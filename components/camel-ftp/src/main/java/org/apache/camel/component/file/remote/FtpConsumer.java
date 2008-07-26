@@ -40,6 +40,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private String regexPattern;
     private boolean setNames = true;
     private boolean exclusiveRead = true;
+    private boolean deleteFile;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -164,6 +165,18 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
 
+            if (deleteFile) {
+                // delete file after consuming
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer);
+                }
+                boolean deleted = client.deleteFile(ftpFile.getName());
+                if (!deleted) {
+                    // ignore just log a warning
+                    LOG.warn("Could not delete file: " + ftpFile.getName() + " from: " + remoteServer);
+                }
+            }
+
             getProcessor().process(exchange);
         }
     }
@@ -174,7 +187,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = ftpFile.getName();
-        String newName = originalName + ".exclusiveRead";
+        String newName = originalName + ".camel";
         boolean exclusive = false;
         while (! exclusive) {
             exclusive = client.rename(originalName, newName);
@@ -241,5 +254,13 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setExclusiveRead(boolean exclusiveRead) {
         this.exclusiveRead = exclusiveRead;
+    }
+
+    public boolean isDeleteFile() {
+        return deleteFile;
+    }
+
+    public void setDeleteFile(boolean deleteFile) {
+        this.deleteFile = deleteFile;
     }
 }

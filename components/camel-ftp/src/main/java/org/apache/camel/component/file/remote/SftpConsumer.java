@@ -41,6 +41,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private Session session;
     private boolean setNames;
     private boolean exclusiveRead = true;
+    private boolean deleteFile;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session) {
         super(endpoint, processor);
@@ -170,6 +171,19 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
 
+            if (deleteFile) {
+                // delete file after consuming
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer);
+                }
+                try {
+                    channel.rm(sftpFile.getFilename());
+                } catch (SftpException e) {
+                    // ignore just log a warning
+                    LOG.warn("Could not delete file: " + sftpFile.getFilename() + " from: " + remoteServer);
+                }
+            }
+
             getProcessor().process(exchange);
         }
     }
@@ -180,7 +194,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = sftpFile.getFilename();
-        String newName = originalName + "..exclusiveRead";
+        String newName = originalName + ".camel";
         boolean exclusive = false;
         while (! exclusive) {
             try {
@@ -253,5 +267,13 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     public void setExclusiveRead(boolean exclusiveRead) {
         this.exclusiveRead = exclusiveRead;
+    }
+
+    public boolean isDeleteFile() {
+        return deleteFile;
+    }
+
+    public void setDeleteFile(boolean deleteFile) {
+        this.deleteFile = deleteFile;
     }
 }
