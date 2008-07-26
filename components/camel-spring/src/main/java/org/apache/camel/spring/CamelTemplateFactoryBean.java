@@ -31,7 +31,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A Spring {@link FactoryBean} for creating a new {@link ProducerTemplate}
+ * A Spring {@link FactoryBean} for creating a new {@link org.apache.camel.ProducerTemplate}
  * instance with a minimum of XML
  * 
  * @version $Revision$

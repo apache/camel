@@ -423,8 +423,6 @@ public class Main extends ServiceSupport {
     /**
      * Returns a {@link ProducerTemplate} from the Spring {@link ApplicationContext} instances
      * or lazily creates a new one dynamically
-     *
-     * @return
      */
     public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
