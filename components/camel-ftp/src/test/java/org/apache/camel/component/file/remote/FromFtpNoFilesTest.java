@@ -25,45 +25,30 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Unit test to verify exclusive read - that we do not poll files that is in progress of being written.
+ * Unit test to verify polling a server with no files to poll.
  */
-public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
+public class FromFtpNoFilesTest extends FtpServerTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
 
-    private String port = "20019";
+    private String port = "20020";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveRead=true&consumer.delay=500";
 
     public String getPort() {
         return port;
     }
 
-    public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
+    public void testPoolIn3SecondsButNoFiles() throws Exception {
         deleteDirectory("./res/home");
         createDirectory("./res/home/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye World");
+        mock.expectedMessageCount(0);
 
-        createSlowFile();
+        Thread.sleep(3 * 1000L);
 
         mock.assertIsSatisfied();
     }
 
-    private void createSlowFile() throws Exception {
-        LOG.info("Creating a slow file ...");
-        File file = new File("./res/home/slowfile/hello.txt");
-        FileOutputStream fos = new FileOutputStream(file);
-        fos.write("Hello World".getBytes());
-        for (int i = 0; i < 3; i++) {
-            Thread.sleep(1000);
-            fos.write(("Line #" + i).getBytes());
-            LOG.info("Appending to slowfile");
-        }
-        fos.write("Bye World".getBytes());
-        fos.close();
-        LOG.info("... done creating slowfile");
-    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
