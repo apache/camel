@@ -132,7 +132,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoints using the
-     * {@link MulticastProcessor} pattern
+     * {@link org.apache.camel.processor.MulticastProcessor} pattern
      */
     public Type to(String... uris) {
         for (String uri : uris) {
@@ -143,7 +143,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoints using the
-     * {@link MulticastProcessor} pattern
+     * {@link org.apache.camel.processor.MulticastProcessor} pattern
      */
     public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -154,7 +154,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoint using the
-     * {@link MulticastProcessor} pattern
+     * {@link org.apache.camel.processor.MulticastProcessor} pattern
      */
     public Type to(Collection<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -279,7 +279,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer} 
+     * to avoid duplicate messages
      */
     public IdempotentConsumerType idempotentConsumer(Expression messageIdExpression,
             MessageIdRepository messageIdRepository) {
@@ -289,7 +290,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an {@link IdempotentConsumer} to avoid duplicate messages
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
+     * to avoid duplicate messages
      *
      * @return the builder used to create the expression
      */
@@ -370,7 +372,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * List</a> pattern.
      *
      * @param receipients is the builder of the expression used in the
-     *                    {@link RecipientList} to decide the destinations
+     *                    {@link org.apache.camel.processor.RecipientList}
+     *                    to decide the destinations
      */
     public Type recipientList(Expression receipients) {
         RecipientListType answer = new RecipientListType(receipients);
@@ -384,7 +387,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * List</a> pattern.
      *
      * @return the expression clause for the expression used in the
-     *                    {@link RecipientList} to decide the destinations
+     *                    {@link org.apache.camel.processor.RecipientList}
+     *                    to decide the destinations
      */
     public ExpressionClause<ProcessorType<Type>> recipientList() {
         RecipientListType answer = new RecipientListType();
@@ -1366,7 +1370,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Unmarshals the in body using the specified {@link DataFormat}
-     * reference in the {@link Registry} and sets the output on the out message body.
+     * reference in the {@link org.apache.camel.spi.Registry} and sets
+     * the output on the out message body.
      *
      * @return this object
      */
@@ -1408,7 +1413,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Marshals the in body the specified {@link DataFormat}
-     * reference in the {@link Registry} and sets the output on the out message body.
+     * reference in the {@link org.apache.camel.spi.Registry} and sets
+     * the output on the out message body.
      *
      * @return this object
      */

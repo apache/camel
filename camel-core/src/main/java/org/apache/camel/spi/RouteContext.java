@@ -76,15 +76,11 @@ public interface RouteContext {
 
     /**
      * This method retrieves the InterceptStrategy instances this route context.
-     *
-     * @return InterceptStrategy
      */
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
      * This method sets the InterceptStrategy instances on this route context.
-     *
-     * @param interceptStrategies
      */
     void setInterceptStrategies(List<InterceptStrategy> interceptStrategies);
 
@@ -92,31 +88,22 @@ public interface RouteContext {
 
     /**
      * This method retrieves the ErrorHandlerWrappingStrategy.
-     *  
-     * @return ErrorHandlerWrappingStrategy
      */
     ErrorHandlerWrappingStrategy getErrorHandlerWrappingStrategy();
     
     /**
      * This method sets the ErrorHandlerWrappingStrategy.
-     * 
      */
     void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
 
     /**
-     * If this flag is true, {@link ProcessorType#addRoutes(RouteContext, java.util.Collection)
+     * If this flag is true, {@link ProcessorType#addRoutes(RouteContext, java.util.Collection)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.
      * 
      */
     void setIsRouteAdded(boolean value);
     
-    /**
-     * @see {@link #setIsRouteAdded(boolean)}
-     * 
-     */
     boolean isRouteAdded();
-    
-    
 
 }

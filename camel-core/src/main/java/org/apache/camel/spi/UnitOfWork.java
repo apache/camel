@@ -29,15 +29,11 @@ public interface UnitOfWork {
 
     /**
      * Adds a synchronization hook
-     *
-     * @param synchronization
      */
     void addSynchronization(Synchronization synchronization);
 
     /**
      * Removes a synchronization hook
-     *
-     * @param synchronization
      */
     void removeSynchronization(Synchronization synchronization);
 
@@ -48,8 +44,6 @@ public interface UnitOfWork {
 
     /**
      * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     *
-     * @return
      */
     String getId();
 }
