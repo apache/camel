@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
@@ -39,14 +40,14 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
     private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>();
 
-    private boolean generateEmptyExchangeWhenIdle;
-    private boolean recursive = true;
-    private String regexPattern = "";
-
     private long lastPollTime;
     private int unchangedDelay;
     private boolean unchangedSize;
 
+    private boolean generateEmptyExchangeWhenIdle;
+    private boolean recursive = true;
+    private String regexPattern = "";
+    private boolean exclusiveRead = true;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -118,6 +119,11 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
         endpoint.configureMessage(file, exchange.getIn());
         try {
+            // is we use excluse read then acquire the exclusive read (waiting until we got it)
+            if (exclusiveRead) {
+                acquireExclusiveRead(file);
+            }
+
             if (LOG.isDebugEnabled()) {
                 LOG.debug("About to process file: " + file + " using exchange: " + exchange);
             }
@@ -157,6 +163,36 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
         return 1;
     }
+
+    protected void acquireExclusiveRead(File file) throws IOException {
+        LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written)");
+
+        // the trick is to try to rename the file, if we can rename then we have exclusive read
+        // NOTE: using java.nio (channel lokc) doesn't help us as we can have write access but the
+        // file is still in progress of being written (slow writer)
+        String originalName = file.getAbsolutePath();
+        File newName = new File(originalName + ".exclusiveRead");
+        boolean exclusive = false;
+        while (! exclusive) {
+            exclusive = file.renameTo(newName);
+            if (exclusive) {
+                LOG.trace("Got it renaming it back to original name");
+                // rename it back
+                newName.renameTo(file);
+            } else {
+                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+            }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Acquired exclusive read to: " + file);
+        }
+    }
+
 
     /**
      * Strategy when the file was processed and a commit should be executed.
@@ -311,4 +347,11 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         this.unchangedSize = unchangedSize;
     }
 
+    public boolean isExclusiveRead() {
+        return exclusiveRead;
+    }
+
+    public void setExclusiveRead(boolean exclusiveRead) {
+        this.exclusiveRead = exclusiveRead;
+    }
 }
