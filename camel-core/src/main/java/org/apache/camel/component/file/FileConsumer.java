@@ -170,6 +170,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // NOTE: using java.nio (channel lokc) doesn't help us as we can have write access but the
         // file is still in progress of being written (slow writer)
+        // TODO: Seems to not work on Unix boxes (see the unit test FileExclusiveReadTest)
         String originalName = file.getAbsolutePath();
         File newName = new File(originalName + ".exclusiveRead");
         boolean exclusive = false;
@@ -180,7 +181,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 // rename it back
                 newName.renameTo(file);
             } else {
-                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis");
+                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis.");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

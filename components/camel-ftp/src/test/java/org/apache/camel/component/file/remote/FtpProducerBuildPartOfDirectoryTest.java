@@ -23,26 +23,27 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.component.file.FileComponent;
 
 /**
- * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of). 
+ * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
-public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
+public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
 
-    private String port = "20018";
+    private String port = "20021";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/upload/user/claus?binary=false&password=admin";
 
     public String getPort() {
         return port;
     }
 
-    public void testProduceAndBuildFullRemotFolderTest() throws Exception {
+    public void testProduceAndBuildPartOfRemotFolderTest() throws Exception {
         deleteDirectory("./res/home/");
+        createDirectory("./res/home/upload/user/superman");
 
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
+        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "claus.txt");
 
         File file = new File("./res/home/upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();
         assertTrue("The uploaded file should exists", file.exists());
-        assertEquals("Hello World", IOConverter.toString(file));
+        assertEquals("Bye World", IOConverter.toString(file));
     }
 
     private static void createDirectory(String s) {

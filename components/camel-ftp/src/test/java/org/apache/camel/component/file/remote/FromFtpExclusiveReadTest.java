@@ -31,7 +31,7 @@ public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
 
-    private String port = "20019";
+    private String port = "21900";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveRead=true&consumer.delay=500";
 
     public String getPort() {
