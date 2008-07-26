@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -28,7 +27,6 @@ import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(SftpProducer.class);
@@ -46,30 +44,29 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
-                LOG.info("Session isn't connected, trying to recreate and connect...");
+                LOG.debug("Session isn't connected, trying to recreate and connect.");
                 session = endpoint.createSession();
                 session.connect();
             }
-            LOG.info("Channel isn't connected, trying to recreate and connect...");
+            LOG.debug("Channel isn't connected, trying to recreate and connect.");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
-            LOG.info("Connected to " + endpoint.getConfiguration().toString());
+            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
         }
     }
 
     protected void disconnect() throws JSchException {
         if (session != null) {
-            LOG.info("Session is being explicitly disconnected");
+            LOG.debug("Session is being explicitly disconnected");
             session.disconnect();
         }
         if (channel != null) {
-            LOG.info("Channel is being explicitly disconnected");
+            LOG.debug("Channel is being explicitly disconnected");
             channel.disconnect();
         }
     }
 
     public void process(Exchange exchange) throws Exception {
-        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't deliver
@@ -78,15 +75,16 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         } catch (JSchException e) {
             // If the connection has gone stale, then we must manually disconnect
             // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.toString());
+            LOG.warn("Disconnecting due to exception: " + e.getMessage());
             disconnect();
             // Rethrow to signify that we didn't deliver
             throw e;
         } catch (SftpException e) {
             // Still not sure if/when these come up and what we should do about them
             // client.disconnect();
-            LOG.warn("Caught SftpException:" + e.toString());
-            LOG.warn("Doing nothing for now, need to determine an appropriate action");
+            LOG.warn("Caught SftpException:" + e.getMessage(), e);
+            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
+            disconnect();
             // Rethrow to signify that we didn't deliver
             throw e;
         }
@@ -95,6 +93,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
+            String remoteServer = endpoint.getConfiguration().remoteServerInformation();
             String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
 
             int lastPathIndex = fileName.lastIndexOf('/');
@@ -102,12 +101,15 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 String directory = fileName.substring(0, lastPathIndex);
                 boolean success = buildDirectory(channel, directory);
                 if (!success) {
-                    LOG.warn("Couldn't build directory: " + directory + " (either permissions deny it, or it already exists)");
+                    LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
 
             channel.put(payload, fileName);
-            LOG.info("Sent: " + fileName + " to " + endpoint.getConfiguration());
+
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Sent: " + fileName + " to: " + remoteServer);
+            }
         } finally {
             if (payload != null) {
                 payload.close();
@@ -121,7 +123,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         try {
             connectIfNecessary();
         } catch (JSchException e) {
-            LOG.warn("Couldn't connect to " + endpoint.getConfiguration());
+            LOG.warn("Couldn't connect to: " + endpoint.getConfiguration().remoteServerInformation());
         }
         super.doStart();
     }
@@ -135,24 +137,31 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     protected static boolean buildDirectory(ChannelSftp sftpClient, String dirName)
         throws IOException, SftpException {
+        String originalDirectory = sftpClient.pwd();
 
-        boolean atLeastOneSuccess = false;
-        final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
-        for (String dir : dirs) {
-            sb.append(dir).append('/');
-            String directory = sb.toString();
+        boolean success = false;
+        try {
+            // maybe the full directory already exsits
+            try {
+                sftpClient.cd(dirName);
+                success = true;
+            } catch (SftpException e) {
+                // ignore, we could not change directory so try to create it instead
+            }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to build directory: " + directory);
+            if (!success) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Trying to build remote directory: " + dirName);
+                }
+                sftpClient.mkdir(dirName);
+                success = true;
             }
-            sftpClient.mkdir(directory);
-            if (!atLeastOneSuccess) {
-                atLeastOneSuccess = true;
-            }
+        } finally {
+            // change back to original directory
+            sftpClient.cd(originalDirectory);
         }
 
-        return atLeastOneSuccess;
+        return success;
     }
 
 }

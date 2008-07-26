@@ -47,12 +47,12 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         } catch (FTPConnectionClosedException e) {
             // If the server disconnected us, then we must manually disconnect
             // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.toString());
+            LOG.warn("Disconnecting due to exception: " + e.getMessage());
             disconnect();
             // Rethrow to signify that we didn't deliver
             throw e;
         } catch (RuntimeCamelException e) {
-            LOG.warn("Caught RuntimeCamelException: " + e.toString());
+            LOG.warn("Caught RuntimeCamelException: " + e.getMessage(), e);
             LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
             disconnect();
             // Rethrow to signify that we didn't deliver
@@ -61,40 +61,40 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        // TODO: is there a way to avoid copy-pasting the reconnect logic?
         if (!client.isConnected()) {
-            LOG.warn("FtpProducer's client isn't connected, trying to reconnect...");
+            LOG.debug("Not connected, trying to reconnect.");
             endpoint.connect(client);
-            LOG.info("Connected to " + endpoint.getConfiguration());
+            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
         }
     }
 
     public void disconnect() throws IOException {
-        LOG.info("FtpProducer's client is being explicitly disconnected");
+        LOG.debug("Disconnecting from " + endpoint.getConfiguration().remoteServerInformation());
         endpoint.disconnect(client);
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
+            String remoteServer = endpoint.getConfiguration().remoteServerInformation();
             String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
 
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
                 if (!buildDirectory(client, directory)) {
-                    LOG.warn("Couldn't build directory: " + directory + " (either permissions deny it, or it already exists)");
+                    LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
 
-            final boolean success = client.storeFile(fileName, payload);
+            boolean success = client.storeFile(fileName, payload);
             if (!success) {
-                // TODO: Should we not have better exception for this?
-                throw new RuntimeCamelException("Error sending file: " + fileName);
+                throw new RuntimeCamelException("Error sending file: " + fileName + " to: " + remoteServer);
             }
 
-            RemoteFileConfiguration config = endpoint.getConfiguration();
-            LOG.info("Sent: " + fileName + " to " + config.toString().substring(0, config.toString().indexOf(config.getFile())));
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Sent: " + fileName + " to: " + remoteServer);
+            }
         } finally {
             if (payload != null) {
                 payload.close();
@@ -108,7 +108,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         try {
             connectIfNecessary();
         } catch (IOException e) {
-            LOG.warn("Couldn't connect to " + endpoint.getConfiguration());
+            LOG.warn("Couldn't connect to: " + endpoint.getConfiguration().remoteServerInformation());
         }
         super.doStart();
     }
@@ -121,24 +121,24 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     protected static boolean buildDirectory(FTPClient ftpClient, String dirName) throws IOException {
-        boolean atLeastOneSuccess = false;
-        final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
+        String originalDirectory = ftpClient.printWorkingDirectory();
 
-        for (String dir : dirs) {
-            sb.append(dir).append('/');
-            String directory = sb.toString();
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to build directory: " + directory);
+        boolean success = false;
+        try {
+            // maybe the full directory already exsits
+            success = ftpClient.changeWorkingDirectory(dirName);
+            if (!success) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Trying to build remote directory: " + dirName);
+                }
+                success = ftpClient.makeDirectory(dirName);
             }
-            final boolean success = ftpClient.makeDirectory(directory);
-
-            if (!atLeastOneSuccess && success) {
-                atLeastOneSuccess = true;
-            }
+        } finally {
+            // change back to original directory
+            ftpClient.changeWorkingDirectory(originalDirectory);
         }
 
-        return atLeastOneSuccess;
+        return success;
     }
+
 }
