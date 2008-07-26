@@ -75,11 +75,6 @@ public class DefaultUnitOfWork implements UnitOfWork {
         return asyncCallbacks == null || asyncCallbacks.isEmpty();
     }
 
-    /**
-     * Returns the unique ID of this unit of work, lazily creating one if it does not yet have one
-     *
-     * @return
-     */
     public String getId() {
         if (id == null) {
             id = DEFAULT_ID_GENERATOR.generateId();
