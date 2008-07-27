@@ -53,13 +53,13 @@ public class FileExclusiveReadTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    // TODO: Fix on Bamboo
+    // TODO: Not possible to test in the same JVM (see javadoc for FileLock)
     public void xxxtestPollFileWhileSlowFileIsBeingWritten() throws Exception {
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye Worl");
 
         createSlowFile();
 
@@ -68,24 +68,17 @@ public class FileExclusiveReadTest extends ContextTestSupport {
 
     private void createSlowFile() throws Exception {
         LOG.info("Creating a slow file ...");
-
         File file = new File("./target/exclusiveread/slowfile/hello.txt");
         FileOutputStream fos = new FileOutputStream(file);
-
-        // get a lock so we are the only one working on this file
         FileLock lock = fos.getChannel().lock();
-
-        byte[] buffer = "Hello World".getBytes();
-        ByteBuffer bb = ByteBuffer.wrap(buffer);
-        for (int i = 0; i < buffer.length; i++) {
+        fos.write("Hello World".getBytes());
+        for (int i = 0; i < 3; i++) {
+            Thread.sleep(1000);
+            fos.write(("Line #" + i).getBytes());
             LOG.info("Appending to slowfile");
-            Thread.sleep(300);
         }
-        LOG.info("Writing to file");
-        fos.write(buffer);
-        LOG.info("Releasing lock");
+        fos.write("Bye World".getBytes());
         lock.release();
-        LOG.info("Closing file");
         fos.close();
         LOG.info("... done creating slowfile");
     }

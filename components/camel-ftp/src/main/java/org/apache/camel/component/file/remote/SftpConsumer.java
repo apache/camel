@@ -220,7 +220,9 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void acquireExclusiveRead(ChannelSftp.LsEntry sftpFile) throws SftpException {
-        LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written)");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Waiting for exclusive lock to file: " + sftpFile);
+        }
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
@@ -236,19 +238,19 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             }
 
             if (exclusive) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Acquired exclusive lock to file: " + originalName);
+                }
                 // rename it back so we can read it
                 channel.rename(newName, originalName);
             } else {
-                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis");
+                LOG.trace("Exclusive lock not granted. Sleeping for 1000 millis");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     // ignore
                 }
             }
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Acquired exclusive read to: " + originalName);
         }
     }
 
