@@ -42,6 +42,7 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         // must stop server after super to let the clients stop correctly (CAMEL-444)
+        ftpServer.getServerContext().dispose();
         ftpServer.stop();
     }
 

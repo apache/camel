@@ -29,6 +29,7 @@ import org.apache.camel.Converter;
  */
 @Converter
 public final class RemoteFileConverter {
+    
     private RemoteFileConverter() {
         // Helper Class
     }

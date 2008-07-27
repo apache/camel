@@ -39,44 +39,49 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(Exchange exchange) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing " + endpoint.getConfiguration());
+        }
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
         // exception will signify that we couldn't deliver
         try {
             process(endpoint.createExchange(exchange));
-        } catch (FTPConnectionClosedException e) {
-            // If the server disconnected us, then we must manually disconnect
-            // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.getMessage());
-            disconnect();
-            // Rethrow to signify that we didn't deliver
-            throw e;
-        } catch (RuntimeCamelException e) {
-            LOG.warn("Caught RuntimeCamelException: " + e.getMessage(), e);
-            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
-            disconnect();
-            // Rethrow to signify that we didn't deliver
-            throw e;
+        } catch (Exception e) {
+            if (isStopping() || isStopped()) {
+                // if we are stopping then ignore any exception during a poll
+                LOG.warn( "Producer is stopping. Ignoring caught exception: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            } else {
+                LOG.warn("Exception occured during processing: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                disconnect();
+                // Rethrow to signify that we didn't poll
+                throw e;
+            }
         }
     }
 
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
-            LOG.debug("Not connected, trying to reconnect.");
-            endpoint.connect(client);
-            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not connected, connecting to " + remoteServer());
+            }
+            FtpUtils.connect(client, endpoint.getConfiguration());
+            LOG.info("Connected to " + remoteServer());
         }
     }
 
     public void disconnect() throws IOException {
-        LOG.debug("Disconnecting from " + endpoint.getConfiguration().remoteServerInformation());
-        endpoint.disconnect(client);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Disconnecting from " + remoteServer());
+        }
+        FtpUtils.disconnect(client);
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
-            String remoteServer = endpoint.getConfiguration().remoteServerInformation();
             String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
 
             int lastPathIndex = fileName.lastIndexOf('/');
@@ -89,12 +94,10 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
             boolean success = client.storeFile(fileName, payload);
             if (!success) {
-                throw new RuntimeCamelException("Error sending file: " + fileName + " to: " + remoteServer);
+                throw new RuntimeCamelException("Error sending file: " + fileName + " to: " + remoteServer());
             }
 
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Sent: " + fileName + " to: " + remoteServer);
-            }
+            LOG.info("Sent: " + fileName + " to: " + remoteServer());
         } finally {
             if (payload != null) {
                 payload.close();
@@ -105,11 +108,8 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     @Override
     protected void doStart() throws Exception {
         LOG.info("Starting");
-        try {
-            connectIfNecessary();
-        } catch (IOException e) {
-            LOG.warn("Couldn't connect to: " + endpoint.getConfiguration().remoteServerInformation());
-        }
+        // do not connect when componet starts, just wait until we process as we will
+        // connect at that time if needed
         super.doStart();
     }
 
@@ -139,6 +139,10 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
 
         return success;
+    }
+
+    private String remoteServer() {
+        return endpoint.getConfiguration().remoteServerInformation();
     }
 
 }

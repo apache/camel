@@ -25,14 +25,14 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Unit test to verify exclusive read - that we do not poll files that is in progress of being written.
+ * Unit test to verify *NON* exclusive read.
  */
-public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
+public class FromFtpNonExclusiveReadTest extends FtpServerTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
 
-    private String port = "20025";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveRead=true&consumer.delay=500";
+    private String port = "20027";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveRead=false&consumer.delay=500";
 
     public String getPort() {
         return port;
@@ -43,11 +43,15 @@ public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
         createDirectory("./res/home/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye World");
 
         createSlowFile();
 
         mock.assertIsSatisfied();
+
+        // we read only part of the file as we dont have exclusive read and thus read part of the
+        // file currently in progress of being written - so we get only the Hello World part
+        String body = mock.getExchanges().get(0).getIn().getBody(String.class);
+        assertFalse("Should not get the entire file", body.endsWith("Bye World"));
     }
 
     private void createSlowFile() throws Exception {

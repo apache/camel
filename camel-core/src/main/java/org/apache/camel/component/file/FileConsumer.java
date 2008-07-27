@@ -172,7 +172,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         // file is still in progress of being written (slow writer)
         // TODO: Seems to not work on Unix boxes (see the unit test FileExclusiveReadTest)
         String originalName = file.getAbsolutePath();
-        File newName = new File(originalName + ".exclusiveRead");
+        File newName = new File(originalName + ".camelExclusiveRead");
         boolean exclusive = false;
         while (! exclusive) {
             exclusive = file.renameTo(newName);
