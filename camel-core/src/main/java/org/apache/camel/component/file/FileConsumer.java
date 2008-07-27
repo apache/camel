@@ -51,7 +51,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean generateEmptyExchangeWhenIdle;
     private boolean recursive = true;
     private String regexPattern = "";
-    private boolean exclusiveRead = true;
+    private boolean exclusiveRead;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
