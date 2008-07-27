@@ -38,7 +38,7 @@ public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
         return port;
     }
 
-    // TODO fix on Bamboo
+    // TODO: Not possible to test in single JVM
     public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
         /*deleteDirectory("./res/home");
         createDirectory("./res/home/slowfile");

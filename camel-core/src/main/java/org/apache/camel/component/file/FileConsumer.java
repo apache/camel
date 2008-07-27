@@ -141,7 +141,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                         boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Done processing file: " + file + ". Status is: " + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "OK"));
+                            LOG.debug("Done processing file: " + file + ". Status is: " + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "processed OK"));
                         }
 
                         if (!failed || handled) {
@@ -170,25 +170,23 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     protected void acquireExclusiveRead(File file) throws IOException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written) to " + file);
+            LOG.trace("Waiting for exclusive lock to file: " + file);
         }
 
         // try to acquire rw lock on the file before we can consume it
         FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
         try {
             FileLock lock = channel.lock();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Acquired exclusive lock: " + lock + " to file: " + file);
+            }
             // just release it now we dont want to hold it during the rest of the processing
             lock.release();
         } finally {
             // must close channel
-            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive read", LOG);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Acquired exclusive read to: " + file);
+            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive lock", LOG);
         }
     }
-
 
     /**
      * Strategy when the file was processed and a commit should be executed.
