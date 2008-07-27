@@ -27,7 +27,7 @@ import org.apache.camel.component.file.FileComponent;
  */
 public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
 
-    private String port = "20018";
+    private String port = "20026";
     private String ftpUrl = "ftp://admin@localhost:" + port + "/upload/user/claus?binary=false&password=admin";
 
     public String getPort() {

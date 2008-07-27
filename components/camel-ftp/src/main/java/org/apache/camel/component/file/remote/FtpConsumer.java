@@ -22,6 +22,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -55,17 +56,31 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.client = client;
     }
 
+    protected void doStart() throws Exception {
+        LOG.info("Starting");
+        super.doStart();
+    }
+
+    protected void doStop() throws Exception {
+        LOG.info("Stopping");
+        // disconnect when stopping
+        disconnect();
+        super.doStop();
+    }
+
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
-            LOG.debug("Not connected, trying to reconnect.");
-            endpoint.connect(client);
-            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Not connected, connecting to " + remoteServer());
+            }
+            FtpUtils.connect(client, endpoint.getConfiguration());
+            LOG.info("Connected to " + remoteServer());
         }
     }
 
     protected void disconnect() throws IOException {
-        LOG.debug("Disconnecting from " + endpoint.getConfiguration().remoteServerInformation());
-        endpoint.disconnect(client);
+        LOG.debug("Disconnecting from " + remoteServer());
+        FtpUtils.disconnect(client);
     }
 
     protected void poll() throws Exception {
@@ -80,6 +95,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
+                // TODO: This code can be nicer
                 int index = fileName.lastIndexOf('/');
                 if (index > -1) {
                     client.changeWorkingDirectory(fileName.substring(0, index));
@@ -88,23 +104,25 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 pollFile(files[0]);
             }
             lastPollTime = System.currentTimeMillis();
-        } catch (FTPConnectionClosedException e) {
-            // If the server disconnected us, then we must manually disconnect
-            // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.getMessage());
-            disconnect();
-            // Rethrow to signify that we didn't poll
-            throw e;
-        } catch (RuntimeCamelException e) {
-            LOG.warn("Caught RuntimeCamelException: " + e.getMessage(), e);
-            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
-            disconnect();
-            // Rethrow to signify that we didn't poll
-            throw e;
+        } catch (Exception e) {
+            if (isStopping() || isStopped()) {
+                // if we are stopping then ignore any exception during a poll
+                LOG.warn( "Consumer is stopping. Ignoring caught exception: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            } else {
+                LOG.warn("Exception occured during polling: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                disconnect();
+                // Rethrow to signify that we didn't poll
+                throw e;
+            }
         }
     }
 
     protected void pollDirectory(String dir) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling directory: " + dir);
+        }
         String currentDir = client.printWorkingDirectory();
 
         client.changeWorkingDirectory(dir);
@@ -136,7 +154,6 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         long ts = ftpFile.getTimestamp().getTimeInMillis();
         // TODO do we need to adjust the TZ? can we?
         if (ts > lastPollTime && isMatched(ftpFile)) {
-            String remoteServer =  endpoint.getConfiguration().remoteServerInformation();
             String fullFileName = getFullFileName(ftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
@@ -148,7 +165,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer);
+                LOG.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
             }
 
             RemoteFileExchange exchange = endpoint.createExchange(fullFileName, byteArrayOutputStream);
@@ -168,12 +185,12 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (deleteFile) {
                 // delete file after consuming
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer);
+                    LOG.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
                 boolean deleted = client.deleteFile(ftpFile.getName());
                 if (!deleted) {
                     // ignore just log a warning
-                    LOG.warn("Could not delete file: " + ftpFile.getName() + " from: " + remoteServer);
+                    LOG.warn("Could not delete file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
             }
 
@@ -187,7 +204,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = ftpFile.getName();
-        String newName = originalName + ".camel";
+        String newName = originalName + ".camelExclusiveRead";
         boolean exclusive = false;
         while (! exclusive) {
             exclusive = client.rename(originalName, newName);
@@ -206,6 +223,10 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Acquired exclusive read to: " + originalName);
         }
+    }
+
+    private String remoteServer() {
+        return endpoint.getConfiguration().remoteServerInformation();
     }
 
     protected boolean isMatched(FTPFile file) {

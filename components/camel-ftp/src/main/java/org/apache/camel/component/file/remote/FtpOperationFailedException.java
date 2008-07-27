@@ -20,13 +20,14 @@ import org.apache.camel.RuntimeCamelException;
 
 /**
  * @version $Revision$
+ * @deprecated not used will be removed in Camel 2.0.
  */
 public class FtpOperationFailedException extends RuntimeCamelException {
     private final int code;
     private final String reason;
 
     public FtpOperationFailedException(int code, String reason) {
-        super("Ftp Operation failed: " + reason.trim() + " Code: " + code);
+        super("Ftp operation failed: " + reason + " Code: " + code);
         this.code = code;
         this.reason = reason;
     }

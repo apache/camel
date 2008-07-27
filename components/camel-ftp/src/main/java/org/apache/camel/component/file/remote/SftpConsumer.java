@@ -55,6 +55,18 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         this.session = session;
     }
 
+    protected void doStart() throws Exception {
+        LOG.info("Starting");
+        super.doStart();
+    }
+
+    protected void doStop() throws Exception {
+        LOG.info("Stopping");
+        // disconnect when stopping
+        disconnect();
+        super.doStop();
+    }
+
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
@@ -65,17 +77,18 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             LOG.debug("Channel isn't connected, trying to recreate and connect.");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
-            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
+            LOG.info("Connected to " + remoteServer());
         }
     }
 
     protected void disconnect() throws JSchException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Disconnecting from " + remoteServer());
+        }
         if (session != null) {
-            LOG.debug("Session is being explicitly disconnected");
             session.disconnect();
         }
         if (channel != null) {
-            LOG.debug("Channel is being explicitly disconnected");
             channel.disconnect();
         }
     }
@@ -92,29 +105,31 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
+                // TODO: This code could be neater
                 channel.cd(fileName.substring(0, fileName.lastIndexOf('/')));
                 final ChannelSftp.LsEntry file = (ChannelSftp.LsEntry)channel.ls(fileName.substring(fileName.lastIndexOf('/') + 1)).get(0);
                 pollFile(file);
             }
             lastPollTime = System.currentTimeMillis();
-        } catch (JSchException e) {
-            // If the connection has gone stale, then we must manually disconnect
-            // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.getMessage());
-            disconnect();
-            // Rethrow to signify that we didn't poll
-            throw e;
-        } catch (SftpException e) {
-            // Still not sure if/when these come up and what we should do about them
-            // client.disconnect();
-            LOG.warn("Caught SftpException:" + e.getMessage(), e);
-            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
-            // Rethrow to signify that we didn't poll
-            throw e;
+        } catch (Exception e) {
+            if (isStopping() || isStopped()) {
+                // if we are stopping then ignore any exception during a poll
+                LOG.warn( "Consumer is stopping. Ignoring caught exception: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            } else {
+                LOG.warn("Exception occured during polling: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                disconnect();
+                // Rethrow to signify that we didn't poll
+                throw e;
+            }
         }
     }
 
     protected void pollDirectory(String dir) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling directory: " + dir);
+        }
         String currentDir = channel.pwd();
 
         channel.cd(dir);
@@ -147,7 +162,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
         // TODO do we need to adjust the TZ? can we?
         if (ts > lastPollTime && isMatched(sftpFile)) {
-            String remoteServer =  endpoint.getConfiguration().remoteServerInformation();
+            String fullFileName = getFullFileName(sftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
             if (exclusiveRead) {
@@ -158,15 +173,18 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             channel.get(sftpFile.getFilename(), byteArrayOutputStream);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer);
+                LOG.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer());
             }
 
             RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream);
 
             if (isSetNames()) {
-                String relativePath = getFullFileName(sftpFile).substring(endpoint.getConfiguration().getFile().length());
-                if (relativePath.startsWith("/")) {
-                    relativePath = relativePath.substring(1);
+                String ftpBasePath = endpoint.getConfiguration().getFile();
+                String relativePath = fullFileName.substring(ftpBasePath.length() + 1);
+                relativePath = relativePath.replaceFirst("/", "");
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Setting exchange filename to " + relativePath);
                 }
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
@@ -174,13 +192,13 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (deleteFile) {
                 // delete file after consuming
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer);
+                    LOG.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer());
                 }
                 try {
                     channel.rm(sftpFile.getFilename());
                 } catch (SftpException e) {
                     // ignore just log a warning
-                    LOG.warn("Could not delete file: " + sftpFile.getFilename() + " from: " + remoteServer);
+                    LOG.warn("Could not delete file: " + sftpFile.getFilename() + " from: " + remoteServer());
                 }
             }
 
@@ -194,7 +212,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = sftpFile.getFilename();
-        String newName = originalName + ".camel";
+        String newName = originalName + ".camelExclusiveRead";
         boolean exclusive = false;
         while (! exclusive) {
             try {
@@ -219,6 +237,10 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Acquired exclusive read to: " + originalName);
         }
+    }
+
+    private String remoteServer() {
+        return endpoint.getConfiguration().remoteServerInformation();
     }
 
     protected boolean isMatched(ChannelSftp.LsEntry sftpFile) {

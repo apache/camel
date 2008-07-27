@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.IOException;
-
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.ftp.FTPClient;
 
 public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpEndpoint.class);
@@ -35,37 +32,13 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     }
 
     public FtpProducer createProducer() throws Exception {
-        return new FtpProducer(this, createFtpClient());
+        return new FtpProducer(this, FtpUtils.createNewFtpClient());
     }
 
     public FtpConsumer createConsumer(Processor processor) throws Exception {
-        final FtpConsumer consumer = new FtpConsumer(this, processor, createFtpClient());
+        final FtpConsumer consumer = new FtpConsumer(this, processor, FtpUtils.createNewFtpClient());
         configureConsumer(consumer);
         return consumer;
     }
 
-    protected FTPClient createFtpClient() {
-        return new FTPClient();
-    }
-
-    public void connect(FTPClient client) throws IOException {
-        // TODO: connect and disconnect. createFtpClient should be moved to another class they don't
-        // belong on this endpoint class that is only for Camel related stuff 
-        RemoteFileConfiguration config = getConfiguration();
-        String host = config.getHost();
-        int port = config.getPort();
-        String username = config.getUsername();
-
-        client.connect(host, port);
-        if (username != null) {
-            client.login(username, config.getPassword());
-        } else {
-            client.login("anonymous", null);
-        }
-        client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
-    }
-
-    public void disconnect(FTPClient client) throws IOException {
-        client.disconnect();
-    }
 }

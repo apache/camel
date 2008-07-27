@@ -41,6 +41,30 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         this.session = session;
     }
 
+    public void process(Exchange exchange) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Processing " + endpoint.getConfiguration());
+        }
+        connectIfNecessary();
+        // If the attempt to connect isn't successful, then the thrown
+        // exception will signify that we couldn't deliver
+        try {
+            process(endpoint.createExchange(exchange));
+        } catch (Exception e) {
+            if (isStopping() || isStopped()) {
+                // if we are stopping then ignore any exception during a poll
+                LOG.warn( "Producer is stopping. Ignoring caught exception: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            } else {
+                LOG.warn("Exception occured during processing: " +
+                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                disconnect();
+                // Rethrow to signify that we didn't poll
+                throw e;
+            }
+        }
+    }
+
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
@@ -56,37 +80,14 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     protected void disconnect() throws JSchException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Disconnecting from " + remoteServer());
+        }
         if (session != null) {
-            LOG.debug("Session is being explicitly disconnected");
             session.disconnect();
         }
         if (channel != null) {
-            LOG.debug("Channel is being explicitly disconnected");
             channel.disconnect();
-        }
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown
-        // exception will signify that we couldn't deliver
-        try {
-            process(endpoint.createExchange(exchange));
-        } catch (JSchException e) {
-            // If the connection has gone stale, then we must manually disconnect
-            // the client before attempting to reconnect
-            LOG.warn("Disconnecting due to exception: " + e.getMessage());
-            disconnect();
-            // Rethrow to signify that we didn't deliver
-            throw e;
-        } catch (SftpException e) {
-            // Still not sure if/when these come up and what we should do about them
-            // client.disconnect();
-            LOG.warn("Caught SftpException:" + e.getMessage(), e);
-            LOG.warn("Hoping an explicit disconnect/reconnect will solve the problem");
-            disconnect();
-            // Rethrow to signify that we didn't deliver
-            throw e;
         }
     }
 
@@ -107,9 +108,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
             channel.put(payload, fileName);
 
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Sent: " + fileName + " to: " + remoteServer);
-            }
+            LOG.info("Sent: " + fileName + " to: " + remoteServer);
         } finally {
             if (payload != null) {
                 payload.close();
@@ -120,11 +119,8 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     @Override
     protected void doStart() throws Exception {
         LOG.info("Starting");
-        try {
-            connectIfNecessary();
-        } catch (JSchException e) {
-            LOG.warn("Couldn't connect to: " + endpoint.getConfiguration().remoteServerInformation());
-        }
+        // do not connect when componet starts, just wait until we process as we will
+        // connect at that time if needed
         super.doStart();
     }
 
@@ -162,6 +158,10 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
 
         return success;
+    }
+
+    private String remoteServer() {
+        return endpoint.getConfiguration().remoteServerInformation();
     }
 
 }
