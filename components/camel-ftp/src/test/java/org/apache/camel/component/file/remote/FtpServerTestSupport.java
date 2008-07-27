@@ -36,14 +36,20 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         initFtpServer();
-        ftpServer.start();
+        if (ftpServer.isStopped()) {
+            ftpServer.start();
+        }
     }
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        // must stop server after super to let the clients stop correctly (CAMEL-444)
-        ftpServer.getServerContext().dispose();
-        ftpServer.stop();
+        if (!ftpServer.isStopped()) {
+            // must stop server after super to let the clients stop correctly (CAMEL-444)
+            ftpServer.getServerContext().dispose();
+            ftpServer.stop();
+        }
+        // give it time to properly stop the server
+        Thread.sleep(3000);
     }
 
     protected void initFtpServer() throws Exception {

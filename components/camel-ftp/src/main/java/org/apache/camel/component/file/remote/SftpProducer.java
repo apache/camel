@@ -127,7 +127,14 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     @Override
     protected void doStop() throws Exception {
         LOG.info("Stopping");
-        disconnect();
+        // disconnect when stopping
+        try {
+            disconnect();
+        } catch (Exception e) {
+            // ignore just log a warning
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
+                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+        }
         super.doStop();
     }
 

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.Vector;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -63,7 +64,13 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     protected void doStop() throws Exception {
         LOG.info("Stopping");
         // disconnect when stopping
-        disconnect();
+        try {
+            disconnect();
+        } catch (Exception e) {
+            // ignore just log a warning
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
+                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+        }
         super.doStop();
     }
 
@@ -105,9 +112,15 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
-                // TODO: This code could be neater
-                channel.cd(fileName.substring(0, fileName.lastIndexOf('/')));
-                final ChannelSftp.LsEntry file = (ChannelSftp.LsEntry)channel.ls(fileName.substring(fileName.lastIndexOf('/') + 1)).get(0);
+                int index = fileName.lastIndexOf('/');
+                if (index > -1) {
+                    // cd to the folder of the filename
+                    channel.cd(fileName.substring(0, index));
+                }
+
+                // list the files in the fold and poll the first file
+                final Vector files = channel.ls(fileName.substring(index + 1));
+                final ChannelSftp.LsEntry file = (ChannelSftp.LsEntry) files.get(0);
                 pollFile(file);
             }
             lastPollTime = System.currentTimeMillis();
@@ -246,7 +259,10 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     protected boolean isMatched(ChannelSftp.LsEntry sftpFile) {
         boolean result = true;
         if (regexPattern != null && regexPattern.length() > 0) {
-            result = sftpFile.getFilename().matches(getRegexPattern());
+            result = sftpFile.getFilename().matches(regexPattern);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Matching file: " + sftpFile.getFilename() + " is " + result);
         }
         return result;
     }

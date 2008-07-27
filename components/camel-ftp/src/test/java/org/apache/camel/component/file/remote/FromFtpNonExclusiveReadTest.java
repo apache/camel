@@ -32,13 +32,13 @@ public class FromFtpNonExclusiveReadTest extends FtpServerTestSupport {
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
 
     private String port = "20027";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveRead=false&consumer.delay=500";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&consumer.exclusiveRead=false&consumer.delay=500";
 
     public String getPort() {
         return port;
     }
 
-    public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
+    public void testPollFileWhileSlowFileIsBeingWrittenUsingNonExclusiveRead() throws Exception {
         deleteDirectory("./res/home");
         createDirectory("./res/home/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");

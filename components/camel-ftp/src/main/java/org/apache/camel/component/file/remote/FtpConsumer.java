@@ -64,7 +64,13 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     protected void doStop() throws Exception {
         LOG.info("Stopping");
         // disconnect when stopping
-        disconnect();
+        try {
+            disconnect();
+        } catch (Exception e) {
+            // ignore just log a warning
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
+                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+        }
         super.doStop();
     }
 
@@ -95,11 +101,12 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
-                // TODO: This code can be nicer
                 int index = fileName.lastIndexOf('/');
                 if (index > -1) {
+                    // cd to the folder of the filename
                     client.changeWorkingDirectory(fileName.substring(0, index));
                 }
+                // list the files in the fold and poll the first file
                 final FTPFile[] files = client.listFiles(fileName.substring(index + 1));
                 pollFile(files[0]);
             }
@@ -147,6 +154,10 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     private void pollFile(FTPFile ftpFile) throws Exception {
+        if (ftpFile == null) {
+            return;
+        }
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Polling file: " + ftpFile);
         }
@@ -233,6 +244,9 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         boolean result = true;
         if (regexPattern != null && regexPattern.length() > 0) {
             result = file.getName().matches(regexPattern);
+        }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Matching file: " + file.getName() + " is " + result);
         }
         return result;
     }
