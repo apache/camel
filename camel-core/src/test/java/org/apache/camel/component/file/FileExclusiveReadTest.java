@@ -18,6 +18,8 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileLock;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,13 +53,12 @@ public class FileExclusiveReadTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    // TODO: Fix me on Bamboo
-    public void xxxtestPollFileWhileSlowFileIsBeingWritten() throws Exception {
+    public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye World");
+        mock.expectedBodiesReceived("Hello World");
 
         createSlowFile();
 
@@ -66,15 +67,24 @@ public class FileExclusiveReadTest extends ContextTestSupport {
 
     private void createSlowFile() throws Exception {
         LOG.info("Creating a slow file ...");
+
         File file = new File("./target/exclusiveread/slowfile/hello.txt");
         FileOutputStream fos = new FileOutputStream(file);
-        fos.write("Hello World".getBytes());
-        for (int i = 0; i < 3; i++) {
-            Thread.sleep(1000);
-            fos.write(("Line #" + i).getBytes());
+
+        // get a lock so we are the only one working on this file
+        FileLock lock = fos.getChannel().lock();
+
+        byte[] buffer = "Hello World".getBytes();
+        ByteBuffer bb = ByteBuffer.wrap(buffer);
+        for (int i = 0; i < buffer.length; i++) {
             LOG.info("Appending to slowfile");
+            Thread.sleep(300);
         }
-        fos.write("Bye World".getBytes());
+        LOG.info("Writing to file");
+        fos.write(buffer);
+        LOG.info("Releasing lock");
+        lock.release();
+        LOG.info("Closing file");
         fos.close();
         LOG.info("... done creating slowfile");
     }

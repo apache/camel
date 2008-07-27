@@ -18,12 +18,16 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -165,30 +169,21 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     protected void acquireExclusiveRead(File file) throws IOException {
-        LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written)");
-
-        // the trick is to try to rename the file, if we can rename then we have exclusive read
-        // NOTE: using java.nio (channel lokc) doesn't help us as we can have write access but the
-        // file is still in progress of being written (slow writer)
-        // TODO: Seems to not work on Unix boxes (see the unit test FileExclusiveReadTest)
-        String originalName = file.getAbsolutePath();
-        File newName = new File(originalName + ".camelExclusiveRead");
-        boolean exclusive = false;
-        while (! exclusive) {
-            exclusive = file.renameTo(newName);
-            if (exclusive) {
-                LOG.trace("Got it renaming it back to original name");
-                // rename it back
-                newName.renameTo(file);
-            } else {
-                LOG.trace("Exclusive read not granted. Sleeping for 1000 millis.");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Acquiring exclusive read (avoid reading file that is in progress of being written) to " + file);
         }
+
+        // try to acquire rw lock on the file before we can consume it
+        FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
+        try {
+            FileLock lock = channel.lock();
+            // just release it now we dont want to hold it during the rest of the processing
+            lock.release();
+        } finally {
+            // must close channel
+            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive read", LOG);
+        }
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Acquired exclusive read to: " + file);
         }
