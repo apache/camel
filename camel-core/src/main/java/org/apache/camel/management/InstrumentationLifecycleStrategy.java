@@ -180,7 +180,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 PerformanceCounter pc = new PerformanceCounter();
                 agent.register(pc, name);
 
-                // add to map now that it has ben registered
+                // add to map now that it has been registered
                 counterMap.put(processor, pc);
             } catch (MalformedObjectNameException e) {
                 LOG.warn("Could not create MBean name: " + name, e);

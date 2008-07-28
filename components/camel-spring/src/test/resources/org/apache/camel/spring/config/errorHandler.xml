@@ -25,9 +25,14 @@
 
   <camelContext id="camel" errorHandlerRef="deadLetterErrorHandler"
    xmlns="http://activemq.apache.org/camel/schema/spring">
+    <jmxAgent id="agent" disabled="true"/>
     <route>
       <from uri="seda:a"/>
       <to uri="seda:b"/>
+    </route>
+    <route>
+       <from uri="direct:c"/>
+       <to uri="direct:d"/>
     </route>
   </camelContext>
 
