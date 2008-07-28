@@ -156,8 +156,15 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Trying to build remote directory: " + dirName);
                 }
-                sftpClient.mkdir(dirName);
-                success = true;
+                
+                try {
+                	sftpClient.mkdir(dirName);
+                	success = true;
+                } catch (SftpException e) {
+                    // we are here if the server side doesn't create intermediate folders
+                    // so create the folder one by one
+                    success = buildDirectoryChunks(sftpClient, dirName);
+                }
             }
         } finally {
             // change back to original directory
@@ -167,6 +174,30 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         return success;
     }
 
+    private static boolean buildDirectoryChunks(ChannelSftp sftpClient, String dirName) 
+    	throws IOException, SftpException {
+        final StringBuilder sb = new StringBuilder(dirName.length());
+        final String[] dirs = dirName.split("\\/");
+        
+        boolean success = false;
+        for (String dir : dirs) {
+            sb.append(dir).append('/');
+            String directory = sb.toString();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to build remote directory: " + directory);
+            }
+
+            try {
+            	sftpClient.mkdir(directory);
+            	success = true;
+            } catch (SftpException e) {
+            	// ignore keep trying to create the rest of the path
+            }
+        }
+        
+        return success;
+    }
+    
     private String remoteServer() {
         return endpoint.getConfiguration().remoteServerInformation();
     }
