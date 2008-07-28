@@ -44,7 +44,6 @@ public class ErrorHandlerTest extends SpringTestSupport {
             processor = unwrap(processor);
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
-            System.out.println("The deadLetterChannel is " + deadLetterChannel);
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
