@@ -83,7 +83,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                if (!buildDirectory(client, directory)) {
+                if (!FtpUtils.buildDirectory(client, directory)) {
                     LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
@@ -99,50 +99,6 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 payload.close();
             }
         }
-    }
-
-    protected boolean buildDirectory(FTPClient ftpClient, String dirName) throws IOException {
-        String originalDirectory = ftpClient.printWorkingDirectory();
-
-        boolean success = false;
-        try {
-            // maybe the full directory already exsits
-            success = ftpClient.changeWorkingDirectory(dirName);
-            if (!success) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + dirName);
-                }
-                success = ftpClient.makeDirectory(dirName);
-                if (!success) {
-                    // we are here if the server side doesn't create intermediate folders
-                    // so create the folder one by one
-                    buildDirectoryChunks(ftpClient, dirName);
-                }
-            }
-        } finally {
-            // change back to original directory
-            ftpClient.changeWorkingDirectory(originalDirectory);
-        }
-
-        return success;
-    }
-
-    private boolean buildDirectoryChunks(FTPClient ftpClient, String dirName) throws IOException {
-        final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
-
-        boolean success = false;
-        for (String dir : dirs) {
-            sb.append(dir).append('/');
-            String directory = sb.toString();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to build remote directory: " + directory);
-            }
-
-            success = ftpClient.makeDirectory(directory);
-        }
-
-        return success;
     }
 
 }
