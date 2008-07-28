@@ -33,6 +33,8 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected boolean setNames = true;
     protected boolean exclusiveRead = true;
     protected boolean deleteFile;
+    protected String moveNamePrefix;
+    protected String moveNamePostfix;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor) {
         super(endpoint, processor);
@@ -67,6 +69,31 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
             LOG.trace("Matching file: " + fileName + " is " + result);
         }
         return result;
+    }
+
+    /**
+     * Should the file be moved after consuming?
+     */
+    protected boolean isMoveFile() {
+        return moveNamePostfix != null || moveNamePrefix != null;
+    }
+
+    /**
+     * Gets the to filename for moving.
+     * 
+     * @param name the original filename
+     * @return the move filename
+     */
+    protected String getMoveFileName(String name) {
+        StringBuffer buffer = new StringBuffer();
+        if (moveNamePrefix != null) {
+            buffer.append(moveNamePrefix);
+        }
+        buffer.append(name);
+        if (moveNamePostfix != null) {
+            buffer.append(moveNamePostfix);
+        }
+        return buffer.toString();
     }
 
     protected String remoteServer() {
@@ -119,6 +146,22 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
 
     public void setDeleteFile(boolean deleteFile) {
         this.deleteFile = deleteFile;
+    }
+
+    public String getMoveNamePrefix() {
+        return moveNamePrefix;
+    }
+
+    public void setMoveNamePrefix(String moveNamePrefix) {
+        this.moveNamePrefix = moveNamePrefix;
+    }
+
+    public String getMoveNamePostfix() {
+        return moveNamePostfix;
+    }
+
+    public void setMoveNamePostfix(String moveNamePostfix) {
+        this.moveNamePostfix = moveNamePostfix;
     }
 
 }

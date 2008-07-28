@@ -190,6 +190,32 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     // ignore just log a warning
                     LOG.warn("Could not delete file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
+            } else if (isMoveFile()) {
+                String fromName = ftpFile.getName();
+                String toName = getMoveFileName(fromName);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Moving file: " + fromName + " to: " + toName);
+                }
+
+                // delete any existing file
+                boolean deleted = client.deleteFile(toName);
+                if (!deleted) {
+                    // if we could not delete any existing file then maybe the folder is missing
+                    // build folder if needed
+                    int lastPathIndex = toName.lastIndexOf('/');
+                    if (lastPathIndex != -1) {
+                        String directory = toName.substring(0, lastPathIndex);
+                        if (!FtpUtils.buildDirectory(client, directory)) {
+                            LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                        }
+                    }
+                }
+
+                // try to rename
+                boolean success = client.rename(fromName, toName);
+                if (!success) {
+                    LOG.warn("Could not move file: " + fromName + " to: " + toName);
+                }
             }
 
             getProcessor().process(exchange);
