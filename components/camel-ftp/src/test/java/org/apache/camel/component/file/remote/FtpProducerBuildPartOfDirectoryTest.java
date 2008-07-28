@@ -18,9 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).

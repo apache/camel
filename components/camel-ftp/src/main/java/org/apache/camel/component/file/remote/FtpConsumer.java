@@ -21,13 +21,10 @@ import java.io.IOException;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
 import org.apache.commons.net.ftp.FTPFile;
 
 public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
@@ -68,8 +65,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
-                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
+                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
     }
@@ -114,11 +111,11 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn( "Consumer is stopping. Ignoring caught exception: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Consumer is stopping. Ignoring caught exception: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during polling: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Exception occured during polling: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
                 throw e;
@@ -219,7 +216,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         String originalName = ftpFile.getName();
         String newName = originalName + ".camelExclusiveRead";
         boolean exclusive = false;
-        while (! exclusive) {
+        while (!exclusive) {
             exclusive = client.rename(originalName, newName);
             if (exclusive) {
                 if (LOG.isDebugEnabled()) {

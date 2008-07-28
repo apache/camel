@@ -23,7 +23,7 @@ import org.apache.commons.net.ftp.FTPClient;
 /**
  * Utility methods for FTP.
  */
-public class FtpUtils {
+public final class FtpUtils {
 
     private FtpUtils() {
     }

@@ -53,11 +53,11 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn( "Producer is stopping. Ignoring caught exception: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Producer is stopping. Ignoring caught exception: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during processing: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Exception occured during processing: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
                 throw e;
@@ -132,8 +132,8 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
-                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
+                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
     }

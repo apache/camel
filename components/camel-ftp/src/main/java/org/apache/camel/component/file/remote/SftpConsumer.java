@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.Vector;
+import java.util.concurrent.ScheduledExecutorService;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
@@ -68,8 +68,8 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". " +
-                e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
+                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
     }
@@ -127,11 +127,11 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn( "Consumer is stopping. Ignoring caught exception: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Consumer is stopping. Ignoring caught exception: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during polling: " +
-                    e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                LOG.warn("Exception occured during polling: "
+                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
                 throw e;
@@ -229,7 +229,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         String originalName = sftpFile.getFilename();
         String newName = originalName + ".camelExclusiveRead";
         boolean exclusive = false;
-        while (! exclusive) {
+        while (!exclusive) {
             try {
                 channel.rename(originalName, newName);
                 exclusive = true;
