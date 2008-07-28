@@ -33,7 +33,7 @@ public class MarshalListTest extends ContextTestSupport {
     public void testMarshalList() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived( "<?xml version='1.0' encoding='UTF-8'?>"
+        mock.expectedBodiesReceived("<?xml version='1.0' encoding='UTF-8'?>"
             + "<list><string>Hello World</string></list>");
 
         List<String> body = new ArrayList<String>();
