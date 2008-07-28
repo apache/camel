@@ -21,6 +21,7 @@ package org.apache.camel.scala.dsl
  */
 trait DSL {
   
+  def bean(bean: Any) : DSL
   def choice : SChoiceType
   def -->(uris: String*) : DSL
   def to(uris: String*) : DSL

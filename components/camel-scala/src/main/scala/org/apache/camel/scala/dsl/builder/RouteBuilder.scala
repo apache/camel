@@ -50,6 +50,7 @@ class RouteBuilder extends Preamble with DSL {
 
   def from(uri: String) = new SRouteType(builder.from(uri), this)
 
+  def bean(bean: Any) = stack.top.bean(bean)
   def choice = stack.top.choice
   def -->(uris: String*) = stack.top.to(uris: _*)
   def to(uris: String*) = stack.top.to(uris: _*)
