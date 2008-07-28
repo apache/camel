@@ -16,13 +16,21 @@
  */
 package org.apache.camel.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.management.InstrumentationErrorHandlerWrappingStrategy;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -48,6 +56,21 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        // do nothing
+
+        RouteType routeType = routeContext.getRoute();
+        if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
+            // configure the outputs
+            List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>(routeType.getOutputs());
+
+            // clearing the outputs
+            routeType.clearOutput();
+
+            // add the output configure the outputs with the routeType
+            for (ProcessorType<?> processorType : outputs) {
+                routeType.addOutput(processorType);
+            }
+
+        }
+
     }
 }

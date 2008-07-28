@@ -36,16 +36,15 @@ public class ErrorHandlerTest extends SpringTestSupport {
     public void testEndpointConfiguration() throws Exception {
         CamelContext context = getMandatoryBean(CamelContext.class, "camel");
         List<Route> list = context.getRoutes();
-        assertEquals("Number routes created" + list, 1, list.size());
+        assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
-            Endpoint key = route.getEndpoint();
-            assertEquals("From endpoint", "seda:a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
             processor = unwrap(processor);
 
             DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+            System.out.println("The deadLetterChannel is " + deadLetterChannel);
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 

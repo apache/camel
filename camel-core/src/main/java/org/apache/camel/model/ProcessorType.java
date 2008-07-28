@@ -279,7 +279,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer} 
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
      * to avoid duplicate messages
      */
     public IdempotentConsumerType idempotentConsumer(Expression messageIdExpression,
@@ -1599,7 +1599,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
-        if (isInheritErrorHandler()) {            
+        if (isInheritErrorHandler()) {
             return new DeadLetterChannelBuilder();
         } else {
             return new NoErrorHandlerBuilder();
