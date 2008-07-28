@@ -59,6 +59,12 @@ abstract class SAbstractType extends DSL {
     this
   }
   
+  def bean(bean: Any) = bean match {
+    case cls: Class[Any] => new SProcessorType(target.bean(cls).asInstanceOf[ProcessorType[P] forSome {type P}])
+    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[ProcessorType[P] forSome {type P}])
+    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[ProcessorType[P] forSome {type P}])
+  }
+  
   def choice = new SChoiceType(target.choice)
     
   def otherwise : SChoiceType = 
