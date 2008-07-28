@@ -21,12 +21,9 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
-    private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
 
     private FtpEndpoint endpoint;
     private FTPClient client;
@@ -104,29 +101,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        LOG.info("Starting");
-        // do not connect when componet starts, just wait until we process as we will
-        // connect at that time if needed
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        LOG.info("Stopping");
-        // disconnect when stopping
-        try {
-            disconnect();
-        } catch (Exception e) {
-            // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
-                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
-        }
-        super.doStop();
-    }
-
-    protected static boolean buildDirectory(FTPClient ftpClient, String dirName) throws IOException {
+    protected boolean buildDirectory(FTPClient ftpClient, String dirName) throws IOException {
         String originalDirectory = ftpClient.printWorkingDirectory();
 
         boolean success = false;
@@ -138,7 +113,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                     LOG.debug("Trying to build remote directory: " + dirName);
                 }
                 success = ftpClient.makeDirectory(dirName);
-                if (! success) {
+                if (!success) {
                     // we are here if the server side doesn't create intermediate folders
                     // so create the folder one by one
                     buildDirectoryChunks(ftpClient, dirName);
@@ -152,7 +127,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         return success;
     }
 
-    private static boolean buildDirectoryChunks(FTPClient ftpClient, String dirName) throws IOException {
+    private boolean buildDirectoryChunks(FTPClient ftpClient, String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
 
@@ -168,10 +143,6 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
 
         return success;
-    }
-
-    private String remoteServer() {
-        return endpoint.getConfiguration().remoteServerInformation();
     }
 
 }

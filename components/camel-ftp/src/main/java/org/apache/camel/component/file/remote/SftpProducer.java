@@ -25,12 +25,8 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 import org.apache.camel.Exchange;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
-    private static final transient Log LOG = LogFactory.getLog(SftpProducer.class);
-
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
@@ -116,29 +112,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        LOG.info("Starting");
-        // do not connect when componet starts, just wait until we process as we will
-        // connect at that time if needed
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        LOG.info("Stopping");
-        // disconnect when stopping
-        try {
-            disconnect();
-        } catch (Exception e) {
-            // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
-                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
-        }
-        super.doStop();
-    }
-
-    protected static boolean buildDirectory(ChannelSftp sftpClient, String dirName)
+    protected boolean buildDirectory(ChannelSftp sftpClient, String dirName)
         throws IOException, SftpException {
         String originalDirectory = sftpClient.pwd();
 
@@ -174,7 +148,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         return success;
     }
 
-    private static boolean buildDirectoryChunks(ChannelSftp sftpClient, String dirName) 
+    private boolean buildDirectoryChunks(ChannelSftp sftpClient, String dirName)
     	throws IOException, SftpException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/");
@@ -198,8 +172,4 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         return success;
     }
     
-    private String remoteServer() {
-        return endpoint.getConfiguration().remoteServerInformation();
-    }
-
 }

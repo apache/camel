@@ -32,17 +32,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
-    private static final transient Log LOG = LogFactory.getLog(SftpConsumer.class);
     private final SftpEndpoint endpoint;
-    private boolean recursive = true;
-    private String regexPattern = "";
-    private long lastPollTime;
 
     private ChannelSftp channel;
     private Session session;
-    private boolean setNames;
-    private boolean exclusiveRead = true;
-    private boolean deleteFile;
 
     public SftpConsumer(SftpEndpoint endpoint, Processor processor, Session session) {
         super(endpoint, processor);
@@ -254,66 +247,9 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    private String remoteServer() {
-        return endpoint.getConfiguration().remoteServerInformation();
+    protected String getFileName(Object file) {
+        ChannelSftp.LsEntry sftpFile = (ChannelSftp.LsEntry) file;
+        return sftpFile.getFilename();
     }
 
-    protected boolean isMatched(ChannelSftp.LsEntry sftpFile) {
-        boolean result = true;
-        if (regexPattern != null && regexPattern.length() > 0) {
-            result = sftpFile.getFilename().matches(regexPattern);
-        }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Matching file: " + sftpFile.getFilename() + " is " + result);
-        }
-        return result;
-    }
-
-    public boolean isRecursive() {
-        return recursive;
-    }
-
-    public void setRecursive(boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public long getLastPollTime() {
-        return lastPollTime;
-    }
-
-    public void setLastPollTime(long lastPollTime) {
-        this.lastPollTime = lastPollTime;
-    }
-
-    public String getRegexPattern() {
-        return regexPattern;
-    }
-
-    public void setRegexPattern(String regexPattern) {
-        this.regexPattern = regexPattern;
-    }
-
-    public boolean isSetNames() {
-        return setNames;
-    }
-
-    public void setSetNames(boolean setNames) {
-        this.setNames = setNames;
-    }
-
-    public boolean isExclusiveRead() {
-        return exclusiveRead;
-    }
-
-    public void setExclusiveRead(boolean exclusiveRead) {
-        this.exclusiveRead = exclusiveRead;
-    }
-
-    public boolean isDeleteFile() {
-        return deleteFile;
-    }
-
-    public void setDeleteFile(boolean deleteFile) {
-        this.deleteFile = deleteFile;
-    }
 }
