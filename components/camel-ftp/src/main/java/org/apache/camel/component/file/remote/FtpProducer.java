@@ -24,7 +24,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPConnectionClosedException;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FtpProducer.class);
@@ -139,10 +138,33 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                     LOG.debug("Trying to build remote directory: " + dirName);
                 }
                 success = ftpClient.makeDirectory(dirName);
+                if (! success) {
+                    // we are here if the server side doesn't create intermediate folders
+                    // so create the folder one by one
+                    buildDirectoryChunks(ftpClient, dirName);
+                }
             }
         } finally {
             // change back to original directory
             ftpClient.changeWorkingDirectory(originalDirectory);
+        }
+
+        return success;
+    }
+
+    private static boolean buildDirectoryChunks(FTPClient ftpClient, String dirName) throws IOException {
+        final StringBuilder sb = new StringBuilder(dirName.length());
+        final String[] dirs = dirName.split("\\/");
+
+        boolean success = false;
+        for (String dir : dirs) {
+            sb.append(dir).append('/');
+            String directory = sb.toString();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Trying to build remote directory: " + directory);
+            }
+
+            success = ftpClient.makeDirectory(directory);
         }
 
         return success;
