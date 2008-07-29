@@ -18,8 +18,6 @@ package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,15 +28,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
+import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
 import org.apache.cxf.configuration.Configurer;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
-import org.apache.cxf.service.Service;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.AbstractConduit;
 import org.apache.cxf.transport.Conduit;
@@ -57,12 +55,18 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private String targetCamelEndpointUri;
     private ProducerTemplate<Exchange> camelTemplate;
     private Bus bus;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo endpointInfo) {
         this(context, b, endpointInfo, null);
     }
 
     public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference) {
+        this(context, b, epInfo, targetReference, null);
+    }
+
+    public CamelConduit(CamelContext context, Bus b, EndpointInfo epInfo, EndpointReferenceType targetReference,
+            HeaderFilterStrategy headerFilterStrategy) {
         super(getTargetReference(epInfo, targetReference, b));
         String address = epInfo.getAddress();
         if (address != null) {
@@ -75,6 +79,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         endpointInfo = epInfo;
         bus = b;
         initConfig();
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public void setCamelContext(CamelContext context) {
@@ -164,10 +169,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                 public void process(org.apache.camel.Exchange ex) throws IOException {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // Send out the request message here, copy the protocolHeader back
-                    Map<String, List<String>> protocolHeader = CastUtils.cast((Map<?, ?>)outMessage.get(Message.PROTOCOL_HEADERS));
-                    String contentType = (String)outMessage.get(Message.CONTENT_TYPE);
-                    CxfSoapBinding.setProtocolHeader(ex.getIn().getHeaders(), protocolHeader);
-                    ex.getIn().setHeader(CamelTransportConstants.CONTENT_TYPE, contentType);
+                    CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, ex.getIn().getHeaders());
+ 
                     // TODO support different encoding
                     ex.getIn().setBody(outputStream.getBytes());
                     getLogger().log(Level.FINE, "template sending request: ", ex.getIn());
@@ -181,7 +184,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
 
         private void handleResponse(org.apache.camel.Exchange exchange) {
-            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);
+            org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(headerFilterStrategy,
+                    exchange, true);
             incomingObserver.onMessage(inMessage);
         }
     }

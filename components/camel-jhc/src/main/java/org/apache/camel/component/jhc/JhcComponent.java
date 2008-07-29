@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.params.BasicHttpParams;
@@ -35,6 +36,18 @@ public class JhcComponent extends DefaultComponent<JhcExchange> {
     private HttpParams params;
 
     public JhcComponent() {
+        // We could import filters from http component but that also means
+        // a new dependency on camel-http
+        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
+        strategy.getOutFilter().add("content-length");
+        strategy.getOutFilter().add("content-type");
+        strategy.getOutFilter().add(JhcProducer.HTTP_RESPONSE_CODE);
+        strategy.setIsLowercase(true);
+
+        // filter headers begin with "org.apache.camel"
+        strategy.setOutFilterPattern("(org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");        
+        setHeaderFilterStrategy(strategy);
+        
         params = new BasicHttpParams(null)
             .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000)
             .setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 10000)

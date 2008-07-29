@@ -18,8 +18,6 @@ package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,12 +29,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfSoapBinding;
+import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.configuration.Configurable;
 import org.apache.cxf.configuration.Configurer;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
@@ -61,8 +60,14 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     String camelDestinationUri;
     private ProducerTemplate<Exchange> camelTemplate;
     private Endpoint distinationEndpoint;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info) throws IOException {
+        this(camelContext, bus, ci, info, null);
+    }
+    
+    public CamelDestination(CamelContext camelContext, Bus bus, ConduitInitiator ci, EndpointInfo info,
+            HeaderFilterStrategy headerFilterStrategy) throws IOException {
         super(bus, getTargetReference(info, bus), info);
         this.camelContext = camelContext;
         conduitInitiator = ci;
@@ -71,6 +76,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             camelDestinationUri = camelDestinationUri.substring(2);
         }
         initConfig();
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     protected Logger getLogger() {
@@ -138,7 +144,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         getLogger().log(Level.FINE, "server received request: ", camelExchange);
         org.apache.cxf.message.Message inMessage =
-            CxfSoapBinding.getCxfInMessage(camelExchange, false);
+            CxfSoapBinding.getCxfInMessage(headerFilterStrategy, camelExchange, false);
 
         inMessage.put(CxfConstants.CAMEL_EXCHANGE, camelExchange);
         ((MessageImpl)inMessage).setDestination(this);
@@ -246,9 +252,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         // Prepare the message and get the send out message
         private void commitOutputMessage() throws IOException {
             Exchange camelExchange = (Exchange)outMessage.get(CxfConstants.CAMEL_EXCHANGE);
-            Map<String, List<String>> protocolHeader = CastUtils.cast((Map<?, ?>)outMessage.get(Message.PROTOCOL_HEADERS));
-            CxfSoapBinding.setProtocolHeader(camelExchange.getOut().getHeaders(), protocolHeader);
-            camelExchange.getOut().setHeader(CamelTransportConstants.CONTENT_TYPE, outMessage.get(Message.CONTENT_TYPE));
+            
+            CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, camelExchange.getOut().getHeaders());
             CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
             camelExchange.getOut().setBody(outputStream.getBytes());
             getLogger().log(Level.FINE, "send the response message: " + outputStream);

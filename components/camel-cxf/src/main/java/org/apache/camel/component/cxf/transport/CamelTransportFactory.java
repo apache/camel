@@ -25,6 +25,8 @@ import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.AbstractTransportFactory;
@@ -46,6 +48,8 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     private static final Set<String> URI_PREFIXES = new HashSet<String>();
 
     private Collection<String> activationNamespaces;
+    
+    private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
 
     static {
         URI_PREFIXES.add("camel://");
@@ -82,11 +86,11 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
     }
 
     public Conduit getConduit(EndpointInfo endpointInfo, EndpointReferenceType target) throws IOException {
-        return new CamelConduit(camelContext, bus, endpointInfo, target);
+        return new CamelConduit(camelContext, bus, endpointInfo, target, headerFilterStrategy);
     }
 
     public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
-        return new CamelDestination(camelContext, bus, this, endpointInfo);
+        return new CamelDestination(camelContext, bus, this, endpointInfo, headerFilterStrategy);
     }
 
     public Set<String> getUriPrefixes() {
@@ -111,5 +115,16 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
             }
         }
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+    
+    
 }
+
 

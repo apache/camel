@@ -27,6 +27,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Message;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * @version $Revision$
@@ -34,10 +36,18 @@ import org.apache.camel.Message;
 public class HttpBinding {
 
     // This should be a set of lower-case strings
+    @Deprecated
     public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
-    private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
+
+    //private Set<String> ignoredHeaders = DEFAULT_HEADERS_TO_IGNORE;
+
     private boolean useReaderForPayload;
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
+
+    public HttpBinding(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
 
     /**
      * Writes the exchange to the servlet response
@@ -58,7 +68,8 @@ public class HttpBinding {
             // Write out the headers...
             for (String key : out.getHeaders().keySet()) {
                 String value = out.getHeader(key, String.class);
-                if (shouldHeaderBePropagated(key, value)) {
+                if (headerFilterStrategy != null && 
+                        !headerFilterStrategy.applyFilterToCamelHeaders(key, value)) {
                     response.setHeader(key, value);
                 }
             }
@@ -101,33 +112,52 @@ public class HttpBinding {
     /*
      * Exclude a set of headers from responses and new requests as all headers
      * get propagated between exchanges by default
+     *     
+     * @deprecated please use {@link HeaderPropagationStrategy} instead
+     * 
      */
+    @Deprecated
     public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
         if (headerValue == null) {
             return false;
         }
-        if (headerName.startsWith("org.apache.camel")) {
-            return false;
-        }
-        if (getIgnoredHeaders().contains(headerName.toLowerCase())) {
-            return false;
-        }
-        return true;
+        
+        return headerFilterStrategy != null &&
+            !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
+        
     }
 
     /*
      * override the set of headers to ignore for responses and new requests
      * @param headersToIgnore should be a set of lower-case strings
+     * 
+     * @deprecated please use {@link HeaderPropagationStrategy} instead
+     * 
      */
+    @Deprecated
     public void setIgnoredHeaders(Set<String> headersToIgnore) {
-        ignoredHeaders  = headersToIgnore;
+        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
+            ((DefaultHeaderFilterStrategy)headerFilterStrategy)
+                .setOutFilter(headersToIgnore);
+        }
     }
 
+    /**
+     * @deprecated please use {@link HeaderPropagationStrategy} instead
+     */
+    @Deprecated
     public Set<String> getIgnoredHeaders() {
-        return ignoredHeaders;
+        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
+            return ((DefaultHeaderFilterStrategy)headerFilterStrategy)
+                    .getOutFilter();
+        } else {
+            return null;
+        }
+         
     }
 
     public boolean isUseReaderForPayload() {
+        
         return useReaderForPayload;
     }
 
@@ -140,4 +170,6 @@ public class HttpBinding {
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
     }
+
+
 }

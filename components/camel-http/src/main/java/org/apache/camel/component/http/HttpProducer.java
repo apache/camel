@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -38,7 +39,6 @@ import org.apache.commons.io.IOUtils;
 
 import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 
-
 /**
  * @version $Revision$
  */
@@ -47,6 +47,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     public static final String QUERY = "org.apache.camel.component.http.query";
 
     // This should be a set of lower-case strings
+    @Deprecated
     public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList("content-length",
                                                                                         "content-type",
                                                                                         HTTP_RESPONSE_CODE
@@ -62,10 +63,12 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
         HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+
         // propagate headers as HTTP headers
         for (String headerName : in.getHeaders().keySet()) {
             String headerValue = in.getHeader(headerName, String.class);
-            if (binding.shouldHeaderBePropagated(headerName, headerValue)) {
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue)) {
                 method.addRequestHeader(headerName, headerValue);
             }
         }
@@ -82,18 +85,19 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             bos.flush();
             is.close();
             out.setBody(bos.createInputStream());
+            
+            // propagate HTTP response headers 
+            Header[] headers = method.getResponseHeaders();
+            for (Header header : headers) {
+                String name = header.getName();
+                String value = header.getValue();
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
+                    out.setHeader(name, value);
+                }
+            }
         } finally {
             method.releaseConnection();
         }
-
-        // lets set the headers
-        Header[] headers = method.getResponseHeaders();
-        for (Header header : headers) {
-            String name = header.getName();
-            String value = header.getValue();
-            out.setHeader(name, value);
-        }
-
     }
 
     public HttpClient getHttpClient() {
@@ -149,6 +153,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         return entity;
     }
 
+    /*
     protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
         if (headerValue == null) {
             return false;
@@ -164,4 +169,5 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         }
         return true;
     }
+    */
 }

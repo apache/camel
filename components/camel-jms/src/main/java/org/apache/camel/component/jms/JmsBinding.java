@@ -19,11 +19,9 @@ package org.apache.camel.component.jms;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -42,9 +40,10 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,14 +58,19 @@ import org.apache.commons.logging.LogFactory;
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
     private JmsEndpoint endpoint;
-    private Set<String> ignoreJmsHeaders;
     private XmlConverter xmlConverter = new XmlConverter();
-
+    private HeaderFilterStrategy headerFilterStrategy;
+    
     public JmsBinding() {
+        headerFilterStrategy = new JmsHeaderFilterStrategy();
     }
 
     public JmsBinding(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
+        headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new JmsHeaderFilterStrategy();
+        }
     }
 
     /**
@@ -96,6 +100,56 @@ public class JmsBinding {
         } catch (JMSException e) {
             throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
+    }
+
+    public Map<String, Object> extractHeadersFromJms(Message jmsMessage) {
+        Map<String, Object> map = new HashMap<String, Object>();
+        if (jmsMessage != null) {
+            // lets populate the standard JMS message headers
+            try {
+                map.put("JMSCorrelationID", jmsMessage.getJMSCorrelationID());
+                map.put("JMSDeliveryMode", jmsMessage.getJMSDeliveryMode());
+                map.put("JMSDestination", jmsMessage.getJMSDestination());
+                map.put("JMSExpiration", jmsMessage.getJMSExpiration());
+                map.put("JMSMessageID", jmsMessage.getJMSMessageID());
+                map.put("JMSPriority", jmsMessage.getJMSPriority());
+                map.put("JMSRedelivered", jmsMessage.getJMSRedelivered());
+                map.put("JMSReplyTo", jmsMessage.getJMSReplyTo());
+                map.put("JMSTimestamp", jmsMessage.getJMSTimestamp());
+                map.put("JMSType", jmsMessage.getJMSType());
+
+                // TODO this works around a bug in the ActiveMQ property handling
+                map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
+            } catch (JMSException e) {
+                throw new MessageJMSPropertyAccessException(e);
+            }
+
+            Enumeration names;
+            try {
+                names = jmsMessage.getPropertyNames();
+            } catch (JMSException e) {
+                throw new MessagePropertyNamesAccessException(e);
+            }
+            while (names.hasMoreElements()) {
+                String name = names.nextElement().toString();
+                try {
+                    Object value = jmsMessage.getObjectProperty(name);
+                    if (headerFilterStrategy != null 
+                            && headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                        continue;
+                    }
+
+                    // must decode back from safe JMS header name to original header name
+                    // when storing on this Camel JmsMessage object.
+                    String key = JmsBinding.decodeFromSafeJmsHeaderName(name);
+                    map.put(key, value);
+                } catch (JMSException e) {
+                    throw new MessagePropertyAccessException(name, e);
+                }
+            }
+        }
+        
+        return map;
     }
 
     protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
@@ -302,16 +356,31 @@ public class JmsBinding {
         return answer;
     }
 
+    /**
+     * @deprecated Please use {@link DefaultHeaderFilterStrategy#getOutFilter()}
+     */
     public Set<String> getIgnoreJmsHeaders() {
-        if (ignoreJmsHeaders == null) {
-            ignoreJmsHeaders = new HashSet<String>();
-            populateIgnoreJmsHeaders(ignoreJmsHeaders);
+        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
+            return ((DefaultHeaderFilterStrategy)headerFilterStrategy)
+                .getOutFilter();
+        } else {
+            // Shouldn't get here unless a strategy that isn't an extension of
+            // DefaultHeaderPropagationStrategy has been injected.
+            return null;
         }
-        return ignoreJmsHeaders;
     }
 
+    /**
+     * @deprecated Please use {@link DefaultHeaderFilterStrategy#setOutFilter()}
+     */
     public void setIgnoreJmsHeaders(Set<String> ignoreJmsHeaders) {
-        this.ignoreJmsHeaders = ignoreJmsHeaders;
+        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
+            ((DefaultHeaderFilterStrategy)headerFilterStrategy)
+                .setOutFilter(ignoreJmsHeaders);
+        } else {
+            // Shouldn't get here unless a strategy that isn't an extension of
+            // DefaultHeaderPropagationStrategy has been injected.
+        }   
     }
 
     /**
@@ -321,11 +390,11 @@ public class JmsBinding {
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
                                          Object headerValue) {
-        String key = encodeToSafeJmsHeaderName(headerName);
-        return headerValue != null && !getIgnoreJmsHeaders().contains(headerName)
-            && ObjectHelper.isJavaIdentifier(key);
+        
+        return headerFilterStrategy == null ||
+            !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue); 
     }
-
+    
     /**
      * Encoder to encode JMS header keys that is that can be sent over the JMS transport.
      * <p/>
@@ -349,19 +418,6 @@ public class JmsBinding {
      */
     public static String decodeFromSafeJmsHeaderName(String headerName) {
         return headerName.replace("_", ".");
-    }
-
-    /**
-     * Populate any JMS headers that should be excluded from being copied from
-     * an input message onto an outgoing message
-     */
-    protected void populateIgnoreJmsHeaders(Set<String> set) {
-        // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
-
-        // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
-        String[] ignore = {"JMSXUserID", "JMSXAppID", "JMSXDeliveryCount", "JMSXProducerTXID",
-            "JMSXConsumerTXID", "JMSXRcvTimestamp", "JMSXRecvTimestamp", "JMSXState"};
-        set.addAll(Arrays.asList(ignore));
     }
 
 }

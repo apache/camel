@@ -23,7 +23,6 @@ import java.net.SocketAddress;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.AsyncCallback;
@@ -31,6 +30,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -64,8 +64,10 @@ import org.apache.http.protocol.RequestUserAgent;
 import org.apache.http.util.concurrent.ThreadFactory;
 
 public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncProcessor {
+
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
-    // This should be a set of lower-case strings
+
+    @Deprecated
     public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
             "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
 
@@ -155,9 +157,10 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
         }
 
         // propagate headers as HTTP headers
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
             String headerValue = exchange.getIn().getHeader(headerName, String.class);
-            if (shouldHeaderBePropagated(headerName, headerValue)) {
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue)) {
                 req.addHeader(headerName, headerValue);
             }
         }
@@ -184,20 +187,6 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
             }
         }
         return entity;
-    }
-
-    // TODO Should somehow reference to HttpProducer as now it is copy/paste
-    protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
-        if (headerValue == null) {
-            return false;
-        }
-        if (headerName.startsWith("org.apache.camel")) {
-            return false;
-        }
-        if (HEADERS_TO_SKIP.contains(headerName.toLowerCase())) {
-            return false;
-        }
-        return true;
     }
 
     static class MySessionRequestCallback implements SessionRequestCallback {
@@ -261,10 +250,15 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
             httpContext.setAttribute(RESPONSE_RECEIVED, Boolean.TRUE);
             Exchange e = (Exchange) httpContext.getAttribute(Exchange.class.getName());
             e.getOut().setBody(httpResponse.getEntity());
+            
+            HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
             for (Iterator it = httpResponse.headerIterator(); it.hasNext();) {
                 Header h = (Header) it.next();
-                e.getOut().setHeader(h.getName(), h.getValue());
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(h.getName(), h.getValue())) {
+                    e.getOut().setHeader(h.getName(), h.getValue());
+                }
             }
+            
             e.getOut().setHeader(HTTP_RESPONSE_CODE, httpResponse.getStatusLine().getStatusCode());
             AsyncCallback callback = (AsyncCallback) e.removeProperty(AsyncCallback.class.getName());
             callback.done(false);

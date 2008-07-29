@@ -127,7 +127,8 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
     protected void processSoapProviderOut(Exchange exchange) throws Exception {
         LOG.info("processSoapProviderOut: " + exchange);
 
-        org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, true);
+        org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(
+                endpoint.getHeaderFilterStrategy(), exchange, true);
         client.setInInterceptors(client.getEndpoint().getService().getInInterceptors());
         client.onMessage(inMessage);
 
@@ -148,7 +149,8 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         cxfExchange.put(Bus.class, getBus());
         cxfExchange.setConduit(new NullConduit());
         exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
-        org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, true);
+        org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(
+                endpoint.getHeaderFilterStrategy(), exchange, true);
         outMessage.put(Message.REQUESTOR_ROLE, Boolean.TRUE);
         outMessage.put(Message.INBOUND_MESSAGE, Boolean.FALSE);
         InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);

@@ -21,25 +21,32 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
+ *
  * @version $Revision$
  */
-public class JmsRouteUsingSpringTest extends JmsRouteTest {
-    private ClassPathXmlApplicationContext applicationContext;
+public class JmsHeaderFilteringWithSpringTest extends JmsHeaderFilteringTest {
     
+    private ClassPathXmlApplicationContext applicationContext;
+
+   
     @Override
-    protected CamelContext createCamelContext() throws Exception {
+    protected CamelContext createCamelContext() throws Exception {   
         applicationContext = createApplicationContext();
         return SpringCamelContext.springCamelContext(applicationContext);
-        
-    }
+    }    
     
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsRouteUsingSpring.xml");
+    private ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/jmsHeaderFilteringWithSpring.xml");
     }
 
+    
     @Override
     protected void tearDown() throws Exception {
+        if (applicationContext != null) {
+            applicationContext.close();
+        }
         super.tearDown();
-        applicationContext.close();
     }
+    
 }
+

@@ -32,6 +32,10 @@ import org.apache.camel.util.URISupport;
  */
 public class CxfSoapComponent extends DefaultComponent {
 
+    public CxfSoapComponent() {
+        setHeaderFilterStrategy(new CxfHeaderFilterStrategy());
+    }
+    
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Map soapProps = IntrospectionSupport.extractProperties(parameters, "soap.");
@@ -39,7 +43,7 @@ public class CxfSoapComponent extends DefaultComponent {
             remaining += "?" + URISupport.createQueryString(parameters);
         }
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
-        CxfSoapEndpoint soapEndpoint = new CxfSoapEndpoint(endpoint);
+        CxfSoapEndpoint soapEndpoint = new CxfSoapEndpoint(endpoint, getHeaderFilterStrategy());
         setProperties(soapEndpoint, soapProps);
         soapEndpoint.init();
         return soapEndpoint;

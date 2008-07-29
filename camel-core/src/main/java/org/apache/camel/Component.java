@@ -16,6 +16,8 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.HeaderFilterStrategy;
+
 /**
  * A <a href="http://activemq.apache.org/camel/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
@@ -46,4 +48,15 @@ public interface Component<E extends Exchange> {
      *         instances of the given uri
      */
     Endpoint<E> createEndpoint(String uri) throws Exception;
+    
+    
+    /**
+     * @return strategy object that handles header filter for this component.
+     */
+    HeaderFilterStrategy getHeaderFilterStrategy();
+    
+    /**
+     * Sets strategy object that handles header filtering for this component.
+     */
+    void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 }

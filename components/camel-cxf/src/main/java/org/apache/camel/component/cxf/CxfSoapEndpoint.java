@@ -31,6 +31,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.helpers.DOMUtils;
@@ -51,12 +52,17 @@ public class CxfSoapEndpoint implements Endpoint {
     private QName serviceName;
     private QName endpointName;
     private Bus bus;
-
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public CxfSoapEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
+        this(endpoint, new CxfHeaderFilterStrategy());
     }
 
+    public CxfSoapEndpoint(Endpoint endpoint, HeaderFilterStrategy headerFilterStrategy) {
+        this.endpoint = endpoint;
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+    
     protected Endpoint getInnerEndpoint() {
         return endpoint;
     }
@@ -167,5 +173,9 @@ public class CxfSoapEndpoint implements Endpoint {
     @Deprecated
     public void setContext(CamelContext context) {
         setCamelContext(context);
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
     }
 }

@@ -17,20 +17,17 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.Source;
 
-import org.apache.camel.component.cxf.transport.CamelTransportConstants;
+import org.apache.camel.component.cxf.util.CxfHeaderHelper;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.ExchangeImpl;
-import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 
 public final class CxfSoapBinding {
@@ -39,8 +36,16 @@ public final class CxfSoapBinding {
     private CxfSoapBinding() {
 
     }
-
+    
+    /**
+     * @deprecated  Please use {@link #getCxfInMessage(HeaderFilterStrategy, org.apache.camel.Exchange, boolean)}
+     */
     public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
+        return CxfSoapBinding.getCxfInMessage(new DefaultHeaderFilterStrategy(), exchange, isClient);
+    }
+    
+    public static org.apache.cxf.message.Message getCxfInMessage(HeaderFilterStrategy headerFilterStrategy,
+            org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE,
                                                                         org.apache.cxf.message.Exchange.class);
@@ -56,15 +61,7 @@ public final class CxfSoapBinding {
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         }
 
-        Map<String, Object> headers = null;
-        if (isClient) {
-            headers = exchange.getOut().getHeaders();
-        } else {
-            headers = exchange.getIn().getHeaders();
-        }
-
-        answer.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
-        answer.put(Message.CONTENT_TYPE, headers.get(CamelTransportConstants.CONTENT_TYPE));
+        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer);
 
         Object body = message.getBody(InputStream.class);
         if (body instanceof InputStream) {
@@ -79,7 +76,15 @@ public final class CxfSoapBinding {
         return answer;
     }
 
+    /**
+     * @deprecated Please use {@link #getCxfOutMessage(HeaderFilterStrategy, org.apache.camel.Exchange, boolean)}
+     */
     public static org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
+        return CxfSoapBinding.getCxfOutMessage(new DefaultHeaderFilterStrategy(), exchange, isClient);
+    }
+    
+    public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
+            org.apache.camel.Exchange exchange, boolean isClient) {
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
         assert cxfExchange != null;
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange.get(org.apache.cxf.endpoint.Endpoint.class);
@@ -92,14 +97,9 @@ public final class CxfSoapBinding {
         } else {
             message = exchange.getOut();
         }
-        Map<String, Object> headers = null;
-        if (isClient) {
-            headers = exchange.getIn().getHeaders();
-        } else {
-            headers = exchange.getOut().getHeaders();
-        }
 
-        outMessage.put(Message.PROTOCOL_HEADERS, getProtocolHeader(headers));
+        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage);
+
         // send the body back
         Object body = message.getBody(Source.class);
         if (body instanceof Source) {
@@ -111,21 +111,9 @@ public final class CxfSoapBinding {
         return outMessage;
     }
 
-    private static Map<String, List<String>> getProtocolHeader(Map<String, Object> headers) {
-        Map<String, List<String>> protocolHeader = new HashMap<String, List<String>>();
-        Iterator headersKeySetIterator = headers.keySet().iterator();
-        while (headersKeySetIterator.hasNext()) {
-            String key = (String)headersKeySetIterator.next();
-            Object value = headers.get(key);
-            if (value != null) {
-                protocolHeader.put(key, Collections.singletonList(value.toString()));
-            } else {
-                protocolHeader.put(key, null);
-            }
-        }
-        return protocolHeader;
-    }
-
+    /**
+     * @deprecated Please use {@link CxfHeaderHelper#propagateCxfToCamel(HeaderFilterStrategy, org.apache.cxf.message.Message, Map)}
+     */
     public static void setProtocolHeader(Map<String, Object> headers, Map<String, List<String>> protocolHeader) {
         if (protocolHeader != null) {
             StringBuilder value = new StringBuilder(256);
