@@ -20,50 +20,30 @@ import scala.dsl.builder.RouteBuilder
 import org.apache.camel.scala.test.CartoonService
 
 /**
- * Test for bean support in simple Scala DSL expressions
+ * Test for bean support in Scala DSL routes with explicit blocks
  */
-class SimpleBeanTest extends ScalaTestSupport {
+class BlockBeanTest extends SimpleBeanTest {
 
-  def testSimpleObject() = {
-    "mock:a" expect {_.received("Lucky Luke rides Jolly Jumper")}
-    test {
-      "direct:a" ! ("Lucky Luke")
-    }
-  }
-  
-  def testSimpleClass() = {
-    "mock:b" expect {_.received("Batman drives the batmobile")}
-    test {
-      "direct:b" ! ("Batman")
-    }
-  }
-  
-  def testSimpleRef() = {
-    "mock:c" expect {_.received("Aladin flies a carpet")}
-    test {
-      "direct:c" ! ("Aladin")
-    }
-  }
-  
-  val builder = new RouteBuilder {
+  override val builder = new RouteBuilder {
      //START SNIPPET: object
-     "direct:a" bean(new CartoonService()) to("mock:a")
+     "direct:a" ==> {
+       bean(new CartoonService()) 
+       to("mock:a")
+     }
      //END SNIPPET: object
      
      //START SNIPPET: class
-     "direct:b" bean(classOf[CartoonService]) to("mock:b")
-     //END SNIPPET: class
+     "direct:b" ==> {
+       bean(classOf[CartoonService]) 
+       to("mock:b")
+     }
+     //END SNIPPET: class}
      
      //START SNIPPET: ref
-     "direct:c" bean("CartoonService") to("mock:c")
-     //END SNIPPET: ref
-   }
-  
-   override def createRegistry() = {
-     val registry = super.createRegistry()
-     registry.bind("CartoonService", new CartoonService())
-     registry
+     "direct:c" ==> { 
+       bean("CartoonService")
+       to("mock:c")
+     }
+     //END SNIPPET: ref}
    }
 }
-
-
