@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.IOException;
 import java.io.InputStream;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.SftpException;
 
 import org.apache.camel.Exchange;
 
@@ -96,7 +94,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                boolean success = buildDirectory(channel, directory);
+                boolean success = SftpUtils.buildDirectory(channel, directory);
                 if (!success) {
                     LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
@@ -112,64 +110,4 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         }
     }
 
-    protected boolean buildDirectory(ChannelSftp sftpClient, String dirName)
-        throws IOException, SftpException {
-        String originalDirectory = sftpClient.pwd();
-
-        boolean success = false;
-        try {
-            // maybe the full directory already exsits
-            try {
-                sftpClient.cd(dirName);
-                success = true;
-            } catch (SftpException e) {
-                // ignore, we could not change directory so try to create it instead
-            }
-
-            if (!success) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + dirName);
-                }
-                
-                try {
-                	sftpClient.mkdir(dirName);
-                	success = true;
-                } catch (SftpException e) {
-                    // we are here if the server side doesn't create intermediate folders
-                    // so create the folder one by one
-                    success = buildDirectoryChunks(sftpClient, dirName);
-                }
-            }
-        } finally {
-            // change back to original directory
-            sftpClient.cd(originalDirectory);
-        }
-
-        return success;
-    }
-
-    private boolean buildDirectoryChunks(ChannelSftp sftpClient, String dirName)
-    	throws IOException, SftpException {
-        final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
-        
-        boolean success = false;
-        for (String dir : dirs) {
-            sb.append(dir).append('/');
-            String directory = sb.toString();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Trying to build remote directory: " + directory);
-            }
-
-            try {
-            	sftpClient.mkdir(directory);
-            	success = true;
-            } catch (SftpException e) {
-            	// ignore keep trying to create the rest of the path
-            }
-        }
-        
-        return success;
-    }
-    
 }
