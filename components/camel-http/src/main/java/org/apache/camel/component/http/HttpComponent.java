@@ -39,6 +39,10 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
 
     private HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
 
+    public HttpComponent() {
+        this.setHeaderFilterStrategy(new HttpHeaderFilterStrategy());
+    }
+    
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      */

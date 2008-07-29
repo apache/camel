@@ -26,10 +26,10 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
-import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.mortbay.io.Buffer;
 import org.mortbay.jetty.HttpFields;
 import org.mortbay.jetty.HttpFields.Field;
@@ -128,15 +128,17 @@ public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements 
             }
         }
 
-        HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
+        // propagate headers to http request
+        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
         for (String name : in.getHeaders().keySet()) {
             String value = in.getHeader(name, String.class);
             if ("Content-Type".equals(name)) {
                 jettyExchange.setRequestContentType(value);
-            } else if (binding.shouldHeaderBePropagated(name, value)) {
+            } else if (strategy != null && !strategy.applyFilterToCamelHeaders(name, value)) {
                 jettyExchange.addRequestHeader(name, value);
             }
         }
+        
         try {
             httpClient.send(jettyExchange);
         } catch (IOException e) {

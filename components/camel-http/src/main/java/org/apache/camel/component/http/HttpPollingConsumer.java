@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.PollingConsumerSupport;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -69,12 +70,15 @@ public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
 
             // lets set the headers
             Header[] headers = method.getResponseHeaders();
+            HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
             for (Header header : headers) {
                 String name = header.getName();
                 String value = header.getValue();
-                message.setHeader(name, value);
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
+                    message.setHeader(name, value);
+                }
             }
-
+        
             message.setHeader("http.responseCode", responseCode);
             return exchange;
         } catch (IOException e) {

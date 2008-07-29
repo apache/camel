@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 public class HttpRoundtripHeaderTest extends ContextTestSupport {
     protected final String uri = "http://localhost:8088/WhichWillGetCloseException";
@@ -63,7 +63,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
 
         JettyHttpEndpoint endpoint = context.getEndpoint(jettyUri, JettyHttpEndpoint.class);
         // override the default set of ignored headers which includes Content-Length
-        endpoint.getBinding().setIgnoredHeaders(new HashSet<String>());
+        ((DefaultHeaderFilterStrategy)endpoint.getHeaderFilterStrategy()).setOutFilter(null);
 
         InputStream answer = (InputStream) template.sendBody(uri, inputText);
 

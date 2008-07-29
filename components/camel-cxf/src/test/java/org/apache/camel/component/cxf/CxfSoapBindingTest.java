@@ -28,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import junit.framework.TestCase;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
@@ -40,10 +41,12 @@ public class CxfSoapBindingTest extends TestCase {
 
     // setup the default context for testing
     public void testGetCxfInMessage() throws Exception {
+        HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
         org.apache.camel.Exchange exchange = new DefaultExchange(context);
         // String
         exchange.getIn().setBody("hello world");
-        org.apache.cxf.message.Message message = CxfSoapBinding.getCxfInMessage(exchange, false);
+        org.apache.cxf.message.Message message = CxfSoapBinding.getCxfInMessage(
+                headerFilterStrategy, exchange, false);
         // test message
         InputStream is = message.getContent(InputStream.class);
         assertNotNull("The input stream should not be null", is);
@@ -56,14 +59,14 @@ public class CxfSoapBindingTest extends TestCase {
         XMLStreamReader xmlReader = StaxUtils.createXMLStreamReader(inputStream);
         DOMSource source = new DOMSource(StaxUtils.read(xmlReader));
         exchange.getIn().setBody(source);
-        message = CxfSoapBinding.getCxfInMessage(exchange, false);
+        message = CxfSoapBinding.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
         assertNotNull("The input stream should not be null", is);
         assertEquals("Don't get the right message", toString(is), REQUEST_STRING);
 
         // File
         exchange.getIn().setBody(requestFile);
-        message = CxfSoapBinding.getCxfInMessage(exchange, false);
+        message = CxfSoapBinding.getCxfInMessage(headerFilterStrategy, exchange, false);
         is = message.getContent(InputStream.class);
         assertNotNull("The input stream should not be null", is);
         assertEquals("Don't get the right message", toString(is), REQUEST_STRING);

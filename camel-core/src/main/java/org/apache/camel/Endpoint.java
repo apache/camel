@@ -18,6 +18,8 @@ package org.apache.camel;
 
 import java.util.Map;
 
+import org.apache.camel.spi.HeaderFilterStrategy;
+
 /**
  * An <a href="http://activemq.apache.org/camel/endpoint.html">endpoint</a>
  * implements the <a
@@ -108,6 +110,11 @@ public interface Endpoint<E extends Exchange> {
 
     void setCamelContext(CamelContext context);
     
+    /**
+     * @return the header propagation strategy
+     */
+    HeaderFilterStrategy getHeaderFilterStrategy();
+
     @Deprecated
     CamelContext getContext();
     

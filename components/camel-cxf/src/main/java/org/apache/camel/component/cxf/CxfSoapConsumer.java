@@ -99,7 +99,8 @@ public class CxfSoapConsumer implements Consumer {
 
     protected void processSoapConsumerIn(Exchange exchange) throws Exception {
         LOG.info("processSoapConsumerIn: " + exchange);
-        org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(exchange, false);
+        org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(
+                endpoint.getHeaderFilterStrategy(), exchange, false);
         org.apache.cxf.message.Exchange cxfExchange = inMessage.getExchange();
         cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, server.getEndpoint());
         cxfExchange.put(Bus.class, getBus());
@@ -117,7 +118,8 @@ public class CxfSoapConsumer implements Consumer {
 
         // TODO check if the message is one-way message
         // Get the method name from the soap endpoint
-        org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(exchange, false);
+        org.apache.cxf.message.Message outMessage = CxfSoapBinding.getCxfOutMessage(
+                endpoint.getHeaderFilterStrategy(), exchange, false);
         org.apache.cxf.message.Exchange cxfExchange = outMessage.getExchange();
         InterceptorChain chain = OutgoingChainInterceptor.getOutInterceptorChain(cxfExchange);
         outMessage.setInterceptorChain(chain);

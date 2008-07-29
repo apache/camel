@@ -58,14 +58,17 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     private boolean attemptedToCreateQueueBrowserStrategy;
 
     public JmsComponent() {
+        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
     }
 
     public JmsComponent(JmsConfiguration configuration) {
         this.configuration = configuration;
+        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
     }
 
     public JmsComponent(CamelContext context) {
         super(context);
+        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
     }
 
     /**
