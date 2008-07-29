@@ -28,6 +28,7 @@
     <version>1.5-SNAPSHOT</version>
   </parent>
 
+  <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-router</artifactId>
   <name>Camel :: Archetypes :: Router</name>
 
