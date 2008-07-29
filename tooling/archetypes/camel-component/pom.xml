@@ -28,6 +28,7 @@
     <version>1.5-SNAPSHOT</version>
   </parent>
 
+  <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-component</artifactId>
   <name>Camel :: Archetypes :: Component</name>
 
