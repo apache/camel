@@ -19,9 +19,11 @@ package org.apache.camel.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -356,10 +358,23 @@ public class ResolverUtil<T> {
                     }
                     loadImplementationsInDirectory(test, packageName, file);
                 } else {
+                    InputStream stream;
+                    if (urlPath.startsWith("http:")) {
+                        // load resources using http such as java webstart
+                        LOG.debug("The current jar is accessed via http");
+                        URL urlStream = new URL(urlPath);
+                        URLConnection con = urlStream.openConnection();
+                        // disable cache mainly to avoid jar file locking on Windows
+                        con.setUseCaches(false);
+                        stream = con.getInputStream();
+                    } else {
+                        stream = new FileInputStream(file);
+                    }
+
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading from jar: " + file);
                     }
-                    loadImplementationsInJar(test, packageName, file);
+                    loadImplementationsInJar(test, packageName, stream, urlPath);
                 }
             } catch (IOException ioe) {
                 LOG.warn("Could not read entries in url: " + url, ioe);
@@ -469,11 +484,13 @@ public class ResolverUtil<T> {
      * @param parent  the parent package under which classes must be in order to
      *                be considered
      * @param jarfile the jar file to be examined for classes
+     * @param stream  the inputstream of the jar file to be examined for classes
+     * @param urlPath the url of the jar file to be examined for classes
      */
-    private void loadImplementationsInJar(Test test, String parent, File jarfile) {
+    private void loadImplementationsInJar(Test test, String parent, InputStream stream, String urlPath) {
         JarInputStream jarStream = null;
         try {
-            jarStream = new JarInputStream(new FileInputStream(jarfile));
+            jarStream = new JarInputStream(stream);
 
             JarEntry entry;
             while ((entry = jarStream.getNextJarEntry()) != null) {
@@ -486,10 +503,10 @@ public class ResolverUtil<T> {
                 }
             }
         } catch (IOException ioe) {
-            LOG.error("Could not search jar file '" + jarfile + "' for classes matching criteria: " + test
+            LOG.error("Could not search jar file '" + urlPath + "' for classes matching criteria: " + test
                 + " due to an IOException: " + ioe.getMessage(), ioe);
         } finally {
-            ObjectHelper.close(jarStream, jarfile.getPath(), LOG);
+            ObjectHelper.close(jarStream, urlPath, LOG);
         }
     }
 
