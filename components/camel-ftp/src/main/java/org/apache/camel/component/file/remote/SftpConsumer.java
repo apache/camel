@@ -28,8 +28,6 @@ import com.jcraft.jsch.SftpException;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     private final SftpEndpoint endpoint;
@@ -200,15 +198,49 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer());
                 }
+                deleteFile(sftpFile.getFilename());
+            } else if (isMoveFile()) {
+                String fromName = sftpFile.getFilename();
+                String toName = getMoveFileName(fromName);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Moving file: " + fromName + " to: " + toName);
+                }
+
+                // delete any existing file
+                boolean deleted = deleteFile(toName);
+                if (!deleted) {
+                    // if we could not delete any existing file then maybe the folder is missing
+                    // build folder if needed
+                    int lastPathIndex = toName.lastIndexOf('/');
+                    if (lastPathIndex != -1) {
+                        String directory = toName.substring(0, lastPathIndex);
+                        if (!SftpUtils.buildDirectory(channel, directory)) {
+                            LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                        }
+                    }
+                }
+
+                // try to rename
                 try {
-                    channel.rm(sftpFile.getFilename());
+                    channel.rename(fromName, toName);
                 } catch (SftpException e) {
                     // ignore just log a warning
-                    LOG.warn("Could not delete file: " + sftpFile.getFilename() + " from: " + remoteServer());
+                    LOG.warn("Could not move file: " + fromName + " to: " + toName);
                 }
             }
 
             getProcessor().process(exchange);
+        }
+    }
+
+    private boolean deleteFile(String filename) {
+        try {
+            channel.rm(filename);
+            return true;
+        } catch (SftpException e) {
+            // ignore just log a warning
+            LOG.warn("Could not delete file: " + filename + " from: " + remoteServer());
+            return false;
         }
     }
 
