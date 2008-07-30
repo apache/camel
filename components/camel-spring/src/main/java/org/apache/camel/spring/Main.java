@@ -50,6 +50,8 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  */
 public class Main extends ServiceSupport {
     private static final Log LOG = LogFactory.getLog(Main.class);
+    private static Main instance;
+
     private String applicationContextUri = "META-INF/spring/*.xml";
     private String fileApplicationContextUri;
     private AbstractApplicationContext applicationContext;
@@ -130,7 +132,18 @@ public class Main extends ServiceSupport {
     }
 
     public static void main(String... args) {
-        new Main().run(args);
+        Main main = new Main();
+        instance = main;
+        main.run(args);
+    }
+
+    /**
+     * Returns the currently executing main
+     *
+     * @return
+     */
+    public static Main getInstance() {
+        return instance;
     }
 
     /**
