@@ -128,7 +128,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     pollDirectory(getFullFileName(ftpFile));
                 }
             } else {
-                LOG.debug("Unsupported type of FTPFile: " + ftpFile + " (not a file or directory). Is skipped.");
+                LOG.debug("Unsupported type of FTPFile: " + ftpFile + " (not a file or directory). It is skipped.");
             }
         }
 
@@ -155,8 +155,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             String fullFileName = getFullFileName(ftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
-            if (exclusiveRead) {
-                acquireExclusiveRead(client, ftpFile);
+            if (exclusiveReadLock) {
+                acquireExclusiveReadLock(client, ftpFile);
             }
 
             // retrieve the file
@@ -188,7 +188,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 boolean deleted = client.deleteFile(ftpFile.getName());
                 if (!deleted) {
                     // ignore just log a warning
-                    LOG.warn("Could not delete file: " + ftpFile.getName() + " from: " + remoteServer());
+                    LOG.warn("Can not delete file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
             } else if (isMoveFile()) {
                 String fromName = ftpFile.getName();
@@ -206,7 +206,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     if (lastPathIndex != -1) {
                         String directory = toName.substring(0, lastPathIndex);
                         if (!FtpUtils.buildDirectory(client, directory)) {
-                            LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                            LOG.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
                         }
                     }
                 }
@@ -214,7 +214,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 // try to rename
                 boolean success = client.rename(fromName, toName);
                 if (!success) {
-                    LOG.warn("Could not move file: " + fromName + " to: " + toName);
+                    LOG.warn("Can not move file: " + fromName + " to: " + toName);
                 }
             }
 
@@ -222,26 +222,26 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    protected void acquireExclusiveRead(FTPClient client, FTPFile ftpFile) throws IOException {
+    protected void acquireExclusiveReadLock(FTPClient client, FTPFile ftpFile) throws IOException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive lock to file: " + ftpFile);
+            LOG.trace("Waiting for exclusive read lock to file: " + ftpFile);
         }
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW lock
         String originalName = ftpFile.getName();
-        String newName = originalName + ".camelExclusiveRead";
+        String newName = originalName + ".camelExclusiveReadLock";
         boolean exclusive = false;
         while (!exclusive) {
             exclusive = client.rename(originalName, newName);
             if (exclusive) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Acquired exclusive lock to file: " + originalName);
+                    LOG.debug("Acquired exclusive read lock to file: " + originalName);
                 }
                 // rename it back so we can read it
                 client.rename(newName, originalName);
             } else {
-                LOG.trace("Exclusive lock not granted. Sleeping for 1000 millis.");
+                LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
