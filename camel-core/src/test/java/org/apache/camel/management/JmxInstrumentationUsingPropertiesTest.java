@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import javax.management.InstanceNotFoundException;
 import javax.management.ObjectName;
 
 /**
@@ -44,12 +43,9 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
     }
 
     public void testMBeanServerType() throws Exception {
-        try {
-            mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
-            assertTrue(false);  // should not get here
-        } catch (InstanceNotFoundException e) {
-            // expect exception since this is not a platform mbean server
-        }
+        // default is platform mbs
+        assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));
+        
     }
 
 }

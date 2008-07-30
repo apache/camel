@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import javax.management.ObjectName;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -30,9 +32,11 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");            
     }
-    
-    public void testGetJMXConnector() throws Exception {
-        assertNull(mbsc);
+   
+    @Override
+    public void testQueryMbeans() throws Exception {
+        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=route,*"), null).size());
+        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processor,*"), null).size());
     }
 
 }

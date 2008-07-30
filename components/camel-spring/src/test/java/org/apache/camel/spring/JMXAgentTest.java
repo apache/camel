@@ -57,11 +57,6 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     }
 
     @Override
-    protected String getDomainName() {
-        return "org.apache.camel.test";
-    }
-
-    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfig.xml");
     }

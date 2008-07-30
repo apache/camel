@@ -26,7 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.management.InstanceAlreadyExistsException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -69,7 +68,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     private String mBeanServerDefaultDomain;
     private String mBeanObjectDomainName;
     private String serviceUrlPath;
-    private Boolean usePlatformMBeanServer;
+    private Boolean usePlatformMBeanServer = true;
     private Boolean createConnector;
 
     protected void finalizeSettings() {
@@ -103,9 +102,9 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
             createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         }
 
-        if (usePlatformMBeanServer == null) {
-            usePlatformMBeanServer =
-                Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
+        // "Use platform mbean server" is true by default
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
+            usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         }
     }
 
@@ -294,7 +293,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     protected MBeanServer findOrCreateMBeanServer() {
 
         // return platform mbean server if the option is specified.
-        if (Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS) || usePlatformMBeanServer) {
+        if (usePlatformMBeanServer) {
             return ManagementFactory.getPlatformMBeanServer();
         }
 

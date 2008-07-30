@@ -16,13 +16,16 @@
  */
 package org.apache.camel.management;
 
-import java.lang.management.ManagementFactory;
+import java.util.List;
 
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 /**
- * This test verifies the system property to select platform mbean server.
+ * This test verifies the system property to un-select platform mbean server.
  * 
  * @version $Revision$
  */
@@ -30,7 +33,7 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
 
     @Override
     protected void setUp() throws Exception {
-        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "True");
+        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "False");
         super.setUp();
     }
 
@@ -42,16 +45,31 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
 
     @Override
     public void testMBeanServerType() throws Exception {
-        assertNotNull(mbsc.getMBeanInfo(
-                new ObjectName("java.lang:type=OperatingSystem")));
+        try {
+            mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
+            assertFalse(true); // should not get here
+        } catch (InstanceNotFoundException e) {
+            // expected
+        }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            mbsc = ManagementFactory.getPlatformMBeanServer();
+            List<MBeanServer> servers =
+                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+
+            for (MBeanServer server : servers) {
+                if (domainName.equals(server.getDefaultDomain())) {
+
+                    mbsc = server;
+                    break;
+                }
+            }
         }
         return mbsc;
     }
+
 
 }

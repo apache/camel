@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import java.lang.management.ManagementFactory;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -43,7 +44,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     protected long sleepForConnection;
 
     public void testMBeansRegistered() throws Exception {
-        if (!Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null &&
+                !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
@@ -165,19 +167,10 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         mbsc = getMBeanConnection();
     }
 
-    @SuppressWarnings("unchecked")
+
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers =
-                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
-
-            for (MBeanServer server : servers) {
-                if (domainName.equals(server.getDefaultDomain())) {
-
-                    mbsc = server;
-                    break;
-                }
-            }
+            mbsc = ManagementFactory.getPlatformMBeanServer();
         }
         return mbsc;
     }
