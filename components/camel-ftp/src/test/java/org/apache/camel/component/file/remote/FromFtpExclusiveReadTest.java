@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,7 +31,7 @@ public class FromFtpExclusiveReadTest extends FtpServerTestSupport {
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
 
     private String port = "20090";
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&consumer.exclusiveRead=true&consumer.delay=500";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&consumer.exclusiveReadLock=true&consumer.delay=500";
 
     public String getPort() {
         return port;

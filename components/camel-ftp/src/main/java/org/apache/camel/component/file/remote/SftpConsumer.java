@@ -169,8 +169,8 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             String fullFileName = getFullFileName(sftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
-            if (exclusiveRead) {
-                acquireExclusiveRead(sftpFile);
+            if (exclusiveReadLock) {
+                acquireExclusiveReadLock(sftpFile);
             }
 
             // retrieve the file
@@ -215,7 +215,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     if (lastPathIndex != -1) {
                         String directory = toName.substring(0, lastPathIndex);
                         if (!SftpUtils.buildDirectory(channel, directory)) {
-                            LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                            LOG.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
                         }
                     }
                 }
@@ -225,7 +225,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     channel.rename(fromName, toName);
                 } catch (SftpException e) {
                     // ignore just log a warning
-                    LOG.warn("Could not move file: " + fromName + " to: " + toName);
+                    LOG.warn("Can not move file: " + fromName + " to: " + toName);
                 }
             }
 
@@ -244,15 +244,15 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         }
     }
 
-    protected void acquireExclusiveRead(ChannelSftp.LsEntry sftpFile) throws SftpException {
+    protected void acquireExclusiveReadLock(ChannelSftp.LsEntry sftpFile) throws SftpException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive lock to file: " + sftpFile);
+            LOG.trace("Waiting for exclusive read lock to file: " + sftpFile);
         }
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
         // since its a remote file we can not use java.nio to get a RW access
         String originalName = sftpFile.getFilename();
-        String newName = originalName + ".camelExclusiveRead";
+        String newName = originalName + ".camelExclusiveReadLock";
         boolean exclusive = false;
         while (!exclusive) {
             try {
@@ -264,12 +264,12 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
             if (exclusive) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Acquired exclusive lock to file: " + originalName);
+                    LOG.debug("Acquired exclusive read lock to file: " + originalName);
                 }
                 // rename it back so we can read it
                 channel.rename(newName, originalName);
             } else {
-                LOG.trace("Exclusive lock not granted. Sleeping for 1000 millis");
+                LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

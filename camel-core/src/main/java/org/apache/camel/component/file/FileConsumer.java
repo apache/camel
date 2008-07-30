@@ -51,7 +51,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean generateEmptyExchangeWhenIdle;
     private boolean recursive = true;
     private String regexPattern = "";
-    private boolean exclusiveRead;
+    private boolean exclusiveReadLock = true;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -60,6 +60,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     protected synchronized void poll() throws Exception {
         int rc = pollFileOrDirectory(endpoint.getFile(), isRecursive());
+
+        // if no files consumes and using generateEmptyExchangeWhenIdle option then process an empty exchange 
         if (rc == 0 && generateEmptyExchangeWhenIdle) {
             final FileExchange exchange = endpoint.createExchange((File)null);
             getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -67,6 +69,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 }
             });
         }
+
         lastPollTime = System.currentTimeMillis();
     }
 
@@ -79,11 +82,15 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
      */
     protected int pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
         if (!fileOrDirectory.isDirectory()) {
-            return pollFile(fileOrDirectory); // process the file
+            // process the file
+            return pollFile(fileOrDirectory);
         } else if (processDir) {
+            // directory that can be recursive
             int rc = 0;
             if (isValidFile(fileOrDirectory)) {
-                LOG.debug("Polling directory " + fileOrDirectory);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Polling directory " + fileOrDirectory);
+                }
                 File[] files = fileOrDirectory.listFiles();
                 for (File file : files) {
                     rc += pollFileOrDirectory(file, isRecursive()); // self-recursion
@@ -91,7 +98,9 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             }
             return rc;
         } else {
-            LOG.debug("Skipping directory " + fileOrDirectory);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Skipping directory " + fileOrDirectory);
+            }
             return 0;
         }
     }
@@ -103,6 +112,9 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
      * @return returns 1 if the file was processed, 0 otherwise.
      */
     protected int pollFile(final File file) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling file: " + file);
+        }
 
         if (!file.exists()) {
             return 0;
@@ -124,8 +136,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         endpoint.configureMessage(file, exchange.getIn());
         try {
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
-            if (exclusiveRead) {
-                acquireExclusiveRead(file);
+            if (exclusiveReadLock) {
+                acquireExclusiveReadLock(file);
             }
 
             if (LOG.isDebugEnabled()) {
@@ -158,7 +170,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
             } else {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " cannot process file: " + file);
+                    LOG.debug(endpoint + " can not process file: " + file);
                 }
             }
         } catch (Throwable e) {
@@ -168,23 +180,28 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return 1;
     }
 
-    protected void acquireExclusiveRead(File file) throws IOException {
+    /**
+     * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
+     * After granting the read lock it is realeased, we just want to make sure that when we start
+     * consuming the file its not currently in progress of being written by third party.
+     */
+    protected void acquireExclusiveReadLock(File file) throws IOException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive lock to file: " + file);
+            LOG.trace("Waiting for exclusive read lock to file: " + file);
         }
 
         // try to acquire rw lock on the file before we can consume it
         FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
         try {
             FileLock lock = channel.lock();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Acquired exclusive lock: " + lock + " to file: " + file);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + file);
             }
             // just release it now we dont want to hold it during the rest of the processing
             lock.release();
         } finally {
             // must close channel
-            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive lock", LOG);
+            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive read lock", LOG);
         }
     }
 
@@ -341,11 +358,11 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         this.unchangedSize = unchangedSize;
     }
 
-    public boolean isExclusiveRead() {
-        return exclusiveRead;
+    public boolean isExclusiveReadLock() {
+        return exclusiveReadLock;
     }
 
-    public void setExclusiveRead(boolean exclusiveRead) {
-        this.exclusiveRead = exclusiveRead;
+    public void setExclusiveReadLock(boolean exclusiveReadLock) {
+        this.exclusiveReadLock = exclusiveReadLock;
     }
 }

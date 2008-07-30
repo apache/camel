@@ -31,7 +31,7 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected boolean recursive = true;
     protected String regexPattern;
     protected boolean setNames = true;
-    protected boolean exclusiveRead = true;
+    protected boolean exclusiveReadLock = true;
     protected boolean deleteFile;
     protected String moveNamePrefix;
     protected String moveNamePostfix;
@@ -132,12 +132,12 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
         this.setNames = setNames;
     }
 
-    public boolean isExclusiveRead() {
-        return exclusiveRead;
+    public boolean isExclusiveReadLock() {
+        return exclusiveReadLock;
     }
 
-    public void setExclusiveRead(boolean exclusiveRead) {
-        this.exclusiveRead = exclusiveRead;
+    public void setExclusiveReadLock(boolean exclusiveReadLock) {
+        this.exclusiveReadLock = exclusiveReadLock;
     }
 
     public boolean isDeleteFile() {
