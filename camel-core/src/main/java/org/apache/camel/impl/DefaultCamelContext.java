@@ -476,7 +476,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (value != null) {
             return value;
         } else {
-            return SystemHelper.isSystemProperty("canel.trace");
+            return SystemHelper.isSystemProperty("camel.trace");
         }
     }
 
