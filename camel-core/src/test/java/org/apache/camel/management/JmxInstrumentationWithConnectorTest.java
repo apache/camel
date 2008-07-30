@@ -38,6 +38,8 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void setUp() throws Exception {
         sleepForConnection = 2000;
         System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "True");
+        // need to explicit set it to false to use non-platform mbs
+        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "False");
         System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "2000");
         super.setUp();
     }
@@ -46,6 +48,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected void tearDown() throws Exception {
         System.clearProperty(JmxSystemPropertyKeys.REGISTRY_PORT);
         System.clearProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR);
+        System.clearProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
 
         if (clientConnector != null) {
             try {

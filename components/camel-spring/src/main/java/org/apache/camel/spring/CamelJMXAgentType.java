@@ -79,7 +79,7 @@ public class CamelJMXAgentType extends IdentifiedType {
      * A flag that indicates whether the platform mbean server should be used
      */
     @XmlAttribute(required = false)
-    private Boolean usePlatformMBeanServer;
+    private Boolean usePlatformMBeanServer = Boolean.TRUE;
 
     public Integer getConnectorPort() {
         return connectorPort;

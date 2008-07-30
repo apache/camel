@@ -25,7 +25,7 @@
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <jmxAgent id="agent" registryPort="20008" 
-        mbeanServerDefaultDomain="org.apache.camel.test"
+        usePlatformMBeanServer="false"
         createConnector="true"
      />
       

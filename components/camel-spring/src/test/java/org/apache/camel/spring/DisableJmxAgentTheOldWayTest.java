@@ -24,15 +24,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  *
  */
-public class DisableJmxAgentTheOldWayTest extends DefaultJMXAgentTest {
+public class DisableJmxAgentTheOldWayTest extends DisableJmxAgentTest {
     
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxTheOldWayConfig.xml");            
-    }
-    
-    public void testGetJMXConnector() throws Exception {
-        assertNull(mbsc);
     }
 
 }

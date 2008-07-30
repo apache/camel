@@ -16,6 +16,13 @@
  */
 package org.apache.camel.management;
 
+import java.util.Set;
+
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+
+import org.apache.camel.component.mock.MockEndpoint;
+
 /**
  * A unit test which verifies disabling of JMX instrumentation.
  *
@@ -34,20 +41,39 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
         System.clearProperty(JmxSystemPropertyKeys.DISABLED);
         super.tearDown();
     }
+
     
     @Override
     public void testMBeansRegistered() throws Exception {
-        assertNull(mbsc);
-    }
-    
-    @Override
-    public void testCounters() throws Exception {
-        assertNull(mbsc);
-    }
-    
-    @Override
-    public void testMBeanServerType() throws Exception {
-        assertNull(mbsc);
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null &&
+                !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
+            assertEquals(domainName, mbsc.getDefaultDomain());
+        }
+
+        resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
+
+        Set s = mbsc.queryNames(
+                new ObjectName(domainName + ":type=endpoint,*"), null);
+        assertEquals("Could not find 0 endpoints: " + s, 0, s.size());
+
+        s = mbsc.queryNames(
+                new ObjectName(domainName + ":type=context,*"), null);
+        assertEquals("Could not find 0 context: " + s, 0, s.size());
+
+        s = mbsc.queryNames(
+                new ObjectName(domainName + ":type=processor,*"), null);
+        assertEquals("Could not find 0 processor: " + s, 0, s.size());
+
+        s = mbsc.queryNames(
+                new ObjectName(domainName + ":type=route,*"), null);
+        assertEquals("Could not find 0 route: " + s, 0, s.size());
 
     }
+
+    @Override
+    protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
+        Set s = beanServer.queryNames(name, null);
+        assertEquals("Found mbeans: " + s, 0, s.size());
+    }
+
 }

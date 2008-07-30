@@ -16,13 +16,14 @@
  */
 package org.apache.camel.spring;
 
+import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import javax.management.MBeanServer;
 import javax.management.MBeanServerConnection;
 import javax.management.MBeanServerFactory;
+import javax.management.ObjectName;
 
-import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -51,10 +52,6 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         super.tearDown();
     }
 
-    protected String getDomainName() {
-        return DefaultInstrumentationAgent.DEFAULT_DOMAIN;
-    }
-
     @SuppressWarnings("unchecked")
     protected void releaseMBeanServers() {
         List<MBeanServer> servers =
@@ -65,8 +62,9 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         }
     }
 
-    public void testGetJMXConnector() throws Exception {
-        assertEquals("Get the wrong domain name", mbsc.getDefaultDomain(), getDomainName());
+    public void testQueryMbeans() throws Exception {
+        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=route,*"), null).size());
+        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processor,*"), null).size());
     }
 
     @Override
@@ -74,19 +72,11 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/defaultJmxConfig.xml");
     }
 
-    @SuppressWarnings("unchecked")
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
-            List<MBeanServer> servers =
-                    (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
-
-            for (MBeanServer server : servers) {
-                if (getDomainName().equals(server.getDefaultDomain())) {
-                    mbsc = server;
-                    break;
-                }
-            }
+            mbsc = ManagementFactory.getPlatformMBeanServer();
         }
         return mbsc;
     }
+    
 }
