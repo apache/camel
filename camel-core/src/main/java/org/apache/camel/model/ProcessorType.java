@@ -1534,7 +1534,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
         // The target is required.
         if (target == null) {
-            throw new RuntimeCamelException("target not provided.");
+            throw new IllegalArgumentException("target not provided on node: " + this);
         }
 
         List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
@@ -1583,7 +1583,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor target) throws Exception {
         // The target is required.
         if (target == null) {
-            throw new RuntimeCamelException("target not provided.");
+            throw new IllegalArgumentException("target not provided on node: " + this);
         }
 
         ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
