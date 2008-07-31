@@ -306,12 +306,22 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             }
         }
 
+        if (endpoint.getExcludedNamePrefix() != null) {
+            if (name.startsWith(endpoint.getExcludedNamePrefix())) {
+                return false;
+            }
+        }
         String[] prefixes = endpoint.getExcludedNamePrefixes();
         if (prefixes != null) {
             for (String prefix : prefixes) {
                 if (name.startsWith(prefix)) {
                     return false;
                 }
+            }
+        }
+        if (endpoint.getExcludedNamePostfix() != null) {
+            if (name.endsWith(endpoint.getExcludedNamePostfix())) {
+                return false;
             }
         }
         String[] postfixes = endpoint.getExcludedNamePostfixes();
