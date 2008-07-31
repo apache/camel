@@ -44,13 +44,13 @@ class SplitterRouteBuilderTest extends ScalaTestSupport {
     new RouteBuilder with XPath {
     //END SNIPPET: xpath
        //START SNIPPET: simple
-       "direct:a" as(classOf[Document]) splitter(_.xpath("/persons/person")) to "mock:a"
+       "direct:a" as(classOf[Document]) splitter(xpath("/persons/person")) to "mock:a"
        //END SNIPPET: simple
        
        //START SNIPPET: block
        "direct:b" ==> {
          as(classOf[Document])
-         splitter(_.xpath("/persons/person")) {
+         splitter(xpath("/persons/person")) {
            to("mock:b")
            to("mock:c")
          }

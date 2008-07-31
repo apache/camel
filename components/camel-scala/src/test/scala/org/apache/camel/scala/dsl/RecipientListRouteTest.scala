@@ -56,7 +56,7 @@ class RecipientListRouteTest extends ScalaTestSupport {
     //START SNIPPET: block
     "direct:c" ==> {
       to("mock:c")
-      recipients(_.jxpath("./in/body/destination"))
+      recipients(jxpath("./in/body/destination"))
     }
     //END SNIPPET: block
   }

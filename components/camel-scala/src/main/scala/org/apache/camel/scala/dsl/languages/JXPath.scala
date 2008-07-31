@@ -25,12 +25,13 @@ trait JXPath {
   
   implicit def exchangeToJXpath(exchange: Exchange) = new RichJXPathExchange(exchange)
   
+  def language(exchange: Exchange) = exchange.getContext().resolveLanguage("jxpath")
+  def jxpath(jxpath: String)(exchange: Exchange) : Any = 
+    language(exchange).createExpression(jxpath).evaluate(exchange)
+  
   class RichJXPathExchange(val exchange: Exchange) {
     
-    val language = exchange.getContext().resolveLanguage("jxpath")
-    
-    def jxpath(jxpath: String) : Any = 
-      language.createExpression(jxpath).evaluate(exchange)
+    def jxpath(jxpath: String) : Any = JXPath.this.jxpath(jxpath)(exchange)
     
   }
   

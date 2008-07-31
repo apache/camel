@@ -25,12 +25,14 @@ trait XPath {
   
   implicit def exchangeToXpath(exchange: Exchange) = new RichXPathExchange(exchange)
   
-  class RichXPathExchange(val exchange: Exchange) {
-    
-    def xpath(xpath: String) : Any = {
+  def xpath(xpath: String)(exchange: Exchange) : Any = {
       val builder = new XPathBuilder[Exchange](xpath)
       builder.evaluate(exchange)
-    }
+  }
+  
+  class RichXPathExchange(val exchange: Exchange) {
+    
+    def xpath(xpath: String) : Any = XPath.this.xpath(xpath)(exchange)
     
   }
   
