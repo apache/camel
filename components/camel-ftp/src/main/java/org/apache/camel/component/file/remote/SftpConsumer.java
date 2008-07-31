@@ -137,7 +137,9 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         String currentDir = channel.pwd();
 
         channel.cd(dir);
-        for (ChannelSftp.LsEntry sftpFile : (ChannelSftp.LsEntry[])channel.ls(".").toArray(new ChannelSftp.LsEntry[] {})) {
+        Vector files = channel.ls(".");
+        for (int i = 0; i < files.size(); i++) {
+            ChannelSftp.LsEntry sftpFile = (ChannelSftp.LsEntry)files.get(i);
             if (sftpFile.getFilename().startsWith(".")) {
                 // skip
             } else if (sftpFile.getAttrs().isDir()) {

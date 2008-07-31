@@ -35,13 +35,16 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected boolean deleteFile;
     protected String moveNamePrefix;
     protected String moveNamePostfix;
+    protected String excludedNamePrefix;
+    protected String excludedNamePostfix;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
 
-    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, ScheduledExecutorService executor) {
+    public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor,
+                              ScheduledExecutorService executor) {
         super(endpoint, processor, executor);
     }
 
@@ -54,21 +57,34 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected abstract String getFileName(Object file);
 
     /**
-     * Is the given file matched to be consumed (will consider regexp if provided as an option).
-     * <p/>
-     * Note: Returns true if no reg exp is used.
+     * Is the given file matched to be consumed.
      */
     protected boolean isMatched(Object file) {
-        String fileName = getFileName(file);
+        String name = getFileName(file);
 
-        boolean result = true;
+        // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
+        if (name.startsWith(".")) {
+            return false;
+        }
+
         if (regexPattern != null && regexPattern.length() > 0) {
-            result = fileName.matches(regexPattern);
+            if (!name.matches(regexPattern)) {
+                return false;
+            }
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Matching file: " + fileName + " is " + result);
+
+        if (excludedNamePrefix != null) {
+            if (name.startsWith(excludedNamePrefix)) {
+                return false;
+            }
         }
-        return result;
+        if (excludedNamePostfix != null) {
+            if (name.endsWith(excludedNamePostfix)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -80,7 +96,7 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
 
     /**
      * Gets the to filename for moving.
-     * 
+     *
      * @param name the original filename
      * @return the move filename
      */
@@ -164,4 +180,19 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
         this.moveNamePostfix = moveNamePostfix;
     }
 
+    public String getExcludedNamePrefix() {
+        return excludedNamePrefix;
+    }
+
+    public void setExcludedNamePrefix(String excludedNamePrefix) {
+        this.excludedNamePrefix = excludedNamePrefix;
+    }
+
+    public String getExcludedNamePostfix() {
+        return excludedNamePostfix;
+    }
+
+    public void setExcludedNamePostfix(String excludedNamePostfix) {
+        this.excludedNamePostfix = excludedNamePostfix;
+    }
 }

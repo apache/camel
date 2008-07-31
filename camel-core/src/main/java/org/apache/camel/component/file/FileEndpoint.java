@@ -56,6 +56,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private String moveNamePostfix;
     private String[] excludedNamePrefixes;
     private String[] excludedNamePostfixes;
+    private String excludedNamePrefix;
+    private String excludedNamePostfix;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
 
@@ -106,7 +108,6 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileExchange createExchange(ExchangePattern pattern) {
         return new FileExchange(getCamelContext(), pattern, file);
     }
-
 
     /**
      * Return the file name that will be auto-generated for the given message if none is provided
@@ -218,6 +219,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * Sets the excluded file name prefixes, such as <tt>"."</tt> for hidden files which
      * are excluded by default
+     *
+     * @deprecated use ExcludedNamePrefix. Will be removed in Camel 2.0.
      */
     public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
         this.excludedNamePrefixes = excludedNamePrefixes;
@@ -230,6 +233,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     /**
      * Sets the excluded file name postfixes, such as {@link FileProcessStrategySupport#DEFAULT_LOCK_FILE_POSTFIX}
      * to ignore lock files by default.
+     *
+     * @deprecated use ExcludedNamePostfix. Will be removed in Camel 2.0.
      */
     public void setExcludedNamePostfixes(String[] excludedNamePostfixes) {
         this.excludedNamePostfixes = excludedNamePostfixes;
@@ -281,6 +286,22 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
      */
     public void setIgnoreFileNameHeader(boolean ignoreFileNameHeader) {
         this.ignoreFileNameHeader = ignoreFileNameHeader;
+    }
+
+    public String getExcludedNamePrefix() {
+        return excludedNamePrefix;
+    }
+
+    public void setExcludedNamePrefix(String excludedNamePrefix) {
+        this.excludedNamePrefix = excludedNamePrefix;
+    }
+
+    public String getExcludedNamePostfix() {
+        return excludedNamePostfix;
+    }
+
+    public void setExcludedNamePostfix(String excludedNamePostfix) {
+        this.excludedNamePostfix = excludedNamePostfix;
     }
 
     /**
@@ -342,7 +363,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return "file://" + getFile().getAbsolutePath();
     }
     
-    protected  String getFileFriendlyMessageId(String id) {
+    protected String getFileFriendlyMessageId(String id) {
         return UuidGenerator.generateSanitizedId(id);
     }
 }
