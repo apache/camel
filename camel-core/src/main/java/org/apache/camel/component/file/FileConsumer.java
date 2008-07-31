@@ -294,11 +294,18 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     protected boolean isMatched(File file) {
         String name = file.getName();
+
+        // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
+        if (name.startsWith(".")) {
+            return false;
+        }
+
         if (regexPattern != null && regexPattern.length() > 0) {
-            if (!name.matches(getRegexPattern())) {
+            if (!name.matches(regexPattern)) {
                 return false;
             }
         }
+
         String[] prefixes = endpoint.getExcludedNamePrefixes();
         if (prefixes != null) {
             for (String prefix : prefixes) {
@@ -315,6 +322,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 }
             }
         }
+
         return true;
     }
 

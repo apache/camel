@@ -54,8 +54,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private boolean append = true;
     private String moveNamePrefix;
     private String moveNamePostfix;
-    private String[] excludedNamePrefixes = {"."};
-    private String[] excludedNamePostfixes = {FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX};
+    private String[] excludedNamePrefixes;
+    private String[] excludedNamePostfixes;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
 
