@@ -33,15 +33,25 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
     private final ProcessorType node;
-    private Predicate traceFilter;
+    private Predicate<Exchange> traceFilter;
     private boolean traceExceptions = true;
     private Logger logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
     private TraceFormatter formatter;
+    private Tracer tracer;
 
-    public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter) {
+    public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
+        this.tracer = tracer;
         this.node = node;
         this.formatter = formatter;
+    }
+
+    public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter) {
+        this(node, target, formatter, null);
+    }
+
+    public TraceInterceptor(ProcessorType node, Processor target, Tracer tracer) {
+        this(node, target, null, tracer);
     }
 
     @Override
@@ -65,7 +75,14 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     public Object format(Exchange exchange) {
-        return formatter.format(this, exchange);
+        TraceFormatter traceFormatter = null;
+        if (formatter != null) {
+            traceFormatter = formatter;
+        } else {
+            assert tracer != null;
+            traceFormatter = tracer.getFormatter();
+        }
+        return traceFormatter.format(this, exchange);
     }
 
     // Properties
@@ -133,7 +150,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
      * Returns true if the given exchange should be logged in the trace list
      */
     protected boolean shouldLogExchange(Exchange exchange) {
-        return traceFilter == null || traceFilter.matches(exchange);
+        return (tracer == null || tracer.isEnabled())
+            && (traceFilter == null || traceFilter.matches(exchange));
     }
 
 }
