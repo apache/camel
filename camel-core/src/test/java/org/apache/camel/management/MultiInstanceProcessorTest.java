@@ -24,12 +24,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * A unit test to verify mbean registration of multi-instances of a processor 
+ * A unit test to verify mbean registration of multi-instances of a processor
  *
  * @version $Revision$
  */
 public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsTest {
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
@@ -44,8 +44,8 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
      */
     @Override
     public void testMBeansRegistered() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null &&
-                !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
+                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
@@ -68,7 +68,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         assertEquals("Could not find 1 route: " + s, 1, s.size());
 
     }
-    
+
     @Override
     public void testCounters() throws Exception {
 
