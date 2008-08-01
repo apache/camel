@@ -28,8 +28,12 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * add extended filter logic in 
  * {@link #extendedFilter(org.apache.camel.impl.DefaultHeaderFilterStrategy.Direction, String, Object)}
  * 
- * Filters are associated with directions (in or out).  "In" direction is referred
- * to propagating headers "to" Camel message.
+ * Filters are associated with directions (in or out).  "In" direction is 
+ * referred to propagating headers "to" Camel message.  The "out" direction
+ * is opposite which is referred to propagating headers from Camel message
+ * to a native message like JMS and CXF message.  You can see example of
+ * DefaultHeaderFilterStrategy are being extended and invoked in camel-jms 
+ * and camel-cxf components.
  *
  * @version $Revision$
  */
@@ -45,6 +49,172 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     private boolean isLowercase;
     private boolean allowNullValues;
+    
+    /**
+     * Applies filtering logic to Camel Message header that is
+     * going to be copied to target message.
+     * 
+     * It returns true if the filtering logics return a match.  Otherwise,
+     * it returns false.  A match means the header should be excluded.
+     * 
+     * @param headerName 
+     * @param headerValue
+     * @return true if this header should be filtered out.
+     */
+    public boolean applyFilterToCamelHeaders(String headerName, Object headerValue) {
+        return doFiltering(Direction.OUT, headerName, headerValue);
+    }
+
+    /**
+     * Applies filtering logic to an external message header message that 
+     * is going to be copied to Camel message header.
+     * 
+     * It returns true if the filtering logics return a match.  Otherwise,
+     * it returns false.  A match means the header should be excluded.
+     *  
+     * @param headerName 
+     * @param headerValue
+     * @return true if this header should be excluded.
+     */
+    public boolean applyFilterToExternalHeaders(String headerName, Object headerValue) {
+        return doFiltering(Direction.IN, headerName, headerValue);
+    }
+
+    /**
+     * Gets the "out" direction filter set.  The "out" direction is referred to 
+     * copying headers from a Camel message to an external message.
+     * 
+     * @return a set that contains header names that should be excluded.
+     */
+    public Set<String> getOutFilter() {
+        if (outFilter == null) {
+            outFilter = new HashSet<String>();
+        }
+        
+        return outFilter;
+    }
+
+    /**
+     * Sets the "out" direction filter set.  The "out" direction is referred to 
+     * copying headers from a Camel message to an external message.
+     * 
+     * @return a set that contains headers names that should be excluded.
+     */
+    public void setOutFilter(Set<String> value) {
+        outFilter = value;
+    }
+
+    /**
+     * Gets the "out" direction filter regular expression {@link Pattern}.  The
+     * "out" direction is referred to copying headers from Camel message to
+     * an external message.  If the pattern matches a header, the header will 
+     * be filtered out. 
+     * 
+     * @return regular expression filter pattern
+     */
+    public String getOutFilterPattern() {
+        return outFilterPattern == null ? null : outFilterPattern.pattern();
+    }
+    
+
+    /**
+     * Sets the "out" direction filter regular expression {@link Pattern}.  The
+     * "out" direction is referred to copying headers from Camel message to
+     * an external message.  If the pattern matches a header, the header will 
+     * be filtered out. 
+     * 
+     * @param value regular expression filter pattern
+     */
+    public void setOutFilterPattern(String value) {
+        if (value == null) {
+            outFilterPattern = null;
+        } else {
+            outFilterPattern = Pattern.compile(value);
+        }
+    }
+    
+    /**
+     * Gets the "in" direction filter set.  The "in" direction is referred to 
+     * copying headers from an external message to a Camel message.
+     * 
+     * @return a set that contains header names that should be excluded.
+     */
+    public Set<String> getInFilter() {
+        if (inFilter == null) {
+            inFilter = new HashSet<String>();
+        }
+        return inFilter;
+    }
+
+    /**
+     * Sets the "in" direction filter set.  The "in" direction is referred to 
+     * copying headers from an external message to a Camel message.
+     * 
+     * @return a set that contains headers names that should be excluded.
+     */
+    public void setInFilter(Set<String> value) {
+        inFilter = value;
+    }
+
+    /**
+     * Gets the "in" direction filter regular expression {@link Pattern}.  The
+     * "in" direction is referred to copying headers from an external message
+     * to a Camel message.  If the pattern matches a header, the header will 
+     * be filtered out. 
+     * 
+     * @return regular expression filter pattern
+     */
+    public String getInFilterPattern() {
+        return inFilterPattern == null ? null : inFilterPattern.pattern();
+    }
+    
+    /**
+     * Sets the "in" direction filter regular expression {@link Pattern}.  The
+     * "in" direction is referred to copying headers from an external message
+     * to a Camel message.  If the pattern matches a header, the header will 
+     * be filtered out. 
+     * 
+     * @param value regular expression filter pattern
+     */
+    public void setInFilterPattern(String value) {
+        if (value == null) {
+            inFilterPattern = null;
+        } else {
+            inFilterPattern = Pattern.compile(value);
+        }
+    }
+
+    /**
+     * Gets the isLowercase property which is a boolean to determinte
+     * whether header names should be converted to lowercase before
+     * checking it the filter Set.  It does not affect filtering using
+     * regular expression pattern.
+     */
+    public boolean getIsLowercase() {
+        return isLowercase;
+    }
+    
+    /**
+     * Sets the isLowercase property which is a boolean to determinte
+     * whether header names should be converted to lowercase before
+     * checking it the filter Set.  It does not affect filtering using
+     * regular expression pattern.
+     */
+    public void setIsLowercase(boolean value) {
+        isLowercase = value;
+    }
+    
+    public boolean getAllowNullValues() {
+        return allowNullValues;
+    }
+    
+    public void setAllowNullValues(boolean value) {
+        allowNullValues = value;
+    }   
+
+    protected boolean extendedFilter(Direction direction, String key, Object value) {
+        return false;
+    }
 
     private boolean doFiltering(Direction direction, String headerName, Object headerValue) {
         
@@ -89,80 +259,4 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             
         return false;
     }
-    
-    protected boolean extendedFilter(Direction direction, String key, Object value) {
-        return false;
-    }
-
-    public Set<String> getOutFilter() {
-        if (outFilter == null) {
-            outFilter = new HashSet<String>();
-        }
-        
-        return outFilter;
-    }
-
-    public void setOutFilter(Set<String> value) {
-        outFilter = value;
-    }
-
-    public String getOutFilterPattern() {
-        return outFilterPattern == null ? null : outFilterPattern.pattern();
-    }
-    
-    public void setOutFilterPattern(String value) {
-        if (value == null) {
-            outFilterPattern = null;
-        } else {
-            outFilterPattern = Pattern.compile(value);
-        }
-    }
-    
-    public Set<String> getInFilter() {
-        if (inFilter == null) {
-            inFilter = new HashSet<String>();
-        }
-        return inFilter;
-    }
-
-    public void setInFilter(Set<String> value) {
-        inFilter = value;
-    }
-
-    public String getInFilterPattern() {
-        return inFilterPattern == null ? null : inFilterPattern.pattern();
-    }
-    
-    public void setInFilterPattern(String value) {
-        if (value == null) {
-            inFilterPattern = null;
-        } else {
-            inFilterPattern = Pattern.compile(value);
-        }
-    }
-
-    public boolean getIsLowercase() {
-        return isLowercase;
-    }
-    
-    public void setIsLowercase(boolean value) {
-        isLowercase = value;
-    }
-    
-    public boolean getAllowNullValues() {
-        return allowNullValues;
-    }
-    
-    public void setAllowNullValues(boolean value) {
-        allowNullValues = value;
-    }
-
-    public boolean applyFilterToCamelHeaders(String headerName, Object headerValue) {
-        return doFiltering(Direction.OUT, headerName, headerValue);
-    }
-
-    public boolean applyFilterToExternalHeaders(String headerName, Object headerValue) {
-        return doFiltering(Direction.IN, headerName, headerValue);
-    }
-   
 }
