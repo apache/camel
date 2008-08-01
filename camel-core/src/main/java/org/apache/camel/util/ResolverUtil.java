@@ -275,35 +275,80 @@ public class ResolverUtil<T> {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
-        for (ClassLoader classLoader : set) {
-            find(test, packageName, classLoader);
+
+        ClassLoader osgiClassLoader = getOsgiClassLoader(set);
+
+        if (osgiClassLoader != null) {
+            // if we have an osgi bundle loader use this one only
+            LOG.debug("Using only osgi bundle classloader");
+            find(test, packageName, osgiClassLoader, true);
+        } else {
+            LOG.debug("Using only regular classloaders");
+            for (ClassLoader classLoader : set) {
+                if (!isOsgiClassloader(classLoader)) {
+                    find(test, packageName, classLoader, false);
+                }
+            }
         }
     }
 
-    protected void find(Test test, String packageName, ClassLoader loader) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
-                    + loader.getClass().getName());
+    /**
+     * Gets the osgi classloader if any in the given set
+     */
+    private static ClassLoader getOsgiClassLoader(Set<ClassLoader> set) {
+        for (ClassLoader loader : set) {
+            if (isOsgiClassloader(loader)) {
+                return loader;
+            }
         }
-        if (loader.getClass().getName().endsWith(
-                "org.apache.felix.framework.searchpolicy.ContentClassLoader")) {
-            LOG.trace("This is not an URL classloader, skipping");
-            //this classloader is in OSGI env which is not URLClassloader, we should resort to the
-            //BundleDelegatingClassLoader in OSGI, so just return
-            return;
-        }
+        return null;
+    }
+
+    /**
+     * Is it an osgi classloader
+     */
+    private static boolean isOsgiClassloader(ClassLoader loader) {
         try {
-            Method mth = loader.getClass().getMethod("getBundle", new Class[] {});
+            Method mth = loader.getClass().getMethod("getBundle", new Class[]{});
             if (mth != null) {
-                // it's osgi bundle class loader, so we need to load implementation in bundles
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Loading from osgi buindle using classloader: " + loader);
-                }
-                loadImplementationsInBundle(test, packageName, loader, mth);
-                return;
+                return true;
             }
         } catch (NoSuchMethodException e) {
-            LOG.trace("It's not an osgi bundle classloader");
+            // ignore its not an osgi loader
+        }
+        return false;
+    }
+
+    /**
+     * Tries to find the reosurce in the package using the class loader.
+     * <p/>
+     * Will handle both plain URL based classloaders and OSGi bundle loaders.
+     *
+     * @param test what to find
+     * @param packageName the package to search in
+     * @param loader the class loader
+     * @param osgi true if its a osgi bundle loader, false if regular classloader
+     */
+    protected void find(Test test, String packageName, ClassLoader loader, boolean osgi) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
+                    + loader.getClass().getName() + " osgi bundle classloader: " + osgi);
+        }
+
+        if (osgi) {
+            try {
+                Method mth = loader.getClass().getMethod("getBundle", new Class[]{});
+                if (mth != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Loading from osgi buindle using classloader: " + loader);
+                    }
+                    loadImplementationsInBundle(test, packageName, loader, mth);
+                    return;
+                }
+            } catch (NoSuchMethodException e) {
+                LOG.warn("It's not an osgi bundle classloader: " + loader);
+                return;
+            }
         }
 
         Enumeration<URL> urls;
