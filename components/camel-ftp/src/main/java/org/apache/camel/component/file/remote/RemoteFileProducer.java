@@ -23,7 +23,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends DefaultProducer<T> {
-    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     protected RemoteFileEndpoint<T> endpoint;
 
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint) {
@@ -55,7 +55,7 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
 
     @Override
     protected void doStart() throws Exception {
-        LOG.info("Starting");
+        log.info("Starting");
         // do not connect when componet starts, just wait until we process as we will
         // connect at that time if needed
         super.doStart();
@@ -63,13 +63,13 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping");
+        log.info("Stopping");
         // disconnect when stopping
         try {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
+            log.warn("Exception occured during disconecting from " + remoteServer() + ". "
                      + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();

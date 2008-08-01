@@ -24,7 +24,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends ScheduledPollConsumer<T> {
-    protected final transient Log LOG = LogFactory.getLog(getClass());
+    protected final transient Log log = LogFactory.getLog(getClass());
     protected RemoteFileEndpoint<T> endpoint;
     protected long lastPollTime;
 
