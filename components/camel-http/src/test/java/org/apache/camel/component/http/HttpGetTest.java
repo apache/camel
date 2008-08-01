@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class HttpGetTest extends ContextTestSupport {
-    protected String expectedText = "<html";
+    protected String expectedText = "activemq";
 
     public void testHttpGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
