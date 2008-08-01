@@ -28,6 +28,8 @@ public interface HeaderFilterStrategy {
     /**
      * Applies filtering logic to Camel Message header that is
      * going to be copied to target message such as CXF and JMS message.
+     * It returns true if the filtering logics return a match.  Otherwise,
+     * it returns false.  A match means the header should be excluded.
      * 
      * @param headerName 
      * @param headerValue
@@ -40,6 +42,8 @@ public interface HeaderFilterStrategy {
      * Applies filtering logic to an external message header such 
      * as CXF and JMS message that is going to be copied to Camel
      * message header.
+     * It returns true if the filtering logics return a match.  Otherwise,
+     * it returns false.  A match means the header should be excluded.
      *  
      * @param headerName 
      * @param headerValue
