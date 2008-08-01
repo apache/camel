@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingPropertiesTest {
-    
+
     @Override
     protected void setUp() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "True");
@@ -42,11 +42,11 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
         super.tearDown();
     }
 
-    
+
     @Override
     public void testMBeansRegistered() throws Exception {
-        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null &&
-                !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
+        if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
+                && !Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS)) {
             assertEquals(domainName, mbsc.getDefaultDomain());
         }
 
