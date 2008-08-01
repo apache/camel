@@ -26,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
 public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public JmsHeaderFilterStrategy() {
-        initialize();  
+        initialize();
     }
 
     protected void initialize() {
@@ -41,10 +41,10 @@ public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("JMSXRecvTimestamp");
         getOutFilter().add("JMSXState");
     }
-    
+
     @Override
     protected boolean extendedFilter(Direction direction, String key, Object value) {
-        return Direction.OUT == direction && 
-            !ObjectHelper.isJavaIdentifier(JmsBinding.encodeToSafeJmsHeaderName(key));
-    }      
+        return Direction.OUT == direction
+            && !ObjectHelper.isJavaIdentifier(JmsBinding.encodeToSafeJmsHeaderName(key));
+    }
 }

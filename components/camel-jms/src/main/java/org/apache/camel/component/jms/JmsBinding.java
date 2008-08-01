@@ -60,7 +60,7 @@ public class JmsBinding {
     private JmsEndpoint endpoint;
     private XmlConverter xmlConverter = new XmlConverter();
     private HeaderFilterStrategy headerFilterStrategy;
-    
+
     public JmsBinding() {
         headerFilterStrategy = new JmsHeaderFilterStrategy();
     }
@@ -134,7 +134,7 @@ public class JmsBinding {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    if (headerFilterStrategy != null 
+                    if (headerFilterStrategy != null
                             && headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
                         continue;
                     }
@@ -148,7 +148,7 @@ public class JmsBinding {
                 }
             }
         }
-        
+
         return map;
     }
 
@@ -380,7 +380,7 @@ public class JmsBinding {
         } else {
             // Shouldn't get here unless a strategy that isn't an extension of
             // DefaultHeaderPropagationStrategy has been injected.
-        }   
+        }
     }
 
     /**
@@ -390,11 +390,11 @@ public class JmsBinding {
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
                                          Object headerValue) {
-        
-        return headerFilterStrategy == null ||
-            !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue); 
+
+        return headerFilterStrategy == null
+            || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
     }
-    
+
     /**
      * Encoder to encode JMS header keys that is that can be sent over the JMS transport.
      * <p/>

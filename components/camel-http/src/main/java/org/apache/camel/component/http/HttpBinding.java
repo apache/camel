@@ -68,8 +68,8 @@ public class HttpBinding {
             // Write out the headers...
             for (String key : out.getHeaders().keySet()) {
                 String value = out.getHeader(key, String.class);
-                if (headerFilterStrategy != null && 
-                        !headerFilterStrategy.applyFilterToCamelHeaders(key, value)) {
+                if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, value)) {
                     response.setHeader(key, value);
                 }
             }
@@ -112,27 +112,27 @@ public class HttpBinding {
     /*
      * Exclude a set of headers from responses and new requests as all headers
      * get propagated between exchanges by default
-     *     
+     *
      * @deprecated please use {@link HeaderPropagationStrategy} instead
-     * 
+     *
      */
     @Deprecated
     public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
         if (headerValue == null) {
             return false;
         }
-        
-        return headerFilterStrategy != null &&
-            !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
-        
+
+        return headerFilterStrategy != null
+            && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
+
     }
 
     /*
      * override the set of headers to ignore for responses and new requests
      * @param headersToIgnore should be a set of lower-case strings
-     * 
+     *
      * @deprecated please use {@link HeaderPropagationStrategy} instead
-     * 
+     *
      */
     @Deprecated
     public void setIgnoredHeaders(Set<String> headersToIgnore) {
@@ -153,11 +153,11 @@ public class HttpBinding {
         } else {
             return null;
         }
-         
+
     }
 
     public boolean isUseReaderForPayload() {
-        
+
         return useReaderForPayload;
     }
 
