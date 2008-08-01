@@ -36,11 +36,16 @@ public class AMQPRouteTest extends ContextTestSupport {
         String expectedBody = "Hello there!";
 
         resultEndpoint.expectedBodiesReceived(expectedBody);
+
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
+        // send the message twice to walk around the AMQP's drop first message issue on Windows box
+        sendExchange(expectedBody);
 
         resultEndpoint.assertIsSatisfied();
+
+
     }
 
     // TODO fix this test
@@ -63,10 +68,12 @@ public class AMQPRouteTest extends ContextTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
+        // send the message twice to walk around the AMQP's drop first message issue on Windows box
+        sendExchange(expectedBody);
 
         resultEndpoint.assertIsSatisfied();
-    }   
-    
+    }
+
     protected void sendExchange(final Object expectedBody) {
         template.sendBodyAndHeader("amqp:queue:test.a", expectedBody, "cheese", 123);
     }
