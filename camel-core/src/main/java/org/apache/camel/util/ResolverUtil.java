@@ -68,11 +68,11 @@ import org.apache.commons.logging.LogFactory;
  * </p>
  * <p/>
  * <pre>
- * esolverUtil&lt;ActionBean&gt; resolver = new ResolverUtil&lt;ActionBean&gt;();
- * esolver.findImplementation(ActionBean.class, pkg1, pkg2);
- * esolver.find(new CustomTest(), pkg1);
- * esolver.find(new CustomTest(), pkg2);
- * ollection&lt;ActionBean&gt; beans = resolver.getClasses();
+ * resolverUtil&lt;ActionBean&gt; resolver = new ResolverUtil&lt;ActionBean&gt;();
+ * resolver.findImplementation(ActionBean.class, pkg1, pkg2);
+ * resolver.find(new CustomTest(), pkg1);
+ * resolver.find(new CustomTest(), pkg2);
+ * collection&lt;ActionBean&gt; beans = resolver.getClasses();
  * </pre>
  *
  * @author Tim Fennell
