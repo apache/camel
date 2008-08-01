@@ -44,18 +44,18 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void doStart() throws Exception {
-        LOG.info("Starting");
+        log.info("Starting");
         super.doStart();
     }
 
     protected void doStop() throws Exception {
-        LOG.info("Stopping");
+        log.info("Stopping");
         // disconnect when stopping
         try {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            LOG.warn("Exception occured during disconecting from " + remoteServer() + ". "
+            log.warn("Exception occured during disconecting from " + remoteServer() + ". "
                      + e.getClass().getCanonicalName() + " message: " + e.getMessage());
         }
         super.doStop();
@@ -63,22 +63,22 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not connected, connecting to " + remoteServer());
+            if (log.isDebugEnabled()) {
+                log.debug("Not connected, connecting to " + remoteServer());
             }
             FtpUtils.connect(client, endpoint.getConfiguration());
-            LOG.info("Connected to " + remoteServer());
+            log.info("Connected to " + remoteServer());
         }
     }
 
     protected void disconnect() throws IOException {
-        LOG.debug("Disconnecting from " + remoteServer());
+        log.debug("Disconnecting from " + remoteServer());
         FtpUtils.disconnect(client);
     }
 
     protected void poll() throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling " + endpoint.getConfiguration());
+        if (log.isTraceEnabled()) {
+            log.trace("Polling " + endpoint.getConfiguration());
         }
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
@@ -101,10 +101,10 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn("Consumer is stopping. Ignoring caught exception: "
+                log.warn("Consumer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during polling: "
+                log.warn("Exception occured during polling: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
@@ -114,8 +114,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void pollDirectory(String dir) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling directory: " + dir);
+        if (log.isTraceEnabled()) {
+            log.trace("Polling directory: " + dir);
         }
         String currentDir = client.printWorkingDirectory();
 
@@ -128,7 +128,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     pollDirectory(getFullFileName(ftpFile));
                 }
             } else {
-                LOG.debug("Unsupported type of FTPFile: " + ftpFile + " (not a file or directory). It is skipped.");
+                log.debug("Unsupported type of FTPFile: " + ftpFile + " (not a file or directory). It is skipped.");
             }
         }
 
@@ -145,8 +145,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             return;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling file: " + ftpFile);
+        if (log.isTraceEnabled()) {
+            log.trace("Polling file: " + ftpFile);
         }
 
         long ts = ftpFile.getTimestamp().getTimeInMillis();
@@ -162,8 +162,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             // retrieve the file
             final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             client.retrieveFile(ftpFile.getName(), byteArrayOutputStream);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
+            if (log.isDebugEnabled()) {
+                log.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
             }
 
             RemoteFileExchange exchange = endpoint.createExchange(fullFileName, byteArrayOutputStream);
@@ -174,27 +174,27 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 String relativePath = fullFileName.substring(ftpBasePath.length() + 1);
                 relativePath = relativePath.replaceFirst("/", "");
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Setting exchange filename to " + relativePath);
+                if (log.isDebugEnabled()) {
+                    log.debug("Setting exchange filename to " + relativePath);
                 }
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
 
             if (deleteFile) {
                 // delete file after consuming
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
+                if (log.isDebugEnabled()) {
+                    log.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
                 boolean deleted = client.deleteFile(ftpFile.getName());
                 if (!deleted) {
                     // ignore just log a warning
-                    LOG.warn("Can not delete file: " + ftpFile.getName() + " from: " + remoteServer());
+                    log.warn("Can not delete file: " + ftpFile.getName() + " from: " + remoteServer());
                 }
             } else if (isMoveFile()) {
                 String fromName = ftpFile.getName();
                 String toName = getMoveFileName(fromName);
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Moving file: " + fromName + " to: " + toName);
+                if (log.isDebugEnabled()) {
+                    log.debug("Moving file: " + fromName + " to: " + toName);
                 }
 
                 // delete any existing file
@@ -206,7 +206,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                     if (lastPathIndex != -1) {
                         String directory = toName.substring(0, lastPathIndex);
                         if (!FtpUtils.buildDirectory(client, directory)) {
-                            LOG.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
+                            log.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
                         }
                     }
                 }
@@ -214,7 +214,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 // try to rename
                 boolean success = client.rename(fromName, toName);
                 if (!success) {
-                    LOG.warn("Can not move file: " + fromName + " to: " + toName);
+                    log.warn("Can not move file: " + fromName + " to: " + toName);
                 }
             }
 
@@ -223,8 +223,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
     }
 
     protected void acquireExclusiveReadLock(FTPClient client, FTPFile ftpFile) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive read lock to file: " + ftpFile);
+        if (log.isTraceEnabled()) {
+            log.trace("Waiting for exclusive read lock to file: " + ftpFile);
         }
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
@@ -235,13 +235,13 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         while (!exclusive) {
             exclusive = client.rename(originalName, newName);
             if (exclusive) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Acquired exclusive read lock to file: " + originalName);
+                if (log.isDebugEnabled()) {
+                    log.debug("Acquired exclusive read lock to file: " + originalName);
                 }
                 // rename it back so we can read it
                 client.rename(newName, originalName);
             } else {
-                LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+                log.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
