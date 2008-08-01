@@ -36,8 +36,8 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing " + endpoint.getConfiguration());
+        if (log.isTraceEnabled()) {
+            log.trace("Processing " + endpoint.getConfiguration());
         }
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
@@ -47,10 +47,10 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn("Producer is stopping. Ignoring caught exception: "
+                log.warn("Producer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during processing: "
+                log.warn("Exception occured during processing: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
@@ -62,20 +62,20 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
-                LOG.debug("Session isn't connected, trying to recreate and connect.");
+                log.debug("Session isn't connected, trying to recreate and connect.");
                 session = endpoint.createSession();
                 session.connect();
             }
-            LOG.debug("Channel isn't connected, trying to recreate and connect.");
+            log.debug("Channel isn't connected, trying to recreate and connect.");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
-            LOG.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
+            log.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
         }
     }
 
     protected void disconnect() throws JSchException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Disconnecting from " + remoteServer());
+        if (log.isDebugEnabled()) {
+            log.debug("Disconnecting from " + remoteServer());
         }
         if (session != null) {
             session.disconnect();
@@ -96,13 +96,13 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 String directory = fileName.substring(0, lastPathIndex);
                 boolean success = SftpUtils.buildDirectory(channel, directory);
                 if (!success) {
-                    LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                    log.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
 
             channel.put(payload, fileName);
 
-            LOG.info("Sent: " + fileName + " to: " + remoteServer);
+            log.info("Sent: " + fileName + " to: " + remoteServer);
         } finally {
             if (payload != null) {
                 payload.close();

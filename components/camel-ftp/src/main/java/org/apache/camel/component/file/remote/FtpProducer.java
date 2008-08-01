@@ -35,8 +35,8 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing " + endpoint.getConfiguration());
+        if (log.isTraceEnabled()) {
+            log.trace("Processing " + endpoint.getConfiguration());
         }
         connectIfNecessary();
         // If the attempt to connect isn't successful, then the thrown
@@ -46,10 +46,10 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         } catch (Exception e) {
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
-                LOG.warn("Producer is stopping. Ignoring caught exception: "
+                log.warn("Producer is stopping. Ignoring caught exception: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
-                LOG.warn("Exception occured during processing: "
+                log.warn("Exception occured during processing: "
                          + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
@@ -60,17 +60,17 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     protected void connectIfNecessary() throws IOException {
         if (!client.isConnected()) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not connected, connecting to " + remoteServer());
+            if (log.isDebugEnabled()) {
+                log.debug("Not connected, connecting to " + remoteServer());
             }
             FtpUtils.connect(client, endpoint.getConfiguration());
-            LOG.info("Connected to " + remoteServer());
+            log.info("Connected to " + remoteServer());
         }
     }
 
     public void disconnect() throws IOException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Disconnecting from " + remoteServer());
+        if (log.isDebugEnabled()) {
+            log.debug("Disconnecting from " + remoteServer());
         }
         FtpUtils.disconnect(client);
     }
@@ -84,7 +84,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
                 if (!FtpUtils.buildDirectory(client, directory)) {
-                    LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                    log.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
 
@@ -93,7 +93,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 throw new RuntimeCamelException("Error sending file: " + fileName + " to: " + remoteServer());
             }
 
-            LOG.info("Sent: " + fileName + " to: " + remoteServer());
+            log.info("Sent: " + fileName + " to: " + remoteServer());
         } finally {
             if (payload != null) {
                 payload.close();
