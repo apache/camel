@@ -41,7 +41,8 @@ public class Debugger implements InterceptStrategy {
     private int exchangeBufferSize = -1;
     private Map<String, DebugInterceptor> interceptors = new HashMap<String, DebugInterceptor>();
     private boolean logExchanges = true;
-    private TraceFormatter formatter = new TraceFormatter();
+    private boolean enabled = true;
+    private Tracer tracer = new Tracer();
 
 
     /**
@@ -63,9 +64,11 @@ public class Debugger implements InterceptStrategy {
         return null;
     }
 
+
     public DebugInterceptor getInterceptor(String id) {
         return interceptors.get(id);
     }
+
 
     /**
      * Returns the list of exchanges sent to the given node in the DSL
@@ -77,6 +80,18 @@ public class Debugger implements InterceptStrategy {
         } else {
             return interceptor.getExchanges();
         }
+    }
+
+    public void setEnable(boolean flag) {
+        enabled = flag;
+        tracer.setEnabled(flag);
+        for(DebugInterceptor interceptor : interceptors.values()) {
+            interceptor.setEnabled(flag);
+        }
+    }
+
+    public boolean isEnabled() {
+        return enabled;
     }
 
     /**
@@ -91,11 +106,24 @@ public class Debugger implements InterceptStrategy {
         }
     }
 
+    public TraceFormatter getTraceFormatter() {
+        return tracer.getFormatter();
+    }
+
+    public void setTraceFormatter(TraceFormatter formatter) {
+        tracer.setFormatter(formatter);
+    }
+
+    public void setLogExchanges(boolean flag) {
+        logExchanges = flag;
+    }
+
 
     public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         String id = processorType.idOrCreate();
         if (logExchanges) {
-            target = new TraceInterceptor(processorType, target, formatter);
+            TraceInterceptor  traceInterceptor= new TraceInterceptor(processorType, target, tracer);
+            target = traceInterceptor;
         }
         DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList(), createExceptionsList());
         interceptors.put(id, interceptor);
@@ -120,4 +148,6 @@ public class Debugger implements InterceptStrategy {
         // TODO allow some kinda LRU based fixed size list to be used?
         return new ArrayList<ExceptionEvent>();
     }
+
+
 }

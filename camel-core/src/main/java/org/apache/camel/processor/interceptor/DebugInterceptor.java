@@ -37,6 +37,7 @@ public class DebugInterceptor extends DelegateProcessor {
     private Predicate traceFilter;
     private Breakpoint breakpoint = new Breakpoint();
     private boolean traceExceptions = true;
+    private boolean enabled = true;
 
     public DebugInterceptor(ProcessorType node, Processor target, List<Exchange> exchanges, List<ExceptionEvent> exceptions) {
         super(target);
@@ -51,8 +52,10 @@ public class DebugInterceptor extends DelegateProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        checkForBreakpoint(exchange);
-        addTraceExchange(exchange);
+        if (isEnabled()) {
+            checkForBreakpoint(exchange);
+            addTraceExchange(exchange);
+        }
         try {
             super.proceed(exchange);
         } catch (Exception e) {
@@ -66,6 +69,14 @@ public class DebugInterceptor extends DelegateProcessor {
 
     public ProcessorType getNode() {
         return node;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean flag) {
+        enabled = flag;
     }
 
     public List<Exchange> getExchanges() {
@@ -114,7 +125,7 @@ public class DebugInterceptor extends DelegateProcessor {
     }
 
     private boolean shouldTraceExceptionEvents(Exchange exchange, Throwable e) {
-        return isTraceExceptions();
+        return isTraceExceptions() && isEnabled();
     }
 
     /**
