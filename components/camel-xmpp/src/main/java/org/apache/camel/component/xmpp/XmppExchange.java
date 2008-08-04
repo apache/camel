@@ -46,7 +46,6 @@ public class XmppExchange extends DefaultExchange {
         this.binding = binding;
     }
 
-    @Override
     public XmppMessage getIn() {
         return (XmppMessage) super.getIn();
     }

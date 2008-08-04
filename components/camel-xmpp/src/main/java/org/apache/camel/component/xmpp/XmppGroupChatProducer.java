@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.xmpp;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
@@ -33,10 +36,10 @@ public class XmppGroupChatProducer extends DefaultProducer {
     private final String room;
     private MultiUserChat chat;
 
-    public XmppGroupChatProducer(XmppEndpoint endpoint, String room) {
+    public XmppGroupChatProducer(XmppEndpoint endpoint) throws XMPPException, CamelException {
         super(endpoint);
         this.endpoint = endpoint;
-        this.room = room;
+        this.room = endpoint.resolveRoom();
         if (room == null) {
             throw new IllegalArgumentException("No room property specified");
         }
@@ -50,7 +53,7 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
         endpoint.getBinding().populateXmppMessage(message, exchange);
         if (LOG.isDebugEnabled()) {
-            LOG.debug(">>>> message: " + message.getBody());
+            LOG.debug("Sending XMPP message: " + message.getBody());
         }
         try {
             chat.sendMessage(message);
@@ -61,12 +64,13 @@ public class XmppGroupChatProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         if (chat == null) {
             chat = new MultiUserChat(endpoint.getConnection(), room);
-            String nickname = this.endpoint.getNickname();
-            chat.join(nickname != null ? nickname : this.endpoint.getUser());
+            DiscussionHistory history = new DiscussionHistory();
+            history.setMaxChars(0); // we do not want any historical messages
+            chat.join(this.endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
         }
+        super.doStart();
     }
 
     @Override

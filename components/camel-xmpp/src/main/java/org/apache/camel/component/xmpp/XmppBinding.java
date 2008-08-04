@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-
 import org.jivesoftware.smack.packet.Message;
 
 /**
@@ -30,6 +29,7 @@ import org.jivesoftware.smack.packet.Message;
  * @version $Revision$
  */
 public class XmppBinding {
+
     /**
      * Populates the given XMPP message from the inbound exchange
      */
@@ -52,9 +52,6 @@ public class XmppBinding {
 
     /**
      * Extracts the body from the XMPP message
-     *
-     * @param exchange
-     * @param message
      */
     public Object extractBodyFromXmpp(XmppExchange exchange, Message message) {
         return message.getBody();

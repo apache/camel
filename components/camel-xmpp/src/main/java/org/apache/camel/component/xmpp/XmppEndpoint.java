@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.Iterator;
+
+import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -26,9 +29,8 @@ import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.AccountManager;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
  * A XMPP Endpoint
@@ -45,7 +47,6 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     private String password;
     private String resource = "Camel";
     private boolean login = true;
-    private PacketFilter filter;
     private boolean createAccount;
     private String room;
     private String participant;
@@ -61,7 +62,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
 
     public Producer<XmppExchange> createProducer() throws Exception {
         if (room != null) {
-            return createGroupChatProducer(room);
+            return createGroupChatProducer();
         } else {
             if (participant == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
@@ -70,8 +71,8 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         }
     }
 
-    public Producer<XmppExchange> createGroupChatProducer(String room) throws Exception {
-        return new XmppGroupChatProducer(this, room);
+    public Producer<XmppExchange> createGroupChatProducer() throws Exception {
+        return new XmppGroupChatProducer(this);
     }
 
     public Producer<XmppExchange> createPrivateChatProducer(String participant) throws Exception {
@@ -79,7 +80,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     public Consumer<XmppExchange> createConsumer(Processor processor) throws Exception {
-        return new XmppConsumer(this, processor);
+    		return new XmppConsumer(this, processor);
     }
 
     @Override
@@ -156,14 +157,6 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         this.login = login;
     }
 
-    public PacketFilter getFilter() {
-        return filter;
-    }
-
-    public void setFilter(PacketFilter filter) {
-        this.filter = filter;
-    }
-
     public boolean isCreateAccount() {
         return createAccount;
     }
@@ -189,7 +182,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
     
     public String getNickname() {
-        return nickname;
+        return nickname != null ? nickname : getUser();
     }
     
     public void setNickname(String nickname) {
@@ -240,6 +233,32 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
             // presence is not needed to be sent after login
         }
         return connection;
+    }
+    
+    /*
+     * If there is no "@" symbol in the room, find the chat service JID and return fully
+     * qualified JID for the room as room@conference.server.domain
+     */
+    public String resolveRoom() throws XMPPException, CamelException {
+    	if (room == null) {
+    		throw new IllegalArgumentException("room is not specified");
+        }
+
+        if (room.indexOf('@', 0) != -1) {
+    		return room;
+        }
+
+        XMPPConnection conn = getConnection();
+    	Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
+    	if (!iterator.hasNext()) {
+    		throw new CamelException("Can not find Multi User Chat service");
+        }
+        String chatServer = iterator.next();
+    	if (LOG.isInfoEnabled()) {
+    		LOG.info("Detected chat server: " + chatServer);
+        }
+
+        return room + "@" + chatServer;
     }
 
     public boolean isSingleton() {

@@ -41,7 +41,6 @@ import org.jivesoftware.smack.packet.Message;
  * <p/>
  * You can overload the <b>xmpp.url</b> system property to define the jabber connection URI
  * to something like <b>xmpp://camel@localhost/?login=false&room=</b>
- *
  * @version $Revision$
  */
 public class XmppRouteTest extends TestCase {
@@ -73,7 +72,7 @@ public class XmppRouteTest extends TestCase {
             //Thread.sleep(100000);
         }
     }
-
+    
     protected static boolean isXmppServerPresent() {
         if (enabled) {
             return true;
@@ -112,16 +111,20 @@ public class XmppRouteTest extends TestCase {
     @Override
     protected void setUp() throws Exception {
         if (isXmppServerPresent()) {
-            String uriPrefx = getUriPrefix();
-            final String uri1 = uriPrefx + "a";
-            final String uri2 = uriPrefx + "b";
+            String uriPrefix = getUriPrefix();
+            final String uri1 = uriPrefix + "&resource=camel-test-from&nickname=came-test-from";
+            final String uri2 = uriPrefix + "&resource=camel-test-to&nickname=came-test-to";
+            final String uri3 = uriPrefix + "&resource=camel-test-from-processor&nickname=came-test-from-processor";
             LOG.info("Using URI " + uri1 + " and " + uri2);
+
+            endpoint = container.getEndpoint(uri1);
+            assertNotNull("No endpoint found!", endpoint);
 
             // lets add some routes
             container.addRoutes(new RouteBuilder() {
                 public void configure() {
                     from(uri1).to(uri2);
-                    from(uri2).process(new Processor() {
+                    from(uri3).process(new Processor() {
                         public void process(Exchange e) {
                             LOG.info("Received exchange: " + e);
                             receivedExchange = (XmppExchange) e;
@@ -130,8 +133,6 @@ public class XmppRouteTest extends TestCase {
                     });
                 }
             });
-            endpoint = container.getEndpoint(uri1);
-            assertNotNull("No endpoint found!", endpoint);
         }
 
         container.start();
@@ -143,7 +144,7 @@ public class XmppRouteTest extends TestCase {
         }
         return System.getProperty("xmpp.url", "xmpp://camel@localhost/?login=false&room=").trim();
     }
-
+    
     @Override
     protected void tearDown() throws Exception {
         client.stop();

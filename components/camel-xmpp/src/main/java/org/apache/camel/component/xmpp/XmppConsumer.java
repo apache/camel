@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.xmpp;
 
-import java.util.Iterator;
-
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
+import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
-import org.jivesoftware.smack.packet.RosterPacket;
+import org.jivesoftware.smackx.muc.DiscussionHistory;
+import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
@@ -36,6 +36,8 @@ import org.jivesoftware.smack.packet.RosterPacket;
 public class XmppConsumer extends DefaultConsumer<XmppExchange> implements PacketListener {
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
+    private Chat privateChat;
+    private MultiUserChat muc;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -44,46 +46,43 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
 
     @Override
     protected void doStart() throws Exception {
+        if (endpoint.getRoom() == null) {
+        	privateChat = endpoint.getConnection().createChat(endpoint.getParticipant());
+	        privateChat.addMessageListener(this);
+	        LOG.info("Open chat to " + privateChat.getParticipant());
+        } else {
+        	muc = new MultiUserChat(endpoint.getConnection(), endpoint.resolveRoom());
+        	muc.addMessageListener(this);
+        	DiscussionHistory history = new DiscussionHistory();
+        	history.setMaxChars(0); // we do not want any historical messages
+        	muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
+        	LOG.info("Joined room: " + muc.getRoom());
+        }
         super.doStart();
-        endpoint.getConnection().addPacketListener(this, endpoint.getFilter());
     }
 
     @Override
     protected void doStop() throws Exception {
-        endpoint.getConnection().removePacketListener(this);
         super.doStop();
+        if (muc != null) {
+        	muc.leave();
+        	muc = null;
+        }
     }
 
     public void processPacket(Packet packet) {
+        Message message = (Message)packet;
 
-        if (packet instanceof Message) {
-            Message message = (Message)packet;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("<<<< message: " + message.getBody());
-            }
-            XmppExchange exchange = endpoint.createExchange(message);
-            try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                // TODO: what should we do when a processing failure occurs??
-                e.printStackTrace();
-            }
-        } else if (packet instanceof RosterPacket) {
-            // TODO: what to do with a RosterPacket other than debug logging it
-            RosterPacket rosterPacket = (RosterPacket)packet;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Roster packet with : " + rosterPacket.getRosterItemCount() + " item(s)");
-                Iterator rosterItems = rosterPacket.getRosterItems();
-                while (rosterItems.hasNext()) {
-                    Object item = rosterItems.next();
-                    LOG.debug("Roster item: " + item);
-                }
-            }
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("<<<< ignored packet: " + packet);
-            }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recieved XMPP message: " + message.getBody());
+        }
 
+        XmppExchange exchange = endpoint.createExchange(message);
+        try {
+            getProcessor().process(exchange);
+        } catch (Exception e) {
+        	LOG.error("Error while processing message", e);
         }
     }
+
 }

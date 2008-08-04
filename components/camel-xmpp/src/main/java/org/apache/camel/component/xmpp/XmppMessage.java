@@ -56,8 +56,6 @@ public class XmppMessage extends DefaultMessage {
 
     /**
      * Returns the underlying XMPP message
-     * 
-     * @return the underlying XMPP message
      */
     public Message getXmppMessage() {
         return xmppMessage;
