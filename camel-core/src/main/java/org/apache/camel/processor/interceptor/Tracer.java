@@ -32,14 +32,14 @@ import org.apache.camel.spi.InterceptStrategy;
 public class Tracer implements InterceptStrategy {
 
     private TraceFormatter formatter = new TraceFormatter();
-    private boolean isEnabled = true;
+    private boolean enabled = true;
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
      *
      * @param context the camel context the debugger is connected to
      * @return the debugger or null if none can be found
      */
-    public static Tracer getDebugger(CamelContext context) {
+    public static Tracer getTracer(CamelContext context) {
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
             List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
@@ -67,11 +67,11 @@ public class Tracer implements InterceptStrategy {
         this.formatter = formatter;
     }
 
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
+    public void setEnabled(boolean flag) {
+        enabled = flag;
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return enabled;
     }
 }
