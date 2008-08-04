@@ -31,16 +31,16 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Report 1", "Report 2");
+        mock.expectedBodiesReceived("Reports", "Reports");
         mock.assertIsSatisfied();
     }
 
     private void prepareFiles() throws Exception {
-        String url = "file://target/exclude/";
+        String url = "file://target/exclude";
         template.sendBodyAndHeader(url, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Report 1", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(url, "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
