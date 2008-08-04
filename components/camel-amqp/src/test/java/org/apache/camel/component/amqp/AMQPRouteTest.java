@@ -68,8 +68,6 @@ public class AMQPRouteTest extends ContextTestSupport {
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         sendExchange(expectedBody);
-        // send the message twice to walk around the AMQP's drop first message issue on Windows box
-        sendExchange(expectedBody);
 
         resultEndpoint.assertIsSatisfied();
     }
