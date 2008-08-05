@@ -19,7 +19,9 @@ package org.apache.camel.component.cxf;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -30,7 +32,9 @@ import org.apache.camel.util.URISupport;
  *
  * @version $Revision$
  */
-public class CxfSoapComponent extends DefaultComponent {
+public class CxfSoapComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public CxfSoapComponent() {
         setHeaderFilterStrategy(new CxfHeaderFilterStrategy());
@@ -52,6 +56,15 @@ public class CxfSoapComponent extends DefaultComponent {
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+        
     }
 
 }

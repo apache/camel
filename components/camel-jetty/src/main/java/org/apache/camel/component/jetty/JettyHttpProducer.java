@@ -129,7 +129,7 @@ public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements 
         }
 
         // propagate headers to http request
-        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+        HeaderFilterStrategy strategy = ((HttpEndpoint)getEndpoint()).getHeaderFilterStrategy();
         for (String name : in.getHeaders().keySet()) {
             String value = in.getHeader(name, String.class);
             if ("Content-Type".equals(name)) {

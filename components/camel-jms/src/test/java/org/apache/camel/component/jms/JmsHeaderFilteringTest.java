@@ -76,15 +76,13 @@ public class JmsHeaderFilteringTest extends ContextTestSupport {
         camelContext.addComponent(componentName, jmsComponentClientAcknowledge(connectionFactory));
 
         // add "testheader" to in filter set
-        ((DefaultHeaderFilterStrategy)camelContext.getComponent(componentName)
-                .getHeaderFilterStrategy()).getInFilter().add("testheader");
+        JmsComponent component = (JmsComponent)camelContext.getComponent(componentName);
+        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getInFilter().add("testheader");
         // add "anotherheader" to out filter set
-        ((DefaultHeaderFilterStrategy)camelContext.getComponent(componentName)
-                .getHeaderFilterStrategy()).getOutFilter().add("anotherheader");
+        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getOutFilter().add("anotherheader");
         // add a regular expression pattern filter
         // notice that dots are encoded to underscores in jms headers
-        ((DefaultHeaderFilterStrategy)camelContext.getComponent(componentName)
-                .getHeaderFilterStrategy()).setInFilterPattern(IN_FILTER_PATTERN);
+        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).setInFilterPattern(IN_FILTER_PATTERN);
 
         return camelContext;
     }

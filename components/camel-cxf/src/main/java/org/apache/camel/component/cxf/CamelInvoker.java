@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
@@ -162,6 +163,9 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         } else {
             cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         }
+        
+        CxfHeaderHelper.propagateCxfToCamel(endpoint.getHeaderFilterStrategy(), exchange.getInMessage(), 
+                cxfExchange.getIn().getHeaders());
         cxfExchange.getIn().setBody(params);
         try {
             cxfConsumer.getProcessor().process(cxfExchange);

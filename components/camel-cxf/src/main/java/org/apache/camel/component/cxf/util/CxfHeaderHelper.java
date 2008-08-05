@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 
@@ -64,6 +65,9 @@ public final class CxfHeaderHelper {
 
                 if (CamelTransportConstants.CONTENT_TYPE.equals(entry.getKey())) {
                     message.put(Message.CONTENT_TYPE, entry.getValue());
+                } else if (Client.REQUEST_CONTEXT.equals(entry.getKey())
+                            || Client.RESPONSE_CONTEXT.equals(entry.getKey())) {
+                    message.put(entry.getKey(), entry.getValue());
                 } else {
                     List<String> listValue = new ArrayList<String>();
                     listValue.add(entry.getValue().toString());
@@ -71,30 +75,45 @@ public final class CxfHeaderHelper {
                 }
             }
         }
-
     }
-
 
     public static void propagateCxfToCamel(HeaderFilterStrategy strategy,
             Message message, Map<String, Object> headers) {
+
+        if (strategy == null) {
+            return;
+        }
 
         Map<String, List<String>> cxfHeaders =
             CastUtils.cast((Map)message.get(Message.PROTOCOL_HEADERS));
 
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
-                if (strategy != null
-                        && !strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue())) {
+                if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue())) {
                     headers.put(entry.getKey(), entry.getValue().get(0));
                 }
             }
         }
 
-        String contentType = (String) message.get(Message.CONTENT_TYPE);
-        if (contentType != null && strategy != null
-                && !strategy.applyFilterToExternalHeaders(Message.CONTENT_TYPE, contentType)) {
-            headers.put(CamelTransportConstants.CONTENT_TYPE, contentType);
+        // propagate content type
+        String key = Message.CONTENT_TYPE;
+        Object value = message.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value)) {
+            headers.put(CamelTransportConstants.CONTENT_TYPE, value);
         }
 
+        // propagate request context
+        key = Client.REQUEST_CONTEXT;
+        value = message.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value)) {
+            headers.put(key, value);
+        }
+
+        // propagate response context
+        key = Client.RESPONSE_CONTEXT;
+        value = message.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value)) {
+            headers.put(key, value);
+        }
     }
 }

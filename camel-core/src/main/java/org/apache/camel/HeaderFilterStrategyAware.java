@@ -16,35 +16,18 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.HeaderFilterStrategy;
+
 /**
- * A <a href="http://activemq.apache.org/camel/component.html">component</a> is
- * a factory of {@link Endpoint} objects.
+ * An interface to represent an object which can make use of
+ * injected {@link HeaderFilterStrategy}.
  * 
+ * @since 1.5
  * @version $Revision$
  */
-public interface Component<E extends Exchange> {
+public interface HeaderFilterStrategyAware {
 
-    /**
-     * Returns the context
-     * 
-     * @return the context of this component
-     */
-    CamelContext getCamelContext();
-
-    /**
-     * The {@link CamelContext} is injected into the component when it is added
-     * to it
-     */
-    void setCamelContext(CamelContext context);
-
-    /**
-     * Attempt to resolve an endpoint for the given URI if the component is
-     * capable of handling the URI
-     * 
-     * @param uri the URI to create
-     * @return a newly created endpoint or null if this component cannot create
-     *         instances of the given uri
-     */
-    Endpoint<E> createEndpoint(String uri) throws Exception;
+    HeaderFilterStrategy getHeaderFilterStrategy();
     
+    void setHeaderFilterStrategy(HeaderFilterStrategy strategy);
 }

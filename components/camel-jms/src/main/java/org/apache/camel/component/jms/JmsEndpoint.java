@@ -21,10 +21,12 @@ import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -258,4 +260,13 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
             }
         }
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (getComponent() instanceof HeaderFilterStrategyAware) {
+            return ((HeaderFilterStrategyAware)getComponent()).getHeaderFilterStrategy();
+        } else {
+            return new JmsHeaderFilterStrategy();
+        }
+    }
+
 }

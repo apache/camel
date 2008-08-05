@@ -86,7 +86,6 @@ public class CxfProducerTest extends TestCase {
 
 
     public void testInvokingSimpleServerWithParams() throws Exception {
-
         CxfExchange exchange = sendSimpleMessage();
 
         org.apache.camel.Message out = exchange.getOut();
@@ -96,6 +95,7 @@ public class CxfProducerTest extends TestCase {
         assertNotNull(responseContext);
         assertEquals("We should get the response context here", "UTF-8", responseContext.get(org.apache.cxf.message.Message.ENCODING));
         assertEquals("reply body on Camel", "echo " + TEST_MESSAGE, output[0]);
+
     }
 
 

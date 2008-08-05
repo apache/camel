@@ -27,7 +27,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -48,8 +47,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     private int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-
+    
     public DefaultComponent() {
     }
 
@@ -140,14 +138,6 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
 
     public void setExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-    
-    public void setHeaderFilterStrategy(HeaderFilterStrategy value) {
-        headerFilterStrategy = value;
     }
     
     /**

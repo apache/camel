@@ -157,7 +157,7 @@ public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncPr
         }
 
         // propagate headers as HTTP headers
-        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+        HeaderFilterStrategy strategy = ((JhcEndpoint)getEndpoint()).getHeaderFilterStrategy();
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
             String headerValue = exchange.getIn().getHeader(headerName, String.class);
             if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue)) {

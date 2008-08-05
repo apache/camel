@@ -24,8 +24,10 @@ import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,7 +49,8 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  *
  * @version $Revision:520964 $
  */
-public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware {
+public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware,
+    HeaderFilterStrategyAware {
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
@@ -56,6 +59,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
     private Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public JmsComponent() {
         setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
@@ -444,5 +448,14 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         } else {
             return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
         }
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+        
     }
 }

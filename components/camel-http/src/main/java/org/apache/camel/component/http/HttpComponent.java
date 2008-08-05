@@ -20,8 +20,10 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
@@ -33,11 +35,13 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpComponent extends DefaultComponent<HttpExchange> {
+public class HttpComponent extends DefaultComponent<HttpExchange> implements HeaderFilterStrategyAware {
 
     private HttpClientConfigurer httpClientConfigurer;
 
     private HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
+
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public HttpComponent() {
         this.setHeaderFilterStrategy(new HttpHeaderFilterStrategy());
@@ -95,5 +99,14 @@ public class HttpComponent extends DefaultComponent<HttpExchange> {
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+        
     }
 }

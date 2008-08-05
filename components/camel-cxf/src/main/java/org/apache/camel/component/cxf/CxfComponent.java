@@ -20,7 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 
 /**
@@ -28,8 +30,10 @@ import org.apache.camel.impl.DefaultComponent;
 
  * @version $Revision$
  */
-public class CxfComponent extends DefaultComponent<CxfExchange> {
+public class CxfComponent extends DefaultComponent<CxfExchange> implements HeaderFilterStrategyAware {
 
+
+    private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
 
     public CxfComponent() {
     }
@@ -45,6 +49,14 @@ public class CxfComponent extends DefaultComponent<CxfExchange> {
         setProperties(result, parameters);
         // We can check the endpoint integration here
         return result;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
     }
 
 
