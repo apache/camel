@@ -20,8 +20,10 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.params.BasicHttpParams;
@@ -29,24 +31,17 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-public class JhcComponent extends DefaultComponent<JhcExchange> {
+public class JhcComponent extends DefaultComponent<JhcExchange> implements HeaderFilterStrategyAware {
 
     private static final Log LOG = LogFactory.getLog(JhcComponent.class);
 
     private HttpParams params;
 
-    public JhcComponent() {
-        // We could import filters from http component but that also means
-        // a new dependency on camel-http
-        DefaultHeaderFilterStrategy strategy = new DefaultHeaderFilterStrategy();
-        strategy.getOutFilter().add("content-length");
-        strategy.getOutFilter().add("content-type");
-        strategy.getOutFilter().add(JhcProducer.HTTP_RESPONSE_CODE);
-        strategy.setIsLowercase(true);
+    private HeaderFilterStrategy headerFilterStrategy;
 
-        // filter headers begin with "org.apache.camel"
-        strategy.setOutFilterPattern("(org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");        
-        setHeaderFilterStrategy(strategy);
+    public JhcComponent() {
+     
+        setHeaderFilterStrategy(new JhcHeaderFilterStrategy());
         
         params = new BasicHttpParams(null)
             .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000)
@@ -67,6 +62,14 @@ public class JhcComponent extends DefaultComponent<JhcExchange> {
 
     protected Endpoint<JhcExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new JhcEndpoint(uri, this, new URI(uri.substring(uri.indexOf(':') + 1)));
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
     }
 
 }

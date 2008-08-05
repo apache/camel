@@ -26,6 +26,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -139,6 +140,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
             binding = new HttpBinding(getHeaderFilterStrategy());
         }
         return binding;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return component.getHeaderFilterStrategy();
     }
 
     public void setBinding(HttpBinding binding) {

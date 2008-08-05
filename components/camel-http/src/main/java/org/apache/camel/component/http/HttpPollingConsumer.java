@@ -70,7 +70,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
 
             // lets set the headers
             Header[] headers = method.getResponseHeaders();
-            HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+            HeaderFilterStrategy strategy = endpoint.getHeaderFilterStrategy();
             for (Header header : headers) {
                 String name = header.getName();
                 String value = header.getValue();

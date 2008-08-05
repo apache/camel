@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.component.cxf.util.CxfHeaderHelper;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.support.ContextPropertiesMapping;
@@ -54,17 +56,24 @@ public final class CxfBinding {
         return null;
     }
 
+    /**
+     * @deprecated please use {@link #createCxfMessage(HeaderFilterStrategy, CxfExchange)} instead
+     */
     public static Message createCxfMessage(CxfExchange exchange) {
+        return CxfBinding.createCxfMessage(new CxfHeaderFilterStrategy(), exchange);
+    }
+    
+    public static Message createCxfMessage(HeaderFilterStrategy strategy, CxfExchange exchange) {
+
         Message answer = exchange.getInMessage();
         CxfMessage in = exchange.getIn();
+        
         // Check the body if the POJO parameter list first
         Object body = in.getBody(List.class);
         if (body instanceof List) {
             // just set the operation's parameter
             answer.setContent(List.class, body);
-            // just set the method name
-            answer.put(CxfConstants.OPERATION_NAME, (String)in.getHeader(CxfConstants.OPERATION_NAME));
-            answer.put(CxfConstants.OPERATION_NAMESPACE, (String)in.getHeader(CxfConstants.OPERATION_NAMESPACE));
+            CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
         } else {
             // CXF uses StAX which is based on the stream API to parse the XML,
             // so the CXF transport is also based on the stream API.
@@ -74,15 +83,24 @@ public final class CxfBinding {
             if (body instanceof InputStream) {
                 answer.setContent(InputStream.class, body);
             }
+            // TODO do we propagate header the same way in non-POJO mode?
+            // CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
         }
         return answer;
     }
 
-    // Store
+    /**
+     * @deprecated please use {@link #storeCxfResponse(HeaderFilterStrategy, CxfExchange, Message)} instead.
+     */
     public static void storeCxfResponse(CxfExchange exchange, Message response) {
-        // no need to process headers as we use the CXF message
+        CxfBinding.storeCxfResponse(new CxfHeaderFilterStrategy(), exchange, response);
+    }
+    
+    public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange, 
+            Message response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
+            CxfHeaderHelper.propagateCxfToCamel(strategy, response, out.getHeaders());
             out.setMessage(response);
             DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfExchange.DATA_FORMAT);
             if (dataFormat.equals(DataFormat.MESSAGE)) {
@@ -94,9 +112,19 @@ public final class CxfBinding {
         }
     }
 
-    // Copy the Camel message to CXF message
+    /**
+     * @deprecated Please use {@link #copyMessage(HeaderFilterStrategy, org.apache.camel.Message, Message)} instead.
+     */
     public static void copyMessage(org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
+        CxfBinding.copyMessage(new CxfHeaderFilterStrategy(), camelMessage, cxfMessage);
+    }
+    
+    // Copy the Camel message to CXF message
+    public static void copyMessage(HeaderFilterStrategy strategy, 
+            org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
         InputStream is = camelMessage.getBody(InputStream.class);
+        
+        CxfHeaderHelper.propagateCamelToCxf(strategy, camelMessage.getHeaders(), cxfMessage);
         if (is != null) {
             cxfMessage.setContent(InputStream.class, is);
         } else {
@@ -117,7 +145,7 @@ public final class CxfBinding {
             response.put(Client.RESPONSE_CONTEXT, context);
         }
     }
-
+    
     public static void storeCxfResponse(CxfExchange exchange, Object response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
@@ -152,4 +180,5 @@ public final class CxfBinding {
         return responseContext;
 
     }
+
 }

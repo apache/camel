@@ -179,7 +179,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     }
 
     public void process(CxfExchange exchange) {
-        Message inMessage = CxfBinding.createCxfMessage(exchange);
+        Message inMessage = CxfBinding.createCxfMessage(endpoint.getHeaderFilterStrategy(), exchange);
         exchange.setProperty(CxfExchange.DATA_FORMAT, dataFormat);
         try {
             if (dataFormat.equals(DataFormat.POJO)) {
@@ -189,8 +189,8 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 if (parameters == null) {
                     parameters = new ArrayList();
                 }
-                String operationName = (String)inMessage.get(CxfConstants.OPERATION_NAME);
-                String operationNameSpace = (String)inMessage.get(CxfConstants.OPERATION_NAMESPACE);
+                String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
+                String operationNameSpace = exchange.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
                 // Get context from message
                 Map<String, Object> context = new HashMap<String, Object>();
                 Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
@@ -204,7 +204,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                         response.setContent(Object[].class, result);
                         // copy the response context to the response
                         CxfBinding.storeCXfResponseContext(response, responseContext);
-                        CxfBinding.storeCxfResponse(exchange, response);
+                        CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
                     } catch (Exception ex) {
                         response.setContent(Exception.class, ex);
                         CxfBinding.storeCxfFault(exchange, response);
@@ -253,7 +253,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                     invokingContext.setResponseContent(response, result);
                     // copy the response context to the response
                     CxfBinding.storeCXfResponseContext(response, responseContext);
-                    CxfBinding.storeCxfResponse(exchange, response);
+                    CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
                 } catch (Exception e) {
                     response.setContent(Exception.class, e);
                     CxfBinding.storeCxfFault(exchange, response);

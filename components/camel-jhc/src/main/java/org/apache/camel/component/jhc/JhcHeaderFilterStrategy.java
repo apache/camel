@@ -14,37 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.component.jhc;
+
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
- * A <a href="http://activemq.apache.org/camel/component.html">component</a> is
- * a factory of {@link Endpoint} objects.
  * 
  * @version $Revision$
  */
-public interface Component<E extends Exchange> {
+public class JhcHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
-    /**
-     * Returns the context
-     * 
-     * @return the context of this component
-     */
-    CamelContext getCamelContext();
-
-    /**
-     * The {@link CamelContext} is injected into the component when it is added
-     * to it
-     */
-    void setCamelContext(CamelContext context);
-
-    /**
-     * Attempt to resolve an endpoint for the given URI if the component is
-     * capable of handling the URI
-     * 
-     * @param uri the URI to create
-     * @return a newly created endpoint or null if this component cannot create
-     *         instances of the given uri
-     */
-    Endpoint<E> createEndpoint(String uri) throws Exception;
+    public JhcHeaderFilterStrategy() {
+        initialize();
+    }
     
+    protected void initialize() {
+        // We could import filters from http component but that also means
+        // a new dependency on camel-http
+        getOutFilter().add("content-length");
+        getOutFilter().add("content-type");
+        getOutFilter().add(JhcProducer.HTTP_RESPONSE_CODE);
+        setIsLowercase(true);
+
+        // filter headers begin with "org.apache.camel"
+        setOutFilterPattern("(org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");   
+    }
 }

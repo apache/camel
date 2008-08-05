@@ -29,7 +29,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -198,11 +197,6 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
-    
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return component.getHeaderFilterStrategy();
-    }
-
     
     @Deprecated
     public CamelContext getContext() {

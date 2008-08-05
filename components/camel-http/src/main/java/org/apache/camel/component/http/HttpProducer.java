@@ -63,7 +63,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
         HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
-        HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
+        HeaderFilterStrategy strategy = ((HttpEndpoint)getEndpoint()).getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers
         for (String headerName : in.getHeaders().keySet()) {

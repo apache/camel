@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.message.Message;
@@ -192,5 +193,8 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         }
     }
 
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return component.getHeaderFilterStrategy();
+    }
 
 }
