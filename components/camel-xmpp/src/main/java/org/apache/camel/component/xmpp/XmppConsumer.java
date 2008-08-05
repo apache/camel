@@ -30,7 +30,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 
 /**
  * A {@link org.apache.camel.Consumer Consumer} which listens to XMPP packets
- * 
+ *
  * @version $Revision$
  */
 public class XmppConsumer extends DefaultConsumer<XmppExchange> implements PacketListener {
@@ -47,16 +47,16 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     @Override
     protected void doStart() throws Exception {
         if (endpoint.getRoom() == null) {
-        	privateChat = endpoint.getConnection().createChat(endpoint.getParticipant());
-	        privateChat.addMessageListener(this);
-	        LOG.info("Open chat to " + privateChat.getParticipant());
+            privateChat = endpoint.getConnection().createChat(endpoint.getParticipant());
+            privateChat.addMessageListener(this);
+            LOG.info("Open chat to " + privateChat.getParticipant());
         } else {
-        	muc = new MultiUserChat(endpoint.getConnection(), endpoint.resolveRoom());
-        	muc.addMessageListener(this);
-        	DiscussionHistory history = new DiscussionHistory();
-        	history.setMaxChars(0); // we do not want any historical messages
-        	muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-        	LOG.info("Joined room: " + muc.getRoom());
+            muc = new MultiUserChat(endpoint.getConnection(), endpoint.resolveRoom());
+            muc.addMessageListener(this);
+            DiscussionHistory history = new DiscussionHistory();
+            history.setMaxChars(0); // we do not want any historical messages
+            muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
+            LOG.info("Joined room: " + muc.getRoom());
         }
         super.doStart();
     }
@@ -65,8 +65,8 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     protected void doStop() throws Exception {
         super.doStop();
         if (muc != null) {
-        	muc.leave();
-        	muc = null;
+            muc.leave();
+            muc = null;
         }
     }
 
@@ -81,7 +81,7 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-        	LOG.error("Error while processing message", e);
+            LOG.error("Error while processing message", e);
         }
     }
 
