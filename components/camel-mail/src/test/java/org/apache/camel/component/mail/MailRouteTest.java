@@ -34,6 +34,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailRouteTest extends ContextTestSupport {
 
     public void testSendAndReceiveMails() throws Exception {
+        Mailbox.clearAll();
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("hello world!");
 

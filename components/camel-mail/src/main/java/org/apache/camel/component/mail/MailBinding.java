@@ -16,10 +16,11 @@
  */
 package org.apache.camel.component.mail;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-
 import javax.activation.DataHandler;
+import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -29,6 +30,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
@@ -43,7 +45,7 @@ import org.apache.camel.converter.ObjectConverter;
 public class MailBinding {
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
-        throws MessagingException {
+        throws MessagingException, IOException {
 
         appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
 
@@ -71,9 +73,15 @@ public class MailBinding {
         }
 
         if (exchange.getIn().hasAttachments()) {
-            appendAttachmentsFromCamel(mimeMessage, exchange, exchange.getIn());
+            appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
         } else {
-            mimeMessage.setText(exchange.getIn().getBody(String.class));
+            if ("text/html".equals(endpoint.getConfiguration().getContentType())) {
+                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), "text/html");
+                mimeMessage.setDataHandler(new DataHandler(ds));
+            } else {
+                // its just text/plain
+                mimeMessage.setText(exchange.getIn().getBody(String.class));
+            }
         }
     }
 
@@ -120,8 +128,8 @@ public class MailBinding {
     /**
      * Appends the Mail attachments from the Camel {@link MailMessage}
      */
-    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, Exchange exchange,
-                                              org.apache.camel.Message camelMessage)
+    protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, org.apache.camel.Message camelMessage,
+                                              MailConfiguration configuration)
         throws MessagingException {
 
         // Create a Multipart
@@ -130,7 +138,7 @@ public class MailBinding {
         // fill the body with text
         multipart.setSubType("mixed");
         MimeBodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setContent(exchange.getIn().getBody(String.class), "text/plain");
+        textBodyPart.setContent(camelMessage.getBody(String.class), configuration.getContentType());
         multipart.addBodyPart(textBodyPart);
 
         for (Map.Entry<String, DataHandler> entry : camelMessage.getAttachments().entrySet()) {

@@ -28,6 +28,8 @@ import org.jvnet.mock_javamail.Mailbox;
 public class MailRecipientsTest extends ContextTestSupport {
 
     public void testMultiRecipients() throws Exception {
+        Mailbox.clearAll();
+
         sendBody("direct:a", "Camel does really rock");
 
         Mailbox inbox = Mailbox.get("camel@riders.org");

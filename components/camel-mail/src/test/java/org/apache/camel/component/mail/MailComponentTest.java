@@ -72,6 +72,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("contentType", "text/plain", config.getContentType());
     }
 
     public void testDefaultPOP3Configuration() throws Exception {
@@ -89,6 +90,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("contentType", "text/plain", config.getContentType());
     }
 
     public void testDefaultIMAPConfiguration() throws Exception {
@@ -106,11 +108,12 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("contentType", "text/plain", config.getContentType());
     }
 
     public void testManyConfigurations() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
-            + "&from=me@camelriders.org&deleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders");
+            + "&from=me@camelriders.org&deleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders&contentType=text/html");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
@@ -124,6 +127,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("contentType", "text/html", config.getContentType());
     }
 
     public void testDestination() {

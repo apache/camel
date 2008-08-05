@@ -49,6 +49,7 @@ public class MailFetchSizeZeroTest extends ContextTestSupport {
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
+        Mailbox.clearAll();
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         Store store = sender.getSession().getStore("pop3");
         store.connect("localhost", 25, "bill", "secret");
