@@ -65,7 +65,8 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
             return createGroupChatProducer();
         } else {
             if (participant == null) {
-                throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
+                throw new IllegalArgumentException("No room or participant configured on this endpoint: "
+                                                   + this);
             }
             return createPrivateChatProducer(participant);
         }
@@ -80,7 +81,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     }
 
     public Consumer<XmppExchange> createConsumer(Processor processor) throws Exception {
-    		return new XmppConsumer(this, processor);
+        return new XmppConsumer(this, processor);
     }
 
     @Override
@@ -180,11 +181,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     public void setParticipant(String participant) {
         this.participant = participant;
     }
-    
+
     public String getNickname() {
         return nickname != null ? nickname : getUser();
     }
-    
+
     public void setNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -234,28 +235,28 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         }
         return connection;
     }
-    
+
     /*
-     * If there is no "@" symbol in the room, find the chat service JID and return fully
-     * qualified JID for the room as room@conference.server.domain
+     * If there is no "@" symbol in the room, find the chat service JID and
+     * return fully qualified JID for the room as room@conference.server.domain
      */
     public String resolveRoom() throws XMPPException, CamelException {
-    	if (room == null) {
-    		throw new IllegalArgumentException("room is not specified");
+        if (room == null) {
+            throw new IllegalArgumentException("room is not specified");
         }
 
         if (room.indexOf('@', 0) != -1) {
-    		return room;
+            return room;
         }
 
         XMPPConnection conn = getConnection();
-    	Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
-    	if (!iterator.hasNext()) {
-    		throw new CamelException("Can not find Multi User Chat service");
+        Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
+        if (!iterator.hasNext()) {
+            throw new CamelException("Can not find Multi User Chat service");
         }
         String chatServer = iterator.next();
-    	if (LOG.isInfoEnabled()) {
-    		LOG.info("Detected chat server: " + chatServer);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Detected chat server: " + chatServer);
         }
 
         return room + "@" + chatServer;
