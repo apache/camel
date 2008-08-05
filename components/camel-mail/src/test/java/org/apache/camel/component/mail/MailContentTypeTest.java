@@ -16,39 +16,47 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Message;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for Mail subject support.
+ * Unit test for contentType option.
  */
-public class MailSubjectTest extends ContextTestSupport {
-    private String subject = "Camel rocks";
+public class MailContentTypeTest extends ContextTestSupport {
 
-    public void testMailSubject() throws Exception {
+    public void testSendHtmlMail() throws Exception {
         Mailbox.clearAll();
 
-        String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBody("direct:a", body);
+        sendBody("direct:a", "<html><body><h1>Hello</h1>World</body></html>");
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("subject", subject);
-        mock.expectedBodiesReceived(body);
-        mock.assertIsSatisfied();
+        Mailbox box = Mailbox.get("claus@localhost");
+        Message msg = box.get(0);
+
+        assertTrue(msg.getContentType().startsWith("text/html"));
+        assertEquals("<html><body><h1>Hello</h1>World</body></html>", msg.getContent());
+    }
+
+    public void testSendPlainMail() throws Exception {
+        Mailbox.clearAll();
+
+        sendBody("direct:b", "Hello World");
+
+        Mailbox box = Mailbox.get("claus@localhost");
+        Message msg = box.get(0);
+        assertTrue(msg.getContentType().startsWith("text/plain"));
+        assertEquals("Hello World", msg.getContent());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
-                // END SNIPPET: e1
-
-                from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");
+                from("direct:a").to("smtp://claus@localhost?contentType=text/html");
+                from("direct:b").to("smtp://claus@localhost?contentType=text/plain");
             }
         };
     }
+
 }

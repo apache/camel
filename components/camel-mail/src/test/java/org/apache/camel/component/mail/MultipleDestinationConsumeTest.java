@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * @version $Revision$
@@ -41,6 +42,8 @@ public class MultipleDestinationConsumeTest extends ContextTestSupport {
     private Session mailSession;
 
     public void testSendAndReceiveMails() throws Exception {
+        Mailbox.clearAll();
+
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
 

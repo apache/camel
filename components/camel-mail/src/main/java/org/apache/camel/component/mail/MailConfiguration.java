@@ -58,6 +58,7 @@ public class MailConfiguration {
     private boolean debugMode;
     private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
+    private String contentType = "text/plain";
 
     public MailConfiguration() {
     }
@@ -384,5 +385,13 @@ public class MailConfiguration {
 
     public void setDummyTrustManager(boolean dummyTrustManager) {
         this.dummyTrustManager = dummyTrustManager;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 }

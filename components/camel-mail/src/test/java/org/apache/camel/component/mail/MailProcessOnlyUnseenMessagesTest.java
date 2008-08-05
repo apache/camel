@@ -26,6 +26,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.jvnet.mock_javamail.Mailbox;
 
 /**
  * Unit test for processOnlyUnseenMessages option.
@@ -54,6 +55,7 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
+        Mailbox.clearAll();
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", 25, "claus", "secret");
