@@ -34,8 +34,7 @@
     <!--<module>camel-xsddoc</module>-->
     <module>maven</module>
     <module>archetypes</module>
-    <module>camel-manual</module>
-    <module>camel-gshell</module>
+    <module>camel-manual</module>   
   </modules>
 
 </project>
