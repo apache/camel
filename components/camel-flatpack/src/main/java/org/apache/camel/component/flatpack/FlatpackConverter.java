@@ -23,7 +23,7 @@ import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Converter
 public final class FlatpackConverter {

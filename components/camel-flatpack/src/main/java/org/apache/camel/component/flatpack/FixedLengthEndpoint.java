@@ -42,7 +42,7 @@ import org.springframework.core.io.Resource;
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Endpoint</a>
  * for working with fixed width and delimited files
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FixedLengthEndpoint extends DefaultPollingEndpoint<Exchange> {
     private final Resource resource;
