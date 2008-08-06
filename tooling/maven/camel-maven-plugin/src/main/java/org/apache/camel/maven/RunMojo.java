@@ -163,6 +163,13 @@ public class RunMojo extends AbstractExecMojo {
     private boolean trace;
 
     /**
+     * Output all routes to the specified XML file
+     *
+     * @parameter expression="${camel.routesOutputFile}"
+     */
+    private String routesOutputFile;    
+    
+    /**
      * The main class to execute.
      *
      * @parameter expression="${camel.mainClass}"
@@ -342,6 +349,11 @@ public class RunMojo extends AbstractExecMojo {
             args.add("-t");
         }
 
+        if (routesOutputFile != null) {
+            args.add("-output");
+            args.add(routesOutputFile);
+        }        
+        
         if (applicationContextUri != null) {
             args.add("-a");
             args.add(applicationContextUri);

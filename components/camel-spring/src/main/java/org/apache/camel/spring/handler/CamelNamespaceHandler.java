@@ -66,7 +66,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<String> parserElementNames = new HashSet<String>();
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
-    private Binder<Node> binder;
+    protected Binder<Node> binder;
 
     public void init() {
         // remoting

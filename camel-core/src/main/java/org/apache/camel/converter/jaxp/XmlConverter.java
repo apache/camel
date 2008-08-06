@@ -26,6 +26,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
+import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -97,21 +98,38 @@ public class XmlConverter {
     }
 
     /**
+     * Returns the default set of output properties for conversions.
+     */
+    public Properties defaultOutputProperties() {
+        Properties properties = new Properties();
+        properties.put(OutputKeys.ENCODING, defaultCharset);
+        properties.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        return properties;
+    }
+
+    /**
      * Converts the given input Source into the required result
      */
     public void toResult(Source source, Result result) throws TransformerException {
+        toResult(source, result, defaultOutputProperties());
+    }   
+    
+    /**
+     * Converts the given input Source into the required result
+     */
+    public void toResult(Source source, Result result, Properties outputProperties) throws TransformerException {
         if (source == null) {
             return;
         }
+        
         Transformer transformer = createTransfomer();
         if (transformer == null) {
             throw new TransformerException("Could not create a transformer - JAXP is misconfigured!");
         }
-        transformer.setOutputProperty(OutputKeys.ENCODING, defaultCharset);
-        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+        transformer.setOutputProperties(outputProperties);
         transformer.transform(source, result);
-    }
-
+    } 
+    
     /**
      * Converts the given byte[] to a Source
      */
