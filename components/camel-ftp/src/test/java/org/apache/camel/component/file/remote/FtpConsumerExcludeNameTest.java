@@ -33,7 +33,7 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
     public void testExludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Report 1", "Report 2");
+        mock.expectedBodiesReceived("Reports", "Reports");
         mock.assertIsSatisfied();
     }
 
@@ -52,9 +52,9 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + port + "/excludename/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(ftpUrl, "Report 1", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(ftpUrl, "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
