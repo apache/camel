@@ -16,43 +16,34 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
-import java.util.HashMap;
-import javax.mail.Message;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for Mail using camel headers to set recipeient subject.
+ * Unit test for Mail using @ in username option
  */
-public class MailUsingHeadersTest extends ContextTestSupport {
+public class MailUsernameWithAtSignTest extends ContextTestSupport {
 
-    public void testMailUsingHeaders() throws Exception {
+    public void testMailUsingAtSignInUsername() throws Exception {
         Mailbox.clearAll();
 
-        // START SNIPPET: e1
-        Map map = new HashMap();
-        map.put("To", "davsclaus@apache.org");
-        map.put("From", "jstrachan@apache.org");
-        map.put("Subject", "Camel rocks");
-
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
-        template.sendBodyAndHeaders("smtp://davsclaus@apache.org", body, map);
-        // END SNIPPET: e1
+        template.sendBody("direct:a", body);
 
-        Mailbox box = Mailbox.get("davsclaus@apache.org");
-        Message msg = box.get(0);
-        assertEquals("davsclaus@apache.org", msg.getRecipients(Message.RecipientType.TO)[0].toString());
-        assertEquals("jstrachan@apache.org", msg.getFrom()[0].toString());
-        assertEquals("Camel rocks", msg.getSubject());
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived(body);
+        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // no routes
+                from("direct:a").to("smtp://localhost?username=james@localhost");
+
+                from("pop3://localhost?username=james&password=secret&consumer.delay=1000").to("mock:result");
             }
         };
     }

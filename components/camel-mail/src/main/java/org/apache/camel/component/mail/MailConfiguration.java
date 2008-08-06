@@ -79,11 +79,6 @@ public class MailConfiguration {
         String userInfo = uri.getUserInfo();
         if (userInfo != null) {
             setUsername(userInfo);
-
-            // set default destination to userInfo@host for backwards compatibility
-            // can be overridden by URI parameters
-            String address = userInfo + "@" + host;
-            recipients.put(Message.RecipientType.TO, address);
         }
 
         int port = uri.getPort();
@@ -265,7 +260,10 @@ public class MailConfiguration {
         if (!recipients.containsKey(Message.RecipientType.TO)) {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
-            String address = username + "@" + host;
+            String address = username;
+            if (address.indexOf("@") == -1) {
+                address += "@" + host;
+            }
             recipients.put(Message.RecipientType.TO, address);
         }
     }
