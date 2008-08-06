@@ -32,7 +32,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
     public void testFtpRegexPattern() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Report 1", "Report 2");
+        mock.expectedBodiesReceived("Reports", "Reports");
         mock.assertIsSatisfied();
     }
 
@@ -51,9 +51,9 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + port + "/regexp/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(ftpUrl, "Report 1", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
         template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(ftpUrl, "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
