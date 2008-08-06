@@ -28,7 +28,7 @@ import org.springframework.core.io.Resource;
  * A <a href="http://flatpack.sourceforge.net/">Flatpack Component</a>
  * for working with fixed width and delimited files
  *
- * @version $Revision: 655776 $
+ * @version $Revision$
  */
 public class FlatpackComponent extends ResourceBasedComponent {
 

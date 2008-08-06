@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class FlatpackDataFormat implements DataFormat {
     private char delimiter = ',';

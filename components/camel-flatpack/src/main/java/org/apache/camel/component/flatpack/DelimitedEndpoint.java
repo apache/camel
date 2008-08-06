@@ -27,7 +27,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.springframework.core.io.Resource;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DelimitedEndpoint extends FixedLengthEndpoint {
     private char delimiter = ',';

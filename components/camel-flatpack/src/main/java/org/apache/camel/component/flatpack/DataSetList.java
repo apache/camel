@@ -22,7 +22,7 @@ import java.util.Iterator;
 import net.sf.flatpack.DataSet;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class DataSetList extends AbstractList {
     private final DataSet dataSet;
