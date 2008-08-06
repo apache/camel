@@ -31,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * A delay is also used after a rollback
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements Cloneable, InitializingBean {
 
