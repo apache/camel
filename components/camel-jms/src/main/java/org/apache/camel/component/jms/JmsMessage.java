@@ -161,6 +161,10 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     protected String createMessageId() {
+        if (jmsMessage == null) {
+            LOG.info("The jmsMessage is not set yet, call the super's createMessageId");
+            return super.createMessageId();
+        }
         try {
             String id = getDestinationAsString(jmsMessage.getJMSDestination()) + jmsMessage.getJMSMessageID();
             return getSanitizedString(id);
