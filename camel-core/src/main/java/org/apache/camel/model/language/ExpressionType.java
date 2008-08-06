@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
@@ -45,6 +46,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
+@XmlRootElement
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExpressionType implements Expression<Exchange>, Predicate<Exchange> {

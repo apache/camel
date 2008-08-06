@@ -33,6 +33,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.spring.handler.ModelFileGenerator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.RouteDotGenerator;
 import org.apache.commons.logging.Log;
@@ -61,6 +62,7 @@ public class Main extends ServiceSupport {
     private long duration = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private String dotOutputDir;
+    private String routesOutputFile;
     private boolean aggregateDot;
     private boolean debug;
     private boolean trace;
@@ -129,6 +131,12 @@ public class Main extends ServiceSupport {
                 enableTrace();
             }
         });
+        addOption(new ParameterOption("out", "output", "Output all routes to the specified XML file", "filename") {
+            protected void doProcess(String arg, String parameter,
+                    LinkedList<String> remainingArgs) {
+                setRoutesOutputFile(parameter);
+            }
+        });
     }
 
     public static void main(String... args) {
@@ -195,7 +203,7 @@ public class Main extends ServiceSupport {
     }
 
     /**
-     * Parses the commandl ine arguments
+     * Parses the command line arguments
      */
     public void parseArguments(String[] arguments) {
         LinkedList<String> args = new LinkedList<String>(Arrays.asList(arguments));
@@ -409,6 +417,14 @@ public class Main extends ServiceSupport {
         setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/trace.xml");
     }
 
+    public void setRoutesOutputFile(String routesOutputFile) {
+        this.routesOutputFile = routesOutputFile;         
+    }
+    
+    public String getRoutesOutputFile() {
+        return routesOutputFile;         
+    }    
+    
     /**
      * Returns the currently active debugger if one is enabled
      *
@@ -529,6 +545,18 @@ public class Main extends ServiceSupport {
 
         if (isAggregateDot()) {
             generateDot("aggregate", aggregateSpringCamelContext(applicationContext), 1);
+        }
+        
+        if (!"".equals(getRoutesOutputFile())) {
+            outputRoutesToFile();
+        }
+    }
+
+    private void outputRoutesToFile() throws IOException {
+        if (ObjectHelper.isNotNullAndNonEmpty(getRoutesOutputFile())) {
+            LOG.info("Generating routes as XML in the file named: " + getRoutesOutputFile());
+            ModelFileGenerator generator = new ModelFileGenerator();
+            generator.marshalRoutesUsingJaxb(getRoutesOutputFile(), getRouteDefinitions());
         }
     }
 
