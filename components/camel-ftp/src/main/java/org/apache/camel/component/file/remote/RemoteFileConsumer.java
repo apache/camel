@@ -28,7 +28,7 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected RemoteFileEndpoint<T> endpoint;
     protected long lastPollTime;
 
-    protected boolean recursive = true;
+    protected boolean recursive;
     protected String regexPattern;
     protected boolean setNames = true;
     protected boolean exclusiveReadLock = true;
