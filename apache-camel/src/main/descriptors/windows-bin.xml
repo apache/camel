@@ -109,6 +109,7 @@
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-hamcrest</include>
+        <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>
         <include>org.apache.camel:camel-ibatis</include>
         <include>org.apache.camel:camel-irc</include>

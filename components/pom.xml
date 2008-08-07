@@ -82,6 +82,7 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-spring-integration</module>   
+    <module>camel-hl7</module>
   </modules>
 
 </project>
