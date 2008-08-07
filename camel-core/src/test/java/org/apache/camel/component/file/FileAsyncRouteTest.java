@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileAsyncRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-async-inbox?delete=true&consumer.delay=10000";
+    protected String uri = "file:target/test-async-inbox?delete=true&consumer.delay=10000&consumer.recurive=true";
 
     CountDownLatch receivedLatch = new CountDownLatch(1);
     CountDownLatch processingLatch = new CountDownLatch(1);

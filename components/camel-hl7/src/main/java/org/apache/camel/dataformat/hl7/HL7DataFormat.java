@@ -30,8 +30,8 @@ import ca.uhn.hl7v2.model.Message;
  * <p/>
  * This data format supports two operations:
  * <ul>
- *   <li>marshal = from Message to String (used when returning as response using the HL7 MLLP codec).</li>
- *   <li>unmarshal = from String to Message (used when recieving streamed data from the HL7 MLLP codec)</li>
+ *   <li>marshal = from Message to String (can be used when returning as response using the HL7 MLLP codec)</li>
+ *   <li>unmarshal = from String to Message (can be used when receiving streamed data from the HL7 MLLP codec)</li>
  * </ul>
  * <p/>
  * Uses the <a href="http://hl7api.sourceforge.net/index.html">HAPI (HL7 API)</a> for HL7 parsing.
