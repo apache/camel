@@ -49,7 +49,7 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
         result.expectedBodiesReceived(expectedBody);
         result.setResultWaitTime(5000);
 
-        template.sendBodyAndHeader(inputFile, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(inputFile, expectedBody, FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }

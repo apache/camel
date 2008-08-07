@@ -95,6 +95,18 @@
 
   <repositories>
     <repository>
+      <id>java.net</id>
+      <name>java.net Maven Repository</name>
+      <url>http://download.java.net/maven/1/</url>
+      <layout>legacy</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>spring.osgi</id>
       <url>http://static.springframework.org/maven2</url>
     </repository>

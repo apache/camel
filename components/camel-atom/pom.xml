@@ -37,6 +37,14 @@
     <camel.osgi.export.pkg>org.apache.camel.component.atom.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>apache.incubating.releases</id>
+      <name>Apache Incubating Release Distribution Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -86,5 +94,6 @@
   </dependencies>
 
 </project>
+
 
 

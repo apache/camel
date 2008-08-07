@@ -38,6 +38,14 @@
     <qpid-version>1.0-incubating-M2.1</qpid-version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>apache.incubating.releases</id>
+      <name>Apache Incubating Release Distribution Repository</name>
+      <url>http://people.apache.org/repo/m2-incubating-repository</url>
+    </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
