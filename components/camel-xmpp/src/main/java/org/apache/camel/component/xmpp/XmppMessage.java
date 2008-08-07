@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -26,7 +27,7 @@ import org.jivesoftware.smack.packet.Message;
 
 /**
  * Represents a {@link org.apache.camel.Message} for working with XMPP
- * 
+ *
  * @version $Revision:520964 $
  */
 public class XmppMessage extends DefaultMessage {
@@ -81,8 +82,8 @@ public class XmppMessage extends DefaultMessage {
     @Override
     public Map<String, Object> getHeaders() {
         Map<String, Object> answer = new HashMap<String, Object>();
-        Iterator iter = xmppMessage.getPropertyNames();
-        while (iter.hasNext()) {
+        Collection<String> propertyNames = xmppMessage.getPropertyNames();
+        for (Iterator iter = propertyNames.iterator(); iter.hasNext();) {
             String name = (String)iter.next();
             answer.put(name, xmppMessage.getProperty(name));
         }

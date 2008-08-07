@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.packet.Message;
@@ -33,7 +34,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  *
  * @version $Revision$
  */
-public class XmppConsumer extends DefaultConsumer<XmppExchange> implements PacketListener {
+public class XmppConsumer extends DefaultConsumer<XmppExchange> implements PacketListener, MessageListener {
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private Chat privateChat;
@@ -47,8 +48,7 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
     @Override
     protected void doStart() throws Exception {
         if (endpoint.getRoom() == null) {
-            privateChat = endpoint.getConnection().createChat(endpoint.getParticipant());
-            privateChat.addMessageListener(this);
+            privateChat = endpoint.getConnection().getChatManager().createChat(endpoint.getParticipant(), this);
             LOG.info("Open chat to " + privateChat.getParticipant());
         } else {
             muc = new MultiUserChat(endpoint.getConnection(), endpoint.resolveRoom());
@@ -83,6 +83,10 @@ public class XmppConsumer extends DefaultConsumer<XmppExchange> implements Packe
         } catch (Exception e) {
             LOG.error("Error while processing message", e);
         }
+    }
+
+    public void processMessage(Chat chat, Message message) {
+        processPacket(message);
     }
 
 }

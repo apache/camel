@@ -40,7 +40,8 @@ public class XmppBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            if (shouldOutputHeader(exchange, name, value)) {
+            // BUG?
+            if (value != null && shouldOutputHeader(exchange, name, value)) {
                 message.setProperty(name, value);
             }
         }

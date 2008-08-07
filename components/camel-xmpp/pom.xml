@@ -37,6 +37,15 @@
 	<camel.osgi.export.pkg>org.apache.camel.component.xmpp.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+  	<!-- ServiceMix repo -->
+  	<repository>
+  		<id>servicemix</id>
+  		<name>Apache ServiceMix Repository</name>
+  		<url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+  	</repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>
@@ -50,14 +59,14 @@
     </dependency>
 
     <dependency>
-      <groupId>jivesoftware</groupId>
+      <groupId>org.igniterealtime.smack</groupId>
       <artifactId>smack</artifactId>
-      <version>2.2.1</version>
+      <version>3.0.4</version>
     </dependency>
     <dependency>
-      <groupId>jivesoftware</groupId>
+      <groupId>org.igniterealtime.smack</groupId>
       <artifactId>smackx</artifactId>
-      <version>2.2.1</version>
+      <version>3.0.4</version>
     </dependency>
     <!-- to allow Spring annotations (jmx) to be tested -->
     <dependency>
