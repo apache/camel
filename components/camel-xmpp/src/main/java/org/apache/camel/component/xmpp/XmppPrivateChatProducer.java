@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
 
@@ -31,7 +32,7 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
     private final String participant;
-    private Chat chat;
+
 
     public XmppPrivateChatProducer(XmppEndpoint endpoint, String participant) {
         super(endpoint);
@@ -43,16 +44,31 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) {
-        // TODO it would be nice if we could reuse the message from the exchange
-        Message message = chat.createMessage();
-        message.setTo(participant);
-        message.setThread(exchange.getExchangeId());
+        String threadId = exchange.getExchangeId();
 
-        endpoint.getBinding().populateXmppMessage(message, exchange);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">>>> message: " + message.getBody());
-        }
         try {
+            Chat chat = endpoint.getConnection().getChatManager().getThreadChat(threadId);
+
+            if(chat == null) {
+              chat = endpoint.getConnection().getChatManager().createChat(getParticipant(), threadId, new MessageListener() {
+                public void processMessage(Chat chat, Message message) {
+                  // not here to do conversation
+                }
+              });
+            }
+
+            // TODO it would be nice if we could reuse the message from the exchange
+            Message message = new Message();
+            message.setTo(participant);
+            //message.setFrom(endpoint.getUser());
+            message.setThread(threadId);
+            //message.setType(Message.Type.normal);
+
+            endpoint.getBinding().populateXmppMessage(message, exchange);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(">>>> message: " + message.getBody());
+            }
+
             chat.sendMessage(message);
         } catch (XMPPException e) {
             throw new RuntimeXmppException(e);
@@ -62,26 +78,16 @@ public class XmppPrivateChatProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (chat == null) {
-            chat = endpoint.getConnection().createChat(getParticipant());
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        chat = null;
         super.doStop();
     }
 
     // Properties
     // -------------------------------------------------------------------------
-    public Chat getChat() {
-        return chat;
-    }
 
-    public void setChat(Chat chat) {
-        this.chat = chat;
-    }
 
     public String getParticipant() {
         return participant;

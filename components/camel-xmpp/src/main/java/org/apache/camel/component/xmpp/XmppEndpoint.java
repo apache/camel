@@ -27,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.AccountManager;
+import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -206,10 +207,13 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     protected XMPPConnection createConnection() throws XMPPException {
         XMPPConnection connection;
         if (port > 0) {
-            connection = new XMPPConnection(host, port);
+            connection = new XMPPConnection(new ConnectionConfiguration(host, port));
         } else {
             connection = new XMPPConnection(host);
         }
+
+        connection.connect();
+
         if (login && !connection.isAuthenticated()) {
             if (user != null) {
                 LOG.info("Logging in to XMPP as user: " + user + " on connection: " + connection);
