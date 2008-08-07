@@ -25,8 +25,8 @@
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
-      <from uri="file://src/test/data?noop=true"/>
-        <to uri="test:file://src/test/data?noop=true"/>
+      <from uri="file://src/test/data?noop=true&amp;consumer.recursive=true"/>
+        <to uri="test:file://src/test/data?noop=true&amp;consumer.recursive=true"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

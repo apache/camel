@@ -39,6 +39,13 @@
     <shade.version>1.0.1</shade.version>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>uface.m2</id>
+      <url>http://uface.googlecode.com/svn/maven/</url>
+      <name>UFace Maven Repository</name>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>

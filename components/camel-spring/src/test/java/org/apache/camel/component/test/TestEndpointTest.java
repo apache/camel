@@ -39,7 +39,7 @@ public class TestEndpointTest extends AbstractJUnit38SpringContextTests {
     @Autowired
     protected CamelContext camelContext;
 
-    @EndpointInject(uri = "test:file://src/test/data?noop=true")
+    @EndpointInject(uri = "test:file://src/test/data?noop=true&consumer.recursive=true")
     protected TestEndpoint endpoint;
 
     public void testMocksAreValid() throws Exception {

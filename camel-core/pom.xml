@@ -41,6 +41,22 @@
     </camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+    <!-- for JAXB dependency -->
+    <repository>
+      <id>java.net</id>
+      <name>java.net Maven Repository</name>
+      <url>http://download.java.net/maven/1/</url>
+      <layout>legacy</layout>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
+  </repositories>
+
   <dependencies>
 
       <!-- required dependencies by camel-core -->

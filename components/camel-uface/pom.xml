@@ -37,6 +37,14 @@
     <camel.osgi.export.pkg>org.apache.camel.component.uface.*</camel.osgi.export.pkg>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>uface.m2</id>
+      <url>http://uface.googlecode.com/svn/maven/</url>
+      <name>UFace Maven Repository</name>
+    </repository>
+  </repositories>
+
   <dependencies>
 
     <dependency>

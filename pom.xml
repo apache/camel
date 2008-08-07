@@ -19,6 +19,11 @@
 
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
+  <parent>
+    <groupId>org.apache</groupId>
+    <artifactId>apache</artifactId>
+    <version>4</version>
+  </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -121,96 +126,6 @@
       <post>camel-commits@activemq.apache.org</post>
     </mailingList>
   </mailingLists>
-
-  <repositories>
-    <repository>
-      <id>repo1.maven</id>
-      <name>Maven Central Repo</name>
-      <url>http://repo1.maven.org/maven2/</url>
-    </repository>
-    <repository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-    </repository>
-    <repository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-    </repository>
-    <repository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-    <repository>
-      <id>uface.m2</id>
-      <url>http://uface.googlecode.com/svn/maven/</url>
-      <name>UFace Maven Repository</name>
-    </repository>
-    <!-- for latest jaxb jars -->
-    <repository>
-      <id>java.net</id>
-      <name>java.net Maven Repository</name>
-      <url>http://download.java.net/maven/1/</url>
-      <layout>legacy</layout>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
-
-  <pluginRepositories>
-    <pluginRepository>
-      <id>apache.incubating.releases</id>
-      <name>Apache Incubating Release Distribution Repository</name>
-      <url>http://people.apache.org/repo/m2-incubating-repository</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-    <pluginRepository>
-      <id>maven2-repository.dev.java.net</id>
-      <name>Java.net Repository for Maven</name>
-      <url>http://download.java.net/maven/2</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>codehaus.repo</id>
-      <name>Codehaus Repository</name>
-      <url>http://repository.codehaus.org/</url>
-    </pluginRepository>
-    <pluginRepository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Dependency Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
 
   <distributionManagement>
     <repository>
