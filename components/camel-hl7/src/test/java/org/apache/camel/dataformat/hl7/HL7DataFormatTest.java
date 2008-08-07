@@ -67,6 +67,7 @@ public class HL7DataFormatTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:marshal").marshal(hl7).to("mock:marshal");
+                
                 from("direct:unmarshal").unmarshal(hl7).to("mock:unmarshal");
             }
         };

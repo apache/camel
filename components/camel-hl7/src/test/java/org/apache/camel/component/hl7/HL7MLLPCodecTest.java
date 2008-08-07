@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.hl7;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -34,11 +34,14 @@ import ca.uhn.hl7v2.model.v24.segment.QRD;
 public class HL7MLLPCodecTest extends ContextTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        // START SNIPPET: e1
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
 
-        JndiRegistry jndi = super.createRegistry();
         jndi.bind("hl7codec", codec);
+        // END SNIPPET: e1
 
         return jndi;
     }
@@ -49,6 +52,12 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
                 from("mina:tcp://localhost:8888?sync=true&codec=hl7codec")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
+                            Message input = exchange.getIn().getBody(Message.class);
+
+                            assertEquals("2.4", input.getVersion());
+                            QRD qrd = (QRD)input.get("QRD");
+                            assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
+
                             Message response = createHL7AsMessage();
                             exchange.getOut().setBody(response);
                         }
@@ -59,8 +68,9 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
     }
 
     public void testSendHL7Message() throws Exception {
-        String line1 = "MSH|^~\\&|ARIA|HERLEV|CAPS||200612211200||QRY^A19|MessageID: 1234|P|2.4";
-        String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|1606943605|DEM||";
+        // START SNIPPET: e2
+        String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
+        String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 
         StringBuffer in = new StringBuffer();
         in.append(line1);
@@ -68,12 +78,14 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
         in.append(line2);
 
         String out = (String)template.requestBody("mina:tcp://localhost:8888?sync=true&codec=hl7codec", in.toString());
+        // END SNIPPET: e2
 
         String[] lines = out.split("\r");
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
     }
 
+    // START SNIPPET: e3
     private static Message createHL7AsMessage() throws Exception {
         ADR_A19 adr = new ADR_A19();
 
@@ -97,5 +109,6 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
 
         return adr.getMessage();
     }
+    // END SNIPPET: e3
 
 }
