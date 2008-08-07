@@ -34,7 +34,7 @@
     <description>Camel HL7 support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.hl7.*;org.apache.camel.component.mina.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.component.hl7.*;org.apache.camel.dataformat.hl7.*</camel.osgi.export.pkg>
     </properties>
 
     <repositories>

@@ -14,12 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.component.hl7;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
+import org.apache.camel.dataformat.hl7.HL7Converter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -27,8 +30,6 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-import org.apache.camel.dataformat.hl7.HL7DataFormat;
-import org.apache.camel.dataformat.hl7.HL7Converter;
 
 import ca.uhn.hl7v2.model.Message;
 
@@ -57,6 +58,8 @@ import ca.uhn.hl7v2.model.Message;
  */
 public class HL7MLLPCodec implements ProtocolCodecFactory {
 
+    private static final transient Log LOG = LogFactory.getLog(HL7MLLPCodec.class);
+
     private static final String CHARSET_ENCODER = HL7MLLPCodec.class.getName() + ".charsetencoder";
     private static final String CHARSET_DECODER = HL7MLLPCodec.class.getName() + ".charsetdecoder";
 
@@ -84,16 +87,17 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
 
                 // convert to string
                 String body;
-                if (message instanceof byte[]) {
-                    // body is most likely a byte[]
-                    body = new String((byte[])message, encoder.charset().name());
-                } else if (message instanceof Message) {
-                    // but can also be a HL7 Message
+                if (message instanceof Message) {
                     body = HL7Converter.toString((Message)message);
+                } else if (message instanceof String) {
+                    body = (String)message;
+                } else if (message instanceof byte[]) {
+                    body = new String((byte[])message);
                 } else {
-                    // fallback to the toString method
-                    body = message.toString();
+                    throw new IllegalArgumentException("The message to encode is not a supported type: " + 
+                            message.getClass().getCanonicalName());
                 }
+
                 // replace \n with \r as HL7 uses 0x0d = \r as segment termninators
                 body = body.replace('\n', '\r');
 
@@ -106,6 +110,9 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
 
                 // flip the buffer so we can use it to write to the out stream
                 bb.flip();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Encoding HL7 from " + message.getClass().getCanonicalName() + " to byte stream");
+                }
                 out.write(bb);
             }
 
@@ -132,6 +139,9 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                         if (next == END_MARKER_2) {
                             posEnd = in.position();
                             break;
+                        } else {
+                            // we expected the 2nd end marker
+                            LOG.warn("The 2nd end marker " + END_MARKER_2 + " was not found, but was " + b);
                         }
                     }
                 }
@@ -155,6 +165,9 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                     }
                     String body = in.getString(decoder);
 
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Decoding HL7 from byte stream to String");
+                    }
                     out.write(body);
                 } finally {
                     // clear the buffer now that we have transfered the data to the String
