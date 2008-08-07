@@ -49,7 +49,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean unchangedSize;
 
     private boolean generateEmptyExchangeWhenIdle;
-    private boolean recursive = true;
+    private boolean recursive;
     private String regexPattern = "";
     private boolean exclusiveReadLock = true;
 
@@ -59,7 +59,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     }
 
     protected synchronized void poll() throws Exception {
-        int rc = pollFileOrDirectory(endpoint.getFile(), isRecursive());
+        // should be true the first time as its the top directory
+        int rc = pollFileOrDirectory(endpoint.getFile(), true);
 
         // if no files consumes and using generateEmptyExchangeWhenIdle option then process an empty exchange 
         if (rc == 0 && generateEmptyExchangeWhenIdle) {

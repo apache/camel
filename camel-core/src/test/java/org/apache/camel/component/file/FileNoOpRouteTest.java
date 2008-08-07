@@ -22,7 +22,7 @@ package org.apache.camel.component.file;
 public class FileNoOpRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "file:target/test-noop-inbox?noop=true";
+        uri = "file:target/test-noop-inbox?noop=true&consumer.recursive=true";
         deleteDirectory("target/test-noop-inbox");
         super.setUp();
     }

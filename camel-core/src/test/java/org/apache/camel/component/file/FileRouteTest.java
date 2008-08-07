@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-default-inbox";
+    protected String uri = "file:target/test-default-inbox?consumer.recursive=true";
 
     public void testFileRoute() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");

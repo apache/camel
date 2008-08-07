@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "file:target/test-delete-inbox?consumer.delay=1000&delete=true";
+        uri = "file:target/test-delete-inbox?consumer.delay=1000&delete=true&consumer.recursive=true";
         deleteDirectory("target/test-delete-inbox");
         super.setUp();
     }

@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileRouteGenerateEmptyExchangeWhenIdleTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-inbox2?consumer.generateEmptyExchangeWhenIdle=true";
+    protected String uri = "file:target/test-inbox2?consumer.generateEmptyExchangeWhenIdle=true&consumer.recursive=true";
 
     public void testFileRoute() throws Exception {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
