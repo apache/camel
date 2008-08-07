@@ -25,8 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpToMockTest extends FtpServerTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String expectedBody = "Hello there!";
-    protected String port = "20010";
-    protected String ftpUrl = "ftp://admin@localhost:" + port + "/tmp/camel?password=admin";
+    protected String port = "2001";
+    protected String ftpUrl = "ftp://admin@localhost:" + port + "/tmp/camel?password=admin&consumer.recursive=true";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -37,10 +37,14 @@ public class FromFtpToMockTest extends FtpServerTestSupport {
         //resultEndpoint.message(0).header("cheese").isEqualTo(123);
 
         template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
-        resultEndpoint.assertIsSatisfied();
-
         // let some time pass to let the consumer etc. properly do its business before closing
         Thread.sleep(1000);
+
+        resultEndpoint.assertIsSatisfied();
+
+        Thread.sleep(1000);
+
+
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
