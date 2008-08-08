@@ -103,7 +103,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 return data.sync;
             }
 
-            // if the exchange is transacted then let the underlysing system handle the redelivery etc.
+            // if the exchange is transacted then let the underlying system handle the redelivery etc.
             // this DeadLetterChannel is only for non transacted exchanges
             if (exchange.isTransacted() && exchange.getException() != null) {
                 if (LOG.isDebugEnabled()) {

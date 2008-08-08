@@ -371,12 +371,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
      * List</a> pattern.
      *
-     * @param receipients is the builder of the expression used in the
+     * @param recipients is the builder of the expression used in the
      *                    {@link org.apache.camel.processor.RecipientList}
      *                    to decide the destinations
      */
-    public Type recipientList(Expression receipients) {
-        RecipientListType answer = new RecipientListType(receipients);
+    public Type recipientList(Expression recipients) {
+        RecipientListType answer = new RecipientListType(recipients);
         addOutput(answer);
         return (Type) this;
     }
