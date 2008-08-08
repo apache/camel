@@ -142,9 +142,11 @@ public class MailConfiguration {
         if (username != null) {
             properties.put("mail." + protocol + ".user", username);
             properties.put("mail.user", username);
+            properties.put("mail." + protocol + ".auth", "true");
+        } else {
+            properties.put("mail." + protocol + ".auth", "false");
         }
         properties.put("mail." + protocol + ".rsetbeforequit", "true");
-        properties.put("mail." + protocol + ".auth", "true");
         properties.put("mail.transport.protocol", protocol);
         properties.put("mail.store.protocol", protocol);
         properties.put("mail.host", host);
