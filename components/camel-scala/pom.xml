@@ -14,6 +14,7 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.scala.*</camel.osgi.export.pkg>
     <scala-version>2.7.1</scala-version>
+    <scala-plugin-version>2.6</scala-plugin-version>
   </properties>
 
   <repositories>
@@ -38,6 +39,7 @@
       <plugin>
         <groupId>org.scala-tools</groupId>
         <artifactId>maven-scala-plugin</artifactId>
+        <version>${scala-plugin-version}</version>
         <executions>
           <execution>
             <goals>
