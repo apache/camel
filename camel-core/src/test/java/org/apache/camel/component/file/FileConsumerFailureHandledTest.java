@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -92,7 +91,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertEquals("File " + filename + " should be deleted", false, file.exists());
 
         // and no lock files
-        file = new File("target/messages/input/" + filename + FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX);
+        file = new File("target/messages/input/" + filename + FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX);
         assertEquals("File " + filename + " lock should be deleted", false, file.exists());
     }
 

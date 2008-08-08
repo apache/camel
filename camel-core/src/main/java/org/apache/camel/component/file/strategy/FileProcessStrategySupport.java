@@ -35,8 +35,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class FileProcessStrategySupport implements FileProcessStrategy {
-    public static final String DEFAULT_LOCK_FILE_POSTFIX = ".cameLock";
-    
     private static final transient Log LOG = LogFactory.getLog(FileProcessStrategySupport.class);
     private boolean lockFile;
     private FileRenamer lockFileRenamer;
@@ -46,7 +44,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
     }
 
     protected FileProcessStrategySupport(boolean lockFile) {
-        this(lockFile, new DefaultFileRenamer(null, DEFAULT_LOCK_FILE_POSTFIX));
+        this(lockFile, new DefaultFileRenamer(null, FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX));
     }
 
     protected FileProcessStrategySupport(boolean lockFile, FileRenamer lockFileRenamer) {
