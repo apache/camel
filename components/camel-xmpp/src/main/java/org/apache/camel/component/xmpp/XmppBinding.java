@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.xmpp;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.jivesoftware.smack.packet.Message;
 
 /**
@@ -29,6 +32,16 @@ import org.jivesoftware.smack.packet.Message;
  * @version $Revision$
  */
 public class XmppBinding {
+
+    private HeaderFilterStrategy headerFilterStrategy;
+
+    public XmppBinding() {
+        this.headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    }
+    
+    public XmppBinding(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
 
     /**
      * Populates the given XMPP message from the inbound exchange
@@ -41,7 +54,8 @@ public class XmppBinding {
             String name = entry.getKey();
             Object value = entry.getValue();
             // BUG?
-            if (value != null && shouldOutputHeader(exchange, name, value)) {
+            if (headerFilterStrategy != null 
+                    && !headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
                 message.setProperty(name, value);
             }
         }
@@ -58,10 +72,17 @@ public class XmppBinding {
         return message.getBody();
     }
 
-    /**
-     * Strategy to allow filtering of headers which are put on the XMPP message
-     */
-    protected boolean shouldOutputHeader(Exchange exchange, String headerName, Object headerValue) {
-        return true;
+    public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage) {
+        Map<String, Object> answer = new HashMap<String, Object>();
+        
+        for (String name : xmppMessage.getPropertyNames()) {
+            Object value = xmppMessage.getProperty(name);
+            
+            if (headerFilterStrategy != null && 
+                    !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                answer.put(name, value);
+            }
+        }
+        return answer;
     }
 }

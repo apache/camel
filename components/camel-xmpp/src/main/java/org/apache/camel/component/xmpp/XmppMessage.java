@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.xmpp;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultMessage;
@@ -65,31 +62,7 @@ public class XmppMessage extends DefaultMessage {
     public void setXmppMessage(Message xmppMessage) {
         this.xmppMessage = xmppMessage;
     }
-
-    public Object getHeader(String name) {
-        return xmppMessage.getProperty(name);
-    }
-
-    @Override
-    public void setHeader(String name, Object value) {
-        if (value == null) {
-            xmppMessage.deleteProperty(name);
-        } else {
-            xmppMessage.setProperty(name, value);
-        }
-    }
-
-    @Override
-    public Map<String, Object> getHeaders() {
-        Map<String, Object> answer = new HashMap<String, Object>();
-        Collection<String> propertyNames = xmppMessage.getPropertyNames();
-        for (Iterator iter = propertyNames.iterator(); iter.hasNext();) {
-            String name = (String)iter.next();
-            answer.put(name, xmppMessage.getProperty(name));
-        }
-        return answer;
-    }
-
+    
     @Override
     public XmppMessage newInstance() {
         return new XmppMessage();
@@ -101,5 +74,12 @@ public class XmppMessage extends DefaultMessage {
             return getExchange().getBinding().extractBodyFromXmpp(getExchange(), xmppMessage);
         }
         return null;
+    }
+    
+    @Override
+    protected void populateInitialHeaders(Map<String, Object> map) {
+        if (xmppMessage != null) {
+            map.putAll(getExchange().getBinding().extractHeadersFromXmpp(xmppMessage));
+        }
     }
 }

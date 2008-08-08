@@ -38,6 +38,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+        binding = new MailBinding(component.getHeaderFilterStrategy());
     }
 
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {

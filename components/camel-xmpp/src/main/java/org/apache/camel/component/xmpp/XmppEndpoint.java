@@ -55,6 +55,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
 
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
+        binding = new XmppBinding(component.getHeaderFilterStrategy());
     }
 
     public XmppEndpoint(String endpointUri) {

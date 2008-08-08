@@ -21,15 +21,19 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * Component for JavaMail.
  *
  * @version $Revision:520964 $
  */
-public class MailComponent extends DefaultComponent<MailExchange> {
+public class MailComponent extends DefaultComponent<MailExchange> implements HeaderFilterStrategyAware {
     private MailConfiguration configuration;
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public MailComponent() {
         this.configuration = new MailConfiguration();
@@ -95,5 +99,14 @@ public class MailComponent extends DefaultComponent<MailExchange> {
      */
     protected String convertPathToActualDestination(String path) {
         return path;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+        
     }
 }
