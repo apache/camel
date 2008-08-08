@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -35,7 +36,7 @@ public class CamelContextAwareTest extends SpringTestSupport {
         bean = getMandatoryBean(CamelContextAwareBean.class, "bean");
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextAwareBean.xml");
     }
 

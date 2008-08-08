@@ -19,6 +19,7 @@ package org.apache.camel.spring.managment;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spring.EndpointReferenceTest;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
@@ -31,7 +32,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
     }
 

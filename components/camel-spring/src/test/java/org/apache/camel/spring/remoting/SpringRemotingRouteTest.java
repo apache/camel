@@ -23,6 +23,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -32,7 +33,7 @@ public class SpringRemotingRouteTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(SpringRemotingRouteTest.class);
 
     public void testPojoRoutes() throws Exception {
-        ClassPathXmlApplicationContext applicationContext = createApplicationContext();
+        AbstractXmlApplicationContext applicationContext = createApplicationContext();
 /*
         Object service = applicationContext.getBean("say");
         log.info("Found service!: " + service);
@@ -51,7 +52,7 @@ public class SpringRemotingRouteTest extends TestCase {
         applicationContext.destroy();
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/remoting/spring.xml");
     }
 }

@@ -18,6 +18,8 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.spring.SpringTestSupport;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -58,7 +60,7 @@ public class BeanRouteTest extends SpringTestSupport {
         return 0;
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/camelContext.xml");
     }
 

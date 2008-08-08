@@ -17,6 +17,7 @@
 package org.apache.camel.spring.mock;
 
 import org.apache.camel.spring.ApplicationContextTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -28,7 +29,7 @@ public class BeanMockTest extends ApplicationContextTestSupport {
         bean.assertEndpointsValid();
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/mock/spring.xml");
     }
 }

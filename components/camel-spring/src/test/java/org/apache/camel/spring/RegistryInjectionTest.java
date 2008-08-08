@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.JndiRegistry;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -28,7 +29,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RegistryInjectionTest extends SpringTestSupport {
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         setUseRouteBuilder(false);
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/RegistryInjection.xml");
     }

@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Route;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
@@ -31,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public abstract class SpringTestSupport extends ContextTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
 
-    protected abstract ClassPathXmlApplicationContext createApplicationContext();
+    protected abstract AbstractXmlApplicationContext createApplicationContext();
 
     @Override
     protected void setUp() throws Exception {

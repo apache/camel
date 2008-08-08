@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -59,7 +60,7 @@ public class InjectedBeanTest extends SpringTestSupport {
         bean = getMandatoryBean(InjectedBean.class, "injectedBean");
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/injectedBean.xml");
     }
 

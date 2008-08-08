@@ -19,6 +19,7 @@ package org.apache.camel.spring.example;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -35,7 +36,7 @@ public class SimpleRouteTest extends SpringTestSupport {
 
         resultEndpoint.assertIsSatisfied();
     }
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/simpleRoute.xml");
     }
 

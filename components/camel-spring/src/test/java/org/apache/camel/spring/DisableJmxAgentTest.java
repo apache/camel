@@ -18,6 +18,7 @@ package org.apache.camel.spring;
 
 import javax.management.ObjectName;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -29,7 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class DisableJmxAgentTest extends DefaultJMXAgentTest {
     
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/disableJmxConfig.xml");            
     }
    

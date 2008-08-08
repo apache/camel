@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Service;
 import org.apache.camel.spring.SpringCamelContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -33,7 +34,7 @@ public final class SpringTestHelper {
     public static CamelContext createSpringCamelContext(ContextTestSupport test, String classpathUri) throws Exception {
         test.setUseRouteBuilder(false);
 
-        final ClassPathXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(classpathUri);
+        final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext(classpathUri);
         test.setCamelContextService(new Service() {
             public void start() throws Exception {
                 applicationContext.start();
