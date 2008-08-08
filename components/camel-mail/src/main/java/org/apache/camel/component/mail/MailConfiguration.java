@@ -54,6 +54,7 @@ public class MailConfiguration {
     private boolean ignoreUriScheme;
     private boolean processOnlyUnseenMessages;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
+    private String destination;
     private int fetchSize = -1;
     private boolean debugMode;
     private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
@@ -259,14 +260,14 @@ public class MailConfiguration {
 
     public void setUsername(String username) {
         this.username = username;
-        if (!recipients.containsKey(Message.RecipientType.TO)) {
+        if (destination == null) {
             // set default destination to username@host for backwards compatibility
             // can be overridden by URI parameters
             String address = username;
             if (address.indexOf("@") == -1) {
                 address += "@" + host;
             }
-            recipients.put(Message.RecipientType.TO, address);
+            destination = address;
         }
     }
 
@@ -276,8 +277,7 @@ public class MailConfiguration {
      * @deprecated use {@link #getRecipients()}
      */
     public String getDestination() {
-        // for backwards compatibility
-        return recipients.get(Message.RecipientType.TO);
+        return destination;
     }
 
     /**
@@ -286,8 +286,7 @@ public class MailConfiguration {
      * @deprecated use {@link #setTo(String)}
      */
     public void setDestination(String destination) {
-        // for backwards compatibility
-        recipients.put(Message.RecipientType.TO, destination);
+        this.destination = destination;
     }
 
     public String getFrom() {

@@ -75,9 +75,17 @@ public class MailRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?consumer.delay=1000").to("direct:a");
-                from("direct:a").to("smtp://route-test-result@localhost", "smtp://route-test-copy@localhost");
-                from("pop3://route-test-result@localhost?consumer.delay=1000").convertBodyTo(String.class).to("mock:result");
+                from("pop3://route-test-james@localhost?consumer.delay=1000")
+                    .to("direct:a");
+
+                // must use fixed to option to send the mail to the given reciever, as we have polled
+                // a mail from a mailbox where it already has the 'old' To as header value
+                from("direct:a")
+                    .to("smtp://localhost?to=route-test-result@localhost",
+                          "smtp://localhost?to=route-test-copy@localhost");
+
+                from("pop3://route-test-result@localhost?consumer.delay=1000")
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }

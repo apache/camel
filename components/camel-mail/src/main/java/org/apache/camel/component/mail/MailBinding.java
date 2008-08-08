@@ -47,9 +47,10 @@ public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
         throws MessagingException, IOException {
 
+        // append the headers from the in message at first
         appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
 
-        // set the recipients (receivers) of the mail
+        // than override any from the fixed endpoint configuraiton
         Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
         if (recipients.containsKey(Message.RecipientType.TO)) {
             mimeMessage.setRecipients(Message.RecipientType.TO, recipients.get(Message.RecipientType.TO));
@@ -59,6 +60,11 @@ public class MailBinding {
         }
         if (recipients.containsKey(Message.RecipientType.BCC)) {
             mimeMessage.setRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
+        }
+
+        // fallback to use destination if no TO provided at all
+        if (mimeMessage.getRecipients(Message.RecipientType.TO) == null) {
+            mimeMessage.setRecipients(Message.RecipientType.TO, endpoint.getConfiguration().getDestination());
         }
 
         // must have at least one recipients otherwise we do not know where to send the mail
@@ -123,6 +129,22 @@ public class MailBinding {
                 }
             }
         }
+    }
+
+    /**
+     * Does the given camel message contain any To, CC or BCC header names?
+     */
+    private static boolean hasRecipientHeaders(org.apache.camel.Message camelMessage) {
+        for (String key : camelMessage.getHeaders().keySet()) {
+            if (Message.RecipientType.TO.toString().equals(key)) {
+                return true;
+            } else if (Message.RecipientType.CC.toString().equals(key)) {
+                return true;
+            } else if (Message.RecipientType.BCC.toString().equals(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
