@@ -26,7 +26,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
@@ -42,8 +41,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
-    private static final String DEFAULT_STRATEGYFACTORY_CLASS =
+    private static final transient String DEFAULT_STRATEGYFACTORY_CLASS =
         "org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
+    public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     private File file;
     private FileProcessStrategy fileProcessStrategy;
@@ -231,7 +231,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     /**
-     * Sets the excluded file name postfixes, such as {@link FileProcessStrategySupport#DEFAULT_LOCK_FILE_POSTFIX}
+     * Sets the excluded file name postfixes, such as {@link FileEndpoint#DEFAULT_LOCK_FILE_POSTFIX}
      * to ignore lock files by default.
      *
      * @deprecated use ExcludedNamePostfix. Will be removed in Camel 2.0.

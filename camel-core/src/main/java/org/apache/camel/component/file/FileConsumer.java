@@ -300,6 +300,10 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         if (name.startsWith(".")) {
             return false;
         }
+        // lock files should be skipped
+        if (name.endsWith(FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX)) {
+            return false;
+        }
 
         if (regexPattern != null && regexPattern.length() > 0) {
             if (!name.matches(regexPattern)) {

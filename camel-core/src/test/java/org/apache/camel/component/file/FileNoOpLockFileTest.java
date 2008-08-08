@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.strategy.FileProcessStrategySupport;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -75,7 +74,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     private static void checkLockFile(boolean expected) {
         String filename = "target/reports/";
         filename += expected ? "locked/" : "notlocked/";
-        filename += "report.txt" + FileProcessStrategySupport.DEFAULT_LOCK_FILE_POSTFIX;
+        filename += "report.txt" + FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX;
 
         File file = new File(filename);
         assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
