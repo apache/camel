@@ -17,11 +17,9 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.Map;
 
 import javax.activation.DataHandler;
-import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -77,24 +75,17 @@ public class MailMessage extends DefaultMessage {
         this.mailMessage = mailMessage;
     }
 
+    @Override
     public Object getHeader(String name) {
-        String[] answer = null;
-        if (mailMessage != null) {
-            try {
-                answer = mailMessage.getHeader(name);
-            } catch (MessagingException e) {
-                throw new RuntimeCamelException("Error accessing header: " + name, e);
-            }
-        }
+        Object answer = super.getHeader(name);
+        
+        // mimic case insensitive search of mail message getHeader
         if (answer == null) {
-            return super.getHeader(name);
-        }
-        if (answer.length == 1) {
-            return answer[0];
+            answer = super.getHeader(name.toLowerCase());
         }
         return answer;
     }
-
+  
     @Override
     public MailMessage newInstance() {
         return new MailMessage();
@@ -112,13 +103,7 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
             try {
-                Enumeration names = mailMessage.getAllHeaders();
-                while (names.hasMoreElements()) {
-                    Header header = (Header)names.nextElement();
-                    String value = header.getValue();
-                    String name = header.getName();
-                    CollectionHelper.appendValue(map, name, value);
-                }
+                map.putAll(getExchange().getBinding().extractHeadersFromMail(mailMessage));
             } catch (MessagingException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }

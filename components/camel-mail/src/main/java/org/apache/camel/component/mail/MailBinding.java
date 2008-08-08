@@ -17,12 +17,15 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
 import javax.mail.BodyPart;
+import javax.mail.Header;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Part;
@@ -35,6 +38,9 @@ import javax.mail.util.ByteArrayDataSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.CollectionHelper;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
@@ -43,6 +49,16 @@ import org.apache.camel.converter.ObjectConverter;
  * @version $Revision$
  */
 public class MailBinding {
+
+    private HeaderFilterStrategy headerFilterStrategy;
+
+    public MailBinding() {
+        headerFilterStrategy = new DefaultHeaderFilterStrategy();
+    }
+    
+    public MailBinding(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy; 
+    }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
         throws MessagingException, IOException {
@@ -114,8 +130,8 @@ public class MailBinding {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null) {
-                if (shouldOutputHeader(camelMessage, headerName, headerValue)) {
-
+                if (headerFilterStrategy != null && 
+                        !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue)) {
                     // Mail messages can repeat the same header...
                     if (ObjectConverter.isCollection(headerValue)) {
                         Iterator iter = ObjectConverter.iterator(headerValue);
@@ -185,14 +201,7 @@ public class MailBinding {
         // Put parts in message
         mimeMessage.setContent(multipart);
     }
-
-    /**
-     * Strategy to allow filtering of headers which are put on the Mail message
-     */
-    protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName, Object headerValue) {
-        return true;
-    }
-
+    
     /**
      * Strategy to allow filtering of attachments which are put on the Mail message
      */
@@ -206,6 +215,27 @@ public class MailBinding {
 
     private static String asString(Exchange exchange, Object value) {
         return exchange.getContext().getTypeConverter().convertTo(String.class, value);
+    }
+
+    public Map<String, Object> extractHeadersFromMail(Message mailMessage) throws MessagingException {
+        Map<String, Object> answer = new HashMap<String, Object>();
+        Enumeration names = mailMessage.getAllHeaders();
+        
+        while (names.hasMoreElements()) {
+            Header header = (Header)names.nextElement();
+            String[] value = mailMessage.getHeader(header.getName());
+            if (headerFilterStrategy != null && 
+                    !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value)) {
+                // toLowerCase() for doing case insensitive search
+                if (value.length == 1) {
+                    CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value[0]);
+                } else {
+                    CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value);
+                }
+            }
+        }
+        
+        return answer;
     }
 
 }

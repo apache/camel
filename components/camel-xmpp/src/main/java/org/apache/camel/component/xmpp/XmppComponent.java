@@ -21,12 +21,17 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * @version $Revision:520964 $
  */
-public class XmppComponent extends DefaultComponent<XmppExchange> {
+public class XmppComponent extends DefaultComponent<XmppExchange> implements HeaderFilterStrategyAware {
+
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public XmppComponent() {
     }
@@ -64,5 +69,14 @@ public class XmppComponent extends DefaultComponent<XmppExchange> {
             }
         }
         return endpoint;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+        
     }
 }
