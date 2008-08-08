@@ -65,7 +65,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         log.debug("Found route: " + route);
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingProcessor.xml");
     }
 

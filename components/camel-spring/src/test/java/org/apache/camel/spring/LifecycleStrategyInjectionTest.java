@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -29,7 +30,7 @@ public class LifecycleStrategyInjectionTest extends SpringTestSupport {
 
     
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         setUseRouteBuilder(false);
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/lifecycleStrategyInjection.xml");
     }

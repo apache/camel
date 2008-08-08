@@ -21,6 +21,7 @@ import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -57,7 +58,7 @@ public class JMXAgentTest extends DefaultJMXAgentTest {
     }
 
     @Override
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/jmxConfig.xml");
     }
 

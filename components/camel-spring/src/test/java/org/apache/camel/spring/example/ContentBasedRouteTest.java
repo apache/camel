@@ -19,6 +19,7 @@ package org.apache.camel.spring.example;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
@@ -58,7 +59,7 @@ public class ContentBasedRouteTest extends SpringTestSupport {
         notMatchedEndpoint = getMockEndpoint("mock:notMatched");
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/contentBasedRoute.xml");
     }
 }

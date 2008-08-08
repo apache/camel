@@ -65,7 +65,7 @@ public class RoutingUsingCamelContextFactoryTest extends TestSupport {
         assertEquals("Number of routes defined", 1, routes.size());
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routingUsingCamelContextFactory.xml");
     }
 

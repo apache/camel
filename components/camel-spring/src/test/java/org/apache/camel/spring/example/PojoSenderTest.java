@@ -19,6 +19,7 @@ package org.apache.camel.spring.example;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
@@ -59,7 +60,7 @@ public class PojoSenderTest extends SpringTestSupport {
         mySender = getMandatoryBean(MySender.class, "mySender");
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoSender.xml");
     }
 
@@ -67,4 +68,5 @@ public class PojoSenderTest extends SpringTestSupport {
         return 0;
     }
 }
+
 

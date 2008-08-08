@@ -19,7 +19,6 @@ package org.apache.camel.spring;
 import junit.framework.TestCase;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version $Revision$
@@ -27,7 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public abstract class ApplicationContextTestSupport extends TestCase {
     protected AbstractXmlApplicationContext applicationContext;
 
-    protected abstract ClassPathXmlApplicationContext createApplicationContext();
+    protected abstract AbstractXmlApplicationContext createApplicationContext();
 
     @Override
     protected void setUp() throws Exception {

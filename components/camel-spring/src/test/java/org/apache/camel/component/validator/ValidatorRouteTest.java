@@ -18,6 +18,7 @@ package org.apache.camel.component.validator;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
@@ -58,7 +59,7 @@ public class ValidatorRouteTest extends SpringTestSupport {
         return 0;
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
+    protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/validator/camelContext.xml");
     }
 }
