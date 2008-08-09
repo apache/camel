@@ -40,10 +40,11 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
+    public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
     private static final transient String DEFAULT_STRATEGYFACTORY_CLASS =
         "org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
-    public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
+
 
     private File file;
     private FileProcessStrategy fileProcessStrategy;
@@ -362,7 +363,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     protected String createEndpointUri() {
         return "file://" + getFile().getAbsolutePath();
     }
-    
+
     protected String getFileFriendlyMessageId(String id) {
         return UuidGenerator.generateSanitizedId(id);
     }

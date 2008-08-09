@@ -38,7 +38,7 @@ public class XmppBinding {
     public XmppBinding() {
         this.headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
-    
+
     public XmppBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -54,7 +54,7 @@ public class XmppBinding {
             String name = entry.getKey();
             Object value = entry.getValue();
             // BUG?
-            if (headerFilterStrategy != null 
+            if (headerFilterStrategy != null
                     && !headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
                 message.setProperty(name, value);
             }
@@ -74,12 +74,12 @@ public class XmppBinding {
 
     public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage) {
         Map<String, Object> answer = new HashMap<String, Object>();
-        
+
         for (String name : xmppMessage.getPropertyNames()) {
             Object value = xmppMessage.getProperty(name);
-            
-            if (headerFilterStrategy != null && 
-                    !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+
+            if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
                 answer.put(name, value);
             }
         }

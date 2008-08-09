@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
 import javax.mail.Message;
 
 import org.apache.camel.ContextTestSupport;
