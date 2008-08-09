@@ -24,7 +24,6 @@ import javax.xml.validation.Schema;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ValidationException;
 import org.apache.commons.logging.Log;

@@ -40,15 +40,14 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class ValidatingProcessor implements Processor {
-    private Schema schema;
-    private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
-
     // for lazy creation of the Schema
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
+    private Schema schema;
     private Source schemaSource;
     private SchemaFactory schemaFactory;
     private URL schemaUrl;
     private File schemaFile;
+    private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
 
     public void process(Exchange exchange) throws Exception {
         Schema schema = getSchema();
@@ -60,54 +59,14 @@ public class ValidatingProcessor implements Processor {
         }
 
         // create a new errorHandler and set it on the validator
-        errorHandler.reset();
-        validator.setErrorHandler(errorHandler);
+        // must be a local instance to avoid problems with concurrency (to be thread safe)
+        ValidatorErrorHandler handler = errorHandler.getClass().newInstance();
+        validator.setErrorHandler(handler);
 
         DOMResult result = new DOMResult();
         validator.validate(source, result);
 
-        errorHandler.handleErrors(exchange, schema, result);
-        /*
-         * Fault fault = exchange.createFault(); if (errorHandler.hasErrors()) { //
-         * set the schema and source document as properties on the fault
-         * fault.setProperty("org.apache.servicemix.schema", schema);
-         * fault.setProperty("org.apache.servicemix.xml", source);
-         * 
-         *//*
-             * check if this error handler supports the capturing of error
-             * messages.
-             *//*
-             * if (errorHandler.capturesMessages()) {
-             * 
-             *//*
-             * In descending order of preference select a format to use. If
-             * neither DOMSource, StringSource or String are supported throw a
-             * messaging exception.
-             *//*
-             * if (errorHandler.supportsMessageFormat(DOMSource.class)) {
-             * fault.setContent( (DOMSource)
-             * errorHandler.getMessagesAs(DOMSource.class)); } else if
-             * (errorHandler.supportsMessageFormat(StringSource.class)) {
-             * fault.setContent(sourceTransformer.toDOMSource( (StringSource)
-             * errorHandler.getMessagesAs(StringSource.class))); } else if
-             * (errorHandler.supportsMessageFormat(String.class)) {
-             * fault.setContent( sourceTransformer.toDOMSource( new
-             * StringSource( (String)
-             * errorHandler.getMessagesAs(String.class)))); } else { throw new
-             * MessagingException("MessageAwareErrorHandler implementation " +
-             * errorHandler.getClass().getName() + " does not support a
-             * compatible error message format."); } } else {
-             *//*
-             * we can't do much here if the ErrorHandler implementation does not
-             * support capturing messages
-             *//*
-             * fault.setContent(new DOMSource(result.getNode(),
-             * result.getSystemId())); } throw new FaultException("Failed to
-             * validate against schema: " + schema, exchange, fault); } else { //
-             * Retrieve the ouput of the validation // as it may have been
-             * changed by the validator out.setContent(new
-             * DOMSource(result.getNode(), result.getSystemId())); } }
-             */
+        handler.handleErrors(exchange, schema, result);
     }
 
     // Properties
