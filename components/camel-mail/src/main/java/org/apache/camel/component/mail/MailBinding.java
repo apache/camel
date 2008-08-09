@@ -55,9 +55,9 @@ public class MailBinding {
     public MailBinding() {
         headerFilterStrategy = new DefaultHeaderFilterStrategy();
     }
-    
+
     public MailBinding(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy; 
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
@@ -130,8 +130,8 @@ public class MailBinding {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
             if (headerValue != null) {
-                if (headerFilterStrategy != null && 
-                        !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue)) {
+                if (headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue)) {
                     // Mail messages can repeat the same header...
                     if (ObjectConverter.isCollection(headerValue)) {
                         Iterator iter = ObjectConverter.iterator(headerValue);
@@ -201,7 +201,7 @@ public class MailBinding {
         // Put parts in message
         mimeMessage.setContent(multipart);
     }
-    
+
     /**
      * Strategy to allow filtering of attachments which are put on the Mail message
      */
@@ -220,12 +220,12 @@ public class MailBinding {
     public Map<String, Object> extractHeadersFromMail(Message mailMessage) throws MessagingException {
         Map<String, Object> answer = new HashMap<String, Object>();
         Enumeration names = mailMessage.getAllHeaders();
-        
+
         while (names.hasMoreElements()) {
             Header header = (Header)names.nextElement();
             String[] value = mailMessage.getHeader(header.getName());
-            if (headerFilterStrategy != null && 
-                    !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value)) {
+            if (headerFilterStrategy != null
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value)) {
                 // toLowerCase() for doing case insensitive search
                 if (value.length == 1) {
                     CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value[0]);
@@ -234,7 +234,7 @@ public class MailBinding {
                 }
             }
         }
-        
+
         return answer;
     }
 
