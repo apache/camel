@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.impl.EventDrivenPollingConsumer;
+import org.apache.camel.component.http.HttpPollingConsumer;
 import org.apache.commons.httpclient.HttpConnectionManager;
 
 /**
@@ -44,7 +44,6 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     @Override
     public Producer<HttpExchange> createProducer() throws Exception {
         return super.createProducer();
-        // return new JettyHttpProducer(this);
     }
 
     @Override
@@ -54,7 +53,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     @Override
     public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
-        return new EventDrivenPollingConsumer<HttpExchange>(this);
+        return new HttpPollingConsumer(this);
     }
 
     @Override
