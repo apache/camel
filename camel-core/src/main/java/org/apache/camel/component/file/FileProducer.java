@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.io.IOException;
+import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -28,7 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.UuidGenerator;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,8 +48,11 @@ public class FileProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0.
+     */
     public FileEndpoint getEndpoint() {
-        return (FileEndpoint) super.getEndpoint();
+        return endpoint;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -57,23 +62,48 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(FileExchange exchange) throws Exception {
-        InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-        File file = createFileName(exchange.getIn());
-        buildDirectory(file);
+        boolean fileSource = exchange.getIn().getBody() instanceof File;
+        File target = createFileName(exchange.getIn());
+        buildDirectory(target);
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("About to write to: " + file + " from exchange: " + exchange);
+            LOG.debug("About to write to: " + target + " from exchange: " + exchange);
         }
-        FileChannel fc = null;
-        try {
-            if (getEndpoint().isAppend()) {
-                fc = new RandomAccessFile(file, "rw").getChannel();
-                fc.position(fc.size());
-            } else {
-                fc = new FileOutputStream(file).getChannel();
-            }
 
-            int size = getEndpoint().getBufferSize();
+        if (fileSource) {
+            File source = ExchangeHelper.getMandatoryInBody(exchange, File.class);
+            writeFileByFile(source, target);
+        } else {
+            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            writeFileByStream(in, target);
+        }
+    }
+
+    private void writeFileByFile(File source, File target) throws IOException {
+        FileChannel in = new FileInputStream(source).getChannel();
+        FileChannel out = null;
+        try {
+            out = prepareOutputFileChannel(target, out);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using FileChannel to transfer from: " + in + " to: " + out);
+            }
+            in.transferTo(0, in.size(), out);
+        } finally {
+            ObjectHelper.close(in, source.getName(), LOG);
+            ObjectHelper.close(out, source.getName(), LOG);
+        }
+    }
+
+    private void writeFileByStream(InputStream in, File target) throws IOException {
+        FileChannel out = null;
+        try {
+            out = prepareOutputFileChannel(target, out);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using InputStream to transfer from: " + in + " to: " + out);
+            }
+            int size = endpoint.getBufferSize();
             byte[] buffer = new byte[size];
             ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
             while (true) {
@@ -82,17 +112,31 @@ public class FileProducer extends DefaultProducer {
                     break;
                 } else if (count < size) {
                     byteBuffer = ByteBuffer.wrap(buffer, 0, count);
-                    fc.write(byteBuffer);
+                    out.write(byteBuffer);
                     break;
                 } else {
-                    fc.write(byteBuffer);
+                    out.write(byteBuffer);
                     byteBuffer.clear();
                 }
             }
         } finally {
-            ObjectHelper.close(in, file.getName(), LOG);
-            ObjectHelper.close(fc, file.getName(), LOG);
+            ObjectHelper.close(in, target.getName(), LOG);
+            ObjectHelper.close(out, target.getName(), LOG);
         }
+    }
+
+    /**
+     * Creates and prepares the output file channel. Will position itself in correct position if eg. it should append
+     * or override any existing content.
+     */
+    private FileChannel prepareOutputFileChannel(File target, FileChannel out) throws IOException {
+        if (endpoint.isAppend()) {
+            out = new RandomAccessFile(target, "rw").getChannel();
+            out = out.position(out.size());
+        } else {
+            out = new FileOutputStream(target).getChannel();
+        }
+        return out;
     }
 
     protected File createFileName(Message message) {
