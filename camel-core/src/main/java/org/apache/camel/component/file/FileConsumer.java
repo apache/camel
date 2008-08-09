@@ -52,6 +52,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean recursive;
     private String regexPattern = "";
     private boolean exclusiveReadLock = true;
+    private boolean alwaysConsume;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -233,7 +234,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         boolean result = false;
         if (file != null && file.exists()) {
             // TODO: maybe use a configurable strategy instead of the hardcoded one based on last file change
-            if (isMatched(file) && isChanged(file)) {
+            if (isMatched(file) && (alwaysConsume || isChanged(file))) {
                 result = true;
             }
         }
@@ -369,6 +370,9 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return unchangedDelay;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void setUnchangedDelay(int unchangedDelay) {
         this.unchangedDelay = unchangedDelay;
     }
@@ -377,6 +381,9 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return unchangedSize;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void setUnchangedSize(boolean unchangedSize) {
         this.unchangedSize = unchangedSize;
     }
@@ -387,5 +394,13 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     public void setExclusiveReadLock(boolean exclusiveReadLock) {
         this.exclusiveReadLock = exclusiveReadLock;
+    }
+
+    public boolean isAlwaysConsume() {
+        return alwaysConsume;
+    }
+
+    public void setAlwaysConsume(boolean alwaysConsume) {
+        this.alwaysConsume = alwaysConsume;
     }
 }
