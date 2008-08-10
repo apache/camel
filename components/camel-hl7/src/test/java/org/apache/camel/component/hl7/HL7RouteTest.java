@@ -133,7 +133,7 @@ public class HL7RouteTest extends ContextTestSupport {
     // START SNIPPET: e2
     public class MyHL7BusinessLogic {
 
-        // This is a plain POJO that has <b>no</b> imports whatsoever on Apache Camel.
+        // This is a plain POJO that has NO imports whatsoever on Apache Camel.
         // its a plain POJO only importing the HAPI library so we can much easier work with the HL7 format.
 
         public Message handleA19(Message msg) throws Exception {
