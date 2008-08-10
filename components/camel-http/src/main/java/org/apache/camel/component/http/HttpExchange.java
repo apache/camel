@@ -47,8 +47,6 @@ public class HttpExchange extends DefaultExchange {
 
     /**
      * Returns the underlying Servlet request for inbound HTTP requests
-     *
-     * @return the underlying Servlet request for inbound HTTP requests
      */
     public HttpServletRequest getRequest() {
         return request;
@@ -56,8 +54,6 @@ public class HttpExchange extends DefaultExchange {
 
     /**
      * Returns the underlying Servlet response for inbound HTTP requests
-     *
-     * @return the underlying Servlet response for inbound HTTP requests
      */
     public HttpServletResponse getResponse() {
         return response;
