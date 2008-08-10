@@ -52,6 +52,20 @@ public class HL7DataFormatTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Message.class);
 
+        mock.expectedHeaderReceived("hl7.msh.sendingApplication", "MYSERVER");
+        mock.expectedHeaderReceived("hl7.msh.sendingFacility", "MYSENDERAPP");
+        mock.expectedHeaderReceived("hl7.msh.receivingApplication", "MYCLIENT");
+        mock.expectedHeaderReceived("hl7.msh.receivingFacility", "MYCLIENTAPP");
+        mock.expectedHeaderReceived("hl7.msh.timestamp", "200612211200");
+        mock.expectedHeaderReceived("hl7.msh.security", null);
+        mock.expectedHeaderReceived("hl7.msh.messageType", "QRY");
+        mock.expectedHeaderReceived("hl7.msh.triggerEvent", "A19");
+        mock.expectedHeaderReceived("hl7.msh.messageType", "QRY");
+        mock.expectedHeaderReceived("hl7.msh.triggerEvent", "A19");
+        mock.expectedHeaderReceived("hl7.msh.messageControl", "1234");
+        mock.expectedHeaderReceived("hl7.msh.processingId", "P");
+        mock.expectedHeaderReceived("hl7.msh.versionId", "2.4");
+
         String body = createHL7AsString();
         template.sendBody("direct:unmarshal", body);
 
@@ -59,7 +73,7 @@ public class HL7DataFormatTest extends ContextTestSupport {
 
         Message msg = mock.getExchanges().get(0).getIn().getBody(Message.class);
         assertEquals("2.4", msg.getVersion());
-        QRD qrd = (QRD)msg.get("QRD");
+        QRD qrd = (QRD) msg.get("QRD");
         assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
     }
 
@@ -67,14 +81,14 @@ public class HL7DataFormatTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:marshal").marshal(hl7).to("mock:marshal");
-                
+
                 from("direct:unmarshal").unmarshal(hl7).to("mock:unmarshal");
             }
         };
     }
 
     private static String createHL7AsString() {
-        String line1 = "MSH|^~\\&|MYSENDER|MYRECEIVER|MYAPPLICATION||200612211200||QRY^A19|1234|P|2.4";
+        String line1 = "MSH|^~\\&|MYSENDER|MYSENDERAPP|MYCLIENT|MYCLIENTAPP|200612211200||QRY^A19|1234|P|2.4";
         String line2 = "QRD|200612211200|R|I|GetPatient|||1^RD|0101701234|DEM||";
 
         StringBuffer body = new StringBuffer();
@@ -107,5 +121,5 @@ public class HL7DataFormatTest extends ContextTestSupport {
 
         return adr.getMessage();
     }
-    
+
 }
