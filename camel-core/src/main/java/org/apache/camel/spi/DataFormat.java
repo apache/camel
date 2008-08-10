@@ -39,6 +39,10 @@ public interface DataFormat {
 
     /**
      * Unmarshals the given stream into an object.
+     * <p/>
+     * <b>Notice:</b> The result is set as body on the exchange OUT message.
+     * It is possible to mutate the OUT message provided in the given exchange parameter.
+     * For instance adding headers to the OUT message will be preserved.
      */
     Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
 }
