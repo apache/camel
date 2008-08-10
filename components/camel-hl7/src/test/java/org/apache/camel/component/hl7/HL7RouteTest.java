@@ -130,7 +130,8 @@ public class HL7RouteTest extends ContextTestSupport {
         };
     }
 
-    public static class MyHL7BusinessLogic {
+    // START SNIPPET: e2
+    public class MyHL7BusinessLogic {
 
         public Message handleA19(Message msg) throws Exception {
             // here you can have your business logic for A19 messages
@@ -146,6 +147,7 @@ public class HL7RouteTest extends ContextTestSupport {
             return createADT01Message();
         }
     }
+    // END SNIPPET: e2
 
     private static Message createADR19Message() throws Exception {
         ADR_A19 adr = new ADR_A19();
