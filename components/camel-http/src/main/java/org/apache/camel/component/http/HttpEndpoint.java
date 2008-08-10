@@ -114,8 +114,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     /**
      * Provide access to the client parameters used on new {@link HttpClient} instances
      * used by producers or consumers of this endpoint.
-     *
-     * @param clientParams
      */
     public void setClientParams(HttpClientParams clientParams) {
         this.clientParams = clientParams;

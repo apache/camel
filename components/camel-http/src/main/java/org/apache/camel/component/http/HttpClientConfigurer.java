@@ -24,10 +24,9 @@ import org.apache.commons.httpclient.HttpClient;
  * @version $Revision$
  */
 public interface HttpClientConfigurer {
+
     /**
      * Configure the HttpClient such as setting the authentication or proxying details
-     *
-     * @param client
      */
     void configureHttpClient(HttpClient client);
 }

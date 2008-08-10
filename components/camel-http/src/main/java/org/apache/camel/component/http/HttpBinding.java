@@ -124,7 +124,6 @@ public class HttpBinding {
 
         return headerFilterStrategy != null
             && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
-
     }
 
     /*
@@ -170,6 +169,5 @@ public class HttpBinding {
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
     }
-
 
 }
