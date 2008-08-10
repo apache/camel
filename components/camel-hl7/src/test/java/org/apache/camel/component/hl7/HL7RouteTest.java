@@ -110,15 +110,15 @@ public class HL7RouteTest extends ContextTestSupport {
                     .unmarshal(hl7)
                     // using choice as the content base router
                     .choice()
-                        // where we choose that A19 queries so go to mock:a19
+                        // where we choose that A19 queries invoke the handleA19 method on our hl7service bean
                         .when(header("hl7.msh.triggerEvent").isEqualTo("A19"))
                             .beanRef("hl7service", "handleA19")
                             .to("mock:a19")
-                        // and A01 should go to mock:a01
+                        // and A01 should invoke the handleA01 method on our hl7service bean
                         .when(header("hl7.msh.triggerEvent").isEqualTo("A01")).to("mock:a01")
                             .beanRef("hl7service", "handleA01")
                             .to("mock:a19")
-                        // other types should go to unknown
+                        // other types should go to mock:unknown
                         .otherwise()
                             .to("mock:unknown")
                     // end choice block
@@ -132,6 +132,9 @@ public class HL7RouteTest extends ContextTestSupport {
 
     // START SNIPPET: e2
     public class MyHL7BusinessLogic {
+
+        // This is a plain POJO that has <b>no</b> imports whatsoever on Apache Camel.
+        // its a plain POJO only importing the HAPI library so we can much easier work with the HL7 format.
 
         public Message handleA19(Message msg) throws Exception {
             // here you can have your business logic for A19 messages
