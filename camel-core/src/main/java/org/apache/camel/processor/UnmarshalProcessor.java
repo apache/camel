@@ -40,7 +40,6 @@ public class UnmarshalProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         try {
-
             // lets setup the out message before we invoke the dataFormat
             // so that it can mutate it if necessary
             Message out = exchange.getOut(true);
@@ -49,7 +48,7 @@ public class UnmarshalProcessor implements Processor {
             Object result = dataFormat.unmarshal(exchange, stream);
             out.setBody(result);
         } finally {
-            if (null != stream) {
+            if (stream != null) {
                 stream.close();
             }
         }
