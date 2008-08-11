@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
@@ -58,6 +59,8 @@ public class SpringRemotingWithOneWayTest extends AbstractJUnit38SpringContextTe
         List<Exchange> list = endpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
             LOG.info("Received: " + exchange.getIn().getBody());
+            ExchangePattern pattern = exchange.getPattern();
+            assertEquals("Expected pattern on exchange: " + exchange, ExchangePattern.InOnly, pattern);
         }
 
     }
