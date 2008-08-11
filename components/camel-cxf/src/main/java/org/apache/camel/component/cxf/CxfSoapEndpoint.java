@@ -178,4 +178,9 @@ public class CxfSoapEndpoint implements Endpoint {
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
+
+    public boolean isLenientProperties() {
+        return false;
+    }
+
 }

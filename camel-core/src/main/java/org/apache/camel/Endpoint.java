@@ -113,4 +113,21 @@ public interface Endpoint<E extends Exchange> {
     
     @Deprecated
     void setContext(CamelContext context);
+
+    /**
+     * Should all properties be known or does the endpoint allow unknown options?
+     * <p/>
+     * <tt>Lenient = false</tt> means that the endpoint should validate that all
+     * given options is known and configured properly
+     * <tt>lenient = true</tt> means that the endpoint allows additional unknown options to
+     * be passed to it but does not throw a ResolveEndpointFailedException when creating
+     * the endpoint.
+     * <p/>
+     * This options is used by a few components for instance the HTTP based that can have
+     * dynamic URI options appended that is targeted for an external system.
+     * <p/>
+     * Most endpoints is configued to be <b>not</b> lenient.
+     */
+    boolean isLenientProperties();
+    
 }

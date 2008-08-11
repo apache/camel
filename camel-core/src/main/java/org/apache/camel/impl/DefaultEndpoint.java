@@ -208,4 +208,9 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         setCamelContext(context);
     }
 
+    public boolean isLenientProperties() {
+        // default should be false for most components
+        return false;
+    }
+
 }
