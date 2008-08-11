@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
@@ -25,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;delayer/&gt; element
@@ -34,6 +36,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "delayer")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayerType extends ExpressionNode {
+    @XmlElement
     private Long delay = 0L;
 
     public DelayerType() {
@@ -73,7 +76,17 @@ public class DelayerType extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        Expression processAtExpression = getExpression() != null ? getExpression().createExpression(routeContext) : null;
+        Expression processAtExpression = createAbsoluteTimeDelayExpression(routeContext);
         return new Delayer(childProcessor, processAtExpression, delay);
+    }
+
+    private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
+        ExpressionType expr = getExpression();
+        if (expr != null) {
+            if (ObjectHelper.isNotNullAndNonEmpty(expr.getLanguage())) {
+                return expr.createExpression(routeContext);
+            } 
+        } 
+        return null;
     }
 }

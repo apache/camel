@@ -97,7 +97,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
         if (event instanceof ContextRefreshedEvent) {
             // now lets start the CamelContext so that all its possible
-            // dependencies are initailized
+            // dependencies are initialized
             try {
                 LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
                 start();
