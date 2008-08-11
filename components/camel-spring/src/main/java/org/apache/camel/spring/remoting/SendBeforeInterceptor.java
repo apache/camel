@@ -24,6 +24,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.CamelInvocationHandler;
+import org.apache.camel.component.bean.MethodInfoCache;
 import org.apache.camel.util.CamelContextHelper;
 
 import org.springframework.beans.factory.DisposableBean;
@@ -54,7 +55,7 @@ public class SendBeforeInterceptor implements MethodInterceptor, CamelContextAwa
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
         producer = endpoint.createProducer();
         producer.start();
-        invocationHandler = new CamelInvocationHandler(endpoint, producer);
+        invocationHandler = new CamelInvocationHandler(endpoint, producer, new MethodInfoCache(endpoint.getCamelContext()));
     }
 
     public void destroy() throws Exception {
