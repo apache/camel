@@ -105,6 +105,5 @@ public class HttpComponent extends DefaultComponent<HttpExchange> implements Hea
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
-        
     }
 }

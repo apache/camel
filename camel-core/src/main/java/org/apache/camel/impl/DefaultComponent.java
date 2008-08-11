@@ -87,8 +87,9 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
                 setProperties(endpoint, parameters);
             }
 
+            // if endpoint is strict (not lenient) and we have unknown parameters configured then
             // fail if there are parameters that could not be set, then they are probably miss spelt or not supported at all
-            if (parameters.size() > 0) {
+            if (!endpoint.isLenientProperties() && parameters.size() > 0) {
                 throw new ResolveEndpointFailedException(uri, "There are " + parameters.size()
                     + " parameters that couldn't be set on the endpoint."
                     + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."

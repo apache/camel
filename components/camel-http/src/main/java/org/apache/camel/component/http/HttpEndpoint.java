@@ -98,6 +98,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         component.disconnect(consumer);
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
+        return true;
+    }
 
     // Properties
     //-------------------------------------------------------------------------
