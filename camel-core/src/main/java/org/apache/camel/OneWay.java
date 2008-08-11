@@ -24,51 +24,39 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as being a one way asynchronous invocation so that if you are using some kind of
  * <a href="http://activemq.apache.org/camel/spring-remoting.html">Spring Remoting</a> then the method invocation will be asynchronous.
+ * <p>
+ * You can then either annotate specific methods as being oneway as follows
  *
- * You can then either annotate specific methods as being oneway / asynchronous via
- * <code>
- * @OneWay
- * public void myMethod() {...}
- * </code>
+ * <code><pre> &#64;OneWay
+ * public void myMethod() {...}</pre></code>
  *
  * or you can say that all methods are by default asynchronous on an interface by annotating the interface
- * 
- * <code>
- * @OneWay
+ *
+ * <code><pre> &#64;OneWay
  * public interface Foo {
  *   void methodOne();
  *   void methodTwo();
- * }
- * </code>
+ * }</pre></code>
  *
  * If you wish to use some other {@link ExchangePattern} than {@link org.apache.camel.ExchangePattern#InOnly} you could use something like
  *
- * <code>
- * @OneWay(ExchangePattern.RobustInOnly)
- * public void myMethod() {...}
- * </code>
- *
+ * <code><pre> &#64;OneWay(ExchangePattern.RobustInOnly)
+ * public void myMethod() {...}</pre></code>
  * otherwise the following code would default to using {@link org.apache.camel.ExchangePattern#InOnly}
+ * <code><pre> &#64;OneWay
+ * public void myMethod() {...}</pre></code>
  *
- * <code>
- * @OneWay
- * public void myMethod() {...}
- * </code>
- *
- * You can also use the annotation to disable the one way pattern on specific methods as follows...
- *
- * <code>
- * @OneWay
+ * <p>
+ * You can also use the annotation on a method to override the annoation on the class as follows...
+ * <code><pre> &#64;OneWay
  * public interface Foo {
  *   void methodOne();
  *
- *   @OneWay(ExchangePattern.InOut)
+ *   &#64;OneWay(ExchangePattern.InOut)
  *   void notOneWayMethod();
- * }
+ * }</pre></code>
  *
  * Where the <b>notOneWayMethod</b> will not be using one way invocation while all other methods will inherit the InOut exchange pattern
- *
- * </code>
  * @see ExchangePattern
  * @see Exchange#getPattern()
  *
