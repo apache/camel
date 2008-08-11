@@ -58,6 +58,7 @@ public class BeanInfo {
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
     private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
+    private BeanInfo superBeanInfo;
 
     public BeanInfo(CamelContext camelContext, Class type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
@@ -150,7 +151,18 @@ public class BeanInfo {
      * @param method
      */
     public MethodInfo getMethodInfo(Method method) {
-        return methodMap.get(method);
+        MethodInfo answer = methodMap.get(method);
+        if (answer == null) {
+            // maybe the method is defined on a base class?
+            if (superBeanInfo == null && type != Object.class) {
+                Class superclass = type.getSuperclass();
+                if (superclass != null && superclass != Object.class) {
+                    superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
+                    return superBeanInfo.getMethodInfo(method);
+                }
+            }
+        }
+        return answer;
     }
 
 

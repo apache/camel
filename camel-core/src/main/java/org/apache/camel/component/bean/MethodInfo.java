@@ -22,6 +22,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -51,7 +52,7 @@ public class MethodInfo {
         this.bodyParameters = bodyParameters;
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.parametersExpression = createParametersExpression();
-        OneWay oneway = method.getAnnotation(OneWay.class);
+        OneWay oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
@@ -92,6 +93,17 @@ public class MethodInfo {
 
     public Method getMethod() {
         return method;
+    }
+
+    /**
+     * Returns the {@link org.apache.camel.ExchangePattern} that should be used when invoking this method. This value
+     * defaults to {@link org.apache.camel.ExchangePattern#InOut} unless some {@link OneWay} annotation is used
+     * to override the message exchange pattern.
+     *
+     * @return the exchange pattern to use for invoking this method.
+     */
+    public ExchangePattern getPattern() {
+        return pattern;
     }
 
     public Expression getParametersExpression() {
@@ -169,7 +181,77 @@ public class MethodInfo {
         };
     }
 
-    public ExchangePattern getPattern() {
-        return pattern;
+    /**
+     * Finds the oneway annotation in priority order; look for method level annotations first, then the class level annotations,
+     * then super class annotations then interface annotations
+     *
+     * @param method the method on which to search
+     * @return the first matching annotation or none if it is not available
+     */
+    protected OneWay findOneWayAnnotation(Method method) {
+        OneWay answer = method.getAnnotation(OneWay.class);
+        if (answer == null) {
+            Class<?> type = method.getDeclaringClass();
+
+            // lets create the search order of types to scan
+            List<Class<?>> typesToSearch = new ArrayList<Class<?>>();
+            addTypeAndSuperTypes(type, typesToSearch);
+            Class[] interfaces = type.getInterfaces();
+            for (Class anInterface : interfaces) {
+                addTypeAndSuperTypes(anInterface, typesToSearch);
+            }
+
+            // now lets scan for a type which the current declared class overloads
+            answer = findOneWayAnnotationOnMethod(typesToSearch, method);
+            if (answer == null ){
+                answer = findOneWayAnnotation(typesToSearch);
+            }
+        }
+        return answer;
     }
+
+    /**
+     * Adds the current class and all of its base classes (apart from {@link Object} to the given list
+     * @param type
+     * @param result
+     */
+    protected void addTypeAndSuperTypes(Class<?> type, List<Class<?>> result) {
+        for (Class<?> t = type; t != null && t != Object.class; t = t.getSuperclass()) {
+            result.add(t);
+        }
+    }
+
+    /**
+     * Finds the first annotation on the base methods defined in the list of classes
+     */
+    protected OneWay findOneWayAnnotationOnMethod(List<Class<?>> classes, Method method) {
+        for (Class<?> type : classes) {
+            try {
+                Method definedMethod = type.getMethod(method.getName(), method.getParameterTypes());
+                OneWay answer = definedMethod.getAnnotation(OneWay.class);
+                if (answer != null) {
+                    return answer;
+                }
+            } catch (NoSuchMethodException e) {
+                // ignore
+            }
+        }
+        return null;
+    }
+
+
+    /**
+     * Finds the first annotation on the given list of classes
+     */
+    protected OneWay findOneWayAnnotation(List<Class<?>> classes) {
+        for (Class<?> type : classes) {
+            OneWay answer = type.getAnnotation(OneWay.class);
+            if (answer != null) {
+                return answer;
+            }
+        }
+        return null;
+    }
+
+
 }

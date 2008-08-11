@@ -25,6 +25,22 @@ import java.lang.annotation.Target;
  * Marks a method as being a one way asynchronous invocation so that if you are using some kind of
  * <a href="http://activemq.apache.org/camel/spring-remoting.html">Spring Remoting</a> then the method invocation will be asynchronous.
  *
+ * You can then either annotate specific methods as being oneway / asynchronous via
+ * <code>
+ * @OneWay
+ * public void myMethod() {...}
+ * </code>
+ *
+ * or you can say that all methods are by default asynchronous on an interface by annotating the interface
+ * 
+ * <code>
+ * @OneWay
+ * public interface Foo {
+ *   void methodOne();
+ *   void methodTwo();
+ * }
+ * </code>
+ *
  * If you wish to use some other {@link ExchangePattern} than {@link org.apache.camel.ExchangePattern#InOnly} you could use something like
  *
  * <code>
@@ -39,13 +55,27 @@ import java.lang.annotation.Target;
  * public void myMethod() {...}
  * </code>
  *
+ * You can also use the annotation to disable the one way pattern on specific methods as follows...
+ *
+ * <code>
+ * @OneWay
+ * public interface Foo {
+ *   void methodOne();
+ *
+ *   @OneWay(ExchangePattern.InOut)
+ *   void notOneWayMethod();
+ * }
+ *
+ * Where the <b>notOneWayMethod</b> will not be using one way invocation while all other methods will inherit the InOut exchange pattern
+ *
+ * </code>
  * @see ExchangePattern
  * @see Exchange#getPattern()
  *
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.METHOD })
+@Target({ElementType.TYPE, ElementType.METHOD})
 public @interface OneWay {
 
     /**
