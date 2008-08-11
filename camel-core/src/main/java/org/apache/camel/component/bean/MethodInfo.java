@@ -25,6 +25,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.OneWay;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -40,6 +42,7 @@ public class MethodInfo {
     private final List<ParameterInfo> bodyParameters;
     private final boolean hasCustomAnnotation;
     private Expression parametersExpression;
+    private ExchangePattern pattern = ExchangePattern.InOut;
 
     public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters, boolean hasCustomAnnotation) {
         this.type = type;
@@ -48,6 +51,10 @@ public class MethodInfo {
         this.bodyParameters = bodyParameters;
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.parametersExpression = createParametersExpression();
+        OneWay oneway = method.getAnnotation(OneWay.class);
+        if (oneway != null) {
+            pattern = oneway.value();
+        }
     }
 
     public String toString() {
@@ -160,5 +167,9 @@ public class MethodInfo {
                 return "ParametersExpression: " + Arrays.asList(expressions);
             }
         };
+    }
+
+    public ExchangePattern getPattern() {
+        return pattern;
     }
 }

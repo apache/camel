@@ -19,11 +19,7 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Body;
@@ -61,6 +57,7 @@ public class BeanInfo {
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
+    private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
 
     public BeanInfo(CamelContext camelContext, Class type) {
         this(camelContext, type, createParameterMappingStrategy(camelContext));
@@ -131,6 +128,33 @@ public class BeanInfo {
     }
 
     protected MethodInfo introspect(Class clazz, Method method) {
+        String opName = method.getName();
+
+        MethodInfo methodInfo = createMethodInfo(clazz, method);
+
+        operations.put(opName, methodInfo);
+        if (methodInfo.hasBodyParameter()) {
+            operationsWithBody.add(methodInfo);
+        }
+        if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
+            operationsWithCustomAnnotation.add(methodInfo);
+        }
+        methodMap.put(method, methodInfo);
+        return methodInfo;
+    }
+
+    /**
+     * Returns the {@link MethodInfo} for the given method if it exists or null
+     * if there is no metadata available for the given method
+     *
+     * @param method
+     */
+    public MethodInfo getMethodInfo(Method method) {
+        return methodMap.get(method);
+    }
+
+
+    protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
 
@@ -168,7 +192,6 @@ public class BeanInfo {
         }
 
         // now lets add the method to the repository
-        String opName = method.getName();
 
         // TODO allow an annotation to expose the operation name to use
         /* if (method.getAnnotation(Operation.class) != null) { String name =
@@ -176,14 +199,6 @@ public class BeanInfo {
          * name.length() > 0) { opName = name; } }
          */
         MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
-
-        operations.put(opName, methodInfo);
-        if (methodInfo.hasBodyParameter()) {
-            operationsWithBody.add(methodInfo);
-        }
-        if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
-            operationsWithCustomAnnotation.add(methodInfo);
-        }
         return methodInfo;
     }
 

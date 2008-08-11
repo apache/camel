@@ -41,8 +41,18 @@ public final class ProxyHelper {
      */
     public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[])
         throws Exception {
+        MethodInfoCache methodCache = new MethodInfoCache(endpoint.getCamelContext());
+        return createProxy(endpoint, cl, interfaces, methodCache);
+    }
+
+    /**
+     * Creates a Proxy which sends PojoExchange to the endpoint.
+     *
+     * @throws Exception
+     */
+    public static Object createProxy(Endpoint endpoint, ClassLoader cl, Class[] interfaces, MethodInfoCache methodCache) throws Exception {
         final Producer producer = endpoint.createProducer();
-        return Proxy.newProxyInstance(cl, interfaces, new CamelInvocationHandler(endpoint, producer));
+        return Proxy.newProxyInstance(cl, interfaces, new CamelInvocationHandler(endpoint, producer, methodCache));
     }
 
     /**
