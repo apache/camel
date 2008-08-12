@@ -36,7 +36,11 @@
 
   </cxf:cxfEndpoint>
 
-
+   <cxf:cxfEndpoint id="noServiceClassEndpoint" address="http://localhost:9000/router"
+    endpointName="s:PortName"
+    serviceName="s:ServiceName"
+    xmlns:s="http://www.example.com/test">
+   </cxf:cxfEndpoint>
 
 
 

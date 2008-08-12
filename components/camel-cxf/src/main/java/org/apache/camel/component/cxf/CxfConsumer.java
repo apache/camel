@@ -64,12 +64,14 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
+            CxfEndpointUtils.checkServiceClass(endpointBean.getServiceClass());
             svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
             isWebServiceProvider = CxfEndpointUtils.hasAnnotation(endpointBean.getServiceClass(),
                                                                   WebServiceProvider.class);
             endpoint.configure(svrBean);
 
         } else { // setup the serverFactoryBean with the URI parameters
+            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
             Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
             svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
             isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);

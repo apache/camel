@@ -20,6 +20,9 @@ import javax.xml.namespace.QName;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
@@ -37,10 +40,16 @@ public class CxfEndpointUtilsTest extends TestCase {
         + "&serviceName={http://www.example.com/test}ServiceName"
         + "&setDefaultBus=true";
 
-
+    private static final String NO_SERVICE_CLASS_URI = "cxf://http://www.example.com/testaddress"
+        + "?portName={http://www.example.com/test}PortName"
+        + "&serviceName={http://www.example.com/test}ServiceName";
 
     protected String getEndpointURI() {
         return CXF_BASE_URI;
+    }
+
+    protected String getNoServiceClassURI() {
+        return NO_SERVICE_CLASS_URI;
     }
 
     protected CamelContext getCamelContext() throws Exception {
@@ -64,6 +73,43 @@ public class CxfEndpointUtilsTest extends TestCase {
         assertEquals("We should get the Message DataFormat", CxfEndpointUtils.getDataFormat(endpoint), DataFormat.MESSAGE);
     }
 
+    public void testCheckServiceClassWithTheEndpoint() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        try {
+            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
+            fail("Should get a CamelException here");
+        } catch (CamelException exception) {
+            assertNotNull("Should get a CamelException here", exception);
+            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        }
+    }
 
+    public void testCheckServiceClassProcedure() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        try {
+            endpoint.createProducer();
+        } catch (CamelException exception) {
+            assertNotNull("Should get a CamelException here", exception);
+            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        }
+    }
+
+    public void testCheckServiceClassConsumer() throws Exception {
+        CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
+        try {
+            endpoint.createConsumer(new NullProcessor());
+        } catch (CamelException exception) {
+            assertNotNull("Should get a CamelException here", exception);
+            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        }
+    }
+
+    class NullProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // Do nothing here
+        }
+
+    }
 
 }

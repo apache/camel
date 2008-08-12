@@ -30,6 +30,7 @@ import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.i18n.Message;
@@ -233,6 +234,18 @@ public final class CxfEndpointUtils {
             return endpoint.isSetDefaultBus().booleanValue();
         } else { // return the default value false
             return false;
+        }
+    }
+
+    public static void checkServiceClass(Class clazz) throws CamelException {
+        if (clazz == null) {
+            throw new CamelException("serviceClass is required for CXF endpoint configuration");
+        }
+    }
+
+    public static void checkServiceClassName(String className) throws CamelException {
+        if (ObjectHelper.isNullOrBlank(className)) {
+            throw new CamelException("serviceClass is required for CXF endpoint configuration");
         }
     }
 
