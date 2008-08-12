@@ -30,10 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
-    private String port = "20022";
+    private int port = 20022;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/deletefile?password=admin&binary=false&consumer.deleteFile=true";
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

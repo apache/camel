@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFileToFtpTest extends FtpServerTestSupport {
 
-    private String port = "20011";
+    private int port = 20011;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin";
 
     public void testFromFileToFtp() throws Exception {
@@ -36,7 +36,7 @@ public class FromFileToFtpTest extends FtpServerTestSupport {
         Thread.sleep(1000);
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

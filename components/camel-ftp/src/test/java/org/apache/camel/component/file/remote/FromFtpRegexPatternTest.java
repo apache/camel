@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpRegexPatternTest extends FtpServerTestSupport {
 
-    private String port = "20097";
+    private int port = 20097;
 
     private String ftpUrl = "ftp://admin@localhost:" + port + "/regexp?password=admin&consumer.regexPattern=report.*";
 
@@ -36,7 +36,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

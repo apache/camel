@@ -26,10 +26,10 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
 
-    private String port = "20089";
+    private int port = 20089;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/upload/user/claus?binary=false&password=admin";
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

@@ -29,7 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport {
 
-    private String port = "20012";
+    private int port = 20012;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp5/camel?password=admin&binary=false";
 
     public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
@@ -42,7 +42,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         Thread.sleep(1000);
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

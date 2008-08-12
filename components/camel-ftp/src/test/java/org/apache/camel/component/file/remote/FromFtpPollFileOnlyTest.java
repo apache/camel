@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
-    private String port = "20028";
+    private int port = 20028;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/fileonly/report.txt?password=admin&directory=false";
 
     public void testPollFileOnly() throws Exception {
@@ -39,7 +39,7 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
