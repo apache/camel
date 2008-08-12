@@ -63,30 +63,21 @@ public class MailBinding {
     public void populateMailMessage(MailEndpoint endpoint, MimeMessage mimeMessage, Exchange exchange)
         throws MessagingException, IOException {
 
-        // append the headers from the in message at first
-        appendHeadersFromCamel(mimeMessage, exchange, exchange.getIn());
-
-        // than override any from the fixed endpoint configuraiton
-        Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
-        if (recipients.containsKey(Message.RecipientType.TO)) {
-            mimeMessage.setRecipients(Message.RecipientType.TO, recipients.get(Message.RecipientType.TO));
-        }
-        if (recipients.containsKey(Message.RecipientType.CC)) {
-            mimeMessage.setRecipients(Message.RecipientType.CC, recipients.get(Message.RecipientType.CC));
-        }
-        if (recipients.containsKey(Message.RecipientType.BCC)) {
-            mimeMessage.setRecipients(Message.RecipientType.BCC, recipients.get(Message.RecipientType.BCC));
-        }
-
-        // fallback to use destination if no TO provided at all
-        if (mimeMessage.getRecipients(Message.RecipientType.TO) == null) {
-            mimeMessage.setRecipients(Message.RecipientType.TO, endpoint.getConfiguration().getDestination());
+        // camel message headers takes presedence over endpoint configuration
+        if (hasRecipientHeaders(exchange.getIn())) {
+            setRecipientFromCamelMessage(mimeMessage, exchange, exchange.getIn());
+        } else {
+            // fallback to endpoint configuration
+            setRecipientFromEndpointConfiguration(mimeMessage, endpoint);
         }
 
         // must have at least one recipients otherwise we do not know where to send the mail
         if (mimeMessage.getAllRecipients() == null) {
             throw new IllegalArgumentException("The mail message does not have any recipients set.");
         }
+
+        // append the rest of the headers (no recipients) that could be subject, reply-to etc.
+        appendHeadersFromCamelMessage(mimeMessage, exchange, exchange.getIn());
 
         if (empty(mimeMessage.getFrom())) {
             // lets default the address to the endpoint destination
@@ -122,8 +113,8 @@ public class MailBinding {
     /**
      * Appends the Mail headers from the Camel {@link MailMessage}
      */
-    protected void appendHeadersFromCamel(MimeMessage mimeMessage, Exchange exchange,
-                                          org.apache.camel.Message camelMessage)
+    protected void appendHeadersFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
+                                                 org.apache.camel.Message camelMessage)
         throws MessagingException {
 
         for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
@@ -132,6 +123,12 @@ public class MailBinding {
             if (headerValue != null) {
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue)) {
+
+                    if (isRecipientHeader(headerName)) {
+                        // skip any recipients as they are handled specially
+                        continue;
+                    }
+
                     // Mail messages can repeat the same header...
                     if (ObjectConverter.isCollection(headerValue)) {
                         Iterator iter = ObjectConverter.iterator(headerValue);
@@ -147,20 +144,50 @@ public class MailBinding {
         }
     }
 
-    /**
-     * Does the given camel message contain any To, CC or BCC header names?
-     */
-    private static boolean hasRecipientHeaders(org.apache.camel.Message camelMessage) {
-        for (String key : camelMessage.getHeaders().keySet()) {
-            if (Message.RecipientType.TO.toString().equals(key)) {
-                return true;
-            } else if (Message.RecipientType.CC.toString().equals(key)) {
-                return true;
-            } else if (Message.RecipientType.BCC.toString().equals(key)) {
-                return true;
+    private void setRecipientFromCamelMessage(MimeMessage mimeMessage, Exchange exchange,
+                                                org.apache.camel.Message camelMessage)
+        throws MessagingException {
+
+        for (Map.Entry<String, Object> entry : camelMessage.getHeaders().entrySet()) {
+            String headerName = entry.getKey();
+            Object headerValue = entry.getValue();
+            if (headerValue != null && isRecipientHeader(headerName)) {
+                // special handling of recipients
+                if (ObjectConverter.isCollection(headerValue)) {
+                    Iterator iter = ObjectConverter.iterator(headerValue);
+                    while (iter.hasNext()) {
+                        Object recipient = iter.next();
+                        appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, recipient));
+                    }
+                } else {
+                    appendRecipientToMimeMessage(mimeMessage, headerName, asString(exchange, headerValue));
+                }
             }
         }
-        return false;
+    }
+
+    /**
+     * Appends the Mail headers from the endpoint configuraiton.
+     */
+    protected void setRecipientFromEndpointConfiguration(MimeMessage mimeMessage, MailEndpoint endpoint)
+        throws MessagingException {
+
+        Map<Message.RecipientType, String> recipients = endpoint.getConfiguration().getRecipients();
+        if (recipients.containsKey(Message.RecipientType.TO)) {
+            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.TO.toString(), recipients.get(Message.RecipientType.TO));
+        }
+        if (recipients.containsKey(Message.RecipientType.CC)) {
+            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.CC.toString(), recipients.get(Message.RecipientType.CC));
+        }
+        if (recipients.containsKey(Message.RecipientType.BCC)) {
+            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
+        }
+
+        // fallback to use destination if no TO provided at all
+        String destination = endpoint.getConfiguration().getDestination();
+        if (destination != null && mimeMessage.getRecipients(Message.RecipientType.TO) == null) {
+            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.TO.toString(), destination);
+        }
     }
 
     /**
@@ -209,15 +236,7 @@ public class MailBinding {
         return true;
     }
 
-    private static boolean empty(Address[] addresses) {
-        return addresses == null || addresses.length == 0;
-    }
-
-    private static String asString(Exchange exchange, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
-    }
-
-    public Map<String, Object> extractHeadersFromMail(Message mailMessage) throws MessagingException {
+    protected Map<String, Object> extractHeadersFromMail(Message mailMessage) throws MessagingException {
         Map<String, Object> answer = new HashMap<String, Object>();
         Enumeration names = mailMessage.getAllHeaders();
 
@@ -236,6 +255,66 @@ public class MailBinding {
         }
 
         return answer;
+    }
+
+    private static void appendRecipientToMimeMessage(MimeMessage mimeMessage, String type, String recipient)
+        throws MessagingException {
+
+        // we support that multi recipient can be given as a string seperated by comma or semi colon
+        String[] lines = recipient.split("[,|;]");
+        for (String line : lines) {
+            line = line.trim();
+            mimeMessage.addRecipients(asRecipientType(type), line);
+        }
+    }
+
+    /**
+     * Does the given camel message contain any To, CC or BCC header names?
+     */
+    private static boolean hasRecipientHeaders(org.apache.camel.Message camelMessage) {
+        for (String key : camelMessage.getHeaders().keySet()) {
+            if (isRecipientHeader(key)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Is the given key a mime message recipient header (To, CC or BCC)
+     */
+    private static boolean isRecipientHeader(String key) {
+        if (Message.RecipientType.TO.toString().equalsIgnoreCase(key)) {
+            return true;
+        } else if (Message.RecipientType.CC.toString().equalsIgnoreCase(key)) {
+            return true;
+        } else if (Message.RecipientType.BCC.toString().equalsIgnoreCase(key)) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Returns the RecipientType object.
+     */
+    private static Message.RecipientType asRecipientType(String type) {
+        if (Message.RecipientType.TO.toString().equalsIgnoreCase(type)) {
+            return Message.RecipientType.TO;
+        } else if (Message.RecipientType.CC.toString().equalsIgnoreCase(type)) {
+            return Message.RecipientType.CC;
+        } else if (Message.RecipientType.BCC.toString().equalsIgnoreCase(type)) {
+            return Message.RecipientType.BCC;
+        }
+        throw new IllegalArgumentException("Unknown recipient type: " + type);
+    }
+
+
+    private static boolean empty(Address[] addresses) {
+        return addresses == null || addresses.length == 0;
+    }
+
+    private static String asString(Exchange exchange, Object value) {
+        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
     }
 
 }

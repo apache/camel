@@ -21,6 +21,7 @@ import java.util.HashMap;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
+import javax.mail.Address;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -68,7 +69,13 @@ public class MailRouteTest extends ContextTestSupport {
         assertNotNull(name + " should have received at least one mail!", message);
         assertEquals("hello world!", message.getContent());
         assertEquals("camel@localhost", message.getFrom()[0].toString());
-        assertEquals(name, message.getRecipients(RecipientType.TO)[0].toString());
+        boolean found = false;
+        for (Address adr : message.getRecipients(RecipientType.TO)) {
+            if (name.equals(adr.toString())) {
+                found = true;
+            }
+        }
+        assertTrue("Should have found the recpient to in the mail: " + name, found);
     }
 
     @Override
@@ -80,9 +87,11 @@ public class MailRouteTest extends ContextTestSupport {
 
                 // must use fixed to option to send the mail to the given reciever, as we have polled
                 // a mail from a mailbox where it already has the 'old' To as header value
+                // here we send the mail to 2 recievers. notice we can use a plain string with semi colon
+                // to seperate the mail addresses
                 from("direct:a")
-                    .to("smtp://localhost?to=route-test-result@localhost",
-                          "smtp://localhost?to=route-test-copy@localhost");
+                    .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
+                    .to("smtp://localhost");
 
                 from("pop3://route-test-result@localhost?consumer.delay=1000")
                     .convertBodyTo(String.class).to("mock:result");
