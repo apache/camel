@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -48,7 +50,7 @@ import org.apache.camel.util.CollectionStringBuffer;
  */
 @XmlRootElement(name = "loadBalance")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class LoadBalanceType extends OutputType<LoadBalanceType> {
+public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     @XmlAttribute(required = false)
     private String ref;
 
@@ -60,12 +62,37 @@ public class LoadBalanceType extends OutputType<LoadBalanceType> {
         )
     private LoadBalancerType loadBalancerType;
 
+    @XmlElementRef
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+
     public LoadBalanceType() {
     }
 
     @Override
     public String getShortName() {
         return "loadbalance";
+    }
+
+    public List<ProcessorType<?>> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorType<?>> outputs) {
+        this.outputs = outputs;
+        if (outputs != null) {
+            for (ProcessorType output : outputs) {
+                configureChild(output);
+            }
+        }
+    }
+
+
+    @Override
+    protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
+        if (isInheritErrorHandler()) {
+            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
     }
 
     public String getRef() {
