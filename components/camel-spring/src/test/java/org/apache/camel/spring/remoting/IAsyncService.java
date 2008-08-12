@@ -18,9 +18,6 @@ package org.apache.camel.spring.remoting;
 
 import org.apache.camel.OneWay;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-
 /**
  * A dummy interface which has a oneway method via the {@link org.apache.camel.OneWay} annotation
  */
