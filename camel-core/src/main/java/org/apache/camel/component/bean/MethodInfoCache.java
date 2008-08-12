@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,11 +16,11 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.util.LRUCache;
-
 import java.lang.reflect.Method;
 import java.util.Map;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.util.LRUCache;
 
 /**
  * Represents a cache of MethodInfo objects to avoid the expense of introspection for each invocation of a method
@@ -31,8 +30,8 @@ import java.util.Map;
  */
 public class MethodInfoCache {
     private final CamelContext camelContext;
-    private Map<Method,MethodInfo> methodCache;
-    private Map<Class,BeanInfo> classCache;
+    private Map<Method, MethodInfo> methodCache;
+    private Map<Class, BeanInfo> classCache;
 
     public MethodInfoCache(CamelContext camelContext) {
         this(camelContext, 1000, 10000);

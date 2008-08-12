@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,15 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.Method;
+
 import junit.framework.TestCase;
-import org.apache.camel.OneWay;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.OneWay;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.lang.reflect.Method;
 
 /**
  * @version $Revision: 1.1 $
@@ -104,26 +103,26 @@ public class BeanInfoTest extends TestCase {
     }
 
     public interface Foo {
-        public void inOutMethod();
+        void inOutMethod();
 
         @OneWay
-        public void inOnlyMethod();
+        void inOnlyMethod();
 
         @OneWay(ExchangePattern.RobustInOnly)
-        public void robustInOnlyMethod();
+        void robustInOnlyMethod();
     }
 
     @OneWay
     public interface MyOneWayInterface {
-        public void inOnlyMethod();
+        void inOnlyMethod();
     }
 
     @OneWay
     public interface MyOneWayInterfaceWithOverloadedMethod {
-        public void inOnlyMethod();
+        void inOnlyMethod();
 
         @OneWay(ExchangePattern.RobustInOnly)
-        public void robustInOnlyMethod();
+        void robustInOnlyMethod();
     }
 
     public static class OverloadOnMethod implements MyOneWayInterface {

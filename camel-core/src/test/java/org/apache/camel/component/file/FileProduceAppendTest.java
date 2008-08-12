@@ -16,12 +16,11 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.IOConverter;
-
-import java.io.File;
-import java.io.OutputStream;
 
 /**
  * Unit test to verify the append option
