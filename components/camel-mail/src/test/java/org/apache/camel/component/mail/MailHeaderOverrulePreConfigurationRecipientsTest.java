@@ -16,28 +16,35 @@
  */
 package org.apache.camel.component.mail;
 
+import java.util.Map;
+import java.util.HashMap;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
- * Unit test for Mail subject support.
+ * Unit test to verify that message headers override pre configuration.
  */
-public class MailSubjectTest extends ContextTestSupport {
-    private String subject = "Camel rocks";
+public class MailHeaderOverrulePreConfigurationRecipientsTest extends ContextTestSupport {
 
-    public void testMailSubject() throws Exception {
+    public void testSendWithRecipientsInHeaders() throws Exception {
         Mailbox.clearAll();
-
-        String body = "Hello Claus.\nYes it does.\n\nRegards James.";
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived("subject", subject);
-        mock.expectedBodiesReceived(body);
+        mock.expectedBodiesReceived("Hello World");
+        mock.expectedHeaderReceived("to", "claus@localhost");
+        mock.expectedHeaderReceived("cc", "willem@localhost");
+        mock.expectedHeaderReceived("bcc", "hadrian@localhost");
 
-        template.sendBody("direct:a", body);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put("to", "claus@localhost");
+        headers.put("cc", "willem@localhost");
+        headers.put("bcc", "hadrian@localhost");
+
+        template.sendBodyAndHeaders("smtp://james3@localhost", "Hello World", headers);
 
         mock.assertIsSatisfied();
     }
@@ -45,12 +52,9 @@ public class MailSubjectTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:a").setHeader("subject", constant(subject)).to("smtp://james2@localhost");
-                // END SNIPPET: e1
-
-                from("pop3://localhost?username=james2&password=secret&consumer.delay=1000").to("mock:result");
+                from("pop3://claus@localhost?To=someone@outhere.com&CC=none@world.com&consumer.delay=1000").to("mock:result");
             }
         };
     }
+    
 }
