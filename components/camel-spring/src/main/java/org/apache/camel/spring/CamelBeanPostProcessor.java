@@ -24,23 +24,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.MessageDriven;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Service;
+import org.apache.camel.*;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.BeanInstantiationException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -115,10 +108,18 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 EndpointInject annotation = field.getAnnotation(EndpointInject.class);
                 if (annotation != null) {
-                    ReflectionUtils.setField(field, bean, getEndpointInjectionValue(annotation, field.getType(), field.getName()));
+                    injectField(field, annotation.uri(), annotation.name(), bean);
+                }
+                Produce produce = field.getAnnotation(Produce.class);
+                if (produce != null) {
+                    injectField(field, produce.uri(), produce.ref(), bean);
                 }
             }
         });
+    }
+
+    protected void injectField(Field field, String endpointUri, String endpointRef, Object bean) {
+        ReflectionUtils.setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, field.getName()));
     }
 
     protected void injectMethods(final Object bean) {
@@ -134,15 +135,23 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     protected void setterInjection(Method method, Object bean) {
         EndpointInject annoation = method.getAnnotation(EndpointInject.class);
         if (annoation != null) {
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes != null) {
-                if (parameterTypes.length != 1) {
-                    LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
-                } else {
-                    String propertyName = ObjectHelper.getPropertyName(method);
-                    Object value = getEndpointInjectionValue(annoation, parameterTypes[0], propertyName);
-                    ObjectHelper.invokeMethod(method, bean, value);
-                }
+            setterInjection(method, bean, annoation.uri(), annoation.name());
+        }
+        Produce produce = method.getAnnotation(Produce.class);
+        if (produce != null) {
+            setterInjection(method, bean, produce.uri(), produce.ref());
+        }
+    }
+
+    protected void setterInjection(Method method, Object bean, String endpointUri, String endpointRef) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        if (parameterTypes != null) {
+            if (parameterTypes.length != 1) {
+                LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
+            } else {
+                String propertyName = ObjectHelper.getPropertyName(method);
+                Object value = getInjectionValue(parameterTypes[0], endpointUri, endpointRef, propertyName);
+                ObjectHelper.invokeMethod(method, bean, value);
             }
         }
     }
@@ -176,20 +185,29 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         MessageDriven annotation = method.getAnnotation(MessageDriven.class);
         if (annotation != null) {
             LOG.info("Creating a consumer for: " + annotation);
+            subscribeMethod(method, bean, annotation.uri(), annotation.name());
+        }
 
-            // lets bind this method to a listener
-            String injectionPointName = method.getName();
-            Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name(), injectionPointName);
-            if (endpoint != null) {
-                try {
-                    Processor processor = createConsumerProcessor(bean, method, endpoint);
-                    LOG.info("Created processor: " + processor);
-                    Consumer consumer = endpoint.createConsumer(processor);
-                    startService(consumer);
-                } catch (Exception e) {
-                    LOG.warn(e);
-                    throw new RuntimeCamelException(e);
-                }
+        Consume consume = method.getAnnotation(Consume.class);
+        if (consume != null) {
+            LOG.info("Creating a consumer for: " + consume);
+            subscribeMethod(method, bean, consume.uri(), consume.ref());
+        }
+    }
+
+    protected void subscribeMethod(Method method, Object bean, String endpointUri, String endpointName) {
+        // lets bind this method to a listener
+        String injectionPointName = method.getName();
+        Endpoint endpoint = getEndpointInjection(endpointUri, endpointName, injectionPointName);
+        if (endpoint != null) {
+            try {
+                Processor processor = createConsumerProcessor(bean, method, endpoint);
+                LOG.info("Created processor: " + processor);
+                Consumer consumer = endpoint.createConsumer(processor);
+                startService(consumer);
+            } catch (Exception e) {
+                LOG.warn(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }
@@ -210,10 +228,10 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
 
     /**
-     * Creates the value for the injection point for the given annotation
+     * Creates the object to be injected for an {@link org.apache.camel.EndpointInject} or {@link Produce} injection point
      */
-    protected Object getEndpointInjectionValue(EndpointInject annotation, Class<?> type, String injectionPointName) {
-        Endpoint endpoint = getEndpointInjection(annotation.uri(), annotation.name(), injectionPointName);
+    protected Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
+        Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName);
         if (endpoint != null) {
             if (type.isInstance(endpoint)) {
                 return endpoint;
@@ -223,6 +241,13 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                 return new DefaultProducerTemplate(getCamelContext(), endpoint);
             } else if (type.isAssignableFrom(PollingConsumer.class)) {
                 return createInjectionPollingConsumer(endpoint);
+            } else if (type.isInterface()) {
+                // lets create a proxy
+                try {
+                    return ProxyHelper.createProxy(endpoint, type);
+                } catch (Exception e) {
+                    throw new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
+                }
             } else {
                 throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
             }
