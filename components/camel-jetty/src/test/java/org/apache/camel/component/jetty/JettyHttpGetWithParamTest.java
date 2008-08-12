@@ -17,14 +17,13 @@
 package org.apache.camel.component.jetty;
 
 import junit.framework.Assert;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.http.HttpProducer;
-import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpExchange;
+import org.apache.camel.component.http.HttpProducer;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test to verify that we can have URI options for external system (endpoint is lenient)
