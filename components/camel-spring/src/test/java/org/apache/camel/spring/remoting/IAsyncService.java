@@ -16,12 +16,12 @@
  */
 package org.apache.camel.spring.remoting;
 
-import org.apache.camel.OneWay;
+import org.apache.camel.InOnly;
 
 /**
- * A dummy interface which has a oneway method via the {@link org.apache.camel.OneWay} annotation
+ * A dummy interface which has a oneway method via the {@link InOnly} annotation
  */
 public interface IAsyncService {
-    @OneWay
+    @InOnly
     void doSomethingAsync(String body);
 }
