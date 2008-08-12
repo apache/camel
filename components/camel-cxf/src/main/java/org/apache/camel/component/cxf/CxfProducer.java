@@ -77,10 +77,9 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
             serviceClass = cxfEndpointBean.getServiceClass();
+            CxfEndpointUtils.checkServiceClass(serviceClass);
         } else {
-            if (endpoint.getServiceClass() == null) {
-                throw new CamelException("serviceClass setting missing from CXF endpoint configuration");
-            }
+            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
             try {
                 serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
             } catch (ClassNotFoundException e) {
@@ -120,42 +119,32 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         }
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+            CxfEndpointUtils.checkServiceClass(cxfEndpointBean.getServiceClass());
             if (cfb == null) {
                 cfb = CxfEndpointUtils.getClientFactoryBean(cxfEndpointBean.getServiceClass());
             }
             endpoint.configure(cfb);
 
         } else { // set up the clientFactoryBean by using URI information
-            if (null != endpoint.getServiceClass()) {
-                try {
-                    // We need to choose the right front end to create the
-                    // clientFactoryBean
-                    Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this
-                        .getClass());
-                    if (cfb == null) {
-                        cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
-                    }
-                    cfb.setAddress(endpoint.getAddress());
-                    if (null != endpoint.getServiceClass()) {
-                        cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
-                    }
-                    if (null != endpoint.getWsdlURL()) {
-                        cfb.setWsdlURL(endpoint.getWsdlURL());
-                    }
-                } catch (ClassNotFoundException e) {
-                    throw new CamelException(e);
-                }
-            } else { // we can't see any service class from the endpoint
+            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
+            try {
+                // We need to choose the right front end to create the
+                // clientFactoryBean
+                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
                 if (cfb == null) {
-                    cfb = new ClientFactoryBean();
+                    cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
+                }
+                cfb.setAddress(endpoint.getAddress());
+                if (null != endpoint.getServiceClass()) {
+                    cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
                 }
                 if (null != endpoint.getWsdlURL()) {
                     cfb.setWsdlURL(endpoint.getWsdlURL());
-                } else {
-                    // Throw an exception indicating insufficient endpoint info
-                    throw new CamelException("Not enough information to create a CXF endpoint. (Provide WSDL url or service class name.)");
                 }
+            } catch (ClassNotFoundException e) {
+                throw new CamelException(e);
             }
+
             if (endpoint.getServiceName() != null) {
                 cfb.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
             }

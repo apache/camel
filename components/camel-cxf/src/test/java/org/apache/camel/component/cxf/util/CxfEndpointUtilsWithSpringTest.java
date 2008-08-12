@@ -57,6 +57,10 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         return "cxf:bean:testEndpoint";
     }
 
+    protected String getNoServiceClassURI() {
+        return "cxf:bean:noServiceClassEndpoint";
+    }
+
     public void testGetDataFormat() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=MESSAGE");
         assertEquals("We should get the Message DataFormat", CxfEndpointUtils.getDataFormat(endpoint),
@@ -84,5 +88,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         assertEquals("We should get the PAYLOAD DataFormat", CxfEndpointUtils.getDataFormat(endpoint),
                      DataFormat.PAYLOAD);
     }
+
+
 
 }
