@@ -17,8 +17,8 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test for consuming the same filename only.

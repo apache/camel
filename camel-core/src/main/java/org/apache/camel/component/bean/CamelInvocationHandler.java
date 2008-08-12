@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Producer;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Producer;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a

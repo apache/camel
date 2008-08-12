@@ -17,11 +17,11 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
-import java.io.IOException;
-import java.io.FileInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
@@ -30,7 +30,6 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
