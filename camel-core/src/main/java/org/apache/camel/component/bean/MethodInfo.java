@@ -19,16 +19,20 @@ package org.apache.camel.component.bean;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ArrayList;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
-import org.apache.camel.OneWay;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.Pattern;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Information about a method to be used for invocation.
@@ -36,6 +40,8 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class MethodInfo {
+    private static final transient Log LOG = LogFactory.getLog(MethodInfo.class);
+
     private Class type;
     private Method method;
     private final List<ParameterInfo> parameters;
@@ -51,7 +57,7 @@ public class MethodInfo {
         this.bodyParameters = bodyParameters;
         this.hasCustomAnnotation = hasCustomAnnotation;
         this.parametersExpression = createParametersExpression();
-        OneWay oneway = findOneWayAnnotation(method);
+        Pattern oneway = findOneWayAnnotation(method);
         if (oneway != null) {
             pattern = oneway.value();
         }
@@ -96,7 +102,7 @@ public class MethodInfo {
 
     /**
      * Returns the {@link org.apache.camel.ExchangePattern} that should be used when invoking this method. This value
-     * defaults to {@link org.apache.camel.ExchangePattern#InOut} unless some {@link OneWay} annotation is used
+     * defaults to {@link org.apache.camel.ExchangePattern#InOut} unless some {@link org.apache.camel.Pattern} annotation is used
      * to override the message exchange pattern.
      *
      * @return the exchange pattern to use for invoking this method.
@@ -187,8 +193,8 @@ public class MethodInfo {
      * @param method the method on which to search
      * @return the first matching annotation or none if it is not available
      */
-    protected OneWay findOneWayAnnotation(Method method) {
-        OneWay answer = method.getAnnotation(OneWay.class);
+    protected Pattern findOneWayAnnotation(Method method) {
+        Pattern answer = getPatternAnnotation(method);
         if (answer == null) {
             Class<?> type = method.getDeclaringClass();
 
@@ -202,8 +208,52 @@ public class MethodInfo {
 
             // now lets scan for a type which the current declared class overloads
             answer = findOneWayAnnotationOnMethod(typesToSearch, method);
-            if (answer == null) {
+            if (answer == null ){
                 answer = findOneWayAnnotation(typesToSearch);
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Returns the pattern annotation on the given annotated element; either as a direct annotation or
+     * on an annotation which is also annotated
+     *
+     * @param annotatedElement the element to look for the annotation
+     * @return the first matching annotation or null if none could be found
+     */
+    protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement) {
+        return getPatternAnnotation(annotatedElement, 2);
+    }
+
+    /**
+     * Returns the pattern annotation on the given annotated element; either as a direct annotation or
+     * on an annotation which is also annotated
+     *
+     * @param annotatedElement the element to look for the annotation
+     * @return the first matching annotation or null if none could be found
+     */
+    protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement, int depth) {
+        Pattern answer = annotatedElement.getAnnotation(Pattern.class);
+        int nextDepth = depth - 1;
+
+        if (nextDepth > 0) {
+            // lets look at all the annotations to see if any of those are annotated
+            Annotation[] annotations = annotatedElement.getAnnotations();
+            for (Annotation annotation : annotations) {
+                Class<? extends Annotation> annotationType = annotation.annotationType();
+                if (annotation instanceof Pattern || annotationType.equals(annotatedElement)) {
+                    continue;
+                } else {
+                    Pattern another = getPatternAnnotation(annotationType, nextDepth);
+                    if (pattern != null) {
+                        if (answer == null) {
+                            answer = another;
+                        } else {
+                            LOG.warn("Duplicate pattern annotation: " + another + " found on annotation: " + annotation + " which will be ignored");
+                        }
+                    }
+                }
             }
         }
         return answer;
@@ -223,11 +273,11 @@ public class MethodInfo {
     /**
      * Finds the first annotation on the base methods defined in the list of classes
      */
-    protected OneWay findOneWayAnnotationOnMethod(List<Class<?>> classes, Method method) {
+    protected Pattern findOneWayAnnotationOnMethod(List<Class<?>> classes, Method method) {
         for (Class<?> type : classes) {
             try {
                 Method definedMethod = type.getMethod(method.getName(), method.getParameterTypes());
-                OneWay answer = definedMethod.getAnnotation(OneWay.class);
+                Pattern answer = getPatternAnnotation(definedMethod);
                 if (answer != null) {
                     return answer;
                 }
@@ -242,9 +292,9 @@ public class MethodInfo {
     /**
      * Finds the first annotation on the given list of classes
      */
-    protected OneWay findOneWayAnnotation(List<Class<?>> classes) {
+    protected Pattern findOneWayAnnotation(List<Class<?>> classes) {
         for (Class<?> type : classes) {
-            OneWay answer = type.getAnnotation(OneWay.class);
+            Pattern answer = getPatternAnnotation(type);
             if (answer != null) {
                 return answer;
             }
