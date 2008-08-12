@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
 
-    private String port = "20096";
+    private int port = 20096;
 
     private String ftpUrl = "ftp://admin@localhost:" + port + "/dotfiles?password=admin";
 
@@ -36,7 +36,7 @@ public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

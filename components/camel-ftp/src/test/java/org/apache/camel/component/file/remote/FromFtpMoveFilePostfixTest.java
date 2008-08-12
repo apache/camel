@@ -30,11 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpMoveFilePostfixTest extends FtpServerTestSupport {
 
-    private String port = "20031";
+    private int port = 20031;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
         + "&consumer.moveNamePostfix=.old";
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

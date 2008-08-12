@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
 
-    private String port = "20013";
+    private int port = 20013;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
 
     public void testFtpRoute() throws Exception {
@@ -51,7 +51,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         Thread.sleep(1000);
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
@@ -85,4 +85,5 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     }
 
 }
+
 

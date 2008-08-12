@@ -56,7 +56,7 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
     @Override
     protected void doStart() throws Exception {
         log.info("Starting");
-        // do not connect when componet starts, just wait until we process as we will
+        // do not connect when component starts, just wait until we process as we will
         // connect at that time if needed
         super.doStart();
     }

@@ -16,13 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.Properties;
-
 import org.apache.camel.ContextTestSupport;
-import org.apache.ftpserver.ConfigurableFtpServerContext;
 import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.config.PropertiesConfiguration;
-import org.apache.ftpserver.ftplet.Configuration;
 import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
@@ -31,7 +26,7 @@ import org.apache.ftpserver.interfaces.FtpServerContext;
 public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected FtpServer ftpServer;
 
-    public abstract String getPort();
+    public abstract int getPort();
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -44,29 +39,13 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         if (!ftpServer.isStopped()) {
-            // must stop server after super to let the clients stop correctly (CAMEL-444)
-            ftpServer.getServerContext().getConnectionManager().closeAllConnections();
             ftpServer.getServerContext().dispose();
             ftpServer.stop();
         }
     }
 
     protected void initFtpServer() throws Exception {
-        // get the configuration object
-        Properties properties = createFtpServerProperties();
-        Configuration config = new PropertiesConfiguration(properties);
-
-        // create service context
-        FtpServerContext ftpConfig = new ConfigurableFtpServerContext(config);
-
-        // create the server object and start it
-        ftpServer = new FtpServer(ftpConfig);
-    }
-
-    protected Properties createFtpServerProperties() {
-        Properties properties = new Properties();
-        properties.setProperty("config.listeners.default.port", getPort());
-        properties.setProperty("config.create-default-user", "true");
-        return properties;
+        ftpServer = new FtpServer();
+        ftpServer.getListener("default").setPort(getPort());
     }
 }

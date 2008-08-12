@@ -32,7 +32,7 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
-    private String port = "20016";
+    private int port = 20016;
     
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
@@ -63,7 +63,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         Thread.sleep(1000);
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 

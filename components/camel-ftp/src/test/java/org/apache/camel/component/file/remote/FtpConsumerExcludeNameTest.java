@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
 
-    private String port = "20095";
+    private int port = 20095;
 
     private String ftpUrl = "ftp://admin@localhost:" + port + "/excludename?password=admin"
         + "&consumer.excludedNamePrefix=secret&consumer.excludedNamePostfix=xml";
@@ -37,7 +37,7 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public String getPort() {
+    public int getPort() {
         return port;
     }
 
