@@ -34,8 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements a <a
- * href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip</a>
+ * Implements a <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on the value of a message header.
  */
@@ -71,7 +70,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
         for (String nextRecipient : recipients) {
             Endpoint<Exchange> endpoint = resolveEndpoint(exchange, nextRecipient);
             Producer<Exchange> producer = producerCache.getProducer(endpoint);
-            Exchange ex = endpoint.createExchange(ExchangePattern.InOut);
+            Exchange ex = current.newInstance();
 
             updateRoutingSlip(current);
             copyOutToIn(ex, current);

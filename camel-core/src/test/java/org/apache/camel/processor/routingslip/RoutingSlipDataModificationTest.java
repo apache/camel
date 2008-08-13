@@ -34,17 +34,15 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
     protected static final String ANSWER = "answer";
     protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
     private static final transient Log LOG = LogFactory.getLog(RoutingSlipDataModificationTest.class);
-    protected MyBean myBean = new MyBean(ROUTING_SLIP_HEADER);
+    protected MyBean myBean = new MyBean();
 
     public void testModificationOfDataAlongRoute()
         throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
 
         x.expectedBodiesReceived(ANSWER);
         y.expectedBodiesReceived(ANSWER + ANSWER);
-        z.expectedBodiesReceived(ANSWER + ANSWER);
 
         sendBody();
 
@@ -53,7 +51,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
     protected void sendBody() {
         template.sendBodyAndHeader("direct:a", ANSWER, ROUTING_SLIP_HEADER,
-                "mock:x,bean:myBean?method=modifyData,mock:y,mock:z");
+                "mock:x,bean:myBean?method=modifyData");
     }
 
     @Override
@@ -75,27 +73,17 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").routingSlip(ROUTING_SLIP_HEADER);
+                from("direct:a").routingSlip(ROUTING_SLIP_HEADER).to("mock:y");
                 // END SNIPPET: example
             }
         };
     }
 
     public static class MyBean {
-        private String routingSlipHeader;
-
         public MyBean() {
         }
 
-        public MyBean(String routingSlipHeader) {
-            this.routingSlipHeader = routingSlipHeader;
-        }
-
-        public String modifyData(
-            @Body String body,
-            @Headers Map<String, Object> headers,
-            @OutHeaders Map<String, Object> outHeaders) {
-            outHeaders.put(routingSlipHeader, headers.get(routingSlipHeader));
+        public String modifyData(@Body String body) {
             return body + body;
         }
     }
