@@ -36,7 +36,7 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
 
     public void testConsumeFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World", "Bye World");
+        mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         assertMockEndpointsSatisifed();
     }

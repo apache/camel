@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.mock;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -60,6 +63,24 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
+    public void testExpectsBodiesInOrder() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        resultEndpoint.expectedBodiesReceived(listOfMessages(11, 12, 13, 14, 15));
+
+        sendMessages(11, 12, 13, 14, 15);
+
+        resultEndpoint.assertIsSatisfied();
+    }    
+
+    public void testExpectsBodiesInAnyOrder() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
+        resultEndpoint.expectedBodiesReceivedInAnyOrder(listOfMessages(11, 12, 13, 14, 15));
+
+        sendMessages(15, 12, 14, 13, 11);
+
+        resultEndpoint.assertIsSatisfied();
+    }       
+    
     public void testNoDuplicateMessagesPass() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result"); 
         resultEndpoint.expectsNoDuplicates(header("counter"));
@@ -143,10 +164,22 @@ public class MockEndpointTest extends ContextTestSupport {
     
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
-            template.sendBodyAndHeader("direct:a", "<message>" + counter + "</message>",
+            template.sendBodyAndHeader("direct:a", createTestMessage(counter),
                     "counter", counter);
         }
     }
+
+    private String createTestMessage(int counter) {
+        return "<message>" + counter + "</message>";
+    }
+
+    protected List<String> listOfMessages(int... counters) {
+        List<String> list = new ArrayList<String>(counters.length);
+        for (int counter : counters) {
+            list.add(createTestMessage(counter));
+        }
+        return list;
+    }   
     
     protected void sendHeader(String name, String value) {
         template.sendBodyAndHeader("direct:a", "body", name, value);
