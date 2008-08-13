@@ -48,14 +48,24 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
     }
 
     public void process(Exchange exchange) throws Exception {
+        Throwable error = null;
         try {
             output.process(exchange);
+
+            // could also fail and set exception on the exchange itself
+            if (exchange.getException() != null) {
+                error = exchange.getException();
+            }
         } catch (Throwable e) {
-            if (!customProcessorForException(exchange, e)) {
-                logError(exchange, e);
+            error = e;
+        }
+
+        if (error != null) {
+            if (!customProcessorForException(exchange, error)) {
+                logError(exchange, error);
             }
         }
-    }
+   }
 
     // Properties
     // -------------------------------------------------------------------------
@@ -104,7 +114,7 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
             break;
         case INFO:
             if (log.isInfoEnabled()) {
-                log.debug(logMessage(exchange, e), e);
+                log.info(logMessage(exchange, e), e);
             }
             break;
         case TRACE:
