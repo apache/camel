@@ -108,6 +108,7 @@
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-groovy</include>
+        <include>org.apache.camel:camel-guice</include>
         <include>org.apache.camel:camel-hamcrest</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>

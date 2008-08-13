@@ -224,4 +224,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     protected void configureRoute(RouteType route) {
         route.setGroup(getClass().getName());
     }
+
+    protected void addRoutes(Routes routes) throws Exception {
+        getContext().addRoutes(routes);
+    }
 }
