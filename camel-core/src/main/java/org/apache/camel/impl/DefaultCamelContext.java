@@ -127,7 +127,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * @param jndiContext
      */
     public DefaultCamelContext(Context jndiContext) {
-        this(new JndiRegistry(jndiContext));
+        this();
+        setJndiContext(jndiContext);
     }
 
     /**
@@ -437,6 +438,17 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             registry = createRegistry();
         }
         return registry;
+    }
+
+    /**
+     * Sets the registry to the given JNDI context
+     *
+     * @param jndiContext is the JNDI context to use as the registry
+     *
+     * @see #setRegistry(org.apache.camel.spi.Registry)
+     */
+    public void setJndiContext(Context jndiContext) {
+        setRegistry(new JndiRegistry(jndiContext));
     }
 
     public void setRegistry(Registry registry) {
