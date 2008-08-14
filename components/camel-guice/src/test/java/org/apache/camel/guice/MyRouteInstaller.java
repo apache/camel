@@ -33,5 +33,4 @@ public class MyRouteInstaller extends RouteBuilder {
         addRoutes(new MyConfigurableRoute(endpoint("direct:c"), endpoint("direct:d")));
 
     }
-
 }
