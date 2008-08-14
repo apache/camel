@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
-import java.lang.reflect.Proxy;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
+
+import java.lang.reflect.Proxy;
 
 /**
  * A helper class for creating proxies which delegate to Camel
@@ -34,15 +34,24 @@ public final class ProxyHelper {
     private ProxyHelper() {
     }
 
+
+    /**
+     * Creates a Proxy which sends PojoExchange to the endpoint.
+     */
+    @SuppressWarnings("unchecked")
+    public static Object createProxyObject(Endpoint endpoint, Producer producer, ClassLoader classLoader, Class[] interfaces, MethodInfoCache methodCache) {
+        return Proxy.newProxyInstance(classLoader, interfaces.clone(), new CamelInvocationHandler(endpoint, producer, methodCache));
+    }
+
+
     /**
      * Creates a Proxy which sends PojoExchange to the endpoint.
      *
      * @throws Exception
      */
-    public static Object createProxy(final Endpoint endpoint, ClassLoader cl, Class interfaces[])
-        throws Exception {
-        MethodInfoCache methodCache = new MethodInfoCache(endpoint.getCamelContext());
-        return createProxy(endpoint, cl, interfaces, methodCache);
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class[] interfaces, MethodInfoCache methodCache) throws Exception {
+        return (T) createProxyObject(endpoint, endpoint.createProducer(), cl, interfaces, methodCache);
     }
 
     /**
@@ -50,9 +59,20 @@ public final class ProxyHelper {
      *
      * @throws Exception
      */
-    public static Object createProxy(Endpoint endpoint, ClassLoader cl, Class[] interfaces, MethodInfoCache methodCache) throws Exception {
-        final Producer producer = endpoint.createProducer();
-        return Proxy.newProxyInstance(cl, interfaces, new CamelInvocationHandler(endpoint, producer, methodCache));
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T>... interfaceClasses) throws Exception {
+        return (T) createProxy(endpoint, cl, interfaceClasses, createMethodInfoCache(endpoint));
+    }
+
+
+    /**
+     * Creates a Proxy which sends PojoExchange to the endpoint.
+     *
+     * @throws Exception
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, Class<T>... interfaceClasses) throws Exception {
+        return (T) createProxy(endpoint, getClassLoader(interfaceClasses), interfaceClasses);
     }
 
     /**
@@ -60,32 +80,27 @@ public final class ProxyHelper {
      *
      * @throws Exception
      */
-    public static Object createProxy(Endpoint endpoint, Class interfaces[]) throws Exception {
-        if (interfaces.length < 1) {
+    @SuppressWarnings("unchecked")
+    public static <T> T createProxy(Endpoint endpoint, Producer producer, Class<T>... interfaceClasses) throws Exception {
+        return (T) createProxyObject(endpoint, producer, getClassLoader(interfaceClasses), interfaceClasses, createMethodInfoCache(endpoint));
+    }
+
+
+    /**
+     * Returns the class loader of the first interface or throws {@link IllegalArgumentException} if there are no interfaces specified
+     *
+     * @return
+     */
+    protected static ClassLoader getClassLoader(Class... interfaces) {
+        if (interfaces == null || interfaces.length < 1) {
             throw new IllegalArgumentException("You must provide at least 1 interface class.");
         }
-        return createProxy(endpoint, interfaces[0].getClassLoader(), interfaces);
+        return interfaces[0].getClassLoader();
     }
 
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, ClassLoader cl, Class<T> interfaceClass)
-        throws Exception {
-        return (T)createProxy(endpoint, cl, new Class[] {interfaceClass});
-    }
 
-    /**
-     * Creates a Proxy which sends PojoExchange to the endpoint.
-     *
-     * @throws Exception
-     */
-    @SuppressWarnings("unchecked")
-    public static <T> T createProxy(Endpoint endpoint, Class<T> interfaceClass) throws Exception {
-        return (T)createProxy(endpoint, new Class[] {interfaceClass});
+    protected static MethodInfoCache createMethodInfoCache(Endpoint endpoint) {
+        return new MethodInfoCache(endpoint.getCamelContext());
     }
 
 }
