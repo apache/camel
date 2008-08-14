@@ -86,6 +86,7 @@ public class CamelServiceExporter extends RemoteExporter implements Initializing
         }
 
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
+        notNull(camelContext, "service");
         Object proxy = getProxyForService();
 
         consumer = endpoint.createConsumer(new BeanProcessor(proxy, camelContext));
