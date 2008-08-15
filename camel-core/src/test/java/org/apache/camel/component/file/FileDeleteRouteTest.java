@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -24,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "file:target/test-delete-inbox?consumer.delay=1000&delete=true&consumer.recursive=true";
-        deleteDirectory("target/test-delete-inbox");
+    	targetdir = "target/test-delete-inbox";
+    	params = "?consumer.delay=1000&delete=true&consumer.recursive=true";
         super.setUp();
     }
 
@@ -36,10 +38,14 @@ public class FileDeleteRouteTest extends FileRouteTest {
         result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
-
         Thread.sleep(4000);
 
         result.assertIsSatisfied();
+        
+        for (String lockName: recorder.getLocks()) {
+        	File lock = new File(lockName);
+        	assertFalse(lock.exists());
+        }
     }
 
 }

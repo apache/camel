@@ -91,6 +91,7 @@ public class DefaultConsumer<E extends Exchange> extends ServiceSupport implemen
      * @param t the exception to handle
      */
     protected void handleException(Throwable t) {
-        getExceptionHandler().handleException(t);
+        Throwable newt = (t == null) ? new Throwable("Handling [null] exception") : t;
+        getExceptionHandler().handleException(newt);
     }
 }

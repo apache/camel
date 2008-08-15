@@ -38,7 +38,7 @@ public interface FileProcessStrategy {
     boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
 
     /**
-     * Releases any file locks and possibly deletes or moves the file
+     * Releases any file locks and possibly deletes or moves the file after successful processing
      *
      * @param endpoint  the endpoint
      * @param exchange  the exchange
@@ -46,5 +46,14 @@ public interface FileProcessStrategy {
      * @throws Exception can be thrown in case of errors
      */
     void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception;
+    
+    /**
+     * Releases any file locks and possibly deletes or moves the file after unsuccessful processing
+     *
+     * @param endpoint  the endpoint
+     * @param exchange  the exchange
+     * @param file      the file
+     */
+    void rollback(FileEndpoint endpoint, FileExchange exchange, File file);
     
 }
