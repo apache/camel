@@ -113,7 +113,7 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method for performing an ordered comparsion on the objects
+     * A helper method for performing an ordered comparison on the objects
      * handling nulls and objects which do not handle sorting gracefully
      */
     public static int compare(Object a, Object b) {
@@ -320,7 +320,23 @@ public final class ObjectHelper {
             return defaultValue;
         }
     }
-
+    
+    /**
+     * A helper method to access a boolean system property, catching any security
+     * exceptions
+     *
+     * @param name the name of the system property required
+     * @param defaultValue the default value to use if the property is not
+     *                available or a security exception prevents access
+     * @return the boolean representation of the system property value 
+     *         or the default value if the property is not available or 
+     *         security does not allow its access
+     */
+    public static boolean getSystemProperty(String name, Boolean defaultValue) {
+        String result = getSystemProperty(name, defaultValue.toString());
+        return Boolean.parseBoolean(result);
+    }    
+    
     /**
      * Returns the type name of the given type or null if the type variable is
      * null
@@ -337,9 +353,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the canoical type name of the given value
+     * Returns the canonical type name of the given value
      */
-    public static String classCanoicalName(Object value) {
+    public static String classCanonicalName(Object value) {
         if (value != null) {
             return value.getClass().getCanonicalName();
         } else {
