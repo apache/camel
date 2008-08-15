@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +16,25 @@
  */
 package org.apache.camel.guice;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.naming.Context;
+
 import com.google.inject.Inject;
+
 import org.apache.camel.Routes;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.guice.impl.GuiceInjector;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.*;
-
-import javax.naming.Context;
-import java.util.List;
-import java.util.Set;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.Registry;
 
 /**
  * @version $Revision: 1.1 $
