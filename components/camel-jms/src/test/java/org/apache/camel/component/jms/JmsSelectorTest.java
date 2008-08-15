@@ -60,7 +60,7 @@ public class JmsSelectorTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b?selector=cheese%3D'y'").to("mock:result");
+                from("activemq:test.b?selector=cheese='y'").to("mock:result");
             }
         };
     }

@@ -16,18 +16,9 @@
  */
 package org.apache.camel.spring.produce;
 
-import java.util.List;
-
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Produce;
-import org.apache.camel.spring.remoting.IAsyncService;
-import org.apache.camel.spring.remoting.SpringRemotingWithOneWayTest;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 

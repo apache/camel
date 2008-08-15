@@ -18,13 +18,6 @@ package org.apache.camel.component.jt400;
 
 import java.io.IOException;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.PollingConsumerSupport;
-
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400SecurityException;
 import com.ibm.as400.access.DataQueue;
@@ -32,6 +25,14 @@ import com.ibm.as400.access.DataQueueEntry;
 import com.ibm.as400.access.ErrorCompletingRequestException;
 import com.ibm.as400.access.IllegalObjectTypeException;
 import com.ibm.as400.access.ObjectDoesNotExistException;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.jt400.Jt400DataQueueEndpoint.Format;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.PollingConsumerSupport;
+
 
 /**
  * {@link PollingConsumer} that polls a data queue for data
@@ -84,7 +85,7 @@ public class Jt400DataQueueConsumer extends PollingConsumerSupport<Exchange> {
      * <code>byte[]</code>. If the endpoint's format is set to
      * {@link Format#text}, the data queue entry's data will be received/sent as
      * a <code>String</code>.
-     * 
+     *
      * @param timeout time to wait when reading from data queue. A value of -1
      *            indicates a blocking read.
      */
