@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -34,7 +34,7 @@ public class MailMultipleRecipientsTest extends ContextTestSupport {
 
         // START SNIPPET: e1
         Map<String, Object> headers = new HashMap<String, Object>();
-        // test with both comma and semi colon as Camel supports both kind of separators 
+        // test with both comma and semi colon as Camel supports both kind of separators
         headers.put("to", "claus@localhost, willem@localhost ; hadrian@localhost");
         headers.put("cc", "james@localhost");
 

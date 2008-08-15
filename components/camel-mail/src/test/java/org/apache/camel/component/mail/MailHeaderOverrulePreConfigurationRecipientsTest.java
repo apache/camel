@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,5 +56,5 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends ContextTes
             }
         };
     }
-    
+
 }

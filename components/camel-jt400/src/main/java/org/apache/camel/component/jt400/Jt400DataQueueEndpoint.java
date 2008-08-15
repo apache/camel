@@ -20,14 +20,14 @@ import java.beans.PropertyVetoException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import com.ibm.as400.access.AS400;
+import com.ibm.as400.access.DataQueue;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-
-import com.ibm.as400.access.AS400;
-import com.ibm.as400.access.DataQueue;
 
 /**
  * AS/400 Data queue endpoint

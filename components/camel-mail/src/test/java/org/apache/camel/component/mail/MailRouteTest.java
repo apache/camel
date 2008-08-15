@@ -18,10 +18,12 @@ package org.apache.camel.component.mail;
 
 import java.io.IOException;
 import java.util.HashMap;
+
+import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
-import javax.mail.Address;
+
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
