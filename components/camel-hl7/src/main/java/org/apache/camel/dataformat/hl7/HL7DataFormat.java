@@ -19,12 +19,14 @@ package org.apache.camel.dataformat.hl7;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.util.Terser;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.util.Terser;
+
 
 /**
  * HL7 DataFormat (supports v2.x of the HL7 protocol).

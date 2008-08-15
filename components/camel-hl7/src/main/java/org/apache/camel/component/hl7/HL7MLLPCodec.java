@@ -20,6 +20,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
+import ca.uhn.hl7v2.model.Message;
+
 import org.apache.camel.dataformat.hl7.HL7Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -30,8 +32,6 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-
-import ca.uhn.hl7v2.model.Message;
 
 /**
  * HL7 MLLP codec.
@@ -74,7 +74,7 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
         return new ProtocolEncoder() {
             public void encode(IoSession session, Object message, ProtocolEncoderOutput out)
                 throws Exception {
-                
+
                 if (message == null) {
                     throw new IllegalArgumentException("Message to encode is null");
                 }
@@ -94,8 +94,8 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                 } else if (message instanceof byte[]) {
                     body = new String((byte[])message);
                 } else {
-                    throw new IllegalArgumentException("The message to encode is not a supported type: " + 
-                            message.getClass().getCanonicalName());
+                    throw new IllegalArgumentException("The message to encode is not a supported type: "
+                            + message.getClass().getCanonicalName());
                 }
 
                 // replace \n with \r as HL7 uses 0x0d = \r as segment termninators
