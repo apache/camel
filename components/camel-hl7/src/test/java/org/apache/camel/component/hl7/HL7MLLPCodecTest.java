@@ -16,17 +16,19 @@
  */
 package org.apache.camel.component.hl7;
 
+import ca.uhn.hl7v2.model.Message;
+import ca.uhn.hl7v2.model.v24.message.ADR_A19;
+import ca.uhn.hl7v2.model.v24.segment.MSA;
+import ca.uhn.hl7v2.model.v24.segment.MSH;
+import ca.uhn.hl7v2.model.v24.segment.QRD;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
-import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.model.v24.message.ADR_A19;
-import ca.uhn.hl7v2.model.v24.segment.MSA;
-import ca.uhn.hl7v2.model.v24.segment.MSH;
-import ca.uhn.hl7v2.model.v24.segment.QRD;
+
 
 /**
  * Unit test for the HL7MLLP Codec.

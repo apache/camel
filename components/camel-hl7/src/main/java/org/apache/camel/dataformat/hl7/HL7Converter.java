@@ -16,20 +16,21 @@
  */
 package org.apache.camel.dataformat.hl7;
 
-import org.apache.camel.Converter;
-
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
 
+import org.apache.camel.Converter;
+
 /**
  * HL7 converters.
  */
 @Converter
-public class HL7Converter {
+public final class HL7Converter {
 
     private HL7Converter() {
+        // Helper class
     }
 
     @Converter
