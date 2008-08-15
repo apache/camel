@@ -52,5 +52,5 @@ public @interface Pattern {
     /**
      * Specifies the exchange pattern to be used for this method
      */
-    public abstract ExchangePattern value();
+    ExchangePattern value();
 }

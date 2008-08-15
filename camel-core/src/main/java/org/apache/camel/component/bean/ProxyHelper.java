@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.reflect.Proxy;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Producer;
-
-import java.lang.reflect.Proxy;
 
 /**
  * A helper class for creating proxies which delegate to Camel

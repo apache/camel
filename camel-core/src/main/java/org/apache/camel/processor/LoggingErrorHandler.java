@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An {@link ErrorHandler} which uses commons-logging to dump the error
- * 
+ *
  * @version $Revision$
  */
 public class LoggingErrorHandler extends ErrorHandlerSupport {
@@ -65,7 +65,7 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
                 logError(exchange, error);
             }
         }
-   }
+    }
 
     // Properties
     // -------------------------------------------------------------------------
