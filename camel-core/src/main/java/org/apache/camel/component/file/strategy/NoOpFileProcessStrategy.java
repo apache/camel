@@ -30,5 +30,4 @@ public class NoOpFileProcessStrategy extends FileProcessStrategySupport {
     public NoOpFileProcessStrategy(boolean isLock) {
         super(isLock);
     }
-
 }

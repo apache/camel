@@ -158,15 +158,22 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                             LOG.debug("Done processing file: " + file + ". Status is: " + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "processed OK"));
                         }
 
-                        if (!failed || handled) {
-                            // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
-                            processStrategyCommit(processStrategy, exchange, file, handled);
-                        } else if (failed && !handled) {
-                            // there was an exception but it was not handled by the DeadLetterChannel
-                            handleException(exchange.getException());
+                        boolean committed = false;
+                        try {
+                            if (!failed || handled) {
+                                // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
+                                processStrategyCommit(processStrategy, exchange, file, handled);
+                                committed = true;
+                            } else {
+                                // there was an exception but it was not handled by the DeadLetterChannel
+                                handleException(exchange.getException());
+                            }
+                        } finally {
+                            if (!committed) {
+                                processStrategyRollback(processStrategy, exchange, file);
+                            }
+                            filesBeingProcessed.remove(file);
                         }
-
-                        filesBeingProcessed.remove(file);
                     }
                 });
 
@@ -228,6 +235,20 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             LOG.warn("Error committing file strategy: " + processStrategy, e);
             handleException(e);
         }
+    }
+
+    /**
+     * Strategy when the file was not processed and a rollback should be executed.
+     *
+     * @param processStrategy   the strategy to perform the commit
+     * @param exchange          the exchange
+     * @param file              the file processed
+     */
+    protected void processStrategyRollback(FileProcessStrategy processStrategy, FileExchange exchange, File file) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Rolling back file strategy: " + processStrategy + " for file: " + file);
+        }
+        processStrategy.rollback(endpoint, exchange, file);
     }
 
     protected boolean isValidFile(File file) {

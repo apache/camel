@@ -74,17 +74,16 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
     }
 
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
-        if (isLockFile()) {
-            Channel channel = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.fileChannel", Channel.class);
-            String lockfile = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Unlocking file: " + file);
-            }
-            channel.close();
-            File lock = new File(lockfile);
-            lock.delete();
-        }
+        unlockFile(endpoint, exchange, file);
     }
+
+	public void rollback(FileEndpoint endpoint, FileExchange exchange, File file) {
+        try {
+            unlockFile(endpoint, exchange, file);
+        } catch (Exception e) {
+            LOG.info("Unable to unlock file: " + file + ": " + e.getMessage(), e);
+        }
+	}
 
     public boolean isLockFile() {
         return lockFile;
@@ -100,5 +99,18 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
 
     public void setLockFileRenamer(FileRenamer lockFileRenamer) {
         this.lockFileRenamer = lockFileRenamer;
+    }
+    
+    protected void unlockFile(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
+        if (isLockFile()) {
+            Channel channel = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.fileChannel", Channel.class);
+            String lockfile = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Unlocking file: " + file);
+            }
+            channel.close();
+            File lock = new File(lockfile);
+            lock.delete();
+        }
     }
 }

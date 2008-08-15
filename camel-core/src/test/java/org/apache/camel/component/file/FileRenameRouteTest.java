@@ -22,8 +22,8 @@ package org.apache.camel.component.file;
 public class FileRenameRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/test-rename-inbox");
-        uri = "file:target/test-rename-inbox?moveNamePrefix=foo/?consumer.recursive=true";
+        targetdir = "target/test-rename-inbox";
+        params = "?moveNamePrefix=foo/?consumer.recursive=true";
         super.setUp();
     }
 }

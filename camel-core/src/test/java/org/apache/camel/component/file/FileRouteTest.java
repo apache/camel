@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.concurrent.ConcurrentLinkedQueue;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -25,7 +29,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-default-inbox?consumer.recursive=true";
+    protected String targetdir = "target/test-default-inbox";
+    protected String params = "?consumer.recursive=true";
+    protected String uri = "file:" + targetdir + params;
+    protected LockRecorderProcessor recorder = new LockRecorderProcessor();
 
     public void testFileRoute() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
@@ -39,7 +46,8 @@ public class FileRouteTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/test-default-inbox");
+        deleteDirectory(targetdir);
+        uri = "file:" + targetdir + params;
         super.setUp();
     }
 
@@ -47,8 +55,20 @@ public class FileRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("mock:result");
+                from(uri).process(recorder).to("mock:result");
             }
         };
+    }
+    
+    public class LockRecorderProcessor implements Processor {
+        private ConcurrentLinkedQueue<String> locks = new ConcurrentLinkedQueue<String>();
+        
+        public ConcurrentLinkedQueue<String> getLocks() {
+            return locks;
+        }
+    	
+        public void process(Exchange exchange) {
+            locks.add(exchange.getProperty("org.apache.camel.file.lock.name", String.class));
+        }
     }
 }

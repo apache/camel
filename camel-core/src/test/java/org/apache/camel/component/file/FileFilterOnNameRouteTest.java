@@ -27,12 +27,7 @@ public class FileFilterOnNameRouteTest extends FileRouteTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                
-                // more natural
                 from(uri).filter(header(FileComponent.HEADER_FILE_NAME).contains("-")).to("mock:result");
-                
-                // than
-                //from(uri).filter(header(FileComponent.HEADER_FILE_NAME).matchesRegex(".*-.*")).to("mock:result");
             }
         };
     }

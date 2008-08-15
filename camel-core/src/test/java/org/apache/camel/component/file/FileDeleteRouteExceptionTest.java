@@ -16,14 +16,32 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+
+import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.ValidationException;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+
 /**
- * @version $Revision$
+ * @version $Revision: 683664 $
  */
-public class FileNoOpRouteTest extends FileRouteTest {
+public class FileDeleteRouteExceptionTest extends FileDeleteRouteTest {
     @Override
     protected void setUp() throws Exception {
-        targetdir = "target/test-noop-inbox";
-        params = "?noop=true&consumer.recursive=true";
+        targetdir = "target/test-delete-inbox";
+        params = "?consumer.delay=1000&delete=true&consumer.recursive=true";
         super.setUp();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                from(uri).to("mock:result").throwFault("Exception while processing file...").to("mock:skip");
+            }
+        };
     }
 }
