@@ -59,14 +59,14 @@ public class FileRouteTest extends ContextTestSupport {
             }
         };
     }
-    
+
     public class LockRecorderProcessor implements Processor {
         private ConcurrentLinkedQueue<String> locks = new ConcurrentLinkedQueue<String>();
-        
+
         public ConcurrentLinkedQueue<String> getLocks() {
             return locks;
         }
-    	
+
         public void process(Exchange exchange) {
             locks.add(exchange.getProperty("org.apache.camel.file.lock.name", String.class));
         }

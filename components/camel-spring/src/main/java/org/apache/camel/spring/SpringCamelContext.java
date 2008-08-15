@@ -28,6 +28,7 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -56,6 +57,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
+    private boolean shouldStartContext = 
+        ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE); // start context by default 
 
     public SpringCamelContext() {
     }
@@ -83,7 +86,16 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     public void afterPropertiesSet() throws Exception {
-        start();
+        maybeStart();
+    }
+
+    private void maybeStart() throws Exception {
+        if (getShouldStartContext()) {     
+            LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
+            start();
+        } else {
+            LOG.debug("Not starting the CamelContext since shouldStartContext property was true.");
+        }
     }
 
     public void destroy() throws Exception {
@@ -99,8 +111,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             // now lets start the CamelContext so that all its possible
             // dependencies are initialized
             try {
-                LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
-                start();
+                maybeStart();
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
@@ -146,12 +157,18 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-        if (eventEndpoint == null) {
-            eventEndpoint = createEventEndpoint();
-        }
+        maybeDoStart();
     }
 
+    protected void maybeDoStart() throws Exception {
+        if (getShouldStartContext()) {
+            super.doStart();
+            if (eventEndpoint == null) {
+                eventEndpoint = createEventEndpoint();
+            }
+        }
+    }   
+    
     @Override
     protected Injector createInjector() {
         if (applicationContext instanceof ConfigurableApplicationContext) {
@@ -182,5 +199,13 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     @Override
     protected Registry createRegistry() {
         return new ApplicationContextRegistry(getApplicationContext());
+    }
+
+    public void setShouldStartContext(boolean shouldStartContext) {
+        this.shouldStartContext = shouldStartContext;
+    }
+
+    public boolean getShouldStartContext() {
+        return shouldStartContext;
     }
 }

@@ -26,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
-    	targetdir = "target/test-delete-inbox";
-    	params = "?consumer.delay=1000&delete=true&consumer.recursive=true";
+        targetdir = "target/test-delete-inbox";
+        params = "?consumer.delay=1000&delete=true&consumer.recursive=true";
         super.setUp();
     }
 
@@ -41,10 +41,10 @@ public class FileDeleteRouteTest extends FileRouteTest {
         Thread.sleep(4000);
 
         result.assertIsSatisfied();
-        
-        for (String lockName: recorder.getLocks()) {
-        	File lock = new File(lockName);
-        	assertFalse(lock.exists());
+
+        for (String lockName : recorder.getLocks()) {
+            File lock = new File(lockName);
+            assertFalse(lock.exists());
         }
     }
 

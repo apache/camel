@@ -222,7 +222,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         if (event instanceof ContextRefreshedEvent) {
             // now lets start the CamelContext so that all its possible
-            // dependencies are initailized
+            // dependencies are initialized
             try {
                 LOG.debug("Starting the context now!");
                 getContext().start();
