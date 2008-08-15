@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Produce {
-    public abstract String uri() default "";
+    String uri() default "";
 
-    public abstract String ref() default "";
+    String ref() default "";
 }

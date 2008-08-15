@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.bean;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.ArrayList;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -208,7 +208,7 @@ public class MethodInfo {
 
             // now lets scan for a type which the current declared class overloads
             answer = findOneWayAnnotationOnMethod(typesToSearch, method);
-            if (answer == null ){
+            if (answer == null) {
                 answer = findOneWayAnnotation(typesToSearch);
             }
         }

@@ -340,12 +340,12 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         List bodyList = new ArrayList();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceived(bodyList);
-    }   
+    }
 
     /**
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
-     */    
+     */
     public void expectedBodiesReceivedInAnyOrder(final List bodies) {
         expectedMessageCount(bodies.size());
         this.expectedBodyValues = bodies;
@@ -359,24 +359,24 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
                     assertTrue("No exchange received for counter: " + i, exchange != null);
 
                     Object expectedBody = expectedBodyValues.get(i);
-                    assertTrue("Message with body " + expectedBody + 
-                            " was expected but not found in " + actualBodyValuesSet, 
+                    assertTrue("Message with body " + expectedBody
+                            + " was expected but not found in " + actualBodyValuesSet,
                             actualBodyValuesSet.remove(expectedBody));
                 }
             }
         });
-    }    
+    }
 
     /**
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
-     */        
+     */
     public void expectedBodiesReceivedInAnyOrder(Object... bodies) {
         List bodyList = new ArrayList();
         bodyList.addAll(Arrays.asList(bodies));
         expectedBodiesReceivedInAnyOrder(bodyList);
-    }       
-    
+    }
+
     /**
      * Adds an expectation that messages received should have ascending values
      * of the given expression such as a user generated counter value
