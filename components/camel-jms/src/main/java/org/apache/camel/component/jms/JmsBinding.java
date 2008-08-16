@@ -264,6 +264,7 @@ public class JmsBinding {
      * <ul>
      *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
      *   <li>String and any other litterals, Character, CharSequence</li>
+     *   <li>Boolean</li>
      *   <li>BigDecimal and BigInteger</li>
      *   <li>java.util.Date</li>
      * </ul>
@@ -284,6 +285,8 @@ public class JmsBinding {
         } else if (headerValue instanceof BigDecimal || headerValue instanceof BigInteger) {
             return headerValue.toString();
         } else if (headerValue instanceof CharSequence) {
+            return headerValue.toString();
+        } else if (headerValue instanceof Boolean) {
             return headerValue.toString();
         } else if (headerValue instanceof Date) {
             return headerValue.toString();
