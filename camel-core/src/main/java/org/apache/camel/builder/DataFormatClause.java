@@ -20,6 +20,7 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
+import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -95,6 +96,13 @@ public class DataFormatClause<T extends ProcessorType> {
      */
     public T csv() {
         return dataFormat(new CsvDataFormat());
+    }
+
+    /**
+     * Uses the HL7 data format
+     */
+    public T hl7() {
+        return dataFormat(new HL7DataFormat());
     }
 
     /**

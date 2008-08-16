@@ -23,16 +23,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents a CSV (Comma Separated Values) {@link DataFormat}
+ * Represents a HL7 {@link org.apache.camel.spi.DataFormat}.
  *
+ * @see <a href="http://activemq.apache.org/camel/hl7.html">HL7 documentation</a>.
  * @version $Revision$
  */
-@XmlRootElement(name = "csv")
+@XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CsvDataFormat extends DataFormatType {
+public class HL7DataFormat extends DataFormatType {
 
-    public CsvDataFormat() {
-        super("org.apache.camel.dataformat.csv.CsvDataFormat");
+    public HL7DataFormat() {
+        super("org.apache.camel.dataformat.hl7.HL7DataFormat");
     }
 
 }
