@@ -44,10 +44,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ExceptionType extends ProcessorType<ProcessorType> {
 
-/*
-    @XmlElementRef
-    private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
-*/
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "redeliveryPolicy", required = false)
@@ -145,6 +141,10 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return this;
     }
 
+    public ExceptionType maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
+        return this;
+    }
 
     // Properties
     //-------------------------------------------------------------------------

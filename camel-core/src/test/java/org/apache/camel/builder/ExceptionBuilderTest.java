@@ -107,6 +107,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 exception(IOException.class)
                     .initialRedeliveryDelay(5000L)
                     .maximumRedeliveries(3)
+                    .maximumRedeliveryDelay(30000L)
                     .backOffMultiplier(1.0)
                     .useExponentialBackOff()
                     .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception"))

@@ -36,6 +36,7 @@ public class RedeliveryPolicyType {
     private Boolean useExponentialBackOff;
     private Double collisionAvoidanceFactor;
     private Boolean useCollisionAvoidance;
+    private Long maximumRedeliveryDelay;
 
     public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer =  parentPolicy.copy();
@@ -59,11 +60,14 @@ public class RedeliveryPolicyType {
         if (useCollisionAvoidance != null) {
             answer.setUseCollisionAvoidance(useCollisionAvoidance);
         }
+        if (maximumRedeliveryDelay != null) {
+            answer.setMaximumRedeliveryDelay(maximumRedeliveryDelay);
+        }
         return answer;
     }
 
     public String toString() {
-        return "RedeliveryPolicy[maxRedeliveries: " + maximumRedeliveries + "]";
+        return "RedeliveryPolicy[maximumRedeliveries: " + maximumRedeliveries + "]";
     }
 
     // Fluent API
@@ -100,6 +104,11 @@ public class RedeliveryPolicyType {
 
     public RedeliveryPolicyType useExponentialBackOff() {
         setUseExponentialBackOff(Boolean.TRUE);
+        return this;
+    }
+
+    public RedeliveryPolicyType maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+        setMaximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 
@@ -152,5 +161,13 @@ public class RedeliveryPolicyType {
 
     public void setUseExponentialBackOff(Boolean useExponentialBackOff) {
         this.useExponentialBackOff = useExponentialBackOff;
+    }
+
+    public Long getMaximumRedeliveryDelay() {
+        return maximumRedeliveryDelay;
+    }
+
+    public void setMaximumRedeliveryDelay(Long maximumRedeliveryDelay) {
+        this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 }
