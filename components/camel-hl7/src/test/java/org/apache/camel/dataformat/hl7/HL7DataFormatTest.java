@@ -33,8 +33,6 @@ import org.apache.camel.spi.DataFormat;
  */
 public class HL7DataFormatTest extends ContextTestSupport {
 
-    private DataFormat hl7 = new HL7DataFormat();
-
     public void testMarshal() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
@@ -81,9 +79,9 @@ public class HL7DataFormatTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:marshal").marshal(hl7).to("mock:marshal");
+                from("direct:marshal").marshal().hl7().to("mock:marshal");
 
-                from("direct:unmarshal").unmarshal(hl7).to("mock:unmarshal");
+                from("direct:unmarshal").unmarshal().hl7().to("mock:unmarshal");
             }
         };
     }
