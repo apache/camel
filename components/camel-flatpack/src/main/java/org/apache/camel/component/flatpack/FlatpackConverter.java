@@ -27,9 +27,11 @@ import org.apache.camel.Converter;
  */
 @Converter
 public final class FlatpackConverter {
+
     private FlatpackConverter() {
         // helper class
     }
+
     @Converter
     public static Map toMap(DataSet dataSet) {
         Map<String, Object> map = new HashMap<String, Object>();
@@ -39,15 +41,25 @@ public final class FlatpackConverter {
 
     /**
      * Puts the values of the dataset into the map
-     * @param map
-     * @param dataSet
      */
     public static void putValues(Map<String, Object> map, DataSet dataSet) {
-        String[] columns = dataSet.getColumns();
+        boolean header = dataSet.isRecordID(FlatpackComponent.HEADER_ID);
+        boolean trailer = dataSet.isRecordID(FlatpackComponent.TRAILER_ID);
+
+        // the columns can vary depending on header, body or trailer
+        String[] columns;
+        if (header) {
+            columns = dataSet.getColumns(FlatpackComponent.HEADER_ID);
+        } else if (trailer) {
+            columns = dataSet.getColumns(FlatpackComponent.TRAILER_ID);
+        } else {
+            columns = dataSet.getColumns();
+        }
+
         for (String column : columns) {
-            // TODO deal with non-string types?
             String value = dataSet.getString(column);
             map.put(column, value);
         }
     }
+
 }

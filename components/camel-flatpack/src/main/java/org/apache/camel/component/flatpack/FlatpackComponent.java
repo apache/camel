@@ -32,6 +32,9 @@ import org.springframework.core.io.Resource;
  */
 public class FlatpackComponent extends ResourceBasedComponent {
 
+    public static final String HEADER_ID = "header";
+    public static final String TRAILER_ID = "trailer";
+
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         boolean fixed = false;
         if (remaining.startsWith("fixed:")) {

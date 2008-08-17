@@ -32,38 +32,26 @@ public class DataSetList extends AbstractList {
     }
 
     public Object get(int index) {
-        Iterator iter = iterator();
-        for (int i = 0; iter.hasNext(); i++) {
-            Object value = iter.next();
-            if (i == index) {
-                return value;
-            }
-        }
-        return null;
+        dataSet.absolute(index);
+        return FlatpackConverter.toMap(dataSet);
     }
 
     public int size() {
-        int answer = 0;
-        for (Iterator iter = iterator(); iter.hasNext();) {
-            iter.next();
-            answer++;
-        }
-        return answer;
+        return dataSet.getRowCount();
     }
 
     @Override
     public Iterator iterator() {
         dataSet.goTop();
         return new Iterator() {
+
             public boolean hasNext() {
                 return dataSet.next();
             }
 
             public Object next() {
-                // TODO because of a limitation in split()
-                // we need to create an object for the current position
-                // otherwise strangeness occurs when the same object is used to represent
-                // each row
+                // because of a limitation in split() we need to create an object for the current position
+                // otherwise strangeness occurs when the same object is used to represent each row
                 return FlatpackConverter.toMap(dataSet);
             }
 
@@ -71,6 +59,6 @@ public class DataSetList extends AbstractList {
                 throw new UnsupportedOperationException("remove() not supported");
             }
         };
-
     }
+    
 }
