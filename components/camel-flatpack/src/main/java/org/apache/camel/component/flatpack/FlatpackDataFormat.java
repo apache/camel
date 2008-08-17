@@ -90,7 +90,6 @@ public class FlatpackDataFormat implements DataFormat {
         this.textQualifier = textQualifier;
     }
 
-
     public Resource getDefinition() {
         return definition;
     }
