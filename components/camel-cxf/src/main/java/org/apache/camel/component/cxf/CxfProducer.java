@@ -46,6 +46,7 @@ import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
@@ -190,7 +191,11 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                         Object[] result = null;
                         // call for the client with the parameters
                         result = invokeClient(operationNameSpace, operationName, parameters, context);
-                        response.setContent(Object[].class, result);
+                        if (result != null) {
+                            response.setContent(List.class, new MessageContentsList(result));
+                        } else {
+                            response.setContent(List.class, new MessageContentsList());
+                        }
                         // copy the response context to the response
                         CxfBinding.storeCXfResponseContext(response, responseContext);
                         CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);

@@ -30,12 +30,10 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
         BankQuote oldQuote = oldExchange.getProperty(BANK_QUOTE, BankQuote.class);
         // Get the oldQute from out message body if we can't get it from the exchange
         if (oldQuote == null) {
-            Object[] oldResult = (Object[])oldExchange.getOut().getBody();
-            oldQuote = (BankQuote) oldResult[0];
+            oldQuote = oldExchange.getOut().getBody(BankQuote.class);
         }
         // Get the newQuote
-        Object[] newResult = (Object[])newExchange.getOut().getBody();
-        BankQuote newQuote = (BankQuote) newResult[0];
+        BankQuote newQuote = newExchange.getOut().getBody(BankQuote.class);
         Exchange result = null;
         BankQuote bankQuote;
 
