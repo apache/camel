@@ -18,6 +18,8 @@ package org.apache.camel.component.flatpack;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 import net.sf.flatpack.DataSet;
 import org.apache.camel.Converter;
@@ -37,6 +39,20 @@ public final class FlatpackConverter {
         Map<String, Object> map = new HashMap<String, Object>();
         putValues(map, dataSet);
         return map;
+    }
+
+    @Converter
+    public static List toList(DataSet dataSet) {
+        List<Map<String, Object>> answer = new ArrayList<Map<String, Object>>();
+        dataSet.goTop();
+
+        while (dataSet.next()) {
+            Map<String, Object> map = new HashMap<String, Object>();
+            putValues(map, dataSet);
+            answer.add(map);
+        }
+
+        return answer;
     }
 
     /**

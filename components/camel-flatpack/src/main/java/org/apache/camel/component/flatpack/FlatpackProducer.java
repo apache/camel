@@ -35,9 +35,14 @@ class FlatpackProducer extends DefaultProducer<Exchange> {
     public void process(Exchange exchange) throws Exception {
         Parser parser = endpoint.createParser(exchange);
         DataSet dataSet = parser.parse();
-        int counter = 0;
-        while (dataSet.next()) {
-            endpoint.processDataSet(dataSet, counter++);
+
+        if (endpoint.isSplitRows()) {
+            int counter = 0;
+            while (dataSet.next()) {
+                endpoint.processDataSet(dataSet, counter++);
+            }
+        } else {
+            endpoint.processDataSet(dataSet, dataSet.getRowCount());
         }
     }
 }

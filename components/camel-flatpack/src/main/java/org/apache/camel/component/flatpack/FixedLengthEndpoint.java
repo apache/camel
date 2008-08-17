@@ -48,6 +48,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint<Exchange> {
     private final Resource resource;
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
+    private boolean splitRows = true;
 
     public FixedLengthEndpoint(String uri, Resource resource) {
         super(uri);
@@ -113,4 +114,11 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint<Exchange> {
         this.loadBalancer = loadBalancer;
     }
 
+    public boolean isSplitRows() {
+        return splitRows;
+    }
+
+    public void setSplitRows(boolean splitRows) {
+        this.splitRows = splitRows;
+    }
 }
