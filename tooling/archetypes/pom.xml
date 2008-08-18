@@ -32,8 +32,10 @@
   <packaging>pom</packaging>
 
   <modules>
-    <module>camel-router</module>
-    <module>camel-component</module>
+    <module>camel-archetype-activemq</module>
+    <module>camel-archetype-component</module>
+    <module>camel-archetype-java</module>
+    <module>camel-archetype-spring</module>
   </modules>
 
 </project>
