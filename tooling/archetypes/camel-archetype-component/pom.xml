@@ -29,7 +29,7 @@
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-rchetype-component</artifactId>
+  <artifactId>camel-archetype-component</artifactId>
   <name>Camel :: Archetypes :: Component</name>
 
   <build>
