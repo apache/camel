@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.wsdl_first;
-
-import javax.xml.ws.Holder;
+package org.apache.camel.non_wrapper;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.wsdl_first.types.GetPersonResponse;
+import org.apache.camel.non_wrapper.types.GetPerson;
+import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.MessageContentsList;
@@ -40,29 +39,29 @@ public class PersonProcessor implements Processor {
         }
         // Get the parameters list which element is the holder.
         MessageContentsList msgList = (MessageContentsList)exchange.getIn().getBody();
-        Holder<String> personId = (Holder<String>)msgList.get(0);
-        Holder<String> ssn = (Holder<String>)msgList.get(1);
-        Holder<String> name = (Holder<String>)msgList.get(2);
+        GetPerson person = (GetPerson) msgList.get(0);
+        String personId = person.getPersonId();
+        GetPersonResponse response = new GetPersonResponse();
 
-        if (personId.value == null || personId.value.length() == 0) {
+        if (personId == null || personId.length() == 0) {
             LOG.info("person id 123, so throwing exception");
             // Try to throw out the soap fault message
-            org.apache.camel.wsdl_first.types.UnknownPersonFault personFault =
-                new org.apache.camel.wsdl_first.types.UnknownPersonFault();
+            org.apache.camel.non_wrapper.types.UnknownPersonFault personFault =
+                new org.apache.camel.non_wrapper.types.UnknownPersonFault();
             personFault.setPersonId("");
-            org.apache.camel.wsdl_first.UnknownPersonFault fault =
-                new org.apache.camel.wsdl_first.UnknownPersonFault("Get the null value of person name", personFault);
+            org.apache.camel.non_wrapper.UnknownPersonFault fault =
+                new org.apache.camel.non_wrapper.UnknownPersonFault("Get the null value of person name", personFault);
             // Since camel has its own exception handler framework, we can't throw the exception to trigger it
             // We just set the fault message in the exchange for camel-cxf component handling
             exchange.getFault().setBody(fault);
         }
-
-        name.value = "Bonjour";
-        ssn.value = "123";
+        response.setPersonId(personId);
+        response.setName("Bonjour");
+        response.setSsn("123");
         LOG.info("setting Bonjour as the response");
         // Set the response message, first element is the return value of the operation,
         // the others are the holders of method parameters
-        exchange.getOut().setBody(new Object[] {null, personId, ssn, name});
+        exchange.getOut().setBody(new Object[] {response});
     }
 
 }
