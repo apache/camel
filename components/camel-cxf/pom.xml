@@ -302,6 +302,12 @@
       							<extraarg>-verbose</extraarg>
       						</extraargs>
       					</wsdlOption>
+      					<wsdlOption>
+      						<wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
+      						<extraargs>
+      							<extraarg>-verbose</extraarg>
+      						</extraargs>
+      					</wsdlOption>
       				</wsdlOptions>
       			</configuration>
       			<goals>

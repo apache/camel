@@ -59,6 +59,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
 
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
+        cxfExchange.setProperty(BindingOperationInfo.class.toString(), bop);
 
         if (bop != null && bop.getOperationInfo().isOneWay()) {
             cxfExchange.setPattern(ExchangePattern.InOnly);
@@ -150,6 +151,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         MethodDispatcher md = (MethodDispatcher)
             exchange.get(Service.class).get(MethodDispatcher.class.getName());
         Method m = md.getMethod(bop);
+        cxfExchange.setProperty(BindingOperationInfo.class.toString(), bop);
 
         // The SEI could be the provider class which will not have the bop information.
         if (bop != null && bop.getOperationInfo().isOneWay()) {
@@ -163,8 +165,8 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         } else {
             cxfExchange.getIn().setHeader(CxfConstants.OPERATION_NAME, m.getName());
         }
-        
-        CxfHeaderHelper.propagateCxfToCamel(endpoint.getHeaderFilterStrategy(), exchange.getInMessage(), 
+
+        CxfHeaderHelper.propagateCxfToCamel(endpoint.getHeaderFilterStrategy(), exchange.getInMessage(),
                 cxfExchange.getIn().getHeaders());
         cxfExchange.getIn().setBody(params);
         try {
