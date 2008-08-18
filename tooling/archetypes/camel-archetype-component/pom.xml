@@ -29,8 +29,8 @@
   </parent>
 
   <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-router</artifactId>
-  <name>Camel :: Archetypes :: Router</name>
+  <artifactId>camel-rchetype-component</artifactId>
+  <name>Camel :: Archetypes :: Component</name>
 
   <build>
     <plugins>

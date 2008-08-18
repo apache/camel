@@ -22,40 +22,51 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>1.5-SNAPSHOT</version>
-  </parent>
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <packaging>jar</packaging>
+  <version>${version}</version>
 
-  <groupId>org.apache.camel.archetypes</groupId>
-  <artifactId>camel-component</artifactId>
-  <name>Camel :: Archetypes :: Component</name>
+  <name>A Camel Route</name>
+  <url>http://www.myorganization.org</url>
+
+  <properties>
+    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+  </dependencies>
 
   <build>
+    <defaultGoal>install</defaultGoal>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-antrun-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>run</goal>
-            </goals>
-            <configuration>
-              <tasks>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$CAMEL_VERSION_REPLACEME$"
-                  value="${project.version}" casesensitive="true">
-                </replace>
-              </tasks>
-            </configuration>
-          </execution>
-        </executions>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
       </plugin>
+
+      <!-- allows the route to be ran via 'mvn camel:run' -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+      </plugin>
+
     </plugins>
   </build>
-
 </project>
