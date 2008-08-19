@@ -42,7 +42,7 @@ public class OgnlExpression extends ExpressionSupport<Exchange> {
         try {
             this.expression = Ognl.parseExpression(expressionString);
         } catch (OgnlException e) {
-            throw new IllegalSyntaxException(language, expressionString);
+            throw new IllegalSyntaxException(language, expressionString, e);
         }
     }
 
