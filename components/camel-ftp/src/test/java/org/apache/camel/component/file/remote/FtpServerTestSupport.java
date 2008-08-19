@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.ftpserver.FtpServer;
-import org.apache.ftpserver.interfaces.FtpServerContext;
 
 /**
  * Base class for unit testing using a FTPServer
