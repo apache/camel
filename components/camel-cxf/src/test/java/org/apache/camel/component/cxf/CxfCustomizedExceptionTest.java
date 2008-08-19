@@ -96,7 +96,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
             assertEquals("Expect to get right exception message", EXCEPTION_MESSAGE, e.getMessage());
             assertTrue("Exception is not instance of SoapFault", e instanceof SoapFault);
             assertEquals("Expect to get right detail message", DETAIL_TEXT, ((SoapFault)e).getDetail().getTextContent());
-            assertEquals("Expect to get right fault-code", SoapFault.FAULT_CODE_CLIENT, ((SoapFault)e).getFaultCode());
+            assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)e).getFaultCode().toString());
         }
 
     }

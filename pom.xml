@@ -42,7 +42,7 @@
     <compiler.fork>false</compiler.fork>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.1.0</activemq-version>
-    <cxf-version>2.1.1</cxf-version>
+    <cxf-version>2.1.2</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.0.1</felix-osgi-version>
     <httpcore-version>4.0-alpha6</httpcore-version>
