@@ -29,7 +29,11 @@ public class IllegalSyntaxException extends RuntimeCamelException {
     private final String expression;
 
     public IllegalSyntaxException(Language language, String expression) {
-        super("Illegal syntax for language: " + language + ". Expression: " + expression);
+        this(language, expression, null);
+    }
+
+    public IllegalSyntaxException(Language language, String expression, Throwable cause) {
+        super("Illegal syntax for language: " + language + ". Expression: " + expression, cause);
         this.language = language;
         this.expression = expression;
     }
