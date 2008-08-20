@@ -41,19 +41,21 @@ public class CustomerServicesTest extends TestCase {
                 new String[] {"spring-config/server-applicationContext.xml"});
             Object server = serverContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
             assertNotNull("We should get server here", server);
-            
+
             // add an interceptor to verify headers
             EndpointImpl.class.cast(server).getServer().getEndpoint().getInInterceptors()
-                .add(new HeaderChecker(Phase.PRE_STREAM));
-            
+                .add(new HeaderChecker(Phase.READ));
+
             clientContext =  new ClassPathXmlApplicationContext(
                 new String[] {"spring-config/client-applicationContext.xml"});
             CustomerServiceV1 customerService = (CustomerServiceV1) clientContext.getBean("org.apache.camel.itest.customerrelations.CustomerServiceV1");
-            
-            // add an interceptor to verify headers
-            JaxWsClientProxy.class.cast(Proxy.getInvocationHandler(customerService))
-                .getClient().getInInterceptors().add(new HeaderChecker(Phase.PRE_STREAM));
-            
+
+            // CXF 2.1.2 only apply the SOAPAction for the request message (in SoapPreProtocolOutInterceptor)
+            // After went through the SOAP 1.1 specification, I got that the SOAPAction is only for the request message
+            // So I comment out this HeaderChecker Interceptor setting up code
+            /*JaxWsClientProxy.class.cast(Proxy.getInvocationHandler(customerService))
+                .getClient().getInInterceptors().add(new HeaderChecker(Phase.READ));*/
+
             Customer customer = customerService.getCustomer("12345");
             assertNotNull("We should get Customer here", customer);
         } finally {
@@ -65,17 +67,17 @@ public class CustomerServicesTest extends TestCase {
             }
         }
     }
-    
+
     class HeaderChecker extends AbstractPhaseInterceptor<Message> {
         public HeaderChecker(String phase) {
             super(phase);
         }
-        
+
         public void handleMessage(Message message) throws Fault {
-            Map<String, List<String>> headers 
+            Map<String, List<String>> headers
                 = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));
             assertNotNull(headers);
             assertEquals("\"getCustomer\"", headers.get("SOAPAction").get(0));
-        }   
+        }
     }
 }
