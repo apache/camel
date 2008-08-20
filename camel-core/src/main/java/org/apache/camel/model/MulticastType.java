@@ -67,12 +67,11 @@ public class MulticastType extends OutputType<ProcessorType> {
     }
 
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
+        if (aggregationStrategy == null && strategyRef != null) {
+            aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+        }
         if (aggregationStrategy == null) {
-            if (strategyRef == null) {
-                aggregationStrategy = new UseLatestAggregationStrategy();
-            } else {
-                aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
-            }
+            aggregationStrategy = new UseLatestAggregationStrategy();
         }
         if (threadPoolRef != null) {
             threadPoolExecutor = routeContext.lookup(threadPoolRef, ThreadPoolExecutor.class);
