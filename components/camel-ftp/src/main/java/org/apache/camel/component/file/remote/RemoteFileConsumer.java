@@ -31,7 +31,7 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected boolean recursive;
     protected String regexPattern;
     protected boolean setNames = true;
-    protected boolean exclusiveReadLock = true;
+    protected boolean exclusiveReadLock;
     protected boolean deleteFile;
     protected String moveNamePrefix;
     protected String moveNamePostfix;
