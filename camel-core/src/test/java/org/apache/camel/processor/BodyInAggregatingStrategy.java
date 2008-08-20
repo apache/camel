@@ -18,21 +18,23 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.Message;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 
-/**
- * @version $Revision$
-*/
-public class MyAggregationStrategy extends UseLatestAggregationStrategy {
-    @Override
+public class BodyInAggregatingStrategy implements AggregationStrategy {
+
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange result = super.aggregate(oldExchange, newExchange);
+        Exchange copy = newExchange.copy();
+        Message newIn = copy.getIn();
+        String oldBody = oldExchange.getIn().getBody(String.class);
+        String newBody = newIn.getBody(String.class);
+        newIn.setBody(oldBody + "+" + newBody);
         Integer old = (Integer) oldExchange.getProperty("aggregated");
         if (old == null) {
             old = 1;
         }
-        result.setProperty("aggregated", old + 1);
-        return result;
+        copy.setProperty("aggregated", old + 1);
+        return copy;
     }
 
     /**
@@ -40,10 +42,12 @@ public class MyAggregationStrategy extends UseLatestAggregationStrategy {
      */
     public boolean isCompleted(@Header(name = "aggregated")
                                Integer aggregated) {
-        System.out.println("calling the isCompleted with aggregated" + aggregated);
+
         if (aggregated == null) {
             return false;
         }
-        return aggregated == 5;
+
+        return aggregated == 3;
     }
+
 }

@@ -1626,7 +1626,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * to using a {@link Pipeline} but derived classes could change the
      * behaviour
      */
-    protected Processor createCompositeProcessor(List<Processor> list) {
+    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
         // return new MulticastProcessor(list);
         return new Pipeline(list);
     }
@@ -1650,7 +1650,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             if (list.size() == 1) {
                 processor = list.get(0);
             } else {
-                processor = createCompositeProcessor(list);
+                processor = createCompositeProcessor(routeContext, list);
             }
         }
         return processor;

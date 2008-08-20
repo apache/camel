@@ -42,6 +42,10 @@ import org.apache.camel.spi.RouteContext;
 public class MulticastType extends OutputType<ProcessorType> {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
+    @XmlAttribute(required = false)
+    private String strategyRef;
+    @XmlAttribute(required = false)
+    private String threadPoolRef;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -62,9 +66,16 @@ public class MulticastType extends OutputType<ProcessorType> {
         return createOutputsProcessor(routeContext);
     }
 
-    protected Processor createCompositeProcessor(List<Processor> list) {
+    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
         if (aggregationStrategy == null) {
-            aggregationStrategy = new UseLatestAggregationStrategy();
+            if (strategyRef == null) {
+                aggregationStrategy = new UseLatestAggregationStrategy();
+            } else {
+                aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+            }
+        }
+        if (threadPoolRef != null) {
+            threadPoolExecutor = routeContext.lookup(threadPoolRef, ThreadPoolExecutor.class);
         }
         return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), threadPoolExecutor);
     }
