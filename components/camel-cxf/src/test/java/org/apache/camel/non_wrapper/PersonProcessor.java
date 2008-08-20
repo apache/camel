@@ -37,9 +37,8 @@ public class PersonProcessor implements Processor {
         if (boi != null) {
             LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
         }
-        // Get the parameters list which element is the holder.
-        MessageContentsList msgList = (MessageContentsList)exchange.getIn().getBody();
-        GetPerson person = (GetPerson) msgList.get(0);
+
+        GetPerson person =  exchange.getIn().getBody(GetPerson.class);
         String personId = person.getPersonId();
         GetPersonResponse response = new GetPersonResponse();
 
