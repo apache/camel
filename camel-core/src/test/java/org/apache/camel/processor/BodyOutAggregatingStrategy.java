@@ -17,33 +17,17 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
-import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.Message;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 
-/**
- * @version $Revision$
-*/
-public class MyAggregationStrategy extends UseLatestAggregationStrategy {
-    @Override
+public class BodyOutAggregatingStrategy implements AggregationStrategy {
+
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange result = super.aggregate(oldExchange, newExchange);
-        Integer old = (Integer) oldExchange.getProperty("aggregated");
-        if (old == null) {
-            old = 1;
-        }
-        result.setProperty("aggregated", old + 1);
-        return result;
+        Message newOut = newExchange.getOut();
+        String oldBody = oldExchange.getOut().getBody(String.class);
+        String newBody = newOut.getBody(String.class);
+        newOut.setBody(oldBody + "+" + newBody);
+        return newExchange;
     }
 
-    /**
-     * An expression used to determine if the aggregation is complete
-     */
-    public boolean isCompleted(@Header(name = "aggregated")
-                               Integer aggregated) {
-        System.out.println("calling the isCompleted with aggregated" + aggregated);
-        if (aggregated == null) {
-            return false;
-        }
-        return aggregated == 5;
-    }
 }

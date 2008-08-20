@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Header;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -63,50 +64,6 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         assertMockEndpointsSatisifed();
     }
 
-    private class AppendingProcessor implements Processor {
-        private String appendingString;
-
-        public AppendingProcessor(String string) {
-            appendingString = string;
-        }
-
-        public void process(Exchange exchange) {
-            // lets transform the IN message
-            Message in = exchange.getIn();
-            String body = in.getBody(String.class);
-            in.setBody(body + appendingString);
-        }
-    }
-
-    private class BodyOutAggregatingStrategy implements AggregationStrategy {
-
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            Message newOut = newExchange.getOut();
-            String oldBody = oldExchange.getOut().getBody(String.class);
-            String newBody = newOut.getBody(String.class);
-            newOut.setBody(oldBody + "+" + newBody);
-            return newExchange;
-        }
-
-    }
-
-    private class BodyInAggregatingStrategy implements AggregationStrategy {
-
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            Exchange copy = newExchange.copy();
-            Message newIn = copy.getIn();
-            String oldBody = oldExchange.getIn().getBody(String.class);
-            String newBody = newIn.getBody(String.class);
-            newIn.setBody(oldBody + "+" + newBody);
-            Integer old = (Integer) oldExchange.getProperty("aggregated");
-            if (old == null) {
-                old = 1;
-            }
-            copy.setProperty("aggregated", old + 1);
-            return copy;
-        }
-    }
-
     protected RouteBuilder createRouteBuilder() {
 
         return new RouteBuilder() {
@@ -120,11 +77,11 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
                 // Multicast the message in a sequential way
                 from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");
 
-                from("direct:x").process(new AppendingProcessor("x")).to("direct:aggregater");
-                from("direct:y").process(new AppendingProcessor("y")).to("direct:aggregater");
-                from("direct:z").process(new AppendingProcessor("z")).to("direct:aggregater");
+                from("direct:x").process(new AppendingProcessor("x")).to("direct:aggregator");
+                from("direct:y").process(new AppendingProcessor("y")).to("direct:aggregator");
+                from("direct:z").process(new AppendingProcessor("z")).to("direct:aggregator");
 
-                from("direct:aggregater").aggregator(header("cheese"), new BodyInAggregatingStrategy()).
+                from("direct:aggregator").aggregator(header("cheese"), new BodyInAggregatingStrategy()).
                 completedPredicate(header("aggregated").isEqualTo(3)).to("mock:result");
                 // END SNIPPET: example
             }
