@@ -19,6 +19,7 @@ package org.apache.camel.impl.converter;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 
@@ -59,4 +60,7 @@ public class PropertyEditorTypeConverter implements TypeConverter {
         return null;
     }
 
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+    	return convertTo(type, value);
+    }
 }

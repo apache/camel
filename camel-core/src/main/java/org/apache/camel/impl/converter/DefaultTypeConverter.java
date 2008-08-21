@@ -18,11 +18,12 @@ package org.apache.camel.impl.converter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
@@ -41,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
     private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
-    private final Map<TypeMapping, TypeConverter> typeMappings = new HashMap<TypeMapping, TypeConverter>();
+    private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     private Injector injector;
     private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
@@ -57,31 +58,36 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         addFallbackConverter(new EnumTypeConverter());
     }
 
-    public <T> T convertTo(Class<T> toType, Object value) {
-        if (toType.isInstance(value)) {
-            return toType.cast(value);
+    public <T> T convertTo(Class<T> type, Object value) {
+        return convertTo(type, null, value);
+    }
+    
+	@SuppressWarnings("unchecked")
+	public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        if (type.isInstance(value)) {
+            return type.cast(value);
         }
         checkLoaded();
-        TypeConverter converter = getOrFindTypeConverter(toType, value);
+        TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
-            return converter.convertTo(toType, value);
+            return converter.convertTo(type, exchange, value);
         }
 
         for (TypeConverter fallback : fallbackConverters) {
-            T rc = fallback.convertTo(toType, value);
+            T rc = fallback.convertTo(type, exchange, value);
             if (rc != null) {
                 return rc;
             }
         }
 
         // lets avoid NullPointerException when converting to boolean for null values
-        if (boolean.class.isAssignableFrom(toType)) {
+        if (boolean.class.isAssignableFrom(type)) {
             return (T) Boolean.FALSE;
         }
-        if (toType.isPrimitive()) {
-            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(toType);
-            if (primitiveType != toType) {
-                return (T) convertTo(primitiveType, value);
+        if (type.isPrimitive()) {
+            Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
+            if (primitiveType != type) {
+                return (T) convertTo(primitiveType, exchange, value);
             }
         }
         return null;
@@ -108,9 +114,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     public TypeConverter getTypeConverter(Class toType, Class fromType) {
         TypeMapping key = new TypeMapping(toType, fromType);
-        synchronized (typeMappings) {
-            return typeMappings.get(key);
-        }
+        return typeMappings.get(key);
     }
 
     public Injector getInjector() {

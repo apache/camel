@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.activation.DataHandler;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
 /**
@@ -44,7 +45,8 @@ public class DefaultMessage extends MessageSupport {
 
     public <T> T getHeader(String name, Class<T> type) {
         Object value = getHeader(name);
-        return getExchange().getContext().getTypeConverter().convertTo(type, value);
+        Exchange e = getExchange();
+        return e.getContext().getTypeConverter().convertTo(type, e, value);
     }
 
     public void setHeader(String name, Object value) {

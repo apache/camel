@@ -172,7 +172,7 @@ public final class ExchangeHelper {
      * not be converted
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(type, value);
+        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
     }
 
     /**

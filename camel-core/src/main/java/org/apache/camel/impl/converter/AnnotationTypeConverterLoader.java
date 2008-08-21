@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl.converter;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -33,13 +32,13 @@ import static java.lang.reflect.Modifier.isPublic;
 import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.camel.util.WebSphereResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 /**
  * A class which will auto-discover converter objects and methods to pre-load
@@ -141,25 +140,21 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             for (Method method : methods) {
                 Converter annotation = method.getAnnotation(Converter.class);
                 if (annotation != null) {
-                    Class<?>[] parameterTypes = method.getParameterTypes();
-                    if (parameterTypes == null || parameterTypes.length != 1) {
-                        LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
-                                + " as a converter method should have one parameter");
-                    } else {
+                    if (isValidConverterMethod(method)) {
                         int modifiers = method.getModifiers();
                         if (isAbstract(modifiers) || !isPublic(modifiers)) {
                             LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
                                     + " as a converter method is not a public and concrete method");
                         } else {
-                            Class toType = method.getReturnType();
+                            Class<?> toType = method.getReturnType();
                             if (toType.equals(Void.class)) {
                                 LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: "
                                         + method + " as a converter method returns a void method");
                             } else {
-                                Class fromType = parameterTypes[0];
+                                Class<?> fromType = method.getParameterTypes()[0];
                                 if (isStatic(modifiers)) {
                                     registerTypeConverter(registry, method, toType, fromType,
-                                                          new StaticMethodTypeConverter(method));
+                                            new StaticMethodTypeConverter(method));
                                 } else {
                                     if (injector == null) {
                                         injector = new CachingInjector(registry, type);
@@ -169,9 +164,13 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                                 }
                             }
                         }
+                    } else {
+                        LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
+                                + " as a converter method should have one parameter");
                     }
                 }
             }
+            
             Class superclass = type.getSuperclass();
             if (superclass != null && !superclass.equals(Object.class)) {
                 loadConverterMethods(registry, superclass);
@@ -181,9 +180,15 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
-    protected void registerTypeConverter(TypeConverterRegistry registry, Method method,
-                                         Class toType, Class fromType, TypeConverter typeConverter) {
+    protected void registerTypeConverter(TypeConverterRegistry registry, 
+    		Method method, Class toType, Class fromType, TypeConverter typeConverter) {
 
         registry.addTypeConverter(toType, fromType, typeConverter);
+    }
+    
+    protected boolean isValidConverterMethod(Method method) {
+    	Class<?>[] parameterTypes = method.getParameterTypes();
+        return (parameterTypes != null) &&
+    	    (parameterTypes.length == 1 || (parameterTypes.length == 2 && parameterTypes[1] == Exchange.class));
     }
 }

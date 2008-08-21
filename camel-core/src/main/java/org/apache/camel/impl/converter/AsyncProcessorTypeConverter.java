@@ -65,6 +65,10 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         return null;
     }
 
+    public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
+    	return convertTo(toType, value);
+    }
+    
     public static AsyncProcessor convert(Processor value) {
         if (value instanceof AsyncProcessor) {
             return (AsyncProcessor)value;

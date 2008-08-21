@@ -18,6 +18,7 @@ package org.apache.camel.impl.converter;
 
 import java.lang.reflect.Method;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
 
@@ -28,9 +29,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class StaticMethodTypeConverter implements TypeConverter {
     private final Method method;
+    private final boolean useExchange;
 
     public StaticMethodTypeConverter(Method method) {
         this.method = method;
+        this.useExchange = method.getParameterTypes().length == 2;
     }
 
     @Override
@@ -39,6 +42,12 @@ public class StaticMethodTypeConverter implements TypeConverter {
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
-        return (T) ObjectHelper.invokeMethod(method, null, value);
+        return convertTo(type, null, value);
     }
+
+	public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        return useExchange ? 
+            (T) ObjectHelper.invokeMethod(method, null, value, exchange) :
+            (T) ObjectHelper.invokeMethod(method, null, value);
+	}
 }

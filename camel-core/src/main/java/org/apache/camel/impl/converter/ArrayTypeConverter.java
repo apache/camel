@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 
 /**
@@ -70,5 +71,9 @@ public class ArrayTypeConverter implements TypeConverter {
             }
         }
         return null;
+    }
+    
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+    	return convertTo(type, value);
     }
 }

@@ -57,8 +57,7 @@ public class JaxpTest extends TestCase {
     }
 
     public void testConvertToSource() throws Exception {
-        Source source = converter
-                .convertTo(Source.class, "<hello>world!</hello>");
+        Source source = converter.convertTo(Source.class, "<hello>world!</hello>");
         assertNotNull(source);
 
         LOG.debug("Found document: " + source);
