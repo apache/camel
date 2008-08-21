@@ -115,9 +115,17 @@ public class FaultRouteTest extends ContextTestSupport {
             assertEquals("Fault message", "It makes no sense of business logic",
                          ((IllegalStateException)(fault.getBody())).getMessage());
         } else { // test for the throwFault with String
-            assertTrue("It should be the CamelException", fault.getBody() instanceof CamelException);
-            assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody()))
-                .getMessage());
+        	if (errors == 0) {
+        	    // fault *not* handled
+	            assertTrue("It should be the CamelException", fault.getBody() instanceof CamelException);
+	            assertEquals("Fault message", "ExceptionMessage", ((CamelException)(fault.getBody())).getMessage());
+        	} else {
+        	    // fault handled, exception should contain the fault
+	            assertNull("Fault body should be null", fault.getBody());
+	            CamelException faultex = (CamelException)exchange.getException();
+	            assertNotNull("Exception body should contain the fault", faultex);
+	            assertEquals("Fault message", "ExceptionMessage", faultex.getMessage());
+        	}
         }
     }
 
