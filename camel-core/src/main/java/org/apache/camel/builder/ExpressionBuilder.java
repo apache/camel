@@ -584,4 +584,22 @@ public final class ExpressionBuilder {
             }
         };
     }
+
+    /**
+     * Returns an Expression for the inbound message id
+     */
+    public static <E extends Exchange> Expression<E> messageIdExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn().getMessageId();
+            }
+
+            @Override
+            public String toString() {
+                return "messageId";
+            }
+        };
+    }
+
+
 }

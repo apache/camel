@@ -54,7 +54,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
 
     public boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (isLockFile()) {
-            File newFile = lockFileRenamer.renameFile(file);
+            File newFile = lockFileRenamer.renameFile(exchange, file);
             String lockFileName = newFile.getAbsolutePath();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Locking the file: " + file + " using the lock file name: " + lockFileName);

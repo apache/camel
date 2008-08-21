@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.file.strategy;
 
-import java.util.Properties;
+import java.util.Map;
 
+import org.apache.camel.Expression;
 import org.apache.camel.component.file.FileProcessStrategy;
 
 /**
@@ -32,15 +33,16 @@ public final class FileProcessStrategyFactory {
     /**
      * A strategy method to lazily create the file strategy to use.
      */
-    public static FileProcessStrategy createFileProcessStrategy(Properties params) {
+    public static FileProcessStrategy createFileProcessStrategy(Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
-        boolean isDelete = params.getProperty("delete") != null;
-        boolean isLock = params.getProperty("lock") != null;
-        String moveNamePrefix = params.getProperty("moveNamePrefix");
-        String moveNamePostfix = params.getProperty("moveNamePostfix");
+        boolean isDelete = params.get("delete") != null;
+        boolean isLock = params.get("lock") != null;
+        String moveNamePrefix = (String) params.get("moveNamePrefix");
+        String moveNamePostfix = (String) params.get("moveNamePostfix");
+        Expression expression = (Expression) params.get("expression");
 
-        if (params.getProperty("noop") != null) {
+        if (params.containsKey("noop")) {
             return new NoOpFileProcessStrategy(isLock);
         } else if (moveNamePostfix != null || moveNamePrefix != null) {
             if (isDelete) {
@@ -48,6 +50,13 @@ public final class FileProcessStrategyFactory {
                     + "and a moveFilenamePostfix or moveFilenamePrefix");
             }
             return new RenameFileProcessStrategy(isLock, moveNamePrefix, moveNamePostfix);
+        } else if (expression != null) {
+            FileLanguageRenamer renamer = new FileLanguageRenamer();
+            renamer.setExpression(expression);
+
+            RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);
+            strategy.setRenamer(renamer);
+            return strategy;
         } else if (isDelete) {
             return new DeleteFileProcessStrategy(isLock);
         } else {

@@ -26,8 +26,10 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -144,6 +146,25 @@ public class FileProducer extends DefaultProducer {
         String name = null;
         if (!endpoint.isIgnoreFileNameHeader()) {
             name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        }
+
+        // expression support
+        Expression expression = endpoint.getExpression();
+        if (name != null) {
+            // the header name can be an expression too, that should override whatever configured on the endpoint
+            if (name.indexOf("${") > -1) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug(FileComponent.HEADER_FILE_NAME + " contains a FileLanguage expression: " + name);
+                }
+                expression = FileLanguage.file(name);
+            }
+        }
+        if (expression != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Filename evaluated as expression: " + expression);
+            }
+            Object result = expression.evaluate(message.getExchange());
+            name = message.getExchange().getContext().getTypeConverter().convertTo(String.class, result);
         }
 
         File endpointFile = endpoint.getFile();

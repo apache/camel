@@ -18,7 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.ByteBuffer;
 import java.nio.channels.FileLock;
 
 import org.apache.camel.ContextTestSupport;
@@ -89,11 +88,6 @@ public class FileExclusiveReadTest extends ContextTestSupport {
                 from(fileUrl).to("mock:result");
             }
         };
-    }
-
-    private static void createDirectory(String s) {
-        File file = new File(s);
-        file.mkdirs();
     }
 
 }

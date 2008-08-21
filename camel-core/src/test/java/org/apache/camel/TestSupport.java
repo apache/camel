@@ -360,4 +360,14 @@ public abstract class TestSupport extends TestCase {
         }
         file.delete();
     }
+
+    /**
+     * create the directory
+     *
+     * @param file the directory to be created
+     */
+    public static void createDirectory(String file) {
+        File dir = new File(file);
+        dir.mkdirs();
+    }
 }

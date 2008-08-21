@@ -19,14 +19,17 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
@@ -41,10 +44,10 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
+
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
     private static final transient String DEFAULT_STRATEGYFACTORY_CLASS =
         "org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
-
 
     private File file;
     private FileProcessStrategy fileProcessStrategy;
@@ -61,6 +64,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private String excludedNamePostfix;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
+    private Expression expression;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -305,6 +309,21 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.excludedNamePostfix = excludedNamePostfix;
     }
 
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
+    /**
+     * Sets the expression based on {@link FileLanguage}
+     */
+    public void setExpression(String fileLanguageExpression) {
+        this.expression = FileLanguage.file(fileLanguageExpression);
+    }
+
     /**
      * A strategy method to lazily create the file strategy
      */
@@ -328,34 +347,39 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         }
 
         try {
-            Method factoryMethod = factory.getMethod("createFileProcessStrategy", Properties.class);
-            return (FileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsProperties());
+            Method factoryMethod = factory.getMethod("createFileProcessStrategy", Map.class);
+            return (FileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsMap());
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName()
                 + ".createFileProcessStrategy(Properties params) method not found", e);
         }
     }
 
-    protected Properties getParamsAsProperties() {
-        Properties params = new Properties();
+    protected Map<String, Object> getParamsAsMap() {
+        Map<String, Object> params = new HashMap<String, Object>();
+
         if (isNoop()) {
-            params.setProperty("noop", Boolean.toString(true));
+            params.put("noop", Boolean.toString(true));
         }
         if (isDelete()) {
-            params.setProperty("delete", Boolean.toString(true));
+            params.put("delete", Boolean.toString(true));
         }
         if (isAppend()) {
-            params.setProperty("append", Boolean.toString(true));
+            params.put("append", Boolean.toString(true));
         }
         if (isLock()) {
-            params.setProperty("lock", Boolean.toString(true));
+            params.put("lock", Boolean.toString(true));
         }
         if (moveNamePrefix != null) {
-            params.setProperty("moveNamePrefix", moveNamePrefix);
+            params.put("moveNamePrefix", moveNamePrefix);
         }
         if (moveNamePostfix != null) {
-            params.setProperty("moveNamePostfix", moveNamePostfix);
+            params.put("moveNamePostfix", moveNamePostfix);
         }
+        if (expression != null) {
+            params.put("expression", expression);
+        }
+
         return params;
     }
 
