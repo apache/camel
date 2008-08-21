@@ -29,7 +29,7 @@ import org.apache.camel.TypeConverter;
  * A type converter which is used to convert to and from array types
  * particularly for derived types of array component types and dealing with
  * primitive array types.
- * 
+ *
  * @version $Revision$
  */
 public class ArrayTypeConverter implements TypeConverter {
@@ -72,8 +72,8 @@ public class ArrayTypeConverter implements TypeConverter {
         }
         return null;
     }
-    
+
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-    	return convertTo(type, value);
+        return convertTo(type, value);
     }
 }

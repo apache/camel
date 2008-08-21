@@ -27,7 +27,7 @@ import org.apache.camel.processor.DelegateProcessor;
  * A simple converter that can convert any {@link Processor} to an {@link AsyncProcessor}.
  * Processing will still occur synchronously but it will provide the required
  * notifications that the caller expects.
- * 
+ *
  * @version $Revision$
  */
 public class AsyncProcessorTypeConverter implements TypeConverter {
@@ -66,9 +66,9 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
     }
 
     public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
-    	return convertTo(toType, value);
+        return convertTo(toType, value);
     }
-    
+
     public static AsyncProcessor convert(Processor value) {
         if (value instanceof AsyncProcessor) {
             return (AsyncProcessor)value;

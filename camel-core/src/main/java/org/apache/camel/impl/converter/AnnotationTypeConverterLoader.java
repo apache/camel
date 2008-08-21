@@ -170,7 +170,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                     }
                 }
             }
-            
+
             Class superclass = type.getSuperclass();
             if (superclass != null && !superclass.equals(Object.class)) {
                 loadConverterMethods(registry, superclass);
@@ -180,15 +180,15 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
-    protected void registerTypeConverter(TypeConverterRegistry registry, 
-    		Method method, Class toType, Class fromType, TypeConverter typeConverter) {
+    protected void registerTypeConverter(TypeConverterRegistry registry,
+                                         Method method, Class toType, Class fromType, TypeConverter typeConverter) {
 
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
-    
+
     protected boolean isValidConverterMethod(Method method) {
-    	Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null) &&
-    	    (parameterTypes.length == 1 || (parameterTypes.length == 2 && parameterTypes[1] == Exchange.class));
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        return (parameterTypes != null)
+            && (parameterTypes.length == 1 || (parameterTypes.length == 2 && parameterTypes[1] == Exchange.class));
     }
 }

@@ -61,6 +61,6 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-    	return convertTo(type, value);
+        return convertTo(type, value);
     }
 }

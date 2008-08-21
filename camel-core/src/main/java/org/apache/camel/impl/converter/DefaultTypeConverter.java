@@ -61,9 +61,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
-    
-	@SuppressWarnings("unchecked")
-	public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+
+    @SuppressWarnings("unchecked")
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         if (type.isInstance(value)) {
             return type.cast(value);
         }

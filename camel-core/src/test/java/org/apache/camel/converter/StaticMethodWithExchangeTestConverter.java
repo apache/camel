@@ -21,10 +21,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 @Converter
-public final class StaticMethodWithExchangeTestConverter {
+public class StaticMethodWithExchangeTestConverter {
 
     @Converter
-    public static MyBean fromString(String text, Exchange exchange) {
+    public MyBean fromString(String text, Exchange exchange) {
         String[] values = ObjectHelper.splitOnCharacter(text, ":", 2);
         return new MyBean(Integer.parseInt(values[0]), exchange.getProperty("prefix", String.class) + values[1]);
     }

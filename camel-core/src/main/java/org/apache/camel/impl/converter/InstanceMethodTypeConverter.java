@@ -49,13 +49,13 @@ public class InstanceMethodTypeConverter implements TypeConverter {
         return convertTo(type, null, value);
     }
 
-	public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         Object instance = injector.newInstance();
         if (instance == null) {
             throw new RuntimeCamelException("Could not instantiate an instance of: " + type.getName());
         }
-        return useExchange ? 
-            (T) ObjectHelper.invokeMethod(method, instance, value, exchange) :
-            (T) ObjectHelper.invokeMethod(method, instance, value);
-	}
+        return useExchange
+            ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T)ObjectHelper
+                .invokeMethod(method, instance, value);
+    }
 }
