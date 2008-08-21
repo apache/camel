@@ -36,9 +36,8 @@ public class FileComponent extends DefaultComponent<FileExchange> {
      */
     public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";
 
-
     /**
-     * Header key holding the value: absolute filepath for the actual file produced.
+     * Header key holding the value: absolute filepath for the actual file produced (by file producer).
      * Value is set automatically by Camel
      */
     public static final String HEADER_FILE_NAME_PRODUCED = "org.apache.camel.file.name.produced";

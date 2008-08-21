@@ -18,6 +18,8 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.File;
 
+import org.apache.camel.component.file.FileExchange;
+
 /**
  * Camel default file renamer.
  *
@@ -38,7 +40,7 @@ public class DefaultFileRenamer implements FileRenamer {
         this.namePostfix = namePostfix;
     }
 
-    public File renameFile(File file) {
+    public File renameFile(FileExchange exchange, File file) {
         File parent = file.getParentFile();
         String name = renameFileName(file);
 

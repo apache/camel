@@ -45,9 +45,4 @@ public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
         assertEquals("Bye World", IOConverter.toString(file));
     }
 
-    private static void createDirectory(String s) {
-        File file = new File(s);
-        file.mkdirs();
-    }
-
 }

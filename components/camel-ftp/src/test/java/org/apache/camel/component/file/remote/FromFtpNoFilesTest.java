@@ -57,8 +57,4 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
         };
     }
 
-    private static void createDirectory(String s) {
-        File file = new File(s);
-        file.mkdirs();
-    }
 }

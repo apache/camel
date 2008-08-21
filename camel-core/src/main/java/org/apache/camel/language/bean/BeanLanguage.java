@@ -24,18 +24,24 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
- * which uses a simple text notation to invoke methods on beans to evaluate predicates or expressions<p/>
+ * A <a href="http://activemq.apache.org/camel/bean-language.html">bean language</a>
+ * which uses a simple text notation to invoke methods on beans to evaluate predicates or expressions
  * <p/>
  * The notation is essentially <code>beanName.methodName</code> which is then invoked using the
  * beanName to lookup in the <a href="http://activemq.apache.org/camel/registry.html>registry</a>
  * then the method is invoked to evaluate the expression using the
- * <a href="http://activemq.apache.org/camel/bean-integration.html>bean integration</a> to bind the
+ * <a href="http://activemq.apache.org/camel/bean-integration.html">bean integration</a> to bind the
  * {@link Exchange} to the method arguments.
  *
  * @version $Revision$
  */
 public class BeanLanguage implements Language {
+
+    public static Expression bean(String expression) {
+        BeanLanguage language = new BeanLanguage();
+        return language.createExpression(expression);
+    }
+
     public Predicate<Exchange> createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
@@ -52,4 +58,5 @@ public class BeanLanguage implements Language {
         }
         return new BeanExpression(beanName, method);
     }
+
 }

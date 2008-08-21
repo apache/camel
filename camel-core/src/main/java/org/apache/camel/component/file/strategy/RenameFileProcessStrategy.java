@@ -51,7 +51,7 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
 
     @Override
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
-        File newName = renamer.renameFile(file);
+        File newName = renamer.renameFile(exchange, file);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + file + " to: " + newName);
         }
