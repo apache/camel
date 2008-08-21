@@ -188,7 +188,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
-        return (parameterTypes != null)
-            && (parameterTypes.length == 1 || (parameterTypes.length == 2 && parameterTypes[1] == Exchange.class));
+        return (parameterTypes != null) && (parameterTypes.length == 1 || 
+            (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
     }
 }
