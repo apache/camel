@@ -191,7 +191,7 @@ public final class IntrospectionSupport {
             Exception typeConvertionFailed = null;
             for (Method setter : setters) {
                 // If the type is null or it matches the needed type, just use the value directly
-                if (value == null || value.getClass() == setter.getParameterTypes()[0]) {
+                if (value == null || setter.getParameterTypes()[0].isAssignableFrom(value.getClass())) {
                     setter.invoke(target, value);
                     return true;
                 } else {
