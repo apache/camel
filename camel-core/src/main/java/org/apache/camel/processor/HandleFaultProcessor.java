@@ -29,12 +29,12 @@ public class HandleFaultProcessor extends DelegateProcessor {
         if (faultMessage != null) {
             final Object faultBody = faultMessage.getBody();
             if (faultBody != null) {
+                faultMessage.setBody(null); // Reset it since we are handling it.
                 if (faultBody instanceof Throwable) {
                     exchange.setException((Throwable)faultBody);
                 } else {
                     exchange.setException(new CamelException("Message contains fault of type "
-                                                             + faultBody.getClass().getName() + ":\n"
-                                                             + faultBody));
+                        + faultBody.getClass().getName() + ":\n" + faultBody));
                 }
             }
         }
