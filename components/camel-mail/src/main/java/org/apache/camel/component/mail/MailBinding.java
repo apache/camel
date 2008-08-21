@@ -314,7 +314,7 @@ public class MailBinding {
     }
 
     private static String asString(Exchange exchange, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
+        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
     }
 
 }

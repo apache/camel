@@ -384,7 +384,7 @@ public final class ExpressionBuilder {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 Object value = expression.evaluate(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, value);
+                return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
             }
 
             @Override
@@ -520,7 +520,7 @@ public final class ExpressionBuilder {
      */
     public static <E extends Exchange> String evaluateStringExpression(Expression<E> expression, E exchange) {
         Object value = expression.evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(String.class, value);
+        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
     }
 
     /**

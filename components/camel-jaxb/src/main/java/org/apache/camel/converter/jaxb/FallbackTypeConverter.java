@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
@@ -69,6 +70,10 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         } catch (JAXBException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+    	return convertTo(type, value);
     }
 
     protected <T> boolean isJaxbType(Class<T> type) {

@@ -30,7 +30,8 @@ public class JAXBConvertTest extends TestCase {
     protected TypeConverter converter = context.getTypeConverter();
 
     public void testConverter() throws Exception {
-        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
+        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, 
+            "<purchaseOrder name='foo' amount='123.45' price='2.22'/>");
 
         assertNotNull("Purchase order should not be null!", purchaseOrder);
         assertEquals("name", "foo", purchaseOrder.getName());

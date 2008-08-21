@@ -14,29 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
+package org.apache.camel.converter;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
+public class MyBean {
+    private int foo;
+    private String bar;
 
-/**
- * A simple converter that can convert any object to a String type by using the
- * toString() method of the object.
- * 
- * @version $Revision$
- */
-public class ToStringTypeConverter implements TypeConverter {
-
-    public <T> T convertTo(Class<T> toType, Object value) {
-        if (value != null) {
-            if (toType.equals(String.class)) {
-                return (T)value.toString();
-            }
-        }
-        return null;
+    public MyBean() {
+    	this(0, "");
+    }
+    
+    public MyBean(int foo, String bar) {
+    	this.foo = foo;
+    	this.bar = bar;
+    }
+    
+    public int getFoo() {
+        return foo;
     }
 
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-    	return convertTo(type, value);
+    public void setFoo(int foo) {
+        this.foo = foo;
+    }
+    
+    public String getBar() {
+    	return bar;
+    }
+    
+    public void setBar(String bar) {
+    	this.bar = bar;
     }
 }

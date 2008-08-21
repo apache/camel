@@ -27,7 +27,12 @@ import java.util.List;
 import java.util.Set;
 
 import junit.framework.TestCase;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ReflectionInjector;
@@ -51,6 +56,11 @@ public class ConverterTest extends TestCase {
             Integer value = (Integer) getValue();
             return value != null ? value.toString() : "";
         }
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
     }
 
     public void testIntegerPropertyEditorConversion() throws Exception {
@@ -181,22 +191,24 @@ public class ConverterTest extends TestCase {
         value = converter.convertTo(Boolean.class, null);
         assertEquals("converted boolean value", null, value);
     }
-
-    public static class MyBean {
-        private int foo;
-
-        public int getFoo() {
-            return foo;
-        }
-
-        public void setFoo(int foo) {
-            this.foo = foo;
-        }
+    
+    public void testStaticMethodConversionWithExchange() throws Exception {
+    	CamelContext camel = new DefaultCamelContext();
+    	Exchange e = new DefaultExchange(camel);
+    	e.setProperty("prefix", "foo-");
+    	MyBean bean = converter.convertTo(MyBean.class, e, "5:bar");
+        assertEquals("converted using exchange", 5, bean.getFoo(), 5);
+        assertEquals("converted using exchange", "foo-bar", bean.getBar());
     }
 
-    @Override
-    protected void setUp() throws Exception {
-        PropertyEditorManager.registerEditor(Integer.class, IntegerPropertyEditor.class);
-    }
+    public void testInstanceMethodConversionWithExchange() throws Exception {
+        String[] values = new String[]{"5", "bar"};
 
+    	CamelContext camel = new DefaultCamelContext();
+    	Exchange e = new DefaultExchange(camel);
+    	e.setProperty("prefix", "foo-");
+    	MyBean bean = converter.convertTo(MyBean.class, e, values);
+        assertEquals("converted using exchange", 5, bean.getFoo(), 5);
+        assertEquals("converted using exchange", "foo-bar", bean.getBar());
+    }
 }

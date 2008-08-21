@@ -18,6 +18,7 @@ package org.apache.camel.impl.converter;
 
 import java.lang.reflect.Method;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.util.ObjectHelper;
@@ -44,4 +45,9 @@ public class EnumTypeConverter implements TypeConverter {
         }
         return null;
     }
+
+	public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+		// ignore exchange
+		return convertTo(type, value);
+	}
 }

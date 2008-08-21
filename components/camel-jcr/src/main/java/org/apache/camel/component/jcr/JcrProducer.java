@@ -41,8 +41,8 @@ public class JcrProducer extends DefaultProducer<DefaultExchange> {
             Node node = base.addNode(getNodeName(exchange));
             TypeConverter converter = exchange.getContext().getTypeConverter();
             for (String key : exchange.getProperties().keySet()) {
-                Value value = converter.convertTo(Value.class, exchange
-                        .getProperty(key));
+                Value value = converter.convertTo(Value.class, 
+                    exchange, exchange.getProperty(key));
                 node.setProperty(key, value);
             }
             node.addMixin("mix:referenceable");

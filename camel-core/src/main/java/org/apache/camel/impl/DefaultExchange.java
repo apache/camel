@@ -144,7 +144,7 @@ public class DefaultExchange implements Exchange {
             validateExchangePropertyIsExpectedType(property, type, value);
         }
 
-        return getContext().getTypeConverter().convertTo(type, value);
+        return getContext().getTypeConverter().convertTo(type, this, value);
     }
 
     public void setProperty(String name, Object value) {

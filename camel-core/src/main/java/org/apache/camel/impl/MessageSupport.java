@@ -56,7 +56,7 @@ public abstract class MessageSupport implements Message {
             CamelContext camelContext = e.getContext();
             if (camelContext != null) {
                 TypeConverter converter = camelContext.getTypeConverter();
-                T answer = converter.convertTo(type, body);
+                T answer = converter.convertTo(type, e, body);
                 if (answer == null) {
                     // lets first try converting the message itself first
                     // as for some types like InputStream v Reader its more efficient to do the transformation
@@ -77,7 +77,7 @@ public abstract class MessageSupport implements Message {
     public <T> void setBody(Object value, Class<T> type) {
         Exchange e = getExchange();
         if (e != null) {
-            T v = e.getContext().getTypeConverter().convertTo(type, value);
+            T v = e.getContext().getTypeConverter().convertTo(type, e, value);
             if (v != null) {
                 value = v;
             }
