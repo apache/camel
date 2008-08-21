@@ -21,14 +21,14 @@ public class MyBean {
     private String bar;
 
     public MyBean() {
-    	this(0, "");
+        this(0, "");
     }
-    
+
     public MyBean(int foo, String bar) {
-    	this.foo = foo;
-    	this.bar = bar;
+        this.foo = foo;
+        this.bar = bar;
     }
-    
+
     public int getFoo() {
         return foo;
     }
@@ -36,12 +36,12 @@ public class MyBean {
     public void setFoo(int foo) {
         this.foo = foo;
     }
-    
+
     public String getBar() {
-    	return bar;
+        return bar;
     }
-    
+
     public void setBar(String bar) {
-    	this.bar = bar;
+        this.bar = bar;
     }
 }

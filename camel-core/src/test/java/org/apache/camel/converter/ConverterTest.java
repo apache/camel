@@ -191,12 +191,12 @@ public class ConverterTest extends TestCase {
         value = converter.convertTo(Boolean.class, null);
         assertEquals("converted boolean value", null, value);
     }
-    
+
     public void testStaticMethodConversionWithExchange() throws Exception {
-    	CamelContext camel = new DefaultCamelContext();
-    	Exchange e = new DefaultExchange(camel);
-    	e.setProperty("prefix", "foo-");
-    	MyBean bean = converter.convertTo(MyBean.class, e, "5:bar");
+        CamelContext camel = new DefaultCamelContext();
+        Exchange e = new DefaultExchange(camel);
+        e.setProperty("prefix", "foo-");
+        MyBean bean = converter.convertTo(MyBean.class, e, "5:bar");
         assertEquals("converted using exchange", 5, bean.getFoo(), 5);
         assertEquals("converted using exchange", "foo-bar", bean.getBar());
     }
@@ -204,10 +204,10 @@ public class ConverterTest extends TestCase {
     public void testInstanceMethodConversionWithExchange() throws Exception {
         String[] values = new String[]{"5", "bar"};
 
-    	CamelContext camel = new DefaultCamelContext();
-    	Exchange e = new DefaultExchange(camel);
-    	e.setProperty("prefix", "foo-");
-    	MyBean bean = converter.convertTo(MyBean.class, e, values);
+        CamelContext camel = new DefaultCamelContext();
+        Exchange e = new DefaultExchange(camel);
+        e.setProperty("prefix", "foo-");
+        MyBean bean = converter.convertTo(MyBean.class, e, values);
         assertEquals("converted using exchange", 5, bean.getFoo(), 5);
         assertEquals("converted using exchange", "foo-bar", bean.getBar());
     }
