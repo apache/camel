@@ -38,6 +38,14 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("Claus", overloadedBean.getName());
     }
 
+    public void testOverloadSetterChooseUsingTypeConverter() throws Exception {
+        MyOverloadedBean overloadedBean = new MyOverloadedBean();
+        Object value = "Willem".getBytes();
+        // should use byte[] -> String type converter and call the setBean(String) setter method 
+        IntrospectionSupport.setProperty(context.getTypeConverter(), overloadedBean, "bean", value);
+        assertEquals("Willem", overloadedBean.getName());
+    }
+
     public class MyOverloadedBean {
         private ExampleBean bean;
 
