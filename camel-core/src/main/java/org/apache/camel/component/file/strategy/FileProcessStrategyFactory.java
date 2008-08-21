@@ -51,7 +51,7 @@ public final class FileProcessStrategyFactory {
             }
             return new RenameFileProcessStrategy(isLock, moveNamePrefix, moveNamePostfix);
         } else if (expression != null) {
-            FileLanguageRenamer renamer = new FileLanguageRenamer();
+            FileExpressionRenamer renamer = new FileExpressionRenamer();
             renamer.setExpression(expression);
 
             RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);

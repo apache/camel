@@ -6,9 +6,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.component.file.FileExchange;
 
 /**
- *
+ * File renamed using {@link Expression} to dynamically compute the file name.
+ * <p/>
+ * If most cases the {@link org.apache.camel.language.simple.FileLanguage FileLanguage} is used to
+ * create the expressions.
  */
-public class FileLanguageRenamer implements FileRenamer {
+public class FileExpressionRenamer implements FileRenamer {
 
     private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
