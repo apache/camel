@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -180,21 +181,42 @@ public final class IntrospectionSupport {
     public static boolean setProperty(TypeConverter typeConverter, Object target, String name, Object value) throws Exception {
         try {
             Class clazz = target.getClass();
-            Method setter = findSetterMethod(typeConverter, clazz, name, value);
-            if (setter == null) {
+            // find candidates of setter methods as there can be overloaded setters
+            Set<Method> setters = findSetterMethods(typeConverter, clazz, name, value);
+            if (setters.isEmpty()) {
                 return false;
             }
 
-            // If the type is null or it matches the needed type, just use the
-            // value directly
-            if (value == null || value.getClass() == setter.getParameterTypes()[0]) {
-                setter.invoke(target, value);
-            } else {
-                // We need to convert it
-                Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
-                setter.invoke(target, convertedValue);
+            // loop and execute the best setter method
+            Exception typeConvertionFailed = null;
+            for (Method setter : setters) {
+                // If the type is null or it matches the needed type, just use the value directly
+                if (value == null || value.getClass() == setter.getParameterTypes()[0]) {
+                    setter.invoke(target, value);
+                    return true;
+                } else {
+                    // We need to convert it
+                    try {
+                        Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
+                        setter.invoke(target, convertedValue);
+                        return true;
+                    } catch (IllegalArgumentException e) {
+                        typeConvertionFailed = e;
+                        // ignore as there could be another setter method where we could type convert with success
+                        LOG.trace("Setter " + setter + " with parameter type " + setter.getParameterTypes()[0]
+                                + " could not be used for type conertions of " + value);
+                    }
+                }
             }
-            return true;
+            // we did not find a setter method to use, and if we did try to use a type converter then throw
+            // this kind of exception as the caused by will hint this error
+            if (typeConvertionFailed != null) {
+                throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
+                        + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
+                        + " nor type convertion possbile: " + typeConvertionFailed.getMessage());
+            } else {
+                return false;
+            }
         } catch (InvocationTargetException e) {
             Throwable throwable = e.getTargetException();
             if (throwable instanceof Exception) {
@@ -242,7 +264,9 @@ public final class IntrospectionSupport {
         return null;
     }
 
-    private static Method findSetterMethod(TypeConverter typeConverter, Class clazz, String name, Object value) {
+    private static Set<Method> findSetterMethods(TypeConverter typeConverter, Class clazz, String name, Object value) {
+        Set<Method> candidates = new LinkedHashSet<Method>();
+
         // Build the method name.
         name = "set" + ObjectHelper.capitalize(name);
         while (clazz != Object.class) {
@@ -252,13 +276,38 @@ public final class IntrospectionSupport {
                 if (method.getName().equals(name) && params.length == 1) {
                     Class paramType = params[0];
                     if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
-                        return method;
+                        candidates.add(method);
                     }
                 }
             }
             clazz = clazz.getSuperclass();
         }
-        return null;
+
+        if (candidates.isEmpty()) {
+            return candidates;
+        } else if (candidates.size() == 1 ){
+            // only one
+            return candidates;
+        } else {
+            // find the best match if possible
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found " + candidates.size() + " suitable setter methods for setting " + name);
+            }
+            // perfer to use the one with the same instance if any exists
+            for (Method method : candidates) {
+                if (method.getParameterTypes()[0].isInstance(value)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Method " + method + " is the best candidate as it has parameter with same instance type");
+                    }
+                    // retain only this method in the answer
+                    candidates.clear();
+                    candidates.add(method);
+                    return candidates;
+                }
+            }
+            // fallback to return what we have found as candidates so far
+            return candidates;
+        }
     }
 
     private static boolean isSettableType(Class clazz) {
