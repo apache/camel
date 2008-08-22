@@ -127,6 +127,18 @@ public class FileExpressionBuilder {
                     date = new Date(exchange.getFile().lastModified());
                 } else if ("now".equals(command)) {
                     date = new Date();
+                } else if (command.startsWith("header.") || command.startsWith("in.header.")) {
+                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    date = exchange.getIn().getHeader(key, Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                    }
+                } else if (command.startsWith("out.header.")) {
+                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    date = exchange.getOut().getHeader(key, Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                    }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
                 }

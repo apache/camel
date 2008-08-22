@@ -31,8 +31,11 @@ import org.apache.camel.util.ObjectHelper;
  * <li>file:parent to access the parent file name</li>
  * <li>file:path to access the file path name</li>
  * <li>file:absolute to access the absolute file name</li>
+ * <li>file:canonical.path to access the canonical path name</li>
  * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
- * Supported commands are: <tt>now</tt> for current timestamp, <tt>file</tt> for the last modified timestamp of the file</li>
+ * Supported commands are: <tt>now</tt> for current timestamp, <tt>file</tt> for the last modified timestamp of the file.
+ * <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
+ * <tt>out.header.xxx</tt> to use the Date object in the out header. </li>
  * <li>bean:&lt;bean expression&gt; to invoke a bean using the
  * {@link org.apache.camel.language.bean.BeanLanguage BeanLanguage}</li>
  * <li>simple:&lt;simple expression&gt; to invoke the simple expression, however simple: can be obmitted as this language

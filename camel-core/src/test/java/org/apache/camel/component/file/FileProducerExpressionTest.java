@@ -19,6 +19,8 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.impl.JndiRegistry;
@@ -42,7 +44,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     public void testProduceBeanByHeader() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
+        template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
+            FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
 
         Thread.sleep(500);
         assertFileExists("target/filelanguage/123.bak");
@@ -56,7 +59,8 @@ public class FileProducerExpressionTest extends ContextTestSupport {
      }
 
     public void testProducerDateByHeader() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
+            FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -81,10 +85,23 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage?expression=myfile-${in.header.foo}.txt", "Hello World", "foo", "abc");
+        template.sendBodyAndHeader("file://target/filelanguage?expression=myfile-${in.header.foo}.txt",
+            "Hello World", "foo", "abc");
 
         Thread.sleep(500);
         assertFileExists("target/filelanguage/myfile-abc.txt");
+    }
+
+    public void testProducerWithDateHeader() throws Exception {
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(1974, Calendar.APRIL, 20);
+        Date date = cal.getTime();
+
+        template.sendBodyAndHeader("file://target/filelanguage?expression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
+            "Hello World", "birthday", date);
+
+        Thread.sleep(500);
+        assertFileExists("target/filelanguage/mybirthday-19740420.txt");
     }
 
     private static void assertFileExists(String filename) {

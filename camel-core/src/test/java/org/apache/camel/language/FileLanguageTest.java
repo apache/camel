@@ -19,6 +19,8 @@ package org.apache.camel.language;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Calendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -64,6 +66,16 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         String expected = new SimpleDateFormat("yyyyMMdd").format(new Date(file.lastModified()));
         assertExpression("backup-${date:file:yyyyMMdd}", "backup-" + expected);
+
+        assertExpression("backup-${date:header.birthday:yyyyMMdd}", "backup-19740420");
+        assertExpression("hello-${date:out.header.special:yyyyMMdd}", "hello-20080808");
+
+        try {
+            this.assertExpression("nodate-${date:header.xxx:yyyyMMdd}", null);
+            fail("Should have thrown IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            // expected
+        }
     }
 
     public void testSimple() throws Exception {
@@ -90,7 +102,14 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         file = new File("target/filelanguage/hello.txt");
-        Exchange answer = new FileExchange(context, ExchangePattern.InOnly, file);
+        Exchange answer = new FileExchange(context, ExchangePattern.InOut, file);
+
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(1974, Calendar.APRIL, 20);
+        answer.getIn().setHeader("birthday", cal.getTime());
+
+        cal.set(2008, Calendar.AUGUST, 8);
+        answer.getOut().setHeader("special", cal.getTime());
         return answer;
     }
 
