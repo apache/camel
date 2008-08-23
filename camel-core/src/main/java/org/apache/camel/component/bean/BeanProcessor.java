@@ -68,10 +68,6 @@ public class BeanProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">>>> invoking method for: " + exchange);
-        }
-
         Object bean = beanHolder.getBean();
         exchange.setProperty("org.apache.camel.bean.BeanHolder", beanHolder);
 
@@ -119,13 +115,13 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                 if (exchange.getPattern().isOutCapable()) {
                     // force out creating if not already created (as its lazy)
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Setting bean invocation value on OUT message: " + value);
+                        LOG.debug("Setting bean invocation result on the OUT message: " + value);
                     }
                     exchange.getOut(true).setBody(value);
                 } else {
                     // if not out then set it on the in
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Setting bean invocation value on IN message: " + value);
+                        LOG.debug("Setting bean invocation result on the IN message: " + value);
                     }
                     exchange.getIn().setBody(value);
                 }

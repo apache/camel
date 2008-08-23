@@ -19,11 +19,11 @@ package org.apache.camel.language;
 import javax.naming.Context;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Header;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.language.bean.BeanLanguage;
 
 /**
  * @version $Revision$
@@ -36,6 +36,31 @@ public class BeanTest extends LanguageTestSupport {
 
     public void testPredicates() throws Exception {
         assertPredicate("foo.isFooHeaderAbc");
+    }
+
+    public void testBeanTypeExpression() throws Exception {
+        Expression exp = BeanLanguage.bean(MyUser.class, null);
+        Exchange exchange = createExchangeWithBody("Claus");
+
+        Object result = exp.evaluate(exchange);
+        assertEquals("Hello Claus", result);
+    }
+
+    public void testBeanTypeAndMethodExpression() throws Exception {
+        Expression exp = BeanLanguage.bean(MyUser.class, "hello");
+        Exchange exchange = createExchangeWithBody("Claus");
+
+        Object result = exp.evaluate(exchange);
+        assertEquals("Hello Claus", result);
+    }
+
+    public void testBeanInstanceAndMethodExpression() throws Exception {
+        MyUser user = new MyUser();
+        Expression exp = BeanLanguage.bean(user, "hello");
+        Exchange exchange = createExchangeWithBody("Claus");
+
+        Object result = exp.evaluate(exchange);
+        assertEquals("Hello Claus", result);
     }
 
     protected String getLanguageName() {
@@ -57,6 +82,12 @@ public class BeanTest extends LanguageTestSupport {
 
         public boolean isFooHeaderAbc(@Header(name = "foo")String foo) {
             return "abc".equals(foo);
+        }
+    }
+
+    public static class MyUser {
+        public String hello(String name) {
+            return "Hello " + name;
         }
     }
 }

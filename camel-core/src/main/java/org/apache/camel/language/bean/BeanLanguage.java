@@ -32,14 +32,47 @@ import org.apache.camel.util.ObjectHelper;
  * then the method is invoked to evaluate the expression using the
  * <a href="http://activemq.apache.org/camel/bean-integration.html">bean integration</a> to bind the
  * {@link Exchange} to the method arguments.
+ * <p/>
+ * As of Camel 1.5 the bean language also supports invoking a provided bean by
+ * its classname or the bean itself.
  *
  * @version $Revision$
  */
 public class BeanLanguage implements Language {
 
+    /**
+     * Creates the expression based on the string syntax.
+     *
+     * @param expression the string syntax
+     * @return the expression
+     */
     public static Expression bean(String expression) {
         BeanLanguage language = new BeanLanguage();
         return language.createExpression(expression);
+    }
+
+    /**
+     * Creates the expression for invoking the bean type.
+     *
+     * @param beanType  the bean type to invoke
+     * @param method optional name of method to invoke for instance to avoid ambiguity
+     * @return the expression
+     */
+    public static Expression bean(Class beanType, String method) {
+        Object bean = ObjectHelper.newInstance(beanType);
+        return bean(bean, method);
+    }
+
+    /**
+     * Creates the expression for invoking the bean type.
+     *
+     * @param bean  the bean to invoke
+     * @param method optional name of method to invoke for instance to avoid ambiguity
+     * @return the expression
+     */
+    public static Expression bean(Object bean, String method) {
+        BeanLanguage language = new BeanLanguage();
+        return language.createExpression(bean, method);
     }
 
     public Predicate<Exchange> createPredicate(String expression) {
@@ -57,6 +90,11 @@ public class BeanLanguage implements Language {
             method = expression.substring(idx + 1);
         }
         return new BeanExpression(beanName, method);
+    }
+
+    public Expression<Exchange> createExpression(Object bean, String method) {
+        ObjectHelper.notNull(bean, "bean");
+        return new BeanExpression(bean, method);
     }
 
 }
