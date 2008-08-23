@@ -18,9 +18,9 @@ package org.apache.camel.language;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Calendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

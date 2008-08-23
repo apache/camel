@@ -124,17 +124,17 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/filelanguage/report.txt?autoCreate=false" +
-                    "&expression=${id}.bak").to("mock:result");
+                from("file://target/filelanguage/report.txt?autoCreate=false"
+                     + "&expression=${id}.bak").to("mock:result");
 
-                from("file://target/filelanguage/report2.txt?autoCreate=false" +
-                    "&expression=backup-${id}-${file:name.noext}.bak").to("mock:result");
+                from("file://target/filelanguage/report2.txt?autoCreate=false"
+                     + "&expression=backup-${id}-${file:name.noext}.bak").to("mock:result");
 
-                from("file://target/filelanguage/report3.txt?autoCreate=false" +
-                    "&expression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
+                from("file://target/filelanguage/report3.txt?autoCreate=false"
+                     + "&expression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
 
-                from("file://target/filelanguage/report4.txt?autoCreate=false" +
-                    "&expression=../backup/${file:name}.bak").to("mock:result");
+                from("file://target/filelanguage/report4.txt?autoCreate=false"
+                     + "&expression=../backup/${file:name}.bak").to("mock:result");
 
                 // configured by java using java beans setters
                 FileEndpoint endpoint = new FileEndpoint();

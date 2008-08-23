@@ -285,7 +285,7 @@ public final class IntrospectionSupport {
 
         if (candidates.isEmpty()) {
             return candidates;
-        } else if (candidates.size() == 1 ){
+        } else if (candidates.size() == 1) {
             // only one
             return candidates;
         } else {

@@ -236,8 +236,8 @@ public final class PredicateBuilder {
 
             @Override
             protected String assertionFailureMessage(E exchange) {
-                return super.assertionFailureMessage(exchange) + 
-                    " for <" + expression.evaluate(exchange) + ">";
+                return super.assertionFailureMessage(exchange)
+                    + " for <" + expression.evaluate(exchange) + ">";
             }
         };
     }
