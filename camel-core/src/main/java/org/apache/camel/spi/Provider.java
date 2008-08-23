@@ -25,6 +25,8 @@ public interface Provider<T> {
 
     /**
      * Returns the newly constructed instance
+     *
+     * @return the newly constructed instance
      */
     T get();
 }

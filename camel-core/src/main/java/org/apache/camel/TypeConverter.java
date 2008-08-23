@@ -25,25 +25,26 @@ package org.apache.camel;
  * @version $Revision$
  */
 public interface TypeConverter {
+
     /**
      * Converts the value to the specified type
      * 
      * @param type the requested type
      * @param value the value to be converted
-     * @return the converted value or null if it can not be converted
+     * @return the converted value or <tt>null</tt> if it can not be converted
      */
     <T> T convertTo(Class<T> type, Object value);
 
     /**
      * Converts the value to the specified type in the context of an exchange
-     * 
-     * @param type the requested type
-     * @param current exchange
-     * @param value the value to be converted
-     * @return the converted value or null if it can not be converted
-     * 
-     * Used when conversion requires extra information from the current 
+     * <p/>
+     * Used when conversion requires extra information from the current
      * exchange (such as encoding).
+     *
+     * @param type the requested type
+     * @param exchange the current exchange
+     * @param value the value to be converted
+     * @return the converted value or <tt>null</tt> if it can not be converted
      */
     <T> T convertTo(Class<T> type, Exchange exchange, Object value);
 }

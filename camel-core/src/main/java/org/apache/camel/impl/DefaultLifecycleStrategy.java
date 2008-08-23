@@ -25,10 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
-import org.apache.camel.management.InstrumentationErrorHandlerWrappingStrategy;
-import org.apache.camel.management.InstrumentationProcessor;
-import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -56,7 +52,6 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-
         RouteType routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             // configure the outputs
@@ -69,8 +64,7 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
             for (ProcessorType<?> processorType : outputs) {
                 routeType.addOutput(processorType);
             }
-
         }
-
     }
+
 }

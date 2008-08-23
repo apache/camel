@@ -46,7 +46,6 @@ import org.apache.commons.logging.LogFactory;
  * JMX agent that registeres Camel lifecycle events in JMX.
  *
  * @version $Revision$
- *
  */
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
@@ -70,11 +69,10 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     /**
      * Constructor for camel context that has been started.
      *
-     * @param agent
-     * @param context
+     * @param agent    the agent
+     * @param context  the camel context
      */
-    public InstrumentationLifecycleStrategy(InstrumentationAgent agent,
-            CamelContext context) {
+    public InstrumentationLifecycleStrategy(InstrumentationAgent agent, CamelContext context) {
         this.agent = agent;
         onContextStart(context);
     }
@@ -96,7 +94,6 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
-
         // the agent hasn't been started
         if (!initialized) {
             return;
@@ -111,7 +108,6 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
-
         // the agent hasn't been started
         if (!initialized) {
             return;
@@ -136,7 +132,6 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onServiceAdd(CamelContext context, Service service) {
-
         // the agent hasn't been started
         if (!initialized) {
             return;
@@ -152,7 +147,6 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-
         // the agent hasn't been started
         if (!initialized) {
             return;
@@ -249,4 +243,5 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     public void setAgent(InstrumentationAgent agent) {
         this.agent = agent;
     }
+
 }

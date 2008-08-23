@@ -64,15 +64,21 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        // same instance type
         if (type.isInstance(value)) {
             return type.cast(value);
         }
+
+        // make sure we have loaded the converters
         checkLoaded();
+
+        // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
             return converter.convertTo(type, exchange, value);
         }
 
+        // fallback converters
         for (TypeConverter fallback : fallbackConverters) {
             T rc = fallback.convertTo(type, exchange, value);
             if (rc != null) {
@@ -84,11 +90,19 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (boolean.class.isAssignableFrom(type)) {
             return (T) Boolean.FALSE;
         }
+
+        // primitives
         if (type.isPrimitive()) {
             Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
                 return (T) convertTo(primitiveType, exchange, value);
             }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Could not find a type converter for converting "
+                + value.getClass().getCanonicalName() + " -> " + type.getCanonicalName()
+                + " with value: " + value);
         }
         return null;
     }

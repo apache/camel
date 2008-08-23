@@ -34,31 +34,66 @@ import org.apache.camel.model.RouteType;
  */
 public interface RouteContext {
 
+    /**
+     * Gets the endpoint
+     *
+     * @return the endpoint
+     */
     Endpoint<? extends Exchange> getEndpoint();
 
+    /**
+     * Gets the from type
+     *
+     * @return the from type
+     */
     FromType getFrom();
 
+    /**
+     * Get the route type
+     *
+     * @return the route type
+     */
     RouteType getRoute();
 
     /**
-     * Gets the CamelContext
+     * Gets the camel context
+     *
+     * @return the camel context
      */
     CamelContext getCamelContext();
 
+    /**
+     * Creates a processor
+     *
+     * @param node  the node
+     * @return the created processor
+     * @throws Exception can be thrown
+     */
     Processor createProcessor(ProcessorType node) throws Exception;
 
     /**
      * Resolves an endpoint from the URI
+     *
+     * @param uri the URI
+     * @return the resolved endpoint
      */
     Endpoint<? extends Exchange> resolveEndpoint(String uri);
 
     /**
      * Resolves an endpoint from either a URI or a named reference
+     *
+     * @param uri  the URI or
+     * @param ref  the named reference
+     * @return the resolved endpoint
      */
     Endpoint<? extends Exchange> resolveEndpoint(String uri, String ref);
 
     /**
      * lookup an object by name and type
+     *
+     * @param name  the name to lookup
+     * @param type  the expected type
+     * @return the found object
      */
     <T> T lookup(String name, Class<T> type);
 
@@ -68,31 +103,59 @@ public interface RouteContext {
      */
     void commit();
 
+    /**
+     * Adds an event driven processor
+     *
+     * @param processor the processor
+     */
     void addEventDrivenProcessor(Processor processor);
 
+    /**
+     * Intercepts with the given interceptor
+     *
+     * @param interceptor the interceptor
+     */
     void intercept(Intercept interceptor);
 
+    /**
+     * Creates a proceed processor
+     *
+     * @return the created proceed processor
+     */
     Processor createProceedProcessor();
 
     /**
      * This method retrieves the InterceptStrategy instances this route context.
+     *
+     * @return the strategy
      */
     List<InterceptStrategy> getInterceptStrategies();
 
     /**
      * This method sets the InterceptStrategy instances on this route context.
+     *
+     * @param interceptStrategies the strategies
      */
     void setInterceptStrategies(List<InterceptStrategy> interceptStrategies);
 
+    /**
+     * Adds a InterceptStrategy to this route context
+     *
+     * @param interceptStrategy the strategy
+     */
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
 
     /**
      * This method retrieves the ErrorHandlerWrappingStrategy.
+     *
+     * @return the strategy
      */
     ErrorHandlerWrappingStrategy getErrorHandlerWrappingStrategy();
     
     /**
      * This method sets the ErrorHandlerWrappingStrategy.
+     *
+     * @param strategy the strategy
      */
     void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
 
@@ -100,10 +163,16 @@ public interface RouteContext {
      * If this flag is true, {@link ProcessorType#addRoutes(RouteContext, java.util.Collection)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.
-     * 
+     *
+     * @param value the flag
      */
     void setIsRouteAdded(boolean value);
-    
+
+    /**
+     * Returns the isRouteAdded flag
+     * 
+     * @return the flag
+     */
     boolean isRouteAdded();
 
 }

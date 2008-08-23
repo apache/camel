@@ -31,9 +31,9 @@ public interface HeaderFilterStrategy {
      * It returns true if the filtering logics return a match.  Otherwise,
      * it returns false.  A match means the header should be excluded.
      * 
-     * @param headerName 
-     * @param headerValue
-     * @return true if this header should be filtered out.
+     * @param headerName  the header name
+     * @param headerValue the header value
+     * @return <tt>true</tt> if this header should be filtered out.
      */
     boolean applyFilterToCamelHeaders(String headerName, Object headerValue);
 
@@ -45,11 +45,10 @@ public interface HeaderFilterStrategy {
      * It returns true if the filtering logics return a match.  Otherwise,
      * it returns false.  A match means the header should be excluded.
      *  
-     * @param headerName 
-     * @param headerValue
-     * @return true if this header should be filtered out.
+     * @param headerName  the header name
+     * @param headerValue the header value
+     * @return <tt>true</tt> if this header should be filtered out.
      */
     boolean applyFilterToExternalHeaders(String headerName, Object headerValue);
-
     
 }
