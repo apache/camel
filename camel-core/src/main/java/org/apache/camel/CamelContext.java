@@ -39,6 +39,8 @@ public interface CamelContext extends Service {
 
     /**
      * Gets the name of the this context.
+     *
+     * @return the name
      */
     String getName();
 
@@ -47,23 +49,33 @@ public interface CamelContext extends Service {
 
     /**
      * Adds a component to the context.
+     *
+     * @param componentName  the name the component is registered as
+     * @param component      the component
      */
     void addComponent(String componentName, Component component);
 
     /**
      * Gets a component from the context by name.
+     *
+     * @param componentName the name of the component
+     * @return the component
      */
     Component getComponent(String componentName);
 
     /**
      * Gets a component from the context by name and specifying the expected type of component.
+     *
+     * @param name  the name to lookup
+     * @param componentType  the expected type
+     * @return the component
      */
     <T extends Component> T getComponent(String name, Class<T> componentType);
 
     /**
      * Removes a previously added component.
      *
-     * @param componentName
+     * @param componentName the component name to remove
      * @return the previously added component or null if it had not been previously added.
      */
     Component removeComponent(String componentName);
@@ -85,19 +97,28 @@ public interface CamelContext extends Service {
      * Resolves the given URI to an {@link Endpoint}.  If the URI has a singleton endpoint
      * registered, then the singleton is returned.  Otherwise, a new {@link Endpoint} is created
      * and if the endpoint is a singleton it is registered as a singleton endpoint.
+     *
+     * @param uri  the URI of the endpoint
+     * @return  the endpoint
      */
     Endpoint getEndpoint(String uri);
 
     /**
-     * Resolves the given URI to an {@link Endpoint} of the specified type.
-     * If the URI has a singleton endpoint registered, then the singleton is returned.
+     * Resolves the given name to an {@link Endpoint} of the specified type.
+     * If the name has a singleton endpoint registered, then the singleton is returned.
      * Otherwise, a new {@link Endpoint} is created and if the endpoint is a
      * singleton it is registered as a singleton endpoint.
+     *
+     * @param name  the name of the endpoint
+     * @param endpointType  the expected type
+     * @return the endpoint
      */
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
      * Returns the collection of all registered singleton endpoints.
+     *
+     * @return  all the singleton endpoints
      */
     Collection<Endpoint> getSingletonEndpoints();
 
@@ -127,11 +148,15 @@ public interface CamelContext extends Service {
 
     /**
      * Returns a list of the current route definitions
+     *
+     * @return list of the current route definitions
      */
     List<RouteType> getRouteDefinitions();
 
     /**
      * Returns the current routes in this context
+     *
+     * @return the current routes
      */
     List<Route> getRoutes();
 
@@ -146,6 +171,7 @@ public interface CamelContext extends Service {
      * Adds a collection of routes to this context
      *
      * @param routes the routes to add
+     * @throws Exception if the routes could not be created for whatever reason
      */
     void addRoutes(Collection<Route> routes) throws Exception;
 
@@ -160,6 +186,9 @@ public interface CamelContext extends Service {
 
     /**
      * Adds a collection of route definitions to the context
+     *
+     * @param routeDefinitions the route definitions to add
+     * @throws Exception if the route definition could not be created for whatever reason
      */
     void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
 
@@ -169,49 +198,73 @@ public interface CamelContext extends Service {
 
     /**
      * Returns the converter of exchanges from one type to another
+     *
+     * @return the converter
      */
     ExchangeConverter getExchangeConverter();
 
     /**
      * Returns the type converter used to coerce types from one type to another
+     *
+     * @return the converter
      */
     TypeConverter getTypeConverter();
 
     /**
      * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,
      * JNDI or the OSGi Service Registry
+     *
+     * @return the registry
      */
     Registry getRegistry();
 
     /**
      * Returns the injector used to instantiate objects by type
+     *
+     * @return the injector
      */
     Injector getInjector();
 
     /**
      * Returns the lifecycle strategy used to handle lifecycle notification
+     *
+     * @return the lifecycle strategy
      */
     LifecycleStrategy getLifecycleStrategy();
 
     /**
      * Resolves a language for creating expressions
+     *
+     * @param language  name of the language
+     * @return the resolved language
      */
     Language resolveLanguage(String language);
 
     /**
      * Creates a new ProducerTemplate
+     *
+     * @return the template
      */
     <E extends Exchange> ProducerTemplate<E> createProducerTemplate();
 
+    /**
+     * Adds the given interceptor strategy
+     *
+     * @param interceptStrategy the strategy
+     */
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
 
     /**
      * Gets the default error handler builder which is inherited by the routes
+     *
+     * @return the builder
      */
     ErrorHandlerBuilder getErrorHandlerBuilder();
 
     /**
      * Sets the default error handler builder which is inherited by the routes
+     *
+     * @param errorHandlerBuilder  the builder
      */
     void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
 }
