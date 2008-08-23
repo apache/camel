@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.asString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -79,6 +80,9 @@ public class MethodInfo {
             }
 
             public Object proceed() throws Throwable {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + messageExchange);
+                }
                 return invoke(method, pojo, arguments, messageExchange);
             }
 

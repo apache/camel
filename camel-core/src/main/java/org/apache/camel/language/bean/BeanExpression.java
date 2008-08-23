@@ -18,7 +18,9 @@ package org.apache.camel.language.bean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanProcessor;
+import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
 import org.apache.camel.impl.ExpressionSupport;
 
@@ -30,6 +32,12 @@ import org.apache.camel.impl.ExpressionSupport;
 public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
     private String beanName;
     private String method;
+    private Object bean;
+
+    public BeanExpression(Object bean, String method) {
+        this.bean = bean;
+        this.method = method;
+    }
 
     public BeanExpression(String beanName, String method) {
         this.beanName = beanName;
@@ -38,7 +46,7 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
 
     @Override
     public String toString() {
-        return "BeanExpression[bean: " + beanName + " method: " + method + "]";
+        return "BeanExpression[bean:" + (bean == null ? beanName : bean) + " method: " + method + "]";
     }
 
     protected String assertionFailureMessage(E exchange) {
@@ -46,7 +54,15 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
     }
 
     public Object evaluate(E exchange) {
-        BeanProcessor processor = new BeanProcessor(new RegistryBean(exchange.getContext(), beanName));
+        // either use registry lookup or a constant bean
+        BeanHolder holder;
+        if (bean == null) {
+            holder = new RegistryBean(exchange.getContext(), beanName);
+        } else {
+            holder = new ConstantBeanHolder(bean, exchange.getContext());
+        }
+
+        BeanProcessor processor = new BeanProcessor(holder);
         if (method != null) {
             processor.setMethod(method);
         }
