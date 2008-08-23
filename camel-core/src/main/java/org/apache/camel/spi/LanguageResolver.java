@@ -24,5 +24,13 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public interface LanguageResolver {
+
+    /**
+     * Resolves the given language.
+     *
+     * @param name    the name of the langauge
+     * @param context the camel context
+     * @return the resolved language
+     */
     Language resolveLanguage(String name, CamelContext context);
 }

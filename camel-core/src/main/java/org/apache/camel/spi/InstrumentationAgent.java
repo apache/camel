@@ -60,19 +60,20 @@ public interface InstrumentationAgent extends Service {
     /**
      * Get the MBeanServer which hosts managed objects.
      * <p/>
-     * NOTE: if the JMXEnabled configuration is not set to true, this method will return null.
+     * <b>Notice:</b> If the JMXEnabled configuration is not set to <tt>true</tt>,
+     * this method will return <tt>null</tt>.
      * 
      * @return the MBeanServer
      */
     MBeanServer getMBeanServer();
 
     /**
-     * Get domain name for Camel MBeans.  Notice that this can be different that the 
-     * default domain name of the MBean Server.  
+     * Get domain name for Camel MBeans.
+     * <p/>
+     * <b>Notice:</b> That this can be different that the default domain name of the MBean Server.
      * 
      * @return domain name
      */
     String getMBeanObjectDomainName();
-
 
 }

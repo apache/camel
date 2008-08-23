@@ -34,6 +34,11 @@ public interface DataFormat {
 
     /**
      * Marshals the object to the given Stream.
+     *
+     * @param exchange  the current exchange
+     * @param graph     the object to be marshalled
+     * @param stream    the output stream to write the marshalled rersult to
+     * @throws Exception can be thrown
      */
     void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
 
@@ -43,6 +48,11 @@ public interface DataFormat {
      * <b>Notice:</b> The result is set as body on the exchange OUT message.
      * It is possible to mutate the OUT message provided in the given exchange parameter.
      * For instance adding headers to the OUT message will be preserved.
+     *
+     * @param exchange    the current exchange
+     * @param stream      the input stream with the object to be unmarshalled
+     * @return            the unmarshalled object
+     * @throws Exception can be thrown
      */
     Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
 }

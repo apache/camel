@@ -33,6 +33,7 @@ public interface ErrorHandlerWrappingStrategy {
      * to give the implementor an opportunity to wrap the target processor
      * in a route.
      *
+     * @param routeContext the route context
      * @param processorType the object that invokes this method
      * @param target the processor to be wrapped
      * @return processor wrapped with an interceptor or not wrapped

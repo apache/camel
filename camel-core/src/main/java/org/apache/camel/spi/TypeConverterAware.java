@@ -27,5 +27,11 @@ import org.apache.camel.TypeConverter;
  * @version $Revision$
  */
 public interface TypeConverterAware {
+
+    /**
+     * Injects the root type converter.
+     *
+     * @param parentTypeConverter the root type converter
+     */
     void setTypeConverter(TypeConverter parentTypeConverter);
 }

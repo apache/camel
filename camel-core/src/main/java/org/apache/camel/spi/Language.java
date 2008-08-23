@@ -27,7 +27,19 @@ import org.apache.camel.Predicate;
  */
 public interface Language {
 
+    /**
+     * Creates a predicate based on the given string input
+     *
+     * @param expression  the expression
+     * @return the created predicate
+     */
     Predicate<Exchange> createPredicate(String expression);
 
+    /**
+     * Creates an expression based on the given string input
+     *
+     * @param expression  the expression as a string input
+     * @return the created expression
+     */
     Expression<Exchange> createExpression(String expression);
 }
