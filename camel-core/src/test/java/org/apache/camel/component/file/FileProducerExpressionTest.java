@@ -18,8 +18,8 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.ContextTestSupport;
@@ -56,7 +56,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
         Thread.sleep(500);
         assertFileExists("target/filelanguage/123.bak");
-     }
+    }
 
     public void testProducerDateByHeader() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",

@@ -29,7 +29,7 @@ public class FaultRetryRouteTest extends ContextTestSupport {
     protected MockEndpoint b;
     protected MockEndpoint error;
     protected final Processor successOnRetryProcessor = new Processor() {
-    	int count = 0;
+        int count;
         public void process(Exchange exchange) throws CamelException {
             if (count++ == 0) {
                 Message message = exchange.getFault();
@@ -42,9 +42,9 @@ public class FaultRetryRouteTest extends ContextTestSupport {
         a.expectedBodiesReceived("in");
         b.expectedBodiesReceived("in");
         error.expectedMessageCount(0);
-        
+
         template.sendBody("direct:start", "in");
-        
+
         MockEndpoint.assertIsSatisfied(a, b, error);
     }
 
