@@ -64,6 +64,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
+                + " -> " + type.getCanonicalName() + " with value: " + value);
+        }
+
         // same instance type
         if (type.isInstance(value)) {
             return type.cast(value);
@@ -101,8 +106,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Could not find a type converter for converting "
-                + value.getClass().getCanonicalName() + " -> " + type.getCanonicalName()
-                + " with value: " + value);
+                + (value == null ? "null" : value.getClass().getCanonicalName())
+                + " -> " + type.getCanonicalName() + " with value: " + value);
         }
         return null;
     }
