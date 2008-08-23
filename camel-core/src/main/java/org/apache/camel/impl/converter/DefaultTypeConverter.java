@@ -104,10 +104,12 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Could not find a type converter for converting "
-                + (value == null ? "null" : value.getClass().getCanonicalName())
-                + " -> " + type.getCanonicalName() + " with value: " + value);
+        boolean camelType = type.getCanonicalName().startsWith("org.apache.camel");
+        if (!camelType && value != null) {
+            // only log WARN level for non internal Camel convertions 
+            LOG.warn("Could not find a type converter for converting "
+                + value.getClass().getCanonicalName() + " -> "
+                + type.getCanonicalName() + " with value: " + value);
         }
         return null;
     }
