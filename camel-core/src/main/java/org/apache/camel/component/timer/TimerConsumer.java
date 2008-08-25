@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.timer;
 
+import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -87,6 +88,7 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         exchange.setProperty("org.apache.camel.timer.name", endpoint.getTimerName());
         exchange.setProperty("org.apache.camel.timer.time", endpoint.getTime());
         exchange.setProperty("org.apache.camel.timer.period", endpoint.getPeriod());
+        exchange.setProperty("org.apache.camel.timer.firedtime", new Date());
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
