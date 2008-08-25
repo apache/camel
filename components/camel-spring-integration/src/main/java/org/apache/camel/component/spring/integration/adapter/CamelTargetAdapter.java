@@ -43,12 +43,12 @@ import org.springframework.integration.message.MessageTarget;
  *
  * @version $Revision$
  */
-public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget, MessageBusAware {
+public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget {
 
     private final Log logger = LogFactory.getLog(this.getClass());
     private ProducerTemplate<Exchange> camelTemplate;
     private MessageChannel replyChannel;
-    private MessageBus messageBus;
+
 
     public void setReplyChannel(MessageChannel channel) {
         replyChannel = channel;
@@ -95,12 +95,6 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageT
             }
         }
         return result;
-
     }
-
-    public void setMessageBus(MessageBus mBus) {
-        messageBus = mBus;
-    }
-
 
 }

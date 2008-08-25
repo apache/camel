@@ -93,8 +93,7 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
 
         outputChannel.send(siOutmessage);
         if (exchange.getPattern().isInCapable()) {
-            org.springframework.integration.message.Message siInMessage =
-            inputChannel.receive();
+            org.springframework.integration.message.Message siInMessage = inputChannel.receive();
             SpringIntegrationBinding.storeToCamelMessage(siInMessage, exchange.getOut());
         }
 
