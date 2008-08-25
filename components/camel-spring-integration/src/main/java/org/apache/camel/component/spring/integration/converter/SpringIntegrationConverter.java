@@ -23,8 +23,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationEndpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationMessage;
 import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.message.DefaultMessageHeader;
 import org.springframework.integration.message.GenericMessage;
+import org.springframework.integration.message.MessageHeaders;
 
 /**
  * The <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
@@ -67,13 +67,8 @@ public final class SpringIntegrationConverter {
         }
 
         // Create a new spring message and copy the attributes and body from the camel message
-        DefaultMessageHeader messageHeader = new DefaultMessageHeader();
-        Map<String, Object> headers = camelMessage.getHeaders();
-        for (String key : headers.keySet()) {
-            Object value = headers.get(key);
-            messageHeader.setAttribute(key, value);
-        }
-        return new GenericMessage(camelMessage.getBody(), messageHeader);
+        MessageHeaders messageHeaders = new MessageHeaders(camelMessage.getHeaders());
+        return new GenericMessage(camelMessage.getBody(), messageHeaders);
     }
 
     @Converter

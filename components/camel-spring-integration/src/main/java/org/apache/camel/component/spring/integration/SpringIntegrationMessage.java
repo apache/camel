@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultMessage;
-import org.springframework.integration.message.MessageHeader;
+import org.springframework.integration.message.MessageHeaders;
 
 /**
  * The Message {@link DefaultMessage} implementation
@@ -75,7 +75,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
 
     public Object getHeader(String name) {
         if (siMessage != null) {
-            return siMessage.getHeader().getAttribute(name);
+            return siMessage.getHeaders().get(name);
         } else {
             return super.getHeader(name);
         }
@@ -84,7 +84,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
     @Override
     public void setHeader(String name, Object value) {
         if (siMessage != null) {
-            siMessage.getHeader().setAttribute(name, value);
+            siMessage.getHeaders().put(name, value);
         } else {
             super.setHeader(name, value);
         }
@@ -94,9 +94,9 @@ public class SpringIntegrationMessage extends DefaultMessage {
     public Map<String, Object> getHeaders() {
         if (siMessage != null) {
             Map<String, Object> answer = new HashMap<String, Object>();
-            MessageHeader header = siMessage.getHeader();
-            for (String name : header.getAttributeNames()) {
-                answer.put(name, header.getAttribute(name));
+            MessageHeaders header = siMessage.getHeaders();
+            for (String name : header.keySet()) {
+                answer.put(name, header.get(name));
             }
             return answer;
         } else {

@@ -33,8 +33,8 @@
  <!-- END SNIPPET: header -->
    	<message-bus/>
 
-   	<channel id="channelA"/>
-   	<channel id="channelB"/>
+    <channel-adapter id="channelA" target="camelTargetA"/>
+   	<channel-adapter id="channelB" target="camelTargetB"/>
     <channel id="channelC"/>
    <!-- START SNIPPET: example -->
    <!-- Create the camel context here -->
@@ -50,11 +50,11 @@
    </camelContext>
 
    <!-- We can bind the camelTarget to the camel context's endpoint by specifying the camelEndpointUri attribute -->
-   <camel-si:camelTarget id="camelTargetA" camelEndpointUri="direct:EndpointA" requestChannel="channelA" expectReply="false">
+   <camel-si:camelTarget id="camelTargetA" camelEndpointUri="direct:EndpointA" expectReply="false">
        <camel-si:camelContextRef>camelTargetContext</camel-si:camelContextRef>
    </camel-si:camelTarget>
 
-   <camel-si:camelTarget id="camelTargetB" camelEndpointUri="direct:EndpointC" requestChannel="channelB" replyChannel="channelC" expectReply="true">
+   <camel-si:camelTarget id="camelTargetB" camelEndpointUri="direct:EndpointC" replyChannel="channelC" expectReply="true">
        <camel-si:camelContextRef>camelTargetContext</camel-si:camelContextRef>
    </camel-si:camelTarget>
 

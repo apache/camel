@@ -17,13 +17,17 @@
 
 package org.apache.camel.component.spring.integration;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.message.GenericMessage;
 import org.springframework.integration.message.Message;
+import org.springframework.integration.message.MessageHeaders;
 import org.springframework.integration.message.StringMessage;
 
 
@@ -39,11 +43,13 @@ public class SpringIntegrationTwoWayConsumerTest extends SpringTestSupport {
     public void testSendingTwoWayMessage() throws Exception {
 
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("requestChannel");
-        Message message = new StringMessage(MESSAGE_BODY);
-        message.getHeader().setReturnAddress("responseChannel");
+        Map<String, Object> maps = new HashMap<String, Object>();
+        maps.put(MessageHeaders.RETURN_ADDRESS, "responseChannel");
+        Message<String> message = new GenericMessage<String>(MESSAGE_BODY, maps);
+
         requestChannel.send(message);
 
-        MessageChannel responseChannel = (MessageChannel) applicationContext.getBean("responseChannel");
+        AbstractPollableChannel responseChannel = (AbstractPollableChannel) applicationContext.getBean("responseChannel");
         Message responseMessage = responseChannel.receive();
         String result = (String) responseMessage.getPayload();
 

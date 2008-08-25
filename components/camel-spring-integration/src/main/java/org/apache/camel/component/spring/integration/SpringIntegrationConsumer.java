@@ -22,6 +22,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.ChannelRegistry;
 import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.config.MessageBusParser;
@@ -36,7 +37,7 @@ import org.springframework.integration.config.MessageBusParser;
  */
 public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringIntegrationExchange> {
     private SpringCamelContext context;
-    private MessageChannel inputChannel;
+    private AbstractPollableChannel inputChannel;
     private MessageChannel outputChannel;
     private String inputChannelName;
     private ChannelRegistry channelRegistry;
@@ -53,14 +54,14 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
                 inputChannelName = endpoint.getInputChannel();
             }
             if (!ObjectHelper.isNullOrBlank(inputChannelName)) {
-                inputChannel = (MessageChannel) channelRegistry.lookupChannel(inputChannelName);
+                inputChannel = (AbstractPollableChannel) channelRegistry.lookupChannel(inputChannelName);
                 ObjectHelper.notNull(inputChannel, "The inputChannel with the name [" + inputChannelName + "]");
             } else {
                 throw new RuntimeCamelException("Can't find the right inputChannelName, , please check your configuration.");
             }
         } else {
             if (endpoint.getMessageChannel() != null) {
-                inputChannel = endpoint.getMessageChannel();
+                inputChannel = (AbstractPollableChannel)endpoint.getMessageChannel();
             } else {
                 throw new RuntimeCamelException("Can't find the right message channel, please check your configuration.");
             }
@@ -79,7 +80,7 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
         getProcessor().process(exchange);
         if (endpoint.isInOut()) {
             // get the output channel from message header
-            Object returnAddress = siInMessage.getHeader().getReturnAddress();
+            Object returnAddress = siInMessage.getHeaders().getReturnAddress();
             MessageChannel reply = null;
 
             if (returnAddress != null) {

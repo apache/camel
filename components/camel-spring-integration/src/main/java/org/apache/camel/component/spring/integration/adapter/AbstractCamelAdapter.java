@@ -29,7 +29,7 @@ import org.springframework.integration.handler.MessageHandler;
  *
  * @version $Revision$
  */
-public abstract class AbstractCamelAdapter implements MessageHandler {
+public abstract class AbstractCamelAdapter {
     private CamelContext camelContext;
     private String camelEndpointUri;
     private volatile boolean expectReply = true;

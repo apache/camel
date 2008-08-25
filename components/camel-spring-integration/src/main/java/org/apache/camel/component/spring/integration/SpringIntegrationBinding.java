@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.springframework.integration.message.GenericMessage;
 
@@ -31,10 +33,14 @@ public final class SpringIntegrationBinding {
         // Helper class
     }
 
-    @SuppressWarnings("unchecked")
     public static org.springframework.integration.message.Message createSpringIntegrationMessage(Exchange exchange) {
+        return createSpringIntegrationMessage(exchange, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static org.springframework.integration.message.Message createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
-        GenericMessage siMessage = new GenericMessage(message.getBody());
+        GenericMessage siMessage = new GenericMessage(message.getBody(), headers);
         return siMessage;
     }
 
