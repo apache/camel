@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.channel.PollableChannel;
+import org.springframework.integration.message.GenericMessage;
 import org.springframework.integration.message.Message;
+import org.springframework.integration.message.MessageHeaders;
 import org.springframework.integration.message.StringMessage;
 
 public class CamelTargetAdapterTest extends SpringTestSupport {
@@ -42,6 +47,22 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
         requestChannel.send(message);
 
         PollableChannel responseChannel = (PollableChannel) applicationContext.getBean("channelC");
+        Message responseMessage = responseChannel.receive();
+        String result = (String) responseMessage.getPayload();
+
+        assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);
+    }
+    
+    public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
+
+        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
+        PollableChannel responseChannel = (PollableChannel) applicationContext.getBean("channelD");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(MessageHeaders.RETURN_ADDRESS, responseChannel);
+        GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);
+        requestChannel.send(message);
+
+        
         Message responseMessage = responseChannel.receive();
         String result = (String) responseMessage.getPayload();
 
