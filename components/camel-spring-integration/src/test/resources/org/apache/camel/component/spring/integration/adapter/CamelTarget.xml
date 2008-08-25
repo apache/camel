@@ -36,6 +36,7 @@
     <channel-adapter id="channelA" target="camelTargetA"/>
    	<channel-adapter id="channelB" target="camelTargetB"/>
     <channel id="channelC"/>
+    <channel id="channelD"/>
    <!-- START SNIPPET: example -->
    <!-- Create the camel context here -->
    <camelContext id="camelTargetContext" xmlns="http://activemq.apache.org/camel/schema/spring">

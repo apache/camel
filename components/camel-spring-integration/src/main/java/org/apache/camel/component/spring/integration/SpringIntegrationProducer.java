@@ -90,15 +90,12 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
             headers.put(MessageHeaders.RETURN_ADDRESS , inputChannel);
         }
         org.springframework.integration.message.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
-        if (exchange.getPattern().isInCapable()) {
-            //Set the return channel address
 
-            outputChannel.send(siOutmessage);
+        outputChannel.send(siOutmessage);
+        if (exchange.getPattern().isInCapable()) {
             org.springframework.integration.message.Message siInMessage =
-                inputChannel.receive();
+            inputChannel.receive();
             SpringIntegrationBinding.storeToCamelMessage(siInMessage, exchange.getOut());
-        } else {
-            outputChannel.send(siOutmessage);
         }
 
     }

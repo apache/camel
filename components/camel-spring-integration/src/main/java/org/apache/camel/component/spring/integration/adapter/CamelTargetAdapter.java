@@ -26,9 +26,12 @@ import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.integration.bus.MessageBus;
+import org.springframework.integration.bus.MessageBusAware;
 import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.message.Message;
 import org.springframework.integration.message.MessageDeliveryException;
+import org.springframework.integration.message.MessageHeaders;
 import org.springframework.integration.message.MessageRejectedException;
 import org.springframework.integration.message.MessageTarget;
 
@@ -40,16 +43,17 @@ import org.springframework.integration.message.MessageTarget;
  *
  * @version $Revision$
  */
-public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget {
+public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget, MessageBusAware {
 
     private final Log logger = LogFactory.getLog(this.getClass());
     private ProducerTemplate<Exchange> camelTemplate;
     private MessageChannel replyChannel;
+    private MessageBus messageBus;
 
     public void setReplyChannel(MessageChannel channel) {
         replyChannel = channel;
     }
-    
+
     public MessageChannel getReplyChannel() {
         return replyChannel;
     }
@@ -81,12 +85,22 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageT
         }
         Message response = null;
         if (isExpectReply()) {
-            // TODO need to check the message header
+            //Check the message header for the return address
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());
-            result = replyChannel.send(response);
+            MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.RETURN_ADDRESS);
+            if (messageReplyChannel != null) {
+                result = messageReplyChannel.send(response);
+            } else {
+                result = replyChannel.send(response);
+            }
         }
         return result;
 
     }
+
+    public void setMessageBus(MessageBus mBus) {
+        messageBus = mBus;
+    }
+
 
 }

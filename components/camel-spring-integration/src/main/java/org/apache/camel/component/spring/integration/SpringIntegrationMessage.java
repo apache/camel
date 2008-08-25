@@ -82,23 +82,9 @@ public class SpringIntegrationMessage extends DefaultMessage {
     }
 
     @Override
-    public void setHeader(String name, Object value) {
-        if (siMessage != null) {
-            siMessage.getHeaders().put(name, value);
-        } else {
-            super.setHeader(name, value);
-        }
-    }
-
-    @Override
     public Map<String, Object> getHeaders() {
         if (siMessage != null) {
-            Map<String, Object> answer = new HashMap<String, Object>();
-            MessageHeaders header = siMessage.getHeaders();
-            for (String name : header.keySet()) {
-                answer.put(name, header.get(name));
-            }
-            return answer;
+            return siMessage.getHeaders();
         } else {
             return super.getHeaders();
         }
