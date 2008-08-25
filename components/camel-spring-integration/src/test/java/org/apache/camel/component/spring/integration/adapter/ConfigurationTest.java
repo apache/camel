@@ -19,7 +19,7 @@ package org.apache.camel.component.spring.integration.adapter;
 import junit.framework.TestCase;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.endpoint.HandlerEndpoint;
+import org.springframework.integration.endpoint.MessagingBridge;
 
 public class ConfigurationTest extends TestCase {
     private AbstractXmlApplicationContext context;
@@ -43,12 +43,12 @@ public class ConfigurationTest extends TestCase {
     public void testCamelTragetEndpoint() throws Exception {
         context =
             new ClassPathXmlApplicationContext(new String[] {"/org/apache/camel/component/spring/integration/adapter/CamelTarget.xml"});
-        HandlerEndpoint handlerEndpointA = (HandlerEndpoint)context.getBean("camelTargetA");
-        assertNotNull(handlerEndpointA);
-        assertEquals("Subscript the wrong channel name", handlerEndpointA.getInputChannelName(), "channelA");
-        HandlerEndpoint handlerEndpointB = (HandlerEndpoint)context.getBean("camelTargetA");
-        assertNotNull(handlerEndpointB);
-        assertEquals("Subscript the wrong channel name", handlerEndpointB.getInputChannelName(), "channelA");
+        CamelTargetAdapter camelTargetA = (CamelTargetAdapter)context.getBean("camelTargetA");
+        assertNotNull(camelTargetA);
+        assertEquals("Subscript the wrong CamelEndpointUri", camelTargetA.getCamelEndpointUri(), "direct:EndpointA");
+        CamelTargetAdapter camelTargetB = (CamelTargetAdapter)context.getBean("camelTargetB");
+        assertNotNull(camelTargetB);
+        assertEquals("Subscript the wrong reply channel name", camelTargetB.getReplyChannel().getName(), "channelC");
         context.destroy();
     }
 }

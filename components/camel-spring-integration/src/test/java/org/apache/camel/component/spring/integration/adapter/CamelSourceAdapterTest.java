@@ -19,12 +19,12 @@ package org.apache.camel.component.spring.integration.adapter;
 import org.apache.camel.component.spring.integration.HelloWorldService;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.channel.PollableChannel;
 import org.springframework.integration.message.Message;
 
 public class CamelSourceAdapterTest extends SpringTestSupport {
     public void testSendingOneWayMessage() throws Exception {
-        MessageChannel channelA = (MessageChannel) applicationContext.getBean("channelA");
+        PollableChannel channelA = (PollableChannel) applicationContext.getBean("channelA");
         template.sendBody("direct:OneWay", "Willem");
         Message message = channelA.receive();
         assertEquals("We should get the message from channelA", message.getPayload(), "Willem");

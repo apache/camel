@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.spring.integration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RuntimeCamelException;
@@ -24,9 +27,11 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.ChannelRegistry;
 import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.config.MessageBusParser;
+import org.springframework.integration.message.MessageHeaders;
 
 /**
  * A producer of exchanges for the Spring Integration
@@ -38,7 +43,7 @@ import org.springframework.integration.config.MessageBusParser;
 public class SpringIntegrationProducer extends DefaultProducer<SpringIntegrationExchange> {
     private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);
     private SpringCamelContext context;
-    private MessageChannel inputChannel;
+    private AbstractPollableChannel inputChannel;
     private MessageChannel outputChannel;
     private String outputChannelName;
     private ChannelRegistry channelRegistry;
@@ -58,7 +63,7 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
                 throw new RuntimeCamelException("Can't find the right outputChannelName,"
                                                 + "please check the endpoint uri outputChannel part!");
             } else {
-                outputChannel = (MessageChannel) channelRegistry.lookupChannel(outputChannelName);
+                outputChannel = (AbstractPollableChannel) channelRegistry.lookupChannel(outputChannelName);
             }
         } else {
             if (endpoint.getMessageChannel() != null) {
@@ -74,16 +79,20 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
                 throw new RuntimeCamelException("Can't find the right inputChannel, "
                                                 + "please check the endpoint uri inputChannel part!");
             } else {
-                inputChannel = (MessageChannel) channelRegistry.lookupChannel(endpoint.getInputChannel());
+                inputChannel = (AbstractPollableChannel) channelRegistry.lookupChannel(endpoint.getInputChannel());
             }
         }
     }
 
     public void process(Exchange exchange) throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();
+        if (exchange.getPattern().isInCapable()) {
+            headers.put(MessageHeaders.RETURN_ADDRESS , inputChannel);
+        }
         org.springframework.integration.message.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
         if (exchange.getPattern().isInCapable()) {
             //Set the return channel address
-            siOutmessage.getHeader().setReturnAddress(inputChannel);
+
             outputChannel.send(siOutmessage);
             org.springframework.integration.message.Message siInMessage =
                 inputChannel.receive();

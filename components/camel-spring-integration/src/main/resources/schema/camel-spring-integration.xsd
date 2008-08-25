@@ -36,7 +36,6 @@
   	</xsd:sequence>
   	<xsd:attribute name="id" type="xsd:ID" use="required" />
   	<xsd:attribute name="camelEndpointUri" type="xsd:string" />
-  	<xsd:attribute name="requestChannel" type="xsd:string" use="required" />
   	<xsd:attribute name="replyChannel" type="xsd:string" />
   	<xsd:attribute name="expectReply" type="xsd:boolean" default="true"/>
   </xsd:complexType>
@@ -50,6 +49,7 @@
 		</xsd:annotation>
         <xsd:complexContent>
           <xsd:extension base="camelEndpointType">
+           <xsd:attribute name="requestChannel" type="xsd:string" use="required" />
 	       <xsd:attribute name="requestTimeout" type="xsd:long"/>
 		   <xsd:attribute name="replyTimeout" type="xsd:long"/>
 		  </xsd:extension>

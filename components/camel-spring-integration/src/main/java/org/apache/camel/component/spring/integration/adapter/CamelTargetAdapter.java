@@ -26,7 +26,11 @@ import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.integration.channel.MessageChannel;
 import org.springframework.integration.message.Message;
+import org.springframework.integration.message.MessageDeliveryException;
+import org.springframework.integration.message.MessageRejectedException;
+import org.springframework.integration.message.MessageTarget;
 
 /**
  * CamelTargeAdapter will redirect the Spring Integration message to the Camel context.
@@ -36,11 +40,19 @@ import org.springframework.integration.message.Message;
  *
  * @version $Revision$
  */
-public class CamelTargetAdapter extends AbstractCamelAdapter {
+public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget {
 
     private final Log logger = LogFactory.getLog(this.getClass());
     private ProducerTemplate<Exchange> camelTemplate;
-    private Endpoint camelEndpoint;
+    private MessageChannel replyChannel;
+
+    public void setReplyChannel(MessageChannel channel) {
+        replyChannel = channel;
+    }
+    
+    public MessageChannel getReplyChannel() {
+        return replyChannel;
+    }
 
     public ProducerTemplate<Exchange> getCamelTemplate() {
         if (camelTemplate == null) {
@@ -53,21 +65,28 @@ public class CamelTargetAdapter extends AbstractCamelAdapter {
         return camelTemplate;
     }
 
-    public Message<?> handle(Message<?> request) {
+    public boolean send(Message<?> message) throws MessageRejectedException, MessageDeliveryException {
         ExchangePattern pattern;
+        boolean result = false;
         if (isExpectReply()) {
             pattern = ExchangePattern.InOut;
         } else {
             pattern = ExchangePattern.InOnly;
         }
         Exchange inExchange = new SpringIntegrationExchange(getCamelContext(), pattern);
-        SpringIntegrationBinding.storeToCamelMessage(request, inExchange.getIn());
+        SpringIntegrationBinding.storeToCamelMessage(message, inExchange.getIn());
         Exchange outExchange = getCamelTemplate().send(getCamelEndpointUri(), inExchange);
+        if (outExchange.getFault() != null) {
+            result = true;
+        }
         Message response = null;
         if (isExpectReply()) {
+            // TODO need to check the message header
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());
+            result = replyChannel.send(response);
         }
-        return response;
+        return result;
+
     }
 
 }

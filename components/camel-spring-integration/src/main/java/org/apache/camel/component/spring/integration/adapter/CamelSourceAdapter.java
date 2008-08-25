@@ -28,7 +28,9 @@ import org.springframework.integration.ConfigurationException;
 import org.springframework.integration.bus.MessageBus;
 import org.springframework.integration.bus.MessageBusAware;
 import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.gateway.RequestReplyTemplate;
+import org.springframework.integration.channel.PollableChannel;
+import org.springframework.integration.gateway.SimpleMessagingGateway;
+import org.springframework.integration.handler.MessageHandler;
 import org.springframework.integration.message.Message;
 
 /**
@@ -39,35 +41,35 @@ import org.springframework.integration.message.Message;
  *
  * @version $Revision$
  */
-public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean, MessageBusAware {
+public class CamelSourceAdapter extends AbstractCamelAdapter implements MessageHandler, InitializingBean, MessageBusAware {
     protected final Object lifecycleMonitor = new Object();
     private final Log logger = LogFactory.getLog(this.getClass());
     private Consumer consumer;
     private Endpoint camelEndpoint;
     private MessageChannel requestChannel;
-    private RequestReplyTemplate requestReplyTemplate = new RequestReplyTemplate();
+    private SimpleMessagingGateway messageGateway = new SimpleMessagingGateway();
 
     private volatile boolean initialized;
 
     public void setRequestChannel(MessageChannel channel) {
         requestChannel = channel;
-        requestReplyTemplate.setRequestChannel(requestChannel);
+        messageGateway.setRequestChannel(requestChannel);
     }
 
     public MessageChannel getChannel() {
         return requestChannel;
     }
 
-    public void setReplyChannel(MessageChannel channel) {
-        requestReplyTemplate.setReplyChannel(channel);
+    public void setReplyChannel(PollableChannel channel) {
+        messageGateway.setReplyChannel(channel);
     }
 
     public void setRequestTimeout(long requestTimeout) {
-        this.requestReplyTemplate.setRequestTimeout(requestTimeout);
+        this.messageGateway.setRequestTimeout(requestTimeout);
     }
 
     public void setReplyTimeout(long replyTimeout) {
-        this.requestReplyTemplate.setReplyTimeout(replyTimeout);
+        this.messageGateway.setReplyTimeout(replyTimeout);
     }
 
     private void incoming(Exchange exchange) {
@@ -120,17 +122,14 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
             }
         }
         if (!isExpectReply()) {
-            boolean sent = this.requestReplyTemplate.send(message);
-            if (!sent && logger.isWarnEnabled()) {
-                logger.warn("failed to send message to channel within timeout");
-            }
+            messageGateway.send(message);
             return null;
         }
-        return this.requestReplyTemplate.request(message);
+        return messageGateway.sendAndReceiveMessage(message);
     }
 
     public void setMessageBus(MessageBus bus) {
-        requestReplyTemplate.setMessageBus(bus);
+        messageGateway.setMessageBus(bus);
     }
 
 

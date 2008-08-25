@@ -37,7 +37,7 @@
    	<channel id="channelB"/>
    	<channel id="channelC"/>
 
-	<handler-endpoint input-channel="channelB"
+	<service-activator input-channel="channelB"
 	          output-channel="channelC"
 	          ref="helloService"
 	          method="sayHello"/>

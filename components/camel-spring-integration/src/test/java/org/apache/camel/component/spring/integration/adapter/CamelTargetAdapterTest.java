@@ -20,6 +20,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.channel.PollableChannel;
 import org.springframework.integration.message.Message;
 import org.springframework.integration.message.StringMessage;
 
@@ -40,7 +41,7 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
         Message message = new StringMessage(MESSAGE_BODY);
         requestChannel.send(message);
 
-        MessageChannel responseChannel = (MessageChannel) applicationContext.getBean("channelC");
+        PollableChannel responseChannel = (PollableChannel) applicationContext.getBean("channelC");
         Message responseMessage = responseChannel.receive();
         String result = (String) responseMessage.getPayload();
 

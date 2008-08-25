@@ -26,9 +26,11 @@
 			http://activemq.apache.org/camel/schema/spring
 			http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
-	<message-bus auto-create-channels="true"/>
+	<message-bus/>
+	<channel id="inputChannel"/>
+   	<channel id="outputChannel"/>
 
-	<handler-endpoint input-channel="inputChannel"
+	<service-activator input-channel="inputChannel"
 	          output-channel="outputChannel"
 	          ref="helloService"
 	          method="sayHello"/>
