@@ -87,9 +87,13 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageT
         if (isExpectReply()) {
             //Check the message header for the return address
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());
-            MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.RETURN_ADDRESS);
-            if (messageReplyChannel != null) {
-                result = messageReplyChannel.send(response);
+            if (replyChannel == null) {
+                MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.RETURN_ADDRESS);
+                if (messageReplyChannel != null) {
+                    result = messageReplyChannel.send(response);
+                } else {
+                    throw new MessageDeliveryException(response, "Can't find reply channel from the CamelTargetAdapter or MessageHeaders");
+                }
             } else {
                 result = replyChannel.send(response);
             }
