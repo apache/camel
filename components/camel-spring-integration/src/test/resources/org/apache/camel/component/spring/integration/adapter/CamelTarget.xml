@@ -36,7 +36,7 @@
     <channel-adapter id="channelA" target="camelTargetA"/>
    	<channel-adapter id="channelB" target="camelTargetB"/>
     <channel id="channelC"/>
-    <channel id="channelD"/>
+    <channel-adapter id="channelD" target="camelTargetD"/>
    <!-- START SNIPPET: example -->
    <!-- Create the camel context here -->
    <camelContext id="camelTargetContext" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -56,6 +56,10 @@
    </camel-si:camelTarget>
 
    <camel-si:camelTarget id="camelTargetB" camelEndpointUri="direct:EndpointC" replyChannel="channelC" expectReply="true">
+       <camel-si:camelContextRef>camelTargetContext</camel-si:camelContextRef>
+   </camel-si:camelTarget>
+
+   <camel-si:camelTarget id="camelTargetD" camelEndpointUri="direct:EndpointC" expectReply="true">
        <camel-si:camelContextRef>camelTargetContext</camel-si:camelContextRef>
    </camel-si:camelTarget>
 

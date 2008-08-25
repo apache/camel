@@ -52,17 +52,16 @@ public class CamelTargetAdapterTest extends SpringTestSupport {
 
         assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);
     }
-    
+
     public void testSendingTwoWayMessageWithMessageAddress() throws Exception {
 
-        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelB");
-        PollableChannel responseChannel = (PollableChannel) applicationContext.getBean("channelD");
+        MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("channelD");
+        PollableChannel responseChannel = (PollableChannel) applicationContext.getBean("channelC");
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MessageHeaders.RETURN_ADDRESS, responseChannel);
         GenericMessage<String> message = new GenericMessage<String>(MESSAGE_BODY, headers);
         requestChannel.send(message);
 
-        
         Message responseMessage = responseChannel.receive();
         String result = (String) responseMessage.getPayload();
 

@@ -89,7 +89,7 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
         if (exchange.getPattern().isInCapable()) {
             headers.put(MessageHeaders.RETURN_ADDRESS , inputChannel);
         }
-        org.springframework.integration.message.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+        org.springframework.integration.message.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange, headers);
 
         outputChannel.send(siOutmessage);
         if (exchange.getPattern().isInCapable()) {
