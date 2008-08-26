@@ -19,7 +19,10 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -28,7 +31,11 @@ import org.apache.camel.impl.DefaultMessage;
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
-
+    private static final Processor DUMMY_PROCESSOR = new Processor() {
+        public void process(Exchange exchange) throws Exception {
+            // Do nothing here
+        }
+    };
     public void testUriConfigurations() throws Exception {
         assertFileEndpoint("file://target/foo/bar", EXPECT_PATH);
         assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH);
@@ -38,9 +45,25 @@ public class FileConfigureTest extends ContextTestSupport {
         assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH);
         assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH);
         assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH);
-        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH);        
+        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH);
         assertFileEndpoint("file:/", File.separator);
         assertFileEndpoint("file:///", File.separator);
+    }
+
+    public void testConsumerConfigurations() throws Exception {
+        FileConsumer consumer = createFileConsumer("file://target/foo/bar?consumer.recursive=true");
+        assertEquals("The recurisive should be true", consumer.isRecursive(), true);
+        try {
+            consumer = createFileConsumer("file://target/foo/bar?consumer.recursiv=true");
+            fail("Expect a configure exception here");
+        } catch (Exception ex) {
+            assertTrue("Get the wrong exception type here", ex instanceof ResolveEndpointFailedException);
+        }
+    }
+
+    private FileConsumer createFileConsumer(String endpointUri) throws Exception {
+        FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
+        return (FileConsumer)endpoint.createConsumer(DUMMY_PROCESSOR);
     }
 
     private void assertFileEndpoint(String endpointUri, String expectedPath) {
@@ -50,10 +73,10 @@ public class FileConfigureTest extends ContextTestSupport {
         File file = endpoint.getFile();
         String path = file.getPath();
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
-        
+
         File consumedFile = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
         Message message = new DefaultMessage();
         endpoint.configureMessage(consumedFile, message);
-        assertEquals(EXPECT_FILE, message.getHeader(FileComponent.HEADER_FILE_NAME));  
+        assertEquals(EXPECT_FILE, message.getHeader(FileComponent.HEADER_FILE_NAME));
     }
 }

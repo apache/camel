@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -60,6 +61,12 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
         if (consumerProperties != null) {
             // TODO pass in type converter
             IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), consumer, consumerProperties);
+            if (!this.isLenientProperties() && consumerProperties.size() > 0) {
+                throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + consumerProperties.size()
+                    + " parameters that couldn't be set on the endpoint consumer."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                    + " Unknown consumer parameters=[" + consumerProperties + "]");
+            }
         }
     }
 
