@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -69,8 +71,8 @@ public class AggregatorTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-    //TODO fix this test
-    public void xtestAggregatorNotAtStart() throws Exception {
+
+    public void testAggregatorNotAtStart() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.message(0).header("visited").isNotNull();
@@ -85,10 +87,13 @@ public class AggregatorTest extends ContextTestSupport {
                 // START SNIPPET: ex
                 from("direct:start").aggregator(header("cheese")).to("mock:result");
 
-                from("seda:header").setHeader("visited", constant(true)).aggregator(header("cheese")).to("mock:result");
+                //from("seda:header").setHeader("visited", constant(true)).aggregator(header("cheese")).to("mock:result");
+                from("seda:header").setHeader("visited", constant(true)).to("direct:temp");
+
+                from("direct:temp").aggregator(header("cheese")).to("mock:result");
 
                 from("direct:predicate").aggregator(header("cheese"), new MyAggregationStrategy()).
-                        completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
+                    completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
                 // END SNIPPET: ex
             }
         };
