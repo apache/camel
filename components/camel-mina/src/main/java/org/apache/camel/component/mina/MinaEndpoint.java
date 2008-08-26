@@ -46,11 +46,12 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final IoConnectorConfig connectorConfig;
     private final boolean lazySessionCreation;
     private final boolean transferExchange;
+    private final boolean sync;
 
     public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address,
                         IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector,
                         IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout,
-                        boolean transferExchange) {
+                        boolean transferExchange, boolean sync) {
         super(endpointUri, component);
         this.address = address;
         this.acceptor = acceptor;
@@ -63,6 +64,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
             this.timeout = timeout;
         }
         this.transferExchange = transferExchange;
+        this.sync = sync;
     }
 
     @SuppressWarnings({"unchecked"})
@@ -123,4 +125,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return transferExchange;
     }
 
+    public boolean isSync() {
+        return sync;
+    }
 }
