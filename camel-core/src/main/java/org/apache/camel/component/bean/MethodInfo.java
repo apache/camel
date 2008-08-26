@@ -31,9 +31,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.asString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ObjectHelper.asString;
 
 /**
  * Information about a method to be used for invocation.
