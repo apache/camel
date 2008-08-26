@@ -60,13 +60,19 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
  * Component for Apache MINA.
  *
  * @version $Revision$
- *
- * @see org.apache.camel.Component
  */
 public class MinaComponent extends DefaultComponent<MinaExchange> {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
 
     private static final long DEFAULT_CONNECT_TIMEOUT = 30000;
+    boolean sync = true;
+    boolean textline;
+    String codec;
+    String encoding;
+    long timeout;
+    boolean lazySessionCreation;
+    boolean transferExchange;
+    boolean minaLogger;
 
     // encoder used for datagram
     private CharsetEncoder encoder;
@@ -83,6 +89,8 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating MinaEndpoint from uri: " + uri);
         }
+
+        setProperties(this, parameters);
 
         URI u = new URI(remaining);
 
@@ -101,26 +109,20 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         throw new IllegalArgumentException("Unrecognised MINA protocol: " + protocol + " for uri: " + uri);
     }
 
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
     protected MinaEndpoint createVmEndpoint(String uri, URI connectUri) {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0, false);
+        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0, false, false);
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
         IoAcceptor acceptor = new SocketAcceptor();
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new SocketConnector();
-
-        boolean lazySessionCreation = getAndRemoveParameter(parameters, "lazySessionCreation", Boolean.class, false);
-        long timeout = getAndRemoveParameter(parameters, "timeout", Long.class, 0L);
-        boolean transferExchange = getAndRemoveParameter(parameters, "transferExchange", Boolean.class, false);
-        boolean sync = getAndRemoveParameter(parameters, "sync", Boolean.class, false);
-        boolean minaLogger = getAndRemoveParameter(parameters, "minaLogger", Boolean.class, false);
-        boolean textline = getAndRemoveParameter(parameters, "textline", Boolean.class, false);
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        String codec = getAndRemoveParameter(parameters, "codec", String.class);
 
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
@@ -141,7 +143,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange, sync);
 
         // set sync or async mode after endpoint is created
         if (sync) {
@@ -180,13 +182,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         SocketAddress address = new InetSocketAddress(connectUri.getHost(), connectUri.getPort());
         IoConnector connector = new DatagramConnector();
 
-        boolean lazySessionCreation = getAndRemoveParameter(parameters, "lazySessionCreation", Boolean.class, false);
-        long timeout = getAndRemoveParameter(parameters, "timeout", Long.class, 0L);
-        boolean transferExchange = false; // transfer exchange is not supported for datagram protocol
-        boolean sync = getAndRemoveParameter(parameters, "sync", Boolean.class, false);
-        boolean minaLogger = getAndRemoveParameter(parameters, "minaLogger", Boolean.class, false);
-        String encoding = getAndRemoveParameter(parameters, "encoding", String.class);
-        String codec = getAndRemoveParameter(parameters, "codec", String.class);
+        if (transferExchange) {
+            throw new IllegalArgumentException("transferExchange=true is not supported for datagram protocol");
+        }
 
         DatagramConnectorConfig connectorConfig = new DatagramConnectorConfig();
         configureDataGramCodecFactory("MinaProducer", connectorConfig, encoding, codec);
@@ -205,7 +203,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
 
-        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange);
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, acceptorConfig, connector, connectorConfig, lazySessionCreation, timeout, transferExchange, sync);
 
         // set sync or async mode after endpoint is created
         if (sync) {
@@ -311,4 +309,70 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
     }
 
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public boolean isSync() {
+        return sync;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
+    public boolean isTextline() {
+        return textline;
+    }
+
+    public void setTextline(boolean textline) {
+        this.textline = textline;
+    }
+
+    public String getCodec() {
+        return codec;
+    }
+
+    public void setCodec(String codec) {
+        this.codec = codec;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
+
+    public boolean isLazySessionCreation() {
+        return lazySessionCreation;
+    }
+
+    public void setLazySessionCreation(boolean lazySessionCreation) {
+        this.lazySessionCreation = lazySessionCreation;
+    }
+
+    public boolean isTransferExchange() {
+        return transferExchange;
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        this.transferExchange = transferExchange;
+    }
+
+    public boolean isMinaLogger() {
+        return minaLogger;
+    }
+
+    public void setMinaLogger(boolean minaLogger) {
+        this.minaLogger = minaLogger;
+    }
 }

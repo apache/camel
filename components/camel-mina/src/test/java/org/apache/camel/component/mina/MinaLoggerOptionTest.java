@@ -32,7 +32,7 @@ import org.apache.mina.common.IoSession;
 public class MinaLoggerOptionTest extends ContextTestSupport {
 
     public void testLoggerOptionTrue() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=true";
+        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=true&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");
@@ -62,7 +62,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
     }
 
     public void testLoggerOptionFalse() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=false";
+        final String uri = "mina:tcp://localhost:6321?textline=true&minaLogger=false&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");
@@ -92,7 +92,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
     }
 
     public void testNoLoggerOption() throws Exception {
-        final String uri = "mina:tcp://localhost:6321?textline=true";
+        final String uri = "mina:tcp://localhost:6321?textline=true&sync=false";
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
                 from(uri).to("mock:result");

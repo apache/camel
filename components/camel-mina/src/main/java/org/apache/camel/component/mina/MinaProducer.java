@@ -54,8 +54,9 @@ public class MinaProducer extends DefaultProducer {
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.lazySessionCreation = this.endpoint.isLazySessionCreation();
-        this.timeout = this.endpoint.getTimeout();
+        this.lazySessionCreation = endpoint.isLazySessionCreation();
+        this.timeout = endpoint.getTimeout();
+        this.sync = endpoint.isSync();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -73,7 +74,6 @@ public class MinaProducer extends DefaultProducer {
         }
 
         // if sync is true then we should also wait for a response (synchronous mode)
-        sync = ExchangeHelper.isOutCapable(exchange);
         if (sync) {
             // only initialize latch if we should get a response
             latch = new CountDownLatch(1);
@@ -97,7 +97,12 @@ public class MinaProducer extends DefaultProducer {
             if (handler.getCause() != null) {
                 throw new CamelException("Response Handler had an exception", handler.getCause());
             } else {
-                MinaPayloadHelper.setOut(exchange, handler.getMessage());
+                // set the result on either IN or OUT on the original exchange depending on its pattern
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    MinaPayloadHelper.setOut(exchange, handler.getMessage());
+                } else {
+                    MinaPayloadHelper.setIn(exchange, handler.getMessage());
+                }
             }
         }
     }

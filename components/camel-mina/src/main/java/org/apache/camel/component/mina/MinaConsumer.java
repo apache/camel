@@ -40,12 +40,14 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
     private final MinaEndpoint endpoint;
     private final SocketAddress address;
     private final IoAcceptor acceptor;
+    private boolean sync;
 
     public MinaConsumer(final MinaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.address = endpoint.getAddress();
         this.acceptor = endpoint.getAcceptor();
+        this.sync = endpoint.isSync();
     }
 
     @Override
@@ -94,8 +96,14 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             MinaExchange exchange = endpoint.createExchange(session, object);
             getProcessor().process(exchange);
 
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                Object body = MinaPayloadHelper.getOut(endpoint, exchange);
+            // if sync then we should return a response
+            if (sync) {
+                Object body;
+                if (ExchangeHelper.isOutCapable(exchange)) {
+                    body = MinaPayloadHelper.getOut(endpoint, exchange);
+                } else {
+                    body = MinaPayloadHelper.getIn(endpoint, exchange);
+                }
                 boolean failed = exchange.isFailed();
 
                 if (failed) {
@@ -115,11 +123,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                     }
                     MinaHelper.writeBody(session, body, exchange);
                 }
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Can not write body since this exchange is not out capable: " + exchange);
-                }
-            }
+            } 
         }
 
     }

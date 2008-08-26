@@ -53,7 +53,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
         endpoint.expectedMessageCount(1);
 
         byte[] in = "Hello from bytes".getBytes();
-        template.sendBody("mina:udp://127.0.0.1:4445", in);
+        template.sendBody("mina:udp://127.0.0.1:4445?sync=false", in);
 
         // sleeping for while to let the mock endpoint get all the message
         Thread.sleep(2000);
@@ -70,7 +70,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina:udp://127.0.0.1:4445").to("mock:result");
+                from("mina:udp://127.0.0.1:4445?sync=false").to("mock:result");
             }
         };
     }
