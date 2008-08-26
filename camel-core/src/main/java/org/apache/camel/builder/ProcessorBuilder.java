@@ -91,7 +91,6 @@ public final class ProcessorBuilder {
     public static Processor setHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                System.out.println("Calling the setHeader");
                 Object value = expression.evaluate(exchange);
                 exchange.getIn().setHeader(name, value);
             }
