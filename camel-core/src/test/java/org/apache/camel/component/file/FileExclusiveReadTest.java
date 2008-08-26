@@ -33,7 +33,7 @@ public class FileExclusiveReadTest extends ContextTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FileExclusiveReadTest.class);
 
-    private String fileUrl = "file://target/exclusiveread/slowfile?consumer.delay=500&consumer.exclusiveRead=true";
+    private String fileUrl = "file://target/exclusiveread/slowfile?consumer.delay=500&consumer.exclusiveReadLock=true";
 
     @Override
     protected void setUp() throws Exception {
