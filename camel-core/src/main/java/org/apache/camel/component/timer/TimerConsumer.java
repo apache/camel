@@ -88,7 +88,12 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         exchange.setProperty("org.apache.camel.timer.name", endpoint.getTimerName());
         exchange.setProperty("org.apache.camel.timer.time", endpoint.getTime());
         exchange.setProperty("org.apache.camel.timer.period", endpoint.getPeriod());
-        exchange.setProperty("org.apache.camel.timer.firedtime", new Date());
+
+        Date now = new Date();
+        exchange.setProperty("org.apache.camel.timer.firedTime", now);
+        // also set now on in header with same key as quaartz to be consistent
+        exchange.getIn().setHeader("firedTime", now);
+
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
