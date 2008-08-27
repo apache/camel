@@ -40,7 +40,6 @@ public class MyAggregationStrategy extends UseLatestAggregationStrategy {
      */
     public boolean isCompleted(@Header(name = "aggregated")
                                Integer aggregated) {
-        System.out.println("calling the isCompleted with aggregated" + aggregated);
         if (aggregated == null) {
             return false;
         }
