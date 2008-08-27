@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hl7;
+
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADR_A19;
 import ca.uhn.hl7v2.model.v24.message.ADT_A01;
@@ -30,7 +31,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.hl7.HL7DataFormat;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
-
 
 /**
  * Unit test for HL7 routing.
