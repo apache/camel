@@ -34,7 +34,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
     private int port = 20015;
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
-        + "&consumer.delay=2000&consumer.recursive=true&consumer.append=false";
+        + "&consumer.delay=2000&consumer.recursive=true";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -56,7 +56,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         file = new File("target/ftptest/logo.jpeg");
         assertTrue(" The binary file should exists", file.exists());
         assertTrue("Logo size wrong", file.length() > 10000);
-        
+
         // let some time pass to let the consumer etc. properly do its business before closing
         Thread.sleep(1000);
     }
@@ -95,7 +95,7 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
     }
-    
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
