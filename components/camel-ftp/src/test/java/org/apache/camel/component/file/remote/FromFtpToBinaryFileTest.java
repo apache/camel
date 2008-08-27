@@ -34,7 +34,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     private int port = 20014;
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp4/camel?password=admin&binary=true"
-        + "&consumer.delay=2000&consumer.recursive=false&consumer.append=false";
+        + "&consumer.delay=2000&consumer.recursive=false";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");

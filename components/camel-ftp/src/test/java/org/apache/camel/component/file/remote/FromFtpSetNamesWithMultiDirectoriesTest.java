@@ -33,10 +33,10 @@ import org.apache.camel.converter.IOConverter;
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
     private int port = 20016;
-    
+
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
-        + "&consumer.delay=2000&consumer.recursive=true&consumer.append=false&consumer.setNames=true";
+        + "&consumer.delay=2000&consumer.recursive=true&consumer.setNames=true";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
