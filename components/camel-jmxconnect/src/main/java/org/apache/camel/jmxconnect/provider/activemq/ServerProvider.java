@@ -31,7 +31,7 @@ import java.net.MalformedURLException;
 import java.util.Map;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ServerProvider implements JMXConnectorServerProvider {
 

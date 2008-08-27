@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class JmxRemoteTest extends TestCase {
     private MBeanServer server;

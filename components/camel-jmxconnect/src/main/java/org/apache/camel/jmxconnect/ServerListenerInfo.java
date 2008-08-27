@@ -28,7 +28,7 @@ import javax.management.NotificationListener;
 import java.util.Map;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 class ServerListenerInfo implements NotificationListener {
     private static final Log log = LogFactory.getLog(ServerListenerInfo.class);

@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDelegate implements Processor {
     private static final Log log = LogFactory.getLog(MBeanCamelServerConnectionClient.class);

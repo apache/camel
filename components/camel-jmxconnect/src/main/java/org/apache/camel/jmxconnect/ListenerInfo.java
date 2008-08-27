@@ -21,7 +21,7 @@ import javax.management.NotificationFilter;
 import javax.management.NotificationListener;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 class ListenerInfo {
     private String id;

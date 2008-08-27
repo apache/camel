@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MBeanCamelServerConnectionImpl extends MBeanServerConnectionDelegate implements MBeanCamelServerConnection {
     private static final Log log = LogFactory.getLog(MBeanCamelServerConnectionImpl.class);

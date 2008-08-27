@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ClientProvider implements JMXConnectorProvider {
     public JMXConnector newJMXConnector(JMXServiceURL url, Map environment) throws IOException {

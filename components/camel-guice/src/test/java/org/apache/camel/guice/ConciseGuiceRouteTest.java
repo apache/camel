@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 /**
  * Lets use a RouteBuilder to bind instances of routes to the CamelContext
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConciseGuiceRouteTest extends TestCase {
 

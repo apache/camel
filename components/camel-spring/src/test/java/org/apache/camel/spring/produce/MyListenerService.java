@@ -20,7 +20,7 @@ import org.apache.camel.Consume;
 import org.springframework.stereotype.Service;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Service
 public class MyListenerService implements MyListener {

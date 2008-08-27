@@ -28,7 +28,7 @@ import org.apache.camel.Routes;
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TraditionalGuiceRouteTest extends TestCase {
 

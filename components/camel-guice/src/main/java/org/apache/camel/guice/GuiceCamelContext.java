@@ -37,7 +37,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class GuiceCamelContext extends DefaultCamelContext {
     private final com.google.inject.Injector injector;

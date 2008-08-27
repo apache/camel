@@ -42,7 +42,7 @@ import java.util.Map;
  * JMXConnectorFactory#connect(JMXServiceURL, Map)
  * JMXConnectorFactory.connect} are already connected.</p>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelJmxConnectorServer extends JMXConnectorServer implements CamelContextAware {
 

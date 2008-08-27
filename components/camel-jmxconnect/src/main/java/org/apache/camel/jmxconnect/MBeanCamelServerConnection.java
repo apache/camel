@@ -23,7 +23,7 @@ import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface MBeanCamelServerConnection extends MBeanServerConnection {
 
