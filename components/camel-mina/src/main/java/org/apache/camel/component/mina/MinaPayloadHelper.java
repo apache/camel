@@ -66,7 +66,8 @@ public final class MinaPayloadHelper {
         if (payload instanceof MinaPayloadHolder) {
             MinaPayloadHolder.unmarshal(exchange, (MinaPayloadHolder) payload);
         } else {
-            // normal transfer using the body only
+            // normal transfer using the body only and preserve the headers
+            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
             exchange.getOut().setBody(payload);
         }
     }
