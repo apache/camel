@@ -19,17 +19,17 @@ package org.apache.camel.itest.jetty;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.stream.StreamCache;
 
 public class SetExchangeProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         // Override the exchange pattern
         exchange.setPattern(ExchangePattern.InOnly);
+
         // Convert the input stream into a string
         String result = exchange.getIn().getBody(String.class);
-        // Copy the message header
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setBody(result);
+        exchange.getIn().setBody(result);
 
     }
 

@@ -24,6 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -37,8 +38,24 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
     @EndpointInject(uri = "mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
 
-    public void testMocksAreValid() throws Exception {
+    public void testMocksAreValidWithTracerEnabled() throws Exception {
         assertNotNull(camelContext);
+        Tracer tracer = Tracer.getTracer(camelContext);
+        assertNotNull(tracer);
+        assertTrue("The tracer should be enabled", tracer.isEnabled());
+        validMockes();
+    }
+
+    public void testMocksAreValidWithTracerDisabled() throws Exception {
+        assertNotNull(camelContext);
+        Tracer tracer = Tracer.getTracer(camelContext);
+        assertNotNull(tracer);
+        tracer.setEnabled(false);
+        validMockes();
+    }
+
+    private void validMockes() throws Exception {
+        resultEndpoint.reset();
         assertNotNull(resultEndpoint);
 
         ProducerTemplate<Exchange> template = camelContext.createProducerTemplate();
@@ -58,5 +75,9 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
         }
 
     }
+
+
+
+
 
 }

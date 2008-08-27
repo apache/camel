@@ -57,7 +57,7 @@ public class StreamCacheConverter {
         }
     }
     
-    private class InputStreamCache extends ByteArrayInputStream implements StreamCache {
+    public class InputStreamCache extends ByteArrayInputStream implements StreamCache {
      
         public InputStreamCache(byte[] data) {
             super(data);

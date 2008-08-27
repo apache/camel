@@ -16,8 +16,13 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.io.InputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.converter.stream.StreamCacheConverter;
+import org.apache.camel.converter.stream.StreamCacheConverter.InputStreamCache;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
@@ -112,9 +117,22 @@ public class TraceFormatter {
     }
 
     protected Object getBodyAsString(Message in) {
+        Object newBody = null;
+        InputStreamCache cache = null;
+        if (in.getBody() instanceof InputStream) {
+            newBody = in.getBody(StreamCache.class);
+            if (newBody != null) {
+                cache = (InputStreamCache) newBody;
+                in.setBody(cache);
+            }
+        }
         Object answer = in.getBody(String.class);
         if (answer == null) {
             answer = in.getBody();
+        }
+        if (cache != null) {
+            // Reset the InputStreamCache
+            cache.reset();
         }
         return answer;
     }

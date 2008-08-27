@@ -37,9 +37,10 @@
   <bean id="setExchangeProcessor" class="org.apache.camel.itest.jetty.SetExchangeProcessor"/>
 
   <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring" trace="true">
     <route>
         <from uri="jetty:http://localhost:9000/test"/>
+        <to uri="log:MyCategory?level=INFO"/>
         <process ref="setExchangeProcessor"/>
         <to uri="jms:responseQueue"/>
     </route>
