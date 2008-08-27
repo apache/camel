@@ -33,7 +33,7 @@ public class LdapRouteTest extends LdapTestSupport {
         // START SNIPPET: invoke
         Endpoint endpoint = context.getEndpoint("direct:start");
         Exchange exchange = endpoint.createExchange();
-        // then we set the SQL on the in body
+        // then we set the LDAP filter on the in body
         exchange.getIn().setBody("(!(ou=test1))");
 
         // now we send the exchange to the endpoint, and receives the response from Camel
@@ -56,7 +56,7 @@ public class LdapRouteTest extends LdapTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         // START SNIPPET: register
         JndiRegistry reg = super.createRegistry();
-        reg.bind("localhost:" + port, this.getWiredContext());
+        reg.bind("localhost:" + port, getWiredContext());
         return reg;
         // END SNIPPET: register
     }
