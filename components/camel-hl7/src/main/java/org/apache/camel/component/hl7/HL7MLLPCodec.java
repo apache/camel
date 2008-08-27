@@ -137,7 +137,7 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                     if (b == END_MARKER_1) {
                         byte next = in.get();
                         if (next == END_MARKER_2) {
-                            posEnd = in.position();
+                            posEnd = in.position() - 2; // use -2 to skip these last 2 end markers
                             break;
                         } else {
                             // we expected the 2nd end marker
