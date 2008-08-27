@@ -305,7 +305,8 @@
       					<wsdlOption>
       						<wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
       						<extraargs>
-      							<extraarg>-verbose</extraarg>
+      							<extraarg>-b</extraarg>
+      							<extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml</extraarg>
       						</extraargs>
       					</wsdlOption>
       				</wsdlOptions>
