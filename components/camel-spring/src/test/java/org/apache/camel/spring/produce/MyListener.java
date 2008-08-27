@@ -17,7 +17,7 @@
 package org.apache.camel.spring.produce;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface MyListener {
     String sayHello(String name);

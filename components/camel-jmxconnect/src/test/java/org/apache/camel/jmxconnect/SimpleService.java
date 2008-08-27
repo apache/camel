@@ -20,7 +20,7 @@ package org.apache.camel.jmxconnect;
 /**
  * This is based heavily on the DynamicService example from the mx4j project
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SimpleService implements Runnable, SimpleServiceMBean {
     private boolean running;

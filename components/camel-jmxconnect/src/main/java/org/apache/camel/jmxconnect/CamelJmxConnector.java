@@ -44,7 +44,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * JMXConnectorFactory.connect} are already connected.
  * </p>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelJmxConnector implements JMXConnector, CamelContextAware {
     private static final Log log = LogFactory.getLog(JMXConnector.class);

@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * A single hard coded route
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyHardcodeRoute extends RouteBuilder {
     protected String foo = "direct:foo";

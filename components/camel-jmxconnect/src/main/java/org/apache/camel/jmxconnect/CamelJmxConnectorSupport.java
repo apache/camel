@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelJmxConnectorSupport {
     public static final String DEFAULT_DESTINATION_PREFIX = "org.apache.camel.jmxconnect.";

@@ -18,7 +18,7 @@
 package org.apache.camel.jmxconnect;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public interface SimpleServiceMBean {
     void start();

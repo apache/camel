@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.activemq.camel.component.ActiveMQComponent;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ActiveMQHelper {
     public static String getDefaultEndpointUri() {

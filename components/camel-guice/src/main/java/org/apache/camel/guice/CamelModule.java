@@ -32,7 +32,7 @@ import org.apache.camel.builder.RouteBuilder;
  * You can drive from this class to overload the {@link #configureRoutes(com.google.inject.multibindings.Multibinder)} method to perform custom binding for
  * route builders. Another approach is to create a {@link RouteBuilder} which just initialises all of your individual route builders
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelModule extends AbstractModule {
     private List<Class<? extends RouteBuilder>> routeClassList;

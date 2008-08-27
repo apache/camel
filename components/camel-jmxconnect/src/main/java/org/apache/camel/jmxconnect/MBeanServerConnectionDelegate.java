@@ -24,7 +24,7 @@ import java.util.Set;
 /**
  * Acts as a delegate for the MBeanServerConnection
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MBeanServerConnectionDelegate implements MBeanServerConnection {
 
