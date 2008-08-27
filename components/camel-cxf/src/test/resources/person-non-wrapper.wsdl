@@ -73,9 +73,6 @@
 			<wsdl:output message="tns:GetPersonResponse"/>
 			<wsdl:fault name="UnknownPerson" message="tns:UnknownPersonFault"/>
 		</wsdl:operation>
-		<jaxws:bindings>
-            <jaxws:enableWrapperStyle>false</jaxws:enableWrapperStyle>
-        </jaxws:bindings>
 	</wsdl:portType>
 
     <wsdl:binding name="PersonSOAPBinding" type="tns:Person">
