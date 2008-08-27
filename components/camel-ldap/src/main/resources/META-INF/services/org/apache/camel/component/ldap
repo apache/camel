@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.ldap.LdapComponent
+class=org.apache.camel.component.ldap.LdapComponent
