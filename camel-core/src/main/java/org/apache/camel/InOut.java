@@ -37,7 +37,7 @@ import java.lang.annotation.Target;
  * @see org.apache.camel.Exchange#getPattern()
  * @see InOut
  *
- * @version $Revision: 684887 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD})
