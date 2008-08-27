@@ -56,15 +56,14 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(a, b);
 
-
         List<Exchange> list = b.getReceivedExchanges();
         assertTrue("List should not be empty!", !list.isEmpty());
         Exchange exchange = list.get(0);
         Message in = exchange.getIn();
         log.info("Found message with headers: " + in.getHeaders());
 
-        assertMessageHeader(in, DeadLetterChannel.REDELIVERY_COUNTER, 1);
-        assertMessageHeader(in, DeadLetterChannel.REDELIVERED, true);
+        assertMessageHeader(in, DeadLetterChannel.REDELIVERY_COUNTER, 0);
+        assertMessageHeader(in, DeadLetterChannel.REDELIVERED, false);
     }
 
     @Override

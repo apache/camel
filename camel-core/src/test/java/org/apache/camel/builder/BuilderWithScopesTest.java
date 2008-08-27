@@ -291,7 +291,7 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel().maximumRedeliveries(2));
+                errorHandler(deadLetterChannel().maximumRedeliveries(1));
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).finallyBlock()
                     .process(orderProcessor2).process(orderProcessor3); // continuation of the finallyBlock clause
@@ -324,7 +324,7 @@ public class BuilderWithScopesTest extends TestSupport {
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
-        // exchange should be processed twice for an uncaught exception and maximumRedeliveries(2)
+        // exchange should be processed twice for an uncaught exception and maximumRedeliveries(1)
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         expected.add("INVOKED3");
@@ -335,7 +335,7 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel().maximumRedeliveries(2));
+                errorHandler(deadLetterChannel().maximumRedeliveries(1));
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).finallyBlock()
                     .process(orderProcessor2).end().process(orderProcessor3);
@@ -367,7 +367,7 @@ public class BuilderWithScopesTest extends TestSupport {
         ArrayList<String> expected = new ArrayList<String>();
         expected.add("VALIDATE");
         expected.add("INVOKED2");
-        // exchange should be processed twice for an uncaught exception and maximumRedeliveries(2)
+        // exchange should be processed twice for an uncaught exception and maximumRedeliveries(1)
         expected.add("VALIDATE");
         expected.add("INVOKED2");
         // orderProcessor3 will not be invoked past end() with an uncaught exception

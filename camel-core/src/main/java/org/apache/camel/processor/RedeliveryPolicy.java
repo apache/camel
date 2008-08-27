@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * The default values is:
  * <ul>
- *   <li>maximumRedeliveries = 6</li>
+ *   <li>maximumRedeliveries = 5</li>
  *   <li>initialRedeliveryDelay = 1000L</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
@@ -40,6 +40,9 @@ import org.apache.commons.logging.LogFactory;
  *   <li>collisionAvoidanceFactor = 0.15d</li>
  *   <li>useCollisionAvoidance = false</li>
  * </ul>
+ * <p/>
+ * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
+ * Setting the maximumRedeliveries to 0 will disable redelivery.
  *
  * @version $Revision$
  */
@@ -47,7 +50,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected static transient Random randomNumberGenerator;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
-    protected int maximumRedeliveries = 6;
+    protected int maximumRedeliveries = 5;
     protected long initialRedeliveryDelay = 1000L;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
@@ -80,7 +83,8 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         if (getMaximumRedeliveries() < 0) {
             return true;
         }
-        return redeliveryCounter < getMaximumRedeliveries();
+        // redeliver until we hitted the max
+        return redeliveryCounter <= getMaximumRedeliveries();
     }
 
 
