@@ -21,7 +21,6 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
@@ -130,7 +129,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             }
 
             if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+                // we did not success with the redelivery so now we let the failure processor handle it
                 setFailureHandled(exchange, true);
+                // must decrement the redelivery counter as we didn't process the redelivery but is
+                // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
+                decrementRedeliveryCounter(exchange);
                 AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
                 boolean sync = afp.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
@@ -151,7 +154,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, exchange.getException());
             exchange.setException(null);
-            
+
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // Only handle the async case...
@@ -262,6 +265,24 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         in.setHeader(REDELIVERED, Boolean.TRUE);
         exchange.setException(e);
         return next;
+    }
+
+    /**
+     * Prepares the redelivery counter and boolean flag for the failure handle processor
+     */
+    private void decrementRedeliveryCounter(Exchange exchange) {
+        Message in = exchange.getIn();
+        Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
+        if (counter != null) {
+            int prev = counter - 1;
+            in.setHeader(REDELIVERY_COUNTER, prev);
+            // set boolean flag according to counter
+            in.setHeader(REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
+        } else {
+            // not redelivered
+            in.setHeader(REDELIVERY_COUNTER, 0);
+            in.setHeader(REDELIVERED, Boolean.FALSE);
+        }
     }
 
     @Override
