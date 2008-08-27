@@ -34,12 +34,13 @@ import org.apache.camel.impl.DefaultEndpoint;
  * @version 
  */
 public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+    public static final String SYSTEM_DN  = "ou=system";
     public static final String OBJECT_SCOPE = "object";
     public static final String ONELEVEL_SCOPE = "onelevel";
     public static final String SUBTREE_SCOPE = "subtree";
     
     private String remaining;
-    private String base;
+    private String base = SYSTEM_DN;
     private String scope = SUBTREE_SCOPE;
 
     protected LdapEndpoint(String endpointUri, String remaining, LdapComponent component) throws URISyntaxException {
