@@ -33,6 +33,20 @@
     </route>
 
     <route>
+      <from uri="seda:header"/>
+      <process ref="setHeaderProcessor"/>
+      <to uri="direct:temp"/>
+    </route>
+
+    <route>
+      <from uri="direct:temp"/>
+      <aggregator>
+        <simple>header.cheese</simple>
+        <to uri="mock:result"/>
+      </aggregator>
+    </route>
+
+    <route>
       <from uri="direct:predicate"/>
       <aggregator strategyRef="myAggregatorStrategy">
         <simple>header.cheese</simple>
@@ -46,4 +60,9 @@
   <!-- END SNIPPET: example -->
 
   <bean id="myAggregatorStrategy" class="org.apache.camel.processor.MyAggregationStrategy"/>
+  <bean id="setHeaderProcessor" class="org.apache.camel.spring.processor.SetHeaderProcessor">
+  	<property name="headerName" value ="visited"/>
+  	<property name="headerValue" value ="true"/>
+  </bean>
+
 </beans>
