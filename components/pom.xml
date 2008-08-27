@@ -55,6 +55,7 @@
     <module>camel-jhc</module>
     <module>camel-jing</module>
     <module>camel-jms</module>
+    <module>camel-ldap</module>
     <module>camel-josql</module>
     <module>camel-jcr</module>
     <!--<module>camel-jmxconnect</module>-->
