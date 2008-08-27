@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 683664 $
+ * @version $Revision$
  */
 public class FileDeleteRouteExceptionTest extends FileDeleteRouteTest {
     @Override

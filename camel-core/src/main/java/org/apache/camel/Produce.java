@@ -32,7 +32,7 @@ import java.lang.annotation.Target;
  *
  * @see InOnly
  *
- * @version $Revision: 630591 $
+ * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
