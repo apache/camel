@@ -15,7 +15,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.ldap;
+package org.apache.camel.component.ldap;
 
 import java.util.Collection;
 
@@ -30,6 +30,7 @@ import org.apache.camel.impl.JndiRegistry;
 public class LdapRouteTest extends LdapTestSupport {
 	
     public void testLdapRoute() throws Exception {
+        // START SNIPPET: invoke
         Endpoint endpoint = context.getEndpoint("direct:start");
         Exchange exchange = endpoint.createExchange();
         // then we set the SQL on the in body
@@ -48,6 +49,7 @@ public class LdapRouteTest extends LdapTestSupport {
         assertTrue(contains("uid=test2,ou=test,ou=system", data));
         assertTrue(contains("uid=testNoOU,ou=test,ou=system", data));
         assertTrue(contains("uid=tcruise,ou=actors,ou=system", data));
+        // START SNIPPET: invoke
     }
 
     @Override
