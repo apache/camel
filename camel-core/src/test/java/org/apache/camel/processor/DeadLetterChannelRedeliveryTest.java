@@ -82,31 +82,31 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-        			.errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2))
-        			.process(new Processor() {
-        				public void process(Exchange exchange) throws Exception {
-        					counter++;
-        					throw new Exception("Forced exception by unit test");
-            			}
-        			});
+                    .errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
 
                 from("direct:no")
-        			.errorHandler(deadLetterChannel("mock:no").maximumRedeliveries(0))
-        			.process(new Processor() {
-        				public void process(Exchange exchange) throws Exception {
-        					counter++;
-        					throw new Exception("Forced exception by unit test");
-            			}
-        			});
+                    .errorHandler(deadLetterChannel("mock:no").maximumRedeliveries(0))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
 
                 from("direct:one")
-        			.errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1))
-        			.process(new Processor() {
-        				public void process(Exchange exchange) throws Exception {
-        					counter++;
-        					throw new Exception("Forced exception by unit test");
-            			}
-        			});
+                    .errorHandler(deadLetterChannel("mock:one").maximumRedeliveries(1))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
             }
         };
     }
