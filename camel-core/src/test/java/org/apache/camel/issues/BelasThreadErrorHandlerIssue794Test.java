@@ -26,13 +26,13 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Unit test to verify that error handling using thread() pool also works as expected.
  */
 public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
-	private static int counter;
+    private static int counter;
 
     public void testThreadErrorHandlerRedeliveryNoThread() throws Exception {
         counter = 0;
 
         // We expect the exchange here after 1 delivery and 2 re-deliveries
-        MockEndpoint mock= getMockEndpoint("mock:noThread");
+        MockEndpoint mock = getMockEndpoint("mock:noThread");
         mock.expectedMessageCount(1);
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
@@ -47,7 +47,7 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         counter = 0;
 
         // We expect the exchange here after 1 delivery and 2 re-deliveries
-        MockEndpoint mock= getMockEndpoint("mock:beforeThread");
+        MockEndpoint mock = getMockEndpoint("mock:beforeThread");
         mock.expectedMessageCount(1);
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
@@ -69,7 +69,7 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         counter = 0;
 
         // We expect the exchange here after 1 delivery and 2 re-deliveries
-        MockEndpoint mock= getMockEndpoint("mock:deafultAfterThread");
+        MockEndpoint mock = getMockEndpoint("mock:deafultAfterThread");
         mock.expectedMessageCount(1);
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
@@ -92,35 +92,35 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:inNoThread")
-        			.errorHandler(deadLetterChannel("mock:noThread").maximumRedeliveries(2))
-        			.process(new Processor() {
-        				public void process(Exchange exchange) throws Exception {
-        					counter++;
-        					throw new Exception("Forced exception by unit test");
-            			}
-        			});
+                    .errorHandler(deadLetterChannel("mock:noThread").maximumRedeliveries(2))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
 
                 from("direct:inBeforeThread")
-        			.errorHandler(deadLetterChannel("mock:beforeThread").maximumRedeliveries(2))
-        			.thread(2)
-        			.process(new Processor() {
-        				public void process(Exchange exchange) throws Exception {
-        					counter++;
-        					throw new Exception("Forced exception by unit test");
-            			}
-        			});
+                    .errorHandler(deadLetterChannel("mock:beforeThread").maximumRedeliveries(2))
+                    .thread(2)
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
 
                 errorHandler(deadLetterChannel("mock:deafultAfterThread").maximumRedeliveries(2));
                 from("direct:inAfterThread")
-                	.thread(2)
+                    .thread(2)
                     // NOTE: this error handler below is not used as we must set it before the thread type
-                	.errorHandler(deadLetterChannel("mock:afterThread").maximumRedeliveries(1))
-                	.process(new Processor() {
-                		public void process(Exchange exchange) throws Exception {
-                			counter++;
-                			throw new Exception("Forced exception by unit test");
-                		}
-                	});
+                    .errorHandler(deadLetterChannel("mock:afterThread").maximumRedeliveries(1))
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
             }
         };
     }
