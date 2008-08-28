@@ -49,7 +49,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e1
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created " + list, 1, list.size());
+        assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
@@ -78,7 +78,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e2
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created " + list, 2, list.size());
+        assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
             String endpointUri = key.getEndpointUri();
@@ -124,7 +124,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e3
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created " + list, 1, list.size());
+        assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
@@ -148,7 +148,7 @@ public class ErrorHandlerTest extends TestSupport {
         // END SNIPPET: e4
 
         List<Route> list = getRouteList(builder);
-        assertEquals("Number routes created " + list, 1, list.size());
+        assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
