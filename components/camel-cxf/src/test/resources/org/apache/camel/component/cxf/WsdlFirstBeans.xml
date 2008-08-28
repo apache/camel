@@ -37,10 +37,9 @@
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"
-                   wsdlURL="person.wsdl"
                    xmlns:person="http://camel.apache.org/wsdl-first"/>
 
-   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
             <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE"/>
             <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE"/>
@@ -48,7 +47,7 @@
 
       <route>
          <from uri="direct:producer" />
-         <to uri="cxf:bean:serviceEndpoint" />
+         <to uri="cxf:bean:serviceEndpoint?dataFormat=POJO" />
       </route>
 
     </camelContext>
