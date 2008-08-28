@@ -927,6 +927,8 @@
           <version>2.5.1</version>
           <configuration>
             <outputDirectory>${basedir}/eclipse-classes</outputDirectory>
+            <downloadSources>true</downloadSources>
+            <downloadJavadocs>true</downloadJavadocs>
 
             <!-- Eclipse update site for the Checkstyle plugin is http://eclipse-cs.sourceforge.net/update -->
             <!-- Eclipse update site for the PMD plugin is http://pmd.sf.net/eclipse -->
@@ -1218,7 +1220,6 @@
                       <entry key="org.eclipse.jdt.core.compiler.problem.rawTypeReference" value="ignore"/>
                     </propertyfile>
 
-
                     <!-- Add code format rules -->
                     <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs"
                             append="true" fixlastline="true">
@@ -1227,11 +1228,16 @@
                     <loadfile property="eclipse.code.format"
                               srcFile="${basedir}/etc/eclipse/ActiveMQCodeFormatter.xml"/>
                     <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml"/>
-                    <propertyfile
+                    <loadfile property="eclipse.camel.java.code.templates" srcFile="${basedir}/etc/eclipse/camel_java_templates.xml"/>
+                    <loadfile property="eclipse.camel.xml.code.templates" srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml"/>  
+                      <propertyfile
                             file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
                       <entry key="formatter_profile" value="_ActiveMQ Java Conventions"/>
                       <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}"/>
                       <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}"/>
+                      
+                      <!-- Add Camel templates for Java DSL -->
+                      <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}"/>
 
                       <!-- Add import order -->
                       <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;"/>
@@ -1239,6 +1245,12 @@
                       <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V,"/>
                       <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M,"/>
                       <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true"/>
+                      </propertyfile>
+                      <propertyfile
+                            file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
+                      <entry key="eclipse.preferences.version" value="1"/>
+                       <!-- Add Camel templates for Spring DSL -->
+                      <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}"/> 
                     </propertyfile>
                   </tasks>
                 </configuration>
