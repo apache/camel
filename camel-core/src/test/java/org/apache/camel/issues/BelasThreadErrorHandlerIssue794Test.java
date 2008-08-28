@@ -43,9 +43,7 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         assertEquals(3, counter); // One call + 2 re-deliveries
     }
 
-    // TODO: Look into these unit tests
-
-/*    public void testThreadErrorHandlerRedeliveryBeforeThread() throws Exception {
+    public void testThreadErrorHandlerRedeliveryBeforeThread() throws Exception {
         counter = 0;
 
         // We expect the exchange here after 1 delivery and 2 re-deliveries
@@ -57,9 +55,9 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         template.sendBody("direct:inBeforeThread", "Hello World");
 
         mock.assertIsSatisfied();
-    }*/
+    }
 
-/*    public void testThreadErrorHandlerCallBeforeThread() throws Exception {
+    public void testThreadErrorHandlerCallBeforeThread() throws Exception {
         counter = 0;
 
         template.sendBody("direct:inBeforeThread", "Hello World");
@@ -71,7 +69,7 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         counter = 0;
 
         // We expect the exchange here after 1 delivery and 2 re-deliveries
-        MockEndpoint mock= getMockEndpoint("mock:afterThread");
+        MockEndpoint mock= getMockEndpoint("mock:deafultAfterThread");
         mock.expectedMessageCount(1);
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
@@ -87,7 +85,7 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         template.sendBody("direct:inAfterThread", "Hello World");
 
         assertEquals(3, counter); // One call + 2 re-deliveries
-    }*/
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -112,9 +110,11 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
             			}
         			});
 
+                errorHandler(deadLetterChannel("mock:deafultAfterThread").maximumRedeliveries(2));
                 from("direct:inAfterThread")
                 	.thread(2)
-                	.errorHandler(deadLetterChannel("mock:afterThread").maximumRedeliveries(2))
+                    // NOTE: this error handler below is not used as we must set it before the thread type
+                	.errorHandler(deadLetterChannel("mock:afterThread").maximumRedeliveries(1))
                 	.process(new Processor() {
                 		public void process(Exchange exchange) throws Exception {
                 			counter++;
