@@ -17,12 +17,16 @@
 package org.apache.camel.component.cxf;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.wsdl_first.Person;
@@ -95,6 +99,41 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         } catch (UnknownPersonFault fault) {
             // We expect to get fault here
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void testInvokingServiceWithCamelProducer() throws Exception {
+        Exchange exchange = sendJaxWsMessageWithHolders("hello");
+        assertEquals("The request should be handled sucessfully ", exchange.isFailed(), false);
+        org.apache.camel.Message out = exchange.getOut();
+        List result =  out.getBody(List.class);
+        assertEquals("The result list should not be empty", result.size(), 4);
+        Holder<String> name = (Holder<String>) result.get(3);
+        assertEquals("we should get the right answer from router", "Bonjour", name.value);
+
+        exchange = sendJaxWsMessageWithHolders("");
+        assertEquals("We should get a fault here", exchange.isFailed(), true);
+        Exception ex = exchange.getFault().getBody(Exception.class);
+        assertTrue("We should get the UnknowPersonFault here", ex instanceof UnknownPersonFault);
+    }
+
+    protected Exchange sendJaxWsMessageWithHolders(final String personIdString) {
+        Exchange exchange = template.send("direct:producer", new Processor() {
+            @SuppressWarnings("unchecked")
+            public void process(final Exchange exchange) {
+                final List params = new ArrayList();
+                Holder<String> personId = new Holder<String>();
+                personId.value = personIdString;
+                params.add(personId);
+                Holder<String> ssn = new Holder<String>();
+                Holder<String> name = new Holder<String>();
+                params.add(ssn);
+                params.add(name);
+                exchange.getIn().setBody(params);
+                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "GetPerson");
+            }
+        });
+        return exchange;
     }
 
 

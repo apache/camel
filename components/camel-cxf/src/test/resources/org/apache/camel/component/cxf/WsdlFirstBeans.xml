@@ -25,24 +25,30 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  
-  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:8092/PersonService/" 
+
+  <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:8092/PersonService/"
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"
                    xmlns:person="http://camel.apache.org/wsdl-first"/>
-  
-    
-  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/PersonService/" 
+
+
+  <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/PersonService/"
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"
+                   wsdlURL="person.wsdl"
                    xmlns:person="http://camel.apache.org/wsdl-first"/>
 
    <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
             <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE"/>
             <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE"/>
+      </route>
+
+      <route>
+         <from uri="direct:producer" />
+         <to uri="cxf:bean:serviceEndpoint" />
       </route>
 
     </camelContext>
