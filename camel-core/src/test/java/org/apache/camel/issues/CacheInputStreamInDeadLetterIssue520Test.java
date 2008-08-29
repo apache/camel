@@ -18,6 +18,7 @@
 package org.apache.camel.issues;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -32,32 +33,31 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     private int count;
 
     public void testSendingInputStream() throws Exception {
-        count = 0;
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new ByteArrayInputStream("<hello>Willem</hello>".getBytes()));
-        assertEquals("The message should be delivered 4 times", count, 4);
-        mock.assertIsSatisfied();
+        InputStream message = new ByteArrayInputStream("<hello>Willem</hello>".getBytes());
+
+        sendingMessage(message);
 
     }
 
     public void testSendingReader() throws Exception {
-        count = 0;
-        MockEndpoint mock = getMockEndpoint("mock:error");
-        mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new StringReader("<hello>Willem</hello>"));
-        assertEquals("The message should be delivered 4 times", count, 4);
-        mock.assertIsSatisfied();
+        StringReader message = new StringReader("<hello>Willem</hello>");
 
+        sendingMessage(message);
     }
 
     public void testSendingSource() throws Exception {
+
+        StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
+
+        sendingMessage(message);
+    }
+
+    private void sendingMessage(Object message) throws InterruptedException {
         count = 0;
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
-        StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
 
         template.sendBody("direct:start", message);
         assertEquals("The message should be delivered 4 times", count, 4);

@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.StreamCache;
-import org.apache.camel.converter.stream.StreamCacheConverter.InputStreamCache;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
