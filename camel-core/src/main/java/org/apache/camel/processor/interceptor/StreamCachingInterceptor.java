@@ -34,8 +34,9 @@ public class StreamCachingInterceptor extends Interceptor {
         super();
         setInterceptorLogic(new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Object newBody = exchange.getIn().getBody(StreamCache.class);
+                StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
                 if (newBody != null) {
+                    newBody.reset();
                     exchange.getIn().setBody(newBody);
                 }
                 proceed(exchange);

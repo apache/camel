@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
@@ -53,6 +55,18 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisifed();
         assertTrue(b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
+        assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
+    }
+
+    public void testConvertInputStreamWithRouteBuilderStreamCaching() throws Exception {
+        a.expectedMessageCount(1);
+
+        InputStream message = new ByteArrayInputStream("<hello>world!</hello>".getBytes());
+        template.sendBody("direct:a", message);
+
+        assertMockEndpointsSatisifed();
+        assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
+        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
     }
 
     public void testIgnoreAlreadyRereadable() throws Exception {
