@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.IOException;
+
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
@@ -26,5 +28,10 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
  * stream-based message.
  */
 public interface StreamCache {
+
+    /**
+     * Resets the StreamCache for a new stream consumption.
+     */
+    void reset() throws IOException;
 
 }

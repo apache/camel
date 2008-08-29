@@ -63,7 +63,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        Processor deadLetter = getDeadLetterFactory().createProcessor();
+        Processor deadLetter = getDeadLetterFactory().createProcessor();       
         DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         configure(answer);
         return answer;

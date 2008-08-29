@@ -18,6 +18,9 @@
 package org.apache.camel.issues;
 
 import java.io.ByteArrayInputStream;
+import java.io.StringReader;
+
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -28,37 +31,60 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport {
     private int count;
 
-    public void testException() throws Exception {
+    public void testSendingInputStream() throws Exception {
         count = 0;
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new ByteArrayInputStream("Hello from Willem".getBytes()));
+        template.sendBody("direct:start", new ByteArrayInputStream("<hello>Willem</hello>".getBytes()));
         assertEquals("The message should be delivered 4 times", count, 4);
         mock.assertIsSatisfied();
 
     }
 
+    public void testSendingReader() throws Exception {
+        count = 0;
+        MockEndpoint mock = getMockEndpoint("mock:error");
+        mock.expectedMessageCount(1);
+
+        template.sendBody("direct:start", new StringReader("<hello>Willem</hello>"));
+        assertEquals("The message should be delivered 4 times", count, 4);
+        mock.assertIsSatisfied();
+
+    }
+
+    public void testSendingSource() throws Exception {
+        count = 0;
+        MockEndpoint mock = getMockEndpoint("mock:error");
+        mock.expectedMessageCount(1);
+        StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
+
+        template.sendBody("direct:start", message);
+        assertEquals("The message should be delivered 4 times", count, 4);
+        mock.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                streamCaching();
                 errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3));
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         count++;
-                        // Read the inputstream from cache
+                        // Read the in stream from cache
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", result, "Hello from Willem");
+                        assertEquals("Should read the inputstream out again", result, "<hello>Willem</hello>");
                         throw new Exception("Forced exception by unit test");
                     }
                 });
 
-                from("direct:errorHandler").process(new Processor() {
+                //Need to set the streamCaching for the deadLetterChannel
+                from("direct:errorHandler").streamCaching().process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", result, "Hello from Willem");
+                        assertEquals("Should read the inputstream out again", result, "<hello>Willem</hello>");
                     }
                 }).to("mock:error");
 
