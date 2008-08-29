@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.InputStream;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -23,6 +24,8 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.converter.stream.StreamCacheConverter.InputStreamCache;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
@@ -138,6 +141,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // must decrement the redelivery counter as we didn't process the redelivery but is
                 // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
                 decrementRedeliveryCounter(exchange);
+                // cache the exchange in message's inputstream
+                cacheInMessageInputStream(exchange);
                 AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
                 boolean sync = afp.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
@@ -162,6 +167,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
             }
 
+            // cache the exchange in message's inputstream
+            cacheInMessageInputStream(exchange);
             // process the exchange
             boolean sync = outputAsync.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
@@ -289,6 +296,20 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             // not redelivered
             in.setHeader(REDELIVERY_COUNTER, 0);
             in.setHeader(REDELIVERED, Boolean.FALSE);
+        }
+    }
+
+    private void cacheInMessageInputStream(Exchange exchange) {
+        Object newBody = null;
+        InputStreamCache cache = null;
+        Message in = exchange.getIn();
+        if (in.getBody() instanceof InputStream) {
+            newBody = in.getBody(StreamCache.class);
+            if (newBody != null) {
+                cache = (InputStreamCache) newBody;
+                cache.reset();
+                in.setBody(cache);
+            }
         }
     }
 
