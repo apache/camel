@@ -32,6 +32,6 @@ public interface StreamCache {
     /**
      * Resets the StreamCache for a new stream consumption.
      */
-    void reset() throws IOException;
+    void reset();
 
 }

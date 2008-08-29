@@ -21,7 +21,6 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.converter.stream.StreamCache;
-import org.apache.camel.converter.stream.StreamCacheConverter.InputStreamCache;
 import org.apache.camel.processor.interceptor.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
 
@@ -177,22 +176,18 @@ public class LogFormatter implements ExchangeFormatter {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
-        Object newBody = null;
-        InputStreamCache cache = null;
-        if (message.getBody() instanceof InputStream) {
-            newBody = message.getBody(StreamCache.class);
-            if (newBody != null) {
-                cache = (InputStreamCache) newBody;
-                message.setBody(cache);
-            }
+
+        StreamCache newBody = message.getBody(StreamCache.class);
+        if (newBody != null) {
+            message.setBody(newBody);
         }
         Object answer = message.getBody(String.class);
         if (answer == null) {
             answer = message.getBody();
         }
-        if (cache != null) {
-            // Reset the inputStreamCache
-            cache.reset();
+        if (newBody != null) {
+            // Reset the StreamCache
+            newBody.reset();
         }
         return answer;
     }

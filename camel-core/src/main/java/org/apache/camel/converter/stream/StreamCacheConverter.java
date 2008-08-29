@@ -30,6 +30,9 @@ import org.apache.camel.Converter;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A set of {@link Converter} methods for wrapping stream-based messages in a {@link StreamCache}
@@ -37,6 +40,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
  */
 @Converter
 public class StreamCacheConverter {
+    private static final transient Log LOG = LogFactory.getLog(StreamCacheConverter.class);
 
     private XmlConverter converter = new XmlConverter();
 
@@ -55,7 +59,7 @@ public class StreamCacheConverter {
         return new ReaderCache(IOConverter.toString(reader));
     }
 
-    public class StreamSourceCache extends StringSource implements StreamCache {
+    private class StreamSourceCache extends StringSource implements StreamCache {
 
         private static final long serialVersionUID = 4147248494104812945L;
 
@@ -69,7 +73,7 @@ public class StreamCacheConverter {
 
     }
 
-    public class InputStreamCache extends ByteArrayInputStream implements StreamCache {
+    private class InputStreamCache extends ByteArrayInputStream implements StreamCache {
 
         public InputStreamCache(byte[] data) {
             super(data);
@@ -77,10 +81,18 @@ public class StreamCacheConverter {
 
     }
 
-    public class ReaderCache extends StringReader implements StreamCache {
+    private class ReaderCache extends StringReader implements StreamCache {
 
         public ReaderCache(String s) {
             super(s);
+        }
+
+        public void reset() {
+            try {
+                super.reset();
+            } catch (IOException e) {
+                LOG.warn("Exception is thrown when resets the ReaderCache", e);
+            }
         }
 
         public void close() {
