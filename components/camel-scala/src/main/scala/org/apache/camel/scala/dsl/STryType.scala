@@ -14,29 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl
+package org.apache.camel.scala.dsl;
+
+import org.apache.camel.model.TryType
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Defines the 'keywords' in our Scala DSL
+ * Scala enrichment for Camel's DelayerType
  */
-trait DSL {
+class STryType(val target: TryType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[TryType] {
   
-  def bean(bean: Any) : DSL
-  def choice : SChoiceType
-  def -->(uris: String*) : DSL
-  def to(uris: String*) : DSL
-  def when(filter: Exchange => Boolean) : SChoiceType
-  def as[Target](toType: Class[Target]) : DSL
-  def recipients(expression: Exchange => Any) : DSL
-  def splitter(expression: Exchange => Any) : SSplitterType
-  def otherwise : DSL
-  def monitor : STryType
-  def multicast : SMulticastType
-  def process(function: Exchange => Unit) : DSL
-  def throttle(frequency: Frequency) : SThrottlerType
-  def loadbalance : SLoadBalanceType
-  def delay(delay: Period) : SDelayerType
-  def resequence(expression: Exchange => Any) : SResequencerType
-  def aggregate(expression: Exchange => Any) : SAggregatorType
-
+  val unwrap = target
+  
+  override def apply(block: => Unit) : STryType = super.apply(block).asInstanceOf[STryType]
+  
+  def handle[Target](exception: Class[Target]) = {
+    target.handle(exception)
+    this
+  }
+  
+  def ensure = {
+    target.finallyBlock
+    this
+  }
+ 
 }

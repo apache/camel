@@ -70,6 +70,8 @@ abstract class SAbstractType extends DSL {
   def otherwise : SChoiceType = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
+  def monitor : STryType = new STryType(target.tryBlock)
+  
   def multicast = new SMulticastType(target.multicast)
   
   def process(function: Exchange => Unit) = {

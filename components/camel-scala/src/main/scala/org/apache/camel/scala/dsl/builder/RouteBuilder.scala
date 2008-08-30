@@ -59,6 +59,7 @@ class RouteBuilder extends Preamble with DSL {
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
+  def monitor = stack.top.monitor
   def multicast = stack.top.multicast
   def process(function: Exchange => Unit) = stack.top.process(function)
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
