@@ -27,10 +27,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -50,10 +52,12 @@ public class UnmarshalType extends OutputType<ProcessorType> {
     @XmlElements({
     @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+    @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
-    @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class)}
+    @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
+    @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class)}
     )
     private DataFormatType dataFormatType;
 

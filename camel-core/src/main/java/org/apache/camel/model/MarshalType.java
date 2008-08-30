@@ -32,6 +32,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -55,7 +56,8 @@ public class MarshalType extends OutputType<ProcessorType> {
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
-    @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class)}
+    @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
+    @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class)}
     )
     private DataFormatType dataFormatType;
 
