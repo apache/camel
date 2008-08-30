@@ -36,7 +36,6 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     public void testFirstFewAttemptsFail() throws Exception {
         successEndpoint.expectedBodiesReceived(body);
         successEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        // TODO convert to AND
         successEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(1);
 
         deadEndpoint.expectedMessageCount(0);
@@ -51,13 +50,19 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         deadEndpoint.expectedBodiesReceived(body);
         deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        // TODO convert to AND
-        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
-        successEndpoint.expectedMessageCount(0);
+        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);        successEndpoint.expectedMessageCount(0);
 
         sendBody("direct:start", body);
 
         assertMockEndpointsSatisifed();
+
+        Throwable t = deadEndpoint.getExchanges().get(0).getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+        assertNotNull("Should have been a cause property", t);
+        assertTrue(t instanceof RuntimeException);
+        assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
+
+        Throwable t2 = deadEndpoint.getExchanges().get(0).getException();
+        assertEquals(t, t2);
     }
 
     @Override
@@ -77,9 +82,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 if (attempt < failUntilAttempt) {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt
                                                + " being less than: " + failUntilAttempt);
-                } else {
-                    template.send("mock:success", exchange);
-                }
+                } 
             }
         };
 
@@ -90,9 +93,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                         .initialRedeliveryDelay(1)
                         .loggingLevel(LoggingLevel.DEBUG)
 
-                ).process(processor);
-                // TODO - currently process().to() results in two separate operations which have their own error handler
-                // to("mock:success");
+                ).process(processor).to("mock:success");
             }
         };
     }
