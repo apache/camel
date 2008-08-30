@@ -743,8 +743,6 @@ public class JmsConfiguration implements Cloneable {
      * Set to true if you want to send message using the QoS settings specified
      * on the message. Normally the QoS settings used are the one configured on
      * this Object.
-     *
-     * @param preserveMessageQos
      */
     public void setPreserveMessageQos(boolean preserveMessageQos) {
         this.preserveMessageQos = preserveMessageQos;
@@ -773,8 +771,6 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Sets the frequency that the requestMap for InOut exchanges is purged for
      * timed out message exchanges
-     *
-     * @param requestMapPurgePollTimeMillis
      */
     public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
         this.requestMapPurgePollTimeMillis = requestMapPurgePollTimeMillis;
@@ -804,8 +800,6 @@ public class JmsConfiguration implements Cloneable {
     /**
      * Sets the {@link JmsOperations} used to deduce the {@link JmsProviderMetadata} details which if none
      * is customized one is lazily created on demand
-     *
-     * @param metadataJmsOperations
      */
     public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
         this.metadataJmsOperations = metadataJmsOperations;
@@ -909,8 +903,7 @@ public class JmsConfiguration implements Cloneable {
             if (tm != null) {
                 listenerContainer.setTransactionManager(tm);
             } else if (transacted) {
-                throw new IllegalArgumentException(
-                                                   "Property transacted is enabled but a transactionManager was not injected!");
+                throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
                 listenerContainer.setTransactionName(transactionName);
@@ -947,7 +940,7 @@ public class JmsConfiguration implements Cloneable {
         if (isEagerLoadingOfProperties()) {
             listener.setEagerLoadingOfProperties(true);
         }
-        // REVISIT: We really ought to change the model and let JmsProducer
+        // TODO: REVISIT: We really ought to change the model and let JmsProducer
         // and JmsConsumer have their own JmsConfiguration instance
         // This way producer's and consumer's QoS can differ and be
         // independently configured
