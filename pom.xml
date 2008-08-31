@@ -63,7 +63,7 @@
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-pool-version>1.4</commons-pool-version>
     <commons-dbcp-version>1.2.2</commons-dbcp-version>
-    <easymock-version>2.3</easymock-version>
+    <easymock-version>2.4</easymock-version>
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
@@ -75,7 +75,6 @@
     <hamcrest-version>1.1</hamcrest-version>
     <saxon-version>9.1.0.1</saxon-version>
     <apacheds-version>1.5.3</apacheds-version>
-    <slf4j-version>1.4.3</slf4j-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
