@@ -75,6 +75,12 @@
       <artifactId>camel-hamcrest</artifactId>
       <scope>test</scope>
     </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-core</artifactId>
+        <scope>test</scope>
+        <type>test-jar</type>
+      </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
