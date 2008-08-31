@@ -27,7 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class StringDataFormatTest extends SpringTestSupport {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/StringDataFormatTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/issues/stringDataFormatTest.xml");
     }
 
     public void testMarshalString() throws Exception {
