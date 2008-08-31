@@ -27,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -52,6 +53,7 @@ public class MarshalType extends OutputType<ProcessorType> {
     @XmlElements({
     @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),
+    @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
