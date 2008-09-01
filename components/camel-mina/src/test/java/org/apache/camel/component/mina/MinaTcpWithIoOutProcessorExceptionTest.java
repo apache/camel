@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * To unit test CAMEL-364.
@@ -35,8 +36,11 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
 
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
-        String out = (String) template.requestBody(uri, body);
-        assertNull("Should not have sent data back", out);
+        Object result = template.sendBody(uri, body);
+        // The exception should be passed to the client
+        assertNotNull("the result should not be null", result);
+        assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");
+
     }
 
     protected RouteBuilder createRouteBuilder() {
