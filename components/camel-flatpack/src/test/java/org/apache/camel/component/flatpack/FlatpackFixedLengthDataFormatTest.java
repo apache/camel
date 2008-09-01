@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.flatpack;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
-import org.springframework.core.io.ClassPathResource;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.IOConverter;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Unit test for fixed length DataFormat.
