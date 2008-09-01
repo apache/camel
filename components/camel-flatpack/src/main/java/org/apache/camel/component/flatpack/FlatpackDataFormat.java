@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.flatpack;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.util.List;
+import java.util.Map;
+
 import net.sf.flatpack.DataSet;
 import net.sf.flatpack.DefaultParserFactory;
 import net.sf.flatpack.Parser;
@@ -30,10 +39,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jdom.JDOMException;
 import org.springframework.core.io.Resource;
-
-import java.io.*;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Flatpack DataFormat.
