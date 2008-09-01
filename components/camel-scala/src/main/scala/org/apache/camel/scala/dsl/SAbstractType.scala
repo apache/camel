@@ -48,6 +48,8 @@ abstract class SAbstractType extends DSL {
     new SProcessorType(target.asInstanceOf[ProcessorType[P] forSome {type P}])
   }
   
+  def attempt : STryType = new STryType(target.tryBlock)
+  
   def splitter(expression: Exchange => Any) = 
     new SSplitterType(target.splitter(expression))
     
@@ -70,7 +72,6 @@ abstract class SAbstractType extends DSL {
   def otherwise : SChoiceType = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
-  def monitor : STryType = new STryType(target.tryBlock)
   
   def multicast = new SMulticastType(target.multicast)
   
