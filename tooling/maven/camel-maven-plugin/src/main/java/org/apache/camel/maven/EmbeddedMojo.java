@@ -174,6 +174,22 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.dotAggregationEnabled = dotAggregationEnabled;
     }
 
+    public String getApplicationContextUri() {
+        return applicationContextUri;
+    }
+
+    public void setApplicationContextUri(String applicationContextUri) {
+        this.applicationContextUri = applicationContextUri;
+    }
+
+    public String getFileApplicationContextUri() {
+        return fileApplicationContextUri;
+    }
+
+    public void setFileApplicationContextUri(String fileApplicationContextUri) {
+        this.fileApplicationContextUri = fileApplicationContextUri;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
