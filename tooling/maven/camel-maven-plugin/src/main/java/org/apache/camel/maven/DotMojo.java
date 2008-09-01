@@ -116,6 +116,20 @@ public class DotMojo extends AbstractMavenReport {
     private File outputDirectory;
 
     /**
+     * The classpath based application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.applicationContextUri}"
+     */
+    protected String applicationContextUri;
+
+    /**
+     * The filesystem based application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.fileApplicationContextUri}"
+     */
+    protected String fileApplicationContextUri;
+
+    /**
      * In the case of multiple camel contexts, setting aggregate == true will
      * aggregate all into a monolithic context, otherwise they will be processed
      * independently.
@@ -327,7 +341,14 @@ public class DotMojo extends AbstractMavenReport {
 
     protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException {
         if (runCamel) {
-            getLog().info("Running Camel embedded to load META-INF/spring/*.xml files");
+            // default path, but can be overridden by configuration
+            if (applicationContextUri != null) {
+                getLog().info("Running Camel embedded to load Spring XML files from classpath: " + applicationContextUri);
+            } else if (fileApplicationContextUri != null) {
+                getLog().info("Running Camel embedded to load Spring XML files from file path: " + fileApplicationContextUri);
+            } else {
+                getLog().info("Running Camel embedded to load Spring XML files from default path: META-INF/spring/*.xml");
+            }
 
             List list = project.getTestClasspathElements();
             getLog().debug("Using classpath: " + list);
@@ -336,13 +357,14 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setClasspathElements(list);
             mojo.setDotEnabled(true);
             if ("true".equals(getAggregate())) {
-
                 mojo.setDotAggregationEnabled(true);
             }
             mojo.setOutputDirectory(outputDirectory.getAbsolutePath());
             mojo.setDuration(duration);
             mojo.setLog(getLog());
             mojo.setPluginContext(getPluginContext());
+            mojo.setApplicationContextUri(applicationContextUri);
+            mojo.setFileApplicationContextUri(fileApplicationContextUri);
             try {
                 mojo.executeWithoutWrapping();
             } catch (Exception e) {
