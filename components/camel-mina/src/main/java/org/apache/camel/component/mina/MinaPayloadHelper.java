@@ -35,7 +35,7 @@ public final class MinaPayloadHelper {
 
     public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.isTransferExchange()) {
-            // we should transfer the entire exchange over the wire (includes in/out)
+            // we should transfer the entire exchange over the wire (includes in/out)\
             return MinaPayloadHolder.marshal(exchange);
         } else {
             // normal transfer using the body only

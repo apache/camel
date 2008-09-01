@@ -29,7 +29,9 @@ import org.apache.camel.spi.UnitOfWork;
  * @version $Revision$
  */
 public interface Exchange {
-    
+
+    String CHARSET_NAME = "org.apache.camel.Exchange.CharsetName";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *
@@ -173,7 +175,7 @@ public interface Exchange {
      * Returns true if this exchange is transacted
      */
     boolean isTransacted();
-    
+
     /**
      * Returns the container so that a processor can resolve endpoints from URIs
      *
@@ -194,7 +196,7 @@ public interface Exchange {
 
     /**
      * Copies the data into this exchange from the given exchange
-     * 
+     *
      * @param source is the source from which headers and messages will be copied
      */
     void copyFrom(Exchange source);

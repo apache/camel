@@ -42,7 +42,7 @@ public class MinaConverterTest extends TestCase {
         String in = "Hello World";
         ByteBuffer bb = ByteBuffer.wrap(in.getBytes());
 
-        String out = MinaConverter.toString(bb);
+        String out = MinaConverter.toString(bb, null);
         assertEquals("Hello World", out);
     }
 

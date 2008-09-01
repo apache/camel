@@ -21,9 +21,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,8 +52,8 @@ public final class NIOConverter {
     }
 
     @Converter
-    public static String toString(ByteBuffer buffer) {
-        return IOConverter.toString(buffer.array());
+    public static String toString(ByteBuffer buffer, Exchange exchange) {
+        return IOConverter.toString(buffer.array(), exchange);
     }
 
     @Converter
@@ -84,9 +87,22 @@ public final class NIOConverter {
     }
 
     @Converter
-    public static ByteBuffer toByteBuffer(String value) {
+    public static ByteBuffer toByteBuffer(String value, Exchange exchange) {
         ByteBuffer buf = ByteBuffer.allocate(value.length());
-        byte[] bytes = value.getBytes();
+        byte[] bytes = null;
+        if (exchange != null) {
+            String charsetName = (String)exchange.getProperty(Exchange.CHARSET_NAME);
+            if (charsetName != null) {
+                try {
+                    bytes = value.getBytes(charsetName);
+                } catch (UnsupportedEncodingException e) {
+                    LOG.warn("Can't convert the byte to String with the charset " + charsetName, e);
+                }
+            }
+        }
+        if (bytes == null) {
+            bytes = value.getBytes();
+        }
         buf.put(bytes);
         return buf;
     }

@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.mina.common.ByteBuffer;
 
@@ -48,9 +49,8 @@ public final class MinaConverter {
     }
 
     @Converter
-    public static String toString(ByteBuffer buffer) {
-        // TODO: CAMEL-381, we should have type converters to strings that accepts a Charset parameter to handle encoding
-        return IOConverter.toString(toByteArray(buffer));
+    public static String toString(ByteBuffer buffer, Exchange exchange) {
+        return IOConverter.toString(toByteArray(buffer), exchange);
     }
 
     @Converter
