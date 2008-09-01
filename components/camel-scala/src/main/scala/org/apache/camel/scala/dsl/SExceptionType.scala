@@ -16,26 +16,14 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.TryType
+import org.apache.camel.model.ExceptionType
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's TryType
+ * Scala enrichment for Camel's ExceptionType
  */
-class STryType(val target: TryType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[TryType] {
+class SExceptionType(val target: ExceptionType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ExceptionType] {
   
   val unwrap = target
-  
-  override def apply(block: => Unit) : STryType = super.apply(block).asInstanceOf[STryType]
-  
-  def handle[Target](exception: Class[Target]) = {
-    target.handle(exception)
-    this
-  }
-  
-  def ensure = {
-    target.finallyBlock
-    this
-  }
- 
+   
 }
