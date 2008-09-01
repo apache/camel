@@ -74,7 +74,7 @@ public class MinaPayloadHolder implements Serializable {
             payload.faultBody = exchange.getFault().getBody();
             payload.faultHeaders.putAll(exchange.getFault().getHeaders());
         }
-        System.out.println("marshal " + payload);
+
         return payload;
     }
 

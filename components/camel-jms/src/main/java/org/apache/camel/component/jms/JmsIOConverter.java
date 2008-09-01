@@ -31,32 +31,33 @@ import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.NIOConverter;
 
 /**
  * Some simple payload conversions to I/O <a
  * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
- * 
+ *
  * @version $Revision$
  */
 
 @Converter
 public final class JmsIOConverter {
-    
-    private JmsIOConverter() {        
+
+    private JmsIOConverter() {
     }
-    
+
     /**
      * @param message
      * @return a ByteBuffer
      * @throws Exception
      */
     @Converter
-    public static ByteBuffer toByteBuffer(final Message message) throws Exception {
+    public static ByteBuffer toByteBuffer(final Message message, Exchange exchange) throws Exception {
 
         if (message instanceof TextMessage) {
             final String text = ((TextMessage)message).getText();
-            return NIOConverter.toByteBuffer(text);
+            return NIOConverter.toByteBuffer(text, exchange);
         }
         if (message instanceof BytesMessage) {
             final BytesMessage bmsg = (BytesMessage)message;

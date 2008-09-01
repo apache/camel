@@ -109,24 +109,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 } else {
                     body = MinaPayloadHelper.getIn(endpoint, exchange);
                 }
-                boolean failed = exchange.isFailed();
-
-                /*if (failed) {
-                    // can not write a response since the exchange is failed and we don't know in what state the
-                    // in/out messages are in so the session is closed
-                    LOG.warn("Can not write body since the exchange is failed, closing session: " + exchange);
-                    session.close();
-                    if (exchange.getException() != null) {
-                        throw new CamelException(exchange.getException());
-                    }
-                    if (exchange.getFault(false) != null) {
-                        if (exchange.getFault().getBody() instanceof Throwable) {
-                            System.out.println("throw the exception here");
-                            throw new CamelException((Throwable)exchange.getFault().getBody());
-                        }
-                    }
-
-                } else*/
+                // send message back
                 if (body == null) {
                     // must close session if no data to write otherwise client will never receive a response
                     // and wait forever (if not timing out)
