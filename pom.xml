@@ -926,8 +926,7 @@
           <version>2.5.1</version>
           <configuration>
             <outputDirectory>${basedir}/eclipse-classes</outputDirectory>
-            <downloadSources>true</downloadSources>
-            <downloadJavadocs>true</downloadJavadocs>
+            <downloadSources>true</downloadSources>            
 
             <!-- Eclipse update site for the Checkstyle plugin is http://eclipse-cs.sourceforge.net/update -->
             <!-- Eclipse update site for the PMD plugin is http://pmd.sf.net/eclipse -->
