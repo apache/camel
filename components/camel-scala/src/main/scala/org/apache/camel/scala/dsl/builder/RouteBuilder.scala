@@ -50,6 +50,7 @@ class RouteBuilder extends Preamble with DSL {
 
   def from(uri: String) = new SRouteType(builder.from(uri), this)
 
+  def attempt = stack.top.attempt
   def bean(bean: Any) = stack.top.bean(bean)
   def choice = stack.top.choice
   def -->(uris: String*) = stack.top.to(uris: _*)
@@ -59,7 +60,6 @@ class RouteBuilder extends Preamble with DSL {
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
-  def monitor = stack.top.monitor
   def multicast = stack.top.multicast
   def process(function: Exchange => Unit) = stack.top.process(function)
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)

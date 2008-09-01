@@ -54,7 +54,7 @@ class TryCatchFinallyTest extends ScalaTestSupport {
               
        //START SNIPPET: block}
        "direct:a" ==> {
-         monitor {
+         attempt {
            process(failingProcessor)
            to ("mock:a")
          } handle(classOf[Exception]) apply {

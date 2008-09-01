@@ -21,6 +21,7 @@ package org.apache.camel.scala.dsl
  */
 trait DSL {
   
+  def attempt : STryType
   def bean(bean: Any) : DSL
   def choice : SChoiceType
   def -->(uris: String*) : DSL
@@ -30,7 +31,6 @@ trait DSL {
   def recipients(expression: Exchange => Any) : DSL
   def splitter(expression: Exchange => Any) : SSplitterType
   def otherwise : DSL
-  def monitor : STryType
   def multicast : SMulticastType
   def process(function: Exchange => Unit) : DSL
   def throttle(frequency: Frequency) : SThrottlerType
