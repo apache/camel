@@ -71,7 +71,7 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
     public void testExchangeFailedOutShouldBeNull() throws Exception {
         String out = sendAndReceive("force-exception");
         assertTrue("out should not be the same as in when the exchange has failed", !"force-exception".equals(out));
-        assertNull("no data should be retrieved", out);
+        assertEquals("should get the exception here", out, "java.lang.IllegalArgumentException: Forced exception");
     }
 
     private String sendAndReceive(String input) throws IOException {
