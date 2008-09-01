@@ -21,18 +21,18 @@ import scala.dsl.builder.RouteBuilder
 import junit.framework.Assert._
 
 /**
- * Test case for try (attempt) - catch (handle) - finally (ensure)
+ * Test case for exception handler
  */
-class TryCatchFinallyTest extends ScalaTestSupport {
+class ExceptionHandlerTest extends ScalaTestSupport {
   
   var handled = false;
   
   def testTryCatchFinally = {
     "mock:a" expect { _.count = 1 }
     "mock:b" expect { _.count = 1 }
-    "mock:c" expect { _.count = 2 }
+    "mock:c" expect { _.count = 1 }
     test {
-       "direct:a" ! ("any given message", 256) 
+       "direct:a" ! ("any given message", 'Symbol, 256) 
     }
   }
     
@@ -41,6 +41,7 @@ class TryCatchFinallyTest extends ScalaTestSupport {
        def failingProcessor(exchange: Exchange) = {
          exchange.in match {
            case text: String => //graciously do nothing
+           case symbol: Symbol => throw new UnsupportedOperationException("We don't know how to deal with this symbolically correct")
            case _ => throw new RuntimeException("Strings are good, the rest is bad")
          }
        }
@@ -51,20 +52,20 @@ class TryCatchFinallyTest extends ScalaTestSupport {
           // the exchange shouldn't have been marked failed
           assertFalse(exchange.isFailed)
        }
-              
-       //START SNIPPET: block}
-       "direct:a" ==> {
-         attempt {
-           process(failingProcessor)
-           to ("mock:a")
-         } handle(classOf[Exception]) apply {
+       
+       //START SNIPPET: simple
+       handle(classOf[UnsupportedOperationException]) to "mock:c"
+       //END SNIPPET: simple
+       
+       //START SNIPPET: block
+       handle(classOf[RuntimeException]) {
            process(catchProcessor)
            to ("mock:b")
-         } ensure {
-           to ("mock:c");
-         }
        }
        //END SNIPPET: block
+       
+       "direct:a" process(failingProcessor) to ("mock:a")
+       
     }
 
 }

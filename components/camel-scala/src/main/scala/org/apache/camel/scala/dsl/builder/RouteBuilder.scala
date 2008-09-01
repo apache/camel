@@ -49,6 +49,8 @@ class RouteBuilder extends Preamble with DSL {
   }
 
   def from(uri: String) = new SRouteType(builder.from(uri), this)
+  def handle[Target](exception: Class[Target]) = new SExceptionType(builder.exception(exception))(this)
+  
 
   def attempt = stack.top.attempt
   def bean(bean: Any) = stack.top.bean(bean)
