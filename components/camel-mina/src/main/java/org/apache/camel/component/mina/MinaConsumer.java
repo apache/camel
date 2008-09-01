@@ -19,6 +19,7 @@ package org.apache.camel.component.mina;
 import java.net.SocketAddress;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ExchangeHelper;
@@ -94,6 +95,10 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
             }
 
             MinaExchange exchange = endpoint.createExchange(session, object);
+            //Set the exchange charset property for converting
+            if (endpoint.getCharsetName() != null) {
+                exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getCharsetName());
+            }
             getProcessor().process(exchange);
 
             // if sync then we should return a response
@@ -106,12 +111,23 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 }
                 boolean failed = exchange.isFailed();
 
-                if (failed) {
+                /*if (failed) {
                     // can not write a response since the exchange is failed and we don't know in what state the
                     // in/out messages are in so the session is closed
                     LOG.warn("Can not write body since the exchange is failed, closing session: " + exchange);
                     session.close();
-                } else if (body == null) {
+                    if (exchange.getException() != null) {
+                        throw new CamelException(exchange.getException());
+                    }
+                    if (exchange.getFault(false) != null) {
+                        if (exchange.getFault().getBody() instanceof Throwable) {
+                            System.out.println("throw the exception here");
+                            throw new CamelException((Throwable)exchange.getFault().getBody());
+                        }
+                    }
+
+                } else*/
+                if (body == null) {
                     // must close session if no data to write otherwise client will never receive a response
                     // and wait forever (if not timing out)
                     LOG.warn("Can not write body since its null, closing session: " + exchange);
@@ -123,7 +139,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                     }
                     MinaHelper.writeBody(session, body, exchange);
                 }
-            } 
+            }
         }
 
     }

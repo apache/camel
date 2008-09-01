@@ -70,7 +70,7 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends ContextTestSupport {
                 from("mina:udp://127.0.0.1:" + PORT + "?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteBuffer in = exchange.getIn().getBody(ByteBuffer.class);
-                        String s = MinaConverter.toString(in);
+                        String s = MinaConverter.toString(in, exchange);
                         exchange.getOut().setBody("Hello " + s);
                     }
                 });

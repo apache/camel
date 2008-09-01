@@ -39,8 +39,10 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.Properties;
 
 import javax.xml.transform.OutputKeys;
@@ -52,6 +54,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -135,9 +138,20 @@ public final class IOConverter {
     }
 
     @Converter
-    public static String toString(byte[] data) {
+    public static String toString(byte[] data, Exchange exchange) {
+        if (exchange != null) {
+            String charsetName = (String) exchange.getProperty(Exchange.CHARSET_NAME);
+            if (charsetName != null) {
+                try {
+                    return new String(data, charsetName);
+                } catch (UnsupportedEncodingException e) {
+                    LOG.warn("Can't convert the byte to String with the charset " + charsetName, e);
+                }
+            }
+        }
         return new String(data);
     }
+
 
     @Converter
     public static String toString(File file) throws IOException {
@@ -226,7 +240,7 @@ public final class IOConverter {
             return new ObjectInputStream(stream);
         }
     }
-    
+
     @Converter
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();

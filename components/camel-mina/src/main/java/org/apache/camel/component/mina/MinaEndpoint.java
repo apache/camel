@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import java.net.SocketAddress;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -47,6 +48,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     private final boolean lazySessionCreation;
     private final boolean transferExchange;
     private final boolean sync;
+    private String charsetName;
 
     public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address,
                         IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector,
@@ -66,6 +68,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         this.transferExchange = transferExchange;
         this.sync = sync;
     }
+
 
     @SuppressWarnings({"unchecked"})
     public Producer<MinaExchange> createProducer() throws Exception {
@@ -127,5 +130,13 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
     public boolean isSync() {
         return sync;
+    }
+
+    public void setCharsetName(String charset) {
+        this.charsetName = charset;
+    }
+
+    public String getCharsetName() {
+        return charsetName;
     }
 }

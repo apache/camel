@@ -33,6 +33,8 @@ import org.apache.camel.Exchange;
  *     <li>out body</li>
  *     <li>in headers</li>
  *     <li>out headers</li>
+ *     <li>fault body </li>
+ *     <li>fault headers</li>
  *     <li>exchange properties</li>
  *     <li>exception</li>
  * </ul>
@@ -44,9 +46,11 @@ public class MinaPayloadHolder implements Serializable {
 
     private Object inBody;
     private Object outBody;
+    private Object faultBody;
     private Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
     private Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
     private Map<String, Object> properties = new LinkedHashMap<String, Object>();
+    private Map<String, Object> faultHeaders = new LinkedHashMap<String, Object>();
     private Throwable exception;
 
     /**
@@ -66,7 +70,11 @@ public class MinaPayloadHolder implements Serializable {
         payload.outHeaders.putAll(exchange.getOut().getHeaders());
         payload.properties.putAll(exchange.getProperties());
         payload.exception = exchange.getException();
-
+        if (exchange.getFault(false) != null) {
+            payload.faultBody = exchange.getFault().getBody();
+            payload.faultHeaders.putAll(exchange.getFault().getHeaders());
+        }
+        System.out.println("marshal " + payload);
         return payload;
     }
 
@@ -81,6 +89,10 @@ public class MinaPayloadHolder implements Serializable {
         exchange.getOut().setBody(payload.outBody);
         exchange.getIn().setHeaders(payload.inHeaders);
         exchange.getOut().setHeaders(payload.outHeaders);
+        if (payload.faultBody != null) {
+            exchange.getFault().setBody(payload.faultBody);
+            exchange.getFault().setHeaders(payload.faultHeaders);
+        }
         for (String key : payload.properties.keySet()) {
             exchange.setProperty(key, payload.properties.get(key));
         }
@@ -89,8 +101,8 @@ public class MinaPayloadHolder implements Serializable {
 
     public String toString() {
         return "MinaPayloadHolder{" + "inBody=" + inBody + ", outBody=" + outBody + ", inHeaders="
-               + inHeaders + ", outHeaders=" + outHeaders + ", properties=" + properties + ", exception="
-               + exception + '}';
+               + inHeaders + ", outHeaders=" + outHeaders + ", faultBody=" + faultBody + " , faultHeaders="
+               + faultHeaders + ", properties=" + properties + ", exception=" + exception + '}';
     }
 
 }

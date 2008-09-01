@@ -34,9 +34,19 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MinaTransferExchangeOptionTest extends ContextTestSupport {
 
-    private static final String URI = "mina:tcp://localhost:6321?sync=true&transferExchange=true";
+    private static final String URI = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
 
-    public void testMinaTransferExchangeOption() throws Exception {
+    public void testMianTransferExchangeOptionWithoutException() throws Exception {
+        Exchange exchange = sendExchange(false);
+        assertExchange(exchange, false);
+    }
+
+    public void testMinaTransferExchangeOptionWithException() throws Exception {
+        Exchange exchange = sendExchange(true);
+        assertExchange(exchange, true);
+    }
+
+    private Exchange sendExchange(boolean setException) throws Exception {
         Endpoint endpoint = context.getEndpoint(URI);
         Exchange exchange = endpoint.createExchange();
 
@@ -44,16 +54,28 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
         message.setBody("Hello!");
         message.setHeader("cheese", "feta");
         exchange.setProperty("ham", "old");
+        exchange.setProperty("setException", setException);
 
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
 
-        Message out = exchange.getOut();
-        assertNotNull(out);
-        assertEquals("Goodbye!", out.getBody());
-        assertEquals("cheddar", out.getHeader("cheese"));
-        assertEquals("fresh", exchange.getProperty("salami"));
+        return exchange;
+    }
+
+    private void assertExchange(Exchange exchange, boolean hasFault) {
+        if (!hasFault) {
+            Message out = exchange.getOut();
+            assertNotNull(out);
+            assertEquals("Goodbye!", out.getBody());
+            assertEquals("cheddar", out.getHeader("cheese"));
+        } else {
+            Message fault = exchange.getFault();
+            assertNotNull(fault);
+            assertTrue("Should get the InterrupteException exception", fault.getBody() instanceof InterruptedException);
+            assertEquals("nihao", fault.getHeader("hello"));
+        }
+
 
         // in should stay the same
         Message in = exchange.getIn();
@@ -76,9 +98,15 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
                         Assert.assertEquals("feta", e.getIn().getHeader("cheese"));
                         Assert.assertEquals("old", e.getProperty("ham"));
                         Assert.assertEquals(ExchangePattern.InOut, e.getPattern());
+                        Boolean setException = (Boolean) e.getProperty("setException");
 
-                        e.getOut().setBody("Goodbye!");
-                        e.getOut().setHeader("cheese", "cheddar");
+                        if (setException) {
+                            e.getFault().setBody(new InterruptedException());
+                            e.getFault().setHeader("hello", "nihao");
+                        } else {
+                            e.getOut().setBody("Goodbye!");
+                            e.getOut().setHeader("cheese", "cheddar");
+                        }
                         e.setProperty("salami", "fresh");
                     }
                 });

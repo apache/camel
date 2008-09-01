@@ -134,7 +134,7 @@ public class MinaProducer extends DefaultProducer {
         if (session != null) {
             session.close();
         }
-        
+
         super.doStop();
     }
 
