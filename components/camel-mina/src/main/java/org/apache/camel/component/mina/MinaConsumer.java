@@ -109,14 +109,15 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 } else {
                     body = MinaPayloadHelper.getIn(endpoint, exchange);
                 }
-                boolean failed = exchange.isFailed();                
-                if (!endpoint.isTransferExchange() && failed) {
+                boolean failed = exchange.isFailed();
+                if (failed && !endpoint.isTransferExchange()) {
                     if (exchange.getException() != null) {
                         body = exchange.getException();
                     } else {
                         body = exchange.getFault().getBody();
                     }
                 }
+
                 if (body == null) {
                     // must close session if no data to write otherwise client will never receive a response
                     // and wait forever (if not timing out)

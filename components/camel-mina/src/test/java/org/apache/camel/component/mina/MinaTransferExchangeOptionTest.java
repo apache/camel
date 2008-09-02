@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
+import java.nio.charset.Charset;
+
 import junit.framework.Assert;
 
 import org.apache.camel.ContextTestSupport;
@@ -71,7 +73,7 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
             assertEquals("cheddar", out.getHeader("cheese"));
         } else {
             Message fault = exchange.getFault();
-            assertNotNull(fault);
+            assertNotNull(fault.getBody());
             assertTrue("Should get the InterrupteException exception", fault.getBody() instanceof InterruptedException);
             assertEquals("nihao", fault.getHeader("hello"));
         }
@@ -84,6 +86,7 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
         assertEquals("feta", in.getHeader("cheese"));
         // however the shared properties have changed
         assertEquals("fresh", exchange.getProperty("salami"));
+        assertNull(exchange.getProperty("Charset"));
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -108,6 +111,7 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
                             e.getOut().setHeader("cheese", "cheddar");
                         }
                         e.setProperty("salami", "fresh");
+                        e.setProperty("Charset", Charset.defaultCharset());
                     }
                 });
             }

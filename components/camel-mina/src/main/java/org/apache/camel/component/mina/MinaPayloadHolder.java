@@ -19,8 +19,11 @@ package org.apache.camel.component.mina;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Holder object for sending an exchange over the wire using the MINA ObjectSerializationCodecFactory codec.
@@ -43,6 +46,7 @@ import org.apache.camel.Exchange;
  */
 public class MinaPayloadHolder implements Serializable {
     private static final long serialVersionUID = 1L;
+    private static final transient Log LOG = LogFactory.getLog(MinaPayloadHolder.class);
 
     private Object inBody;
     private Object outBody;
@@ -55,6 +59,7 @@ public class MinaPayloadHolder implements Serializable {
 
     /**
      * Creates a payload object with the information from the given exchange.
+     * Only marshal the Serializable object
      *
      * @param exchange     the exchange
      * @return the holder object with information copied form the exchange
@@ -62,17 +67,17 @@ public class MinaPayloadHolder implements Serializable {
     public static MinaPayloadHolder marshal(Exchange exchange) {
         MinaPayloadHolder payload = new MinaPayloadHolder();
 
-        payload.inBody = exchange.getIn().getBody();
+        payload.inBody = checkSerializableObject(exchange.getIn().getBody());
         if (exchange.getOut(false) != null) {
-            payload.outBody = exchange.getOut().getBody();
+            payload.outBody = checkSerializableObject(exchange.getOut().getBody());
         }
-        payload.inHeaders.putAll(exchange.getIn().getHeaders());
-        payload.outHeaders.putAll(exchange.getOut().getHeaders());
-        payload.properties.putAll(exchange.getProperties());
+        payload.inHeaders.putAll(checkMapSerializableObjects(exchange.getIn().getHeaders()));
+        payload.outHeaders.putAll(checkMapSerializableObjects(exchange.getOut().getHeaders()));
+        payload.properties.putAll(checkMapSerializableObjects(exchange.getProperties()));
         payload.exception = exchange.getException();
         if (exchange.getFault(false) != null) {
             payload.faultBody = exchange.getFault().getBody();
-            payload.faultHeaders.putAll(exchange.getFault().getHeaders());
+            payload.faultHeaders.putAll(checkMapSerializableObjects(exchange.getFault().getHeaders()));
         }
 
         return payload;
@@ -104,5 +109,34 @@ public class MinaPayloadHolder implements Serializable {
                + inHeaders + ", outHeaders=" + outHeaders + ", faultBody=" + faultBody + " , faultHeaders="
                + faultHeaders + ", properties=" + properties + ", exception=" + exception + '}';
     }
+
+    private static Object checkSerializableObject(Object object) {
+        if (object instanceof Serializable) {
+            return object;
+        } else {
+            LOG.warn("Object " + object + " can't be serialized, it will be exculed by the MinaPayloadHold");
+            return null;
+        }
+    }
+
+    private static Map<String, Object> checkMapSerializableObjects(Map<String, Object> map) {
+        if (map == null) {
+            return null;
+        }
+        Set<String> keys = map.keySet();
+        Map<String, Object> result = new LinkedHashMap<String, Object>();
+        for (String key : keys) {
+            Object object = map.get(key);
+            if (object instanceof Serializable) {
+                result.put(key, object);
+            } else {
+                LOG.warn("Object " + object + " of key " + key
+                         + " can't be serialized, it will be exculed by the MinaPayloadHold");
+            }
+        }
+        return result;
+
+    }
+
 
 }
