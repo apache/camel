@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -43,13 +45,14 @@ public class MinaEncodingTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
 
         // include a UTF-8 char in the text \u0E08 is a Thai elephant
-        byte[] body = "Hello Thai Elephant \u0E08".getBytes();
+        byte[] body = "Hello Thai Elephant \u0E08".getBytes("UTF-8");
 
         endpoint.expectedMessageCount(1);
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisifed();
+        System.out.println(endpoint.getExchanges().get(0).getIn().getBody());
     }
 
     public void testTCPEncodeUTF8InputIsString() throws Exception {
@@ -132,8 +135,8 @@ public class MinaEncodingTest extends ContextTestSupport {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        // This fails, see CAMEL-381 and MinaConverter
-        //assertMockEndpointsSatisifed();
+
+        assertMockEndpointsSatisifed();
     }
 
     public void testUDPEncodeUTF8InputIsStringNoMock() throws Exception {
@@ -148,8 +151,7 @@ public class MinaEncodingTest extends ContextTestSupport {
             public void configure() {
                 from(uri).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        byte[] in = exchange.getIn().getBody(byte[].class);
-                        String s = new String(in, "UTF-8");
+                        String s = exchange.getIn().getBody(String.class);
                         assertEquals(hello, s);
                         exchange.getOut().setBody(bye);
                     }
@@ -166,8 +168,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        byte[] out = exchange.getOut().getBody(byte[].class);
-        String s = new String(out, "UTF-8");
+        String s = exchange.getOut().getBody(String.class);
         assertEquals(bye, s);
     }
 

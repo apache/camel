@@ -18,8 +18,12 @@
 package org.apache.camel.component.mina;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import junit.framework.TestCase;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.common.ByteBuffer;
 
 /**
@@ -38,12 +42,14 @@ public class MinaConverterTest extends TestCase {
         }
     }
 
-    public void testToString() {
-        String in = "Hello World";
-        ByteBuffer bb = ByteBuffer.wrap(in.getBytes());
+    public void testToString() throws UnsupportedEncodingException {
+        String in = "Hello World \u4f60\u597d";
+        ByteBuffer bb = ByteBuffer.wrap(in.getBytes("UTF-8"));
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext());
+        exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
 
-        String out = MinaConverter.toString(bb, null);
-        assertEquals("Hello World", out);
+        String out = MinaConverter.toString(bb, exchange);
+        assertEquals("Hello World \u4f60\u597d", out);
     }
 
     public void testToInputStream() throws Exception {
