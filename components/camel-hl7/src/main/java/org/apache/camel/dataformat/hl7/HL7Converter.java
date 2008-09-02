@@ -42,7 +42,7 @@ public final class HL7Converter {
 
     @Converter
     public static Message toMessage(String body) throws HL7Exception {
-        // replace \n with \r as HL7 uses 0x0d = \r as segment terminators
+        // replace \n with \r as HL7 uses 0x0d = \r as segment terminators and HAPI only parses with \r
         body = body.replace('\n', '\r');
 
         Parser parser = new PipeParser();
