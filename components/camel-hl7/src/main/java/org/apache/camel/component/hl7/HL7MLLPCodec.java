@@ -64,11 +64,12 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
     private static final String CHARSET_DECODER = HL7MLLPCodec.class.getName() + ".charsetdecoder";
 
     // HL7 MLLP start and end markers
-    private static final byte START_MARKER = 0x0b; // 11 decimal
-    private static final byte END_MARKER_1 = 0x1c; // 28 decimal
-    private static final byte END_MARKER_2 = 0x0d; // 13 decimal
+    private char startByte = 0x0b; // 11 decimal
+    private char endByte1 = 0x1c;  // 28 decimal
+    private char endByte2 = 0x0d;  // 13 decimal
 
     private Charset charset = Charset.defaultCharset();
+    private boolean convertLFtoCR = true;
 
     public ProtocolEncoder getEncoder() throws Exception {
         return new ProtocolEncoder() {
@@ -77,6 +78,9 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
 
                 if (message == null) {
                     throw new IllegalArgumentException("Message to encode is null");
+                } else if (message instanceof Exception) {
+                    // we cant handle exceptions
+                    throw (Exception) message;
                 }
 
                 CharsetEncoder encoder = (CharsetEncoder)session.getAttribute(CHARSET_ENCODER);
@@ -99,14 +103,16 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                 }
 
                 // replace \n with \r as HL7 uses 0x0d = \r as segment termninators
-                body = body.replace('\n', '\r');
+                if (convertLFtoCR) {
+                    body = body.replace('\n', '\r');
+                }
 
                 // put the data into the byte buffer
                 ByteBuffer bb = ByteBuffer.allocate(body.length() + 3).setAutoExpand(true);
-                bb.put(START_MARKER);
+                bb.put((byte) startByte);
                 bb.putString(body, encoder);
-                bb.put(END_MARKER_1);
-                bb.put(END_MARKER_2);
+                bb.put((byte) endByte1);
+                bb.put((byte) endByte2);
 
                 // flip the buffer so we can use it to write to the out stream
                 bb.flip();
@@ -131,17 +137,17 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
                 int posStart = 0;
                 while (in.hasRemaining()) {
                     byte b = in.get();
-                    if (b == START_MARKER) {
+                    if (b == startByte) {
                         posStart = in.position();
                     }
-                    if (b == END_MARKER_1) {
+                    if (b == endByte1) {
                         byte next = in.get();
-                        if (next == END_MARKER_2) {
+                        if (next == endByte2) {
                             posEnd = in.position() - 2; // use -2 to skip these last 2 end markers
                             break;
                         } else {
                             // we expected the 2nd end marker
-                            LOG.warn("The 2nd end marker " + END_MARKER_2 + " was not found, but was " + b);
+                            LOG.warn("The 2nd end byte " + endByte2 + " was not found, but was " + b);
                         }
                     }
                 }
@@ -197,4 +203,35 @@ public class HL7MLLPCodec implements ProtocolCodecFactory {
         this.charset = Charset.forName(charsetName);
     }
 
+    public boolean isConvertLFtoCR() {
+        return convertLFtoCR;
+    }
+
+    public void setConvertLFtoCR(boolean convertLFtoCR) {
+        this.convertLFtoCR = convertLFtoCR;
+    }
+
+    public char getStartByte() {
+        return startByte;
+    }
+
+    public void setStartByte(char startByte) {
+        this.startByte = startByte;
+    }
+
+    public char getEndByte1() {
+        return endByte1;
+    }
+
+    public void setEndByte1(char endByte1) {
+        this.endByte1 = endByte1;
+    }
+
+    public char getEndByte2() {
+        return endByte2;
+    }
+
+    public void setEndByte2(char endByte2) {
+        this.endByte2 = endByte2;
+    }
 }
