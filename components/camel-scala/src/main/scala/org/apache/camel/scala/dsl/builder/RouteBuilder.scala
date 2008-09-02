@@ -20,6 +20,7 @@ import org.apache.camel.model.ProcessorType
 import org.apache.camel.model.ChoiceType
 
 import collection.mutable.Stack
+import _root_.scala.reflect.Manifest
 
 import org.apache.camel.scala.dsl._
 
@@ -49,8 +50,10 @@ class RouteBuilder extends Preamble with DSL {
   }
 
   def from(uri: String) = new SRouteType(builder.from(uri), this)
-  def handle[Target](exception: Class[Target]) = new SExceptionType(builder.exception(exception))(this)
-  
+  def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = {
+     val exception = new SExceptionType(builder.exception(manifest.erasure))(this)
+     exception.apply(block)
+  }  
 
   def attempt = stack.top.attempt
   def bean(bean: Any) = stack.top.bean(bean)

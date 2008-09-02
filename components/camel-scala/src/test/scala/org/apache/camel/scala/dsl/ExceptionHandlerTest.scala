@@ -54,11 +54,11 @@ class ExceptionHandlerTest extends ScalaTestSupport {
        }
        
        //START SNIPPET: simple
-       handle(classOf[UnsupportedOperationException]) to "mock:c"
+       handle[UnsupportedOperationException] { to ("mock:c") }
        //END SNIPPET: simple
        
        //START SNIPPET: block
-       handle(classOf[RuntimeException]) {
+       handle[RuntimeException] {
            process(catchProcessor)
            to ("mock:b")
        }
