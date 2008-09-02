@@ -67,6 +67,11 @@ public class MinaProducer extends DefaultProducer {
             openConnection();
         }
 
+        // set the exchange encoding property
+        if (endpoint.getCharsetName() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getCharsetName());
+        }
+
         Object body = MinaPayloadHelper.getIn(endpoint, exchange);
         if (body == null) {
             LOG.warn("No payload to send for exchange: " + exchange);
