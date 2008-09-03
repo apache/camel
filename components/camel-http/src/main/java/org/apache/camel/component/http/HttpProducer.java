@@ -48,10 +48,8 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
     // This should be a set of lower-case strings
     @Deprecated
-    public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList("content-length",
-                                                                                        "content-type",
-                                                                                        HTTP_RESPONSE_CODE
-                                                                                            .toLowerCase()));
+    public static final Set<String> HEADERS_TO_SKIP =
+            new HashSet<String>(Arrays.asList("content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -62,7 +60,6 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     public void process(Exchange exchange) throws Exception {
         HttpMethod method = createMethod(exchange);
         Message in = exchange.getIn();
-        HttpBinding binding = ((HttpEndpoint)getEndpoint()).getBinding();
         HeaderFilterStrategy strategy = ((HttpEndpoint)getEndpoint()).getHeaderFilterStrategy();
 
         // propagate headers as HTTP headers
@@ -153,21 +150,4 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         return entity;
     }
 
-    /*
-    protected boolean shouldHeaderBePropagated(String headerName, String headerValue) {
-        if (headerValue == null) {
-            return false;
-        }
-        if (HTTP_METHOD.equals(headerName)) {
-            return false;
-        }
-        if (headerName.startsWith("org.apache.camel")) {
-            return false;
-        }
-        if (HEADERS_TO_SKIP.contains(headerName.toLowerCase())) {
-            return false;
-        }
-        return true;
-    }
-    */
 }

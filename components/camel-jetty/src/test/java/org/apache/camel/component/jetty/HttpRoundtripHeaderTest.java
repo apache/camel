@@ -40,7 +40,6 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
 
     // http://issues.apache.org/activemq/browse/CAMEL-324
     public void testHttpRoundTripHeaders() throws Exception {
-
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
@@ -52,12 +51,10 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         String lastLine = readLastLine(answer);
 
         assertNotNull("last response line", lastLine);
-        assertEquals("response matches: " + expectedText, expectedText,
-                lastLine);
+        assertEquals("response matches: " + expectedText, expectedText, lastLine);
     }
 
     public void testHttpRoundTripHeadersWithNoIngoredHeaders() throws Exception {
-
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
@@ -73,8 +70,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         String lastLine = readLastLine(answer);
 
         assertNotNull("last response line", lastLine);
-        // Content-Length from request will truncate the output to just the
-        // inputText
+        // Content-Length from request will truncate the output to just the inputText
         assertEquals("response matches: " + inputText, inputText, lastLine);
     }
 
@@ -112,8 +108,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
 
     private String readLastLine(InputStream answer) throws IOException {
         String lastLine = null;
-        BufferedReader reader = new BufferedReader(
-                new InputStreamReader(answer));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(answer));
         while (true) {
             String line = reader.readLine();
             if (line == null) {
