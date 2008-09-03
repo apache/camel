@@ -35,7 +35,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
+import org.apache.camel.management.InstrumentationProcessor;
+import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.InterceptType;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
@@ -93,6 +97,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<EndpointFactoryBean> endpoints;
     @XmlElementRef
     private List<DataFormatType> dataFormats;
+    @XmlElement(name = "intercept", required = false)
+    private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlElement(name = "route", required = false)
     private List<RouteType> routes = new ArrayList<RouteType>();
     @XmlTransient
@@ -159,6 +165,35 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
         }
 
+        // setup the intercepts
+        for (RouteType route : routes) {
+
+            for (InterceptType intercept : intercepts) {
+                List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+                List<ProcessorType<?>> exceptionHandlers = new ArrayList<ProcessorType<?>>();
+                for (ProcessorType output : route.getOutputs()) {
+                    if (output instanceof ExceptionType) {
+                        exceptionHandlers.add(output);
+                    } else {
+                        outputs.add(output);
+                    }
+                }
+
+                // clearing the outputs
+                route.clearOutput();
+
+                // add exception handlers as top children
+                route.getOutputs().addAll(exceptionHandlers);
+
+                // add the interceptor
+                InterceptType proxy = intercept.createProxy();
+                route.addOutput(proxy);
+                route.pushBlock(proxy.getProceed());
+
+                route.getOutputs().addAll(outputs);
+            }
+
+        }
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -254,6 +289,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setRoutes(List<RouteType> routes) {
         this.routes = routes;
+    }
+
+    public List<InterceptType> getIntercepts() {
+        return intercepts;
+    }
+
+    public void setIntercepts(List<InterceptType> intercepts) {
+        this.intercepts = intercepts;
     }
 
     public RouteBuilder getRouteBuilder() {

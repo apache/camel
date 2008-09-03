@@ -901,11 +901,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         addInterceptor(new InterceptorRef(interceptor));
     }
 
-    protected void pushBlock(Block block) {
+    public void pushBlock(Block block) {
         blocks.add(block);
     }
 
-    protected Block popBlock() {
+    public Block popBlock() {
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
@@ -1636,6 +1636,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {
             Processor processor = output.createProcessor(routeContext);
+            // if the ProceedType create processor is null we keep on going
+            if (output instanceof ProceedType && processor == null) {
+                continue;
+            }
             processor = output.wrapProcessorInInterceptors(routeContext, processor);
 
             ProcessorType currentProcessor = this;
