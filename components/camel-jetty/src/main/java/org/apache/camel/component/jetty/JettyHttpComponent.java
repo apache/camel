@@ -76,8 +76,7 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
-        JettyHttpEndpoint result =
-            new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
         setProperties(result, parameters);
         return result;
     }
@@ -143,15 +142,13 @@ public class JettyHttpComponent extends HttpComponent {
     /**
      * Disconnects the URL specified on the endpoint from the specified
      * processor.
-     *
-     * @throws Exception
      */
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
         camelServlet.disconnect(consumer);
 
-        // If the connector is not needed anymore.. then stop it.
-        HttpEndpoint endpoint = (HttpEndpoint)consumer.getEndpoint();
+        // If the connector is not needed anymore then stop it
+        HttpEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
 
         synchronized (connectors) {

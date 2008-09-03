@@ -60,11 +60,24 @@ public class HttpMessage extends DefaultMessage {
 
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
+        // populate the http request headers
         Enumeration names = request.getHeaderNames();
         while (names.hasMoreElements()) {
             String name = (String)names.nextElement();
             Object value = request.getHeader(name);
             map.put(name, value);
         }
+
+        // also populate the http request parameters
+        names = request.getParameterNames();
+        while (names.hasMoreElements()) {
+            String name = (String)names.nextElement();
+            Object value = request.getParameter(name);
+            map.put(name, value);
+        }
+
+        // store the method and query as well
+        map.put(HttpMethods.HTTP_METHOD, request.getMethod());
+        map.put(HttpProducer.QUERY, request.getQueryString());
     }
 }

@@ -68,4 +68,5 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public boolean isSessionSupport() {
         return sessionSupport;
     }
+
 }

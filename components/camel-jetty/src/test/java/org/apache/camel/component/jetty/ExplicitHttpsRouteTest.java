@@ -29,7 +29,6 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                
                 SslSocketConnector sslSocketConnector = new SslSocketConnector();
                 sslSocketConnector.setKeyPassword(pwd);
                 sslSocketConnector.setPassword(pwd);

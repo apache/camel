@@ -35,28 +35,15 @@ import org.mortbay.util.ajax.ContinuationSupport;
  */
 public class CamelContinuationServlet extends CamelServlet {
 
-    // private static final String EXCHANGE_ATTRIBUTE =
-    // CamelContinuationServlet.class.getName()+".EXCHANGE_ATTRIBUTE";
-
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-
             // Is there a consumer registered for the request.
             HttpConsumer consumer = resolve(request);
             if (consumer == null) {
                 response.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
-
-            // HttpExchange exchange =
-            // (HttpExchange)request.getAttribute(EXCHANGE_ATTRIBUTE);
-            // if( exchange == null ) {
-            // exchange = new HttpExchange(consumer.getEndpoint(), request,
-            // response);
-            // }
-            // Continuation continuation =
-            // ContinuationSupport.getContinuation(request, exchange);
 
             final Continuation continuation = ContinuationSupport.getContinuation(request, null);
             if (continuation.isNew()) {
@@ -74,18 +61,15 @@ public class CamelContinuationServlet extends CamelServlet {
                 });
 
                 if (!sync) {
-
                     // Wait for the exchange to get processed.
                     // This might block until it completes or it might return via an exception and
                     // then this method is re-invoked once the the exchange has finished processing
                     continuation.suspend(0);
-
                 }
 
                 // HC: The getBinding() is interesting because it illustrates the
-                // impedance miss-match between
-                // HTTP's stream oriented protocol, and Camels more message oriented
-                // protocol exchanges.
+                // impedance miss-match between HTTP's stream oriented protocol, and
+                // Camels more message oriented protocol exchanges.
 
                 // now lets output to the response
                 consumer.getBinding().writeResponse(exchange, response);
@@ -99,11 +83,9 @@ public class CamelContinuationServlet extends CamelServlet {
                 return;
             }
 
-
         } catch (Exception e) {
             throw new ServletException(e);
         }
     }
-
 
 }

@@ -19,9 +19,6 @@ package org.apache.camel.component.jetty;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.converter.IOConverter;
@@ -61,19 +58,11 @@ public class HttpToFileTest extends ContextTestSupport {
                 from("jetty:http://localhost:8080/myworld").to("seda:in").setBody(constant("We got the file"));
 
                 // store the content from the queue as a file
-                from("seda:in").process(new MyJettyProcessor())
+                from("seda:in")
                     .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
                     .to("file://target/myworld?append=false");
             }
         };
-    }
-
-    private class MyJettyProcessor implements Processor {
-        public void process(Exchange exchange) throws Exception {
-            // must convert to in only as file producer will try to load the file if the exchange pattern
-            // is out capable.
-            exchange.setPattern(ExchangePattern.InOnly);
-        }
     }
 
 }
