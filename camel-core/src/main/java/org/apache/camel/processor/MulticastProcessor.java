@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -63,8 +61,6 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         public Exchange getExchange() {
             return exchange;
         }
-
-
     }
 
     private Collection<Processor> processors;
@@ -89,12 +85,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         if (isParallelProcessing) {
             if (executor != null) {
                 this.executor = executor;
-            } else { // setup default Executor
+            } else { 
+                // setup default Executor
                 this.executor = new ThreadPoolExecutor(processors.size(), processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
             }
-
         }
-
     }
 
     /**
@@ -202,8 +197,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         // No updates needed
     }
 
-    protected List<ProcessorExchangePair> createProcessorExchangePairs(
-        Exchange exchange) {
+    protected List<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
         Processor[] processorsArray = processors.toArray(new Processor[processors.size()]);
         for (int i = 0; i < processorsArray.length; i++) {
