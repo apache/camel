@@ -31,6 +31,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
+
 /**
  * Implements a dynamic <a
  * href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
@@ -65,8 +66,7 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     @Override
-    protected List<ProcessorExchangePair> createProcessorExchangePairs(
-        Exchange exchange) {
+    protected List<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         Object value = expression.evaluate(exchange);
         Integer collectionSize = CollectionHelper.size(value);
         List<ProcessorExchangePair> result;
