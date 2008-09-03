@@ -50,11 +50,13 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: e1
                 from("jetty:" + serverUri)
                     .choice()
                     .when().simple("in.header.one").to("mock:one")
                 .otherwise()
                     .to("mock:other");
+                // END SNIPPET: e1
             }
         };
     }
