@@ -140,7 +140,7 @@ public final class IOConverter {
     @Converter
     public static String toString(byte[] data, Exchange exchange) {
         if (exchange != null) {
-            String charsetName = (String) exchange.getProperty(Exchange.CHARSET_NAME);
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charsetName != null) {
                 try {
                     return new String(data, charsetName);

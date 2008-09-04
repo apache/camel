@@ -91,7 +91,7 @@ public final class NIOConverter {
         ByteBuffer buf = ByteBuffer.allocate(value.length());
         byte[] bytes = null;
         if (exchange != null) {
-            String charsetName = (String)exchange.getProperty(Exchange.CHARSET_NAME);
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
             if (charsetName != null) {
                 try {
                     bytes = value.getBytes(charsetName);
