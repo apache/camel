@@ -16,16 +16,20 @@
  */
 package org.apache.camel.builder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.StringTokenizer;
+import java.util.Scanner;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
@@ -402,15 +406,17 @@ public final class ExpressionBuilder {
                                                                         final String token) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                String text = evaluateStringExpression(expression, exchange);
-                if (text == null) {
-                    return null;
-                }
-                StringTokenizer iter = new StringTokenizer(text, token);
                 List<String> answer = new ArrayList<String>();
-                while (iter.hasMoreTokens()) {
-                    answer.add(iter.nextToken());
+
+                Object value = expression.evaluate(exchange);
+                Scanner scanner = getScanner(expression, exchange, value);
+                if (scanner != null) {
+                    scanner.useDelimiter(token);
+                    while (scanner.hasNext()) {
+                        answer.add(scanner.next());
+                    }
                 }
+
                 return answer;
             }
 
@@ -426,15 +432,22 @@ public final class ExpressionBuilder {
      * given regex
      */
     public static <E extends Exchange> Expression<E> regexTokenize(final Expression<E> expression,
-                                                                   String regexTokenizer) {
+                                                                   final String regexTokenizer) {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                String text = evaluateStringExpression(expression, exchange);
-                if (text == null) {
-                    return null;
+                List<String> answer = new ArrayList<String>();
+
+                Object value = expression.evaluate(exchange);
+                Scanner scanner = getScanner(expression, exchange, value);
+                if (scanner != null) {
+                    scanner.useDelimiter(regexTokenizer);
+                    while (scanner.hasNext()) {
+                        answer.add(scanner.next());
+                    }
                 }
-                return Arrays.asList(pattern.split(text));
+
+                return answer;
             }
 
             @Override
@@ -444,12 +457,44 @@ public final class ExpressionBuilder {
         };
     }
 
+    private static Scanner getScanner(Expression expression, Exchange exchange, Object value) {
+        String charset = (String)exchange.getProperty(Exchange.CHARSET_NAME);
+
+        Scanner scanner = null;
+        if (value instanceof Readable) {
+            scanner = new Scanner((Readable)value);
+        } else if (value instanceof InputStream) {
+            scanner = charset == null ? new Scanner((InputStream)value)
+                : new Scanner((InputStream)value, charset);
+        } else if (value instanceof File) {
+            try {
+                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeCamelException(e);
+            }
+        } else if (value instanceof String) {
+            scanner = new Scanner((String)value);
+        } else if (value instanceof ReadableByteChannel) {
+            scanner = charset == null ? new Scanner((ReadableByteChannel)value)
+                : new Scanner((ReadableByteChannel)value, charset);
+        }
+
+        if (scanner == null) {
+            // value is not a suitable type, try to convert value to a string
+            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+            if (text != null) {
+                scanner = new Scanner(text);
+            }
+        }
+        return scanner;
+    }
+
     /**
      * Transforms the expression into a String then performs the regex
      * replaceAll to transform the String and return the result
      */
     public static <E extends Exchange> Expression<E> regexReplaceAll(final Expression<E> expression,
-                                                                     String regex, final String replacement) {
+                                                                     final String regex, final String replacement) {
         final Pattern pattern = Pattern.compile(regex);
         return new Expression<E>() {
             public Object evaluate(E exchange) {

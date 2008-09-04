@@ -190,6 +190,7 @@ public abstract class TestSupport extends TestCase {
 
         log.debug("Received response: " + exchange + " with out: " + exchange.getOut());
     }
+
     protected Object assertMessageHeader(Message message, String name, Object expected) {
         Object value = message.getHeader(name);
         assertEquals("Header: " + name + " on Message: " + message, expected, value);
