@@ -54,7 +54,7 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
                 from("jetty:" + serverUri)
                     .choice()
                     .when().simple("in.header.one").to("mock:one")
-                .otherwise()
+                    .otherwise()
                     .to("mock:other");
                 // END SNIPPET: e1
             }
