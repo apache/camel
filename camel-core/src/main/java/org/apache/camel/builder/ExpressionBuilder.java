@@ -458,7 +458,7 @@ public final class ExpressionBuilder {
     }
 
     private static Scanner getScanner(Expression expression, Exchange exchange, Object value) {
-        String charset = (String)exchange.getProperty(Exchange.CHARSET_NAME);
+        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
 
         Scanner scanner = null;
         if (value instanceof Readable) {

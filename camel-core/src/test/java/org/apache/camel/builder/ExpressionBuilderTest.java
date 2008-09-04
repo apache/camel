@@ -24,6 +24,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
@@ -31,8 +34,6 @@ import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
 import static org.apache.camel.builder.ExpressionBuilder.regexTokenize;
 import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
 import static org.apache.camel.builder.PredicateBuilder.contains;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision$
