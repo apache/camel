@@ -27,10 +27,6 @@
     <intercept>
       <to uri="mock:middle1"/>
     </intercept>
-    <intercept>
-      <to uri="mock:middle2"/>
-      <stop/>
-    </intercept>
     <route>
       <from uri="direct:start"/>
       <to uri="mock:end"/>
