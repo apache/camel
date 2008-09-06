@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -32,6 +33,7 @@ import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.spi.RouteContext;
 
+
 /**
  * Represents an XML &lt;intercept/&gt; element
  *
@@ -40,11 +42,11 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "intercept")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InterceptType extends OutputType<ProcessorType> {
-
+  
     @XmlTransient
     private ProceedType proceed = new ProceedType();
     @XmlTransient
-    private Boolean stop = Boolean.FALSE;
+    private Boolean stopIntercept = Boolean.FALSE;
     @XmlTransient
     private Boolean usePredicate = Boolean.FALSE;
 
@@ -84,12 +86,19 @@ public class InterceptType extends OutputType<ProcessorType> {
     }
 
     public void stopIntercept() {
-        stop = Boolean.TRUE;
+        setStopIntercept(Boolean.TRUE);
     }
 
+    @XmlElement(name = "stop", required = false)
+    public void setStop(String elementValue /* not used */) {
+        stopIntercept();
+    }    
+    
     public InterceptType createProxy() {
         InterceptType answer = new InterceptType();
         answer.getOutputs().addAll(this.getOutputs());
+        
+        answer.setStopIntercept(getStopIntercept());
 
         // hack: now we need to replace the proceed of the proxy with its own
         // a bit ugly, operating based on the assumption that the proceed is
@@ -105,19 +114,19 @@ public class InterceptType extends OutputType<ProcessorType> {
 
                     // for the predicated version we add the proceed() to otherwise()
                     // before knowing if stop() will follow, so let's make a small adjustment
-                    if (usePredicate.booleanValue() && stop.booleanValue()) {
+                    if (usePredicate.booleanValue() && getStopIntercept().booleanValue()) {
                         WhenType when = choice.getWhenClauses().get(0);
                         when.getOutputs().remove(this.getProceed());
                     }
 
                     // add proceed to the when clause
                     addProceedProxy(this.getProceed(), answer.getProceed(),
-                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !stop.booleanValue());
+                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !getStopIntercept().booleanValue());
 
                     // force adding a proceed at the end (otherwise) if its not a stop type
-                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !stop.booleanValue());
+                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !getStopIntercept().booleanValue());
 
-                    if (stop.booleanValue()) {
+                    if (getStopIntercept().booleanValue()) {
                         // must add proceed to when clause if stop is explictiy declared, otherwise when the
                         // predicate test fails then there is no proceed
                         // See example: InterceptorSimpleRouteTest (City Paris is never proceeded)  
@@ -130,7 +139,7 @@ public class InterceptType extends OutputType<ProcessorType> {
             }
             if (choice == null) {
                 // force adding a proceed at the end if its not a stop type
-                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !stop.booleanValue());
+                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !getStopIntercept().booleanValue());
             }
         }
 
@@ -148,6 +157,14 @@ public class InterceptType extends OutputType<ProcessorType> {
         } else if (force) {
             processor.addOutput(proxy);
         }
+    }
+
+    public void setStopIntercept(Boolean stop) {
+        this.stopIntercept = stop;
+    }
+
+    public Boolean getStopIntercept() {
+        return stopIntercept;
     }
 
 }
