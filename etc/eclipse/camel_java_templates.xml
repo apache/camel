@@ -19,8 +19,8 @@
 -->
 <templates><template autoinsert="true" context="java" deleted="false" description="Creates an Aggregator" enabled="true" name="camel_aggregator">from(${from_uri:var(String)}).aggregator(header("cheese")).to(${to_uri:var(String)});
 </template><template autoinsert="true" context="java" deleted="false" description="Creates a Content Based Router" enabled="true" name="camel_cbr">from(${from_uri:var(String)}).choice()
-.when(header("foo").isEqualTo("bar")).to(${when_uri:var(String)})
-.when(header("foo").isEqualTo("cheese")).to(${when2_uri:var(String)})
+.when().xpath("$$foo = 'bar'").to(${when_uri:var(String)})
+.when().xpath("$$foo = 'cheese'").to(${when2_uri:var(String)})
 .otherwise().to(${otherwise_uri:var(String)});
 </template><template autoinsert="true" context="java" deleted="false" description="Creates a Delayer" enabled="true" name="camel_delayer">from(${from_uri:var(String)}).delayer(${milliseconds:var(Integer)}).to(${to_uri:var(String)});</template><template autoinsert="true" context="java" deleted="false" description="Creates a Message Filter allows you to filter messages. " enabled="true" name="camel_filter">from(${from_uri:var(String)}).
   filter().xpath("/person[@name='${user}']").
