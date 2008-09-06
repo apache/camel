@@ -57,16 +57,8 @@
         <configuration>
           <links>
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
-            <link>http://java.sun.com/j2ee/1.4/docs/api/</link>
-            <link>http://commons.apache.org/collections/api-release/</link>
-            <link>http://jakarta.apache.org/commons/dbcp/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/fileupload/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/httpclient/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/logging/apidocs/</link>
-            <link>http://jakarta.apache.org/commons/pool/apidocs/</link>
-            <link>http://junit.sourceforge.net/javadoc/</link>
-            <link>http://logging.apache.org/log4j/docs/api/</link>
-            <link>http://mina.apache.org/report/trunk/apidocs/</link>
+            <link>http://java.sun.com/javaee/5/docs/api/</link>
+            <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
           </links>
           <stylesheetfile>${basedir}/../../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
