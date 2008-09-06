@@ -39,6 +39,7 @@ import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptType;
+import org.apache.camel.model.ProceedType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
@@ -190,7 +191,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 route.addOutput(proxy);
                 route.pushBlock(proxy.getProceed());
 
-                route.getOutputs().addAll(outputs);
+                int outputsSize = proxy.getOutputs().size();
+                if (outputsSize > 0) {
+                    ProcessorType<?> processorType = proxy.getOutputs().get(outputsSize - 1);
+                    if (processorType instanceof ProceedType) {
+                        route.getOutputs().addAll(outputs);                        
+                    }
+                }                
             }
 
         }
