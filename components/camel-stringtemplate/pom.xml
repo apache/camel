@@ -34,7 +34,7 @@
   <description>Camel StringTemplate support</description>
 
   <properties>
-	<camel.osgi.export.pkg>org.apache.camel.component.springtemplate.*</camel.osgi.export.pkg>
+	<camel.osgi.export.pkg>org.apache.camel.component.stringtemplate.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -48,9 +48,9 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>antlr</groupId>
+      <groupId>org.antlr</groupId>
       <artifactId>stringtemplate</artifactId>
-      <version>2.3b6</version>
+      <version>3.0</version>
     </dependency>
 
     <!-- testing -->
