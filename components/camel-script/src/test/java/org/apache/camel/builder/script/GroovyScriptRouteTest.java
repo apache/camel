@@ -17,7 +17,6 @@
 package org.apache.camel.builder.script;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
 import static org.apache.camel.builder.script.ScriptBuilder.groovy;
 

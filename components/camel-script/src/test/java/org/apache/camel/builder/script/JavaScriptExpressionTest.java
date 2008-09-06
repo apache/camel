@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Tests a routing expression using JavaScript
@@ -30,13 +32,16 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         // Currently, this test fails because the JavaScript expression in createRouteBuilder
         // below returns false
         // To fix that, we need to figure out how to get the expression to return the right value
-        getMockEndpoint("mock:result").expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("foo", "bar");
         sendBody("direct:start", "hello", headers);
 
+        assertEquals("Should get the message header here", mock.getExchanges().get(0).getIn().getHeader("foo"), "bar");
         assertMockEndpointsSatisifed();
     }
 
@@ -55,7 +60,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        when().javaScript("request.headers.get('foo') == 'bar'").to("mock:result")
+                        when().javaScript("request.headers.get('foo') == 'bar'").to("log:info?showAll=true").to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };

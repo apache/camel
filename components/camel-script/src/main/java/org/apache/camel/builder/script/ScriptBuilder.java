@@ -523,7 +523,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         context.setAttribute("context", exchange.getContext(), scope);
         context.setAttribute("exchange", exchange, scope);
         context.setAttribute("request", exchange.getIn(), scope);
-        context.setAttribute("response", exchange.getOut(), scope);
+        context.setAttribute("response", exchange.getOut(false), scope);
     }
 
     protected InputStreamReader createScriptReader() throws IOException {
