@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+         http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+
+    <bean id="incidentservice" class="org.apache.camel.example.axis.ReportIncidentService"/>
+
+    <camel:camelContext id="camelContext">
+        <!-- endpoint named backup that is configued as a file component -->
+        <camel:endpoint id="backup" uri="file://target?append=false"/>
+
+    </camel:camelContext>
+
+</beans>
+        
