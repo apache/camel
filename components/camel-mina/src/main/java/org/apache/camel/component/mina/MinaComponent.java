@@ -65,15 +65,14 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
 
     private static final long DEFAULT_CONNECT_TIMEOUT = 30000;
-    boolean sync = true;
-    boolean textline;
-    String codec;
-    String encoding;
-    long timeout;
-    boolean lazySessionCreation;
-    boolean transferExchange;
-    boolean minaLogger;
-
+    private boolean sync = true;
+    private boolean textline;
+    private String codec;
+    private String encoding;
+    private long timeout;
+    private boolean lazySessionCreation;
+    private boolean transferExchange;
+    private boolean minaLogger;
     // encoder used for datagram
     private CharsetEncoder encoder;
 
@@ -302,6 +301,9 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         ProtocolCodecFactory codecFactory = null;
         if (codec != null) {
             codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
+            if (codecFactory == null) {
+                throw new IllegalArgumentException("Codec " + codec + " not found in registry.");
+            }
             if (LOG.isDebugEnabled()) {
                 LOG.debug(type + ": Using custom CodecFactory: " + codecFactory);
             }

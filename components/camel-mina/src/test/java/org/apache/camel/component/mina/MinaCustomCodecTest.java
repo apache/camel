@@ -17,6 +17,7 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -43,6 +44,15 @@ public class MinaCustomCodecTest extends ContextTestSupport {
         template.sendBody(uri, "Hello World");
 
         mock.assertIsSatisfied();
+    }
+
+    public void testBadConfiguration() throws Exception {
+        try {
+            template.sendBody("mina:tcp://localhost:11300?sync=true&codec=XXX", "Hello World");
+            fail("Should have thrown a ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            // ok
+        }
     }
 
     protected JndiRegistry createRegistry() throws Exception {
