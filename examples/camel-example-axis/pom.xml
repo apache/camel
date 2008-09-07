@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>examples</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>camel-example-axis</artifactId>
+    <name>Camel :: Example :: Axis</name>
+    <description>An example how to use Apache Axis 1.4 with Camel as a web application</description>
+    <packaging>war</packaging>
+	
+    <properties>
+        <jetty-version>6.1.1</jetty-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-jaxrpc</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.axis</groupId>
+            <artifactId>axis-saaj</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+		<dependency>
+		    <groupId>axis</groupId>
+		    <artifactId>axis-wsdl4j</artifactId>
+		    <version>1.5.1</version>
+		</dependency>
+
+		<dependency>
+		    <groupId>commons-discovery</groupId>
+		    <artifactId>commons-discovery</artifactId>
+		    <version>0.4</version>
+		</dependency> 
+
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.14</version>
+        </dependency>
+
+        <!-- for unit testing -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>jetty</artifactId>
+            <version>${jetty-version}</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                </configuration>
+            </plugin>
+
+		  <plugin>
+                <groupId>org.mortbay.jetty</groupId>
+                <artifactId>maven-jetty-plugin</artifactId>
+                <version>${jetty-version}</version>
+            </plugin>
+
+            <plugin>
+               <groupId>org.codehaus.mojo</groupId>
+               <artifactId>axistools-maven-plugin</artifactId>
+               <configuration>
+			   <sourceDirectory>src/main/webapp/WEB-INF/wsdl</sourceDirectory>
+                  <packageSpace>org.apache.camel.example.reportincident</packageSpace>
+                  <testCases>false</testCases>
+                  <serverSide>true</serverSide>
+                  <subPackageByFileName>false</subPackageByFileName>
+               </configuration>
+               <executions>
+                 <execution>
+                   <goals>
+                     <goal>wsdl2java</goal>
+                   </goals>
+                 </execution>
+               </executions>
+            </plugin>
+
+	      <plugin>
+	        <groupId>org.apache.camel</groupId>
+	        <artifactId>camel-maven-plugin</artifactId>
+			<configuration>
+				<fileApplicationContextUri>src/main/resources/*.xml</fileApplicationContextUri>
+			</configuration>
+	      </plugin>
+
+	  </plugins>
+
+	</build>
+
+</project>
