@@ -52,7 +52,6 @@ public class MinaEncodingTest extends ContextTestSupport {
 
         template.sendBody(uri, body);
         assertMockEndpointsSatisifed();
-        System.out.println(endpoint.getExchanges().get(0).getIn().getBody());
     }
 
     public void testTCPEncodeUTF8InputIsString() throws Exception {
