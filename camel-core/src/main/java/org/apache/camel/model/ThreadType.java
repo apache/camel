@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ThreadProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -98,7 +99,6 @@ public class ThreadType extends ProcessorType<ProcessorType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-
         ThreadProcessor thread = new ThreadProcessor();
         thread.setExecutor(executor);
         if (coreSize != null) {
@@ -122,18 +122,29 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         thread.setThreadGroup(threadGroup);
 
         // TODO: see if we can avoid creating so many nested pipelines
-
         ArrayList<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);
         pipe.add(createOutputsProcessor(routeContext, outputs));
         return new Pipeline(pipe);
     }
 
-    ///////////////////////////////////////////////////////////////////
-    //
-    // Fluent Methods
-    //
-    ///////////////////////////////////////////////////////////////////
+    @Override
+    protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
+        if (isInheritErrorHandler()) {
+            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
+    }
+
+    // Fluent methods
+    // -----------------------------------------------------------------------
+    @Override
+    public ProcessorType errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+        // do not support setting error handling on thread type as its confusing and will not be used
+        throw new IllegalArgumentException("Setting errorHandler on ThreadType is not supported."
+            + " Instead set the errorHandler on the parent.");
+    }
+
     public ThreadType coreSize(int coreSize) {
         setCoreSize(coreSize);
         return this;
