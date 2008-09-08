@@ -44,7 +44,8 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         return exceptions;
     }
 
-    public void setExceptions(List<ExceptionType> exceptions) {
-        this.exceptions = exceptions;
+    public void setErrorHandlers(List<ExceptionType> exceptions) {
+        this.exceptions.clear();
+        this.exceptions.addAll(exceptions);
     }
 }
