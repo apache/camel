@@ -17,6 +17,9 @@
 package org.apache.camel.component.jms;
 
 import java.io.Serializable;
+import java.io.File;
+import java.io.Reader;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
@@ -24,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.nio.ByteBuffer;
 
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
@@ -319,12 +323,18 @@ public class JmsBinding {
                 populateMapMessage(result, map, context);
                 return result;
             } catch (JMSException e) {
-                // if MapMessage creation failed then fall back to Object
-                // Message
+                // if MapMessage creation failed then fall back to Object Message
+                LOG.warn("Can not populate MapMessage will fall back to ObjectMessage, cause by: " + e.getMessage());
             }
         }
         if (body instanceof String) {
             return session.createTextMessage((String)body);
+        }
+        if (body instanceof File || body instanceof Reader || body instanceof InputStream || body instanceof ByteBuffer) {
+            BytesMessage result = session.createBytesMessage();
+            byte[] bytes = context.getTypeConverter().convertTo(byte[].class, body);
+            result.writeBytes(bytes);
+            return result;
         }
         if (body instanceof Serializable) {
             return session.createObjectMessage((Serializable)body);
