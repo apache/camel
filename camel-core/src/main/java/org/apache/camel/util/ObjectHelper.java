@@ -239,6 +239,8 @@ public final class ObjectHelper {
     public static Iterator createIterator(Object value) {
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
+        } else if (value instanceof Iterator) {
+            return (Iterator) value;
         } else if (value instanceof Collection) {
             Collection collection = (Collection)value;
             return collection.iterator();
