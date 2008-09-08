@@ -42,7 +42,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.Properties;
 
 import javax.xml.transform.OutputKeys;
@@ -117,7 +116,6 @@ public final class IOConverter {
 
     @Converter
     public static StringReader toReader(String text) {
-        // TODO could we automatically find this?
         return new StringReader(text);
     }
 
@@ -159,6 +157,20 @@ public final class IOConverter {
     }
 
     @Converter
+    public static byte[] toByteArray(File file) throws IOException {
+        return toBytes(toInputStream(file));
+    }
+
+    @Converter
+    public static byte[] toByteArray(Reader reader) throws IOException {
+        if (reader instanceof BufferedReader) {
+            return toByteArray((BufferedReader)reader);
+        } else {
+            return toByteArray(new BufferedReader(reader));
+        }
+    }
+
+    @Converter
     public static String toString(URL url) throws IOException {
         return toString(toInputStream(url));
     }
@@ -196,26 +208,36 @@ public final class IOConverter {
     }
 
     @Converter
+    public static byte[] toByteArray(BufferedReader reader) throws IOException {
+        if (reader == null) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder(1024);
+        char[] buf = new char[1024];
+        try {
+            int len = reader.read(buf);
+            if (len != -1) {
+                sb.append(buf, 0, len);
+            }
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException e) {
+                LOG.warn("Failed to close stream: " + e, e);
+            }
+        }
+        return sb.toString().getBytes();
+    }
+
+    @Converter
     public static String toString(InputStream in) throws IOException {
         return toString(toReader(in));
     }
 
+    @Converter
     public static String toString(Source source) throws TransformerException, IOException {
         return toString(source, null);
-    }
-
-    public static String toString(Source source, Properties props) throws TransformerException, IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        StreamResult sr = new StreamResult(bos);
-        Transformer trans = TransformerFactory.newInstance().newTransformer();
-        if (props == null) {
-            props = new Properties();
-            props.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
-        }
-        trans.setOutputProperties(props);
-        trans.transform(source, sr);
-        bos.close();
-        return bos.toString();
     }
 
     @Converter
@@ -257,4 +279,22 @@ public final class IOConverter {
         }
         bos.flush();
     }
+
+    protected static String toString(Source source, Properties props) throws TransformerException, IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try {
+            StreamResult sr = new StreamResult(bos);
+            Transformer trans = TransformerFactory.newInstance().newTransformer();
+            if (props == null) {
+                props = new Properties();
+                props.put(OutputKeys.OMIT_XML_DECLARATION, "yes");
+            }
+            trans.setOutputProperties(props);
+            trans.transform(source, sr);
+        } finally {
+            bos.close();
+        }
+        return bos.toString();
+    }
+
 }
