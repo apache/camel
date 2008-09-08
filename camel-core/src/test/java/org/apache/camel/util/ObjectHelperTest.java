@@ -17,8 +17,11 @@
 package org.apache.camel.util;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -124,4 +127,9 @@ public class ObjectHelperTest extends TestCase {
         assertTrue(ObjectHelper.equalByteArray(a, b));
     }
 
+    public void testCreateIterator() {
+        List<String> list = new ArrayList<String>();
+        Iterator<String> iterator = list.iterator();
+        assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
+    }
 }

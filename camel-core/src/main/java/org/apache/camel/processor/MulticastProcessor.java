@@ -139,7 +139,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         Exchange result = null;
 
         List<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
-
+        
         // Parallel Processing the producer
         if (isParallelProcessing) {
             Exchange[] exchanges = new Exchange[pairs.size()];

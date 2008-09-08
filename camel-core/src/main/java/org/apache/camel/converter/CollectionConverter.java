@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -69,6 +70,18 @@ public final class CollectionConverter {
     @Converter
     public static List toList(Collection collection) {
         return new ArrayList(collection);
+    }
+    
+    /**
+     * Converts an {@link Iterator} to a {@link ArrayList}
+     */
+    @Converter
+    public static ArrayList toArrayList(Iterator it) {
+        ArrayList list = new ArrayList();
+        while (it.hasNext()) {
+            list.add(it.next());
+        }
+        return list;
     }
 
     @Converter

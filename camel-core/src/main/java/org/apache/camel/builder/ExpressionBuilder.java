@@ -406,18 +406,10 @@ public final class ExpressionBuilder {
                                                                         final String token) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                List<String> answer = new ArrayList<String>();
-
                 Object value = expression.evaluate(exchange);
-                Scanner scanner = getScanner(expression, exchange, value);
-                if (scanner != null) {
-                    scanner.useDelimiter(token);
-                    while (scanner.hasNext()) {
-                        answer.add(scanner.next());
-                    }
-                }
-
-                return answer;
+                Scanner scanner = getScanner(exchange, value);
+                scanner.useDelimiter(token);
+                return scanner;
             }
 
             @Override
@@ -436,18 +428,10 @@ public final class ExpressionBuilder {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                List<String> answer = new ArrayList<String>();
-
                 Object value = expression.evaluate(exchange);
-                Scanner scanner = getScanner(expression, exchange, value);
-                if (scanner != null) {
-                    scanner.useDelimiter(regexTokenizer);
-                    while (scanner.hasNext()) {
-                        answer.add(scanner.next());
-                    }
-                }
-
-                return answer;
+                Scanner scanner = getScanner(exchange, value);
+                scanner.useDelimiter(regexTokenizer);
+                return scanner;
             }
 
             @Override
@@ -457,7 +441,7 @@ public final class ExpressionBuilder {
         };
     }
 
-    private static Scanner getScanner(Expression expression, Exchange exchange, Object value) {
+    private static Scanner getScanner(Exchange exchange, Object value) {
         String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
 
         Scanner scanner = null;
@@ -485,6 +469,10 @@ public final class ExpressionBuilder {
             if (text != null) {
                 scanner = new Scanner(text);
             }
+        }
+        
+        if (scanner == null) {
+            scanner = new Scanner("");
         }
         return scanner;
     }
