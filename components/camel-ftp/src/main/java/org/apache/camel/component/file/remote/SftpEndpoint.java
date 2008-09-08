@@ -45,7 +45,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
 
     protected Session createSession() throws JSchException {
         final JSch jsch = new JSch();
-        final Session session = jsch.getSession(getConfiguration().getUsername(), getConfiguration().getHost());
+        final Session session = jsch.getSession(getConfiguration().getUsername(), getConfiguration().getHost(), getConfiguration().getPort());
         session.setUserInfo(new UserInfo() {
             public String getPassphrase() {
                 return null;
