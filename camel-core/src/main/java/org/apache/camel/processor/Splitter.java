@@ -29,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -75,7 +76,7 @@ public class Splitter extends MulticastProcessor implements Processor {
         } else {
             result = new ArrayList<ProcessorExchangePair>();
         }
-        Iterator<Object> iter = ObjectConverter.iterator(value);
+        Iterator<Object> iter = ObjectHelper.createIterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();

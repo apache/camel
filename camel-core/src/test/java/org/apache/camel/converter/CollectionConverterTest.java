@@ -18,6 +18,7 @@ package org.apache.camel.converter;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 import junit.framework.TestCase;
@@ -32,6 +33,16 @@ public class CollectionConverterTest extends TestCase {
 
     public void testIteratorToList() throws Exception {
         assertSmurfs(CollectionConverter.toArrayList(SMURFS.iterator()));
+    }
+    
+    public void testIterableToList() throws Exception {
+        assertSmurfs(CollectionConverter.toList(new Iterable() {
+            public Iterator iterator() {
+                return SMURFS.iterator();
+            }
+        }));
+        // no conversion should occur for the list itself
+        assertSame(SMURFS, CollectionConverter.toList((Iterable) SMURFS));
     }
 
     private void assertSmurfs(Collection<String> result) {
