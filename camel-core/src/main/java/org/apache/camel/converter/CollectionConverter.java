@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -116,5 +117,20 @@ public final class CollectionConverter {
     @Converter
     public static HashMap toHashMap(Map map) {
         return new HashMap(map);
+    }
+
+    /**
+     * Converts an {@link Iterable} into a {@link List} 
+     */
+    @Converter
+    public static List toList(Iterable iterable) {
+        if (iterable instanceof List) {
+            return (List) iterable;
+        }
+        List result = new LinkedList();
+        for (Object value : iterable) {
+            result.add(value);
+        }
+        return result;
     }
 }
