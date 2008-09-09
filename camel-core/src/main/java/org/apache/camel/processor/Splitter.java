@@ -16,7 +16,10 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ObjectHelper.notNull;
+
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,12 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
@@ -46,17 +46,19 @@ public class Splitter extends MulticastProcessor implements Processor {
     public static final String SPLIT_COUNTER = "org.apache.camel.splitCounter";
 
     private final Expression expression;
+    private final boolean streaming;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
-        this(expression, destination, aggregationStrategy, false, null);
+        this(expression, destination, aggregationStrategy, false, null, false);
     }
 
     public Splitter(Expression expression, Processor destination,
             AggregationStrategy aggregationStrategy,
-            boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+            boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor, boolean streaming) {
         super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor);
 
         this.expression = expression;
+        this.streaming = streaming;
         notNull(expression, "expression");
         notNull(destination, "destination");
     }
@@ -67,10 +69,47 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     @Override
-    protected List<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         Object value = expression.evaluate(exchange);
-        Integer collectionSize = CollectionHelper.size(value);
+        
+        if (streaming) {
+            return createProcessorExchangePairsIterable(exchange, value);
+        } else {
+            return createProcessorExchangePairsList(exchange, value);
+        }
+    }
+
+    private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, Object value) {
+        final Iterator iterator = ObjectHelper.createIterator(value);
+        return new Iterable() {
+
+            public Iterator iterator() {
+                return new Iterator() {
+
+                    public boolean hasNext() {
+                        return iterator.hasNext();
+                    }
+
+                    public Object next() {
+                        Object part = iterator.next();
+                        Exchange newExchange = exchange.copy();
+                        Message in = newExchange.getIn();
+                        in.setBody(part);
+                        return new ProcessorExchangePair(getProcessors().iterator().next(), newExchange);
+                    }
+
+                    public void remove() {
+                        throw new UnsupportedOperationException("remove is not supported by this iterator");
+                    }
+                };
+            }
+            
+        };
+    }
+
+    private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
         List<ProcessorExchangePair> result;
+        Integer collectionSize = CollectionHelper.size(value);
         if (collectionSize != null) {
             result = new ArrayList<ProcessorExchangePair>(collectionSize);
         } else {
@@ -88,8 +127,10 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int i, List<ProcessorExchangePair> allPairs) {
+    protected void updateNewExchange(Exchange exchange, int i, Iterable<ProcessorExchangePair> allPairs) {
         exchange.getIn().setHeader(SPLIT_COUNTER, i);
-        exchange.getIn().setHeader(SPLIT_SIZE, allPairs.size());
+        if (allPairs instanceof Collection) {
+            exchange.getIn().setHeader(SPLIT_SIZE, ((Collection) allPairs).size());
+        }
     }
 }

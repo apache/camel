@@ -271,8 +271,17 @@ public abstract class ContextTestSupport extends TestSupport {
 
     /**
      * Asserts that all the expectations of the Mock endpoints are valid
+     * 
+     * @deprecated use {{@link #assertMockEndpointsSatisfied()} instead
      */
     protected void assertMockEndpointsSatisifed() throws InterruptedException {
+        assertMockEndpointsSatisfied();
+    }
+
+    /**
+     * Asserts that all the expectations of the Mock endpoints are valid
+     */
+    protected void assertMockEndpointsSatisfied() throws InterruptedException {
         MockEndpoint.assertIsSatisfied(context);
     }
 

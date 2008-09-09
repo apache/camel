@@ -48,6 +48,8 @@ public class SplitterType extends ExpressionNode {
     private Boolean parallelProcessing;
     @XmlTransient
     private ThreadPoolExecutor threadPoolExecutor;
+    @XmlAttribute(required = false)
+    private Boolean streaming = false;
     
     public SplitterType() {
     }
@@ -80,7 +82,7 @@ public class SplitterType extends ExpressionNode {
             threadPoolExecutor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
         }
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
-                isParallelProcessing(), threadPoolExecutor);
+                isParallelProcessing(), threadPoolExecutor, streaming);
     }
     
     public AggregationStrategy getAggregationStrategy() {
@@ -97,6 +99,30 @@ public class SplitterType extends ExpressionNode {
 
     public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+    
+    /**
+     * The splitter should use streaming -- exchanges are being sent as the data for them becomes available.
+     * This improves throughput and memory usage, but it has a drawback: 
+     * - the sent exchanges will no longer contain the {@link Splitter#SPLIT_SIZE} header property 
+     * 
+     * @return 
+     */
+    public boolean getStreaming() {
+        return streaming != null ? streaming : false;
+    }
+
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+    
+    /**
+     * Enables streaming. 
+     * Cfr. {@link SplitterType#setStreaming(boolean)} for more information
+     */
+    public SplitterType streaming() {
+        setStreaming(true);
+        return this;
     }
 
     public ThreadPoolExecutor getThreadPoolExecutor() {
