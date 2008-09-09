@@ -31,6 +31,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.converter.CollectionConverter;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -138,17 +139,19 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     public void process(Exchange exchange) throws Exception {
         Exchange result = null;
 
-        List<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
+        Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
         
         // Parallel Processing the producer
         if (isParallelProcessing) {
-            Exchange[] exchanges = new Exchange[pairs.size()];
-            final CountDownLatch completedExchanges = new CountDownLatch(pairs.size());
+            //TODO: make a dynamic countdown latch to avoid having to convert back to list
+            List<ProcessorExchangePair> allPairs = CollectionConverter.toList(pairs);
+            Exchange[] exchanges = new Exchange[allPairs.size()];
+            final CountDownLatch completedExchanges = new CountDownLatch(allPairs.size());
             int i = 0;
             for (ProcessorExchangePair pair : pairs) {
                 Processor producer = pair.getProcessor();
                 exchanges[i] = pair.getExchange();
-                updateNewExchange(exchanges[i], i, pairs);
+                updateNewExchange(exchanges[i], i, allPairs);
                 ProcessCall call = new ProcessCall(exchanges[i], producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
                         completedExchanges.countDown();
@@ -193,11 +196,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         }
     }
 
-    protected void updateNewExchange(Exchange exchange, int i, List<ProcessorExchangePair> allPairs) {
+    protected void updateNewExchange(Exchange exchange, int i, Iterable<ProcessorExchangePair> allPairs) {
         // No updates needed
     }
 
-    protected List<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
+    protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
         Processor[] processorsArray = processors.toArray(new Processor[processors.size()]);
         for (int i = 0; i < processorsArray.length; i++) {
