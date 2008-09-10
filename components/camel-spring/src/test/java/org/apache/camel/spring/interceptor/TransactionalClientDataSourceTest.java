@@ -99,7 +99,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
                 if (useTransactionErrorHandler) {
                     // useTransactionErrorHandler is only used for unit testing to reuse code
                     // for doing a 2nd test without this transaction error handler, so ignore
-                    // this. For spring based transaction, end users is encured to use the
+                    // this. For spring based transaction, end users are encouraged to use the
                     // transaction error handler instead of the default DeadLetterChannel.
                     errorHandler(transactionErrorHandler(required).
                         // notice that the builder has builder methods for chained configuration

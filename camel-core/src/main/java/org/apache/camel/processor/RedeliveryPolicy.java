@@ -168,7 +168,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Enables collision avoidence which adds some randomization to the backoff
+     * Enables collision avoidance which adds some randomization to the backoff
      * timings to reduce contention probability
      */
     public RedeliveryPolicy useCollisionAvoidance() {
@@ -177,7 +177,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Enables exponential backof using the {@link #getBackOffMultiplier()} to
+     * Enables exponential backoff using the {@link #getBackOffMultiplier()} to
      * increase the time between retries
      */
     public RedeliveryPolicy useExponentialBackOff() {
@@ -196,7 +196,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Enables collision avoidence and sets the percentage used
+     * Enables collision avoidance and sets the percentage used
      */
     public RedeliveryPolicy collisionAvoidancePercent(double collisionAvoidancePercent) {
         useCollisionAvoidance();
@@ -232,7 +232,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Sets the percentage used for collision avoidence if enabled via
+     * Sets the percentage used for collision avoidance if enabled via
      * {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidancePercent(double collisionAvoidancePercent) {
@@ -244,7 +244,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Sets the factor used for collision avoidence if enabled via
+     * Sets the factor used for collision avoidance if enabled via
      * {@link #setUseCollisionAvoidance(boolean)}
      */
     public void setCollisionAvoidanceFactor(double collisionAvoidanceFactor) {
@@ -296,7 +296,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Enables/disables collision avoidence which adds some randomization to the
+     * Enables/disables collision avoidance which adds some randomization to the
      * backoff timings to reduce contention probability
      */
     public void setUseCollisionAvoidance(boolean useCollisionAvoidance) {
@@ -308,7 +308,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     }
 
     /**
-     * Enables/disables exponential backof using the
+     * Enables/disables exponential backoff using the
      * {@link #getBackOffMultiplier()} to increase the time between retries
      */
     public void setUseExponentialBackOff(boolean useExponentialBackOff) {
