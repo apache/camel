@@ -69,7 +69,10 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>Jersey Spring</servlet-name>
-    <url-pattern>/api/*</url-pattern>
+    <url-pattern>/*</url-pattern>
   </servlet-mapping>
 
+  <welcome-file-list>
+    <welcome-file>/camel</welcome-file>
+  </welcome-file-list>
 </web-app>

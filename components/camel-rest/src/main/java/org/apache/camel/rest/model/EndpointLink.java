@@ -19,10 +19,10 @@ package org.apache.camel.rest.model;
 
 import org.apache.camel.Endpoint;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version $Revision: 1.1 $
@@ -35,6 +35,10 @@ public class EndpointLink {
     @XmlAttribute
     private String href;
 
+    @Override
+    public String toString() {
+        return "EndpointLink{href='" + href + "' uri='" + uri + "'}";
+    }
 
     public void load(Endpoint endpoint) {
         this.uri = endpoint.getEndpointUri();
@@ -59,6 +63,6 @@ public class EndpointLink {
 
     protected String createHref(String uri) {
         // TODO how to encode as a href?
-        return uri;
+        return "/camel/endpoint/" + uri;
     }
 }

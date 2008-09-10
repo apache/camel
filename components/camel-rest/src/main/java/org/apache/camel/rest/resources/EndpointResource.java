@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Path;
 
 /**
  * @version $Revision: 1.1 $
@@ -34,5 +35,11 @@ public class EndpointResource {
     public EndpointResource(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
-    
+
+
+    @GET
+    @Produces("text/plain")
+    public String getValue() {
+        return  endpoint.getEndpointUri();
+    }
 }
