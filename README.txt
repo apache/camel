@@ -5,13 +5,13 @@ Apache Camel is a powerful Spring based Integration Framework.
 
 Camel implements the Enterprise Integration Patterns allowing you to configure
 routing and mediation rules in either a Java based Domain Specific Language
-(or Fluent API) or via Spring based Xml Configuration files. Either approaches
+(or Fluent API) or via Spring based XML Configuration files. Either approaches
 mean you get smart completion of routing rules in your IDE whether in your
 Java or XML editor.
 
 Apache Camel uses URIs so that it can easily work directly with any kind of
-Transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
-or CXF Bus API together with working with pluggable Data Format options.
+transport or messaging model such as HTTP, ActiveMQ, JMS, JBI, SCA, MINA
+or CXF Bus API together with and working with pluggable Data Format options.
 Apache Camel is a small library which has minimal dependencies for easy
 embedding in any Java application.
 
@@ -29,7 +29,7 @@ following projects:
 Getting Started
 =============================================================================== 
 
-To help you get started, try the following links:-
+To help you get started, try the following links:
 
 Getting Started
   http://activemq.apache.org/camel/getting-started.html
@@ -40,8 +40,8 @@ Building
 We welcome contributions of all kinds, for details of how you can help
   http://activemq.apache.org/contributing.html
 
-Please refer to the website for details of finding the issue tracker, email 
-  lists, wiki or IRC channel
+Please refer to the website for details of finding the issue tracker, 
+email lists, wiki or IRC channel
   http://activemq.apache.org/camel/
 
 If you hit any problems please talk to us on the Camel Forums
