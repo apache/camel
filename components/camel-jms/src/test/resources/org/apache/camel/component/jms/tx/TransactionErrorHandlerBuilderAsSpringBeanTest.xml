@@ -67,19 +67,13 @@
     <bean id="transactionErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
         <property name="transactionTemplate" ref="PROPAGATION_REQUIRED"/>
         <!-- here we refer to the configurations of the error handler -->
-        <property name="redeliveryPolicy" ref="redeliveryPolicyConfig"/>
+        <property name="delayPolicy" ref="delayPolicyConfig"/>
     </bean>
 
     <!-- configuration of the transaction error handler -->
-    <bean id="redeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
-        <!-- try up till 5 times -->
-        <property name="maximumRedeliveries" value="5"/>
-        <!-- wait 5 seconds at first redelivery -->
-        <property name="initialRedeliveryDelay" value="5000"/>
-        <!-- increas the wait time for each redelivery -->
-        <property name="useExponentialBackOff" value="true"/>
-        <!-- wait at most 30 seconds between redelivery -->
-        <property name="maximumRedeliveryDelay" value="30000"/>
+    <bean id="delayPolicyConfig" class="org.apache.camel.processor.DelayPolicy">
+        <!-- wait 5 seconds between redelivery -->
+        <property name="delay" value="5000"/>
     </bean>
 
     <!-- the no error handler -->
