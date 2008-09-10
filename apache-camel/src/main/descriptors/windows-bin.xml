@@ -22,17 +22,6 @@
   </formats>
   
   <fileSets>
-    <!-- Copy over the bundle jar. 
-         Needed to do this here because the maven-assembly-plugin
-         did not recognize ${pom.version} in common-bin.xml -->
-    <fileSet>
-      <directory>target</directory>
-      <outputDirectory>/</outputDirectory>
-      <includes>
-        <include>${pom.artifactId}-${pom.version}.jar</include>
-      </includes>
-    </fileSet>
-
     <!-- Copy over everything that needs to get dos line endings -->
     <fileSet>
       <directory>src/main/release</directory>
