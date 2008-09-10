@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.DelayPolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -42,13 +43,8 @@ public class TransactionInterceptor extends DelegateProcessor {
         new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
-    private ThreadLocal<RedeliveryData> previousRollback = new ThreadLocal<RedeliveryData>() {
-        @Override
-        protected RedeliveryData initialValue() {
-            return new RedeliveryData();
-        }
-    };
     private RedeliveryPolicy redeliveryPolicy;
+    private DelayPolicy delayPolicy;
 
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
@@ -59,9 +55,18 @@ public class TransactionInterceptor extends DelegateProcessor {
         this.transactionTemplate = transactionTemplate;
     }
 
+    /**
+     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
+     */
     public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate, RedeliveryPolicy redeliveryPolicy) {
         this(processor, transactionTemplate);
         this.redeliveryPolicy = redeliveryPolicy;
+        this.delayPolicy = redeliveryPolicy;
+    }
+
+    public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate, DelayPolicy delayPolicy) {
+        this(processor, transactionTemplate);
+        this.delayPolicy = delayPolicy;
     }
 
     @Override
@@ -72,17 +77,8 @@ public class TransactionInterceptor extends DelegateProcessor {
     }
 
     public void process(final Exchange exchange) {
-        LOG.debug("Transaction begin");
-
-        final RedeliveryData redeliveryData = previousRollback.get();
-
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
-                // TODO: The delay is in some cases never triggered - see CAMEL-663
-                if (redeliveryPolicy != null && redeliveryData.previousRollback) {
-                    // lets delay
-                    redeliveryData.redeliveryDelay = redeliveryPolicy.sleep(redeliveryData.redeliveryDelay);
-                }
 
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
@@ -96,18 +92,18 @@ public class TransactionInterceptor extends DelegateProcessor {
                         activeTx = status.isNewTransaction() && !status.isCompleted();
                         if (!activeTx) {
                             if (DefaultTransactionStatus.class.isAssignableFrom(status.getClass())) {
-                                DefaultTransactionStatus defStatus = DefaultTransactionStatus.class
-                                    .cast(status);
+                                DefaultTransactionStatus defStatus =
+                                        DefaultTransactionStatus.class.cast(status);
                                 activeTx = defStatus.hasTransaction() && !status.isCompleted();
                             }
                         }
                     }
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Is actual transaction active: " + activeTx);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Is actual transaction active: " + activeTx);
                     }
 
                     // okay mark the exchange as transacted, then the DeadLetterChannel or others know
-                    // its an transacted exchange
+                    // its a transacted exchange
                     if (activeTx) {
                         TRANSACTED.set(exchange, Boolean.TRUE);
                     }
@@ -124,36 +120,66 @@ public class TransactionInterceptor extends DelegateProcessor {
                     rce = new RuntimeCamelException(e);
                 }
 
-                // rehrow exception if the exchange failed
+                // rethrow exception if the exchange failed
                 if (rce != null) {
-                    redeliveryData.previousRollback = true;
+                    // an exception occured so please sleep before we rethrow the exception
+                    delayBeforeRedelivery();
                     if (activeTx) {
                         status.setRollbackOnly();
-                        LOG.debug("Transaction rollback");
+                        LOG.debug("Setting transaction to rollbackOnly due to exception being thrown: " + rce.getMessage());
                     }
                     throw rce;
                 }
             }
         });
-
-        redeliveryData.previousRollback = false;
-        redeliveryData.redeliveryDelay = 0L;
-
-        LOG.debug("Transaction commit");
     }
 
+    /**
+     * Sleeps before the transaction is set as rollback and the caused exception is rethrown to let the
+     * Spring TransactionManager handle the rollback.
+     */
+    protected void delayBeforeRedelivery() {
+        long delay = 0;
+        if (redeliveryPolicy != null) {
+            delay = redeliveryPolicy.getDelay();
+        } else if (delayPolicy != null) {
+            delay = delayPolicy.getDelay();
+        }
 
+        if (delay > 0) {
+            try {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Sleeping for: " + delay + " millis until attempting redelivery");
+                }
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Thread interrupted: " + e, e);
+                }
+            }
+        }
+    }
+
+    /**
+     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
+     */
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
 
+    /**
+     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
+     */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
     }
 
-    protected static class RedeliveryData {
-        boolean previousRollback;
-        long redeliveryDelay;
+    public DelayPolicy getDelayPolicy() {
+        return delayPolicy;
+    }
+
+    public void setDelayPolicy(DelayPolicy delayPolicy) {
+        this.delayPolicy = delayPolicy;
     }
 
     protected String propagationBehaviorToString(int propagationBehavior) {

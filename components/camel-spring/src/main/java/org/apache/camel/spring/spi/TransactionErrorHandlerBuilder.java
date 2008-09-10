@@ -19,6 +19,7 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
+import org.apache.camel.processor.DelayPolicy;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -37,6 +38,7 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     private TransactionTemplate transactionTemplate;
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+    private DelayPolicy delayPolicy = new DelayPolicy();
 
     public TransactionErrorHandlerBuilder() {
     }
@@ -49,12 +51,26 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
         this.transactionTemplate = transactionTemplate;
     }
 
+    /**
+     * @deprecated use setDelayPolicy. Will be removed in Camel 2.0
+     */
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
 
+    /**
+     * @deprecated use setDelayPolicy. Will be removed in Camel 2.0
+     */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    public DelayPolicy getDelayPolicy() {
+        return delayPolicy;
+    }
+
+    public void setDelayPolicy(DelayPolicy delayPolicy) {
+        this.delayPolicy = delayPolicy;
     }
 
     public ErrorHandlerBuilder copy() {
@@ -66,7 +82,7 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        return new TransactionInterceptor(processor, transactionTemplate, redeliveryPolicy);
+        return new TransactionInterceptor(processor, transactionTemplate, delayPolicy);
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -75,38 +91,64 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     // Builder methods
     // -------------------------------------------------------------------------
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
         getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
         getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
 
+    /**
+     * @deprecated use delay - will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder initialRedeliveryDelay(long initialRedeliveryDelay) {
-        getRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
+        getDelayPolicy().delay(initialRedeliveryDelay);
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {
         getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder useCollisionAvoidance() {
         getRedeliveryPolicy().useCollisionAvoidance();
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TransactionErrorHandlerBuilder useExponentialBackOff() {
         getRedeliveryPolicy().useExponentialBackOff();
+        return this;
+    }
+
+    public TransactionErrorHandlerBuilder delay(long delay) {
+        getDelayPolicy().delay(delay);
         return this;
     }
 

@@ -30,11 +30,11 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted
  * @version $Revision$
  */
 public class JmsTransactedRouteTest extends ContextTestSupport {
+
     public void testJmsRouteWithTextMessage() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         String expectedBody = "Hello there!";
         String expectedBody2 = "Goodbye!";
-
 
         resultEndpoint.expectedBodiesReceived(expectedBody, expectedBody2);
         resultEndpoint.message(0).header("cheese").isEqualTo(123);
@@ -50,8 +50,6 @@ public class JmsTransactedRouteTest extends ContextTestSupport {
 
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
         JmsComponent component = jmsComponentTransacted(connectionFactory);
-        //component.getConfiguration().setCacheLevelName("CACHE_CONNECTION");
-        //component.getConfiguration().setCacheLevel(DefaultMessageListenerContainer.CACHE_CONNECTION);
         camelContext.addComponent("activemq", component);
         return camelContext;
     }

@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  * The default values is:
  * <ul>
  *   <li>maximumRedeliveries = 5</li>
- *   <li>initialRedeliveryDelay = 1000L</li>
+ *   <li>delay = 1000L (the initial delay)</li>
  *   <li>maximumRedeliveryDelay = 60 * 1000L</li>
  *   <li>backOffMultiplier = 2</li>
  *   <li>useExponentialBackOff = false</li>
@@ -46,12 +46,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class RedeliveryPolicy implements Cloneable, Serializable {
+public class RedeliveryPolicy extends DelayPolicy {
     protected static transient Random randomNumberGenerator;
     private static final transient Log LOG = LogFactory.getLog(RedeliveryPolicy.class);
 
     protected int maximumRedeliveries = 5;
-    protected long initialRedeliveryDelay = 1000L;
     protected long maximumRedeliveryDelay = 60 * 1000L;
     protected double backOffMultiplier = 2;
     protected boolean useExponentialBackOff;
@@ -64,7 +63,13 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     @Override
     public String toString() {
-        return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries + "]";
+        return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries +
+                ", initialRedeliveryDelay=" + delay +
+                ", maximumRedeliveryDelay=" + maximumRedeliveryDelay +
+                ", useExponentialBackOff=" + useExponentialBackOff +
+                ", backOffMultiplier=" + backOffMultiplier +
+                ", useCollisionAvoidance=" + useCollisionAvoidance +
+                ", collisionAvoidanceFactor=" + collisionAvoidanceFactor + "]";
     }
 
     public RedeliveryPolicy copy() {
@@ -114,7 +119,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         long redeliveryDelay;
 
         if (previousDelay == 0) {
-            redeliveryDelay = initialRedeliveryDelay;
+            redeliveryDelay = delay;
         } else if (useExponentialBackOff && backOffMultiplier > 1) {
             redeliveryDelay = Math.round(backOffMultiplier * previousDelay);
         } else {
@@ -154,9 +159,11 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
 
     /**
      * Sets the initial redelivery delay in milliseconds on the first redelivery
+     *
+     * @deprecated use delay. Will be removed in Camel 2.0.
      */
     public RedeliveryPolicy initialRedeliveryDelay(long initialRedeliveryDelay) {
-        setInitialRedeliveryDelay(initialRedeliveryDelay);
+        setDelay(initialRedeliveryDelay);
         return this;
     }
 
@@ -244,15 +251,20 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.collisionAvoidanceFactor = collisionAvoidanceFactor;
     }
 
+    /**
+     * @deprecated  use delay instead. Will be removed in Camel 2.0.
+     */
     public long getInitialRedeliveryDelay() {
-        return initialRedeliveryDelay;
+        return getDelay();
     }
 
     /**
      * Sets the initial redelivery delay in milliseconds on the first redelivery
+     *
+     * @deprecated use delay instead. Will be removed in Camel 2.0.
      */
     public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
-        this.initialRedeliveryDelay = initialRedeliveryDelay;
+        setDelay(initialRedeliveryDelay);
     }
 
     public int getMaximumRedeliveries() {
