@@ -19,6 +19,14 @@
   <id>common-bin</id>
   <fileSets>
 
+    <fileSet>
+      <directory>target</directory>
+      <outputDirectory>/</outputDirectory>
+      <includes>
+        <include>apache-camel-*.jar</include>
+      </includes>
+    </fileSet>
+
     <!-- copy the manual docs -->
     <fileSet>
       <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
