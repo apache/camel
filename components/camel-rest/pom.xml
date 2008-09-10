@@ -37,7 +37,6 @@
     <jetty-port>8080</jetty-port>
   </properties>
 
-
   <repositories>
     <repository>
       <id>java.net.maven2</id>
@@ -60,6 +59,60 @@
       <artifactId>jersey-spring</artifactId>
       <version>${jersey-version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-json</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-atom</artifactId>
+      <version>${jersey-version}</version>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey-client</artifactId>
+      <version>${jersey-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- web container -->
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty-util</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- enable commons-logging when inside jetty6:run -->
+    <!--
+    <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>jcl104-over-slf4j</artifactId>
+        <version>1.5.0</version>
+    </dependency>
+    -->
+    <!--
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-jcl</artifactId>
+        </dependency>
+    -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -98,13 +151,15 @@
         <artifactId>maven-jetty-plugin</artifactId>
         <version>${jetty-version}</version>
 
-                <configuration>
+        <configuration>
+<!--
           <connectors>
             <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
               <port>${jetty.port}</port>
               <maxIdleTime>60000</maxIdleTime>
             </connector>
           </connectors>
+-->
 
           <webAppConfig>
             <contextPath>/</contextPath>
@@ -114,7 +169,7 @@
             <!-- enable easy JMX connection to JConsole -->
             <systemProperty>
               <name>com.sun.management.jmxremote</name>
-              <value />
+              <value/>
             </systemProperty>
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>

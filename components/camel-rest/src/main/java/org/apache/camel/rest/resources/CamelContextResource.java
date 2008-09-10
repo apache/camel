@@ -21,17 +21,20 @@ import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Endpoints;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
-@Path("context")
+@Path("camel")
 @Singleton
 public class CamelContextResource {
 
@@ -61,7 +64,7 @@ public class CamelContextResource {
     }
 
     @Path("endpoint/{id}")
-    public EndpointResource findWidget(@PathParam("id") String id) {
+    public EndpointResource getEndpoint(@PathParam("id") String id) {
         // TODO lets assume the ID is the endpoint
         Endpoint endpoint = getCamelContext().getEndpoint(id);
         if (endpoint != null) {
@@ -69,6 +72,18 @@ public class CamelContextResource {
         } else {
             return null;
         }
+    }
+
+    @GET
+    @Path("routes")
+    @Produces({"application/json", "application/xml"})
+    public RoutesType getRouteDefinitions() {
+        RoutesType answer = new RoutesType();
+        if (camelContext != null) {
+            List<RouteType> list = camelContext.getRouteDefinitions();
+            answer.setRoutes(list);
+        }
+        return answer;
     }
 
 }

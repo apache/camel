@@ -20,13 +20,13 @@ package org.apache.camel.rest.model;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ArrayList;
 
 /**
  * @version $Revision: 1.1 $
@@ -34,8 +34,14 @@ import java.util.ArrayList;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Endpoints {
-    @XmlElement(name="endpoint")
+    @XmlElement(name = "endpoint")
     private List<EndpointLink> endpoints = new ArrayList<EndpointLink>();
+
+    @Override
+    public String toString() {
+        return "Endpoints" + endpoints;
+
+    }
 
     public List<EndpointLink> getEndpoints() {
         return endpoints;
