@@ -23,7 +23,7 @@ import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * To demonstrate the TransactionErrorHandlerBuilder configued in Spring XML.
+ * To demonstrate the TransactionErrorHandlerBuilder configured in Spring XML.
  */
 public class TransactionErrorHandlerBuilderAsSpringBeanTest extends SpringTestSupport {
 

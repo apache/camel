@@ -38,7 +38,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("bar", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendToSecondWhen() throws Exception {
@@ -48,7 +48,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("cheese", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendToOtherwiseClause() throws Exception {
@@ -58,7 +58,7 @@ public class ChoiceTest extends ContextTestSupport {
 
         sendMessage("somethingUndefined", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {
@@ -78,9 +78,9 @@ public class ChoiceTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").choice()
-                        .when(header("foo").isEqualTo("bar")).setHeader("name", constant("a")).to("mock:x")
-                        .when(header("foo").isEqualTo("cheese")).to("mock:y")
-                        .otherwise().to("mock:z");
+                  .when().xpath("$foo = 'bar'").to("mock:x")
+                  .when().xpath("$foo = 'cheese'").to("mock:y")
+                  .otherwise().to("mock:z");
             }
         };
     }
