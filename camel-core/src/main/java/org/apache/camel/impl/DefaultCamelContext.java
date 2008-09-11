@@ -43,6 +43,7 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
@@ -529,7 +530,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
             if (!found) {
-                addInterceptStrategy(new Tracer());
+                Tracer tracer = new Tracer();
+                // lets see if we have a formatter if so use it
+                TraceFormatter formatter = this.getRegistry().lookup("traceFormatter", TraceFormatter.class);
+                if (formatter != null) {
+                    tracer.setFormatter(formatter);
+                }
+                addInterceptStrategy(tracer);
             }
         }
         lifecycleStrategy.onContextStart(this);

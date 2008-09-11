@@ -145,7 +145,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         logger.process(exchange, throwable);
     }
 
-
     /**
      * Returns true if the given exchange should be logged in the trace list
      */

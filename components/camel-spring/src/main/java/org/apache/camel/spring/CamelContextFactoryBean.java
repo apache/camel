@@ -46,6 +46,7 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
@@ -141,6 +142,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         Tracer tracer = getBeanForType(Tracer.class);
         if (tracer != null) {
+            // use formatter if there is a TraceFormatter bean defined
+            TraceFormatter formatter = getBeanForType(TraceFormatter.class);
+            if (formatter != null) {
+                tracer.setFormatter(formatter);
+            }
             getContext().addInterceptStrategy(tracer);
         }
 
