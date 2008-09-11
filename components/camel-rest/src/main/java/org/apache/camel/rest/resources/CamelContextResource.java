@@ -25,10 +25,10 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Endpoints;
 
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.GET;
 import java.util.List;
 
 /**
@@ -38,6 +38,7 @@ import java.util.List;
  */
 @Path("/")
 @Singleton
+@Produces({"text/html", "application/json", "application/xml"})
 public class CamelContextResource {
 
     private final CamelContext camelContext;
@@ -54,27 +55,20 @@ public class CamelContextResource {
         return camelContext.getName();
     }
 
-    /*
-        @GET
-        @Produces("text/plain")
-        public String getValue() {
-            return "Has CamelContext: " + camelContext;
-        }
-
-    */
     /**
      * Returns a list of endpoints available in this context
      *
      * @return
      */
-    @GET
     @Path("endpoints")
-    @Produces({"application/json", "application/xml"})
     public Endpoints getEndpoints() {
         return new Endpoints(camelContext);
     }
 
-    @Path("endpoint/{id}")
+    /**
+     * Looks up an individual endpoint
+     */
+    @Path("endpoints/{id}")
     public EndpointResource getEndpoint(@PathParam("id") String id) {
         // TODO lets assume the ID is the endpoint
         Endpoint endpoint = getCamelContext().getEndpoint(id);
@@ -92,7 +86,6 @@ public class CamelContextResource {
      */
     @GET
     @Path("routes")
-    @Produces({"application/json", "application/xml"})
     public RoutesType getRouteDefinitions() {
         RoutesType answer = new RoutesType();
         if (camelContext != null) {
