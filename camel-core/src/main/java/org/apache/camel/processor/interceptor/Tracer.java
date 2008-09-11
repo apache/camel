@@ -33,6 +33,7 @@ public class Tracer implements InterceptStrategy {
 
     private TraceFormatter formatter = new TraceFormatter();
     private boolean enabled = true;
+
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
      *

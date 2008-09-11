@@ -116,7 +116,6 @@ public class TraceFormatter {
     }
 
     protected Object getBodyAsString(Message in) {
-
         StreamCache newBody = in.getBody(StreamCache.class);
         if (newBody != null) {
             in.setBody(newBody);
