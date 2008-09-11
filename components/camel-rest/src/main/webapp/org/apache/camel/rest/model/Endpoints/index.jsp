@@ -6,18 +6,18 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Camel Context</title>
+  <title>Endpoints</title>
 </head>
 <body>
 
-<h1>Context: ${it.name}</h1>
-
+<h2>Endpoints</h2>
 
 <ul>
-  <li><a href="endpoints">Endpoints</a></li>
-  <li><a href="routes">Routes</a></li>
-  <li><a href="application.wadl">WADL</a></li>
+  <c:forEach var="i" items="${it.endpoints}">
+    <li><a href="${i.href}">${i.uri}</a>
+  </c:forEach>
 </ul>
+
 
 </body>
 </html>
