@@ -38,7 +38,7 @@ import java.util.List;
  */
 @Path("/")
 @Singleton
-@Produces({"text/html", "application/json", "application/xml"})
+@Produces({"text/html", "application/xml", "application/json"})
 public class CamelContextResource {
 
     private final CamelContext camelContext;
@@ -60,6 +60,7 @@ public class CamelContextResource {
      *
      * @return
      */
+    @GET
     @Path("endpoints")
     public Endpoints getEndpoints() {
         return new Endpoints(camelContext);
@@ -68,6 +69,7 @@ public class CamelContextResource {
     /**
      * Looks up an individual endpoint
      */
+    @GET
     @Path("endpoints/{id}")
     public EndpointResource getEndpoint(@PathParam("id") String id) {
         // TODO lets assume the ID is the endpoint
