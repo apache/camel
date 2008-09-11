@@ -29,8 +29,10 @@ public class SedaAsyncRouteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
+        // START SNIPPET: e2
         Object out = template.requestBody("direct:start", "Hello World");
         assertEquals("OK", out);
+        // END SNIPPET: e2
 
         assertMockEndpointsSatisfied();
     }
@@ -38,6 +40,7 @@ public class SedaAsyncRouteTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            // START SNIPPET: e1
             public void configure() throws Exception {
                 from("direct:start")
                     // send it to the seda queue that is async
@@ -47,6 +50,7 @@ public class SedaAsyncRouteTest extends ContextTestSupport {
 
                 from("seda:next").to("mock:result");
             }
+            // END SNIPPET: e1
         };
     }
 }
