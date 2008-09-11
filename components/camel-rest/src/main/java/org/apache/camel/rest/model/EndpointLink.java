@@ -35,6 +35,14 @@ public class EndpointLink {
     @XmlAttribute
     private String href;
 
+    public EndpointLink() {
+    }
+
+    public EndpointLink(Endpoint endpoint) {
+        this();
+        load(endpoint);
+    }
+
     @Override
     public String toString() {
         return "EndpointLink{href='" + href + "' uri='" + uri + "'}";
@@ -63,6 +71,6 @@ public class EndpointLink {
 
     protected String createHref(String uri) {
         // TODO how to encode as a href?
-        return "/camel/endpoint/" + uri;
+        return "/endpoint/" + uri;
     }
 }

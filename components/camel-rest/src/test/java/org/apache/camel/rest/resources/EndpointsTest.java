@@ -17,30 +17,29 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.rest.model.Endpoints;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import junit.framework.TestCase;
+import org.apache.camel.rest.Main;
 import org.apache.camel.rest.model.EndpointLink;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.rest.model.Endpoints;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Path;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class EndpointResource {
+public class EndpointsTest extends TestSupport {
 
-    private final Endpoint endpoint;
+    public void testEndpoints() throws Exception {
+        Endpoints endpoints = resource.path("endpoints").accept("application/xml").get(Endpoints.class);
+        assertNotNull("Should have found endpoints", endpoints);
 
-    public EndpointResource(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
+        System.out.println("Found: " + endpoints.getEndpoints());
 
-    public String getHref() {
-        return new EndpointLink(endpoint).getHref();
-    }
-    public String getUri() {
-        return  endpoint.getEndpointUri();
+        List<EndpointLink> list = endpoints.getEndpoints();
+        assertTrue("Should have received some endpoints!", !list.isEmpty());
     }
 }

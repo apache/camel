@@ -37,6 +37,14 @@ public class Endpoints {
     @XmlElement(name = "endpoint")
     private List<EndpointLink> endpoints = new ArrayList<EndpointLink>();
 
+    public Endpoints() {
+    }
+
+    public Endpoints(CamelContext camelContext) {
+        this();
+        load(camelContext);
+    }
+
     @Override
     public String toString() {
         return "Endpoints" + endpoints;

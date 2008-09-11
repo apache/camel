@@ -64,15 +64,20 @@
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.apache.camel.rest.resources</param-value>
+      <param-value>org.apache.camel.rest</param-value>
+    </init-param>
+    <init-param>
+        <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+        <param-value>true</param-value>
+    </init-param>
+    <init-param>
+        <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
+        <param-value>true</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
     <servlet-name>Jersey Spring</servlet-name>
-    <url-pattern>/*</url-pattern>
+    <url-pattern>/</url-pattern>
   </servlet-mapping>
 
-  <welcome-file-list>
-    <welcome-file>/camel</welcome-file>
-  </welcome-file-list>
 </web-app>

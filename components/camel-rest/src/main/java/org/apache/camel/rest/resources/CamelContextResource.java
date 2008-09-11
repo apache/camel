@@ -25,16 +25,18 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Endpoints;
 
-import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.GET;
 import java.util.List;
 
 /**
+ * The resource for the CamelContext
+ *
  * @version $Revision: 1.1 $
  */
-@Path("camel")
+@Path("/")
 @Singleton
 public class CamelContextResource {
 
@@ -48,19 +50,28 @@ public class CamelContextResource {
         return camelContext;
     }
 
-    @GET
-    @Produces("text/plain")
-    public String getValue() {
-        return "Has CamelContext: " + camelContext;
+    public String getName() {
+        return camelContext.getName();
     }
 
+    /*
+        @GET
+        @Produces("text/plain")
+        public String getValue() {
+            return "Has CamelContext: " + camelContext;
+        }
+
+    */
+    /**
+     * Returns a list of endpoints available in this context
+     *
+     * @return
+     */
     @GET
     @Path("endpoints")
     @Produces({"application/json", "application/xml"})
     public Endpoints getEndpoints() {
-        Endpoints answer = new Endpoints();
-        answer.load(camelContext);
-        return answer;
+        return new Endpoints(camelContext);
     }
 
     @Path("endpoint/{id}")
@@ -74,6 +85,11 @@ public class CamelContextResource {
         }
     }
 
+    /**
+     * Returns the routes currently active within this context
+     *
+     * @return
+     */
     @GET
     @Path("routes")
     @Produces({"application/json", "application/xml"})
