@@ -136,7 +136,30 @@
   </dependencies>
 
   <build>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+    </resources>
+
+
     <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>pertest</forkMode>
+          <includes>
+            <include>**/*Test.*</include>
+          </includes>
+          <excludes>
+            <!-- TODO FIXME ASAP -->
+            <exclude>**/RoutesTest.*</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+
       <plugin>
         <artifactId>maven-war-plugin</artifactId>
         <version>2.1-alpha-2</version>
@@ -152,14 +175,14 @@
         <version>${jetty-version}</version>
 
         <configuration>
-<!--
-          <connectors>
-            <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
-              <port>${jetty.port}</port>
-              <maxIdleTime>60000</maxIdleTime>
-            </connector>
-          </connectors>
--->
+          <!--
+                    <connectors>
+                      <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                        <port>${jetty.port}</port>
+                        <maxIdleTime>60000</maxIdleTime>
+                      </connector>
+                    </connectors>
+          -->
 
           <webAppConfig>
             <contextPath>/</contextPath>
@@ -180,6 +203,16 @@
             <artifactId>log4j</artifactId>
             <version>${log4j-version}</version>
           </dependency>
+          <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+            <version>1.2</version>
+          </dependency>
+          <dependency>
+            <groupId>taglibs</groupId>
+            <artifactId>standard</artifactId>
+            <version>1.1.2</version>
+          </dependency>
         </dependencies>
       </plugin>
 
@@ -190,7 +223,8 @@
         <!--<version>1.3-dev</version>-->
         <executions>
           <execution>
-            <phase>process-sources</phase>
+            <!--<phase>process-sources</phase>-->
+            <phase>package</phase>
             <configuration>
               <destdir>${project.build.directory}/schema</destdir>
               <srcdir>src/main/java/org/apache/camel/rest/model</srcdir>
@@ -207,6 +241,72 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>javadoc</goal>
+            </goals>
+            <!--<phase>compile</phase>-->
+            <phase>package</phase>
+          </execution>
+        </executions>
+
+        <configuration>
+
+          <encoding>UTF-8</encoding>
+          <verbose>false</verbose>
+          <show>public</show>
+          <subpackages>com.sun.jersey.samples.generatewadl.resources</subpackages>
+
+          <doclet>com.sun.jersey.wadl.resourcedoc.ResourceDoclet</doclet>
+          <docletArtifacts>
+            <docletArtifact>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>maven-wadl-plugin</artifactId>
+              <version>${jersey-version}</version>
+            </docletArtifact>
+            <!--
+                Also specify jersey and xerces as doclet artifacts as the ResourceDoclet
+                uses classes provided by them to generate the resourcedoc.
+             -->
+            <docletArtifact>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>jersey-server</artifactId>
+              <version>${jersey-version}</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>xerces</groupId>
+              <artifactId>xercesImpl</artifactId>
+              <version>2.6.1</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>javax.xml.bind</groupId>
+              <artifactId>jaxb-api</artifactId>
+              <version>${jaxb-api-version}</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>com.sun.xml.bind</groupId>
+              <artifactId>jaxb-impl</artifactId>
+              <version>${jaxb-version}</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>javax.activation</groupId>
+              <artifactId>activation</artifactId>
+              <version>1.1</version>
+            </docletArtifact>
+            <docletArtifact>
+              <groupId>stax</groupId>
+              <artifactId>stax-api</artifactId>
+              <version>${stax-api-version}</version>
+            </docletArtifact>
+          </docletArtifacts>
+          <additionalparam>-output ${project.build.outputDirectory}/resourcedoc.xml</additionalparam>
+        </configuration>
       </plugin>
 
       <plugin>

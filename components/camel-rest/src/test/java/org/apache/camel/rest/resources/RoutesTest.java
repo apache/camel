@@ -17,30 +17,33 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.rest.model.Endpoints;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.WebResource;
+import com.sun.jersey.api.client.config.ClientConfig;
+import com.sun.jersey.api.client.config.DefaultClientConfig;
+import junit.framework.TestCase;
+import org.apache.camel.rest.Main;
 import org.apache.camel.rest.model.EndpointLink;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.rest.model.Endpoints;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Path;
+import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class EndpointResource {
+public class RoutesTest extends TestSupport {
 
-    private final Endpoint endpoint;
+    public void testRoutes() throws Exception {
 
-    public EndpointResource(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
+        String routes = resource.path("routes").accept("application/xml").get(String.class);
+        System.out.println("Routes: " + routes);
+/*
+        RoutesType routes = wr.path("routes").accept("application/xml").get(RoutesType.class);
+        assertNotNull("Should have found routes", routes);
+        List<RouteType> routeList = routes.getRoutes();
+        assertNotNull("Should have more than one route", routeList.size() > 0);
 
-    public String getHref() {
-        return new EndpointLink(endpoint).getHref();
-    }
-    public String getUri() {
-        return  endpoint.getEndpointUri();
+        System.out.println("Have routes: " + routeList);
+*/
     }
 }

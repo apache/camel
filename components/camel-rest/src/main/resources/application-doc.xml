@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<applicationDocs targetNamespace="http://research.sun.com/wadl/2006/10">
+
+  <doc xml:lang="en" title="Apache Camel REST API">
+    This is the WADL API for Apache Camel
+  </doc>
+
+  <doc xml:lang="de">
+    <p>
+      For more on the REST API please see<a href="http://activemq.apache.org/camel/rest.html">the REST API
+      documentation</a>.
+    </p>
+  </doc>
+</applicationDocs>
