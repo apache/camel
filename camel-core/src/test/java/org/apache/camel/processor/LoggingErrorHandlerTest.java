@@ -31,7 +31,11 @@ public class LoggingErrorHandlerTest extends ContextTestSupport {
     private MyLog log = new MyLog();
 
     public void testLogException() {
-        template.sendBody("direct:in", "Hello World");
+        try {
+            template.sendBody("direct:in", "Hello World");
+        } catch (Exception e) {
+            // expected
+        }
         assertTrue("Should have logged it", log.logged);
     }
 

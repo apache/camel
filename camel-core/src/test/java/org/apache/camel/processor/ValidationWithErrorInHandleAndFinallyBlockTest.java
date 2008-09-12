@@ -20,6 +20,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ValidationWithErrorInHandleAndFinallyBlockTest extends ValidationTest {
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

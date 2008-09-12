@@ -45,7 +45,7 @@ public class TraceInterceptorTest extends ContextTestSupport {
     public void testTracerInterceptor() throws Exception {
         EasyMock.reset(formatter);
         formatter.format(EasyMock.isA(TraceInterceptor.class), EasyMock.isA(Exchange.class));
-        EasyMock.expectLastCall().andReturn("Test");
+        EasyMock.expectLastCall().andReturn("Test").atLeastOnce();
         EasyMock.replay(formatter);
         template.sendBody("direct:a", "<hello>world!</hello>");
         EasyMock.verify(formatter);

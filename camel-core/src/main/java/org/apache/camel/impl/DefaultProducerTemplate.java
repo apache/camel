@@ -29,6 +29,7 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -328,6 +329,23 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
     protected Object extractResultBody(E result, ExchangePattern pattern) {
         Object answer = null;
         if (result != null) {
+            // rethrow if there was an exception
+            if (result.getException() != null) {
+                if (result.getException() instanceof RuntimeCamelException) {
+                    // already a RuntimeCamelException so throw it as is
+                    throw (RuntimeCamelException) result.getException();
+                } else {
+                    // wrap checked exception in runtime
+                    throw new RuntimeCamelException(result.getException());
+                }
+            }
+
+            // result could have a fault message
+            if (hasFaultMessage(result)) {
+                return result.getFault().getBody();
+            }
+
+            // okay no fault then return the response according to the pattern
             // try to honor pattern if provided
             boolean notOut = pattern != null && !pattern.isOutCapable();
             boolean hasOut = result.getOut(false) != null;
@@ -338,6 +356,17 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
             }
         }
         return answer;
+    }
+
+    protected boolean hasFaultMessage(E result) {
+        Message faultMessage = result.getFault(false);
+        if (faultMessage != null) {
+            Object faultBody = faultMessage.getBody();
+            if (faultBody != null) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

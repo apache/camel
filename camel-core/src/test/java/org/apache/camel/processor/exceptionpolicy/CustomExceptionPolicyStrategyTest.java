@@ -56,7 +56,11 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my policy exception");
 
-        template.sendBody("direct:a", "Hello Camel");
+        try {
+            template.sendBody("direct:a", "Hello Camel");
+        } catch (Exception e) {
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }

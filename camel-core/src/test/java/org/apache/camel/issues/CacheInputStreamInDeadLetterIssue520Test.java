@@ -26,6 +26,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -33,24 +34,17 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     private int count;
 
     public void testSendingInputStream() throws Exception {
-
         InputStream message = new ByteArrayInputStream("<hello>Willem</hello>".getBytes());
-
         sendingMessage(message);
-
     }
 
     public void testSendingReader() throws Exception {
-
         StringReader message = new StringReader("<hello>Willem</hello>");
-
         sendingMessage(message);
     }
 
     public void testSendingSource() throws Exception {
-
         StreamSource message = new StreamSource(new StringReader("<hello>Willem</hello>"));
-
         sendingMessage(message);
     }
 
@@ -59,7 +53,13 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", message);
+        try {
+            template.sendBody("direct:start", message);
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof Exception);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+        }
+        
         assertEquals("The message should be delivered 4 times", count, 4);
         mock.assertIsSatisfied();
     }

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,7 +39,7 @@ public class ValidationTest extends ContextTestSupport {
 
         Object result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertMockEndpointsSatisfied();
         assertEquals("validResult", result);
     }
 
@@ -46,26 +47,32 @@ public class ValidationTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         validEndpoint.expectedMessageCount(0);
 
-        Object result = template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        try {
+            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
-        assertEquals("invalidResult", result);
+        assertMockEndpointsSatisfied();
     }
 
     public void testinvalidThenValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(2);
         invalidEndpoint.expectedMessageCount(1);
 
-        Object result;
-        
-        result = template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
-        assertEquals("invalidResult", result);
-        result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
+        try {
+            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo",  "notMatchedHeaderValue");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
+
+        Object result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
         assertEquals("validResult", result);
+
         result = template.sendBodyAndHeader("direct:start", "<valid/>", "foo",   "bar");
         assertEquals("validResult", result);
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

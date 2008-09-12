@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -38,9 +39,13 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
 
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         assertEquals(3, counter); // One call + 2 re-deliveries
     }
@@ -54,9 +59,13 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.FALSE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(0);
 
-        template.sendBody("direct:no", "Hello World");
+        try {
+            template.sendBody("direct:no", "Hello World");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         assertEquals(1, counter); // One call
     }
@@ -70,9 +79,13 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(1);
 
-        template.sendBody("direct:one", "Hello World");
+        try {
+            template.sendBody("direct:one", "Hello World");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         assertEquals(2, counter); // One call + 1 re-delivery
     }

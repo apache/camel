@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
@@ -40,16 +41,21 @@ public class RomeksExceptionTest extends ContextTestSupport {
         assertErrorHandlingWorks("b");
     }
 
-    protected void assertErrorHandlingWorks(String route) throws InterruptedException {
+    protected void assertErrorHandlingWorks(String route) throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         MockEndpoint exceptionEndpoint = getMockEndpoint("mock:exception");
 
         resultEndpoint.expectedMessageCount(0);
         exceptionEndpoint.expectedBodiesReceived("<exception/>");
 
-        template.sendBodyAndHeader("direct:start", "<body/>", "route", route);
+        try {
+            template.sendBodyAndHeader("direct:start", "<body/>", "route", route);
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Exception thrown intentionally.", e.getCause().getMessage());
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = exceptionEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

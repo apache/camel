@@ -33,9 +33,13 @@ public class ThreadErrorHandlerTest extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
 
-        template.sendBody("direct:in", "Hello World");
+        try {
+            template.sendBody("direct:in", "Hello World");
+        } catch (Exception e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

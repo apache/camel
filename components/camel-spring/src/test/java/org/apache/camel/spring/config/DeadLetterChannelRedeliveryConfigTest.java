@@ -44,7 +44,11 @@ public class DeadLetterChannelRedeliveryConfigTest extends AbstractJUnit38Spring
         dead.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(3);
         result.expectedMessageCount(0);
 
-        template.sendBody("direct:in", "Hello World");
+        try {
+            template.sendBody("direct:in", "Hello World");
+        } catch (Exception e) {
+            // expected
+        }
 
         result.assertIsSatisfied();
         dead.assertIsSatisfied();
