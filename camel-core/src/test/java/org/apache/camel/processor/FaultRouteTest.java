@@ -23,6 +23,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -101,7 +102,11 @@ public class FaultRouteTest extends ContextTestSupport {
         c.expectedMessageCount(0);
         err.expectedMessageCount(errors);
 
-        template.sendBody(startPoint, "in");
+        try {
+            template.sendBody(startPoint, "in");
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
 
         MockEndpoint.assertIsSatisfied(a, b, c, err);
 

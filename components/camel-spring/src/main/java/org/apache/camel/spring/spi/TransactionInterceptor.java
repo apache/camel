@@ -113,11 +113,10 @@ public class TransactionInterceptor extends DelegateProcessor {
 
                     // wrap if the exchange failed with an exception
                     if (exchange.getException() != null) {
-                        rce = new RuntimeCamelException(exchange.getException());
+                        rce = wrapRuntimeCamelException(exchange.getException());
                     }
                 } catch (Exception e) {
-                     // wrap if the exchange threw an exception
-                    rce = new RuntimeCamelException(e);
+                    rce = wrapRuntimeCamelException(e);
                 }
 
                 // rethrow exception if the exchange failed
@@ -132,6 +131,19 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
             }
         });
+    }
+
+    /**
+     * Wraps the caused exception in a RuntimeCamelException if its not already such an exception
+     */
+    private static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        if (e instanceof RuntimeCamelException) {
+            // dont double wrap if already a RuntimeCamelException
+            return (RuntimeCamelException) e;
+        } else {
+             // wrap if the exchange threw an exception
+            return new RuntimeCamelException(e);
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
@@ -36,7 +37,13 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(0);
 
-        template.sendBody("direct:in", "Hello World");
+        try {
+            template.sendBody("direct:in", "Hello World");
+            fail("Should have thrown IllegalStateException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalStateException);
+            // expected
+        }
 
         dead.assertIsSatisfied();
         result.assertIsSatisfied();

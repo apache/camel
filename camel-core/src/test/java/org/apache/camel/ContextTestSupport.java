@@ -272,7 +272,7 @@ public abstract class ContextTestSupport extends TestSupport {
     /**
      * Asserts that all the expectations of the Mock endpoints are valid
      * 
-     * @deprecated use {{@link #assertMockEndpointsSatisfied()} instead
+     * @deprecated use {{@link #assertMockEndpointsSatisfied()} instead. Will be removed in Camel 2.0.
      */
     protected void assertMockEndpointsSatisifed() throws InterruptedException {
         assertMockEndpointsSatisfied();

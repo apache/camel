@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -37,7 +38,13 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
 
-        template.sendBody("direct:inNoThread", "Hello World");
+        try {
+            template.sendBody("direct:inNoThread", "Hello World");
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
         mock.assertIsSatisfied();
         assertEquals(3, counter); // One call + 2 re-deliveries
@@ -52,7 +59,13 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
         mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
 
-        template.sendBody("direct:inBeforeThread", "Hello World");
+        try {
+            template.sendBody("direct:inBeforeThread", "Hello World");
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }
@@ -60,7 +73,13 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
     public void testThreadErrorHandlerCallBeforeThread() throws Exception {
         counter = 0;
 
-        template.sendBody("direct:inBeforeThread", "Hello World");
+        try {
+            template.sendBody("direct:inBeforeThread", "Hello World");
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
         assertEquals(3, counter); // One call + 2 re-deliveries
     }

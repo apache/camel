@@ -32,9 +32,13 @@ public class ExceptionTest extends ContextTestSupport {
 
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<body/>");
+        try {
+            template.sendBody("direct:start", "<body/>");
+        } catch (Exception e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testExceptionWithHandler() throws Exception {
@@ -44,9 +48,13 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<body/>");
+        try {
+            template.sendBody("direct:start", "<body/>");
+        } catch (Exception e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testExceptionWithLongHandler() throws Exception {
@@ -56,9 +64,13 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedBodiesReceived("<handled/>");
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start", "<body/>");
+        try {
+            template.sendBody("direct:start", "<body/>");
+        } catch (Exception e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testLongRouteWithHandler() throws Exception {
@@ -68,9 +80,13 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBody("direct:start2", "<body/>");
+        try {
+            template.sendBody("direct:start2", "<body/>");
+        } catch (Exception e) {
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

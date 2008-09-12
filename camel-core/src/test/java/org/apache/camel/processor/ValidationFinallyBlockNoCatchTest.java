@@ -36,9 +36,13 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         allEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
+        try {
+            template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
+        } catch (Exception e) {
+            // expected
+        }
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, allEndpoint);
+        assertMockEndpointsSatisfied();
     }
 
     public void testInvalidMessage() throws Exception {
@@ -47,9 +51,13 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
         // allEndpoint receives 1 + 5 messages, ordinary (1 attempt) and redelivery (5 attempts) is involved
         allEndpoint.expectedMessageCount(1 + 5);
 
-        template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        try {
+            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        } catch (Exception e) {
+            // expected
+        }
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, allEndpoint);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

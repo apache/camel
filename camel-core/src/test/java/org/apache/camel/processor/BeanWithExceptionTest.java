@@ -41,15 +41,19 @@ public class BeanWithExceptionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertMockEndpointsSatisfied();
     }
 
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        try {
+            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+        } catch (Exception e) {
+            // expected
+        }
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        assertMockEndpointsSatisfied();
     }
 
     @Override

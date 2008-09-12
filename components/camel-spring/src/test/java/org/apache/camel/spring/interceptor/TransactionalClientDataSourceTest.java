@@ -18,6 +18,7 @@ package org.apache.camel.spring.interceptor;
 
 import javax.sql.DataSource;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
@@ -74,9 +75,14 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
     // END SNIPPET: e3
 
     // START SNIPPET: e4
-
     public void testTransactionRollback() throws Exception {
-        template.sendBody("direct:fail", "Hello World");
+        try {
+            template.sendBody("direct:fail", "Hello World");
+        } catch (RuntimeCamelException e) {
+            // expeced as we fail
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
+        }
 
         int count = jdbc.queryForInt("select count(*) from books");
         assertEquals("Number of books", 1, count);
@@ -103,8 +109,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
                     // transaction error handler instead of the default DeadLetterChannel.
                     errorHandler(transactionErrorHandler(required).
                         // notice that the builder has builder methods for chained configuration
-                        maximumRedeliveries(3).
-                        initialRedeliveryDelay(5 * 1000L));
+                        delay(5 * 1000L));
                 }
                 // END SNIPPET: e1
 

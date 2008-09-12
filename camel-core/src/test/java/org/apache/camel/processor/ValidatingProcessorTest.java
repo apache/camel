@@ -19,9 +19,11 @@ package org.apache.camel.processor;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.validation.SchemaValidationException;
 import org.apache.camel.processor.validation.ValidatingProcessor;
 
 /**
@@ -51,7 +53,7 @@ public class ValidatingProcessorTest extends ContextTestSupport {
 
         template.sendBody("direct:start", xml);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testInvalidMessage() throws Exception {
@@ -63,9 +65,15 @@ public class ValidatingProcessorTest extends ContextTestSupport {
             + "  <username>someone</username>"
             + "</user>";
 
-        template.sendBody("direct:start", xml);
+        try {
+            template.sendBody("direct:start", xml);
+            fail("Should have thrown a RuntimeCamelException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof SchemaValidationException);
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

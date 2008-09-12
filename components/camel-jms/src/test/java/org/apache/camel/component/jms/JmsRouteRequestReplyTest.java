@@ -29,6 +29,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -302,7 +303,12 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         public void run() {
             for (int i = 0; i < maxCalls; i++) {
                 int callId = counter.incrementAndGet();
-                Object reply = template.requestBody(fromUri, request + "-" + callId);
+                Object reply = "";
+                try {
+                    reply = template.requestBody(fromUri, request + "-" + callId);
+                } catch (RuntimeCamelException e) {
+                    // expected in some cases
+                }
                 if (!reply.equals(expectedReply + "-" + callId)) {
                     ok = false;
                     message = "Unexpected reply. Expected: '" + expectedReply  + "-" + callId
@@ -412,8 +418,13 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         c.getConfiguration().setRequestTimeout(1000);
         c.getConfiguration().setRequestMapPurgePollTimeMillis(1000);
 
-        Object reply = template.requestBody(endpoingUriA, request);
-        assertEquals(reply, request);
+        Object reply = "";
+        try {
+            reply = template.requestBody(endpoingUriA, request);
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
+        assertEquals("", reply);
 
         JmsEndpoint endpoint = context.getEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup
@@ -426,8 +437,13 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         c.getConfiguration().setRequestTimeout(1000);
         c.getConfiguration().setRequestMapPurgePollTimeMillis(1000);
 
-        Object reply = template.requestBody(endpoingUriA, request);
-        assertEquals(reply, request);
+        Object reply = "";
+        try {
+            reply = template.requestBody(endpoingUriA, request);
+        } catch (RuntimeCamelException e) {
+            // expected
+        }
+        assertEquals("", reply);
 
         JmsEndpoint endpoint = context.getEndpoint(endpoingUriA, JmsEndpoint.class);
         // Wait 1 extra purge cycle to make sure that TimeoutMap had a chance to cleanup

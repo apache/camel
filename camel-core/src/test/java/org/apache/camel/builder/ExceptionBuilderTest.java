@@ -26,6 +26,7 @@ import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -43,7 +44,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm a NPE");
 
-        template.sendBody("direct:a", "Hello NPE");
+        try {
+            template.sendBody("direct:a", "Hello NPE");
+            fail("Should have thrown a NullPointerException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof NullPointerException);
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }
@@ -53,7 +60,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm somekind of IO exception");
 
-        template.sendBody("direct:a", "Hello IO");
+        try {
+            template.sendBody("direct:a", "Hello IO");
+            fail("Should have thrown a IOException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IOException);
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }
@@ -63,7 +76,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm just exception");
 
-        template.sendBody("direct:a", "Hello Exception");
+        try {
+            template.sendBody("direct:a", "Hello Exception");
+            fail("Should have thrown a Exception");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof Exception);
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }
@@ -73,7 +92,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my business is not going to well");
 
-        template.sendBody("direct:a", "Hello business");
+        try {
+            template.sendBody("direct:a", "Hello business");
+            fail("Should have thrown a MyBusinessException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof MyBusinessException);
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }
@@ -84,7 +109,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some security error");
 
-        template.sendBody("direct:a", "I am not allowed to do this");
+        try {
+            template.sendBody("direct:a", "I am not allowed to do this");
+            fail("Should have thrown a GeneralSecurityException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof GeneralSecurityException);
+            // expected
+        }
 
         mock.assertIsSatisfied();
     }

@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -38,7 +39,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "Hello World");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testOuterError() throws Exception {
@@ -48,9 +49,16 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:outer");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown a IllegalArgumentException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testInnerError() throws Exception {
@@ -61,9 +69,16 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
         mock.expectedHeaderReceived("name", "Claus");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        try {
+            template.sendBody("direct:start", "Hello World");
+            fail("Should have thrown a IllegalArgumentException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalArgumentException);
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
