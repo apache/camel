@@ -21,15 +21,14 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.StreamCache;
 
-public class SetExchangeProcessor implements Processor {
+public class SetResponseProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
-        // Override the exchange pattern
-        exchange.setPattern(ExchangePattern.InOnly);
 
         // Convert the input stream into a string
         String result = exchange.getIn().getBody(String.class);
-        exchange.getIn().setBody(result);
+
+        exchange.getOut().setBody("<message>out</message>");
 
     }
 
