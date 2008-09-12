@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.ldap;
 
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
-
-import java.util.Map;
 
 /**
  * Represents the component that manages {@link LdapEndpoint}(s).

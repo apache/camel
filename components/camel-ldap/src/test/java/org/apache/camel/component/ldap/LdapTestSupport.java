@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,7 +60,7 @@ public abstract class LdapTestSupport extends AbstractServerTest {
 
         // disable JMX
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-        
+
         // create Camel context
         context = createCamelContext();
         assertValidContext(context);
@@ -81,13 +80,13 @@ public abstract class LdapTestSupport extends AbstractServerTest {
 
         log.debug("Routing Rules are: " + context.getRoutes());
     }
-    
+
     @Override
     public void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
         template.stop();
         stopCamelContext();
-        
+
         super.tearDown();
     }
 
@@ -95,15 +94,15 @@ public abstract class LdapTestSupport extends AbstractServerTest {
         Set<SearchResult> results = new HashSet<SearchResult>();
         SearchControls controls = new SearchControls();
         controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
-        
+
         NamingEnumeration<SearchResult> namingEnumeration = ctx.search(
             ServerDNConstants.SYSTEM_DN, filter, controls);
-        while(namingEnumeration.hasMore()) {
+        while (namingEnumeration.hasMore()) {
             results.add(namingEnumeration.next());
         }
         return results;
     }
-    
+
     protected boolean contains(String dn, Collection<SearchResult> results) {
         for (SearchResult result : results) {
             if (result.getNameInNamespace().equals(dn)) {
@@ -113,7 +112,7 @@ public abstract class LdapTestSupport extends AbstractServerTest {
 
         return false;
     }
-    
+
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext(createRegistry());
     }

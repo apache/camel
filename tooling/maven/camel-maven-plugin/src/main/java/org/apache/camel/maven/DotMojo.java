@@ -91,6 +91,21 @@ public class DotMojo extends AbstractMavenReport {
     protected boolean useDot;
 
     /**
+     * The classpath based application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.applicationContextUri}"
+     */
+    protected String applicationContextUri;
+
+    /**
+     * The filesystem based application context uri that spring wants to get.
+     *
+     * @parameter expression="${camel.fileApplicationContextUri}"
+     */
+    protected String fileApplicationContextUri;
+
+
+    /**
      * Reference to Maven 2 Project.
      *
      * @parameter expression="${project}"
@@ -115,19 +130,6 @@ public class DotMojo extends AbstractMavenReport {
      */
     private File outputDirectory;
 
-    /**
-     * The classpath based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.applicationContextUri}"
-     */
-    protected String applicationContextUri;
-
-    /**
-     * The filesystem based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.fileApplicationContextUri}"
-     */
-    protected String fileApplicationContextUri;
 
     /**
      * In the case of multiple camel contexts, setting aggregate == true will
