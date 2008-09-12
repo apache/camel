@@ -34,19 +34,17 @@
   	</property>
   </bean>
 
-  <bean id="setExchangePatternProcessor" class="org.apache.camel.itest.jetty.SetExchangePatternProcessor"/>
+  <bean id="setResponseProcessor" class="org.apache.camel.itest.jetty.SetResponseProcessor"/>
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring" trace="true">
     <route>
         <from uri="jetty:http://localhost:9000/test"/>
-        <to uri="log:MyCategory?level=INFO"/>
-        <process ref="setExchangePatternProcessor"/>
         <to uri="jms:responseQueue"/>
     </route>
     <route>
         <from uri="jms:responseQueue"/>
-        <to uri="mock:resultEndpoint"/>
+        <process ref="setResponseProcessor"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
