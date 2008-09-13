@@ -16,8 +16,12 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
+import org.apache.ftpserver.usermanager.PropertiesUserManager;
 
 /**
  * Base class for unit testing using a FTPServer
@@ -45,6 +49,15 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
 
     protected void initFtpServer() throws Exception {
         ftpServer = new FtpServer();
+
+        // setup user management to read our users.properties and use clear text passwords
+        PropertiesUserManager uman = new PropertiesUserManager();
+        uman.setFile(new File("./src/test/resources/users.properties").getAbsoluteFile());
+        uman.setPasswordEncryptor(new ClearTextPasswordEncryptor());
+        uman.setAdminName("admin");
+        uman.configure();
+        ftpServer.setUserManager(uman);
+
         ftpServer.getListener("default").setPort(getPort());
     }
 }
