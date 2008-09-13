@@ -74,7 +74,7 @@
     <testng-version>5.7</testng-version>
     <hamcrest-version>1.1</hamcrest-version>
     <saxon-version>9.1.0.1</saxon-version>
-    <apacheds-version>1.5.3</apacheds-version>
+    <apacheds-version>1.5.4</apacheds-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>

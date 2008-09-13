@@ -18,7 +18,6 @@ package org.apache.camel.component.ldap;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.naming.Context;
@@ -39,12 +38,11 @@ import org.apache.camel.util.jndi.JndiTest;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.directory.server.constants.ServerDNConstants;
-import org.apache.directory.server.ldap.handlers.DefaultUnbindHandler;
 import org.apache.directory.server.unit.AbstractServerTest;
 
 
 /**
- * @version $
+ * 
  */
 public abstract class LdapTestSupport extends AbstractServerTest {
     protected transient Log log = LogFactory.getLog(getClass());
