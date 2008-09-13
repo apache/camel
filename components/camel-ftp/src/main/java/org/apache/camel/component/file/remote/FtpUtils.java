@@ -31,18 +31,28 @@ public final class FtpUtils {
     private FtpUtils() {
     }
 
-    public static void connect(FTPClient client, RemoteFileConfiguration config) throws IOException {
+    public static boolean connect(FTPClient client, RemoteFileConfiguration config) throws IOException {
         String host = config.getHost();
         int port = config.getPort();
         String username = config.getUsername();
 
+        LOG.trace("Connecting to " + config);
         client.connect(host, port);
+
+        boolean login;
+        LOG.trace("Attempting to login " + username);
         if (username != null) {
-            client.login(username, config.getPassword());
+            login = client.login(username, config.getPassword());
         } else {
-            client.login("anonymous", null);
+            login = client.login("anonymous", null);
         }
+        LOG.trace("User " + username + " logged in: " + login);
+        if (!login) {
+            return false;
+        }
+
         client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
+        return true;
     }
 
     public static void disconnect(FTPClient client) throws IOException {
@@ -63,8 +73,8 @@ public final class FtpUtils {
             // maybe the full directory already exsits
             success = ftpClient.changeWorkingDirectory(dirName);
             if (!success) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + dirName);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Trying to build remote directory: " + dirName);
                 }
                 success = ftpClient.makeDirectory(dirName);
                 if (!success) {

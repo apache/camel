@@ -20,13 +20,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.net.ftp.FTPClient;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
     private FtpEndpoint endpoint;
     private FTPClient client;
+    private boolean loggedIn;
 
     public FtpProducer(FtpEndpoint endpoint, FTPClient client) {
         super(endpoint);
@@ -38,12 +38,19 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
         if (log.isTraceEnabled()) {
             log.trace("Processing " + endpoint.getConfiguration());
         }
-        connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown
-        // exception will signify that we couldn't deliver
+
         try {
+            connectIfNecessary();
+
+            if (!loggedIn) {
+                String message = "Could not connect/login to " + endpoint.getConfiguration();
+                log.warn(message);
+                throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
+            }
+
             process(endpoint.createExchange(exchange));
         } catch (Exception e) {
+            loggedIn = false;
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
                 log.warn("Producer is stopping. Ignoring caught exception: "
@@ -59,16 +66,21 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!client.isConnected()) {
+        if (!client.isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
-                log.debug("Not connected, connecting to " + remoteServer());
+                log.debug("Not connected/logged in, connecting to " + remoteServer());
             }
-            FtpUtils.connect(client, endpoint.getConfiguration());
-            log.info("Connected to " + remoteServer());
+            loggedIn = FtpUtils.connect(client, endpoint.getConfiguration());
+            if (!loggedIn) {
+                return;
+            }
         }
+
+        log.info("Connected and logged in to " + remoteServer());
     }
 
     public void disconnect() throws IOException {
+        loggedIn = false;
         if (log.isDebugEnabled()) {
             log.debug("Disconnecting from " + remoteServer());
         }
@@ -90,7 +102,8 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
 
             boolean success = client.storeFile(fileName, payload);
             if (!success) {
-                throw new RuntimeCamelException("Error sending file: " + fileName + " to: " + remoteServer());
+                String message = "Error sending file: " + fileName + " to: " + remoteServer();
+                throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
             }
 
             log.info("Sent: " + fileName + " to: " + remoteServer());

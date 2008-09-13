@@ -62,11 +62,11 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     protected void connectIfNecessary() throws JSchException {
         if (channel == null || !channel.isConnected()) {
             if (session == null || !session.isConnected()) {
-                log.debug("Session isn't connected, trying to recreate and connect.");
+                log.trace("Session isn't connected, trying to recreate and connect.");
                 session = endpoint.createSession();
                 session.connect();
             }
-            log.debug("Channel isn't connected, trying to recreate and connect.");
+            log.trace("Channel isn't connected, trying to recreate and connect.");
             channel = endpoint.createChannelSftp(session);
             channel.connect();
             log.info("Connected to " + endpoint.getConfiguration().remoteServerInformation());
