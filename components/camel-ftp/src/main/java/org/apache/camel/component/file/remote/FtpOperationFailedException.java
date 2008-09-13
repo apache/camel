@@ -19,28 +19,33 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.RuntimeCamelException;
 
 /**
+ * Exception thrown in case of last FTP operation failed.
+ *
  * @version $Revision$
- * @deprecated not used will be removed in Camel 2.0.
  */
 public class FtpOperationFailedException extends RuntimeCamelException {
     private final int code;
     private final String reason;
 
     public FtpOperationFailedException(int code, String reason) {
-        super("Ftp operation failed: " + reason + " Code: " + code);
+        super("Ftp operation failed: " + reason + ". Code: " + code);
         this.code = code;
         this.reason = reason;
     }
 
+    public FtpOperationFailedException(int code, String reason, String message) {
+        this(code, reason + " " + message);
+    }
+
     /**
-     * Return the failure code
+     * Return the FTP failure code
      */
     public int getCode() {
         return code;
     }
 
     /**
-     * Return the failure reason
+     * Return the FTP failure reason
      */
     public String getReason() {
         return reason;

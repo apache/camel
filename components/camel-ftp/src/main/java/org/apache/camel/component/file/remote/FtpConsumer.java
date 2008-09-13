@@ -29,6 +29,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
 
     private FtpEndpoint endpoint;
     private FTPClient client;
+    private boolean loggedIn;
 
     public FtpConsumer(FtpEndpoint endpoint, Processor processor, FTPClient client) {
         super(endpoint, processor);
@@ -55,23 +56,29 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             disconnect();
         } catch (Exception e) {
             // ignore just log a warning
-            log.warn("Exception occured during disconecting from " + remoteServer() + ". "
-                     + e.getClass().getCanonicalName() + " message: " + e.getMessage());
+            String message = "Could not disconnect from " + remoteServer()
+                    + ". Reason: " + client.getReplyString() + ". Code: " + client.getReplyCode();
+            log.warn(message);
         }
         super.doStop();
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!client.isConnected()) {
+        if (!client.isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
-                log.debug("Not connected, connecting to " + remoteServer());
+                log.debug("Not connected/logged in, connecting to " + remoteServer());
             }
-            FtpUtils.connect(client, endpoint.getConfiguration());
-            log.info("Connected to " + remoteServer());
+            loggedIn = FtpUtils.connect(client, endpoint.getConfiguration());
+            if (!loggedIn) {
+                return;
+            }
         }
+        
+        log.info("Connected and logged in to " + remoteServer());
     }
 
     protected void disconnect() throws IOException {
+        loggedIn = false;
         log.debug("Disconnecting from " + remoteServer());
         FtpUtils.disconnect(client);
     }
@@ -80,10 +87,16 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
         if (log.isTraceEnabled()) {
             log.trace("Polling " + endpoint.getConfiguration());
         }
-        connectIfNecessary();
-        // If the attempt to connect isn't successful, then the thrown
-        // exception will signify that we couldn't poll
+
         try {
+            connectIfNecessary();
+
+            if (!loggedIn) {
+                String message = "Could not connect/login to " + endpoint.getConfiguration();
+                log.warn(message);
+                throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
+            }
+
             final String fileName = endpoint.getConfiguration().getFile();
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
@@ -97,8 +110,11 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 final FTPFile[] files = client.listFiles(fileName.substring(index + 1));
                 pollFile(files[0]);
             }
+
             lastPollTime = System.currentTimeMillis();
+
         } catch (Exception e) {
+            loggedIn = false;
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
                 log.warn("Consumer is stopping. Ignoring caught exception: "
@@ -187,8 +203,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 }
                 boolean deleted = client.deleteFile(ftpFile.getName());
                 if (!deleted) {
-                    // ignore just log a warning
-                    log.warn("Can not delete file: " + ftpFile.getName() + " from: " + remoteServer());
+                    String message = "Can not delete file: " + ftpFile.getName() + " from: " + remoteServer();
+                    throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
                 }
             } else if (isMoveFile()) {
                 String fromName = ftpFile.getName();
@@ -214,10 +230,12 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 // try to rename
                 boolean success = client.rename(fromName, toName);
                 if (!success) {
-                    log.warn("Can not move file: " + fromName + " to: " + toName);
+                    String message = "Can not move file: " + fromName + " to: " + toName;
+                    throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
                 }
             }
 
+            // all success so lets process it
             getProcessor().process(exchange);
         }
     }

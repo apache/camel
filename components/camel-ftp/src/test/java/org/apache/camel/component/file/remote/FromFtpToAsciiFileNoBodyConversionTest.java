@@ -33,7 +33,6 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp5/camel?password=admin&binary=false";
 
     public void testFromFtpToAsciiFileNoBodyConversion() throws Exception {
-
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
