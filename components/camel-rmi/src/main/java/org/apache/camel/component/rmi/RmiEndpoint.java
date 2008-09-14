@@ -80,7 +80,7 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         }
         // skip leading slash
         if (path.startsWith("/")) {
-           return path.substring(1);
+            return path.substring(1);
         }
         return path;
     }

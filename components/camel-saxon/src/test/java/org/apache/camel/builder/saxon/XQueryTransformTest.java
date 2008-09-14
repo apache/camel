@@ -53,8 +53,8 @@ public class XQueryTransformTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example
                 from("direct:start").
-                  transform().xquery("/people/person[@name='Jonathan']").
-                  to("mock:result");
+                    transform().xquery("/people/person[@name='Jonathan']").
+                    to("mock:result");
                 // END SNIPPET: example
             }
         };
