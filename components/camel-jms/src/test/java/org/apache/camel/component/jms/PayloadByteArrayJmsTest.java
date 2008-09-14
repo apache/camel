@@ -16,19 +16,23 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.ConnectionFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 
+import javax.jms.ConnectionFactory;
+
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+
 
 /**
  * Unit test that we send payload as byte[] for certain types
@@ -47,7 +51,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
 
         template.sendBody("activemq:queue:hello", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testInputStreamShouldBeByteArray() throws Exception {
@@ -60,7 +64,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
 
         template.sendBody("activemq:queue:hello", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testByteBufferShouldBeByteArray() throws Exception {
@@ -73,7 +77,7 @@ public class PayloadByteArrayJmsTest extends ContextTestSupport {
 
         template.sendBody("activemq:queue:hello", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected CamelContext createCamelContext() throws Exception {

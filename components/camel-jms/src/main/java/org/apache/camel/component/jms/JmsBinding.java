@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.jms;
 
-import java.io.Serializable;
 import java.io.File;
-import java.io.Reader;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.nio.ByteBuffer;
 
 import javax.jms.BytesMessage;
 import javax.jms.Destination;
@@ -39,6 +39,7 @@ import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
 import javax.xml.transform.TransformerException;
+
 import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
@@ -50,7 +51,6 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 
 
 /**
