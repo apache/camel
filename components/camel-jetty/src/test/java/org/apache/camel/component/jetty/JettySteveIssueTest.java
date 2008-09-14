@@ -34,7 +34,7 @@ public class JettySteveIssueTest extends ContextTestSupport {
 
         template.sendBody(serverUri + "?x=foo", "Hello World");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

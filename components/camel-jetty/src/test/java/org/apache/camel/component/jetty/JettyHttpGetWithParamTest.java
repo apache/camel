@@ -41,7 +41,7 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
 
         template.sendBody(serverUri + "?one=uno&two=dos", "Hello World");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testHttpGetWithParamsViaHeader() throws Exception {
@@ -52,7 +52,7 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(serverUri, "Hello World", HttpProducer.QUERY, "one=uno&two=dos");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
