@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.net.ftp.FTPClientConfig;
 
 public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
     private RemoteFileConfiguration configuration;
@@ -62,8 +63,21 @@ public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
             throw new RuntimeCamelException("Unsupported protocol: " + config.getProtocol());
         }
 
+        configureFTPClientConfig(parameters, endpoint);
         setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
+    }
+
+    private void configureFTPClientConfig(Map parameters, RemoteFileEndpoint endpoint) {
+        // lookup client config in registry if provided
+        String ref = getAndRemoveParameter(parameters, "ftpClientConfig", String.class);
+        if (ref != null) {
+            FTPClientConfig ftpClientConfig = this.getCamelContext().getRegistry().lookup(ref, FTPClientConfig.class);
+            if (ftpClientConfig == null) {
+                throw new IllegalArgumentException("FTPClientConfig " + ref + " not found in registry.");
+            }
+            endpoint.getConfiguration().setFtpClientConfig(ftpClientConfig);
+        }
     }
 
     public RemoteFileConfiguration getConfiguration() {
