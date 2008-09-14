@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,19 +16,22 @@
  */
 package org.apache.camel.rest.resources;
 
-import com.sun.jersey.spi.inject.Inject;
-import com.sun.jersey.spi.resource.Singleton;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
-import org.apache.camel.rest.model.Endpoints;
+
+import java.util.List;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.List;
+
+import com.sun.jersey.spi.inject.Inject;
+import com.sun.jersey.spi.resource.Singleton;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.rest.model.Endpoints;
 
 /**
  * The resource for the CamelContext
