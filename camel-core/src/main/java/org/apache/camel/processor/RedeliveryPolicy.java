@@ -63,13 +63,13 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     @Override
     public String toString() {
-        return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries +
-                ", initialRedeliveryDelay=" + delay +
-                ", maximumRedeliveryDelay=" + maximumRedeliveryDelay +
-                ", useExponentialBackOff=" + useExponentialBackOff +
-                ", backOffMultiplier=" + backOffMultiplier +
-                ", useCollisionAvoidance=" + useCollisionAvoidance +
-                ", collisionAvoidanceFactor=" + collisionAvoidanceFactor + "]";
+        return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
+            + ", initialRedeliveryDelay=" + delay
+            + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
+            + ", useExponentialBackOff="  + useExponentialBackOff
+            + ", backOffMultiplier=" + backOffMultiplier
+            + ", useCollisionAvoidance=" + useCollisionAvoidance
+            + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor + "]";
     }
 
     public RedeliveryPolicy copy() {
