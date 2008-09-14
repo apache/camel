@@ -36,17 +36,25 @@ public final class FtpUtils {
         int port = config.getPort();
         String username = config.getUsername();
 
+        if (config.getFtpClientConfig() != null) {
+            LOG.trace("Configuring FTPClient with config: " + config.getFtpClientConfig());
+            client.configure(config.getFtpClientConfig());
+        }
+
         LOG.trace("Connecting to " + config);
         client.connect(host, port);
 
         boolean login;
-        LOG.trace("Attempting to login " + username);
         if (username != null) {
+            LOG.trace("Attempting to login " + username);
             login = client.login(username, config.getPassword());
         } else {
+            LOG.trace("Attempting to login anonymous");
             login = client.login("anonymous", null);
         }
-        LOG.trace("User " + username + " logged in: " + login);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("User " + (username != null ? username : "anonymous") + " logged in: " + login);
+        }
         if (!login) {
             return false;
         }
