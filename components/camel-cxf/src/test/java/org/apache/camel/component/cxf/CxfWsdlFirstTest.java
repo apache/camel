@@ -36,6 +36,7 @@ import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstTest extends SpringTestSupport {
@@ -62,7 +63,8 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     protected void startService() {
         Object implementor = new PersonImpl();
         String address = "http://localhost:9000/PersonService/";
-        Endpoint.publish(address, implementor);
+        EndpointImpl endpoint = (EndpointImpl) Endpoint.publish(address, implementor);
+        server = endpoint.getServer();
     }
 
     @Override

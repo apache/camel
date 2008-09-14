@@ -46,7 +46,17 @@ public class SoapTargetBean {
         }
     }
 
-    public SOAPMessage invoke(SOAPMessage request) {
+    public SOAPMessage invokeString(String request) {
+        SOAPMessage response = null;
+        if (request.indexOf("sayHi") > 0) {
+            response = sayHiResponse;
+        } else {
+            response = greetMeResponse;
+        }
+        return response;
+    }
+
+    public SOAPMessage invokeSoapMessage(SOAPMessage request) {
         SOAPMessage response = null;
         try {
             SOAPBody body = request.getSOAPBody();

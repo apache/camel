@@ -82,7 +82,7 @@ public class CxfMessage extends DefaultMessage {
     public void setMessage(Message cxfMessage) {
         this.cxfMessage = cxfMessage;
     }
-    
+
     @Override
     public CxfMessage newInstance() {
         return new CxfMessage();
