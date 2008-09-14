@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,6 +31,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
@@ -71,7 +72,7 @@ public class Splitter extends MulticastProcessor implements Processor {
     @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         Object value = expression.evaluate(exchange);
-        
+
         if (streaming) {
             return createProcessorExchangePairsIterable(exchange, value);
         } else {
@@ -103,7 +104,7 @@ public class Splitter extends MulticastProcessor implements Processor {
                     }
                 };
             }
-            
+
         };
     }
 

@@ -90,7 +90,7 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
                     .process(outer)
                     .to("direct:outer");
 
-               from("direct:outer")
+                from("direct:outer")
                     .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2))
                     .process(inner)
                     .to("mock:end");
@@ -113,5 +113,5 @@ public class MultiErrorHandlerInRouteTest extends ContextTestSupport {
             this.name = name;
         }
     }
-    
+
 }
