@@ -65,16 +65,32 @@ public class EndpointMessageListener implements MessageListener {
             if (eagerLoadingOfProperties) {
                 exchange.getIn().getHeaders();
             }
+
+            // process the exchange
             processor.process(exchange);
-            final JmsMessage out = exchange.getOut(false);
-            if (exchange.getException() != null) {
-                rce = new RuntimeCamelException(exchange.getException());
+
+            // get the correct jms message to send as reply
+            JmsMessage body = null;
+            if (exchange.isFailed()) {
+                if (exchange.getException() != null) {
+                    // an exception occured while processing
+                    // TODO: Camel-585 somekind of flag to determine if we should send the exchange back to the client
+                    // or do as new wrap as runtime exception to be thrown back to spring so it can do rollback
+                    rce = wrapRuntimeCamelException(exchange.getException());
+                } else if (exchange.getFault().getBody() != null) {
+                    // a fault occured while processing
+                    body = exchange.getFault();
+                }
+            } else {
+                // process OK so get the reply
+                body = exchange.getOut(false);
             }
-            if (rce == null && out != null && !disableReplyTo) {
-                sendReply(replyDestination, message, exchange, out);
+            // send the reply
+            if (rce == null && body != null && !disableReplyTo) {
+                sendReply(replyDestination, message, exchange, body);
             }
         } catch (Exception e) {
-            rce = new RuntimeCamelException(e);
+            rce = wrapRuntimeCamelException(e);
         }
         if (rce != null) {
             LOG.warn(endpoint + " consumer caught an exception while processing "
@@ -158,6 +174,19 @@ public class EndpointMessageListener implements MessageListener {
 
     // Implementation methods
     //-------------------------------------------------------------------------
+
+    /**
+     * Wraps the caused exception in a RuntimeCamelException if its not already such an exception
+     */
+    private static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        // TODO: Move to camel-core
+        if (e instanceof RuntimeCamelException) {
+            // dont double wrap if already a RuntimeCamelException
+            return (RuntimeCamelException) e;
+        } else {
+            return new RuntimeCamelException(e);
+        }
+    }
 
     protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange, final JmsMessage out) {
         if (replyDestination == null) {

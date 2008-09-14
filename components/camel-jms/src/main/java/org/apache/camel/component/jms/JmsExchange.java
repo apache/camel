@@ -103,7 +103,7 @@ public class JmsExchange extends DefaultExchange {
      * @return the JMS fault message
      */
     public Message getFaultMessage() {
-        return getOut().getJmsMessage();
+        return getFault().getJmsMessage();
     }
 
     // Implementation methods
