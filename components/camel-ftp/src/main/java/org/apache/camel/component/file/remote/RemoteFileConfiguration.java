@@ -55,7 +55,7 @@ public class RemoteFileConfiguration implements Cloneable {
      * Returns human readable server information for logging purpose
      */
     public String remoteServerInformation() {
-        return protocol + "://" + username + "@" + host + ":" + port;
+        return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + port;
     }
 
     public void configure(URI uri) {

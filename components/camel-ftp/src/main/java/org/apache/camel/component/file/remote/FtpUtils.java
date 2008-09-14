@@ -46,7 +46,7 @@ public final class FtpUtils {
 
         boolean login;
         if (username != null) {
-            LOG.trace("Attempting to login " + username);
+            LOG.trace("Attempting to login user: " + username);
             login = client.login(username, config.getPassword());
         } else {
             LOG.trace("Attempting to login anonymous");
