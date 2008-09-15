@@ -18,9 +18,9 @@ package org.apache.camel.processor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -31,11 +31,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.CollectionConverter;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.CountingLatch;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -143,18 +144,18 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         
         // Parallel Processing the producer
         if (isParallelProcessing) {
-            //TODO: make a dynamic countdown latch to avoid having to convert back to list
-            List<ProcessorExchangePair> allPairs = CollectionConverter.toList(pairs);
-            Exchange[] exchanges = new Exchange[allPairs.size()];
-            final CountDownLatch completedExchanges = new CountDownLatch(allPairs.size());
+            List<Exchange> exchanges = new LinkedList<Exchange>();
+            final CountingLatch completedExchanges = new CountingLatch();
             int i = 0;
             for (ProcessorExchangePair pair : pairs) {
                 Processor producer = pair.getProcessor();
-                exchanges[i] = pair.getExchange();
-                updateNewExchange(exchanges[i], i, allPairs);
-                ProcessCall call = new ProcessCall(exchanges[i], producer, new AsyncCallback() {
+                Exchange subExchange = pair.getExchange();
+                updateNewExchange(subExchange, i, pairs);
+                exchanges.add(subExchange);
+                completedExchanges.increment(); 
+                ProcessCall call = new ProcessCall(subExchange, producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
-                        completedExchanges.countDown();
+                        completedExchanges.decrement();
                     }
 
                 });
