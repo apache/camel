@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -70,8 +71,8 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
     @Override
     public List<ProcessorType<?>> getOutputs() {
         return Collections.EMPTY_LIST;
-    }    
-    
+    }
+
     protected Class createTypeClass() {
         return ObjectHelper.loadClass(getType(), getClass().getClassLoader());
     }
@@ -85,12 +86,17 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
     }
 
     public void setTypeClass(Class typeClass) {
+
         this.typeClass = typeClass;
     }
 
     public Class getTypeClass() {
         if (typeClass == null) {
-            setTypeClass(createTypeClass());
+            Class clazz = createTypeClass();
+            if (clazz == null) {
+                throw new RuntimeCamelException("can't load the class with the class name " + getType());
+            }
+            setTypeClass(clazz);
         }
         return typeClass;
     }
