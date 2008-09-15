@@ -165,9 +165,18 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             log.trace("Polling file: " + ftpFile);
         }
 
-        long ts = ftpFile.getTimestamp().getTimeInMillis();
-        // TODO do we need to adjust the TZ? can we?
-        if (ts > lastPollTime && isMatched(ftpFile)) {
+        // if using last polltime for timestamp matcing (to be removed in Camel 2.0)
+        boolean timestampMatched = true;
+        if (isTimestamp()) {
+            // TODO do we need to adjust the TZ? can we?
+            long ts = ftpFile.getTimestamp().getTimeInMillis();
+            timestampMatched = ts > lastPollTime;
+            if (log.isTraceEnabled()) {
+                log.trace("The file is to old + " + ftpFile + ". lastPollTime=" + lastPollTime + " > fileTimestamp=" + ts);
+            }
+        }
+
+        if (timestampMatched && isMatched(ftpFile)) {
             String fullFileName = getFullFileName(ftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
