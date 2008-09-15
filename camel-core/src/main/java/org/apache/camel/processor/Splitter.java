@@ -47,7 +47,6 @@ public class Splitter extends MulticastProcessor implements Processor {
     public static final String SPLIT_COUNTER = "org.apache.camel.splitCounter";
 
     private final Expression expression;
-    private final boolean streaming;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
         this(expression, destination, aggregationStrategy, false, null, false);
@@ -56,10 +55,9 @@ public class Splitter extends MulticastProcessor implements Processor {
     public Splitter(Expression expression, Processor destination,
             AggregationStrategy aggregationStrategy,
             boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor, boolean streaming) {
-        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor);
+        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor, streaming);
 
         this.expression = expression;
-        this.streaming = streaming;
         notNull(expression, "expression");
         notNull(destination, "destination");
     }
@@ -73,7 +71,7 @@ public class Splitter extends MulticastProcessor implements Processor {
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         Object value = expression.evaluate(exchange);
 
-        if (streaming) {
+        if (isStreaming()) {
             return createProcessorExchangePairsIterable(exchange, value);
         } else {
             return createProcessorExchangePairsList(exchange, value);
