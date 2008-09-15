@@ -24,7 +24,9 @@
 
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <jaxb id="myJaxb" prettyPrint="true" contextPath="org.apache.camel.example"/>
+    <dataFormats>
+      <jaxb id="myJaxb" prettyPrint="true" contextPath="org.apache.camel.example"/>
+    </dataFormats>
 
     <route>
       <from uri="direct:start"/>
