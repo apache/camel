@@ -37,7 +37,7 @@ public class ConvertBodyProcessor implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Message in = exchange.getIn();
+        Message in = exchange.getIn();        
         Object value = in.getBody(type);
         if (value == null) {
             LOG.warn("Could not convert body of IN message: " + in + " to type: " + type.getName());
