@@ -21,7 +21,7 @@ import javax.jms.MessageListener;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Represents a JMS {@link MessageListener} which can be used directly with any
@@ -44,7 +44,7 @@ public class MessageListenerProcessor implements MessageListener {
             Exchange exchange = endpoint.createExchange(message);
             processor.process(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 }

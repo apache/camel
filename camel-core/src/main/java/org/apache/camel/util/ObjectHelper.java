@@ -664,4 +664,20 @@ public final class ObjectHelper {
         }
         return value != null;
     }
+
+    /**
+     * Wraps the caused exception in a {@link RuntimeCamelException} if its not already such an exception.
+     *
+     * @param e  the caused exception
+     * @return  the wrapper exception
+     */
+    public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
+        if (e instanceof RuntimeCamelException) {
+            // don't double wrap if already a RuntimeCamelException
+            return (RuntimeCamelException) e;
+        } else {
+            return new RuntimeCamelException(e);
+        }
+    }
+
 }

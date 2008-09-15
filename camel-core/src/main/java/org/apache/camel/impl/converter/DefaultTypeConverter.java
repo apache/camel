@@ -24,13 +24,13 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -250,7 +250,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                     // ignore its fine to have none
                 }
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                throw wrapRuntimeCamelException(e);
             }
         }
     }

@@ -103,8 +103,6 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
             conn.connect();
         } catch (Exception e) {
             LOG.error("Failed to connect: " + e, e);
-
-            // TODO use checked exceptions?
             throw new RuntimeCamelException(e);
         }
         return conn;
@@ -115,7 +113,7 @@ public class IrcComponent extends DefaultComponent<IrcExchange> {
             connection.doQuit();
             connection.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn("Error closing connection.", e);
         }
     }
 

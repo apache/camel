@@ -21,23 +21,23 @@ import java.net.URI;
 import org.apache.camel.RuntimeCamelException;
 
 public class IrcConfiguration implements Cloneable {
-    String target;
-    String hostname;
-    String password;
-    String nickname;
-    String realname;
-    String username;
-    boolean persistent = true;
-    boolean colors = true;
-    boolean onNick = true;
-    boolean onQuit = true;
-    boolean onJoin = true;
-    boolean onKick = true;
-    boolean onMode = true;
-    boolean onPart = true;
-    boolean onTopic = true;
-    boolean onPrivmsg = true;
-    int[] ports = {6667, 6668, 6669};
+    private String target;
+    private String hostname;
+    private String password;
+    private String nickname;
+    private String realname;
+    private String username;
+    private boolean persistent = true;
+    private boolean colors = true;
+    private boolean onNick = true;
+    private boolean onQuit = true;
+    private boolean onJoin = true;
+    private boolean onKick = true;
+    private boolean onMode = true;
+    private boolean onPart = true;
+    private boolean onTopic = true;
+    private boolean onPrivmsg = true;
+    private int[] ports = {6667, 6668, 6669};
 
     public IrcConfiguration() {
     }

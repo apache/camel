@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 
 import javax.naming.directory.SearchControls;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -81,7 +80,7 @@ public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         this.scope = scope;
     }
 
-    private int toSearchControlScope(String scope) throws CamelException {
+    private int toSearchControlScope(String scope) {
         if (scope.equalsIgnoreCase(OBJECT_SCOPE)) {
             return SearchControls.OBJECT_SCOPE;
         } else if (scope.equalsIgnoreCase(ONELEVEL_SCOPE)) {
@@ -89,7 +88,7 @@ public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         } else if (scope.equalsIgnoreCase(SUBTREE_SCOPE)) {
             return SearchControls.SUBTREE_SCOPE;
         } else {
-            throw new CamelException("Invalid search scope \"" + scope
+            throw new IllegalArgumentException("Invalid search scope \"" + scope
                 + "\" for LdapEndpoint: " + getEndpointUri());
         }
     }

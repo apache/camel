@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
@@ -29,6 +28,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -115,7 +115,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             } catch (RuntimeException e) {
                 throw e;
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                throw wrapRuntimeCamelException(e);
             }
             if (eventEndpoint != null) {
                 eventEndpoint.onApplicationEvent(event);

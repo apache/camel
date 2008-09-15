@@ -29,13 +29,11 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptType;
@@ -50,6 +48,7 @@ import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -275,7 +274,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 LOG.debug("Starting the context now!");
                 getContext().start();
             } catch (Exception e) {
-                throw new RuntimeCamelException(e);
+                throw wrapRuntimeCamelException(e);
             }
         }
         /*

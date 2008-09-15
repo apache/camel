@@ -34,7 +34,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
@@ -52,6 +51,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A post processor to perform injection of {@link Endpoint} and
@@ -218,7 +218,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
                 startService(consumer);
             } catch (Exception e) {
                 LOG.warn(e);
-                throw new RuntimeCamelException(e);
+                throw wrapRuntimeCamelException(e);
             }
         }
     }
@@ -276,7 +276,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             startService(pollingConsumer);
             return pollingConsumer;
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -290,7 +290,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
             startService(producer);
             return producer;
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 
