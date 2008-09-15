@@ -26,6 +26,8 @@ import org.apache.commons.logging.LogFactory;
 public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends ScheduledPollConsumer<T> {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected RemoteFileEndpoint<T> endpoint;
+
+    // @deprecated lastPollTime to be removed in Camel 2.0
     protected long lastPollTime;
 
     protected boolean recursive;
@@ -37,6 +39,7 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     protected String moveNamePostfix;
     protected String excludedNamePrefix;
     protected String excludedNamePostfix;
+    private boolean timestamp;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor) {
         super(endpoint, processor);
@@ -195,4 +198,20 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     public void setExcludedNamePostfix(String excludedNamePostfix) {
         this.excludedNamePostfix = excludedNamePostfix;
     }
+
+    /**
+     * @deprecated the timestamp feature will be removed in Camel 2.0
+     */
+    public boolean isTimestamp() {
+        return timestamp;
+    }
+
+    /**
+     * Sets wether polling should use last poll timestamp for filtering only new files.
+     * @deprecated the timestamp feature will be removed in Camel 2.0
+     */
+    public void setTimestamp(boolean timestamp) {
+        this.timestamp = timestamp;
+    }
+
 }

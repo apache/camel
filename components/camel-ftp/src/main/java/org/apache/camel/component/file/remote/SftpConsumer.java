@@ -162,10 +162,18 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             log.trace("Polling file: " + sftpFile);
         }
 
-        long ts = sftpFile.getAttrs().getMTime() * 1000L;
+        // if using last polltime for timestamp matcing (to be removed in Camel 2.0)
+        boolean timestampMatched = true;
+        if (isTimestamp()) {
+            // TODO do we need to adjust the TZ? can we?
+            long ts = sftpFile.getAttrs().getMTime() * 1000L;
+            timestampMatched = ts > lastPollTime;
+            if (log.isTraceEnabled()) {
+                log.trace("The file is to old + " + sftpFile + ". lastPollTime=" + lastPollTime + " > fileTimestamp=" + ts);
+            }
+        }
 
-        // TODO do we need to adjust the TZ? can we?
-        if (ts > lastPollTime && isMatched(sftpFile)) {
+        if (timestampMatched && isMatched(sftpFile)) {
             String fullFileName = getFullFileName(sftpFile);
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
