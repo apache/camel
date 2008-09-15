@@ -162,10 +162,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 completedExchanges.increment(); 
                 ProcessCall call = new ProcessCall(subExchange, producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
-                        completedExchanges.decrement();
                         if (streaming && aggregationStrategy != null) {
                             doAggregate(result, subExchange);
                         }
+                        completedExchanges.decrement();
                     }
 
                 });
