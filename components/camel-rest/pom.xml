@@ -90,6 +90,12 @@
       <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jsp-2.1</artifactId>
+      <version>${jetty-version}</version>
+      <scope>test</scope>
+    </dependency>
     <!-- enable commons-logging when inside jetty6:run -->
     <!--
     <dependency>
