@@ -35,6 +35,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.CountingLatch;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -69,6 +70,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     private AggregationStrategy aggregationStrategy;
     private boolean isParallelProcessing;
     private ThreadPoolExecutor executor;
+    private final boolean streaming;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
     public MulticastProcessor(Collection<Processor> processors) {
@@ -78,8 +80,12 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
         this(processors, aggregationStrategy, false, null);
     }
-
+    
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor) {
+        this(processors, aggregationStrategy, false, null, false);
+    }
+
+    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor, boolean streaming) {
         notNull(processors, "processors");
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
@@ -92,6 +98,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 this.executor = new ThreadPoolExecutor(processors.size(), processors.size(), 0, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<Runnable>(processors.size()));
             }
         }
+        this.streaming = streaming;
     }
 
     /**
@@ -138,7 +145,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Exchange result = null;
+        final AtomicExchange result = new AtomicExchange();
 
         Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
         
@@ -149,13 +156,16 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             int i = 0;
             for (ProcessorExchangePair pair : pairs) {
                 Processor producer = pair.getProcessor();
-                Exchange subExchange = pair.getExchange();
+                final Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, i, pairs);
                 exchanges.add(subExchange);
                 completedExchanges.increment(); 
                 ProcessCall call = new ProcessCall(subExchange, producer, new AsyncCallback() {
                     public void done(boolean doneSynchronously) {
                         completedExchanges.decrement();
+                        if (streaming && aggregationStrategy != null) {
+                            doAggregate(result, subExchange);
+                        }
                     }
 
                 });
@@ -163,13 +173,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 i++;
             }
             completedExchanges.await();
-            if (aggregationStrategy != null) {
+            if (!streaming && aggregationStrategy != null) {
                 for (Exchange resultExchange : exchanges) {
-                    if (result == null) {
-                        result = resultExchange;
-                    } else {
-                        result = aggregationStrategy.aggregate(result, resultExchange);
-                    }
+                    doAggregate(result, resultExchange);
                 }
             }
 
@@ -182,18 +188,29 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 updateNewExchange(subExchange, i, pairs);
 
                 producer.process(subExchange);
-                if (aggregationStrategy != null) {
-                    if (result == null) {
-                        result = subExchange;
-                    } else {
-                        result = aggregationStrategy.aggregate(result, subExchange);
-                    }
-                }
+                doAggregate(result, subExchange);
                 i++;
             }
         }
-        if (result != null) {
-            ExchangeHelper.copyResults(exchange, result);
+        if (result.get() != null) {
+            ExchangeHelper.copyResults(exchange, result.get());
+        }
+    }
+
+    /**
+     * Aggregate the {@link Exchange} with the current {@link Result}
+     * @param result the current result 
+     * @param exchange the exchange to be added to the result
+     * 
+     * @return the new exchange, consisting of the aggregated information
+     */
+    protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
+        if (aggregationStrategy != null) {
+            if (result.get() == null) {
+                result.set(exchange);
+            } else {
+                result.set(aggregationStrategy.aggregate(result.get(), exchange));
+            }
         }
     }
 
@@ -231,6 +248,20 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
             });
         }
         ServiceHelper.startServices(processors);
+    }
+    
+    /**
+     * Is the multicast processor working in streaming mode?
+     * 
+     * In streaming mode:
+     * <ul>
+     * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>
+     * <li>for parallel processing, we start aggregating responses as they get send back to the processor;
+     * this means the {@link AggregatorStrategy} has to take care of handling out-of-order arrival of exchanges</li>
+     * </ul>
+     */
+    protected boolean isStreaming() {
+        return streaming;
     }
 
     /**

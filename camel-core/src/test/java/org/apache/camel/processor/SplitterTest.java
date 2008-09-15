@@ -45,7 +45,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (int i = 0; i < 4; i++) {
@@ -68,7 +68,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         Message out = result.getOut();
         assertEquals("Roman", out.getBody());
         assertMessageHeader(out, "foo", "bar");
@@ -99,7 +99,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
 
@@ -131,11 +131,31 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         Message out = result.getOut();
 
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+    }
+    
+    public void testSpliterWithAggregationStrategyParallelStreaming() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(5);
+
+        Exchange result = template.send("direct:parallel-streaming", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Roman");
+                in.setHeader("foo", "bar");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+        Message out = result.getOut();
+
+        assertMessageHeader(out, "foo", "bar");
+        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
+        System.out.println(result);
     }
     
     public void testSplitterWithStreaming() throws Exception {
@@ -166,6 +186,7 @@ public class SplitterTest extends ContextTestSupport {
                 from("direct:seqential").splitter(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
                 from("direct:parallel").splitter(body().tokenize(","), new MyAggregationStrategy(), true).to("mock:result");
                 from("direct:streaming").splitter(body().tokenize(",")).streaming().to("mock:result");
+                from("direct:parallel-streaming").splitter(body().tokenize(","), new MyAggregationStrategy(), true).streaming().to("mock:result");
             }
         };
     }
