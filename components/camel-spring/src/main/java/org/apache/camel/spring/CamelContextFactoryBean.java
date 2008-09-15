@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +43,12 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatsType;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
@@ -54,7 +57,9 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -96,8 +101,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
-    @XmlElementRef
-    private List<DataFormatType> dataFormats;
+    @XmlElement(name = "dataFormats", required = false)
+    private DataFormatsType dataFormats;
     @XmlElement(name = "intercept", required = false)
     private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlElement(name = "route", required = false)
@@ -169,8 +174,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
             }
-        }
-
+        }       
+        
         // setup the intercepts
         for (RouteType route : routes) {
 
@@ -205,7 +210,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 }                
             }
 
+        }        
+        
+        if (dataFormats != null) {
+            getContext().setDataFormats(dataFormats.asMap());
         }
+        
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -495,5 +505,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages, contextClassLoaderOnStart, getBeanPostProcessor());
             finder.appendBuilders(additionalBuilders);
         }
+    }
+
+    public void setDataFormats(DataFormatsType dataFormats) {
+        this.dataFormats = dataFormats;
+    }
+
+    public DataFormatsType getDataFormats() {
+        return dataFormats;
     }
 }

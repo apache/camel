@@ -18,10 +18,13 @@ package org.apache.camel;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
@@ -267,4 +270,16 @@ public interface CamelContext extends Service {
      * @param errorHandlerBuilder  the builder
      */
     void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
+    
+    /**
+     * Sets the data formats that can be referenced in the routes.
+     * @param dataFormats the data formats
+     */
+    void setDataFormats(Map<String, DataFormatType> dataFormats);
+
+    /**
+     * Gets the data formats that can be referenced in the routes.
+     * @param dataFormats the data formats
+     */     
+    Map<String, DataFormatType> getDataFormats();
 }

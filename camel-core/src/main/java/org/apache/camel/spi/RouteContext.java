@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatType;
 
 /**
  * The context used to activate new routing rules
@@ -174,5 +175,12 @@ public interface RouteContext {
      * @return the flag
      */
     boolean isRouteAdded();
-
+    
+    /**
+     * Get a DataFormatType by ref name
+     *
+     * @param ref  the ref name to lookup
+     * @return the found object
+     */
+    DataFormatType getDataFormat(String ref);
 }
