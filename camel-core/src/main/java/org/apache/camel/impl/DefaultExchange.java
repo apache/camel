@@ -16,7 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A default implementation of {@link Exchange}
@@ -246,7 +246,7 @@ public class DefaultExchange implements Exchange {
         if (exception instanceof Exception) {
             throw (Exception)exception;
         }
-        throw new RuntimeCamelException(exception);
+        throw wrapRuntimeCamelException(exception);
     }
 
     public Message getFault() {

@@ -20,10 +20,10 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,14 +74,14 @@ public class TryProcessor extends ServiceSupport implements Processor {
         } catch (Exception ex) {
             unexpected = ex;
         } catch (Throwable ex) {
-            unexpected = new RuntimeCamelException(ex);
+            unexpected = wrapRuntimeCamelException(ex);
         } finally {
             try {
                 processFinally(exchange);
             } catch (Exception ex) {
                 unexpected = ex;
             } catch (Throwable ex) {
-                unexpected = new RuntimeCamelException(ex);
+                unexpected = wrapRuntimeCamelException(ex);
             }
             if (unexpected != null) {
                 LOG.warn("Caught exception inside processFinally clause.", unexpected);

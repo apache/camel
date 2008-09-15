@@ -36,6 +36,7 @@ import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -255,7 +256,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             }
         } catch (Exception e) {
             // TODO add the fault message handling work
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
 
     }

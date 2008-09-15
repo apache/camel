@@ -19,11 +19,11 @@ package org.apache.camel.component.event;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -79,7 +79,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
         try {
             getLoadBalancer().process(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 

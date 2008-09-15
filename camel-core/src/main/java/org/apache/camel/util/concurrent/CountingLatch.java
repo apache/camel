@@ -65,7 +65,7 @@ public class CountingLatch {
     /**
      * Get the current count
      */
-    public int getCount()  {
+    public int getCount() {
         return sync.getCount();
     }
     
@@ -97,7 +97,7 @@ public class CountingLatch {
      * 
      * @param timeout the value of the timeout
      * @param unit the unit in which the timeout is expressed
-     * @return <code>trAwue</code> if the latch has reached the count of 0 in the given time
+     * @return <code>true</code> if the latch has reached the count of 0 in the given time
      * @throws InterruptedException if the thread gets interrupted while waiting
      */
     public boolean await(long timeout, TimeUnit unit) throws InterruptedException {

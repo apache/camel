@@ -57,7 +57,7 @@ public class SpringIntegrationConsumer  extends ScheduledPollConsumer<SpringInte
                 inputChannel = (AbstractPollableChannel) channelRegistry.lookupChannel(inputChannelName);
                 ObjectHelper.notNull(inputChannel, "The inputChannel with the name [" + inputChannelName + "]");
             } else {
-                throw new RuntimeCamelException("Can't find the right inputChannelName, , please check your configuration.");
+                throw new RuntimeCamelException("Can't find the right inputChannelName, please check your configuration.");
             }
         } else {
             if (endpoint.getMessageChannel() != null) {

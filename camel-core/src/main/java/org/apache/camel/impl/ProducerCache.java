@@ -26,8 +26,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -68,7 +68,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
             Producer<E> producer = getProducer(endpoint);
             producer.process(exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -85,7 +85,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
             E exchange = producer.createExchange();
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -105,7 +105,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
             setProcessedSync(exchange, sync);
             return exchange;
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 
@@ -133,7 +133,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
             E exchange = producer.createExchange(pattern);
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            throw wrapRuntimeCamelException(e);
         }
     }
 

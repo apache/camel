@@ -25,6 +25,7 @@ import javax.jms.Session;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -36,7 +37,7 @@ import org.springframework.jms.core.MessageCreator;
  *
  * Note that instance of this object has to be thread safe (reentrant)
  * 
- * @version $Revision$    ;';;;
+ * @version $Revision$
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(EndpointMessageListener.class);
@@ -75,7 +76,7 @@ public class EndpointMessageListener implements MessageListener {
                 if (exchange.getException() != null) {
                     // an exception occured while processing
                     // TODO: Camel-585 somekind of flag to determine if we should send the exchange back to the client
-                    // or do as new wrap as runtime exception to be thrown back to spring so it can do rollback
+                    // or do as now where we wrap as runtime exception to be thrown back to spring so it can do rollback
                     rce = wrapRuntimeCamelException(exchange.getException());
                 } else if (exchange.getFault().getBody() != null) {
                     // a fault occured while processing
@@ -174,19 +175,6 @@ public class EndpointMessageListener implements MessageListener {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-
-    /**
-     * Wraps the caused exception in a RuntimeCamelException if its not already such an exception
-     */
-    private static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
-        // TODO: Move to camel-core
-        if (e instanceof RuntimeCamelException) {
-            // dont double wrap if already a RuntimeCamelException
-            return (RuntimeCamelException) e;
-        } else {
-            return new RuntimeCamelException(e);
-        }
-    }
 
     protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange, final JmsMessage out) {
         if (replyDestination == null) {

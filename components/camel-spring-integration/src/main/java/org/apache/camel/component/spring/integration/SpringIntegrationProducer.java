@@ -60,7 +60,7 @@ public class SpringIntegrationProducer extends DefaultProducer<SpringIntegration
                 outputChannelName = endpoint.getInputChannel();
             }
             if (ObjectHelper.isNullOrBlank(outputChannelName)) {
-                throw new RuntimeCamelException("Can't find the right outputChannelName,"
+                throw new RuntimeCamelException("Can't find the right outputChannelName, "
                                                 + "please check the endpoint uri outputChannel part!");
             } else {
                 outputChannel = (AbstractPollableChannel) channelRegistry.lookupChannel(outputChannelName);

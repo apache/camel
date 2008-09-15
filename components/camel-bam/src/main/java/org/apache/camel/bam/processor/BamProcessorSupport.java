@@ -22,8 +22,8 @@ import java.lang.reflect.Type;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ExchangeHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -145,7 +145,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     protected Object onError(TransactionStatus status, Exception e) {
         status.setRollbackOnly();
         LOG.error("Caught: " + e, e);
-        throw new RuntimeCamelException(e);
+        throw wrapRuntimeCamelException(e);
     }
 
 }

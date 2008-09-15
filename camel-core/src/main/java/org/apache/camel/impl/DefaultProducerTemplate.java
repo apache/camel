@@ -29,8 +29,8 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
@@ -331,13 +331,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         if (result != null) {
             // rethrow if there was an exception
             if (result.getException() != null) {
-                if (result.getException() instanceof RuntimeCamelException) {
-                    // already a RuntimeCamelException so throw it as is
-                    throw (RuntimeCamelException) result.getException();
-                } else {
-                    // wrap checked exception in runtime
-                    throw new RuntimeCamelException(result.getException());
-                }
+                throw wrapRuntimeCamelException(result.getException());
             }
 
             // result could have a fault message
