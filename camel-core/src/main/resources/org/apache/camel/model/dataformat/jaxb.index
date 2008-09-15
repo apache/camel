@@ -19,6 +19,7 @@ ArtixDSDataFormat
 CsvDataFormat
 HL7DataFormat
 DataFormatType
+DataFormatsType
 JaxbDataFormat
 SerializationDataFormat
 StringDataFormat

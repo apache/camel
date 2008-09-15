@@ -18,7 +18,9 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
@@ -32,10 +34,12 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -203,5 +207,14 @@ public class DefaultRouteContext implements RouteContext {
     public void setIsRouteAdded(boolean b) {
         routeAdded = b;
         
+    }
+
+    public DataFormatType getDataFormat(String ref) {
+        Map<String, DataFormatType> dataFormats = getCamelContext().getDataFormats();
+        if (dataFormats != null) {
+            return dataFormats.get(ref);
+        } else {
+            return null;
+        }
     }
 }

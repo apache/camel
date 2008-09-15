@@ -43,9 +43,11 @@ import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
@@ -92,6 +94,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
     private ErrorHandlerBuilder errorHandlerBuilder;
+    private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -681,5 +684,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return isStarted() && !isStarting();
     }
 
+    public void setDataFormats(Map<String, DataFormatType> dataFormats) {
+        this.dataFormats = dataFormats;
+    }
 
+    public Map<String, DataFormatType> getDataFormats() {
+        return dataFormats;
+    }
 }

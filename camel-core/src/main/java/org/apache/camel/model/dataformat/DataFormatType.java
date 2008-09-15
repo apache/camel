@@ -60,6 +60,11 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
         if (type == null) {
             notNull(ref, "ref or dataFormatType");
             DataFormat dataFormat = routeContext.lookup(ref, DataFormat.class);
+            
+            if (dataFormat == null) {
+                dataFormat = routeContext.getDataFormat(ref);
+            }
+            
             if (dataFormat instanceof DataFormatType) {
                 type = (DataFormatType)dataFormat;
             } else {
