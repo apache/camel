@@ -64,40 +64,6 @@
 	  <version>${spring-version}</version>
     </dependency>
 
-    <!-- LogicBlaze Repo Script Engines
-    <dependency>
-      <groupId>javax.script</groupId>
-      <artifactId>groovy-engine</artifactId>
-      <version>1.0</version>
-      <classifier>jdk14</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.script</groupId>
-      <artifactId>js-engine</artifactId>
-      <version>1.0</version>
-      <classifier>jdk14</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.script</groupId>
-      <artifactId>jython-engine</artifactId>
-      <version>1.0</version>
-      <classifier>jdk14</classifier>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.script</groupId>
-      <artifactId>jruby-engine</artifactId>
-      <version>1.0</version>
-      <classifier>jdk14</classifier>
-      <scope>test</scope>
-    </dependency>
-    -->
-
     <!-- ServiceMix Repo Script Engines -->
     <dependency>
       <groupId>com.sun.script</groupId>
@@ -164,6 +130,12 @@
     </dependency>
 
     <dependency>
+          <groupId>javax.script</groupId>
+          <artifactId>script-api</artifactId>
+          <version>1.0</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.jruby</groupId>
       <artifactId>jruby</artifactId>
       <version>1.1.4</version>
@@ -182,33 +154,6 @@
     </dependency>
 
   </dependencies>
-
-
-  <profiles>
-    <profile>
-      <id>jdk1.5</id>
-      <activation>
-        <jdk>1.5</jdk>
-      </activation>
-      <dependencies>
-        <!-- required for the retrotranslated JSR-223 api & engines -->
-        <dependency>
-          <groupId>net.sf.retrotranslator</groupId>
-          <artifactId>retrotranslator-runtime</artifactId>
-          <version>1.2.1</version>
-        </dependency>
-
-        <!-- these dependencies are only for Java 5, they are not required for Java 6 -->
-        <dependency>
-          <groupId>javax.script</groupId>
-          <artifactId>script-api</artifactId>
-          <version>1.0</version>
-          <classifier>jdk14</classifier>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
-
 
   <build>
     <plugins>
