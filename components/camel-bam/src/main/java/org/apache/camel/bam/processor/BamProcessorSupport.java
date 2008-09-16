@@ -23,12 +23,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A base {@link Processor} for working on <a

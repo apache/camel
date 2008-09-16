@@ -30,9 +30,11 @@ import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * Default implementation of a type converter registry used for
@@ -106,7 +108,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         boolean camelType = type.getCanonicalName().startsWith("org.apache.camel");
         if (!camelType && value != null) {
-            // only log WARN level for non internal Camel convertions 
+            // only log WARN level for non internal Camel convertions
             LOG.warn("Could not find a type converter for converting "
                 + value.getClass().getCanonicalName() + " -> "
                 + type.getCanonicalName() + " with value: " + value);

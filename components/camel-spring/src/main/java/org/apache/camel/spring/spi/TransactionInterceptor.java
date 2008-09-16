@@ -23,7 +23,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelayPolicy;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionDefinition;
@@ -32,6 +31,8 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * The <a href="http://activemq.apache.org/camel/transactional-client.html">Transactional Client</a>

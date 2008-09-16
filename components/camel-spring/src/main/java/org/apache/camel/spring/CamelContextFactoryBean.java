@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -44,27 +42,25 @@ import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatsType;
-import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -174,8 +170,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (beanPostProcessor instanceof CamelBeanPostProcessor) {
                 ((CamelBeanPostProcessor)beanPostProcessor).setCamelContext(getContext());
             }
-        }       
-        
+        }
+
         // setup the intercepts
         for (RouteType route : routes) {
 
@@ -205,17 +201,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 if (outputsSize > 0) {
                     ProcessorType<?> processorType = proxy.getOutputs().get(outputsSize - 1);
                     if (processorType instanceof ProceedType) {
-                        route.getOutputs().addAll(outputs);                        
+                        route.getOutputs().addAll(outputs);
                     }
-                }                
+                }
             }
 
-        }        
-        
+        }
+
         if (dataFormats != null) {
             getContext().setDataFormats(dataFormats.asMap());
         }
-        
+
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
