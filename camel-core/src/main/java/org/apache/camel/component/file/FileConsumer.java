@@ -44,15 +44,16 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
     private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>();
 
+    // the options below is @deprecated and will be removed in Camel 2.0
     private long lastPollTime;
     private int unchangedDelay;
     private boolean unchangedSize;
-
     private boolean generateEmptyExchangeWhenIdle;
+    private boolean alwaysConsume;
+
     private boolean recursive;
     private String regexPattern = "";
     private boolean exclusiveReadLock = true;
-    private boolean alwaysConsume;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -270,6 +271,10 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             // Allow recursive polling to descend into this directory
             return true;
         } else {
+            // @deprecated will be removed on Camel 2.0
+            // the code below is kinda hard to maintain. We should strive to remove
+            // this stuff in Camel 2.0 to keep this component simple and no surprises for end-users
+            // this stuff is not persistent so restarting Camel will reset the state
             boolean lastModifiedCheck = false;
             long modifiedDuration = 0;
             if (getUnchangedDelay() > 0) {
@@ -383,6 +388,9 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return generateEmptyExchangeWhenIdle;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void setGenerateEmptyExchangeWhenIdle(boolean generateEmptyExchangeWhenIdle) {
         this.generateEmptyExchangeWhenIdle = generateEmptyExchangeWhenIdle;
     }
@@ -421,7 +429,21 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
         return alwaysConsume;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0 (not needed when we get rid of last polltimestamp)
+     */
     public void setAlwaysConsume(boolean alwaysConsume) {
         this.alwaysConsume = alwaysConsume;
+    }
+
+    public boolean isTimestamp() {
+        return !alwaysConsume;
+    }
+
+    /**
+     * @deprecated will be removed in Camel 2.0 (not needed when we get rid of last polltimestamp)
+     */
+    public void setTimestamp(boolean timestamp) {
+        this.alwaysConsume = !timestamp;
     }
 }

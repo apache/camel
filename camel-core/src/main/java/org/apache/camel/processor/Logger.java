@@ -20,7 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchangeFormatter;
 import org.apache.camel.processor.interceptor.ExchangeFormatter;
-import org.apache.camel.processor.interceptor.TraceInterceptor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
