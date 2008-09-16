@@ -37,7 +37,7 @@
 
         <route>
             <from uri="direct:unmarshal"/>
-            <!-- using a child node -->
+            <!-- using a bean id -->
             <unmarshal ref="xs"/>
             <to uri="mock:unmarshal"/>
         </route>
