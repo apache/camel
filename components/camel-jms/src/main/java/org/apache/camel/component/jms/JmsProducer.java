@@ -192,7 +192,7 @@ public class JmsProducer extends DefaultProducer {
             setMessageId(exchange);
 
             // lets wait and return the response
-            long requestTimeout = endpoint.getRequestTimeout();
+            long requestTimeout = endpoint.getConfiguration().getRequestTimeout();
             try {
                 Message message = null;
                 try {

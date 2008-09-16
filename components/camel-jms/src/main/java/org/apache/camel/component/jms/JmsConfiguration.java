@@ -1071,6 +1071,9 @@ public class JmsConfiguration implements Cloneable {
         return requestTimeout;
     }
 
+    /**
+     * Sets the timeout in milliseconds which requests should timeout after
+     */
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
     }

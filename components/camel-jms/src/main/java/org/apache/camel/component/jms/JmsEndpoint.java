@@ -43,14 +43,12 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
-    private long requestTimeout;
 
     public JmsEndpoint(String uri, JmsComponent component, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
         this.destination = destination;
         this.pubSubDomain = pubSubDomain;
-        this.requestTimeout = configuration.getRequestTimeout();
     }
 
     public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destination, boolean pubSubDomain) {
@@ -59,7 +57,6 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.configuration = configuration;
         this.destination = destination;
         this.pubSubDomain = pubSubDomain;
-        this.requestTimeout = configuration.getRequestTimeout();
     }
 
     public JmsEndpoint(String endpointUri, String destination, boolean pubSubDomain) {
@@ -193,17 +190,20 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
         this.requestor = requestor;
     }
 
+    /**
+     * @deprecated use configuration.requestTimeout. Will be removed in Camel 2.0
+     */
     public long getRequestTimeout() {
-        return requestTimeout;
+        return configuration.getRequestTimeout();
     }
 
     /**
      * Sets the timeout in milliseconds which requests should timeout after
      *
-     * @param requestTimeout
+     * @deprecated use configuration.requestTimeout. Will be removed in Camel 2.0
      */
     public void setRequestTimeout(long requestTimeout) {
-        this.requestTimeout = requestTimeout;
+        configuration.setRequestTimeout(requestTimeout);
     }
 
     public boolean isPubSubDomain() {
