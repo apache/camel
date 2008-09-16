@@ -23,12 +23,12 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 /**
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents

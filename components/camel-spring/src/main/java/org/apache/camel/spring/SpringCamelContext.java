@@ -28,7 +28,6 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spring.spi.ApplicationContextRegistry;
 import org.apache.camel.spring.spi.SpringInjector;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeansException;
@@ -41,6 +40,8 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A Spring aware implementation of {@link org.apache.camel.CamelContext} which
@@ -57,8 +58,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
-    private boolean shouldStartContext = 
-        ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE); // start context by default 
+    private boolean shouldStartContext =
+        ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE); // start context by default
 
     public SpringCamelContext() {
     }
@@ -79,7 +80,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         answer.afterPropertiesSet();
         return answer;
     }
-        
+
 
     public static SpringCamelContext springCamelContext(String configLocations) throws Exception {
         return springCamelContext(new ClassPathXmlApplicationContext(configLocations));
@@ -90,7 +91,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     private void maybeStart() throws Exception {
-        if (getShouldStartContext()) {     
+        if (getShouldStartContext()) {
             LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
             start();
         } else {
@@ -167,8 +168,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
                 eventEndpoint = createEventEndpoint();
             }
         }
-    }   
-    
+    }
+
     @Override
     protected Injector createInjector() {
         if (applicationContext instanceof ConfigurableApplicationContext) {

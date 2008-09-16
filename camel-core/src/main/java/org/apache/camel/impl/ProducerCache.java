@@ -27,10 +27,12 @@ import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * Cache containing created {@link Producer}.

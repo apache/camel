@@ -25,18 +25,19 @@ import javax.jms.Session;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A JMS {@link MessageListener} which can be used to delegate processing to a
  * Camel endpoint.
  *
  * Note that instance of this object has to be thread safe (reentrant)
- * 
+ *
  * @version $Revision$
  */
 public class EndpointMessageListener implements MessageListener {
