@@ -88,6 +88,7 @@ public class CountingLatchTest extends TestCase {
                 for (int i = 0; i < COUNT; i++) {
                     latch.increment();
                     sleep();
+
                 }
             }
         });
@@ -102,14 +103,12 @@ public class CountingLatchTest extends TestCase {
             }
         });
         up.start();
-        down.start();
-        assertFalse("We can't be done in 100 ms", latch.await(100, TimeUnit.MILLISECONDS));
-        // but we can block until we are done
+        down.start();        
         assertLatchDone();
     }
 
     /**
-     * Await the latch and assert the count is 0 when it does return 
+     * Await the latch and assert the count is 0 when it does return
      * @throws InterruptedException
      */
     private void assertLatchDone() throws InterruptedException {
