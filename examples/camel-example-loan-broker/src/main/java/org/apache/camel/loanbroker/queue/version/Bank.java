@@ -34,8 +34,8 @@ public class Bank implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
-        Integer historyLength = (Integer) exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH);
+        String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
+        Integer historyLength = exchange.getIn().getHeader(Constants.PROPERTY_HISTORYLENGTH, Integer.class);
         double rate = primeRate + (double)(historyLength / 12) / 10 + (double)(Math.random() * 10) / 10;
         LOG.info("The bank: " + bankName + " for client: " + ssn + " 's rate " + rate);
         exchange.getOut().setHeader(Constants.PROPERTY_RATE, new Double(rate));

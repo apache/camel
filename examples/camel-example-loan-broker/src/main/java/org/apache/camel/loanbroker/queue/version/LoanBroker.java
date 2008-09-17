@@ -55,7 +55,7 @@ public class LoanBroker extends RouteBuilder {
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
 
         // Note we can explicitly name the component
-        context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         context.addRoutes(new LoanBroker());
         // Start the loan broker
@@ -76,27 +76,27 @@ public class LoanBroker extends RouteBuilder {
     public void configure() {
     // START SNIPPET: dsl
         // Put the message from loanRequestQueue to the creditRequestQueue
-        from("test-jms:queue:loanRequestQueue").to("test-jms:queue:creditRequestQueue");
+        from("jms:queue:loanRequestQueue").to("jms:queue:creditRequestQueue");
 
         // Now we can let the CreditAgency process the request, then the message will be put into creditResponseQueue
-        from("test-jms:queue:creditRequestQueue").process(new CreditAgency()).to("test-jms:queue:creditResponseQueue");
+        from("jms:queue:creditRequestQueue").process(new CreditAgency()).to("jms:queue:creditResponseQueue");
 
         // Here we use the multicast pattern to send the message to three different bank queue
-        from("test-jms:queue:creditResponseQueue").multicast().to("test-jms:queue:bank1", "test-jms:queue:bank2", "test-jms:queue:bank3");
+        from("jms:queue:creditResponseQueue").multicast().to("jms:queue:bank1", "jms:queue:bank2", "jms:queue:bank3");
 
         // Each bank processor will process the message and put the response message into the bankReplyQueue
-        from("test-jms:queue:bank1").process(new Bank("bank1")).to("test-jms:queue:bankReplyQueue");
-        from("test-jms:queue:bank2").process(new Bank("bank2")).to("test-jms:queue:bankReplyQueue");
-        from("test-jms:queue:bank3").process(new Bank("bank3")).to("test-jms:queue:bankReplyQueue");
+        from("jms:queue:bank1").process(new Bank("bank1")).to("jms:queue:bankReplyQueue");
+        from("jms:queue:bank2").process(new Bank("bank2")).to("jms:queue:bankReplyQueue");
+        from("jms:queue:bank3").process(new Bank("bank3")).to("jms:queue:bankReplyQueue");
 
         // Now we aggregating the response message by using the Constants.PROPERTY_SSN header
         // The aggregation will completed when all the three bank responses are received
-        from("test-jms:queue:bankReplyQueue")
+        from("jms:queue:bankReplyQueue")
             .aggregator(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completedPredicate(header("aggregated").isEqualTo(3))
 
         // Here we do some translation and put the message back to loanReplyQueue
-            .process(new Translator()).to("test-jms:queue:loanReplyQueue");
+            .process(new Translator()).to("jms:queue:loanReplyQueue");
 
     // END SNIPPET: dsl
     }

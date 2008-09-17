@@ -27,7 +27,7 @@ public class CreditAgency implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("Receiving credit agency request");
-        String ssn = (String)exchange.getIn().getHeader(Constants.PROPERTY_SSN);
+        String ssn = exchange.getIn().getHeader(Constants.PROPERTY_SSN, String.class);
         int score = (int) (Math.random() * 600 + 300);
         int hlength = (int) (Math.random() * 19 + 1);
         exchange.getOut().setHeader(Constants.PROPERTY_SCORE, new Integer(score));

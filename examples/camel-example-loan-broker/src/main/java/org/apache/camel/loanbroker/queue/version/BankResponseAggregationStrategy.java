@@ -27,9 +27,9 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
-        Integer old = (Integer) oldExchange.getProperty("aggregated");
-        Double oldRate = (Double) oldExchange.getIn().getHeader(Constants.PROPERTY_RATE);
-        Double newRate = (Double) newExchange.getIn().getHeader(Constants.PROPERTY_RATE);
+        Integer old = oldExchange.getProperty("aggregated", Integer.class);
+        Double oldRate = oldExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
+        Double newRate = newExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
         Exchange result = null;
         if (old == null) {
             old = 1;
