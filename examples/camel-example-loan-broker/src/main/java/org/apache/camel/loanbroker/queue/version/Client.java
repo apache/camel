@@ -35,7 +35,7 @@ public class Client extends RouteBuilder {
         // Set up the ActiveMQ JMS Components
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
         // Note we can explicit name of the component
-        context.addComponent("test-jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        context.addComponent("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
 
         context.addRoutes(new Client());
 
@@ -45,7 +45,7 @@ public class Client extends RouteBuilder {
         // START SNIPPET: sending
         // send out the request message
         for (int i = 0; i < 2; i++) {
-            template.sendBodyAndHeader("test-jms:queue:loanRequestQueue",
+            template.sendBodyAndHeader("jms:queue:loanRequestQueue",
                                        "Quote for the lowerst rate of loaning bank",
                                        Constants.PROPERTY_SSN, "Client" + i);
             Thread.sleep(100);
@@ -63,7 +63,7 @@ public class Client extends RouteBuilder {
      */
     public void configure() {
         // START SNIPPET: pulling
-        from("test-jms:queue:loanReplyQueue").process(new Processor() {
+        from("jms:queue:loanReplyQueue").process(new Processor() {
 
             public void process(Exchange exchange) throws Exception {
                 // Print out the response message
