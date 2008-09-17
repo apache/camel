@@ -86,6 +86,21 @@ public final class CxfBinding {
             // TODO do we propagate header the same way in non-POJO mode?
             // CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
         }
+
+        //Ensure there is a request context, which is needed by propogateContext() below
+        Map<String, Object> requestContext = CastUtils.cast((Map)answer.get(Client.REQUEST_CONTEXT));
+        if (requestContext == null) {
+        	requestContext = new HashMap<String, Object>();
+        }
+        if (exchange.getExchange() != null) { 
+        	requestContext.putAll(exchange.getExchange());
+        }
+        if (exchange.getProperties() != null) {
+            //Allows other components to pass properties into cxf request context
+            requestContext.putAll(exchange.getProperties());
+        }
+        answer.put(Client.REQUEST_CONTEXT, requestContext);
+        
         return answer;
     }
 

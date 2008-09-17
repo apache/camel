@@ -26,11 +26,27 @@ import javax.xml.ws.BindingProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
 
+	// *** This class extends CxfProducerTest, so see that class for other tests run by this code
+	
+	private static final String TEST_KEY   = "sendSimpleMessage-test";
+	private static final String TEST_VALUE = "exchange property value should get passed through request context";
+	
+	public void testExchangePropertyPropagation() throws Exception {
+        CxfExchange exchange = sendSimpleMessage();
+
+        assertNotNull(exchange);
+        assertNotNull(exchange.getInMessage());
+        assertNotNull(exchange.getInMessage().get(Client.REQUEST_CONTEXT));
+        Map<String, Object> requestContext = CastUtils.cast((Map)exchange.getInMessage().get(Client.REQUEST_CONTEXT));
+        String actualValue = (String)requestContext.get(TEST_KEY);
+        assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
+    }
 
     protected String getSimpleEndpointUri() {
         return "cxf://http://localhost:9000/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
@@ -50,6 +66,7 @@ public class CxfProducerContextTest extends CxfProducerTest {
                 exchange.getIn().setBody(params);
                 exchange.getIn().setHeader(Client.REQUEST_CONTEXT , requestContext);
                 exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, ECHO_OPERATION);
+                exchange.getProperties().put(TEST_KEY, TEST_VALUE);
             }
         });
         return exchange;
