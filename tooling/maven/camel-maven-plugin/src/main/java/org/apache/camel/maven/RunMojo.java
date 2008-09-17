@@ -332,8 +332,7 @@ public class RunMojo extends AbstractExecMojo {
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (killAfter != -1) {
-            getLog()
-                .warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
+            getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
 
         // lets create the command line arguments to pass in...
@@ -495,8 +494,7 @@ public class RunMojo extends AbstractExecMojo {
         }
         // generally abnormal
         if (thread.isAlive()) {
-            getLog().warn(
-                          "thread " + thread + " was interrupted but is still alive after waiting at least "
+            getLog().warn("thread " + thread + " was interrupted but is still alive after waiting at least "
                               + timeoutMsecs + "msecs");
         }
     }
@@ -540,17 +538,14 @@ public class RunMojo extends AbstractExecMojo {
                     getLog().warn("thread " + thread + " will be Thread.stop()'ed");
                     thread.stop();
                 } else {
-                    getLog().warn(
-                                  "thread " + thread
-                                      + " will linger despite being asked to die via interruption");
+                    getLog().warn("thread " + thread
+                            + " will linger despite being asked to die via interruption");
                 }
             }
         }
         if (!uncooperativeThreads.isEmpty()) {
-            getLog()
-                .warn(
-                      "NOTE: "
-                          + uncooperativeThreads.size()
+            getLog().warn("NOTE: "
+                    + uncooperativeThreads.size()
                           + " thread(s) did not finish despite being asked to "
                           + " via interruption. This is not a problem with exec:java, it is a problem with the running code."
                           + " Although not serious, it should be remedied.");
@@ -561,8 +556,7 @@ public class RunMojo extends AbstractExecMojo {
                 // even log in future
                 Thread[] threadsArray = new Thread[1];
                 threadGroup.enumerate(threadsArray);
-                getLog().debug(
-                               "strange; " + activeCount + " thread(s) still active in the group "
+                getLog().debug("strange; " + activeCount + " thread(s) still active in the group "
                                    + threadGroup + " such as " + threadsArray[0]);
             }
         }
@@ -622,8 +616,7 @@ public class RunMojo extends AbstractExecMojo {
             Iterator iter = this.determineRelevantPluginDependencies().iterator();
             while (iter.hasNext()) {
                 Artifact classPathElement = (Artifact)iter.next();
-                getLog().debug(
-                               "Adding plugin dependency artifact: " + classPathElement.getArtifactId()
+                getLog().debug("Adding plugin dependency artifact: " + classPathElement.getArtifactId()
                                    + " to classpath");
                 path.add(classPathElement.getFile().toURL());
             }
@@ -649,10 +642,6 @@ public class RunMojo extends AbstractExecMojo {
                 getLog().debug("Adding to classpath : " + mainClasses);
                 path.add(mainClasses);
 
-                URL testClasses = new File(project.getBuild().getTestOutputDirectory()).toURL();
-                getLog().debug("Adding to classpath : " + testClasses);
-                path.add(testClasses);
-
                 Set dependencies = project.getArtifacts();
 
                 // system scope dependencies are not returned by maven 2.0. See
@@ -662,8 +651,7 @@ public class RunMojo extends AbstractExecMojo {
                 Iterator iter = dependencies.iterator();
                 while (iter.hasNext()) {
                     Artifact classPathElement = (Artifact)iter.next();
-                    getLog().debug(
-                                   "Adding project dependency artifact: " + classPathElement.getArtifactId()
+                    getLog().debug("Adding project dependency artifact: " + classPathElement.getArtifactId()
                                        + " to classpath");
                     File file = classPathElement.getFile();
                     if (file != null) {
@@ -712,7 +700,7 @@ public class RunMojo extends AbstractExecMojo {
 
             String type = dependency.getType();
             if (type == null) {
-                type = "jar"; //$NON-NLS-1$
+                type = "jar";
             }
             String classifier = dependency.getClassifier();
             boolean optional = dependency.isOptional();
@@ -803,8 +791,7 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         if (executableTool == null) {
-            throw new MojoExecutionException(
-                                             "No dependency of the plugin matches the specified executableDependency."
+            throw new MojoExecutionException("No dependency of the plugin matches the specified executableDependency."
                                                  + "  Specified executableToolAssembly is: "
                                                  + executableDependency.toString());
         }
