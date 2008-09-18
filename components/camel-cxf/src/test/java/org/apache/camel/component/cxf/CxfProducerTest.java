@@ -28,6 +28,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,6 +37,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.interceptor.Fault;
 import org.apache.hello_world_soap_http.GreeterImpl;
 
 /**
@@ -47,6 +49,7 @@ public class CxfProducerTest extends TestCase {
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final String SIMPLE_SERVER_ADDRESS = "http://localhost:28080/test";
     protected static final String JAXWS_SERVER_ADDRESS = "http://localhost:28081/test";
+    protected static final String WRONG_SERVER_ADDRESS = "http://localhost:9999/test";
 
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
 
@@ -98,6 +101,16 @@ public class CxfProducerTest extends TestCase {
 
     }
 
+    public void testInvokingAWrongServer() throws Exception {
+        try {
+            sendSimpleMessage(getWrongEndpointUri());
+            fail("We should get the exception here");
+        } catch (RuntimeCamelException ex) {
+            // only catch the RuntimeCamelException
+        }
+
+    }
+
 
     public void testInvokingJaxWsServerWithParams() throws Exception {
         CxfExchange exchange = sendJaxWsMessage();
@@ -118,10 +131,18 @@ public class CxfProducerTest extends TestCase {
 
     protected String getJaxwsEndpointUri() {
         return "cxf://" + JAXWS_SERVER_ADDRESS + "?serviceClass=org.apache.hello_world_soap_http.Greeter";
-
     }
+
+    protected String getWrongEndpointUri() {
+        return "cxf://" + WRONG_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.HelloService";
+    }
+
     protected CxfExchange sendSimpleMessage() {
-        CxfExchange exchange = (CxfExchange)template.send(getSimpleEndpointUri(), new Processor() {
+        return sendSimpleMessage(getSimpleEndpointUri());
+    }
+
+    private CxfExchange sendSimpleMessage(String endpointUri) {
+        CxfExchange exchange = (CxfExchange)template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);

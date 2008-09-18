@@ -91,6 +91,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         final Endpoint endpoint = exchange.get(Endpoint.class);
         Message outMessage = null;
         if (result.isFailed()) {
+            // The exception will be send back to the soap client
             CxfMessage fault = result.getFault();
             outMessage = exchange.getInFaultMessage();
             if (outMessage == null) {
@@ -98,8 +99,12 @@ public class CamelInvoker implements Invoker, MessageInvoker {
                 outMessage.setExchange(exchange);
                 exchange.setInFaultMessage(outMessage);
             }
-            Exception ex = (Exception) fault.getBody();
-            outMessage.setContent(Exception.class, ex);
+            Throwable ex = (Throwable) fault.getBody();
+            if (ex != null) {
+                outMessage.setContent(Throwable.class, ex);
+            } else {
+                outMessage.setContent(Throwable.class, result.getException());
+            }
         } else {
             outMessage = result.getOutMessage();
             if (LOG.isLoggable(Level.FINEST)) {

@@ -38,7 +38,7 @@ public class PayloadContentRedirectInterceptor extends AbstractPhaseInterceptor<
     @SuppressWarnings("unchecked")
     public void handleMessage(Message message) throws Fault {
         // check the fault from the message
-        Exception ex = message.getContent(Exception.class);
+        Throwable ex = message.getContent(Throwable.class);
         if (ex != null) {
             if (ex instanceof Fault) {
                 throw (Fault)ex;

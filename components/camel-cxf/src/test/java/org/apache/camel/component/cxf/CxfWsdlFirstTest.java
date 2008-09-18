@@ -115,7 +115,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
 
         exchange = sendJaxWsMessageWithHolders("");
         assertEquals("We should get a fault here", exchange.isFailed(), true);
-        Exception ex = exchange.getFault().getBody(Exception.class);
+        Throwable ex = exchange.getException();
         assertTrue("We should get the UnknowPersonFault here", ex instanceof UnknownPersonFault);
     }
 
