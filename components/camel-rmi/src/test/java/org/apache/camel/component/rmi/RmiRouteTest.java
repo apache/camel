@@ -40,7 +40,7 @@ public class RmiRouteTest extends TestCase {
         }
 
         // Boot up a local RMI registry
-        LocateRegistry.createRegistry(1099);
+        LocateRegistry.createRegistry(9876);
 
         // START SNIPPET: register
         JndiContext context = new JndiContext();
@@ -53,11 +53,11 @@ public class RmiRouteTest extends TestCase {
         // lets add simple route
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:hello").to("rmi://localhost:1099/bye");
+                from("direct:hello").to("rmi://localhost:9876/bye");
 
                 // When exposing an RMI endpoint, the interfaces it exposes must
                 // be configured.
-                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:1099/bye");
+                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:9876/bye");
                 bye.setRemoteInterfaces(ISay.class);
                 from(bye).to("pojo:bye");
             }
