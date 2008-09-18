@@ -41,7 +41,8 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
     private ScheduledFuture<?> future;
-
+    private Exception firstExceptionThrown;
+    
     public ScheduledPollConsumer(DefaultEndpoint<E> endpoint, Processor processor) {
         this(endpoint, processor, endpoint.getExecutorService());
     }
@@ -64,8 +65,10 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
         try {
             poll();
         } catch (Exception e) {
-            // TODO: We should not swallow this but handle it better. See CAMEL-501
             LOG.warn("An exception occured while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
+            if (firstExceptionThrown == null) {
+                firstExceptionThrown = e;
+            } 
         }
     }
 
@@ -109,12 +112,13 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
     /**
      * The polling method which is invoked periodically to poll this consumer
      * 
-     * @throws Exception can be thrown if an exception occured during polling
+     * @throws Exception can be thrown if an exception occurred during polling
      */
     protected abstract void poll() throws Exception;
 
     @Override
     protected void doStart() throws Exception {
+        firstExceptionThrown = null;
         super.doStart();
         if (isUseFixedDelay()) {
             future = executor.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
@@ -129,5 +133,9 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
             future.cancel(false);
         }
         super.doStop();
+        
+        if (firstExceptionThrown != null) {
+            throw firstExceptionThrown;
+        }
     }
 }
