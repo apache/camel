@@ -41,11 +41,12 @@
     	xmlns:s="http://apache.org/hello_world_soap_http" />
 
    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
+    <route errorHandlerRef="noErrorHandler">
       <from uri="cxf:bean:routerEndpoint" />
       <to uri="cxf:bean:serviceEndpoint" />
     </route>
    </camelContext>
 
+   <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
 
 </beans>
