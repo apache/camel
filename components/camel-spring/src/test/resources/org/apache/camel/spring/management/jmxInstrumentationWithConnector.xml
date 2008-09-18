@@ -59,13 +59,13 @@
     <property name="defaultDomain" value="org.apache.camel.test"/>
   </bean>
   <bean id="registry" class="org.springframework.remoting.rmi.RmiRegistryFactoryBean">
-    <property name="port" value="1099"/>
+    <property name="port" value="9877"/>
   </bean>
   <bean id="serverConnector"
       class="org.springframework.jmx.support.ConnectorServerFactoryBean" depends-on="registry">
     <property name="objectName" value="connector:name=rmi"/>
     <property name="serviceUrl" 
-      value="service:jmx:rmi:///jndi/rmi://localhost:1099/jmxrmi"/>
+      value="service:jmx:rmi:///jndi/rmi://localhost:9877/jmxrmi"/>
     <property name="threaded" value="true"/>
     <property name="daemon" value="true"/>
   </bean>
