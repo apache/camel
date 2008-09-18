@@ -74,6 +74,7 @@ public class CxfRouterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(noErrorHandler());
                 from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
             }
         };
