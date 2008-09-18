@@ -94,8 +94,8 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
         if (delay <= 0) {
             return;
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sleeping for: " + delay + " millis");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sleeping for: " + delay + " millis");
         }
         if (isFastStop()) {
             stoppedLatch.await(delay, TimeUnit.MILLISECONDS);

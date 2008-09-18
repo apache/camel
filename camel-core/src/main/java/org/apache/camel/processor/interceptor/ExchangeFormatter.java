@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public interface ExchangeFormatter {
+
     /**
      * Generates a string representation of the exchange
      */

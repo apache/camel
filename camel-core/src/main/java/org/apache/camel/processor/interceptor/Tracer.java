@@ -37,8 +37,8 @@ public class Tracer implements InterceptStrategy {
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
      *
-     * @param context the camel context the debugger is connected to
-     * @return the debugger or null if none can be found
+     * @param context the camel context the tracer is connected to
+     * @return the tracer or null if none can be found
      */
     public static Tracer getTracer(CamelContext context) {
         if (context instanceof DefaultCamelContext) {

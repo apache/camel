@@ -44,10 +44,10 @@ import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ComponentResolver;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
@@ -93,6 +93,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
+    private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
 
@@ -504,6 +505,28 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.trace = trace;
     }
 
+    /**
+     * Returns the delay in millis if delaying has been enabled or disabled via the {@link #setDelay(Long)} method
+     * or it has not been specified then default to the <b>camel.delay</b> system property
+     */
+    public long getDelay() {
+        final Long value = getDelaying();
+        if (value != null) {
+            return value;
+        } else {
+            String prop = SystemHelper.getSystemProperty("camel.delay");
+            return prop != null ? Long.getLong(prop) : 0;
+        }
+    }
+
+    public Long getDelaying() {
+        return delay;
+    }
+
+    public void setDelay(Long delay) {
+        this.delay = delay;
+    }
+
     public <E extends Exchange> ProducerTemplate<E> createProducerTemplate() {
         return new DefaultProducerTemplate<E>(this);
     }
@@ -524,15 +547,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void doStart() throws Exception {
         if (getTrace()) {
-            // lets check if we already have already been configured and if not add the default
-            boolean found = false;
-            final List<InterceptStrategy> list = getInterceptStrategies();
-            for (InterceptStrategy strategy : list) {
-                if (strategy instanceof Tracer) {
-                    found = true;
-                }
-            }
-            if (!found) {
+            // only add a new tracer if not already configued
+            if (Tracer.getTracer(this) == null) {
                 Tracer tracer = new Tracer();
                 // lets see if we have a formatter if so use it
                 TraceFormatter formatter = this.getRegistry().lookup("traceFormatter", TraceFormatter.class);
@@ -542,6 +558,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 addInterceptStrategy(tracer);
             }
         }
+
+        if (getDelay() > 0) {
+            // only add a new delayer if not already configued
+            if (Delayer.getDelayer(this) == null) {
+                addInterceptStrategy(new Delayer(getDelay()));
+            }
+        }
+
         lifecycleStrategy.onContextStart(this);
 
         forceLazyInitialization();
