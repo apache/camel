@@ -43,6 +43,7 @@ import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatsType;
 import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -81,6 +82,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean trace;
+    @XmlAttribute(required = false)
+    private Long delay;
     @XmlAttribute(required = false)
     private String errorHandlerRef;
     @XmlElement(name = "package", required = false)
@@ -134,12 +137,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void afterPropertiesSet() throws Exception {
-        // lets see if we can find a debugger to add
         // TODO there should be a neater way to do this!
+
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
             getContext().addInterceptStrategy(debugger);
         }
+
         Tracer tracer = getBeanForType(Tracer.class);
         if (tracer != null) {
             // use formatter if there is a TraceFormatter bean defined
@@ -148,6 +152,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 tracer.setFormatter(formatter);
             }
             getContext().addInterceptStrategy(tracer);
+        }
+
+        Delayer delayer = getBeanForType(Delayer.class);
+        if (delayer != null) {
+            getContext().addInterceptStrategy(delayer);
         }
 
         // set the lifecycle strategy if defined
@@ -408,6 +417,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.trace = trace;
     }
 
+    public Long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(Long delay) {
+        this.delay = delay;
+    }
+
     public CamelJMXAgentType getCamelJMXAgent() {
         return camelJMXAgent;
     }
@@ -453,6 +470,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         ctx.setName(getId());
         if (trace != null) {
             ctx.setTrace(trace);
+        }
+        if (delay != null) {
+           ctx.setDelay(delay);
         }
         if (errorHandlerRef != null) {
             ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
