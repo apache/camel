@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.message.Message;
@@ -51,20 +52,23 @@ public class CxfEndpointBeanTest extends TestCase {
 
     }
 
-    public void testCxfBusConfiguration() throws InterruptedException {
+    public void testCxfBusConfiguration() throws Exception {
         // get the camelContext from application context
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         ProducerTemplate template = camelContext.createProducerTemplate();
-        Exchange exchange = template.send("cxf:bean:routerEndpoint", new Processor() {
-            public void process(final Exchange exchange) {
-                final List<String> params = new ArrayList<String>();
-                params.add("hello");
-                exchange.getIn().setBody(params);
-                exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
-            }
-        });
-        
-        assertTrue("There should have a timeout exception", exchange.isFailed());
+        try {
+            Exchange exchange = template.send("cxf:bean:routerEndpoint", new Processor() {
+                public void process(final Exchange exchange) {
+                    final List<String> params = new ArrayList<String>();
+                    params.add("hello");
+                    exchange.getIn().setBody(params);
+                    exchange.getIn().setHeader(CxfConstants.OPERATION_NAME, "echo");
+                }
+            });
+            fail("should get the exception here");
+        } catch (RuntimeCamelException ex) {
+            // do nothing here
+        }
 
     }
 

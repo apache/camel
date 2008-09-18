@@ -63,6 +63,7 @@ public class CXFGreeterRouterTest extends CxfSpringRouterTest {
             fail("Should get the NoSuchCodeLitFault here.");
         } catch (NoSuchCodeLitFault fault) {
             // expect the fault here
+            assertNotNull("The fault info should not be null", fault.getFaultInfo());
         }
 
     }

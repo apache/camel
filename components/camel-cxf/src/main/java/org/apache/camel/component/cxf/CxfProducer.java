@@ -36,7 +36,6 @@ import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
@@ -162,105 +161,95 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         return cfb.create();
     }
 
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
         CxfExchange cxfExchange = endpoint.createExchange(exchange);
         process(cxfExchange);
         exchange.copyFrom(cxfExchange);
 
     }
 
-    public void process(CxfExchange exchange) {
+    public void process(CxfExchange exchange) throws Exception {
         Message inMessage = CxfBinding.createCxfMessage(endpoint.getHeaderFilterStrategy(), exchange);
         exchange.setProperty(CxfExchange.DATA_FORMAT, dataFormat);
-        try {
-            if (dataFormat.equals(DataFormat.POJO)) {
-                // InputStream is = m.getContent(InputStream.class);
-                // now we just deal with the POJO invocations
-                List parameters = inMessage.getContent(List.class);
-                if (parameters == null) {
-                    parameters = new ArrayList();
-                }
-                String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
-                String operationNameSpace = exchange.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE, String.class);
-                // Get context from message
-                Map<String, Object> context = new HashMap<String, Object>();
-                Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
-                Message response = new MessageImpl();
-                if (operationName != null) {
-                    // we need to check out the operation Namespace
-                    try {
-                        Object[] result = null;
-                        // call for the client with the parameters
-                        result = invokeClient(operationNameSpace, operationName, parameters, context);
-                        if (result != null) {
-                            response.setContent(List.class, new MessageContentsList(result));
-                        } else {
-                            response.setContent(List.class, new MessageContentsList());
-                        }
-                        // copy the response context to the response
-                        CxfBinding.storeCXfResponseContext(response, responseContext);
-                        CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
-                    } catch (Exception ex) {
-                        response.setContent(Exception.class, ex);
-                        CxfBinding.storeCxfFault(exchange, response);
-                    }
-                } else {
-                    throw new RuntimeCamelException("Can't find the operation name in the message!");
-                }
-            } else {
-                // get the invocation context
-                org.apache.cxf.message.Exchange ex = exchange.getExchange();
-                if (ex == null) {
-                    ex = (org.apache.cxf.message.Exchange)exchange.getProperty(CxfConstants.CXF_EXCHANGE);
-                    exchange.setExchange(ex);
-                }
-                if (ex == null) {
-                    ex = new ExchangeImpl();
-                    exchange.setExchange(ex);
-                }
-                assert ex != null;
-                InvokingContext invokingContext = ex.get(InvokingContext.class);
-                if (invokingContext == null) {
-                    invokingContext = InvokingContextFactory.createContext(dataFormat);
-                    ex.put(InvokingContext.class, invokingContext);
-                }
-                Map<Class, Object> params = invokingContext.getRequestContent(inMessage);
-                // invoke the stream message with the exchange context
-                CxfClient cxfClient = (CxfClient)client;
-                // need to get the binding object to create the message
-                BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
-                Message response = null;
-                if (boi == null) {
-                    // it should be the raw message
-                    response = new MessageImpl();
-                } else {
-                    // create the message here
-                    Endpoint ep = ex.get(Endpoint.class);
-                    response = ep.getBinding().createMessage();
-                }
-                response.setExchange(ex);
-                // invoke the message prepare the context
-                Map<String, Object> context = new HashMap<String, Object>();
-                Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
-                try {
-                    Object result = cxfClient.dispatch(params, context, ex);
-                    ex.setOutMessage(response);
-                    invokingContext.setResponseContent(response, result);
-                    // copy the response context to the response
-                    CxfBinding.storeCXfResponseContext(response, responseContext);
-                    CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
-                } catch (Exception e) {
-                    response.setContent(Exception.class, e);
-                    CxfBinding.storeCxfFault(exchange, response);
-                }
+
+        if (dataFormat.equals(DataFormat.POJO)) {
+            // InputStream is = m.getContent(InputStream.class);
+            // now we just deal with the POJO invocations
+            List parameters = inMessage.getContent(List.class);
+            if (parameters == null) {
+                parameters = new ArrayList();
             }
-        } catch (Exception e) {
-            // TODO add the fault message handling work
-            throw wrapRuntimeCamelException(e);
+            String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
+            String operationNameSpace = exchange.getIn().getHeader(CxfConstants.OPERATION_NAMESPACE,
+                                                                   String.class);
+            // Get context from message
+            Map<String, Object> context = new HashMap<String, Object>();
+            Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
+            Message response = new MessageImpl();
+            if (operationName != null) {
+                // we need to check out the operation Namespace
+                Object[] result = null;
+                // call for the client with the parameters
+                result = invokeClient(operationNameSpace, operationName, parameters, context);
+                if (result != null) {
+                    response.setContent(List.class, new MessageContentsList(result));
+                } else {
+                    response.setContent(List.class, new MessageContentsList());
+                }
+                // copy the response context to the response
+                CxfBinding.storeCXfResponseContext(response, responseContext);
+                CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
+
+            } else {
+                throw new RuntimeCamelException("Can't find the operation name in the message!");
+            }
+        } else {
+            // get the invocation context
+            org.apache.cxf.message.Exchange ex = exchange.getExchange();
+            if (ex == null) {
+                ex = (org.apache.cxf.message.Exchange)exchange.getProperty(CxfConstants.CXF_EXCHANGE);
+                exchange.setExchange(ex);
+            }
+            if (ex == null) {
+                ex = new ExchangeImpl();
+                exchange.setExchange(ex);
+            }
+            assert ex != null;
+            InvokingContext invokingContext = ex.get(InvokingContext.class);
+            if (invokingContext == null) {
+                invokingContext = InvokingContextFactory.createContext(dataFormat);
+                ex.put(InvokingContext.class, invokingContext);
+            }
+            Map<Class, Object> params = invokingContext.getRequestContent(inMessage);
+            // invoke the stream message with the exchange context
+            CxfClient cxfClient = (CxfClient)client;
+            // need to get the binding object to create the message
+            BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
+            Message response = null;
+            if (boi == null) {
+                // it should be the raw message
+                response = new MessageImpl();
+            } else {
+                // create the message here
+                Endpoint ep = ex.get(Endpoint.class);
+                response = ep.getBinding().createMessage();
+            }
+            response.setExchange(ex);
+            // invoke the message prepare the context
+            Map<String, Object> context = new HashMap<String, Object>();
+            Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
+
+            Object result = cxfClient.dispatch(params, context, ex);
+            ex.setOutMessage(response);
+            invokingContext.setResponseContent(response, result);
+            // copy the response context to the response
+            CxfBinding.storeCXfResponseContext(response, responseContext);
+            CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
+
+
         }
 
     }
-
 
     @Override
     protected void doStart() throws Exception {
@@ -272,17 +261,21 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         super.doStop();
     }
 
-    private Object[] invokeClient(String operationNameSpace, String operationName, List parameters, Map<String, Object> context) throws Exception {
+    private Object[] invokeClient(String operationNameSpace, String operationName, List parameters,
+                                  Map<String, Object> context) throws Exception {
 
         QName operationQName = null;
         if (operationNameSpace == null) {
-            operationQName = new QName(client.getEndpoint().getService().getName().getNamespaceURI(), operationName);
+            operationQName = new QName(client.getEndpoint().getService().getName().getNamespaceURI(),
+                                       operationName);
         } else {
             operationQName = new QName(operationNameSpace, operationName);
         }
-        BindingOperationInfo op = client.getEndpoint().getEndpointInfo().getBinding().getOperation(operationQName);
+        BindingOperationInfo op = client.getEndpoint().getEndpointInfo().getBinding()
+            .getOperation(operationQName);
         if (op == null) {
-            throw new RuntimeCamelException("No operation found in the CXF client, the operation is " + operationQName);
+            throw new RuntimeCamelException("No operation found in the CXF client, the operation is "
+                                            + operationQName);
         }
         if (!endpoint.isWrapped()) {
             if (op.isUnwrappedCapable()) {

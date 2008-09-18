@@ -32,12 +32,13 @@ import org.apache.cxf.message.Message;
 // We use context to change the producer's endpoint address here
 public class CxfProducerContextTest extends CxfProducerTest {
 
-	// *** This class extends CxfProducerTest, so see that class for other tests run by this code
-	
-	private static final String TEST_KEY   = "sendSimpleMessage-test";
-	private static final String TEST_VALUE = "exchange property value should get passed through request context";
-	
-	public void testExchangePropertyPropagation() throws Exception {
+    // *** This class extends CxfProducerTest, so see that class for other tests
+    // run by this code
+
+    private static final String TEST_KEY = "sendSimpleMessage-test";
+    private static final String TEST_VALUE = "exchange property value should get passed through request context";
+
+    public void testExchangePropertyPropagation() throws Exception {
         CxfExchange exchange = sendSimpleMessage();
 
         assertNotNull(exchange);

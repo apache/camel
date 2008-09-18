@@ -43,7 +43,7 @@ public class FaultOutInterceptor extends AbstractPhaseInterceptor<Message> {
         // To walk around the FaultOutInterceptor NPE issue of CXF 2.0.4
         checkBindingOperationInfor(message);
 
-        Exception ex = message.getContent(Exception.class);
+        Throwable ex = message.getContent(Throwable.class);
 
         if (ex != null) {
             if (!(ex instanceof Fault)) {
@@ -63,7 +63,7 @@ public class FaultOutInterceptor extends AbstractPhaseInterceptor<Message> {
                 SoapMessage sm = (SoapMessage)message;
                 ex = SoapFault.createFault((Fault)ex, sm.getVersion());
             }
-            message.setContent(Exception.class, ex);
+            message.setContent(Throwable.class, ex);
         }
     }
 

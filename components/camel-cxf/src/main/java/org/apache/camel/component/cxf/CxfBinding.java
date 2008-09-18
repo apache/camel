@@ -62,12 +62,12 @@ public final class CxfBinding {
     public static Message createCxfMessage(CxfExchange exchange) {
         return CxfBinding.createCxfMessage(new CxfHeaderFilterStrategy(), exchange);
     }
-    
+
     public static Message createCxfMessage(HeaderFilterStrategy strategy, CxfExchange exchange) {
 
         Message answer = exchange.getInMessage();
         CxfMessage in = exchange.getIn();
-        
+
         // Check the body if the POJO parameter list first
         Object body = in.getBody(List.class);
         if (body instanceof List) {
@@ -90,17 +90,17 @@ public final class CxfBinding {
         //Ensure there is a request context, which is needed by propogateContext() below
         Map<String, Object> requestContext = CastUtils.cast((Map)answer.get(Client.REQUEST_CONTEXT));
         if (requestContext == null) {
-        	requestContext = new HashMap<String, Object>();
+            requestContext = new HashMap<String, Object>();
         }
-        if (exchange.getExchange() != null) { 
-        	requestContext.putAll(exchange.getExchange());
+        if (exchange.getExchange() != null) {
+            requestContext.putAll(exchange.getExchange());
         }
         if (exchange.getProperties() != null) {
             //Allows other components to pass properties into cxf request context
             requestContext.putAll(exchange.getProperties());
         }
         answer.put(Client.REQUEST_CONTEXT, requestContext);
-        
+
         return answer;
     }
 
@@ -110,8 +110,8 @@ public final class CxfBinding {
     public static void storeCxfResponse(CxfExchange exchange, Message response) {
         CxfBinding.storeCxfResponse(new CxfHeaderFilterStrategy(), exchange, response);
     }
-    
-    public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange, 
+
+    public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange,
             Message response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
@@ -133,12 +133,12 @@ public final class CxfBinding {
     public static void copyMessage(org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
         CxfBinding.copyMessage(new CxfHeaderFilterStrategy(), camelMessage, cxfMessage);
     }
-    
+
     // Copy the Camel message to CXF message
-    public static void copyMessage(HeaderFilterStrategy strategy, 
+    public static void copyMessage(HeaderFilterStrategy strategy,
             org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
         InputStream is = camelMessage.getBody(InputStream.class);
-        
+
         CxfHeaderHelper.propagateCamelToCxf(strategy, camelMessage.getHeaders(), cxfMessage);
         if (is != null) {
             cxfMessage.setContent(InputStream.class, is);
@@ -160,7 +160,7 @@ public final class CxfBinding {
             response.put(Client.RESPONSE_CONTEXT, context);
         }
     }
-    
+
     public static void storeCxfResponse(CxfExchange exchange, Object response) {
         CxfMessage out = exchange.getOut();
         if (response != null) {
