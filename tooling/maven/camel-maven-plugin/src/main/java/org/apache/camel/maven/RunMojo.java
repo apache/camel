@@ -409,9 +409,7 @@ public class RunMojo extends AbstractExecMojo {
         // but it's too late since the termination condition (only daemon
         // threads) has been triggered.
         if (keepAlive) {
-            getLog()
-                .warn(
-                      "Warning: keepAlive is now deprecated and obsolete. Do you need it? Please comment on MEXEC-6.");
+            getLog().warn("Warning: keepAlive is now deprecated and obsolete. Do you need it? Please comment on MEXEC-6.");
             waitFor(0);
         }
 
@@ -597,6 +595,8 @@ public class RunMojo extends AbstractExecMojo {
         List classpathURLs = new ArrayList();
         this.addRelevantPluginDependenciesToClasspath(classpathURLs);
         this.addRelevantProjectDependenciesToClasspath(classpathURLs);
+
+        getLog().info("Classpath = " + classpathURLs);
         return new URLClassLoader((URL[])classpathURLs.toArray(new URL[classpathURLs.size()]));
     }
 
@@ -646,7 +646,7 @@ public class RunMojo extends AbstractExecMojo {
 
                 // system scope dependencies are not returned by maven 2.0. See
                 // MEXEC-17
-                dependencies.addAll(getSystemScopeDependencies());
+                dependencies.addAll(getAllNonTestScopedDependencies());
 
                 Iterator iter = dependencies.iterator();
                 while (iter.hasNext()) {
@@ -668,17 +668,18 @@ public class RunMojo extends AbstractExecMojo {
 
     }
 
-    private Collection getSystemScopeDependencies() throws MojoExecutionException {
-        List systemScopeArtifacts = new ArrayList();
+    private Collection getAllNonTestScopedDependencies() throws MojoExecutionException {
+        List answer = new ArrayList();
 
         for (Iterator artifacts = getAllDependencies().iterator(); artifacts.hasNext();) {
             Artifact artifact = (Artifact)artifacts.next();
 
-            // if (artifact.getScope().equals(Artifact.SCOPE_SYSTEM)) {
-            systemScopeArtifacts.add(artifact);
-            // }
+            // do not add test artifacts
+            if (!artifact.getScope().equals(Artifact.SCOPE_TEST)) {
+                answer.add(artifact);
+            }
         }
-        return systemScopeArtifacts;
+        return answer;
     }
 
     // generic method to retrieve all the transitive dependencies
@@ -719,7 +720,7 @@ public class RunMojo extends AbstractExecMojo {
             List exclusions = new ArrayList();
             for (Iterator j = dependency.getExclusions().iterator(); j.hasNext();) {
                 Exclusion e = (Exclusion)j.next();
-                exclusions.add(e.getGroupId() + ":" + e.getArtifactId()); //$NON-NLS-1$
+                exclusions.add(e.getGroupId() + ":" + e.getArtifactId());
             }
 
             ArtifactFilter newFilter = new ExcludesArtifactFilter(exclusions);
@@ -773,8 +774,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Examine the plugin dependencies to find the executable artifact.
      *
-     * @return an artifact which refers to the actual executable tool (not a
-     *         POM)
+     * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws MojoExecutionException
      */
     private Artifact findExecutableArtifact() throws MojoExecutionException {
@@ -848,8 +848,7 @@ public class RunMojo extends AbstractExecMojo {
             try {
                 lock.wait(millis);
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // good practice if don't
-                // throw
+                Thread.currentThread().interrupt(); // good practice if don't throw
                 getLog().warn("Spuriously interrupted while waiting for " + millis + "ms", e);
             }
         }
