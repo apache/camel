@@ -1265,7 +1265,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which sets the exchange property
      */
     public Type setProperty(String name, Expression expression) {
-        return process(ProcessorBuilder.setProperty(name, expression));
+        SetPropertyType answer = new SetPropertyType(name, expression);
+        addOutput(answer);
+        return (Type) this;
     }
 
 
@@ -1274,8 +1276,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public ExpressionClause<ProcessorType<Type>> setProperty(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
-        process(ProcessorBuilder.setProperty(name, clause));
-        return clause;
+        SetPropertyType answer = new SetPropertyType(name, clause);
+        addOutput(answer);
+        return clause;        
     }
 
     /**
