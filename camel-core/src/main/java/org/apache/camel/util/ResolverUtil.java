@@ -382,7 +382,7 @@ public class ResolverUtil<T> {
                 }
 
                 // osgi bundles should be skipped
-                if (urlPath.startsWith("bundle:")) {
+                if (url.toString().startsWith("bundle:") || urlPath.startsWith("bundle:")) {
                     LOG.trace("It's a virtual osgi bundle, skipping");
                     continue;
                 }
@@ -471,7 +471,7 @@ public class ResolverUtil<T> {
                     }
                     Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
                     while (paths != null && paths.hasMoreElements()) {
-                        URL path = paths.nextElement();
+                        URL path = paths.nextElement();                        
                         urls.add(path.getPath().substring(1));
                     }
                 }
