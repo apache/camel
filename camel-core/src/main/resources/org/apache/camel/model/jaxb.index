@@ -50,6 +50,7 @@ ServiceActivationType
 SetBodyType
 SetHeaderType
 SetOutHeaderType
+SetPropertyType
 SplitterType
 ThrottlerType
 ThreadType
