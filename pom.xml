@@ -90,6 +90,7 @@
     <camel.osgi.split.pkg>-split-package:=first</camel.osgi.split.pkg>
     <camel.osgi.import>${camel.osgi.import.pkg}</camel.osgi.import>
     <camel.osgi.symbolic.name>${groupId}.${artifactId}</camel.osgi.symbolic.name>
+    <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
   </properties>
 
   <url>http://apache.apache.org/camel/</url>
@@ -1011,6 +1012,7 @@
 	    <version>${felix-version}</version>
 	    <extensions>true</extensions>
 	    <configuration>
+              <excludeDependencies>${camel.osgi.exclude.dependencies}</excludeDependencies>
 	      <instructions>
 	        <Bundle-Name>${artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
