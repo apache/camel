@@ -35,7 +35,12 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
         consumer.start();
         Exchange out = consumer.receive(3000);
         assertNull("Should not get the file", out);
-        consumer.stop();
+        
+    	try {
+	        consumer.stop();
+    	} catch (FtpOperationFailedException fofe) {
+    		// expected, ignore
+    	}
     }
 
     public int getPort() {
