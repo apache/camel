@@ -22,13 +22,17 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 /**
  * @version $Revision$
  */
 @Entity
-@UniqueConstraint(columnNames = {"name" })
+@Table(
+    name="ACTIVITYDEFINITION",
+    uniqueConstraints=@UniqueConstraint(columnNames = {"name"})
+)
 public class ActivityDefinition extends EntitySupport {
     private String name;
     private ProcessDefinition processDefinition;
