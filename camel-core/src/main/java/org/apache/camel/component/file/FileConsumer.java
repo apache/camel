@@ -332,6 +332,11 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
             return false;
         }
 
+        // directories so far is always regarded as matched (matching on the name is only for files)
+        if (file.isDirectory()) {
+            return true;
+        }
+
         if (regexPattern != null && regexPattern.length() > 0) {
             if (!name.matches(regexPattern)) {
                 return false;
