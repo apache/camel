@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import org.apache.camel.util.ObjectHelper;
@@ -33,7 +34,10 @@ import org.springframework.orm.jpa.JpaTemplate;
  * @version $Revision$
  */
 @Entity
-@UniqueConstraint(columnNames = {"name" })
+@Table(
+    name="PROCESSDEFINITION",
+    uniqueConstraints=@UniqueConstraint(columnNames = {"name"})
+)
 public class ProcessDefinition extends EntitySupport {
     private static final transient Log LOG = LogFactory.getLog(ProcessDefinition.class);
     private String name;
