@@ -472,7 +472,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             ctx.setTrace(trace);
         }
         if (delay != null) {
-           ctx.setDelay(delay);
+            ctx.setDelay(delay);
         }
         if (errorHandlerRef != null) {
             ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);
