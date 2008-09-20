@@ -46,7 +46,7 @@ public class RoutingSlipDataModificationTest extends ContextTestSupport {
 
         sendBody();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendBody() {

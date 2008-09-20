@@ -39,7 +39,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseConstantParameter() throws Exception {
@@ -53,7 +53,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseExpression() throws Exception {
@@ -69,7 +69,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseHeaderExpression() throws Exception {
@@ -83,7 +83,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseBodyExpression() throws Exception {
@@ -97,7 +97,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "ABC");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUseBodyAsTypeExpression() throws Exception {
@@ -111,7 +111,7 @@ public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "ABC".getBytes());
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

@@ -39,7 +39,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBody("direct:a", ROUTING_SLIP_HEADER, ",");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUpdatingOfRoutingSlipHeaderSet() throws Exception {
@@ -55,7 +55,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBody("direct:b", "aRoutingSlipHeader", ",");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUpdatingOfRoutingSlipHeaderAndDelimiterSet() throws Exception {
@@ -71,7 +71,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBody("direct:c", "aRoutingSlipHeader", "#");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testMessagePassingThrough() throws Exception {
@@ -80,7 +80,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBody("direct:a", ROUTING_SLIP_HEADER, ",");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testEmptyRoutingSlip() throws Exception {
@@ -89,7 +89,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBodyWithEmptyRoutingSlip();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testNoRoutingSlip() throws Exception {
@@ -98,7 +98,7 @@ public class RoutingSlipTest extends ContextTestSupport {
 
         sendBodyWithNoRoutingSlip();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendBody(String endpoint, String header, String delimiter) {

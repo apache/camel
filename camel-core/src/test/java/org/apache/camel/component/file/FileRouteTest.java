@@ -41,7 +41,7 @@ public class FileRouteTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

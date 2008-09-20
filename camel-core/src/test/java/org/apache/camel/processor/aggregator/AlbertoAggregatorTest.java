@@ -68,7 +68,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
         ProducerTemplate template = context.createProducerTemplate();
         template.sendBody("direct:start", allNames);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

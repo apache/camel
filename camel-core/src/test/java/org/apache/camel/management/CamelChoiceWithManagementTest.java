@@ -72,7 +72,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
     }
 
@@ -88,7 +88,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

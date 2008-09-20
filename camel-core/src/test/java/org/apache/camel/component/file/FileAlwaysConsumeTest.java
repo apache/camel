@@ -46,7 +46,7 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         Thread.sleep(1000);
 
@@ -62,7 +62,7 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
         file.renameTo(renamed.getAbsoluteFile());
 
         // should consume the file again
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testNotAlwaysConsume() throws Exception {
@@ -77,7 +77,7 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         Thread.sleep(1000);
 
@@ -93,7 +93,7 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
 
         // should NOT consume the file again, let 2 secs pass to let the consuemr try to consume it but it should not
         Thread.sleep(2000);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
 }

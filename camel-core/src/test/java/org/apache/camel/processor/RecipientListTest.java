@@ -36,7 +36,7 @@ public class RecipientListTest extends ContextTestSupport {
 
         sendBody();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendBody() {

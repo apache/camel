@@ -36,7 +36,7 @@ public class XPathChoiceTest extends ContextTestSupport {
 
         sendMessage("bar", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendToSecondWhen() throws Exception {
@@ -46,7 +46,7 @@ public class XPathChoiceTest extends ContextTestSupport {
 
         sendMessage("cheese", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendToOtherwiseClause() throws Exception {
@@ -56,7 +56,7 @@ public class XPathChoiceTest extends ContextTestSupport {
 
         sendMessage("somethingUndefined", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendMessage(final Object headerValue, final Object body) throws Exception {

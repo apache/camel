@@ -32,7 +32,7 @@ public class DataSetConsumeTest extends ContextTestSupport {
             template.sendBodyAndHeader("dataset:foo", "<hello>world!</hello>", DataSet.INDEX_HEADER, i);
         }
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

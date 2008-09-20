@@ -42,7 +42,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testLotsOfAttemptsFail() throws Exception {
@@ -54,7 +54,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         sendBody("direct:start", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         Throwable t = deadEndpoint.getExchanges().get(0).getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
         assertNotNull("Should have been a cause property", t);

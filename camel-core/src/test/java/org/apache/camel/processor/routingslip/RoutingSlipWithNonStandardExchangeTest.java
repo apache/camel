@@ -37,7 +37,7 @@ public class RoutingSlipWithNonStandardExchangeTest extends ContextTestSupport {
 
         sendBody("direct:a", ROUTING_SLIP_HEADER, ",");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         
         List<Exchange> exchanges = end.getExchanges();
         Exchange exchange = exchanges.get(0);

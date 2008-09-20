@@ -31,7 +31,7 @@ public class XPathFilterTest extends ContextTestSupport {
 
         sendBody("direct:start", matchingBody);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -39,7 +39,7 @@ public class XPathFilterTest extends ContextTestSupport {
 
         sendBody("direct:start", notMatchingBody);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -34,7 +34,7 @@ public class TransformProcessorWithHeaderTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:in",
             "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

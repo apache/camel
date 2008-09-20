@@ -43,7 +43,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         StreamSource message = new StreamSource(new StringReader("<hello>world!</hello>"));
         template.sendBody("direct:a", message);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
     }
 
@@ -53,7 +53,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         StreamSource message = new StreamSource(new StringReader("<hello>world!</hello>"));
         template.sendBody("direct:b", message);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertTrue(b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
         assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
     }
@@ -64,7 +64,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         InputStream message = new ByteArrayInputStream("<hello>world!</hello>".getBytes());
         template.sendBody("direct:a", message);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
         assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
     }
@@ -74,7 +74,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
 
         template.sendBody("direct:a", "<hello>world!</hello>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof String);
     }
 
