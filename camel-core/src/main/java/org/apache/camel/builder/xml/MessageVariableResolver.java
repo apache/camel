@@ -97,8 +97,6 @@ public class MessageVariableResolver implements XPathVariableResolver {
             }
         }
 
-        // TODO support exposing CamelContext properties/resources via XPath?
-
         // If we can't find an answer we must return void.
         // We can't return null then the xpath engine will throw a NullPointerException
         if (answer == null) {

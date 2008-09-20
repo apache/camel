@@ -14,45 +14,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.language;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision$
+ * Unit test routing with simple language.
  */
-public class RecipientListWithArrayHeaderTest extends ContextTestSupport {
+public class SimpleLanguageRouteTest extends ContextTestSupport {
 
-    public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
-        MockEndpoint x = getMockEndpoint("mock:x");
-        MockEndpoint y = getMockEndpoint("mock:y");
-        MockEndpoint z = getMockEndpoint("mock:z");
+    public void testSimpleFilter() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:foo");
+        mock.expectedBodiesReceived("Hello Foo");
 
-        x.expectedBodiesReceived("answer");
-        y.expectedBodiesReceived("answer");
-        z.expectedBodiesReceived("answer");
-
-        sendBody();
+        template.sendBody("seda:foo", "Hello Bar");
+        template.sendBodyAndHeader("seda:foo", "Hello Foo", "foo", "yes");
 
         assertMockEndpointsSatisfied();
     }
 
-    protected void sendBody() {
-        template.sendBodyAndHeader("direct:a", "answer", "recipientListHeader",
-                new String[] {"mock:x", "mock:y", "mock:z"});
-    }
-
-    protected RouteBuilder createRouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                // START SNIPPET: example
-                from("direct:a").recipientList(header("recipientListHeader"));
-                // END SNIPPET: example
+            public void configure() throws Exception {
+                from("seda:foo")
+                    .filter().simple("in.header.foo").to("mock:foo");
             }
         };
-
     }
-
 }

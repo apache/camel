@@ -47,7 +47,7 @@ public class NewInstanceTest extends ContextTestSupport {
 
         template.sendBody("direct:start", ExchangePattern.InOut, "second");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

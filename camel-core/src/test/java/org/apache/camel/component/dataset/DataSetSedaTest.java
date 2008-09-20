@@ -32,7 +32,7 @@ public class DataSetSedaTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("dataset:foo");
         endpoint.expectedMessageCount((int) dataSet.getSize());
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

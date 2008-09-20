@@ -32,7 +32,7 @@ public class DataSetTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount((int) dataSet.getSize());
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

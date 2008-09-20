@@ -61,7 +61,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
         assertNotNull("We should get result here", exchange);
         assertEquals("Can't get the right result", "inputx+inputy+inputz", exchange.getOut().getBody(String.class));
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

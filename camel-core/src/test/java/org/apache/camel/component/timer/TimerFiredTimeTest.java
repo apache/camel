@@ -30,7 +30,7 @@ public class TimerFiredTimeTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
         assertEquals("hello", exchange.getProperty("org.apache.camel.timer.name"));

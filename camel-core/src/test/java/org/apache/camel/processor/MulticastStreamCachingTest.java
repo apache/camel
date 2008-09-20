@@ -50,7 +50,7 @@ public class MulticastStreamCachingTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
 

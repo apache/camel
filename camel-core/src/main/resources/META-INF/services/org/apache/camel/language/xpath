@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.builder.xml.XPathLanguage
+class=org.apache.camel.language.xpath.XPathLanguage

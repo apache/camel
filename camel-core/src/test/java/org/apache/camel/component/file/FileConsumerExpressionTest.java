@@ -47,7 +47,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
         Thread.sleep(1000);
@@ -63,7 +63,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
         Thread.sleep(1000);
@@ -79,7 +79,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye Big World");
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", FileComponent.HEADER_FILE_NAME, "report3.txt");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
         Thread.sleep(1000);
@@ -94,7 +94,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Big World");
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", FileComponent.HEADER_FILE_NAME, "report4.txt");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
         Thread.sleep(1000);
@@ -110,7 +110,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Bean Language Rules The World",
                 FileComponent.HEADER_FILE_NAME, "report5.txt");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
         Thread.sleep(1000);

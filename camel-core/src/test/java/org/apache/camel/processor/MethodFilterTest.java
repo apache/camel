@@ -33,7 +33,7 @@ public class MethodFilterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, body, "foo", "London");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -42,7 +42,7 @@ public class MethodFilterTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:start", ExchangePattern.InOut, body, "foo", "Tampa");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

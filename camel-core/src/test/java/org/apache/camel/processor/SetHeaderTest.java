@@ -36,7 +36,7 @@ public class SetHeaderTest extends ContextTestSupport {
 
         sendBody("direct:start", matchingBody);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         Object value = exchange.getIn().getHeader("foo");

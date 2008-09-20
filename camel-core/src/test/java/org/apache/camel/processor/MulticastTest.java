@@ -46,7 +46,7 @@ public class MulticastTest extends ContextTestSupport {
             }
         });
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

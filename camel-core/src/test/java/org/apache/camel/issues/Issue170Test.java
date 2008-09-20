@@ -41,7 +41,7 @@ public class Issue170Test extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", body1, "counter", 1);
         template.sendBodyAndHeader("direct:start", body2, "counter", 2);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
