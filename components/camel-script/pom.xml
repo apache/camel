@@ -20,154 +20,173 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
 
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <groupId>org.apache.camel</groupId>
-    <artifactId>camel-parent</artifactId>
-    <version>1.5-SNAPSHOT</version>
-  </parent>
+    <parent>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-parent</artifactId>
+        <version>1.5-SNAPSHOT</version>
+    </parent>
 
-  <artifactId>camel-script</artifactId>
-  <packaging>bundle</packaging>
-  <name>Camel :: Script</name>
-  <description>Camel Script support</description>
+    <artifactId>camel-script</artifactId>
+    <packaging>bundle</packaging>
+    <name>Camel :: Script</name>
+    <description>Camel Script support</description>
 
-  <properties>
-	<camel.osgi.export.pkg>org.apache.camel.builder.script.*</camel.osgi.export.pkg>
-  </properties>
+    <properties>
+        <camel.osgi.export.pkg>org.apache.camel.builder.script.*</camel.osgi.export.pkg>
+    </properties>
 
-  <repositories>
-    <!-- SMX Repository is more up to date than LogicBlaze repo -->
-    <repository>
-      <id>servicemix.apache.svn</id>
-      <name>ServiceMix Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-    </repository>
-    <repository>
-      <id>codehause.mule-deps</id>
-      <name>Codehause Mule Dependencies Repository</name>
-      <url>http://dist.codehaus.org/mule/dependencies/maven2</url>
-    </repository>
-  </repositories>
+    <repositories>
+        <!-- SMX Repository is more up to date than LogicBlaze repo -->
+        <repository>
+            <id>servicemix.apache.svn</id>
+            <name>ServiceMix Repository</name>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+        </repository>
+        <repository>
+            <id>codehause.mule-deps</id>
+            <name>Codehause Mule Dependencies Repository</name>
+            <url>http://dist.codehaus.org/mule/dependencies/maven2</url>
+        </repository>
+    </repositories>
 
-  <dependencies>
+    <dependencies>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-	  <version>${spring-version}</version>
-    </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${spring-version}</version>
+        </dependency>
 
-    <!-- ServiceMix Repo Script Engines -->
-    <dependency>
-      <groupId>com.sun.script</groupId>
-      <artifactId>groovy-engine</artifactId>
-      <version>20080611</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>javax.script</groupId>
+            <artifactId>script-api</artifactId>
+            <version>1.0</version>
+        </dependency>
 
-    <dependency>
-      <groupId>com.sun.script</groupId>
-      <artifactId>js-engine</artifactId>
-      <version>20080611</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
 
-    <dependency>
-      <groupId>com.sun.script</groupId>
-      <artifactId>jython-engine</artifactId>
-      <version>20080611</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- ServiceMix Repo Script Engines -->
+        <dependency>
+            <groupId>com.sun.script</groupId>
+            <artifactId>groovy-engine</artifactId>
+            <version>20080611</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>com.sun.script</groupId>
-      <artifactId>jruby-engine</artifactId>
-      <version>20080611</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.sun.script</groupId>
+            <artifactId>js-engine</artifactId>
+            <version>20080611</version>
+            <scope>test</scope>
+        </dependency>
 
-    <!-- testing -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
-      <optional>true</optional>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.sun.script</groupId>
+            <artifactId>jython-engine</artifactId>
+            <version>20080611</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-spring</artifactId>
-      <scope>test</scope>
-      <optional>true</optional>
-    </dependency>
+        <dependency>
+            <groupId>com.sun.script</groupId>
+            <artifactId>jruby-engine</artifactId>
+            <version>20080611</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>rhino</groupId>
-      <artifactId>js</artifactId>
-      <version>1.6R7</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>com.sun.script</groupId>
+            <artifactId>bsh-engine</artifactId>
+            <version>20080611</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython</artifactId>
-      <version>2.2.1</version>
-      <scope>test</scope>
-    </dependency>
+        <!-- testing -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-core</artifactId>
+            <type>test-jar</type>
+            <optional>true</optional>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring</artifactId>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
 
-    <dependency>
-          <groupId>javax.script</groupId>
-          <artifactId>script-api</artifactId>
-          <version>1.0</version>
-    </dependency>
+        <dependency>
+            <groupId>rhino</groupId>
+            <artifactId>js</artifactId>
+            <version>1.6R7</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>org.jruby</groupId>
-      <artifactId>jruby</artifactId>
-      <version>1.1.4</version>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.python</groupId>
+            <artifactId>jython</artifactId>
+            <version>2.2.1</version>
+            <scope>test</scope>
+        </dependency>
 
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>log4j</groupId>
-      <artifactId>log4j</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-  </dependencies>
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby</artifactId>
+            <version>1.1.4</version>
+            <scope>test</scope>
+        </dependency>
 
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <forkMode>pertest</forkMode>
-          <childDelegation>false</childDelegation>
-          <useFile>true</useFile>
-          <includes>
-            <include>**/*Test.*</include>
-          </includes>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+        <dependency>
+            <groupId>org.beanshell</groupId>
+            <artifactId>bsh</artifactId>
+            <version>2.0b4</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <forkMode>pertest</forkMode>
+                    <childDelegation>false</childDelegation>
+                    <useFile>true</useFile>
+                    <includes>
+                        <include>**/*Test.*</include>
+                    </includes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

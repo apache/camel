@@ -22,6 +22,7 @@ import org.apache.camel.LanguageTestSupport;
  * @version $Revision$
  */
 public class PythonLanguageTest extends LanguageTestSupport {
+    
     public void testLanguageExpressions() throws Exception {
         assertExpression("exchange.in.headers", "{foo=abc, bar=123}");
         assertExpression("exchange.in", "Message: <hello id='m123'>world!</hello>");

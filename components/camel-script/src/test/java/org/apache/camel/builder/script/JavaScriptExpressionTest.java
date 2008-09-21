@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -28,8 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Tests a routing expression using JavaScript
  */
 public class JavaScriptExpressionTest extends ContextTestSupport {
+    
     public void testSendMatchingMessage() throws Exception {
-        // Currently, this test fails because the JavaScript expression in createRouteBuilder
+        // TODO Currently, this test fails because the JavaScript expression in createRouteBuilder
         // below returns false
         // To fix that, we need to figure out how to get the expression to return the right value
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -42,7 +42,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         sendBody("direct:start", "hello", headers);
 
         assertEquals("Should get the message header here", mock.getExchanges().get(0).getIn().getHeader("foo"), "bar");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNonMatchingMessage() throws Exception {
@@ -53,7 +53,7 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
         headers.put("foo", "foo");
         sendBody("direct:start", "hello", headers);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
