@@ -23,9 +23,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for the alwaysConsume=true option.
+ * Unit test for the alwaysConsume=false option.
  */
-public class FileAlwaysConsumeTest extends ContextTestSupport {
+public class FileAlwaysConsumeFalseTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -38,13 +38,12 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/alwaysconsume/?consumer.alwaysConsume=true&moveNamePrefix=done/").to("mock:result");
+                from("file://target/alwaysconsume/?consumer.alwaysConsume=false&moveNamePrefix=done/").to("mock:result");
             }
         };
-
     }
 
-    public void testAlwaysConsume() throws Exception {
+    public void testNotAlwaysConsume() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -56,8 +55,7 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
 
         // reset mock and set new expectations
         mock.reset();
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(0);
 
         // move file back
         File file = new File("target/alwaysconsume/done/report.txt");
@@ -65,7 +63,8 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
         file = file.getAbsoluteFile();
         file.renameTo(renamed.getAbsoluteFile());
 
-        // should consume the file again
+        // should NOT consume the file again, let 2 secs pass to let the consuemr try to consume it but it should not
+        Thread.sleep(2000);
         assertMockEndpointsSatisfied();
     }
 
