@@ -36,6 +36,5 @@ public class ProduceTest extends AbstractJUnit38SpringContextTests {
         // lets send a message
         String actual = producer.sayHello("James");
         assertEquals("response", "Hello James", actual);
-
     }
 }

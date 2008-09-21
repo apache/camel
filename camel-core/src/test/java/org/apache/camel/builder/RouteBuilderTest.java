@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.model.RoutesType;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -268,11 +269,6 @@ public class RouteBuilderTest extends TestSupport {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
                 from("seda:a").intercept(interceptor1).intercept(interceptor2).to("seda:d");
-                /*
-                 *
-                 * TODO keep old DSL? .intercept() .add(interceptor1)
-                 * .add(interceptor2) .target().to("seda:d");
-                 */
             }
         };
         // END SNIPPET: e7
@@ -498,5 +494,19 @@ public class RouteBuilderTest extends TestSupport {
         } else {
             return processor;
         }
+    }
+
+    public void testCorrectNumberOfRoutes() throws Exception {
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() throws Exception {
+                from("direct:start").to("seda:in");
+
+                from("seda:in").to("mock:result");
+            }
+        };
+
+        List<Route> routes = getRouteList(builder);
+
+        assertEquals(2, routes.size());
     }
 }
