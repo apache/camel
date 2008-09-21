@@ -189,6 +189,16 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/beanshell.html">BeanShell expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T beanShell(String text) {
+        return language("beanshell", text);
+    }
+
+    /**
      * Evaluates the  <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>
      * using the <a href="http://activemq.apache.org/camel/juel.html">JUEL library</a>
      *
