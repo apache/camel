@@ -26,6 +26,7 @@ import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.component.file.FileProcessStrategy;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,12 +64,12 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
             FileChannel channel = new RandomAccessFile(lockFileName, "rw").getChannel();
             FileLock lock = channel.lock();
             if (lock != null) {
-                exchange.setProperty("org.apache.camel.fileChannel", channel);
                 exchange.setProperty("org.apache.camel.file.lock", lock);
                 exchange.setProperty("org.apache.camel.file.lock.name", lockFileName);
                 return true;
+            } else {
+                return false;
             }
-            return false;
         }
         return true;
     }
@@ -81,7 +82,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
         try {
             unlockFile(endpoint, exchange, file);
         } catch (Exception e) {
-            LOG.info("Unable to unlock file: " + file + ": " + e.getMessage(), e);
+            LOG.warn("Unable to unlock file: " + file, e);
         }
     }
 
@@ -103,14 +104,24 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
 
     protected void unlockFile(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
         if (isLockFile()) {
-            Channel channel = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.fileChannel", Channel.class);
-            String lockfile = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);
+            FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock", FileLock.class);
+            String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.name", String.class);
+            Channel channel = lock.channel();
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unlocking file: " + file);
             }
-            channel.close();
-            File lock = new File(lockfile);
-            lock.delete();
+            try {
+                lock.release();
+            } finally {
+                // must close channel
+                ObjectHelper.close(channel, "Closing channel", LOG);
+
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Deleting lock file: " + lockFileName);
+                }
+                File lockfile = new File(lockFileName);
+                lockfile.delete();
+            }
         }
     }
 }

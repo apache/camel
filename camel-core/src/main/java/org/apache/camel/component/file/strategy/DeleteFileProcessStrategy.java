@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
@@ -45,7 +46,7 @@ public class DeleteFileProcessStrategy extends FileProcessStrategySupport {
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            LOG.warn("Could not delete file: " + file);
+            throw new IOException("Can not delete file: " + file);
         }
 
         // must commit to release the lock
