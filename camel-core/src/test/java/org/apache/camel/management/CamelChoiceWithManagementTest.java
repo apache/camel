@@ -34,6 +34,7 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
     private MockEndpoint d;
     private MockEndpoint e;
 
+
     protected void setUp() throws Exception {
         context = createCamelContext();
         assertValidContext(context);
@@ -73,7 +74,6 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-
     }
 
     public void testOtherwise() throws Exception {

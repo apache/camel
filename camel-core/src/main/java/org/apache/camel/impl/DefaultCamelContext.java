@@ -328,25 +328,31 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setRoutes(List<Route> routes) {
         this.routes = routes;
+        throw new UnsupportedOperationException("overriding existing routes is not supported yet, use addRoutes instead");
     }
 
     public void addRoutes(Collection<Route> routes) throws Exception {
         if (this.routes == null) {
-            this.routes = new ArrayList<Route>(routes);
-        } else {
-            this.routes.addAll(routes);
+            this.routes = new ArrayList<Route>();
         }
-        lifecycleStrategy.onRoutesAdd(routes);
-        if (shouldStartRoutes()) {
-            startRoutes(routes);
+
+        if (routes != null) {
+            this.routes.addAll(routes);
+
+            lifecycleStrategy.onRoutesAdd(routes);
+            if (shouldStartRoutes()) {
+                startRoutes(routes);
+            }
         }
     }
 
     public void addRoutes(Routes builder) throws Exception {
         // lets now add the routes from the builder
-        builder.setContext(this);        
+        builder.setContext(this);
         List<Route> routeList = builder.getRouteList();
-        LOG.debug("Adding routes from: " + builder + " routes: " + routeList);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Adding routes from: " + builder + " routes: " + routeList);
+        }
         addRoutes(routeList);
     }
 

@@ -17,6 +17,8 @@
 package org.apache.camel.spring.produce;
 
 import org.apache.camel.Consume;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -25,13 +27,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class MyListenerService implements MyListener {
 
+    private static final Log LOG = LogFactory.getLog(MyListenerService.class);
+
     public MyListenerService() {
-        System.out.println("Instantiated service: " + this);
+        LOG.debug("Instantiated service: " + this);
     }
 
     @Consume(uri = "direct:myService")
     public String sayHello(String name) {
-        System.out.println("Invoked sayHello with: " + name);
+        LOG.debug("Invoked sayHello with: " + name);
         return "Hello " + name;
     }
 }

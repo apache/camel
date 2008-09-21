@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -44,7 +43,6 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 public abstract class RouteBuilder extends BuilderSupport implements Routes {
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RoutesType routeCollection = new RoutesType();
-    private List<Route> routes = new ArrayList<Route>();
 
     public RouteBuilder() {
         this(null);
@@ -149,11 +147,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Returns the routing map from inbound endpoints to processors
+     * Uses {@link org.apache.camel.CamelContext#getRoutes()} to return the routes in the context.
      */
     public List<Route> getRouteList() throws Exception {
         checkInitialized();
-        return routes;
+        return null;
     }
 
     @Override
@@ -179,11 +177,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
                 setErrorHandlerBuilder(camelContext.getErrorHandlerBuilder());
             }
             configure();
-            populateRoutes(routes);
+            populateRoutes();
         }
     }
 
-    protected void populateRoutes(List<Route> routes) throws Exception {
+    protected void populateRoutes() throws Exception {
         CamelContext camelContext = getContext();
         if (camelContext == null) {
             throw new IllegalArgumentException("No CamelContext has been injected!");
