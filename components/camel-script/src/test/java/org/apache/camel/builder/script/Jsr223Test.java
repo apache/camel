@@ -17,7 +17,6 @@
 package org.apache.camel.builder.script;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
@@ -26,7 +25,8 @@ import junit.framework.TestCase;
  * @version $Revision$
  */
 public class Jsr223Test extends TestCase {
-    private static String [] scriptNames = {"groovy", "js", "python", "ruby", "javascript"};
+    private static String [] scriptNames = {"beanshell", "groovy", "js", "python", "ruby", "javascript"};
+
     public void testLanguageNames() throws Exception {
         ScriptEngineManager manager = new ScriptEngineManager();
         for (String scriptName : scriptNames) {

@@ -156,6 +156,49 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         return new ScriptBuilder(language, new UrlResource(scriptURL));
     }
 
+    // Beanshell
+    // -------------------------------------------------------------------------
+
+    /**
+     * Creates a script builder for the BeanShell script contents
+     *
+     * @param scriptText the script text to be evaluted
+     * @return the builder
+     */
+    public static ScriptBuilder beanShell(String scriptText) {
+        return new ScriptBuilder("beanshell", scriptText);
+    }
+
+    /**
+     * Creates a script builder for the BeanShell script {@link Resource}
+     *
+     * @param scriptResource the resource used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder beanShell(Resource scriptResource) {
+        return new ScriptBuilder("beanshell", scriptResource);
+    }
+
+    /**
+     * Creates a script builder for the BeanShell script {@link File}
+     *
+     * @param scriptFile the file used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder beanShell(File scriptFile) {
+        return new ScriptBuilder("beanshell", new FileSystemResource(scriptFile));
+    }
+
+    /**
+     * Creates a script builder for the BeanShell script {@link URL}
+     *
+     * @param scriptURL the URL used to load the script
+     * @return the builder
+     */
+    public static ScriptBuilder beanShell(URL scriptURL) {
+        return new ScriptBuilder("beanshell", new UrlResource(scriptURL));
+    }
+
     // Groovy
     // -------------------------------------------------------------------------
 

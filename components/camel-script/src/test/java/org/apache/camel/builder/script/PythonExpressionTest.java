@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  * Tests a routing expression using Python
  */
 public class PythonExpressionTest extends ContextTestSupport {
+    
     public void testSendMatchingMessage() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
@@ -34,7 +35,7 @@ public class PythonExpressionTest extends ContextTestSupport {
         headers.put("foo", "bar");
         sendBody("direct:start", "hello", headers);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNonMatchingMessage() throws Exception {
@@ -45,7 +46,7 @@ public class PythonExpressionTest extends ContextTestSupport {
         headers.put("foo", "foo");
         sendBody("direct:start", "hello", headers);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
