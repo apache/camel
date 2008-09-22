@@ -228,7 +228,7 @@ public class XmlParseTest extends XmlTestSupport {
         ResequencerType resequencer = assertResequencer(route);
         assertNotNull(resequencer.getStreamConfig());
         assertNull(resequencer.getBatchConfig());
-        assertEquals(100, resequencer.getStreamConfig().getCapacity());
+        assertEquals(1000, resequencer.getStreamConfig().getCapacity());
         assertEquals(2000L, resequencer.getStreamConfig().getTimeout());
     }
 

@@ -81,6 +81,7 @@ public class StreamResequencerTest extends ContextTestSupport {
     }
 
     public void testStreamResequencerTypeWithoutJmx() throws Exception {
+        System.out.println("This will now fail");
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
         doTestStreamResequencerType();
     }

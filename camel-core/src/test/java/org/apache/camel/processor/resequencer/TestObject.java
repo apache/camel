@@ -16,20 +16,21 @@
  */
 package org.apache.camel.processor.resequencer;
 
-/**
- * Implemented by classes that handle timeout notifications.
- * 
- * @author Martin Krasser
- * 
- * @version $Revision$
- */
-public interface TimeoutHandler {
+public class TestObject {
 
-    /**
-     * Handles a timeout notification.
-     * 
-     * @param timeout the timer task that caused this timeout notification.
-     */
-    void timeout(Timeout timeout);
+    private int value;
+    
+    public TestObject(int value) {
+        this.value = value;
+    }
+    
+    public int getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
     
 }

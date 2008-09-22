@@ -22,8 +22,6 @@ package org.apache.camel.processor.resequencer;
  * for being released by the {@link ResequencerEngine}.
  * 
  * @author Martin Krasser
- * 
- * @version $Revision
  */
 class Element<E> implements TimeoutHandler {
 
@@ -69,14 +67,14 @@ class Element<E> implements TimeoutHandler {
     
     /**
      * Schedules the given timeout task. Before this methods calls the
-     * {@link Timeout#schedule()} method it adds this element as timeout
+     * {@link Timeout#schedule()} method it sets this element as timeout
      * listener.
      * 
      * @param t a timeout task.
      */
     public synchronized void schedule(Timeout t) {
         this.timeout = t;
-        this.timeout.addTimeoutHandlerFirst(this);
+        this.timeout.setTimeoutHandler(this);
         this.timeout.schedule();
     }
     

@@ -16,20 +16,32 @@
  */
 package org.apache.camel.processor.resequencer;
 
-/**
- * Implemented by classes that handle timeout notifications.
- * 
- * @author Martin Krasser
- * 
- * @version $Revision$
- */
-public interface TimeoutHandler {
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-    /**
-     * Handles a timeout notification.
-     * 
-     * @param timeout the timer task that caused this timeout notification.
-     */
-    void timeout(Timeout timeout);
+public class SequenceBuffer<E> implements SequenceSender<E> {
+
+    private BlockingQueue<E> queue;
     
+    public SequenceBuffer() {
+        this.queue = new LinkedBlockingQueue<E>();
+    }
+    
+    public int size() {
+        return queue.size();
+    }
+    
+    public E take() throws InterruptedException {
+        return queue.take();
+    }
+    
+    public E poll(long timeout) throws InterruptedException {
+        return queue.poll(timeout, TimeUnit.MILLISECONDS);
+    }
+    
+    public void sendElement(E o) throws Exception {
+        queue.put(o);
+    }
+
 }
