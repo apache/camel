@@ -32,6 +32,8 @@ public interface Exchange {
 
     String CHARSET_NAME = "org.apache.camel.Exchange.CharsetName";
 
+    String AGGREGATED_COUNT = "org.apache.camel.Exchange.AggregatedCount";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

@@ -29,18 +29,13 @@ public class BodyInAggregatingStrategy implements AggregationStrategy {
         String oldBody = oldExchange.getIn().getBody(String.class);
         String newBody = newIn.getBody(String.class);
         newIn.setBody(oldBody + "+" + newBody);
-        Integer old = (Integer) oldExchange.getProperty("aggregated");
-        if (old == null) {
-            old = 1;
-        }
-        copy.setProperty("aggregated", old + 1);
         return copy;
     }
 
     /**
      * An expression used to determine if the aggregation is complete
      */
-    public boolean isCompleted(@Header(name = "aggregated")
+    public boolean isCompleted(@Header(name = Exchange.AGGREGATED_COUNT)
                                Integer aggregated) {
 
         if (aggregated == null) {
