@@ -35,8 +35,8 @@ import org.springframework.orm.jpa.JpaTemplate;
  */
 @Entity
 @Table(
-    name="PROCESSDEFINITION",
-    uniqueConstraints=@UniqueConstraint(columnNames = {"name"})
+    name = "PROCESSDEFINITION",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
 )
 public class ProcessDefinition extends EntitySupport {
     private static final transient Log LOG = LogFactory.getLog(ProcessDefinition.class);
