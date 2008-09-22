@@ -56,12 +56,21 @@ public class AggregationCollection extends AbstractCollection<Exchange> {
         Exchange oldExchange = map.get(correlationKey);
         Exchange newExchange = exchange;
         if (oldExchange != null) {
+            Integer count = oldExchange.getProperty(Exchange.AGGREGATED_COUNT, Integer.class);
+            if (count == null) {
+                count = 1;
+            }
+            count++;
             newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
+            newExchange.setProperty(Exchange.AGGREGATED_COUNT, count);
         }
 
         // the strategy may just update the old exchange and return it
         if (newExchange != oldExchange) {
             LOG.debug("put exchange:" + newExchange + " for key:"  + correlationKey);
+            if (oldExchange == null) {
+                newExchange.setProperty(Exchange.AGGREGATED_COUNT, new Integer(1));
+            }
             map.put(correlationKey, newExchange);
         }
         onAggregation(correlationKey, newExchange);

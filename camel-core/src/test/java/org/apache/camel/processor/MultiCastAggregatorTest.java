@@ -82,7 +82,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
                 from("direct:z").process(new AppendingProcessor("z")).to("direct:aggregator");
 
                 from("direct:aggregator").aggregator(header("cheese"), new BodyInAggregatingStrategy()).
-                completedPredicate(header("aggregated").isEqualTo(3)).to("mock:result");
+                completedPredicate(header(Exchange.AGGREGATED_COUNT).isEqualTo(3)).to("mock:result");
                 // END SNIPPET: example
             }
         };

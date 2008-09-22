@@ -31,17 +31,14 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
         Double oldRate = oldExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
         Double newRate = newExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
         Exchange result = null;
-        if (old == null) {
-            old = 1;
-        }
+
         if (newRate >= oldRate) {
             result = oldExchange;
         } else {
             result = newExchange;
         }
         LOG.debug("Get the lower rate exchange " + result);
-        // Set the property for the completeness condition
-        result.setProperty("aggregated", old + 1);
+
         return result;
 
     }
