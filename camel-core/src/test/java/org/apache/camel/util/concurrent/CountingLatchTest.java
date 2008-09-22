@@ -87,16 +87,14 @@ public class CountingLatchTest extends TestCase {
             public void run() {
                 for (int i = 0; i < COUNT; i++) {
                     latch.increment();
-                    sleep();
-
                 }
             }
         });
         Thread down = new Thread(new Runnable() {
             public void run() {
                 for (int i = 0; i < COUNT; i++) {
-                    latch.decrement();
                     latch.increment();
+                    latch.decrement();
                     sleep();
                     latch.decrement();
                 }
