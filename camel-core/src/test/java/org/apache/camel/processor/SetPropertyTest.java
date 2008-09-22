@@ -36,15 +36,15 @@ public class SetPropertyTest extends ContextTestSupport {
 
         // make sure we got the message
         assertMockEndpointsSatisfied();
-        
+
         // lets get the property value
         List<Exchange> exchanges = end.getExchanges();
-        Exchange exchange = exchanges.get(0);        
+        Exchange exchange = exchanges.get(0);
         String actualPropertyValue = exchange.getProperty(propertyName, String.class);
-        
+
         assertEquals(expectedPropertyValue, actualPropertyValue);
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -55,8 +55,8 @@ public class SetPropertyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                  setProperty(propertyName).constant(expectedPropertyValue).
-                  to("mock:end");
+                    setProperty(propertyName).constant(expectedPropertyValue).
+                    to("mock:end");
             }
         };
     }

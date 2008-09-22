@@ -40,6 +40,7 @@
         </route>
    </camelContext>
 
+   <!-- Inject the camel context to the Camel transport's destination -->
    <camel:destination name="{http://apache.org/hello_world_soap_http}CamelPort.camel-destination">
         <camel:camelContextRef>dest_context</camel:camelContextRef>
    </camel:destination>
