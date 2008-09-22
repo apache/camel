@@ -16,14 +16,17 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.resequencer.ResequencerEngine;
 import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
+import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * A resequencer that re-orders a (continuous) stream of {@link Exchange}s. The
@@ -38,67 +41,172 @@ import org.apache.camel.processor.resequencer.SequenceSender;
  * the sequence number 4. The message sequence 2,3,5 has a gap because the
  * sucessor of 3 is missing. The resequencer therefore has to retain message 5
  * until message 4 arrives (or a timeout occurs).
+ * <p>
+ * Instances of this class poll for {@link Exchange}s from a given
+ * <code>endpoint</code>. Resequencing work and the delivery of messages to
+ * the next <code>processor</code> is done within the single polling thread.
  * 
  * @author Martin Krasser
  * 
  * @version $Revision$
+ * 
+ * @see ResequencerEngine
  */
-public class StreamResequencer extends DelegateProcessor implements Processor {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Runnable, Processor {
 
-    private ResequencerEngine<Exchange> reseq;
-    private BlockingQueue<Exchange> queue;
-    private SequenceSender sender;
+    private ExceptionHandler exceptionHandler;
+    private ResequencerEngine<Exchange> engine;
+    private PollingConsumer<? extends Exchange> consumer;
+    private Endpoint<? extends Exchange> endpoint;
+    private Processor processor;
+    private Thread worker;
+    private int capacity;
     
     /**
      * Creates a new {@link StreamResequencer} instance.
      * 
+     * @param endpoint
+     *            endpoint to poll exchanges from.
      * @param processor
-     *            the next processor that processes the re-ordered exchanges.
+     *            next processor that processes re-ordered exchanges.
      * @param comparator
-     *            a {@link SequenceElementComparator} for comparing sequence
-     *            number contained in {@link Exchange}s.
-     * @param capacity
-     *            the capacity of the inbound queue.
+     *            a sequence element comparator for exchanges.
      */
-    public StreamResequencer(Processor processor, SequenceElementComparator<Exchange> comparator, int capacity) {
-        super(processor);
-        queue = new LinkedBlockingQueue<Exchange>();
-        reseq = new ResequencerEngine<Exchange>(comparator, capacity);
-        reseq.setOutQueue(queue);
-    }
-    
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        sender = new SequenceSender(getProcessor());
-        sender.setQueue(queue);
-        sender.start();
-
+    public StreamResequencer(Endpoint<? extends Exchange> endpoint, Processor processor, SequenceElementComparator<Exchange> comparator) {
+        this.exceptionHandler = new LoggingExceptionHandler(getClass());
+        this.engine = new ResequencerEngine<Exchange>(comparator);
+        this.engine.setSequenceSender(this);
+        this.endpoint = endpoint;
+        this.processor = processor;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        reseq.stop();
-        sender.cancel();
-        super.doStop();
+    /**
+     * Returns this resequencer's exception handler.
+     * 
+     * @return this resequencer's exception handler.
+     */
+    public ExceptionHandler getExceptionHandler() {
+        return exceptionHandler;
     }
 
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        reseq.put(exchange);
+    /**
+     * Returns the next processor.
+     * 
+     * @return the next processor.
+     */
+    public Processor getProcessor() {
+        return processor;
     }
 
+    /**
+     * Returns this resequencer's capacity. The capacity is the maximum number
+     * of exchanges that can be managed by this resequencer at a given point in
+     * time. If the capacity if reached, polling from the endpoint will be
+     * skipped for <code>timeout</code> milliseconds giving exchanges the
+     * possibility to time out and to be delivered after the waiting period.
+     * 
+     * @return this resequencer's capacity.
+     */
+    public int getCapacity() {
+        return capacity;
+    }
+
+    /**
+     * Returns this resequencer's timeout. This sets the resequencer engine's
+     * timeout via {@link ResequencerEngine#setTimeout(long)}. This value is
+     * also used to define the polling timeout from the endpoint.
+     * 
+     * @return this resequencer's timeout.
+     * (Processor) 
+     * @see ResequencerEngine#setTimeout(long)
+     */
     public long getTimeout() {
-        return reseq.getTimeout();
+        return engine.getTimeout();
+    }
+
+    public void setCapacity(int capacity) {
+        this.capacity = capacity;
     }
 
     public void setTimeout(long timeout) {
-        reseq.setTimeout(timeout);
+        engine.setTimeout(timeout);
     }
 
     @Override
     public String toString() {
-        return "StreamResequencer[to: " + getProcessor() + "]";
+        return "StreamResequencer[to: " + processor + "]";
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        consumer = endpoint.createPollingConsumer();
+        ServiceHelper.startServices(processor, consumer);
+        worker = new Thread(this, this + " Polling Thread");
+        engine.start();
+        worker.start();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.startServices(consumer, processor);
+        engine.stop();
+    }
+
+    /**
+     * Sends the <code>exchange</code> to the next <code>processor</code>.
+     * 
+     * @param o
+     *            exchange to send.
+     */
+    public void sendElement(Exchange o) throws Exception {
+        processor.process(o);
+    }
+
+    /**
+     * Loops over {@link #processExchange()}.
+     */
+    public void run() {
+        while (!isStopped() && !isStopping()) {
+            try {
+                processExchange();
+            } catch (Exception e) {
+                exceptionHandler.handleException(e);
+            }
+        }
+    }
+
+    /**
+     * Processes an exchange received from the this resequencer's
+     * <code>endpoint</code>. Received exchanges are processed via
+     * {@link ResequencerEngine#insert(Object)}.
+     * {@link ResequencerEngine#deliver()} is then called in any case regardless
+     * whether a message was received or receiving timed out.
+     * 
+     * @throws Exception
+     *             if exchange delivery fails.
+     */
+    protected void processExchange() throws Exception {
+        if (engine.size() >= capacity) {
+            Thread.sleep(getTimeout());
+        } else {
+            Exchange exchange = consumer.receive(getTimeout());
+            if (exchange != null) {
+                engine.insert(exchange);
+            }
+        }
+        engine.deliver();
+    }
+
+    public void process(Exchange exchange) throws Exception {
+        if (engine.size() >= capacity) {
+            Thread.sleep(getTimeout());
+        } else {
+            if (exchange != null) {
+                engine.insert(exchange);
+            }
+        }
+        engine.deliver();
+        
     }
 
 }

@@ -23,7 +23,7 @@ package org.apache.camel.processor.resequencer;
  * 
  * @author Martin Krasser
  * 
- * @version $Revision
+ * @version $Revision$
  */
 class ElementComparator<E> implements SequenceElementComparator<Element<E>> {
 

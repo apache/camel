@@ -71,7 +71,7 @@ public class ResequencerTest extends ContextTestSupport {
         assertEquals("Number of routes created: " + list, 1, list.size());
 
         Route route = list.get(0);
-        assertTrue(route.toString().startsWith("BatchResequencerRoute"));
+        assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
     }
 
     public void testBatchResequencerTypeWithoutJmx() throws Exception {

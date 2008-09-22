@@ -26,7 +26,7 @@ import java.util.TreeSet;
  * 
  * @author Martin Krasser
  * 
- * @version $Revision
+ * @version $Revision$
  */
 public class Sequence<E> extends TreeSet<E> {
 

@@ -162,7 +162,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         // TODO: find out how to have these two within an <xsd:choice>
         stream(streamConfig);
     }
-
+    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         if (batchConfig != null) {
@@ -173,26 +173,17 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         }
     }
 
-    @Override
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
-        if (batchConfig != null) {
-            routes.add(createBatchResequencerRoute(routeContext));
-        } else {
-            // StreamResequencer created via createProcessor method
-            super.addRoutes(routeContext, routes);
-        }
-    }
-
-    private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
-        final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
-        return new Route(routeContext.getEndpoint(), resequencer) {
-            @Override
-            public String toString() {
-                return "BatchResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
-            }
-        };
-    }
-
+    /**
+     * Creates a batch {@link Resequencer} instance applying the given
+     * <code>config</code>.
+     * 
+     * @param routeContext
+     *            route context.
+     * @param config
+     *            batch resequencer configuration.
+     * @return the configured batch resequencer.
+     * @throws Exception 
+     */
     protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
         Processor processor = routeContext.createProcessor(this);
@@ -203,17 +194,49 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return resequencer;
     }
 
-    protected StreamResequencer createStreamResequencer(RouteContext routeContext,
+    /**
+     * Creates a {@link StreamResequencer} instance applying the given
+     * <code>config</code>.
+     * 
+     * @param routeContext
+     *            route context.
+     * @param config
+     *            stream resequencer configuration.
+     * @return the configured stream resequencer.
+     * @throws Exception
+     */
+    protected StreamResequencer createStreamResequencer(RouteContext routeContext, 
             StreamResequencerConfig config) throws Exception {
         config.getComparator().setExpressions(resolveExpressionList(routeContext));
         Processor processor = routeContext.createProcessor(this);
-        StreamResequencer resequencer = new StreamResequencer(processor,
-                config.getComparator(), config.getCapacity());
+        StreamResequencer resequencer = new StreamResequencer(routeContext.getEndpoint(),
+                processor, config.getComparator());
         resequencer.setTimeout(config.getTimeout());
+        resequencer.setCapacity(config.getCapacity());
         return resequencer;
-
+        
     }
-
+    
+    private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
+        final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
+        return new Route(routeContext.getEndpoint(), resequencer) {
+            @Override
+            public String toString() {
+                return "BatchResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
+            }
+        };
+    }
+    
+    private Route<? extends Exchange> createStreamResequencerRoute(RouteContext routeContext) throws Exception {
+        final StreamResequencer resequencer = createStreamResequencer(routeContext, streamConfig);
+        return new Route(routeContext.getEndpoint(), resequencer) {
+            @Override
+            public String toString() {
+                return "StreamResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
+            }
+        };
+    }
+    
     private List<Expression> resolveExpressionList(RouteContext routeContext) {
         if (expressionList == null) {
             expressionList = new ArrayList<Expression>();

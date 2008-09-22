@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.resequencer;
 
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -29,64 +27,48 @@ import java.util.TimerTask;
  * 
  * @author Martin Krasser
  * 
- * @version $Revision
+ * @version $Revision$
  */
 public class Timeout extends TimerTask {
     
-    private List<TimeoutHandler> timeoutHandlers;
+    private TimeoutHandler timeoutHandler;
     
     private Timer timer;
     
     private long timeout;
     
     /**
-     * Creates a new timeout task using the given {@link Timer} instance a timeout value. The
-     * task is not scheduled immediately. It will be scheduled by calling this
-     * task's {@link #schedule()} method.
+     * Creates a new timeout task using the given {@link Timer} instance and
+     * timeout value. The task is not scheduled immediately. It will be
+     * scheduled by calling this task's {@link #schedule()} method.
      * 
      * @param timer
+     *            a timer
      * @param timeout
+     *            a timeout value.
      */
     public Timeout(Timer timer, long timeout) {
-        this.timeoutHandlers = new LinkedList<TimeoutHandler>();
         this.timeout = timeout;
         this.timer = timer;
     }
 
     /**
-     * Returns the list of timeout handlers that have been registered for
-     * notification.
+     * Returns the timeout handler that has been registered for notification.
      * 
-     * @return the list of timeout handlers
+     * @return the timeout handler.
      */
-    public List<TimeoutHandler> getTimeoutHandlers() {
-        return timeoutHandlers;
+    public TimeoutHandler getTimeoutHandlers() {
+        return timeoutHandler;
     }
     
     /**
-     * Appends a new timeout handler at the end of the timeout handler list.
+     * Sets a timeout handler for receiving timeout notifications.
      * 
-     * @param handler a timeout handler.
+     * @param timeoutHandler
+     *            a timeout handler.
      */
-    public void addTimeoutHandler(TimeoutHandler handler) {
-        timeoutHandlers.add(handler);
-    }
-    
-    /**
-     * inserts a new timeout handler at the beginning of the timeout handler
-     * list.
-     * 
-     * @param handler a timeout handler.
-     */
-    public void addTimeoutHandlerFirst(TimeoutHandler handler) {
-        timeoutHandlers.add(0, handler);
-    }
-    
-    /**
-     * Removes all timeout handlers from the timeout handler list. 
-     */
-    public void clearTimeoutHandlers() {
-        this.timeoutHandlers.clear();
+    public void setTimeoutHandler(TimeoutHandler timeoutHandler) {
+        this.timeoutHandler = timeoutHandler;
     }
     
     /**
@@ -97,13 +79,11 @@ public class Timeout extends TimerTask {
     }
 
     /**
-     * Notifies all timeout handlers about the scheduled timeout.
+     * Notifies the timeout handler about the scheduled timeout.
      */
     @Override
     public void run() {
-        for (TimeoutHandler observer : timeoutHandlers) {
-            observer.timeout(this);
-        }
+        timeoutHandler.timeout(this);
     }
 
 }

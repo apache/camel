@@ -23,7 +23,7 @@ import java.util.Comparator;
  * 
  * @author Martin Krasser
  * 
- * @version $Revision
+ * @version $Revision$
  */
 public interface SequenceElementComparator<E> extends Comparator<E> {
 

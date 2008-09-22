@@ -16,20 +16,18 @@
  */
 package org.apache.camel.processor.resequencer;
 
-/**
- * Implemented by classes that handle timeout notifications.
- * 
- * @author Martin Krasser
- * 
- * @version $Revision$
- */
-public interface TimeoutHandler {
+public class TestComparator implements SequenceElementComparator<TestObject> {
 
-    /**
-     * Handles a timeout notification.
-     * 
-     * @param timeout the timer task that caused this timeout notification.
-     */
-    void timeout(Timeout timeout);
-    
+    public boolean predecessor(TestObject o1, TestObject o2) {
+        return (o2.getValue() - 1) == o1.getValue();
+    }
+
+    public boolean successor(TestObject o1, TestObject o2) {
+        return (o1.getValue() - 1) == o2.getValue();
+    }
+
+    public int compare(TestObject o1, TestObject o2) {
+        return Integer.valueOf(o1.getValue()).compareTo(o2.getValue());
+    }
+
 }

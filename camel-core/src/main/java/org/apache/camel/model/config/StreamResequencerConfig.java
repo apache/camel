@@ -69,12 +69,12 @@ public class StreamResequencerConfig {
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using default
-     * values for <code>capacity</code> (100) and <code>timeout</code>
+     * values for <code>capacity</code> (1000) and <code>timeout</code>
      * (1000L). Elements of the sequence are compared using the
      * {@link DefaultExchangeComparator}.
      */
     public StreamResequencerConfig() {
-        this(100, 1000L);
+        this(1000, 1000L);
     }
 
     /**
@@ -106,7 +106,7 @@ public class StreamResequencerConfig {
 
     /**
      * Returns a new {@link StreamResequencerConfig} instance using default
-     * values for <code>capacity</code> (100) and <code>timeout</code>
+     * values for <code>capacity</code> (1000) and <code>timeout</code>
      * (1000L). Elements of the sequence are compared using the
      * {@link DefaultExchangeComparator}.
      * 
