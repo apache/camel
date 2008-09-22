@@ -148,8 +148,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.startServices(consumer, processor);
+        // let's stop everything in the reverse order
+        // no need to stop the worker thread -- it will stop automatically when this service is stopped
         engine.stop();
+        ServiceHelper.stopServices(consumer, processor);
     }
 
     /**
