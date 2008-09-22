@@ -46,7 +46,6 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a value builder for the given header
      */
-
     public <E extends Exchange> ValueBuilder<E> header(String name) {
         return Builder.header(name);
     }
@@ -54,7 +53,6 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
-
     public ValueBuilder body() {
         return Builder.body();
     }
@@ -63,7 +61,6 @@ public abstract class TestSupport extends TestCase {
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-
     public <T> ValueBuilder bodyAs(Class<T> type) {
         return Builder.bodyAs(type);
     }
@@ -72,7 +69,6 @@ public abstract class TestSupport extends TestCase {
      * Returns a predicate and value builder for the outbound body on an
      * exchange
      */
-
     public ValueBuilder outBody() {
         return Builder.outBody();
     }
@@ -81,7 +77,6 @@ public abstract class TestSupport extends TestCase {
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
-
     public <T> ValueBuilder outBodyAs(Class<T> type) {
         return Builder.outBodyAs(type);
     }
@@ -90,7 +85,6 @@ public abstract class TestSupport extends TestCase {
      * Returns a predicate and value builder for the fault body on an
      * exchange
      */
-
     public ValueBuilder faultBody() {
         return Builder.faultBody();
     }
@@ -99,7 +93,6 @@ public abstract class TestSupport extends TestCase {
      * Returns a predicate and value builder for the fault message body as a
      * specific type
      */
-
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
@@ -107,7 +100,6 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a value builder for the given system property
      */
-
     public ValueBuilder systemProperty(String name) {
         return Builder.systemProperty(name);
     }
@@ -115,7 +107,6 @@ public abstract class TestSupport extends TestCase {
     /**
      * Returns a value builder for the given system property
      */
-
     public ValueBuilder systemProperty(String name, String defaultValue) {
         return Builder.systemProperty(name, defaultValue);
     }
@@ -151,9 +142,10 @@ public abstract class TestSupport extends TestCase {
 
     /**
      * Asserts that the given exchange has an OUT message of the given body value
+     *
      * @param exchange the exchange which should have an OUT message
      * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     protected void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
@@ -172,9 +164,10 @@ public abstract class TestSupport extends TestCase {
 
     /**
      * Asserts that the given exchange has an OUT message of the given body value
+     *
      * @param exchange the exchange which should have an OUT message
      * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException
+     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
      */
     protected void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
@@ -322,9 +315,6 @@ public abstract class TestSupport extends TestCase {
     /**
      * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
      * this call will drill through them and return the wrapped Processor.
-     *
-     * @param processor
-     * @return
      */
     protected Processor unwrap(Processor processor) {
         while (true) {
