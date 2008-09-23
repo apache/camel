@@ -40,6 +40,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -49,6 +50,7 @@ import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
@@ -836,7 +838,32 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return answer;
     }
 
+    /**
+     * Creates a expression which must evaluate to an integer that determines
+     * how many times the exchange should be sent down the rest of the route.
+     *
+     * @return the clause used to create the loop expression
+     */
+    public ExpressionClause<LoopType> loop() {
+        LoopType loop = new LoopType();
+        addOutput(loop);
+        return ExpressionClause.createAndSetExpression(loop);
+    }
 
+    public LoopType loop(Expression<?> expression) {
+        LoopType loop = getNodeFactory().createLoop();
+        loop.setExpression(expression);
+        addOutput(loop);
+        return loop;
+    }
+
+    public LoopType loop(int count) {
+        LoopType loop = getNodeFactory().createLoop();
+        loop.setExpression(new ConstantExpression(Integer.toString(count)));
+        addOutput(loop);
+        return loop;
+    }
+    
     public Type throwFault(Throwable fault) {
         ThrowFaultType answer = new ThrowFaultType();
         answer.setFault(fault);
