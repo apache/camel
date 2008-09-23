@@ -143,7 +143,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     /**
-     * Allows a delay to be specified which causes producers to pause - to simpulate slow producers
+     * Allows a delay to be specified which causes producers to pause - to simulate slow producers
      */
     public void setProduceDelay(long produceDelay) {
         this.produceDelay = produceDelay;
