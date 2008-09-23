@@ -1285,14 +1285,18 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which removes the header on the IN message
      */
     public Type removeHeader(String name) {
-        return process(ProcessorBuilder.removeHeader(name));
+        RemoveHeaderType answer = new RemoveHeaderType(name);
+        addOutput(answer);
+        return (Type) this;        
     }
 
     /**
      * Adds a processor which removes the header on the OUT message
      */
     public Type removeOutHeader(String name) {
-        return process(ProcessorBuilder.removeOutHeader(name));
+        RemoveOutHeaderType answer = new RemoveOutHeaderType(name);
+        addOutput(answer);
+        return (Type) this;        
     }
 
     /**
@@ -1306,7 +1310,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds a processor which removes the exchange property
      */
     public Type removeProperty(String name) {
-        return process(ProcessorBuilder.removeProperty(name));
+        RemovePropertyType answer = new RemovePropertyType(name);
+        addOutput(answer);
+        return (Type) this;        
     }
 
     /**
