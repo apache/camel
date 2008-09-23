@@ -27,6 +27,10 @@ public class NodeFactory {
         return new FilterType();
     }
 
+    public LoopType createLoop() {
+        return new LoopType();
+    }
+
     public RouteType createRoute() {
         return new RouteType();
     }
