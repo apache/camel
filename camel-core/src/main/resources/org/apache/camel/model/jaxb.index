@@ -31,6 +31,7 @@ InterceptType
 InterceptorRef
 InterceptorType
 LoadBalanceType
+LoopType
 MarshalType
 MulticastType
 OptionalIdentifiedType
