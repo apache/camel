@@ -176,7 +176,8 @@ public class XmlParseTest extends XmlTestSupport {
         assertInterceptorRefs(route, "interceptor1", "interceptor2");
     }
 
-    public void testParseRouteWithChoiceXml() throws Exception {
+    @SuppressWarnings("unchecked")
+	public void testParseRouteWithChoiceXml() throws Exception {
         RouteType route = assertOneRoute("routeWithChoice.xml");
         assertFrom(route, "seda:a");
 
@@ -237,6 +238,9 @@ public class XmlParseTest extends XmlTestSupport {
 
     public void testLoop() throws Exception {
         RouteType route = assertOneRoute("loop.xml");
+        LoopType loop = assertOneProcessorInstanceOf(LoopType.class, route);
+        assertNotNull(loop.getExpression());
+        assertEquals("constant", loop.getExpression().getLanguage());
     }
 
     // Implementation methods
@@ -261,7 +265,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals(text, uri, value.getUri());
     }
 
-    protected void assertTo(String message, ProcessorType processor, String uri) {
+    protected void assertTo(String message, ProcessorType<?> processor, String uri) {
         ToType value = assertIsInstanceOf(ToType.class, processor);
         String text = message + "To URI";
         log.info("Testing: " + text + " is equal to: " + uri + " for processor: " + processor);

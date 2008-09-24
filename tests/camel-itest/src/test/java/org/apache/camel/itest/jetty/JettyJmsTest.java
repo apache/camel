@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,11 +72,5 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
             assertEquals("Should get the request", "Hello form Willem", result);
             assertEquals("Should get the header", "greetMe", exchange.getIn().getHeader("Operation"));
         }
-
     }
-
-
-
-
-
 }
