@@ -16,12 +16,14 @@
  */
 package org.apache.camel.builder.script;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.builder.script.ScriptBuilder.beanShell;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+
+import static org.apache.camel.builder.script.ScriptBuilder.beanShell;
+
 
 /**
  * Unit test for a BeanSheel script
