@@ -24,10 +24,10 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision:  $
  */
 public class LoopTest extends ContextTestSupport {
-	MockEndpoint resultEndpoint;
-	
+    MockEndpoint resultEndpoint;
+
     public void testCounterLoop() throws Exception {
-    	performLoopTest("direct:a", 8);
+        performLoopTest("direct:a", 8);
     }
 
     public void testExpressionLoop() throws Exception {
