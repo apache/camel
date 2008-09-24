@@ -17,6 +17,8 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -45,10 +47,27 @@ public class LoopTest extends ContextTestSupport {
         lastEndpoint.assertIsSatisfied();
     }
 
-    private void performLoopTest(String endpointUri, int expectedIterations) throws InterruptedException {
+    public void testLoopWithInvalidExpression() throws Exception {
+    	try {
+            performLoopTest("direct:b", 4, "invalid");
+            fail("Exception expected for invalid expression");
+    	} catch (RuntimeCamelException e) {
+    	    // expected
+        }
+    }
+
+    public void testLoopProperties() throws Exception {
+        performLoopTest("direct:e", 10);
+    }
+
+    private void performLoopTest(String endpointUri, int expectedIterations, String header) throws InterruptedException {
         resultEndpoint.expectedMessageCount(expectedIterations);
-        template.sendBodyAndHeader(endpointUri, "<hello times='4'>world!</hello>", "loop", "6");
+        template.sendBodyAndHeader(endpointUri, "<hello times='4'>world!</hello>", "loop", header);
         resultEndpoint.assertIsSatisfied();
+    }
+
+    private void performLoopTest(String endpointUri, int expectedIterations) throws InterruptedException {
+        performLoopTest(endpointUri, expectedIterations, "6");
     }
 
     @Override
@@ -60,6 +79,8 @@ public class LoopTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
+        final Processor loopTest = new LoopTestProcessor(10);
+
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
@@ -74,6 +95,9 @@ public class LoopTest extends ContextTestSupport {
                 // START SNIPPET: ex4
                 from("direct:d").loop(2).to("mock:result").end().to("mock:last");
                 // END SNIPPET: ex4
+                // START SNIPPET: ex5
+                from("direct:e").loop(10).process(loopTest).to("mock:result");
+                // END SNIPPET: ex5
             }
         };
     }

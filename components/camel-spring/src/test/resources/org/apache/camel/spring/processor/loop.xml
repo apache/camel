@@ -23,7 +23,7 @@
     ">
 
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <!-- START SNIPPET: ex -->
+    <!-- START SNIPPET: ex1 -->
     <route>
       <from uri="direct:a"/>
       <loop>
@@ -31,7 +31,7 @@
         <to uri="mock:result"/>
       </loop>
     </route>
-    <!-- END SNIPPET: ex -->
+    <!-- END SNIPPET: ex1 -->
  
     <!-- START SNIPPET: ex2 -->
     <route>
@@ -62,6 +62,23 @@
       </loop>
       <to uri="mock:last"/>
     </route>
-    <!-- START SNIPPET: ex4 -->    
+    <!-- START SNIPPET: ex4 -->
+    
+    <!-- START SNIPPET: ex5 -->        
+    <route>
+      <from uri="direct:e"/>
+      <loop>
+        <constant>10</constant>
+        <process ref="myProcessor"/>
+        <to uri="mock:result"/>
+      </loop>
+    </route>
+    <!-- START SNIPPET: ex5 -->
+        
   </camelContext>
+  
+  <bean id="myProcessor" class="org.apache.camel.processor.LoopTestProcessor">
+    <constructor-arg index="0" value="10"/>
+  </bean>
+  
 </beans>
