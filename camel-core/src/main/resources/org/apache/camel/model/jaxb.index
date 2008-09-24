@@ -42,7 +42,6 @@ ProcessorRef
 RecipientListType
 RedeliveryPolicyType
 RemoveHeaderType
-RemoveOutHeaderType
 RemovePropertyType
 ResequencerType
 RouteType
