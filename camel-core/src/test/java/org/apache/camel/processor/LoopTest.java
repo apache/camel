@@ -38,6 +38,13 @@ public class LoopTest extends ContextTestSupport {
         performLoopTest("direct:c", 4);
     }
 
+    public void testLoopAsBlock() throws Exception {
+    	MockEndpoint lastEndpoint = resolveMandatoryEndpoint("mock:last", MockEndpoint.class);
+        lastEndpoint.expectedMessageCount(1);
+        performLoopTest("direct:d", 2);
+        lastEndpoint.assertIsSatisfied();
+    }
+
     private void performLoopTest(String endpointUri, int expectedIterations) throws InterruptedException {
         resultEndpoint.expectedMessageCount(expectedIterations);
         template.sendBodyAndHeader(endpointUri, "<hello times='4'>world!</hello>", "loop", "6");
@@ -64,6 +71,9 @@ public class LoopTest extends ContextTestSupport {
                 // START SNIPPET: ex3
                 from("direct:c").loop().xpath("/hello/@times").to("mock:result");
                 // END SNIPPET: ex3
+                // START SNIPPET: ex4
+                from("direct:d").loop(2).to("mock:result").end().to("mock:last");
+                // END SNIPPET: ex4
             }
         };
     }

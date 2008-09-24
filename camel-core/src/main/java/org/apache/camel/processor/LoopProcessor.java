@@ -20,6 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The processor which sends messages in a loop.
@@ -27,6 +29,8 @@ import org.apache.camel.util.ExchangeHelper;
  * @version $Revision: $
  */
 public class LoopProcessor extends DelegateProcessor {
+    private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
+    
     private Expression<Exchange> expression;
 
     public LoopProcessor(Expression<Exchange> expression, Processor processor) {
@@ -41,7 +45,8 @@ public class LoopProcessor extends DelegateProcessor {
         String text = ExchangeHelper.convertToType(exchange, String.class, expression.evaluate(exchange));
         Integer value = ExchangeHelper.convertToType(exchange, Integer.class, text);
         int count = value != null ? value.intValue() : 0;
-        while (count-- > 0) {
+        for (int i = 0; i < count; i++) {
+            LOG.debug("LoopProcessor: iteration #" + i);
             super.process(exchange);
         }
     }
