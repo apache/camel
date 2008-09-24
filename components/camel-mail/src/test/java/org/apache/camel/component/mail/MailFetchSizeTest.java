@@ -88,7 +88,8 @@ public class MailFetchSizeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=5000").to("mock:result");
+                from("pop3://jones@localhost?password=secret&fetchSize=2&consumer.delay=5000"
+                    + "&deleteProcessedMessages=true").to("mock:result");
             }
         };
     }
