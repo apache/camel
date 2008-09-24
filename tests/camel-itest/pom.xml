@@ -35,22 +35,36 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.camel</groupId>
-    	<artifactId>camel-spring</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.camel</groupId>
-    	<artifactId>camel-cxf</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-cxf</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
-    	<groupId>org.apache.camel</groupId>
-    	<artifactId>camel-jetty</artifactId>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
     </dependency>
 
-    <!-- testing -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -59,12 +73,6 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core</artifactId>
-      <type>test-jar</type>
       <scope>test</scope>
     </dependency>
      <dependency>
@@ -100,10 +108,7 @@
     </dependency>
   </dependencies>
 
-
-
   <build>
-
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -116,25 +121,25 @@
       	<artifactId>cxf-codegen-plugin</artifactId>
       	<version>${cxf-version}</version>
       	<executions>
-      		<execution>
-      			<id>generate-sources</id>
-      			<phase>generate-sources</phase>
-      			<configuration>
-      			    <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
-      				<wsdlOptions>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/main/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
-      					</wsdlOption>
-      					<wsdlOption>
-      						<wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
-      					</wsdlOption>
-      				</wsdlOptions>
-      			</configuration>
-      			<goals>
-      				<goal>wsdl2java</goal>
-      			</goals>
-      		</execution>
-      	</executions>
+      	  <execution>
+      		<id>generate-sources</id>
+      		<phase>generate-sources</phase>
+      		<configuration>
+      	      <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+               <wsdlOptions>
+                  <wsdlOption>
+                    <wsdl>${basedir}/src/main/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
+                  </wsdlOption>
+                <wsdlOption>
+                    <wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
+                  </wsdlOption>
+                </wsdlOptions>
+               </configuration>
+              <goals>
+                <goal>wsdl2java</goal>
+              </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
