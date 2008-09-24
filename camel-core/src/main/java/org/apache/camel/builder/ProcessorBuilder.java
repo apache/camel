@@ -170,25 +170,6 @@ public final class ProcessorBuilder {
     }
 
     /**
-     * Removes the header on the OUT message
-     */
-    public static Processor removeOutHeader(final String name) {
-        return new Processor() {
-            public void process(Exchange exchange) {
-                Message out = exchange.getOut(false);
-                if (out != null) {
-                    out.removeHeader(name);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "removeOutHeader(" + name +  ")";
-            }
-        };
-    }
-
-    /**
      * Removes the header on the FAULT message
      */
     public static Processor removeFaultHeader(final String name) {

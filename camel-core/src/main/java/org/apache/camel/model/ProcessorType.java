@@ -1318,15 +1318,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a processor which removes the header on the OUT message
-     */
-    public Type removeOutHeader(String name) {
-        RemoveOutHeaderType answer = new RemoveOutHeaderType(name);
-        addOutput(answer);
-        return (Type) this;        
-    }
-
-    /**
      * Adds a processor which removes the header on the FAULT message
      */
     public Type removeFaultHeader(String name) {
