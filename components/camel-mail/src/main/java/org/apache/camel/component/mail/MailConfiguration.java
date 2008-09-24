@@ -50,9 +50,9 @@ public class MailConfiguration {
     private String defaultEncoding;
     private String from = DEFAULT_FROM;
     private String folderName = DEFAULT_FOLDER_NAME;
-    private boolean deleteProcessedMessages = true;
+    private boolean deleteProcessedMessages;
     private boolean ignoreUriScheme;
-    private boolean processOnlyUnseenMessages;
+    private boolean processOnlyUnseenMessages = true;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private String destination;
     private int fetchSize = -1;

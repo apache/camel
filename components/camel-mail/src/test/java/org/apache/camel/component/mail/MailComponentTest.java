@@ -69,10 +69,11 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
+        assertEquals("processOnlyUnseenMessages", true, config.isProcessOnlyUnseenMessages());
     }
 
     public void testDefaultPOP3Configuration() throws Exception {
@@ -87,10 +88,11 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
+        assertEquals("processOnlyUnseenMessages", true, config.isProcessOnlyUnseenMessages());
     }
 
     public void testDefaultIMAPConfiguration() throws Exception {
@@ -105,15 +107,17 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
         assertEquals("contentType", "text/plain", config.getContentType());
+        assertEquals("processOnlyUnseenMessages", true, config.isProcessOnlyUnseenMessages());
     }
 
     public void testManyConfigurations() throws Exception {
         MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:30/subject?password=secret"
-            + "&from=me@camelriders.org&deleteProcessedMessages=false&defaultEncoding=iso-8859-1&folderName=riders&contentType=text/html");
+            + "&from=me@camelriders.org&deleteProcessedMessages=true&defaultEncoding=iso-8859-1&folderName=riders"
+            + "&contentType=text/html&processOnlyUnseenMessages=false");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
@@ -124,9 +128,10 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", "iso-8859-1", config.getDefaultEncoding());
         assertEquals("from", "me@camelriders.org", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(false, config.isDeleteProcessedMessages());
+        assertEquals(true, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
+        assertEquals("processOnlyUnseenMessages", false, config.isProcessOnlyUnseenMessages());
         assertEquals("contentType", "text/html", config.getContentType());
     }
 
@@ -142,7 +147,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
     }
@@ -159,7 +164,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
         assertEquals("password", "secret", config.getPassword());
-        assertEquals(true, config.isDeleteProcessedMessages());
+        assertEquals(false, config.isDeleteProcessedMessages());
         assertEquals(false, config.isIgnoreUriScheme());
         assertEquals("fetchSize", -1, config.getFetchSize());
     }
