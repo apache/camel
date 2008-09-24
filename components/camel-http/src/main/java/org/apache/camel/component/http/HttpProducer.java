@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
@@ -49,7 +48,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
     // This should be a set of lower-case strings
     @Deprecated
     public static final Set<String> HEADERS_TO_SKIP =
-            new HashSet<String>(Arrays.asList("content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
+        new HashSet<String>(Arrays.asList("content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
@@ -110,12 +109,10 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
         RequestEntity requestEntity = createRequestEntity(exchange);
         Object m = exchange.getIn().getHeader(HTTP_METHOD);
-        // TODO: Damm this is not readable code (nested ? - please dont)
-        HttpMethods ms = m instanceof HttpMethods
-            ? (HttpMethods)m : HttpMethods.valueOf(m == null
-                                                       ? requestEntity == null
-                                                           ? "GET" : "POST"
-                                                               : m.toString());
+        
+        HttpMethods ms = requestEntity == null ? HttpMethods.GET : HttpMethods.POST;
+        ms = m instanceof HttpMethods ? (HttpMethods)m : 
+            m == null ? ms : HttpMethods.valueOf(m.toString());
 
         HttpMethod method = ms.createMethod(uri);
 
