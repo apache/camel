@@ -19,20 +19,20 @@ package org.apache.camel.processor.resequencer;
 public class ResequencerRunner<E> extends Thread {
 
     private ResequencerEngineSync<E> resequencer;
-    
+
     private long interval;
-    
+
     private boolean cancelRequested;
-    
+
     public ResequencerRunner(ResequencerEngineSync<E> resequencer, long interval) {
         this.resequencer = resequencer;
         this.interval = interval;
         this.cancelRequested = false;
     }
-    
+
     @Override
     public void run() {
-        while(!cancelRequested()) {
+        while (!cancelRequested()) {
             try {
                 Thread.sleep(interval);
             } catch (InterruptedException e) {
@@ -51,9 +51,9 @@ public class ResequencerRunner<E> extends Thread {
     public synchronized void cancel() {
         this.cancelRequested = true;
     }
-    
+
     private synchronized boolean cancelRequested() {
         return cancelRequested;
     }
-    
+
 }

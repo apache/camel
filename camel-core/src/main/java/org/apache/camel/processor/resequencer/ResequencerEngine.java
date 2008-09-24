@@ -14,10 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-  package org.apache.camel.processor.resequencer;
-  
-  import java.util.Timer;
-  
+package org.apache.camel.processor.resequencer;
+
+import java.util.Timer;
+
 /**
  * Resequences elements based on a given {@link SequenceElementComparator}.
  * This resequencer is designed for resequencing element streams. Stream-based
@@ -56,24 +56,24 @@
  * <strong>Note:</strong> Instances of this class are not thread-safe.
  * Resequencing should be done by calling {@link #insert(Object)} and
  * {@link #deliver()} or {@link #deliverNext()} from a single thread.
- * 
+ *
  * @author Martin Krasser
- * 
+ *
  * @version $Revision$
  */
 public class ResequencerEngine<E> {
-  
+
     /**
      * The element that most recently hash been delivered or <code>null</code>
      * if no element has been delivered yet.
      */
     private Element<E> lastDelivered;
-  
+
     /**
      * Minimum amount of time to wait for out-of-sequence elements.
      */
     private long timeout;
-     
+
     /**
      * A sequence of elements for sorting purposes.
      */
@@ -83,16 +83,16 @@ public class ResequencerEngine<E> {
      * A timer for scheduling timeout notifications.
      */
     private Timer timer;
-    
+
     /**
-     * A strategy for sending sequence elements. 
+     * A strategy for sending sequence elements.
      */
     private SequenceSender<E> sequenceSender;
-     
+
     /**
      * Creates a new resequencer instance with a default timeout of 2000
      * milliseconds.
-     * 
+     *
      * @param comparator a sequence element comparator.
      * @param capacity the capacity of this resequencer.
      */
@@ -101,30 +101,30 @@ public class ResequencerEngine<E> {
         this.timeout = 2000L;
         this.lastDelivered = null;
     }
-    
+
     public void start() {
         timer = new Timer("Stream Resequencer Timer");
     }
-    
+
     /**
      * Stops this resequencer (i.e. this resequencer's {@link Timer} instance).
      */
     public void stop() {
         timer.cancel();
     }
-    
+
     /**
      * Returns the number of elements currently maintained by this resequencer.
-     * 
+     *
      * @return the number of elements currently maintained by this resequencer.
      */
     public int size() {
         return sequence.size();
     }
-    
+
     /**
      * Returns this resequencer's timeout value.
-     * 
+     *
      * @return the timeout in milliseconds.
      */
     public long getTimeout() {
@@ -133,7 +133,7 @@ public class ResequencerEngine<E> {
 
     /**
      * Sets this sequencer's timeout value.
-     * 
+     *
      * @param timeout the timeout in milliseconds.
      */
     public void setTimeout(long timeout) {
@@ -142,7 +142,7 @@ public class ResequencerEngine<E> {
 
     /**
      * Returns the sequence sender.
-     * 
+     *
      * @return the sequence sender.
      */
     public SequenceSender<E> getSequenceSender() {
@@ -151,7 +151,7 @@ public class ResequencerEngine<E> {
 
     /**
      * Sets the sequence sender.
-     * 
+     *
      * @param sequenceSender a sequence element sender.
      */
     public void setSequenceSender(SequenceSender<E> sequenceSender) {
@@ -160,7 +160,7 @@ public class ResequencerEngine<E> {
 
     /**
      * Returns the last delivered element.
-     * 
+     *
      * @return the last delivered element or <code>null</code> if no delivery
      *         has been made yet.
      */
@@ -170,21 +170,21 @@ public class ResequencerEngine<E> {
         }
         return lastDelivered.getObject();
     }
-    
+
     /**
      * Sets the last delivered element. This is for testing purposes only.
-     * 
+     *
      * @param o an element.
      */
     void setLastDelivered(E o) {
         lastDelivered = new Element<E>(o);
     }
-    
+
     /**
      * Inserts the given element into this resequencer. If the element is not
      * ready for immediate delivery and has no immediate presecessor then it is
      * scheduled for timing out. After being timed out it is ready for delivery.
-     * 
+     *
      * @param o an element.
      */
     public void insert(E o) {
@@ -194,13 +194,13 @@ public class ResequencerEngine<E> {
         sequence.add(element);
 
         Element<E> successor = sequence.successor(element);
-        
+
         // check if there is an immediate successor and cancel
         // timer task (no need to wait any more for timeout)
         if (successor != null) {
             successor.cancel();
         }
-        
+
         // start delivery if current element is successor of last delivered element
         if (successorOfLastDelivered(element)) {
             // nothing to schedule
@@ -210,59 +210,61 @@ public class ResequencerEngine<E> {
             element.schedule(defineTimeout());
         }
     }
-    
+
     /**
      * Delivers all elements which are currently ready to deliver.
-     * 
+     *
      * @throws exception thrown by {@link SequenceSender#sendElement(Object)}.
-     * 
+     *
      * @see #deliverNext();
      */
     public void deliver() throws Exception {
-        while(deliverNext());
+        while (deliverNext()) {
+            // do nothing here
+        }
     }
-    
+
     /**
      * Attempts to deliver a single element from the head of the resequencer
      * queue (sequence). Only elements which have not been scheduled for timing
-     * out or which already timed out can be delivered. Elements are deliveref via 
+     * out or which already timed out can be delivered. Elements are deliveref via
      * {@link SequenceSender#sendElement(Object)}.
-     * 
+     *
      * @return <code>true</code> if the element has been delivered
      *         <code>false</code> otherwise.
-     * 
+     *
      * @throws exception thrown by {@link SequenceSender#sendElement(Object)}.
-     *         
+     *
      */
-    public boolean deliverNext() throws Exception {   
+    public boolean deliverNext() throws Exception {
         if (sequence.size() == 0) {
             return false;
         }
         // inspect element with lowest sequence value
         Element<E> element = sequence.first();
-        
+
         // if element is scheduled do not deliver and return
         if (element.scheduled()) {
             return false;
         }
-        
+
         // remove deliverable element from sequence
         sequence.remove(element);
 
         // set the delivered element to last delivered element
         lastDelivered = element;
-        
+
         // deliver the sequence element
         sequenceSender.sendElement(element.getObject());
 
         // element has been delivered
         return true;
     }
-    
+
     /**
      * Returns <code>true</code> if the given element is the immediate
      * successor of the last delivered element.
-     * 
+     *
      * @param element an element.
      * @return <code>true</code> if the given element is the immediate
      *         successor of the last delivered element.
@@ -276,18 +278,18 @@ public class ResequencerEngine<E> {
         }
         return false;
     }
-    
+
     /**
      * Creates a timeout task based on the timeout setting of this resequencer.
-     * 
+     *
      * @return a new timeout task.
      */
     private Timeout defineTimeout() {
         return new Timeout(timer, timeout);
     }
-    
+
     private static <E> Sequence<Element<E>> createSequence(SequenceElementComparator<E> comparator) {
         return new Sequence<Element<E>>(new ElementComparator<E>(comparator));
     }
-    
+
 }
