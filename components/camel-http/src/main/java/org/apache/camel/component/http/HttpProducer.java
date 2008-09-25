@@ -82,8 +82,8 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             bos.flush();
             is.close();
             out.setBody(bos.createInputStream());
-            
-            // propagate HTTP response headers 
+
+            // propagate HTTP response headers
             Header[] headers = method.getResponseHeaders();
             for (Header header : headers) {
                 String name = header.getName();
@@ -110,10 +110,10 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
         RequestEntity requestEntity = createRequestEntity(exchange);
         Object m = exchange.getIn().getHeader(HTTP_METHOD);
-        
+
         HttpMethods ms = requestEntity == null ? HttpMethods.GET : HttpMethods.POST;
-        ms = m instanceof HttpMethods ? (HttpMethods)m : 
-            m == null ? ms : HttpMethods.valueOf(m.toString());
+        ms = m instanceof HttpMethods ? (HttpMethods)m
+            : m == null ? ms : HttpMethods.valueOf(m.toString());
 
         HttpMethod method = ms.createMethod(uri);
 

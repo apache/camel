@@ -50,7 +50,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
         deadEndpoint.expectedBodiesReceived(body);
         deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);        successEndpoint.expectedMessageCount(0);
+        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
+        successEndpoint.expectedMessageCount(0);
 
         sendBody("direct:start", body);
 
@@ -82,7 +83,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 if (attempt < failUntilAttempt) {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt
                                                + " being less than: " + failUntilAttempt);
-                } 
+                }
             }
         };
 
