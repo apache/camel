@@ -83,9 +83,9 @@ public class LoopTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: ex
+                // START SNIPPET: ex1
                 from("direct:a").loop(8).to("mock:result");
-                // END SNIPPET: ex
+                // END SNIPPET: ex1
                 // START SNIPPET: ex2
                 from("direct:b").loop(header("loop")).to("mock:result");
                 // END SNIPPET: ex2
