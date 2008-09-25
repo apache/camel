@@ -201,6 +201,8 @@ public final class IntrospectionSupport {
                         Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
                         setter.invoke(target, convertedValue);
                         return true;
+                    } catch (NoTypeConversionAvailableException e) {
+                        // ignore we could not find a suitable type converter for this method
                     } catch (IllegalArgumentException e) {
                         typeConvertionFailed = e;
                         // ignore as there could be another setter method where we could type convert with success

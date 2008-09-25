@@ -63,7 +63,7 @@ public class StreamResequencerTest extends ContextTestSupport {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
-        System.clearProperty(JmxSystemPropertyKeys.DISABLED);
+        enableJMX();
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -81,8 +81,8 @@ public class StreamResequencerTest extends ContextTestSupport {
     }
 
     public void testStreamResequencerTypeWithoutJmx() throws Exception {
-        System.out.println("This will now fail");
-        System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
+        log.debug("This will now fail");
+        disableJMX();
         doTestStreamResequencerType();
     }
 

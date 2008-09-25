@@ -81,8 +81,6 @@ public class JmsMessage extends DefaultMessage {
 
     /**
      * Returns the underlying JMS message
-     *
-     * @return the underlying JMS message
      */
     public Message getJmsMessage() {
         return jmsMessage;
