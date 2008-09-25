@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
@@ -74,7 +75,11 @@ public class RegistryBean implements BeanHolder {
 
     public Processor getProcessor() {
         if (processor == null && bean != null) {
-            processor = CamelContextHelper.convertTo(context, Processor.class, bean);
+            try {
+                processor = CamelContextHelper.convertTo(context, Processor.class, bean);
+            } catch (NoTypeConversionAvailableException ex) {
+                // ignore
+            }
         }
         return processor;
     }

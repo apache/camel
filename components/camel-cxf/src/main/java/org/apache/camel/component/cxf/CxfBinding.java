@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
@@ -69,19 +70,21 @@ public final class CxfBinding {
         CxfMessage in = exchange.getIn();
 
         // Check the body if the POJO parameter list first
-        Object body = in.getBody(List.class);
-        if (body instanceof List) {
+        try {
+            List body = in.getBody(List.class);
             // just set the operation's parameter
             answer.setContent(List.class, body);
             CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
-        } else {
+        } catch (NoTypeConversionAvailableException ex) {
             // CXF uses StAX which is based on the stream API to parse the XML,
             // so the CXF transport is also based on the stream API.
             // And the interceptors are also based on the stream API,
             // so let's use an InputStream to host the CXF on wire message.
-            body = in.getBody(InputStream.class);
-            if (body instanceof InputStream) {
+            try {
+                InputStream body = in.getBody(InputStream.class);
                 answer.setContent(InputStream.class, body);
+            } catch (NoTypeConversionAvailableException ex2) {
+                // ignore
             }
             // TODO do we propagate header the same way in non-POJO mode?
             // CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
@@ -137,19 +140,19 @@ public final class CxfBinding {
     // Copy the Camel message to CXF message
     public static void copyMessage(HeaderFilterStrategy strategy,
             org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
-        InputStream is = camelMessage.getBody(InputStream.class);
-
+        
         CxfHeaderHelper.propagateCamelToCxf(strategy, camelMessage.getHeaders(), cxfMessage);
-        if (is != null) {
-            cxfMessage.setContent(InputStream.class, is);
-        } else {
+        try {
+            InputStream is = camelMessage.getBody(InputStream.class);
+            if (is != null) {
+                cxfMessage.setContent(InputStream.class, is);
+            }
+        } catch (NoTypeConversionAvailableException ex) {
             Object result = camelMessage.getBody();
-            if (result != null) {
-                if (result instanceof InputStream) {
-                    cxfMessage.setContent(InputStream.class, result);
-                } else {
-                    cxfMessage.setContent(result.getClass(), result);
-                }
+            if (result instanceof InputStream) {
+                cxfMessage.setContent(InputStream.class, result);
+            } else {
+                cxfMessage.setContent(result.getClass(), result);
             }
         }
     }

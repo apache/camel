@@ -22,6 +22,7 @@ import java.lang.reflect.Method;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -85,10 +86,14 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             in.setHeader(MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
-        BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
-        if (beanInvoke != null) {
-            beanInvoke.invoke(bean, exchange);
-            return;
+        try {
+            BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
+            if (beanInvoke != null) {
+                beanInvoke.invoke(bean, exchange);
+                return;
+            }
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore, body is not a BeanInvocation
         }
 
         boolean isExplicitMethod = false;
@@ -106,8 +111,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(bean, exchange);
         }
         if (invocation == null) {
-            throw new IllegalStateException("No method invocation could be created, "
-                                            + "no maching method could be found on: " + bean);
+            throw new IllegalStateException(
+                "No method invocation could be created, no maching method could be found on: " + bean);
         }
         try {
             Object value = invocation.proceed();

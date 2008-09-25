@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.model.InterceptorRef;
@@ -34,10 +35,14 @@ public class StreamCachingInterceptor extends Interceptor {
         super();
         setInterceptorLogic(new Processor() {
             public void process(Exchange exchange) throws Exception {
-                StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
-                if (newBody != null) {
-                    newBody.reset();
-                    exchange.getIn().setBody(newBody);
+            	try {
+                    StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
+                    if (newBody != null) {
+                        newBody.reset();
+                        exchange.getIn().setBody(newBody);
+                    }
+            	} catch (NoTypeConversionAvailableException ex) {
+            	    // ignore if in is not of StreamCache type
                 }
                 proceed(exchange);
             }

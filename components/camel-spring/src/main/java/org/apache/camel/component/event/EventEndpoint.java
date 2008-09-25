@@ -17,6 +17,7 @@
 package org.apache.camel.component.event;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -109,11 +110,14 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
     }
 
     protected ApplicationEvent toApplicationEvent(Exchange exchange) {
-        ApplicationEvent event = exchange.getIn().getBody(ApplicationEvent.class);
-        if (event == null) {
-            event = new CamelEvent(this, exchange);
+        try {
+            ApplicationEvent event = exchange.getIn().getBody(ApplicationEvent.class);
+            if (event != null) {
+                return event;
+            }
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore, handled below
         }
-        return event;
+        return new CamelEvent(this, exchange);
     }
-
 }
