@@ -71,17 +71,22 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         }
 
         // lets store the result in the output message.
-        Message out = exchange.getOut(true);
         try {
+            Message answer = null;
             int responseCode = httpClient.executeMethod(method);
-            out.setHeaders(in.getHeaders());
-            out.setHeader(HTTP_RESPONSE_CODE, responseCode);
+            if (responseCode == 200) {
+                answer = exchange.getOut(true);
+            } else {
+                answer = exchange.getFault(true);
+            }
+            answer.setHeaders(in.getHeaders());
+            answer.setHeader(HTTP_RESPONSE_CODE, responseCode);
             LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
             InputStream is = method.getResponseBodyAsStream();
             IOUtils.copy(is, bos);
             bos.flush();
             is.close();
-            out.setBody(bos.createInputStream());
+            answer.setBody(bos.createInputStream());
 
             // propagate HTTP response headers
             Header[] headers = method.getResponseHeaders();
@@ -89,7 +94,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
                 String name = header.getName();
                 String value = header.getValue();
                 if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
-                    out.setHeader(name, value);
+                    answer.setHeader(name, value);
                 }
             }
         } finally {
