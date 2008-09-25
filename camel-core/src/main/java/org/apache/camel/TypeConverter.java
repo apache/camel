@@ -16,7 +16,6 @@
  */
 package org.apache.camel;
 
-import org.apache.abdera.parser.ParseException;
 
 /**
  * A pluggable strategy to be able to convert objects <a
