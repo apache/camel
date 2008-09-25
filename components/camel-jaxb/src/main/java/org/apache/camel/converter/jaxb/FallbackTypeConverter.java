@@ -30,6 +30,7 @@ import javax.xml.bind.util.JAXBSource;
 import javax.xml.transform.Source;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
@@ -126,8 +127,9 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             // the required source
             JAXBContext context = createContext(value.getClass());
             JAXBSource source = new JAXBSource(context, value);
-            T answer = parentTypeConverter.convertTo(type, source);
-            if (answer == null) {
+            try {
+                return parentTypeConverter.convertTo(type, source);
+            } catch (NoTypeConversionAvailableException e) {
                 // lets try a stream
                 StringWriter buffer = new StringWriter();
                 Marshaller marshaller = context.createMarshaller();
@@ -135,7 +137,6 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 marshaller.marshal(value, buffer);
                 return parentTypeConverter.convertTo(type, buffer.toString());
             }
-            return answer;
         }
 
         // lets try convert to the type from JAXB
