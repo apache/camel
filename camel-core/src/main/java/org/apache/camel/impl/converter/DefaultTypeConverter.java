@@ -24,6 +24,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterAware;
@@ -66,9 +67,17 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        if (LOG.isTraceEnabled()) {
+    	if (LOG.isTraceEnabled()) {
             LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
                 + " -> " + type.getCanonicalName() + " with value: " + value);
+        }
+
+        if (value == null) {
+            // lets avoid NullPointerException when converting to boolean for null values
+            if (boolean.class.isAssignableFrom(type)) {
+                return (T) Boolean.FALSE;
+            }
+            return null;
         }
 
         // same instance type
@@ -82,7 +91,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
-            return converter.convertTo(type, exchange, value);
+            T rc = converter.convertTo(type, exchange, value);
+            if (rc != null) {
+                return rc;
+            }
         }
 
         // fallback converters
@@ -91,11 +103,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             if (rc != null) {
                 return rc;
             }
-        }
-
-        // lets avoid NullPointerException when converting to boolean for null values
-        if (boolean.class.isAssignableFrom(type)) {
-            return (T) Boolean.FALSE;
         }
 
         // primitives
@@ -107,13 +114,16 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         }
 
         boolean camelType = type.getCanonicalName().startsWith("org.apache.camel");
-        if (!camelType && value != null) {
+        if (!camelType) {
+            // TODO: as the next thing is an exception I suspect this warn is useless.  TB removed.
             // only log WARN level for non internal Camel convertions
             LOG.warn("Could not find a type converter for converting "
                 + value.getClass().getCanonicalName() + " -> "
                 + type.getCanonicalName() + " with value: " + value);
         }
-        return null;
+        
+        // Could not find suitable conversion
+        throw new NoTypeConversionAvailableException(value, type);
     }
 
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {

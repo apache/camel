@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.converter.stream.StreamCacheConverter;
 import org.apache.camel.spi.UnitOfWork;
@@ -116,14 +117,23 @@ public class TraceFormatter {
     }
 
     protected Object getBodyAsString(Message in) {
-        StreamCache newBody = in.getBody(StreamCache.class);
-        if (newBody != null) {
-            in.setBody(newBody);
+        StreamCache newBody = null;
+        try {
+            newBody = in.getBody(StreamCache.class);
+            if (newBody != null) {
+                in.setBody(newBody);
+            }
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore, in not of StreamCache type
         }
-        Object answer = in.getBody(String.class);
-        if (answer == null) {
+        
+        Object answer = null;
+        try {
+            answer = in.getBody(String.class);
+        } catch (NoTypeConversionAvailableException ex) {
             answer = in.getBody();
         }
+        
         if (newBody != null) {
             // Reset the InputStreamCache
             newBody.reset();
@@ -142,5 +152,4 @@ public class TraceFormatter {
     protected String getNodeMessage(TraceInterceptor interceptor) {
         return interceptor.getNode().idOrCreate();
     }
-
 }

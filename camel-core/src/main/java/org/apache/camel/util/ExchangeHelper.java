@@ -29,6 +29,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.NoTypeConversionAvailableException;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -89,11 +90,15 @@ public final class ExchangeHelper {
 
     public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type)
         throws NoSuchPropertyException {
-        T answer = exchange.getProperty(propertyName, type);
-        if (answer == null) {
-            throw new NoSuchPropertyException(exchange, propertyName, type);
+    	try {
+            T result = exchange.getProperty(propertyName, type);
+            if (result != null) {
+                return result;
+            }
+        } catch (NoTypeConversionAvailableException ex) {
+            // will throw NoSuchPropertyException below
         }
-        return answer;
+        throw new NoSuchPropertyException(exchange, propertyName, type);
     }
 
     public static <T> T getMandatoryHeader(Exchange exchange, String propertyName, Class<T> type)

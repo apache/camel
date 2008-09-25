@@ -32,6 +32,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -235,11 +236,11 @@ public final class IntrospectionSupport {
 
     private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
         if (typeConverter != null) {
-            Object answer = typeConverter.convertTo(type, value);
-            if (answer == null) {
+            try {
+                return typeConverter.convertTo(type, value);
+            } catch (NoTypeConversionAvailableException ex) {
                 throw new IllegalArgumentException("Could not convert \"" + value + "\" to " + type.getName());
             }
-            return answer;
         }
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {

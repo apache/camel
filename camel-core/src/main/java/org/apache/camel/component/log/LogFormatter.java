@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.processor.interceptor.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
@@ -176,15 +177,22 @@ public class LogFormatter implements ExchangeFormatter {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
-
-        StreamCache newBody = message.getBody(StreamCache.class);
-        if (newBody != null) {
-            message.setBody(newBody);
+    	StreamCache newBody = null;
+        try {
+            newBody = message.getBody(StreamCache.class);
+            if (newBody != null) {
+                message.setBody(newBody);
+            }
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore
         }
-        Object answer = message.getBody(String.class);
-        if (answer == null) {
+        Object answer = null;
+        try {
+            answer = message.getBody(String.class);
+        } catch (NoTypeConversionAvailableException ex) {
             answer = message.getBody();
         }
+        
         if (newBody != null) {
             // Reset the StreamCache
             newBody.reset();

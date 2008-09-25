@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.transform.Source;
 
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -63,10 +64,10 @@ public final class CxfSoapBinding {
 
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer);
 
-        Object body = message.getBody(InputStream.class);
-        if (body instanceof InputStream) {
+        try {
+            InputStream body = message.getBody(InputStream.class);
             answer.setContent(InputStream.class, body);
-        } else {
+        } catch (NoTypeConversionAvailableException ex) {
             LOG.warn("Can't get right InputStream object here, the message body is " + message.getBody());
         }
 
@@ -101,10 +102,10 @@ public final class CxfSoapBinding {
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage);
 
         // send the body back
-        Object body = message.getBody(Source.class);
-        if (body instanceof Source) {
+        try {
+            Source body = message.getBody(Source.class);
             outMessage.setContent(Source.class, body);
-        } else {
+        } catch (NoTypeConversionAvailableException ex) {
             LOG.warn("Can't get right Source object here, the message body is " + message.getBody());
         }
         outMessage.putAll(message.getHeaders());

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -108,9 +109,13 @@ public class CxfMessage extends DefaultMessage {
             MessageContentsList list = (MessageContentsList)getBody();
             for (int i = 0; i < list.size(); i++) {
                 Object value = list.get(i);
-                T answer = getBody(type, value);
-                if (answer != null) {
-                    return answer;
+                try {
+                    T answer = getBody(type, value);
+                    if (answer != null) {
+                        return answer;
+                    }
+                } catch (NoTypeConversionAvailableException ex) {
+                    // ignore
                 }
             }
         }

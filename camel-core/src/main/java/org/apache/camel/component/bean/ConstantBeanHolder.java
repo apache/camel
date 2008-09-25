@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -33,7 +34,11 @@ public class ConstantBeanHolder implements BeanHolder {
     public ConstantBeanHolder(Object bean, BeanInfo beanInfo) {
         this.bean = bean;
         this.beanInfo = beanInfo;
-        this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
+        try {
+            this.processor = CamelContextHelper.convertTo(beanInfo.getCamelContext(), Processor.class, bean);
+        } catch (NoTypeConversionAvailableException ex) {
+            this.processor = null;
+        }
     }
 
     public ConstantBeanHolder(Object bean, CamelContext context) {
