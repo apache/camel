@@ -41,7 +41,7 @@
         <to uri="mock:result"/>
       </loop>
     </route>
-    <!-- START SNIPPET: ex2 -->
+    <!-- END SNIPPET: ex2 -->
  
     <!-- START SNIPPET: ex3 -->        
     <route>
@@ -51,7 +51,7 @@
         <to uri="mock:result"/>
       </loop>
     </route>
-    <!-- START SNIPPET: ex3 -->    
+    <!-- END SNIPPET: ex3 -->    
 
     <!-- START SNIPPET: ex4 -->        
     <route>
@@ -62,7 +62,7 @@
       </loop>
       <to uri="mock:last"/>
     </route>
-    <!-- START SNIPPET: ex4 -->
+    <!-- END SNIPPET: ex4 -->
     
     <!-- START SNIPPET: ex5 -->        
     <route>
@@ -73,7 +73,7 @@
         <to uri="mock:result"/>
       </loop>
     </route>
-    <!-- START SNIPPET: ex5 -->
+    <!-- END SNIPPET: ex5 -->
         
   </camelContext>
   
