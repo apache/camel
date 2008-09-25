@@ -501,7 +501,15 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
 
     protected ScriptEngine createScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
-        ScriptEngine engine = manager.getEngineByName(scriptEngineName);
+        try {
+            engine = manager.getEngineByName(scriptEngineName);
+        } catch (NoClassDefFoundError ex) {
+            LOG.error("Can't load the scriptEngine for " + scriptEngineName + ", the exception is " + ex
+                      + ", please check the scriptEngine needs jars.");
+        }
+        if (engine == null) {
+            throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
+        }
         if (isPython()) {
             ScriptContext context = engine.getContext();
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
