@@ -27,6 +27,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -288,8 +289,10 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     }
 
     protected ByteBuffer toByteBuffer(Object message) throws CharacterCodingException {
-        ByteBuffer answer = convertTo(ByteBuffer.class, message);
-        if (answer == null) {
+        ByteBuffer answer = null;
+        try {
+            answer = convertTo(ByteBuffer.class, message);
+        } catch (NoTypeConversionAvailableException e) {
             String value = convertTo(String.class, message);
             answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
             answer.putString(value, encoder);
