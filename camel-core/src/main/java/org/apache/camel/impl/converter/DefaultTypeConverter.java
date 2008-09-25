@@ -112,16 +112,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 return (T) convertTo(primitiveType, exchange, value);
             }
         }
-
-        boolean camelType = type.getCanonicalName().startsWith("org.apache.camel");
-        if (!camelType) {
-            // TODO: as the next thing is an exception I suspect this warn is useless.  TB removed.
-            // only log WARN level for non internal Camel convertions
-            LOG.warn("Could not find a type converter for converting "
-                + value.getClass().getCanonicalName() + " -> "
-                + type.getCanonicalName() + " with value: " + value);
-        }
-        
+       
         // Could not find suitable conversion
         throw new NoTypeConversionAvailableException(value, type);
     }

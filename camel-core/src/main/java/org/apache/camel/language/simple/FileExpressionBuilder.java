@@ -23,6 +23,7 @@ import java.util.Date;
 
 import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.language.bean.BeanLanguage;
 
@@ -31,6 +32,9 @@ import org.apache.camel.language.bean.BeanLanguage;
  * on FileExchange.
  */
 public final class FileExpressionBuilder {
+
+    // TODO: All the file stuff should just be added as
+
     private FileExpressionBuilder() {
         // Helper class
     }
@@ -139,32 +143,17 @@ public final class FileExpressionBuilder {
     public static <E extends FileExchange> Expression<E> dateExpression(final String command, final String pattern) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                Date date;
                 if ("file".equals(command)) {
                     if (exchange.getFile() == null) {
                         return null;
                     }
-                    date = new Date(exchange.getFile().lastModified());
-                } else if ("now".equals(command)) {
-                    date = new Date();
-                } else if (command.startsWith("header.") || command.startsWith("in.header.")) {
-                    String key = command.substring(command.lastIndexOf(".") + 1);
-                    date = exchange.getIn().getHeader(key, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
-                    }
-                } else if (command.startsWith("out.header.")) {
-                    String key = command.substring(command.lastIndexOf(".") + 1);
-                    date = exchange.getOut().getHeader(key, Date.class);
-                    if (date == null) {
-                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
-                    }
-                } else {
-                    throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
+                    Date date = new Date(exchange.getFile().lastModified());
+                    SimpleDateFormat df = new SimpleDateFormat(pattern);
+                    return df.format(date);
                 }
-
-                SimpleDateFormat df = new SimpleDateFormat(pattern);
-                return df.format(date);
+                // must call evalute to return the nested langauge evaluate when evaluating
+                // stacked expressions
+                return ExpressionBuilder.dateExpression(command, pattern).evaluate(exchange);
             }
 
             @Override

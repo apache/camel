@@ -34,6 +34,13 @@ import org.apache.camel.util.ObjectHelper;
  * <li>out.header.foo to access an outbound header called 'foo'</li>
  * <li>property.foo to access the exchange property called 'foo'</li>
  * <li>sys.foo to access the system property called 'foo'</li>
+ * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ *     Supported commands are: <tt>now</tt> for current timestamp,
+ *     <tt>in.header.xxx</tt> or <tt>header.xxx</tt> to use the Date object in the in header.
+ *     <tt>out.header.xxx</tt> to use the Date object in the out header.
+ * </li>
+ * <li>bean:&lt;bean expression&gt; to invoke a bean using the
+ * {@link org.apache.camel.language.bean.BeanLanguage BeanLanguage}</li>
  * </ul>
  *
  * @version $Revision$
@@ -88,6 +95,24 @@ public class SimpleLanguage extends AbstractSimpleLanguage {
         remainder = ifStartsWithReturnRemainder("sys.", expression);
         if (remainder != null) {
             return ExpressionBuilder.systemProperty(remainder);
+        }
+
+        // date: prefix
+        remainder = ifStartsWithReturnRemainder("date:", expression);
+        if (remainder != null) {
+            String[] parts = remainder.split(":");
+            if (parts.length != 2) {
+                throw new IllegalSyntaxException(this, expression + " ${date:command:pattern} is the correct syntax.");
+            }
+            String command = parts[0];
+            String pattern = parts[1];
+            return ExpressionBuilder.dateExpression(command, pattern);
+        }
+
+        // bean: prefix
+        remainder = ifStartsWithReturnRemainder("bean:", expression);
+        if (remainder != null) {
+            return ExpressionBuilder.beanExpression(remainder);
         }
 
         throw new IllegalSyntaxException(this, expression);

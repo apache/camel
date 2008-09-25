@@ -47,11 +47,6 @@ public final class JmsIOConverter {
     private JmsIOConverter() {
     }
 
-    /**
-     * @param message
-     * @return a ByteBuffer
-     * @throws Exception
-     */
     @Converter
     public static ByteBuffer toByteBuffer(final Message message, Exchange exchange) throws Exception {
 
@@ -78,8 +73,9 @@ public final class JmsIOConverter {
                 }
             } catch (MessageEOFException e) {
                 // we have no other way of knowing the end of the message
+            } finally {
+                dataOut.close();
             }
-            dataOut.close();
             return NIOConverter.toByteBuffer(bytesOut.toByteArray());
         }
         if (message instanceof MapMessage) {

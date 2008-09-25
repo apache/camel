@@ -78,15 +78,6 @@ public class FileLanguageTest extends LanguageTestSupport {
         }
     }
 
-    public void testSimple() throws Exception {
-        assertExpression("${body}", "<hello id='m123'>world!</hello>");
-        assertExpression("${in.header.foo}", "abc");
-
-        // end users might add simple: prefix so we support that too
-        assertExpression("${simple:in.header.foo}", "abc");
-        assertExpression("${simple:body}", "<hello id='m123'>world!</hello>");
-    }
-
     public void testSimpleAndFile() throws Exception {
         assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-hello.bak");
     }

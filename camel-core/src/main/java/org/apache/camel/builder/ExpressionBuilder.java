@@ -20,9 +20,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.List;
+import java.util.Date;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -30,6 +30,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.bean.BeanLanguage;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
@@ -634,5 +636,67 @@ public final class ExpressionBuilder {
         };
     }
 
+    public static <E extends Exchange> Expression<E> dateExpression(final String command, final String pattern) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                Date date;
+                if ("now".equals(command)) {
+                    date = new Date();
+                } else if (command.startsWith("header.") || command.startsWith("in.header.")) {
+                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    date = exchange.getIn().getHeader(key, Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                    }
+                } else if (command.startsWith("out.header.")) {
+                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    date = exchange.getOut().getHeader(key, Date.class);
+                    if (date == null) {
+                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
+                }
+
+                SimpleDateFormat df = new SimpleDateFormat(pattern);
+                return df.format(date);
+            }
+
+            @Override
+            public String toString() {
+                return "date(" + command + ":" + pattern + ")";
+            }
+        };
+    }
+
+    public static <E extends Exchange> Expression<E> simpleExpression(final String simple) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                // must call evalute to return the nested langauge evaluate when evaluating
+                // stacked expressions
+                return SimpleLanguage.simple(simple).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "simple(" + simple + ")";
+            }
+        };
+    }
+
+    public static <E extends Exchange> Expression<E> beanExpression(final String bean) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                // must call evalute to return the nested langauge evaluate when evaluating
+                // stacked expressions
+                return BeanLanguage.bean(bean).evaluate(exchange);
+            }
+
+            @Override
+            public String toString() {
+                return "bean(" + bean + ")";
+            }
+        };
+    }
 
 }
