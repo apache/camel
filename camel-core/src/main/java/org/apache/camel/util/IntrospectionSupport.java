@@ -236,11 +236,7 @@ public final class IntrospectionSupport {
 
     private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
         if (typeConverter != null) {
-            try {
-                return typeConverter.convertTo(type, value);
-            } catch (NoTypeConversionAvailableException ex) {
-                throw new IllegalArgumentException("Could not convert \"" + value + "\" to " + type.getName());
-            }
+            return typeConverter.convertTo(type, value);
         }
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {

@@ -24,6 +24,7 @@ import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
@@ -130,21 +131,17 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         if (in.getBody() == null) {
             return null;
         }
-        RequestEntity entity = in.getBody(RequestEntity.class);
-        if (entity == null) {
-
+        try {
+            return in.getBody(RequestEntity.class);
+        } catch (NoTypeConversionAvailableException ex) {
             String data = in.getBody(String.class);
             String contentType = in.getHeader("Content-Type", String.class);
             try {
-                if (contentType != null) {
-                    return new StringRequestEntity(data, contentType, null);
-                }
                 return new StringRequestEntity(data, null, null);
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeException(e);
             }
         }
-        return entity;
     }
 
 }
