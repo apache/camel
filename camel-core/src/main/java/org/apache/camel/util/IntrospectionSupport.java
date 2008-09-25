@@ -198,17 +198,17 @@ public final class IntrospectionSupport {
                 } else {
                     // We need to convert it
                     try {
+                        // ignore exceptions as there could be another setter method where we could type convert successfully
                         Object convertedValue = convert(typeConverter, setter.getParameterTypes()[0], value);
                         setter.invoke(target, convertedValue);
                         return true;
                     } catch (NoTypeConversionAvailableException e) {
-                        // ignore we could not find a suitable type converter for this method
+                        typeConvertionFailed = e;
                     } catch (IllegalArgumentException e) {
                         typeConvertionFailed = e;
-                        // ignore as there could be another setter method where we could type convert with success
-                        LOG.trace("Setter " + setter + " with parameter type " + setter.getParameterTypes()[0]
-                                + " could not be used for type conertions of " + value);
                     }
+                    LOG.trace("Setter \"" + setter + "\" with parameter type \"" + 
+                            setter.getParameterTypes()[0] + "\" could not be used for type conertions of " + value);
                 }
             }
             // we did not find a setter method to use, and if we did try to use a type converter then throw
