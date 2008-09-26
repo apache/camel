@@ -208,7 +208,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
                 int outputsSize = proxy.getOutputs().size();
                 if (outputsSize > 0) {
-                    ProcessorType<?> processorType = proxy.getOutputs().get(outputsSize - 1);
+                    ProcessorType processorType = proxy.getOutputs().get(outputsSize - 1);
                     if (processorType instanceof ProceedType) {
                         route.getOutputs().addAll(outputs);
                     }
