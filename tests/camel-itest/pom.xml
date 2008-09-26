@@ -36,10 +36,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jms</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -48,6 +50,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-jetty</artifactId>
+      <scope>test</scope>
     </dependency>
 
     <dependency>
@@ -113,17 +116,23 @@
       	<version>${cxf-version}</version>
       	<executions>
       	  <execution>
-      		<id>generate-sources</id>
+      		<id>generate-test-sources</id>
       		<phase>generate-sources</phase>
       		<configuration>
-      	      <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
+      		   <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
                <wsdlOptions>
                   <wsdlOption>
-                    <wsdl>${basedir}/src/main/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
+                    <wsdl>${basedir}/src/test/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
+                    <extraargs>
+                    	<extraarg>-verbose</extraarg>
+                    </extraargs>
                   </wsdlOption>
                 <wsdlOption>
-                    <wsdl>${basedir}/src/main/resources/wsdl/hello_world.wsdl</wsdl>
-                  </wsdlOption>
+                    <wsdl>${basedir}/src/test/resources/wsdl/hello_world.wsdl</wsdl>
+                    <extraargs>
+                    	<extraarg>-verbose</extraarg>
+                    </extraargs>
+                </wsdlOption>
                 </wsdlOptions>
                </configuration>
               <goals>

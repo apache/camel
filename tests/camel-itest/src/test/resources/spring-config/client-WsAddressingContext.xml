@@ -21,7 +21,7 @@
 		serviceName="customer:CustomerServiceV1"
 		endpointName="customer:CustomerServiceV1CamelPort"
 		serviceClass="org.apache.camel.itest.customerrelations.CustomerServiceV1"
-		wsdlLocation="./src/main/resources/wsdl/CustomerService_noSoapAction.wsdl">
+		wsdlLocation="./src/test/resources/wsdl/CustomerService_noSoapAction.wsdl">
 		<!-- properties>
 			<entry xmlns="http://www.springframework.org/schema/beans"
 				key="mtom-enabled" value="true" />
