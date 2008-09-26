@@ -25,26 +25,7 @@
       <includes>
         <include>apache-camel-*.jar</include>
       </includes>
-    </fileSet>
-
-    <!-- copy the manual docs -->
-    <fileSet>
-      <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
-      <outputDirectory>/doc/manual</outputDirectory>
-      <includes>
-        <include>*.pdf</include>
-        <include>*.html</include>
-      </includes>
-    </fileSet>
-
-   <!-- copy the java docs -->
-   <fileSet>
-    <directory>${basedir}/target/javadoc/</directory>
-      <outputDirectory>/doc/javadoc</outputDirectory>
-      <includes>
-        <include>**/**</include>
-      </includes>
-    </fileSet>
+    </fileSet>    
 
     <!-- copy the website docs
     <fileSet>
