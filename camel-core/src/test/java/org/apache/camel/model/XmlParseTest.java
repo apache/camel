@@ -301,7 +301,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Expression", languageExpression, expression.getExpression());
     }
 
-    protected void assertInterceptorRefs(ProcessorType<?> route, String... names) {
+    protected void assertInterceptorRefs(ProcessorType route, String... names) {
         RouteType rt = (RouteType)route;
         assertNotNull(rt);
         
