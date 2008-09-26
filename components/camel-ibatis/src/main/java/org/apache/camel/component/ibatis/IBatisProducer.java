@@ -19,8 +19,8 @@ package org.apache.camel.component.ibatis;
 import java.util.Iterator;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -47,7 +47,7 @@ public class IBatisProducer extends DefaultProducer {
             String operation = getOperationName(exchange);
 
             // lets handle arrays or collections of objects
-            Iterator iter = ObjectConverter.iterator(body);
+            Iterator iter = ObjectHelper.createIterator(body);
             while (iter.hasNext()) {
                 endpoint.getSqlClient().insert(operation, iter.next());
             }
