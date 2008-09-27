@@ -19,6 +19,8 @@ package org.apache.camel.component.file.remote;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
+import org.apache.camel.util.UuidGenerator;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 
 public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends ScheduledPollEndpoint<T> {
@@ -51,8 +53,9 @@ public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends S
         return (T) new RemoteFileExchange(getCamelContext(), pattern, getBinding());
     }
 
-    public T createExchange(String fullFileName, ByteArrayOutputStream outputStream) {
-        return (T) new RemoteFileExchange(getCamelContext(), getExchangePattern(), getBinding(), getConfiguration().getHost(), fullFileName, outputStream);
+    public T createExchange(String fullFileName, String fileName, long fileLength, ByteArrayOutputStream outputStream) {
+        return (T) new RemoteFileExchange(getCamelContext(), getExchangePattern(), getBinding(),
+                getConfiguration().getHost(), fullFileName, fileName, fileLength, outputStream);
     }
 
     public RemoteFileBinding getBinding() {
@@ -76,5 +79,16 @@ public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends S
 
     public void setConfiguration(RemoteFileConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    /**
+      * Return the file name that will be auto-generated for the given message if none is provided
+      */
+     public String getGeneratedFileName(Message message) {
+         return getFileFriendlyMessageId(message.getMessageId());
+     }
+
+    protected String getFileFriendlyMessageId(String id) {
+        return UuidGenerator.generateSanitizedId(id);
     }
 }
