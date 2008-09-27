@@ -26,13 +26,14 @@ import org.apache.camel.util.ObjectHelper;
  *
  * Examples of supported file expressions are:
  * <ul>
- * <li>file:name to access the file name</li>
- * <li>file:name.noext to access the file name with no extension</li>
- * <li>file:parent to access the parent file name</li>
- * <li>file:path to access the file path name</li>
- * <li>file:absolute to access the absolute file name</li>
- * <li>file:canonical.path to access the canonical path name</li>
- * <li>date:&lt;command&gt;:&lt;pattern&gt; for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ * <li><tt>file:name</tt> to access the file name</li>
+ * <li><tt>file:name.noext</tt> to access the file name with no extension</li>
+ * <li><tt>file:parent</tt> to access the parent file name</li>
+ * <li><tt>file:path</tt> to access the file path name</li>
+ * <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
+ * <li><tt>file:canonical.path</tt> to access the canonical path name</li>
+ * <li><tt>file:length</tt> to access the file length as a Long type</li>
+ * <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
  *     All the commands from {@link SimpleLanguage} is also avaiable.
  * </li>
@@ -62,10 +63,12 @@ public class FileLanguage extends AbstractSimpleLanguage {
                 return FileExpressionBuilder.fileParentExpression();
             } else if (ObjectHelper.equal(remainder, "path")) {
                 return FileExpressionBuilder.filePathExpression();
-            } else if (ObjectHelper.equal(remainder, "absolute")) {
-                return FileExpressionBuilder.fileAbsoluteExpression();
+            } else if (ObjectHelper.equal(remainder, "absolute.path")) {
+                return FileExpressionBuilder.fileAbsolutePathExpression();
             } else if (ObjectHelper.equal(remainder, "canonical.path")) {
                 return FileExpressionBuilder.fileCanoicalPathExpression();
+            } else if (ObjectHelper.equal(remainder, "length")) {
+                return FileExpressionBuilder.fileSizeExpression();
             }
         }
 
