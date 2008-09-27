@@ -188,7 +188,8 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 log.debug("Retrieved file: " + sftpFile.getFilename() + " from: " + remoteServer());
             }
 
-            RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile), byteArrayOutputStream);
+            RemoteFileExchange exchange = endpoint.createExchange(getFullFileName(sftpFile),
+                    sftpFile.getFilename(), sftpFile.getAttrs().getSize(), byteArrayOutputStream);
 
             if (isSetNames()) {
                 String ftpBasePath = endpoint.getConfiguration().getFile();
@@ -209,7 +210,7 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 deleteFile(sftpFile.getFilename());
             } else if (isMoveFile()) {
                 String fromName = sftpFile.getFilename();
-                String toName = getMoveFileName(fromName);
+                String toName = getMoveFileName(fromName, exchange);
                 if (log.isDebugEnabled()) {
                     log.debug("Moving file: " + fromName + " to: " + toName);
                 }

@@ -30,9 +30,10 @@ public class RemoteFileExchange<T extends RemoteFileBinding> extends DefaultExch
         this.binding = binding;
     }
 
-    public RemoteFileExchange(CamelContext context, ExchangePattern pattern, T binding, String host, String fullFileName, ByteArrayOutputStream outputStream) {
+    public RemoteFileExchange(CamelContext context, ExchangePattern pattern, T binding, String host, 
+                              String fullFileName, String fileName, long fileLength, ByteArrayOutputStream outputStream) {
         this(context, pattern, binding);
-        setIn(new RemoteFileMessage(host, fullFileName, outputStream));
+        setIn(new RemoteFileMessage(host, fullFileName, fileName, fileLength, outputStream));
     }
 
     public T getBinding() {

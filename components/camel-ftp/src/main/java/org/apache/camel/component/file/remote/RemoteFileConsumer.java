@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -94,16 +95,24 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
      * Should the file be moved after consuming?
      */
     protected boolean isMoveFile() {
-        return moveNamePostfix != null || moveNamePrefix != null;
+        return moveNamePostfix != null || moveNamePrefix != null || endpoint.getConfiguration().getExpression() != null;
     }
 
     /**
      * Gets the to filename for moving.
      *
      * @param name the original filename
+     * @param exchange the current exchange
      * @return the move filename
      */
-    protected String getMoveFileName(String name) {
+    protected String getMoveFileName(String name, Exchange exchange) {
+        // move according to the expression
+        if (endpoint.getConfiguration().getExpression()  != null) {
+            Object result = endpoint.getConfiguration().getExpression() .evaluate(exchange);
+            return exchange.getContext().getTypeConverter().convertTo(String.class, result);
+        }
+
+        // move according to the pre and postfix
         StringBuffer buffer = new StringBuffer();
         if (moveNamePrefix != null) {
             buffer.append(moveNamePrefix);
@@ -213,5 +222,4 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     public void setTimestamp(boolean timestamp) {
         this.timestamp = timestamp;
     }
-
 }

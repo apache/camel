@@ -50,6 +50,11 @@ public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
 
     protected RemoteFileEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         RemoteFileConfiguration config = getConfiguration().copy();
+
+        // get the uri part before the options as they can be non URI valid such as the expression using $ chars
+        if (uri.indexOf("?") != -1) {
+            uri = uri.substring(0, uri.indexOf("?"));
+        }
         config.configure(new URI(uri));
 
         // lets make sure we copy the configuration as each endpoint can

@@ -415,10 +415,6 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     /**
      * Configures the dynamic context with exchange specific parameters
-     *
-     * @param dynamicQueryContext
-     * @param exchange
-     * @throws Exception
      */
     protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange)
         throws Exception {

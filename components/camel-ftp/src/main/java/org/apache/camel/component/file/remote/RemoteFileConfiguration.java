@@ -18,7 +18,9 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
+import org.apache.camel.Expression;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.language.simple.FileLanguage;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
 public class RemoteFileConfiguration implements Cloneable {
@@ -31,6 +33,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private boolean binary;
     private boolean directory = true;
     private FTPClientConfig ftpClientConfig;
+    private Expression expression;
 
     public RemoteFileConfiguration() {
     }
@@ -154,8 +157,19 @@ public class RemoteFileConfiguration implements Cloneable {
         this.ftpClientConfig = ftpClientConfig;
     }
 
-    public String dump() {
-        return "RemoteFileConfiguration{" + "protocol='" + protocol + '\'' + ", username='" + username + '\'' + ", host='" + host + '\'' + ", port=" + port + ", password='" + password + '\''
-               + ", file='" + file + '\'' + ", binary=" + binary + ", directory=" + directory + '}';
+
+    public Expression getExpression() {
+        return expression;
+    }
+
+    public void setExpression(Expression expression) {
+        this.expression = expression;
+    }
+
+    /**
+     * Sets the expression based on {@link org.apache.camel.language.simple.FileLanguage}
+     */
+    public void setExpression(String fileLanguageExpression) {
+        this.expression = FileLanguage.file(fileLanguageExpression);
     }
 }

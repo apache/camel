@@ -191,7 +191,8 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 log.debug("Retrieved file: " + ftpFile.getName() + " from: " + remoteServer());
             }
 
-            RemoteFileExchange exchange = endpoint.createExchange(fullFileName, byteArrayOutputStream);
+            RemoteFileExchange exchange = endpoint.createExchange(fullFileName, ftpFile.getName(),
+                    ftpFile.getSize(), byteArrayOutputStream);
 
             if (isSetNames()) {
                 // set the filename in the special header filename marker to the ftp filename
@@ -217,7 +218,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 }
             } else if (isMoveFile()) {
                 String fromName = ftpFile.getName();
-                String toName = getMoveFileName(fromName);
+                String toName = getMoveFileName(fromName, exchange);
                 if (log.isDebugEnabled()) {
                     log.debug("Moving file: " + fromName + " to: " + toName);
                 }
