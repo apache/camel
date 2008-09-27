@@ -18,7 +18,6 @@ package org.apache.camel.component.ibatis;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,40 +26,40 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class IBatisRouteTest extends ContextTestSupport {
-    
-    public void testSendAccountBean() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:results");
-        endpoint.expectedMinimumMessageCount(1);
+public class IBatisPollingDelayRouteTest extends ContextTestSupport {
 
+    public void testSendAccountBean() throws Exception {
+        createTestData();
+
+        long start = System.currentTimeMillis();
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+
+        assertMockEndpointsSatisfied();
+        long delta = System.currentTimeMillis() - start;
+
+        assertTrue("Should not take that long: " + delta, delta < 5000);
+    }
+
+    private void createTestData() {
+        // insert test data
         Account account = new Account();
         account.setId(123);
         account.setFirstName("James");
         account.setLastName("Strachan");
         account.setEmailAddress("TryGuessing@gmail.com");
-
         template.sendBody("direct:start", account);
-
-        assertMockEndpointsSatisfied();
-
-        // now lets poll that the account has been inserted
-        Object answer = template.sendBody("ibatis:selectAllAccounts", null);
-        List body = assertIsInstanceOf(List.class, answer);
-
-        assertEquals("Wrong size: " + body, 1, body.size());
-        Account actual = assertIsInstanceOf(Account.class, body.get(0));
-
-        assertEquals("Account.getFirstName()", "James", actual.getFirstName());
-        assertEquals("Account.getLastName()", "Strachan", actual.getLastName());
-
-        log.info("Found: " + actual);
     }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("ibatis:selectAllAccounts").to("mock:results");
+                // START SNIPPET: e1
+                // run this timer every 2nd second, that will select data from the database and send it to the mock endpiont
+                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts").to("mock:result");
+                // END SNIPPET: e1
 
                 from("direct:start").to("ibatis:insertAccount");
             }
@@ -89,7 +88,7 @@ public class IBatisRouteTest extends ContextTestSupport {
     }
 
     private Connection createConnection() throws Exception {
-        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
+        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:selectAllAccounts", IBatisEndpoint.class);
         return endpoint.getSqlClient().getDataSource().getConnection();
     }
 
