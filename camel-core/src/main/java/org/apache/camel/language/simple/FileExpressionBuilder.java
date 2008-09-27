@@ -17,35 +17,31 @@
 
 package org.apache.camel.language.simple;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.Expression;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.component.file.FileExchange;
-import org.apache.camel.language.bean.BeanLanguage;
 
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a> based
- * on FileExchange.
+ * on files.
+ * <p/>
+ * This expression expects the headers from the {@link FileLanguage} on the <b>IN</b> message.
+ *
+ * @see org.apache.camel.language.simple.FileLanguage
  */
 public final class FileExpressionBuilder {
-
-    // TODO: All the file stuff should just be added as
 
     private FileExpressionBuilder() {
         // Helper class
     }
 
-    public static <E extends FileExchange> Expression<E> fileNameExpression() {
+    public static <E extends Exchange> Expression<E> fileNameExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
-                    return null;
-                }
-                return exchange.getFile().getName();
+                return exchange.getIn().getHeader("CamelFileName", String.class);
             }
 
             @Override
@@ -55,14 +51,15 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> fileNameNoExtensionExpression() {
+    public static <E extends Exchange> Expression<E> fileNameNoExtensionExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
+                String name = exchange.getIn().getHeader("CamelFileName", String.class);
+                if (name != null) {
+                    return name.substring(0, name.lastIndexOf('.'));
+                } else {
                     return null;
                 }
-                String name = exchange.getFile().getName();
-                return name.substring(0, name.lastIndexOf('.'));
             }
 
             @Override
@@ -72,13 +69,10 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> fileParentExpression() {
+    public static <E extends Exchange> Expression<E> fileParentExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
-                    return null;
-                }
-                return exchange.getFile().getParent();
+                return exchange.getIn().getHeader("CamelFileParent", String.class);
             }
 
             @Override
@@ -88,13 +82,10 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> filePathExpression() {
+    public static <E extends Exchange> Expression<E> filePathExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
-                    return null;
-                }
-                return exchange.getFile().getPath();
+                return exchange.getIn().getHeader("CamelFilePath", String.class);
             }
 
             @Override
@@ -104,33 +95,23 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> fileAbsoluteExpression() {
+    public static <E extends Exchange> Expression<E> fileAbsolutePathExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
-                    return null;
-                }
-                return exchange.getFile().getAbsolutePath();
+                return exchange.getIn().getHeader("CamelFileAbsolutePath", String.class);
             }
 
             @Override
             public String toString() {
-                return "file:absolute";
+                return "file:absolute.path";
             }
         };
     }
 
-    public static <E extends FileExchange> Expression<E> fileCanoicalPathExpression() {
+    public static <E extends Exchange> Expression<E> fileCanoicalPathExpression() {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                if (exchange.getFile() == null) {
-                    return null;
-                }
-                try {
-                    return exchange.getFile().getCanonicalPath();
-                } catch (IOException e) {
-                    throw new RuntimeCamelException("Could not get the canonical path for file: " + exchange.getFile(), e);
-                }
+                return exchange.getIn().getHeader("CamelFileCanonicalPath", String.class);
             }
 
             @Override
@@ -140,16 +121,30 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> dateExpression(final String command, final String pattern) {
+    public static <E extends Exchange> Expression<E> fileSizeExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getIn().getHeader("CamelFileLength", Long.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:length";
+            }
+        };
+    }
+
+    public static <E extends Exchange> Expression<E> dateExpression(final String command, final String pattern) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 if ("file".equals(command)) {
-                    if (exchange.getFile() == null) {
+                    Date date = exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+                    if (date != null) {
+                        SimpleDateFormat df = new SimpleDateFormat(pattern);
+                        return df.format(date);
+                    } else {
                         return null;
                     }
-                    Date date = new Date(exchange.getFile().lastModified());
-                    SimpleDateFormat df = new SimpleDateFormat(pattern);
-                    return df.format(date);
                 }
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
@@ -163,7 +158,7 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static <E extends FileExchange> Expression<E> simpleExpression(final String simple) {
+    public static <E extends Exchange> Expression<E> simpleExpression(final String simple) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 // must call evalute to return the nested langauge evaluate when evaluating
@@ -174,21 +169,6 @@ public final class FileExpressionBuilder {
             @Override
             public String toString() {
                 return "simple(" + simple + ")";
-            }
-        };
-    }
-
-    public static <E extends FileExchange> Expression<E> beanExpression(final String bean) {
-        return new Expression<E>() {
-            public Object evaluate(E exchange) {
-                // must call evalute to return the nested langauge evaluate when evaluating
-                // stacked expressions
-                return BeanLanguage.bean(bean).evaluate(exchange);
-            }
-
-            @Override
-            public String toString() {
-                return "bean(" + bean + ")";
             }
         };
     }

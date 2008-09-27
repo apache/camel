@@ -25,7 +25,9 @@ import java.util.GregorianCalendar;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -56,8 +58,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:name.noext}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
-        assertExpression("${file:absolute}", file.getAbsolutePath());
+        assertExpression("${file:absolute.path}", file.getAbsolutePath());
         assertExpression("${file:canonical.path}", file.getCanonicalPath());
+        assertExpression("${file:length}", file.length());
     }
 
     public void testDate() throws Exception {
@@ -92,6 +95,10 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     public Exchange createExchange() {
+        // create the file
+        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+
+        // get the file handle
         file = new File("target/filelanguage/hello.txt");
         Exchange answer = new FileExchange(context, ExchangePattern.InOut, file);
 
