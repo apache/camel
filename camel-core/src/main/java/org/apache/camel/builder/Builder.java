@@ -64,7 +64,7 @@ public final class Builder {
      * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> bodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T> bodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 
@@ -82,7 +82,7 @@ public final class Builder {
      * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> outBodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T> outBodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.outBodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 
@@ -100,7 +100,7 @@ public final class Builder {
      * specific type
      */
     public static <E extends Exchange, T> ValueBuilder<E> faultBodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.<E, T> faultBodyExpression(type);
+        Expression<E> expression = ExpressionBuilder.faultBodyExpression(type);
         return new ValueBuilder<E>(expression);
     }
 
