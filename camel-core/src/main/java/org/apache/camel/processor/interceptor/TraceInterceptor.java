@@ -17,13 +17,12 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.LoggingLevel;
-import org.apache.commons.logging.Log;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -32,22 +31,31 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
+    private final Logger logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
     private final ProcessorType node;
-    private Predicate<Exchange> traceFilter;
-    private boolean traceExceptions = true;
-    private Logger logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
+    private final Tracer tracer;
     private TraceFormatter formatter;
-    private Tracer tracer;
 
     public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
         this.tracer = tracer;
         this.node = node;
         this.formatter = formatter;
+
+        // set logging level
+        if (tracer.getLevel() != null) {
+            logger.setLevel(tracer.getLevel());
+        }
+        if (tracer.getFormatter() != null) {
+            this.formatter = tracer.getFormatter();
+        }
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter) {
-        this(node, target, formatter, null);
+        this(node, target, formatter, new Tracer());
     }
 
     public TraceInterceptor(ProcessorType node, Processor target, Tracer tracer) {
@@ -59,52 +67,28 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return "TraceInterceptor[" + node + "]";
     }
 
-    public void process(Exchange exchange) throws Exception {
+    public void process(final Exchange exchange) throws Exception {
         try {
-            if (shouldLogExchange(exchange)) {
+            if (shouldLogNode(node) && shouldLogExchange(exchange)) {
                 logExchange(exchange);
             }
             super.proceed(exchange);
         } catch (Exception e) {
-            logException(exchange, e);
-            throw e;
-        } catch (Error e) {
-            logException(exchange, e);
+            if (shouldLogException(exchange)) {
+                logException(exchange, e);
+            }
             throw e;
         }
     }
 
     public Object format(Exchange exchange) {
-        TraceFormatter traceFormatter = null;
-        if (formatter != null) {
-            traceFormatter = formatter;
-        } else {
-            assert tracer != null;
-            traceFormatter = tracer.getFormatter();
-        }
-        return traceFormatter.format(this, exchange);
+        return formatter.format(this, exchange);
     }
 
     // Properties
     //-------------------------------------------------------------------------
     public ProcessorType getNode() {
         return node;
-    }
-
-    public Predicate getTraceFilter() {
-        return traceFilter;
-    }
-
-    public void setTraceFilter(Predicate traceFilter) {
-        this.traceFilter = traceFilter;
-    }
-
-    public boolean isTraceExceptions() {
-        return traceExceptions;
-    }
-
-    public void setTraceExceptions(boolean traceExceptions) {
-        this.traceExceptions = traceExceptions;
     }
 
     public Logger getLogger() {
@@ -115,26 +99,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return formatter;
     }
 
-    public void setFormatter(TraceFormatter formatter) {
-        this.formatter = formatter;
-    }
-
-    public LoggingLevel getLevel() {
-        return getLogger().getLevel();
-    }
-
-    public Log getLog() {
-        return getLogger().getLog();
-    }
-
-    public void setLog(Log log) {
-        getLogger().setLog(log);
-    }
-
-    public void setLevel(LoggingLevel level) {
-        getLogger().setLevel(level);
-    }
-
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void logExchange(Exchange exchange) {
@@ -142,7 +106,9 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     protected void logException(Exchange exchange, Throwable throwable) {
-        logger.process(exchange, throwable);
+        if (tracer.isTraceExceptions()) {
+            logger.process(exchange, throwable);
+        }
     }
 
     /**
@@ -150,7 +116,28 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
      */
     protected boolean shouldLogExchange(Exchange exchange) {
         return (tracer == null || tracer.isEnabled())
-            && (traceFilter == null || traceFilter.matches(exchange));
+            && (tracer.getTraceFilter() == null || tracer.getTraceFilter().matches(exchange));
+    }
+
+    /**
+     * Returns true if the given exchange should be logged when an exception was thrown
+     */
+    protected boolean shouldLogException(Exchange exchange) {
+        return tracer.isTraceExceptions();
+    }
+
+
+    /**
+     * Returns true if the given node should be logged in the trace list
+     */
+    protected boolean shouldLogNode(ProcessorType node) {
+        if (node == null) {
+            return false;
+        }
+        if (!tracer.isTraceInterceptors() && (node instanceof InterceptStrategy || node instanceof InterceptorRef)) {
+            return false;
+        }
+        return true;
     }
 
 }

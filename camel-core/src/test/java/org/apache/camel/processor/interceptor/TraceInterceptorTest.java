@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
@@ -23,8 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 import org.easymock.classextension.EasyMock;
 
 public class TraceInterceptorTest extends ContextTestSupport {
-    TraceFormatter formatter;
-    Tracer tracer;
+    private TraceFormatter formatter;
+    private Tracer tracer;
+
     @Override
     protected void setUp() throws Exception {
         formatter = EasyMock.createMock(TraceFormatter.class);
