@@ -34,6 +34,7 @@ import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Resequencer;
 import org.apache.camel.processor.StreamResequencer;
+import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -161,6 +162,41 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
         // TODO: find out how to have these two within an <xsd:choice>
         stream(streamConfig);
+    }
+    
+    public ResequencerType timeout(long timeout) {
+        if (batchConfig != null) {
+            batchConfig.setBatchTimeout(timeout);
+        } else {
+            streamConfig.setTimeout(timeout);
+        }
+        return this;
+    }
+    
+    public ResequencerType size(int batchSize) {
+        if (batchConfig == null) {
+            throw new IllegalStateException("size() only supported for batch resequencer");
+        }
+        batchConfig.setBatchSize(batchSize);
+        return this;
+    }
+
+    public ResequencerType capacity(int capacity) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("capacity() only supported for stream resequencer");
+        }
+        streamConfig.setCapacity(capacity);
+        return this;
+        
+    }
+    
+    public ResequencerType comparator(ExpressionResultComparator<Exchange> comparator) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("comparator() only supported for stream resequencer");
+        }
+        streamConfig.setComparator(comparator);
+        return this;
+        
     }
     
     @Override
