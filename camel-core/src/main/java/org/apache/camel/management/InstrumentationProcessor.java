@@ -51,6 +51,12 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
+        if (processor == null) {
+            // no processor so nothing to process, so return
+            callback.done(true);
+            return true;
+        }
+
         final long startTime = System.nanoTime();
 
         if (processor instanceof AsyncProcessor) {
