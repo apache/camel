@@ -30,7 +30,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelRouteTest extends TestCase {
     protected AbstractXmlApplicationContext applicationContext;

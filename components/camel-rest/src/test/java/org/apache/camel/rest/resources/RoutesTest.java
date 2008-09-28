@@ -18,7 +18,7 @@ package org.apache.camel.rest.resources;
 
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RoutesTest extends TestSupport {
 

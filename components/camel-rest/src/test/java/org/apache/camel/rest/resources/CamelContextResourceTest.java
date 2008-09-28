@@ -31,7 +31,7 @@ import org.apache.camel.rest.model.Endpoints;
 import org.apache.camel.rest.util.JAXBContextResolver;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelContextResourceTest extends TestCase {
     protected int port = 9998;

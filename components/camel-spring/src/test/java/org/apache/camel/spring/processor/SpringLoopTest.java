@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.processor.LoopTest;
 
 /**
- * @version $Revision:  $
+ * @version $Revision$
  */
 public class SpringLoopTest extends LoopTest {
     @Override
