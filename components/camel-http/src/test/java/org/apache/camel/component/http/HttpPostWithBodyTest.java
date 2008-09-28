@@ -27,11 +27,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 import static org.apache.camel.component.http.HttpMethods.POST;
 
+
 public class HttpPostWithBodyTest extends ContextTestSupport {
-    protected String expectedText = "<html";
+    protected String expectedText = "Not Implemented";
 
     public void testHttpPostWithError() throws Exception {
 
@@ -46,21 +48,55 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
         assertNotNull("exchange", exchange);
         assertTrue("The exchange should be failed", exchange.isFailed());
 
-        // get the fault message
-        Message fault = exchange.getFault();
-        assertNotNull("fault", fault);
+        // get the ex message
+        HttpOperationFailedException exception = (HttpOperationFailedException)exchange.getException();
+        assertNotNull("exception", exception);
 
-        Map<String, Object> headers = fault.getHeaders();
+        int statusCode = exception.getStatusCode();
+        assertTrue("The response code should not be 200", statusCode != 200);
+
+        String reason = exception.getStatusLine().getReasonPhrase();
+
+        assertNotNull("Should have a body!", reason);
+        assertTrue("body should contain: " + expectedText, reason.contains(expectedText));
+
+    }
+
+    public void testHttpPostRecovery() throws Exception {
+
+        MockEndpoint mockResult = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        MockEndpoint mockRecovery = resolveMandatoryEndpoint("mock:recovery", MockEndpoint.class);
+        mockRecovery.expectedMessageCount(1);
+        mockResult.expectedMessageCount(0);
+
+        template.send("direct:reset", new Processor() {
+
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("q=activemq");
+            }
+
+        });
+
+        mockRecovery.assertIsSatisfied();
+        mockResult.assertIsSatisfied();
+        List<Exchange> list = mockRecovery.getReceivedExchanges();
+        Exchange exchange = list.get(0);
+        assertNotNull("exchange", exchange);
+
+        Message in = exchange.getIn();
+        assertNotNull("in", in);
+
+        Map<String, Object> headers = in.getHeaders();
+
         log.debug("Headers: " + headers);
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
 
-        int responseCode = fault.getHeader(HttpProducer.HTTP_RESPONSE_CODE, Integer.class);
-        assertTrue("The response code should not be 200", responseCode != 200);
+        String body = in.getBody(String.class);
 
-        String body = fault.getBody(String.class);
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
-        assertTrue("body should contain: " + expectedText, body.contains(expectedText));
+        System.out.println("The body is " + body);
+        assertTrue("body should contain: <html>", body.contains("<html>"));
 
     }
 
@@ -69,6 +105,9 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").setHeader(HTTP_METHOD, POST).to("http://www.google.com");
+                from("direct:reset").setHeader(HTTP_METHOD, POST).
+                    errorHandler(deadLetterChannel("direct:recovery").maximumRedeliveries(1)).to("http://www.google.com").to("mock:result");
+                from("direct:recovery").setHeader(HTTP_METHOD, GET).to("http://www.google.com").to("mock:recovery");
             }
         };
     }
