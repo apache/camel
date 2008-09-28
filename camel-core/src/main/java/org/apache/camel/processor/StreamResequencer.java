@@ -200,15 +200,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (engine.size() >= capacity) {
-            Thread.sleep(getTimeout());
-        } else {
-            if (exchange != null) {
-                engine.insert(exchange);
-            }
-        }
-        engine.deliver();
-        
+        // empty since exchanges come from endpoint's polling consumer
     }
 
 }
