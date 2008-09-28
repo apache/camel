@@ -25,7 +25,7 @@ import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import org.apache.camel.rest.Main;
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class TestSupport extends TestCase {
     protected int port = 9998;

@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.rest.model.EndpointLink;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EndpointResource {
 

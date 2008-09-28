@@ -24,7 +24,7 @@ import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 641680 $
+ * @version $Revision$
  */
 public class XQueryTransformTest extends ContextTestSupport {
 

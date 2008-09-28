@@ -29,7 +29,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)

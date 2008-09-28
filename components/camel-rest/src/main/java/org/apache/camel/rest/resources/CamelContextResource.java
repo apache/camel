@@ -36,7 +36,7 @@ import org.apache.camel.rest.model.Endpoints;
 /**
  * The resource for the CamelContext
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Path("/")
 @Singleton
