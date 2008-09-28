@@ -90,7 +90,7 @@ public class XmlParseTest extends XmlTestSupport {
         TransformType node = assertNthProcessorInstanceOf(TransformType.class, route, 0);
         assertExpression(node.getExpression(), "simple", "${in.body} extra data!");
         assertChildTo(route, "mock:end", 1);
-    }    
+    }
 
     public void testParseSetBodyXml() throws Exception {
         RouteType route = assertOneRoute("setBody.xml");
@@ -98,8 +98,8 @@ public class XmlParseTest extends XmlTestSupport {
         SetBodyType node = assertNthProcessorInstanceOf(SetBodyType.class, route, 0);
         assertExpression(node.getExpression(), "simple", "${in.body} extra data!");
         assertChildTo(route, "mock:end", 1);
-    }        
-    
+    }
+
     public void testParseSetHeaderXml() throws Exception {
         RouteType route = assertOneRoute("setHeader.xml");
         assertFrom(route, "seda:a");
@@ -107,7 +107,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("oldBodyValue", node.getHeaderName());
         assertExpression(node.getExpression(), "simple", "body");
         assertChildTo(route, "mock:b", 1);
-    }   
+    }
 
     public void testParseSetHeaderToConstantXml() throws Exception {
         RouteType route = assertOneRoute("setHeaderToConstant.xml");
@@ -116,7 +116,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("theHeader", node.getHeaderName());
         assertExpression(node.getExpression(), "constant", "a value");
         assertChildTo(route, "mock:b", 1);
-    }       
+    }
 
     public void testParseSetOutHeaderXml() throws Exception {
         RouteType route = assertOneRoute("setOutHeader.xml");
@@ -125,7 +125,7 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("oldBodyValue", node.getHeaderName());
         assertExpression(node.getExpression(), "simple", "body");
         assertChildTo(route, "mock:b", 1);
-    }   
+    }
 
     public void testParseSetOutHeaderToConstantXml() throws Exception {
         RouteType route = assertOneRoute("setOutHeaderToConstant.xml");
@@ -134,16 +134,16 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("theHeader", node.getHeaderName());
         assertExpression(node.getExpression(), "constant", "a value");
         assertChildTo(route, "mock:b", 1);
-    }        
-    
+    }
+
     public void testParseConvertBodyXml() throws Exception {
         RouteType route = assertOneRoute("convertBody.xml");
         assertFrom(route, "seda:a");
         ConvertBodyType node = assertOneProcessorInstanceOf(ConvertBodyType.class, route);
         assertEquals("java.lang.Integer", node.getType());
         assertEquals(Integer.class, node.getTypeClass());
-    } 
-    
+    }
+
     public void testParseRoutingSlipXml() throws Exception {
         RouteType route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
@@ -157,17 +157,17 @@ public class XmlParseTest extends XmlTestSupport {
         assertFrom(route, "seda:a");
         RoutingSlipType node = assertOneProcessorInstanceOf(RoutingSlipType.class, route);
         assertEquals("theRoutingSlipHeader", node.getHeaderName());
-        assertEquals(RoutingSlipType.DEFAULT_DELIMITER, node.getUriDelimiter());       
-    }       
-    
+        assertEquals(RoutingSlipType.DEFAULT_DELIMITER, node.getUriDelimiter());
+    }
+
     public void testParseRoutingSlipWithHeaderAndDelimiterSetXml() throws Exception {
         RouteType route = assertOneRoute("routingSlipHeaderAndDelimiterSet.xml");
         assertFrom(route, "seda:a");
         RoutingSlipType node = assertOneProcessorInstanceOf(RoutingSlipType.class, route);
         assertEquals("theRoutingSlipHeader", node.getHeaderName());
-        assertEquals("#", node.getUriDelimiter());       
-    }   
-    
+        assertEquals("#", node.getUriDelimiter());
+    }
+
     //TODO get the test fixed
     public void xtestParseRouteWithInterceptorXml() throws Exception {
         RouteType route = assertOneRoute("routeWithInterceptor.xml");
@@ -177,7 +177,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     @SuppressWarnings("unchecked")
-	public void testParseRouteWithChoiceXml() throws Exception {
+    public void testParseRouteWithChoiceXml() throws Exception {
         RouteType route = assertOneRoute("routeWithChoice.xml");
         assertFrom(route, "seda:a");
 
@@ -304,7 +304,7 @@ public class XmlParseTest extends XmlTestSupport {
     protected void assertInterceptorRefs(ProcessorType route, String... names) {
         RouteType rt = (RouteType)route;
         assertNotNull(rt);
-        
+
         // Rely on the fact that reference ids are unique
         List<InterceptorType> interceptors = rt.getInterceptors();
         assertEquals("Interceptor count does not match", names.length, interceptors.size());

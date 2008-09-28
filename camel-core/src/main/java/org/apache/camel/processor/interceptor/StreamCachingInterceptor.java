@@ -35,14 +35,14 @@ public class StreamCachingInterceptor extends Interceptor {
         super();
         setInterceptorLogic(new Processor() {
             public void process(Exchange exchange) throws Exception {
-            	try {
+                try {
                     StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
                     if (newBody != null) {
                         newBody.reset();
                         exchange.getIn().setBody(newBody);
                     }
-            	} catch (NoTypeConversionAvailableException ex) {
-            	    // ignore if in is not of StreamCache type
+                } catch (NoTypeConversionAvailableException ex) {
+                    // ignore if in is not of StreamCache type
                 }
                 proceed(exchange);
             }

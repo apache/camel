@@ -20,8 +20,8 @@ package org.apache.camel.language.simple;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.apache.camel.Expression;
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 
 /**
@@ -146,7 +146,7 @@ public final class FileExpressionBuilder {
                         return null;
                     }
                 }
-                // must call evalute to return the nested langauge evaluate when evaluating
+                // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 return ExpressionBuilder.dateExpression(command, pattern).evaluate(exchange);
             }
@@ -161,7 +161,7 @@ public final class FileExpressionBuilder {
     public static <E extends Exchange> Expression<E> simpleExpression(final String simple) {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
-                // must call evalute to return the nested langauge evaluate when evaluating
+                // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 return SimpleLanguage.simple(simple).evaluate(exchange);
             }

@@ -90,7 +90,7 @@ public final class ExchangeHelper {
 
     public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type)
         throws NoSuchPropertyException {
-    	try {
+        try {
             T result = exchange.getProperty(propertyName, type);
             if (result != null) {
                 return result;

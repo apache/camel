@@ -41,18 +41,18 @@ public class LoopTest extends ContextTestSupport {
     }
 
     public void testLoopAsBlock() throws Exception {
-    	MockEndpoint lastEndpoint = resolveMandatoryEndpoint("mock:last", MockEndpoint.class);
+        MockEndpoint lastEndpoint = resolveMandatoryEndpoint("mock:last", MockEndpoint.class);
         lastEndpoint.expectedMessageCount(1);
         performLoopTest("direct:d", 2);
         lastEndpoint.assertIsSatisfied();
     }
 
     public void testLoopWithInvalidExpression() throws Exception {
-    	try {
+        try {
             performLoopTest("direct:b", 4, "invalid");
             fail("Exception expected for invalid expression");
-    	} catch (RuntimeCamelException e) {
-    	    // expected
+        } catch (RuntimeCamelException e) {
+            // expected
         }
     }
 

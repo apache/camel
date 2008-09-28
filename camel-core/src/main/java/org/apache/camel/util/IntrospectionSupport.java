@@ -207,8 +207,8 @@ public final class IntrospectionSupport {
                     } catch (IllegalArgumentException e) {
                         typeConvertionFailed = e;
                     }
-                    LOG.trace("Setter \"" + setter + "\" with parameter type \"" + 
-                            setter.getParameterTypes()[0] + "\" could not be used for type conertions of " + value);
+                    LOG.trace("Setter \"" + setter + "\" with parameter type \""
+                              + setter.getParameterTypes()[0] + "\" could not be used for type conertions of " + value);
                 }
             }
             // we did not find a setter method to use, and if we did try to use a type converter then throw
