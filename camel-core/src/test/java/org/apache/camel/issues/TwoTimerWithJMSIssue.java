@@ -17,39 +17,49 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.model.ProcessorType;
+import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * Trying to reproduce CAMEL-927.
  */
 public class TwoTimerWithJMSIssue extends ContextTestSupport {
 
+    private static int counter;
+
     @Override
     protected void setUp() throws Exception {
-        //disableJMX(); in case JMX is the culprint
+        enableJMX(); // the bug was in the JMX so it must be enabled
         super.setUp();
     }
 
-    public void testTimer() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        // we expect 4 messages to let the timers fire twice
-        mock.expectedMinimumMessageCount(4);
+    public void testFromWithNoOutputs() throws Exception {
+        Thread.sleep(500);
 
-        assertMockEndpointsSatisfied();
+        assertTrue("Counter should be 2 or higher", counter >= 2);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                context.addInterceptStrategy(new Tracer());
+                context.addInterceptStrategy(new MyTracer());
 
-                from("timer://kickoff_1?period=2000&delay=1").to("mock:result");
-
-                from("timer://kickoff_2?period=2000&delay=2").to("mock:result");
+                from("timer://kickoff_1?period=250").
+                from("timer://kickoff_2?period=250&delay=10");
             }
         };
     }
+
+    private class MyTracer implements InterceptStrategy {
+        public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target)
+            throws Exception {
+            assertNotNull(target);
+            counter++;
+            return target;
+        }
+    }
+
 }
