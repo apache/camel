@@ -25,7 +25,7 @@ import org.apache.camel.spi.InterceptStrategy;
 /**
  * Trying to reproduce CAMEL-927.
  */
-public class TwoTimerWithJMSIssue extends ContextTestSupport {
+public class TwoTimerWithJMXIssue extends ContextTestSupport {
 
     private static int counter;
 
