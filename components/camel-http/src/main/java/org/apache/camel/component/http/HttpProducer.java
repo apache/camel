@@ -72,31 +72,42 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
         // lets store the result in the output message.
         try {
-            Message answer = null;
             int responseCode = httpClient.executeMethod(method);
-            if (responseCode == 200) {
-                answer = exchange.getOut(true);
-            } else {
-                answer = exchange.getFault(true);
-            }
-            answer.setHeaders(in.getHeaders());
-            answer.setHeader(HTTP_RESPONSE_CODE, responseCode);
-            LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
-            InputStream is = method.getResponseBodyAsStream();
-            IOUtils.copy(is, bos);
-            bos.flush();
-            is.close();
-            answer.setBody(bos.createInputStream());
-
-            // propagate HTTP response headers
-            Header[] headers = method.getResponseHeaders();
-            for (Header header : headers) {
-                String name = header.getName();
-                String value = header.getValue();
-                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
-                    answer.setHeader(name, value);
+            if (responseCode >= 100 && responseCode < 300) {
+                Message answer = exchange.getOut(true);
+                answer.setHeaders(in.getHeaders());
+                answer.setHeader(HTTP_RESPONSE_CODE, responseCode);
+                LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
+                InputStream is = method.getResponseBodyAsStream();
+                IOUtils.copy(is, bos);
+                bos.flush();
+                is.close();
+                answer.setBody(bos.createInputStream());
+                // propagate HTTP response headers
+                Header[] headers = method.getResponseHeaders();
+                for (Header header : headers) {
+                    String name = header.getName();
+                    String value = header.getValue();
+                    if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
+                        answer.setHeader(name, value);
+                    }
                 }
+            } else {
+                HttpOperationFailedException exception = null;
+                if (responseCode < 400 && responseCode >= 300) {
+                    String redirectLocation;
+                    Header locationHeader = method.getResponseHeader("location");
+                    if (locationHeader != null) {
+                        redirectLocation = locationHeader.getValue();
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation);
+                    }
+                } else {
+                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
+                }
+
+                throw exception;
             }
+
         } finally {
             method.releaseConnection();
         }
