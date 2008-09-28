@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * The processor which sends messages in a loop.
  *
- * @version $Revision: $
+ * @version $Revision$
  */
 public class LoopProcessor extends DelegateProcessor {
     public static final String PROP_ITER_COUNT = "CamelIterationCount";
