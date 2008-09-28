@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 public class LoopTestProcessor implements Processor {
-    private int count = 0;
-    private int index = 0;
+    private int count;
+    private int index;
 
     public LoopTestProcessor() {
     }
@@ -41,10 +41,10 @@ public class LoopTestProcessor implements Processor {
     }
 
     public void process(Exchange exchange) {
-    	Integer c = exchange.getProperty(LoopProcessor.PROP_ITER_COUNT, Integer.class);
-    	Integer i = exchange.getProperty(LoopProcessor.PROP_ITER_INDEX, Integer.class);
-    	if (c == null || c.intValue() != this.count) {
-    	    exchange.setException(new CamelException(
+        Integer c = exchange.getProperty(LoopProcessor.PROP_ITER_COUNT, Integer.class);
+        Integer i = exchange.getProperty(LoopProcessor.PROP_ITER_INDEX, Integer.class);
+        if (c == null || c.intValue() != this.count) {
+            exchange.setException(new CamelException(
                 "Invalid count value.  Expected " + this.count + " but was " + c));
         }
         if (i == null || i.intValue() != this.index++) {

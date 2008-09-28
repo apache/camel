@@ -177,7 +177,7 @@ public class LogFormatter implements ExchangeFormatter {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
-    	StreamCache newBody = null;
+        StreamCache newBody = null;
         try {
             newBody = message.getBody(StreamCache.class);
             if (newBody != null) {
@@ -192,7 +192,7 @@ public class LogFormatter implements ExchangeFormatter {
         } catch (NoTypeConversionAvailableException ex) {
             answer = message.getBody();
         }
-        
+
         if (newBody != null) {
             // Reset the StreamCache
             newBody.reset();

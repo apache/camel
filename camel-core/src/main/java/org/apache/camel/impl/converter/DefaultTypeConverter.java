@@ -67,7 +67,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-    	if (LOG.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {
             LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
                 + " -> " + type.getCanonicalName() + " with value: " + value);
         }
@@ -112,7 +112,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
                 return (T) convertTo(primitiveType, exchange, value);
             }
         }
-       
+
         // Could not find suitable conversion
         throw new NoTypeConversionAvailableException(value, type);
     }
