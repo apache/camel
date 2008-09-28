@@ -216,7 +216,6 @@ public class JmsBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
             Object headerValue = entry.getValue();
-
             appendJmsProperty(jmsMessage, exchange, in, headerName, headerValue);
         }
     }
@@ -246,12 +245,11 @@ public class JmsBinding {
         } else if (shouldOutputHeader(in, headerName, headerValue)) {
             // must encode to safe JMS header name before setting property on jmsMessage
             String key = encodeToSafeJmsHeaderName(headerName);
-
             // only primitive headers and strings is allowed as properties
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             if (value != null) {
-                jmsMessage.setObjectProperty(key, headerValue);
+                jmsMessage.setObjectProperty(key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we can not sent it over the wire
                 LOG.debug("Ignoring non primitive header: " + headerName + " of class: "
@@ -295,7 +293,6 @@ public class JmsBinding {
         } else if (headerValue instanceof Date) {
             return headerValue.toString();
         }
-
         return null;
     }
 
