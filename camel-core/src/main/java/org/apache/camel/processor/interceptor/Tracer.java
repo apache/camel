@@ -19,9 +19,12 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
+import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
@@ -33,6 +36,10 @@ public class Tracer implements InterceptStrategy {
 
     private TraceFormatter formatter = new TraceFormatter();
     private boolean enabled = true;
+    private LoggingLevel level;
+    private Predicate<Exchange> traceFilter;
+    private boolean traceInterceptors;
+    private boolean traceExceptions = true;
 
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
@@ -74,5 +81,49 @@ public class Tracer implements InterceptStrategy {
 
     public boolean isEnabled() {
         return enabled;
+    }
+
+    public boolean isTraceInterceptors() {
+        return traceInterceptors;
+    }
+
+    /**
+     * Sets wether interceptors should be traced or not
+     */
+    public void setTraceInterceptors(boolean traceInterceptors) {
+        this.traceInterceptors = traceInterceptors;
+    }
+
+    public Predicate getTraceFilter() {
+        return traceFilter;
+    }
+
+    /**
+     * Sets a predicate to be used as filter when tracing
+     */
+    public void setTraceFilter(Predicate traceFilter) {
+        this.traceFilter = traceFilter;
+    }
+
+    public LoggingLevel getLevel() {
+        return level;
+    }
+
+    /**
+     * Sets the logging level to ouput tracing. Will default use <tt>INFO</tt> level.
+     */
+    public void setLevel(LoggingLevel level) {
+        this.level = level;
+    }
+
+    public boolean isTraceExceptions() {
+        return traceExceptions;
+    }
+
+    /**
+     * Sets wether thrown exceptions should be traced
+     */
+    public void setTraceExceptions(boolean traceExceptions) {
+        this.traceExceptions = traceExceptions;
     }
 }

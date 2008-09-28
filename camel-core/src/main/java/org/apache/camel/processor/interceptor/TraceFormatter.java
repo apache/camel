@@ -16,13 +16,10 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.converter.stream.StreamCache;
-import org.apache.camel.converter.stream.StreamCacheConverter;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
@@ -33,24 +30,45 @@ public class TraceFormatter {
     private boolean showBreadCrumb = true;
     private boolean showNode = true;
     private boolean showExchangeId;
+    private boolean showExchangePattern = true;
     private boolean showProperties = true;
     private boolean showHeaders = true;
     private boolean showBody = true;
     private boolean showBodyType = true;
+    private boolean showException = true;
 
     public Object format(TraceInterceptor interceptor, Exchange exchange) {
         Message in = exchange.getIn();
         Throwable exception = exchange.getException();
-        return (showBreadCrumb ? getBreadCrumbID(exchange) + " " : "")
-                + "-> " + getNodeMessage(interceptor) + " "
-                + (showNode ? interceptor.getNode() + " " : "")
-                + exchange.getPattern()
-                + (showExchangeId ? " Id: " + exchange.getExchangeId() : "")
-                + (showProperties ? " Properties:" + exchange.getProperties() : "")
-                + (showHeaders ? " Headers:" + in.getHeaders() : "")
-                + (showBodyType ? " BodyType:" + getBodyTypeAsString(in) : "")
-                + (showBody ? " Body:" + getBodyAsString(in) : "")
-                + (exception != null ? " Exception: " + exception : "");
+        StringBuilder sb = new StringBuilder();
+        if (showBreadCrumb || showExchangeId) {
+            sb.append(getBreadCrumbID(exchange)).append(" ");
+        }
+        if (showNode) {
+            sb.append("-> ").append(getNodeMessage(interceptor)).append(" ");
+        }
+        if (showExchangePattern) {
+            sb.append(", Pattern:").append(exchange.getPattern()).append(" ");
+        }
+        // only show properties if we have any
+        if (showProperties && !exchange.getProperties().isEmpty()) {
+            sb.append(", Properties:").append(exchange.getProperties()).append(" ");
+        }
+        // only show headers if we have any
+        if (showHeaders && !in.getHeaders().isEmpty()) {
+            sb.append(", Headers:").append(in.getHeaders()).append(" ");
+        }
+        if (showBodyType) {
+            sb.append(", BodyType:").append(getBodyTypeAsString(in)).append(" ");
+        }
+        if (showBody) {
+            sb.append(", Body:").append(getBodyAsString(in)).append(" ");
+        }
+        if (showException && exception != null) {
+            sb.append(", Exception:").append(exception);
+        }
+
+        return sb.toString();
     }
 
     public boolean isShowBody() {
@@ -109,6 +127,22 @@ public class TraceFormatter {
         this.showNode = showNode;
     }
 
+    public boolean isShowExchangePattern() {
+        return showExchangePattern;
+    }
+
+    public void setShowExchangePattern(boolean showExchangePattern) {
+        this.showExchangePattern = showExchangePattern;
+    }
+
+    public boolean isShowException() {
+        return showException;
+    }
+
+    public void setShowException(boolean showException) {
+        this.showException = showException;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
@@ -150,6 +184,8 @@ public class TraceFormatter {
     }
 
     protected String getNodeMessage(TraceInterceptor interceptor) {
-        return interceptor.getNode().idOrCreate();
+        String message = interceptor.getNode().getShortName() + "(" + interceptor.getNode().getLabel() + ")";
+        return String.format("%1$-25s", message);
     }
+
 }

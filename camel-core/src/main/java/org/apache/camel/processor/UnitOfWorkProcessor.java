@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultUnitOfWork;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /** 
  * Handles calling the UnitOfWork.done() method when processing of an exchange
@@ -35,7 +36,14 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         if (exchange.getUnitOfWork() == null) {
             // If there is no existing UoW, then we should start one and
             // terminate it once processing is completed for the exchange.
-            exchange.setUnitOfWork(new DefaultUnitOfWork());
+            final DefaultUnitOfWork uow = new DefaultUnitOfWork();
+            exchange.setUnitOfWork(uow);
+            try {
+                uow.start();
+            } catch (Exception e) {
+                throw wrapRuntimeCamelException(e);
+            }
+            // return the process code where we do stop and cleanup
             return processor.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
                     // Order here matters. We need to complete the callbacks
@@ -43,6 +51,11 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
                     // some final results.
                     callback.done(sync);
                     exchange.getUnitOfWork().done(exchange);
+                    try {
+                        uow.stop();
+                    } catch (Exception e) {
+                        throw wrapRuntimeCamelException(e);
+                    }
                     exchange.setUnitOfWork(null);
                 }
             });

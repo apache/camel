@@ -33,7 +33,7 @@ public interface Synchronization {
     /**
      * Called when the processing of the message exchange is complete
      *
-     * @param exchange the excahnge being processed
+     * @param exchange the exchange being processed
      */
     void onComplete(Exchange exchange);
 
@@ -42,7 +42,7 @@ public interface Synchronization {
      * The exception which caused the problem is in {@link Exchange#getException()} and
      * there could be a fault message via {@link Exchange#getFault()}
      *
-     * @param exchange the excahnge being processed
+     * @param exchange the exchange being processed
      */
     void onFailure(Exchange exchange);
 }

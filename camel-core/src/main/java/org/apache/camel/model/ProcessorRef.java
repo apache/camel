@@ -47,20 +47,20 @@ public class ProcessorRef extends OutputType<ProcessorType> {
 
     @Override
     public String getShortName() {
-        return "processor";
+        return "process";
     }
 
     @Override
     public String toString() {
-        return "Processor["
-                + ((ref != null) ? "ref:  " + ref : processor)
+        return "process["
+                + ((ref != null) ? "ref: " + ref : processor)
                 + "]";
     }
 
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref:  " + ref;
+            return "ref: " + ref;
         } else if (processor != null) {
             return processor.toString();
         } else {

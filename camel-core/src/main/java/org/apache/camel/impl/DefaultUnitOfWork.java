@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.Service;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
@@ -31,7 +32,7 @@ import org.apache.camel.util.UuidGenerator;
  *
  * @version $Revision$
  */
-public class DefaultUnitOfWork implements UnitOfWork {
+public class DefaultUnitOfWork implements UnitOfWork, Service {
     private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
 
     private String id;
@@ -40,6 +41,19 @@ public class DefaultUnitOfWork implements UnitOfWork {
     private CountDownLatch latch;
 
     public DefaultUnitOfWork() {
+    }
+
+    public void start() throws Exception {
+    }
+
+    public void stop() throws Exception {
+        // need to clean up when we are stopping to not leak memory
+        if (synchronizations != null) {
+            synchronizations.clear();
+        }
+        if (asyncCallbacks != null) {
+            asyncCallbacks.clear();
+        }
     }
 
     public synchronized void addSynchronization(Synchronization synchronization) {
@@ -55,6 +69,9 @@ public class DefaultUnitOfWork implements UnitOfWork {
         }
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void reset() {
     }
 

@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -34,7 +33,7 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
             });
             fail("Should have thrown RuntimeCamelException");
         } catch (IllegalArgumentException e) {
-            assertEquals("target not provided on node: Processor[ref:  hello]", e.getMessage());
+            assertEquals("target not provided on node: process[ref: hello]", e.getMessage());
         }
     }
 
