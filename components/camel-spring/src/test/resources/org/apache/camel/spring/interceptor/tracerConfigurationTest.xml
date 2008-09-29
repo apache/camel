@@ -28,7 +28,8 @@
     <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
         <property name="traceExceptions" value="false"/>
         <property name="traceInterceptors" value="true"/>
-        <property name="level" value="FATAL"/>
+        <property name="logLevel" value="FATAL"/>
+        <property name="logName" value="com.mycompany.messages"/>
     </bean>
 
     <camelContext id="camel" trace="true" xmlns="http://activemq.apache.org/camel/schema/spring">
