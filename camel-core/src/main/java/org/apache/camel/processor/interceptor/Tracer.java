@@ -40,6 +40,7 @@ public class Tracer implements InterceptStrategy {
     private Predicate<Exchange> traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
+    private String logName;
 
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
@@ -125,5 +126,17 @@ public class Tracer implements InterceptStrategy {
      */
     public void setTraceExceptions(boolean traceExceptions) {
         this.traceExceptions = traceExceptions;
+    }
+
+    public String getLogName() {
+        return logName;
+    }
+
+    /**
+     * Sets the logging name to use.
+     * Will default use <tt>org.apache.camel.processor.interceptor.TraceInterceptor<tt>.
+     */
+    public void setLogName(String logName) {
+        this.logName = logName;
     }
 }

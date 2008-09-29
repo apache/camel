@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
-    private final Logger logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
+    private Logger logger;
     private final ProcessorType node;
     private final Tracer tracer;
     private TraceFormatter formatter;
@@ -42,10 +42,19 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         this.node = node;
         this.formatter = formatter;
 
-        // set logging level
+        // set logger to use
+        if (tracer.getLogName() != null) {
+            logger = new Logger(LogFactory.getLog(tracer.getLogName()), this);
+        } else {
+            // use default logger
+            logger = new Logger(LogFactory.getLog(TraceInterceptor.class), this);
+        }
+
+        // set logging level if provided
         if (tracer.getLevel() != null) {
             logger.setLevel(tracer.getLevel());
         }
+
         if (tracer.getFormatter() != null) {
             this.formatter = tracer.getFormatter();
         }
