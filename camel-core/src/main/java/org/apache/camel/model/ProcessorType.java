@@ -983,13 +983,25 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
         return (Type) this;
     }
-
+    
+    /**
+     * Catches an exception type.
+     *
+     * @deprecated Please use {@link #onException(Class)} instead. Will be removed in Camel 2.0.
+     */    
     public ExceptionType exception(Class exceptionType) {
+        return onException(exceptionType);
+    }
+
+    /**
+     * Catches an exception type.
+     */       
+    public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
         addOutput(answer);
         return answer;
-    }
-
+    }   
+    
     /**
      * Apply an interceptor route if the predicate is true
      */

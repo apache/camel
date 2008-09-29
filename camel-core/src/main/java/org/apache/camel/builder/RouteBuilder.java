@@ -133,10 +133,19 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     /**
      * Adds an exception handler route for the given exception type
      */
-    public ExceptionType exception(Class exceptionType) {
+    public ExceptionType onException(Class exceptionType) {
         return routeCollection.exception(exceptionType);
     }
 
+    /**
+     * Adds an exception handler route for the given exception type
+     *
+     * @deprecated Please use {@link #onException(Class)} instead. Will be removed in Camel 2.0.
+     */
+    public ExceptionType exception(Class exceptionType) {
+        return onException(exceptionType);
+    }    
+    
     // Properties
     // -----------------------------------------------------------------------
     public CamelContext getContext() {
