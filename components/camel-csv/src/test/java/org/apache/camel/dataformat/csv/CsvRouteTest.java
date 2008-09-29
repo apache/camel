@@ -70,7 +70,11 @@ public class CsvRouteTest extends ContextTestSupport {
 
             log.debug("Received " + text);
             assertNotNull("Should be able to convert received body to a string", text);
-            assertEquals("text body", "abc,123", text.trim());
+            
+            // order is not guaranteed with a Map (which was passed in before)
+            // so we need to check for both combinations
+            assertTrue("Text body has wrong value.", "abc,123".equals(text.trim()) 
+                       || "123,abc".equals(text.trim()));
         }
     }
 
