@@ -22,13 +22,13 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- *  Unit test for trace formatter configured in spring XML.
+ *  Unit test for tracer configuration configured in spring XML.
  */
-public class TraceFormatterTest extends SpringTestSupport {
+public class TracerConfigurationTest extends SpringTestSupport {
 
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
-            "/org/apache/camel/spring/interceptor/traceFormatterTest.xml");
+            "/org/apache/camel/spring/interceptor/tracerConfigurationTest.xml");
     }
 
     public void testTraceFormatter() throws Exception {
@@ -39,5 +39,5 @@ public class TraceFormatterTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
 }
