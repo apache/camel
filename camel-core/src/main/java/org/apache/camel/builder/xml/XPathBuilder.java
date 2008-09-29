@@ -511,15 +511,6 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
                             return getOutHeaderFunction();
                         }
                     }
-                    if (isMatchingNamespaceOrEmptyNamespace(qName.getNamespaceURI(), DEFAULT_NAMESPACE)) {
-                        String localPart = qName.getLocalPart();
-                        if (localPart.equals("out-body") && argumentCount == 0) {
-                            return getOutBodyFunction();
-                        }
-                        if (localPart.equals("out-header") && argumentCount == 1) {
-                            return getOutHeaderFunction();
-                        }
-                    }
                 }
                 return answer;
             }
