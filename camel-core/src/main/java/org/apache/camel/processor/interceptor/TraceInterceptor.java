@@ -51,8 +51,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         }
 
         // set logging level if provided
-        if (tracer.getLevel() != null) {
-            logger.setLevel(tracer.getLevel());
+        if (tracer.getLogLevel() != null) {
+            logger.setLevel(tracer.getLogLevel());
         }
 
         if (tracer.getFormatter() != null) {

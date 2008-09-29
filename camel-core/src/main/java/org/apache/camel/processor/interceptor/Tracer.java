@@ -36,11 +36,11 @@ public class Tracer implements InterceptStrategy {
 
     private TraceFormatter formatter = new TraceFormatter();
     private boolean enabled = true;
-    private LoggingLevel level;
+    private String logName;
+    private LoggingLevel logLevel;
     private Predicate<Exchange> traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
-    private String logName;
 
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
@@ -106,15 +106,15 @@ public class Tracer implements InterceptStrategy {
         this.traceFilter = traceFilter;
     }
 
-    public LoggingLevel getLevel() {
-        return level;
+    public LoggingLevel getLogLevel() {
+        return logLevel;
     }
 
     /**
      * Sets the logging level to ouput tracing. Will default use <tt>INFO</tt> level.
      */
-    public void setLevel(LoggingLevel level) {
-        this.level = level;
+    public void setLogLevel(LoggingLevel logLevel) {
+        this.logLevel = logLevel;
     }
 
     public boolean isTraceExceptions() {
