@@ -327,5 +327,25 @@
         <maven.test.skip>true</maven.test.skip>
       </properties>
     </profile>
+    <profile>
+      <id>ibm-jdk</id>
+      <activation>
+        <property>
+          <name>java.vendor</name>
+          <value>IBM Corporation</value>
+        </property>
+      </activation>
+      <!--
+        Add the Sun jaxp-ri as a dependency when using the ibm jdk, so that
+        cxf's dependency on the Sun saaj can work with the ibm jdk.
+      -->
+      <dependencies>
+        <dependency>
+          <groupId>com.sun.xml.parsers</groupId>
+          <artifactId>jaxp-ri</artifactId>
+          <version>1.4.2</version>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 </project>
