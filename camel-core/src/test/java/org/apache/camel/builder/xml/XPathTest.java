@@ -56,18 +56,18 @@ public class XPathTest extends TestSupport {
         // we may not have Xalan on the classpath
         try {
             instance = Class.forName("org.apache.xalan.extensions.XPathFunctionResolverImpl").newInstance();
+
+            if (instance instanceof XPathFunctionResolver) {
+                XPathFunctionResolver functionResolver = (XPathFunctionResolver)instance;
+    
+                XPathBuilder builder = xpath("java:" + getClass().getName() + ".func(string(/header/value))").namespace("java", "http://xml.apache.org/xalan/java").functionResolver(functionResolver);
+    
+                String xml = "<header><value>12</value></header>";
+                Object value = assertExpression(builder, xml, "modified12");
+                log.debug("Evaluated xpath: " + builder.getText() + " on XML: " + xml + " result: " + value);
+            }
         } catch (Throwable e) {
             log.debug("Could not find Xalan on the classpath so ignoring this test case: " + e);
-        }
-
-        if (instance instanceof XPathFunctionResolver) {
-            XPathFunctionResolver functionResolver = (XPathFunctionResolver)instance;
-
-            XPathBuilder builder = xpath("java:" + getClass().getName() + ".func(string(/header/value))").namespace("java", "http://xml.apache.org/xalan/java").functionResolver(functionResolver);
-
-            String xml = "<header><value>12</value></header>";
-            Object value = assertExpression(builder, xml, "modified12");
-            log.debug("Evaluated xpath: " + builder.getText() + " on XML: " + xml + " result: " + value);
         }
     }
 
