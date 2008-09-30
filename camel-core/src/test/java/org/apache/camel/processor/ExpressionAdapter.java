@@ -27,6 +27,7 @@ import org.apache.camel.impl.ExpressionSupport;
  * @version $Revision$
  */
 public abstract class ExpressionAdapter extends ExpressionSupport<Exchange> {
+
     public abstract Object evaluate(Exchange exchange);
 
     protected String assertionFailureMessage(Exchange exchange) {
