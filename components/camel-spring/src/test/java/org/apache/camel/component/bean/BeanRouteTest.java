@@ -18,7 +18,6 @@ package org.apache.camel.component.bean;
 
 import org.apache.camel.spring.SpringTestSupport;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -56,7 +55,6 @@ public class BeanRouteTest extends SpringTestSupport {
     }
 
     protected int getExpectedRouteCount() {
-        // TODO why zero?
         return 0;
     }
 
