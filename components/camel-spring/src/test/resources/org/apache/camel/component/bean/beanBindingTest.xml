@@ -24,9 +24,6 @@
 
     <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
         <template id="template"/>
-
-        <endpoint id="startBeanExpression" uri="direct:startBeanExpression"/>
-        <endpoint id="result" uri="mock:result"/>
     </camelContext>
 
     <bean id="myConsumer" class="org.apache.camel.component.bean.MyBeanBindingConsumer">
