@@ -16,14 +16,13 @@
  */
 package org.apache.camel.rest.resources;
 
-import junit.framework.TestCase;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-
+import junit.framework.TestCase;
 import org.apache.camel.rest.Main;
+
 /**
  * @version $Revision$
  */
@@ -43,6 +42,11 @@ public class TestSupport extends TestCase {
         //cc.getProviderClasses().add(JAXBContextResolver.class);
         client = Client.create(clientConfig);
         resource = client.resource("http://localhost:" + port + Main.WEBAPP_CTX);
+    }
+
+    protected WebResource resource(String uri) {
+        System.out.println("About to test URI: " + uri);
+        return resource.path(uri);
     }
 
     @Override

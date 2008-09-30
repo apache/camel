@@ -42,7 +42,7 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     public JAXBContextResolver() throws Exception {
         Map<String, Object> props = new HashMap<String, Object>();
-        props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED");
+        //props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED");
         props.put(JSONJAXBContext.JSON_ROOT_UNWRAPPING, Boolean.TRUE);
         props.put(JSONJAXBContext.JSON_NON_STRINGS, "[\"number\"]");
 

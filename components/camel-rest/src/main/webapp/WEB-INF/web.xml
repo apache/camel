@@ -60,8 +60,14 @@
     <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+      <param-value>org.apache.camel.rest.util.CamelResourceConfig</param-value>
+    </init-param>
+<!--
+    <init-param>
+      <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
       <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
     </init-param>
+-->
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
       <param-value>org.apache.camel.rest</param-value>

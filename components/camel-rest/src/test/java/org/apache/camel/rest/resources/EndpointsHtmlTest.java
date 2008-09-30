@@ -25,24 +25,12 @@ import com.sun.jersey.api.client.WebResource;
 /**
  * @version $Revision$
  */
-public class EndpointsTest extends TestSupport {
+public class EndpointsHtmlTest extends TestSupport {
 
-    public void testEndpointsAsXml() throws Exception {
-        Endpoints endpoints = resource("endpoints").accept("application/xml").get(Endpoints.class);
-        assertValidEndpoints(endpoints);
+    public void testEndpointsAsHtml() throws Exception {
+        String response = resource("endpoints").accept("text/html").get(String.class);
 
-        endpoints = resource("endpoints.xml").get(Endpoints.class);
-        assertValidEndpoints(endpoints);
+        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
     }
 
-    // TODO test as JSON
-    
-    protected void assertValidEndpoints(Endpoints endpoints) {
-        assertNotNull("Should have found endpoints", endpoints);
-
-        System.out.println("Found: " + endpoints.getEndpoints());
-
-        List<EndpointLink> list = endpoints.getEndpoints();
-        assertTrue("Should have received some endpoints!", !list.isEmpty());
-    }
 }
