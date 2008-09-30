@@ -24,10 +24,11 @@ import org.apache.commons.logging.LogFactory;
 //START SNIPPET: aggregation
 public class BankResponseAggregationStrategy implements AggregationStrategy {
     private static final transient Log LOG = LogFactory.getLog(BankResponseAggregationStrategy.class);
+
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
-        Integer old = oldExchange.getProperty("aggregated", Integer.class);
+
         Double oldRate = oldExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
         Double newRate = newExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
         Exchange result = null;

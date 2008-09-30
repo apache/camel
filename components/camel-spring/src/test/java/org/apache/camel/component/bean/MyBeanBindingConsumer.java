@@ -45,7 +45,7 @@ public class MyBeanBindingConsumer {
     }
 
     @MessageDriven(uri = "direct:startMany")
-    public void doSomethingHeaderExpression(String payload, @Constant(value = "5") int count, @Header(name = "number") int number) {
+    public void doSomethingManyExpression(String payload, @Constant(value = "5") int count, @Header(name = "number") int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }
 
