@@ -64,7 +64,7 @@ public class CamelContextResource {
      */
     @GET
     @Path("endpoints")
-    public Endpoints getEndpoints() {
+    public Endpoints getEndpoint() {
         return new Endpoints(camelContext);
     }
 
@@ -72,7 +72,7 @@ public class CamelContextResource {
      * Looks up an individual endpoint
      */
     @GET
-    @Path("endpoints/{id}")
+    @Path("endpoint/{id}")
     public EndpointResource getEndpoint(@PathParam("id") String id) {
         // TODO lets assume the ID is the endpoint
         Endpoint endpoint = getCamelContext().getEndpoint(id);

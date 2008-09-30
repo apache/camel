@@ -160,6 +160,7 @@
           </includes>
           <excludes>
             <!-- TODO FIXME ASAP -->
+            <exclude>**/EndpointsHtmlTest.*</exclude>
             <exclude>**/RoutesTest.*</exclude>
           </excludes>
         </configuration>
