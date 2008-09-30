@@ -164,6 +164,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
      *
      * @param scriptText the script text to be evaluted
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public static ScriptBuilder beanShell(String scriptText) {
         return new ScriptBuilder("beanshell", scriptText);
@@ -174,6 +175,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
      *
      * @param scriptResource the resource used to load the script
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public static ScriptBuilder beanShell(Resource scriptResource) {
         return new ScriptBuilder("beanshell", scriptResource);
@@ -184,6 +186,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
      *
      * @param scriptFile the file used to load the script
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public static ScriptBuilder beanShell(File scriptFile) {
         return new ScriptBuilder("beanshell", new FileSystemResource(scriptFile));
@@ -194,6 +197,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
      *
      * @param scriptURL the URL used to load the script
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public static ScriptBuilder beanShell(URL scriptURL) {
         return new ScriptBuilder("beanshell", new UrlResource(scriptURL));

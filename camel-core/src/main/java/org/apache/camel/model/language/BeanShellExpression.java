@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For BeanShell expressions and predicates
  *
+ * @deprecated use {@link org.apache.camel.model.language.LanguageExpression} will be remaved in Camel 2.0
  * @version $Revision$
  */
 @XmlRootElement(name = "beanshell")

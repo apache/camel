@@ -193,6 +193,7 @@ public class ExpressionClause<T> extends ExpressionType {
      *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
+     * @deprecated use language(<tt>"beanshell"</tt>, text). Will be removed in Camel 2.0.
      */
     public T beanShell(String text) {
         return language("beanshell", text);
