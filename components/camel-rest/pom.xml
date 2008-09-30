@@ -33,7 +33,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.rest.*</camel.osgi.export.pkg>
-    <jersey-version>0.11-ea-SNAPSHOT</jersey-version>
+    <jersey-version>1.0-ea-SNAPSHOT</jersey-version>
     <jetty-port>8080</jetty-port>
   </properties>
 
