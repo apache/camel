@@ -69,11 +69,13 @@
     <module>camel-ognl</module>
     <module>camel-osgi</module>
     <module>camel-quartz</module>
+    <module>camel-rest</module>
     <module>camel-rmi</module>
     <!--<module>camel-ruby</module>-->
     <module>camel-saxon</module>
     <module>camel-scala</module>
     <module>camel-script</module>
+    <module>camel-spring</module>
     <module>camel-spring-integration</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
@@ -86,23 +88,4 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
   </modules>
-
-  <profiles>
-    <!-- The schemagen plugin does not work on IBM's JDK. Lets
-    skip any component builds that use schemagen on that platform. -->
-    <profile>
-      <id>not-on-ibmjdk</id>
-      <activation>
-        <property>
-          <name>java.vendor</name>
-          <value>!IBM Corporation</value>
-        </property>
-      </activation>
-      <modules>
-        <module>camel-rest</module>
-        <module>camel-spring</module>
-      </modules>      
-    </profile>
-  </profiles>
-
 </project>
