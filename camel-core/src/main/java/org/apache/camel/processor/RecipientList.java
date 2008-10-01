@@ -58,6 +58,17 @@ public class RecipientList extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Object receipientList = expression.evaluate(exchange);
+        sendToRecipientList(exchange, receipientList);
+    }
+
+    /**
+     * Sends the given exchange to the recipient list
+     *
+     * @param exchange
+     * @param receipientList
+     * @throws Exception
+     */
+    public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
         Iterator iter = ObjectConverter.iterator(receipientList);
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
