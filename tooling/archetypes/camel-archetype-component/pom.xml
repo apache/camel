@@ -31,6 +31,7 @@
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-component</artifactId>
   <name>Camel :: Archetypes :: Component</name>
+  <description>Creates a new Camel component.</description>
 
   <build>
     <plugins>
