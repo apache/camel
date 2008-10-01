@@ -29,6 +29,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
+import org.apache.camel.model.language.MethodCallExpression;
+import org.apache.camel.model.language.ConstantExpression;
+import org.apache.camel.processor.RecipientList;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -51,6 +54,7 @@ public class MethodInfo {
     private final boolean hasCustomAnnotation;
     private Expression parametersExpression;
     private ExchangePattern pattern = ExchangePattern.InOut;
+    private RecipientList recipientList;
 
     public MethodInfo(Class type, Method method, List<ParameterInfo> parameters, List<ParameterInfo> bodyParameters, boolean hasCustomAnnotation) {
         this.type = type;
@@ -63,14 +67,17 @@ public class MethodInfo {
         if (oneway != null) {
             pattern = oneway.value();
         }
+        if (method.getAnnotation(org.apache.camel.RecipientList.class) != null) {
+            recipientList = new RecipientList(new ConstantExpression(null));
+        }
     }
 
     public String toString() {
         return method.toString();
     }
 
-    public MethodInvocation createMethodInvocation(final Object pojo, final Exchange messageExchange) {
-        final Object[] arguments = (Object[]) parametersExpression.evaluate(messageExchange);
+    public MethodInvocation createMethodInvocation(final Object pojo, final Exchange exchange) {
+        final Object[] arguments = (Object[]) parametersExpression.evaluate(exchange);
         return new MethodInvocation() {
             public Method getMethod() {
                 return method;
@@ -82,9 +89,13 @@ public class MethodInfo {
 
             public Object proceed() throws Throwable {
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + messageExchange);
+                    LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + exchange);
                 }
-                return invoke(method, pojo, arguments, messageExchange);
+                Object result = invoke(method, pojo, arguments, exchange);
+                if (recipientList != null) {
+                    recipientList.sendToRecipientList(exchange, result);
+                }
+                return result;
             }
 
             public Object getThis() {
