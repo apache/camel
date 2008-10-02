@@ -1022,7 +1022,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Trace logs the exchange before it goes to the next processing step using
      * the {@link #DEFAULT_TRACE_CATEGORY} logging category.
      * 
-     * @deprecated Please use {@link http://activemq.apache.org/camel/tracer.html} instead. Will be removed in Camel 2.0.
+     * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
+     * instead. Will be removed in Camel 2.0.
      */
     public Type trace() {
         return trace(DEFAULT_TRACE_CATEGORY);
@@ -1034,7 +1035,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @param category the logging category trace messages will sent to.
      * 
-     * @deprecated Please use {@link http://activemq.apache.org/camel/tracer.html} instead. Will be removed in Camel 2.0.
+     * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
+     * instead. Will be removed in Camel 2.0.
      */
     public Type trace(String category) {
         final Log log = LogFactory.getLog(category);

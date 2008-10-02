@@ -23,9 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents a HL7 {@link org.apache.camel.spi.DataFormat}.
+ * Represents a <a href="http://activemq.apache.org/camel/hl7.html">HL7</a> {@link org.apache.camel.spi.DataFormat}.
  *
- * @see <a href="http://activemq.apache.org/camel/hl7.html">HL7 documentation</a>.
  * @version $Revision$
  */
 @XmlRootElement(name = "hl7")

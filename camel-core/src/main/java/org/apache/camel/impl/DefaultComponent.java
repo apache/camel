@@ -27,6 +27,8 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;

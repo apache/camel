@@ -94,7 +94,6 @@ public class ResequencerEngine<E> {
      * milliseconds.
      *
      * @param comparator a sequence element comparator.
-     * @param capacity the capacity of this resequencer.
      */
     public ResequencerEngine(SequenceElementComparator<E> comparator) {
         this.sequence = createSequence(comparator);
@@ -214,9 +213,9 @@ public class ResequencerEngine<E> {
     /**
      * Delivers all elements which are currently ready to deliver.
      *
-     * @throws exception thrown by {@link SequenceSender#sendElement(Object)}.
+     * @throws Exception thrown by {@link SequenceSender#sendElement(Object)}.
      *
-     * @see #deliverNext();
+     * @see ResequencerEngine#deliverNext() 
      */
     public void deliver() throws Exception {
         while (deliverNext()) {
@@ -233,7 +232,7 @@ public class ResequencerEngine<E> {
      * @return <code>true</code> if the element has been delivered
      *         <code>false</code> otherwise.
      *
-     * @throws exception thrown by {@link SequenceSender#sendElement(Object)}.
+     * @throws Exception thrown by {@link SequenceSender#sendElement(Object)}.
      *
      */
     public boolean deliverNext() throws Exception {

@@ -89,7 +89,7 @@ public final class ProxyHelper {
     /**
      * Returns the class loader of the first interface or throws {@link IllegalArgumentException} if there are no interfaces specified
      *
-     * @return
+     * @return the class loader
      */
     protected static ClassLoader getClassLoader(Class... interfaces) {
         if (interfaces == null || interfaces.length < 1) {
