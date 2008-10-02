@@ -63,7 +63,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * <a href="http://activemq.apache.org/camel/pojo-producing.html">POJO Producing</a> via the
  * {@link org.apache.camel.Produce} annotation along with other annotations such as
  * {@link org.apache.camel.RecipientList} for creating <a href="http://activemq.apache.org/camel/recipientlist-annotation.html">a Recipient List router via annotations</a>.
- * <br>
+ * <p>
  * If you use the &lt;camelContext&gt; element in your <a href="http://activemq.apache.org/camel/spring.html">Spring XML</a> 
  * then one of these bean post processors is implicity installed and configured for you. So you should never have to
  * explicitly create or configure one of these instances.
