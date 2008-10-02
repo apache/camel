@@ -143,6 +143,7 @@ public class DefaultRouteContext implements RouteContext {
 
             // TODO: hz: move all this into the lifecycle strategy! (used by jmx naming strategy)
             Route edcr = new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor);
+            edcr.getProperties().put(Route.ID_PROPERTY, route.idOrCreate());
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());

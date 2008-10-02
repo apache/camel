@@ -56,7 +56,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=context,*"), null);
+                new ObjectName(domainName + ":name=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(

@@ -38,14 +38,13 @@ public class CamelNamingStrategy {
     public static final String KEY_TYPE = "type";
     public static final String KEY_CONTEXT = "context";
     public static final String KEY_GROUP = "group";
-    public static final String KEY_COMPONENT = "component";
     public static final String KEY_ROUTE = "route";
+    public static final String KEY_NODE_ID = "nodeid";
     public static final String TYPE_CONTEXT = "context";
     public static final String TYPE_ENDPOINT = "endpoint";
     public static final String TYPE_PROCESSOR = "processor";
     public static final String TYPE_ROUTE = "route";
     public static final String TYPE_SERVICE = "service";
-    public static final String KEY_NODE_ID = "nodeid";
 
     protected String domainName;
     protected String hostName = "locahost";
@@ -78,8 +77,7 @@ public class CamelNamingStrategy {
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_CONTEXT + ",");
-        buffer.append(KEY_NAME + "=").append(getContextId(context));
+        buffer.append(KEY_NAME + "=").append("context");
         return createObjectName(buffer);
     }
 
@@ -95,8 +93,7 @@ public class CamelNamingStrategy {
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ENDPOINT + ",");
-        buffer.append(KEY_COMPONENT + "=").append(getComponentId(ep)).append(",");
-        buffer.append(KEY_NAME + "=").append(getEndpointId(ep));
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(getEndpointId(ep)));
         return createObjectName(buffer);
     }
 
@@ -123,18 +120,13 @@ public class CamelNamingStrategy {
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route<? extends Exchange> route = mbean.getRoute();
         Endpoint<? extends Exchange> ep = route.getEndpoint();
-
-        String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
-        String cid = getComponentId(ep);
-        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep)
-            : "[" + cid + "]" + getEndpointId(ep);
+        String id = (String)route.getProperties().get(Route.ID_PROPERTY);
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
-        buffer.append(KEY_ROUTE + "=").append(id).append(",");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(ep.getCamelContext())).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_ROUTE + ",");
-        buffer.append(KEY_NAME + "=").append(id);
+        buffer.append(KEY_NAME + "=").append(ObjectName.quote(id == null ? ("0x" + Integer.toHexString(route.hashCode())) : id));
         return createObjectName(buffer);
     }
 
@@ -147,14 +139,14 @@ public class CamelNamingStrategy {
         throws MalformedObjectNameException {
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
         String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
-        String cid = getComponentId(ep);
-        String id = VALUE_UNKNOWN.equals(cid) ? getEndpointId(ep) : "[" + cid + "]" + getEndpointId(ep);
+        String cid = ObjectName.quote(ep.getEndpointUri());
+        //String id = VALUE_UNKNOWN.equals(cid) ? ObjectName.quote(getEndpointId(ep) : "[" + cid + "]" + ObjectName.quote(getEndpointId(ep);
         String nodeId = processor.idOrCreate();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(ctxid).append(",");
-        buffer.append(KEY_ROUTE + "=").append(id).append(",");
+        // buffer.append(KEY_ROUTE + "=").append(id).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_PROCESSOR + ",");
         buffer.append(KEY_NODE_ID + "=").append(nodeId).append(",");
         buffer.append(KEY_NAME + "=").append(ObjectName.quote(processor.toString()));
@@ -178,24 +170,15 @@ public class CamelNamingStrategy {
     }
 
     protected String getContextId(CamelContext context) {
-        String id = context != null ? context.getName() : VALUE_UNKNOWN;
-        return hostName + "/" + id;
-    }
-
-    protected String getComponentId(Endpoint<? extends Exchange> ep) {
-        String uri = ep.getEndpointUri();
-        int pos = uri.indexOf(':');
-        return (pos == -1) ? VALUE_UNKNOWN : uri.substring(0, pos);
+        return hostName + "/" + (context != null ? context.getName() : VALUE_UNKNOWN);
     }
 
     protected String getEndpointId(Endpoint<? extends Exchange> ep) {
         String uri = ep.getEndpointUri();
-        int pos = uri.indexOf(':');
-        String id = (pos == -1) ? uri : uri.substring(pos + 1);
-        if (!ep.isSingleton()) {
-            id += "@" + Integer.toString(ep.hashCode());
-        }
-        return ObjectNameEncoder.encode(id);
+        int pos = uri.indexOf('?');
+        String id = (pos == -1) ? uri : uri.substring(0, pos);
+        id += "?id=0x" + Integer.toHexString(ep.hashCode());
+        return id;
     }
 
     /**
