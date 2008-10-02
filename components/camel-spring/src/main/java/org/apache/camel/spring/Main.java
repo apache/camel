@@ -148,7 +148,7 @@ public class Main extends ServiceSupport {
     /**
      * Returns the currently executing main
      *
-     * @return
+     * @return the current running instance
      */
     public static Main getInstance() {
         return instance;
