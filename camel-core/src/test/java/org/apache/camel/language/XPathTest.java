@@ -26,6 +26,7 @@ import org.apache.camel.spi.Language;
  * @version $Revision$
  */
 public class XPathTest extends LanguageTestSupport {
+
     public void testExpressions() throws Exception {
         assertExpression("in:body()", "<hello id='m123'>world!</hello>");
         assertExpression("in:header('foo')", "abc");
@@ -36,6 +37,12 @@ public class XPathTest extends LanguageTestSupport {
         assertPredicate("in:header('foo') = 'abc'");
         assertPredicate("$foo = 'abc'");
         assertPredicate("$foo = 'bar'", false);
+    }
+
+    public void testNormalXPathExpression() throws Exception {
+        assertExpression("hello", "world!");
+        assertExpression("hello/text()", "world!");
+        assertExpression("hello/@id", "m123");
     }
 
     protected String getLanguageName() {
