@@ -386,4 +386,51 @@
     </profile>    
   </profiles>
 
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <links>
+            <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
+            <link>http://java.sun.com/javaee/5/docs/api/</link>
+            <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+          </links>
+          <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
+          <linksource>true</linksource>
+          <maxmemory>256m</maxmemory>
+          <source>1.5</source>
+
+          <groups>
+            <group>
+              <title>Camel Spring Classes</title>
+              <packages>org.apache.camel.spring</packages>
+            </group>
+            <group>
+              <title>Spring Remoting Classes</title>
+              <packages>org.apache.camel.spring.remoting</packages>
+            </group>
+            <group>
+              <title>Camel Components</title>
+              <packages>org.apache.camel.component:org.apache.camel.component.*</packages>
+            </group>
+            <group>
+              <title>Camel SPI implementations for Spring</title>
+              <packages>org.apache.camel.spring.spi</packages>
+            </group>
+            <group>
+              <title>Spring 2.x Namespace Handling Code</title>
+              <packages>org.apache.camel.spring.handler</packages>
+            </group>
+            <group>
+              <title>Utility classes</title>
+              <packages>org.apache.camel.spring.util:org.apache.camel.spring.factory</packages>
+            </group>
+          </groups>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
