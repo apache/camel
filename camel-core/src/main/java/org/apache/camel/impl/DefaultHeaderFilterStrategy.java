@@ -97,8 +97,6 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter set.  The "out" direction is referred to 
      * copying headers from a Camel message to an external message.
-     * 
-     * @return a set that contains headers names that should be excluded.
      */
     public void setOutFilter(Set<String> value) {
         outFilter = value;
@@ -149,8 +147,6 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter set.  The "in" direction is referred to 
      * copying headers from an external message to a Camel message.
-     * 
-     * @return a set that contains headers names that should be excluded.
      */
     public void setInFilter(Set<String> value) {
         inFilter = value;

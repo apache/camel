@@ -23,9 +23,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents a Flatpack {@link org.apache.camel.spi.DataFormat}.
- *
- * @see <a href="http://activemq.apache.org/camel/flatpack.html">Flatpack documentation</a>.
+ * Represents a <a href="http://activemq.apache.org/camel/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
+ * 
  * @version $Revision$
  */
 @XmlRootElement(name = "flatpack")

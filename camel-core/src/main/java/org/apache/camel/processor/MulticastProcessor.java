@@ -198,11 +198,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     }
 
     /**
-     * Aggregate the {@link Exchange} with the current {@link Result}
-     * @param result the current result 
+     * Aggregate the {@link Exchange} with the current result
+     *
+     * @param result the current result
      * @param exchange the exchange to be added to the result
-     * 
-     * @return the new exchange, consisting of the aggregated information
      */
     protected synchronized void doAggregate(AtomicExchange result, Exchange exchange) {
         if (aggregationStrategy != null) {
@@ -257,7 +256,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
      * <ul>
      * <li>we use {@link Iterable} to ensure we can send messages as soon as the data becomes available</li>
      * <li>for parallel processing, we start aggregating responses as they get send back to the processor;
-     * this means the {@link AggregatorStrategy} has to take care of handling out-of-order arrival of exchanges</li>
+     * this means the {@link org.apache.camel.processor.aggregate.AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
      * </ul>
      */
     protected boolean isStreaming() {

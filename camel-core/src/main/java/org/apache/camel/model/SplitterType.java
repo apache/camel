@@ -106,9 +106,9 @@ public class SplitterType extends ExpressionNode {
      * This improves throughput and memory usage, but it has a drawback: 
      * - the sent exchanges will no longer contain the {@link Splitter#SPLIT_SIZE} header property 
      * 
-     * @return 
+     * @return whether or not streaming should be used
      */
-    public boolean getStreaming() {
+    public boolean isStreaming() {
         return streaming != null ? streaming : false;
     }
 
