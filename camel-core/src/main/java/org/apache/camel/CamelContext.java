@@ -129,7 +129,7 @@ public interface CamelContext extends Service {
      * For a singleton endpoint the collection will contain exactly one element.
      *
      * @param uri  the URI of the endpoints
-     * @return  all non-singleton endpoints
+     * @return  collection of endpoints
      */
     Collection<Endpoint> getEndpoints(String uri);
     
@@ -141,6 +141,27 @@ public interface CamelContext extends Service {
     Collection<Endpoint> getSingletonEndpoints();
 
     /**
+     * Adds the endpoint to the context using the given URI.
+     *
+     * @param uri the URI to be used to resolve this endpoint
+     * @param endpoint the endpoint to be added to the context
+     * @return the old endpoint that was previously registered to the context if 
+     * there was already an singleton endpoint for that URI or null
+     * @throws Exception if the new endpoint could not be started or the old 
+     * singleton endpoint could not be stopped
+     */
+    Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception;
+
+    /**
+     * Removes all endpoints with the given URI
+     *
+     * @param uri the URI to be used to remove
+     * @return a collection of endpoints removed or null if there are no endpoints for this URI
+     * @throws Exception if at least one endpoint could not be stopped
+     */
+    Collection<Endpoint> removeEndpoints(String uri) throws Exception;
+
+    /**
      * Adds the endpoint to the context using the given URI.  The endpoint will be registered as a singleton.
      *
      * @param uri the URI to be used to resolve this endpoint
@@ -149,6 +170,7 @@ public interface CamelContext extends Service {
      * already an endpoint for that URI
      * @throws Exception if the new endpoint could not be started or the old endpoint could not be stopped
      */
+    @Deprecated
     Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception;
 
     /**
@@ -158,6 +180,7 @@ public interface CamelContext extends Service {
      * @return the endpoint that was removed or null if there is no endpoint for this URI
      * @throws Exception if endpoint could not be stopped
      */
+    @Deprecated
     Endpoint removeSingletonEndpoint(String uri) throws Exception;
 
 

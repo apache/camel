@@ -55,6 +55,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -269,24 +270,47 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return answer;
     }
 
-    public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
+    public Endpoint addEndpoint(String uri, Endpoint endpoint) throws Exception {
         Endpoint oldEndpoint;
         synchronized (endpoints) {
             startServices(endpoint);
             oldEndpoint = endpoints.remove(uri);
-            endpoints.put(uri, endpoint);
-            stopServices(oldEndpoint);
+            endpoints.put(CamelContextHelper.getEndpointKey(uri, endpoint), endpoint);
+            if (oldEndpoint != null) {
+                stopServices(oldEndpoint);
+            }
         }
         return oldEndpoint;
     }
 
-    public Endpoint removeSingletonEndpoint(String uri) throws Exception {
-        Endpoint oldEndpoint;
+    public Collection<Endpoint> removeEndpoints(String uri) throws Exception {
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
         synchronized (endpoints) {
-            oldEndpoint = endpoints.remove(uri);
-            stopServices(oldEndpoint);
+            Endpoint oldEndpoint = endpoints.remove(uri);
+            if (oldEndpoint != null) {
+                answer.add(oldEndpoint);
+                stopServices(oldEndpoint);
+            } else {
+                for (Map.Entry entry : endpoints.entrySet()) {
+                    oldEndpoint = (Endpoint)entry.getValue();
+                    if (!oldEndpoint.isSingleton() && uri.equals(oldEndpoint.getEndpointUri())) {
+                        answer.add(oldEndpoint);
+                        stopServices(oldEndpoint);
+                        endpoints.remove(entry.getKey());
+                    }
+                }
+            }
         }
-        return oldEndpoint;
+        return answer;
+    }
+
+    public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
+        return addEndpoint(uri, endpoint);
+    }
+
+    public Endpoint removeSingletonEndpoint(String uri) throws Exception {
+        Collection<Endpoint> answer = removeEndpoints(uri);
+        return (Endpoint) (answer.size() > 0 ? answer.toArray()[0] : null);
     }
 
     public Endpoint getEndpoint(String uri) {
@@ -320,10 +344,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (answer != null) {
                         addService(answer);
 
-                        String key = answer.isSingleton() ? uri : 
-                            ("Ox" + Integer.toHexString(answer.hashCode()) + ":" + uri);
-                        
-                        endpoints.put(key, answer);
+                        endpoints.put(CamelContextHelper.getEndpointKey(uri, answer), answer);
                         lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {

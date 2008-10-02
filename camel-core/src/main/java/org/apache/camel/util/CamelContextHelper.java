@@ -57,6 +57,10 @@ public final class CamelContextHelper {
         }
     }
 
+    public static String getEndpointKey(String uri, Endpoint ep) {
+        return ep.isSingleton() ? uri : ("Ox" + Integer.toHexString(ep.hashCode()) + ":" + uri);
+    }
+
     /**
      * Returns the mandatory endpoint for the given URI and type or the
      * {@link org.apache.camel.NoSuchEndpointException} is thrown
