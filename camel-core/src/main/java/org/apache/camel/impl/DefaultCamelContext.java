@@ -233,40 +233,40 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // Endpoint Management Methods
     // -----------------------------------------------------------------------
 
-	public Collection<Endpoint> getEndpoints() {
+    public Collection<Endpoint> getEndpoints() {
         synchronized (endpoints) {
             return new ArrayList<Endpoint>(endpoints.values());
         }
-	}
+    }
 
-	public Collection<Endpoint> getEndpoints(String uri) {
-		Collection<Endpoint> answer = new ArrayList<Endpoint>();
-		Collection<Endpoint> coll;
+    public Collection<Endpoint> getEndpoints(String uri) {
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        Collection<Endpoint> coll;
         synchronized (endpoints) {
             Endpoint ep = endpoints.get(uri);
             if (ep != null) {
-            	answer.add(ep);
-            	return answer;
+                answer.add(ep);
+                return answer;
             }
             coll = new ArrayList<Endpoint>(endpoints.values());
         }
-		for (Endpoint ep : coll) {
-			if (!ep.isSingleton() && uri.equals(ep.getEndpointUri())) {
-				answer.add(ep);
-			}
-		}
-		return answer;
-	}
+        for (Endpoint ep : coll) {
+            if (!ep.isSingleton() && uri.equals(ep.getEndpointUri())) {
+                answer.add(ep);
+            }
+        }
+        return answer;
+    }
 
     public Collection<Endpoint> getSingletonEndpoints() {
-		Collection<Endpoint> answer = new ArrayList<Endpoint>();
-		Collection<Endpoint> coll = getEndpoints();
-		for (Endpoint ep : coll) {
-			if (ep.isSingleton()) {
-				answer.add(ep);
-			}
-		}
-		return answer;
+        Collection<Endpoint> answer = new ArrayList<Endpoint>();
+        Collection<Endpoint> coll = getEndpoints();
+        for (Endpoint ep : coll) {
+            if (ep.isSingleton()) {
+                answer.add(ep);
+            }
+        }
+        return answer;
     }
 
     public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
@@ -321,8 +321,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         addService(answer);
 
                         String key = answer.isSingleton() ? uri : 
-                        	("Ox" + Integer.toHexString(answer.hashCode()) + ":" + uri);
-                    	
+                            ("Ox" + Integer.toHexString(answer.hashCode()) + ":" + uri);
+                        
                         endpoints.put(key, answer);
                         lifecycleStrategy.onEndpointAdd(answer);
                     }
