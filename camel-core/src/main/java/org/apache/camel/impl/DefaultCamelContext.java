@@ -233,10 +233,40 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // Endpoint Management Methods
     // -----------------------------------------------------------------------
 
-    public Collection<Endpoint> getSingletonEndpoints() {
+	public Collection<Endpoint> getEndpoints() {
         synchronized (endpoints) {
             return new ArrayList<Endpoint>(endpoints.values());
         }
+	}
+
+	public Collection<Endpoint> getEndpoints(String uri) {
+		Collection<Endpoint> answer = new ArrayList<Endpoint>();
+		Collection<Endpoint> coll;
+        synchronized (endpoints) {
+            Endpoint ep = endpoints.get(uri);
+            if (ep != null) {
+            	answer.add(ep);
+            	return answer;
+            }
+            coll = new ArrayList<Endpoint>(endpoints.values());
+        }
+		for (Endpoint ep : coll) {
+			if (!ep.isSingleton() && uri.equals(ep.getEndpointUri())) {
+				answer.add(ep);
+			}
+		}
+		return answer;
+	}
+
+    public Collection<Endpoint> getSingletonEndpoints() {
+		Collection<Endpoint> answer = new ArrayList<Endpoint>();
+		Collection<Endpoint> coll = getEndpoints();
+		for (Endpoint ep : coll) {
+			if (ep.isSingleton()) {
+				answer.add(ep);
+			}
+		}
+		return answer;
     }
 
     public Endpoint addSingletonEndpoint(String uri, Endpoint endpoint) throws Exception {
@@ -260,7 +290,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Endpoint getEndpoint(String uri) {
-        Endpoint answer;
+        Endpoint<?> answer;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
             if (answer == null) {
@@ -270,7 +300,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                     if (splitURI[1] != null) {
                         String scheme = splitURI[0];
-                        Component component = getComponent(scheme);
+                        Component<?> component = getComponent(scheme);
 
                         // Ask the component to resolve the endpoint.
                         if (component != null) {
@@ -290,12 +320,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (answer != null) {
                         addService(answer);
 
-                        if (answer.isSingleton()) {
-                            endpoints.put(uri, answer);
-
-                            // TODO we should support non-singletons in the lifecycle
-                            lifecycleStrategy.onEndpointAdd(answer);
-                        }
+                        String key = answer.isSingleton() ? uri : 
+                        	("Ox" + Integer.toHexString(answer.hashCode()) + ":" + uri);
+                    	
+                        endpoints.put(key, answer);
+                        lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {
                     LOG.debug("Failed to resolve endpoint " + uri + ". Reason: " + e, e);
@@ -305,7 +334,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         return answer;
     }
-
 
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);

@@ -119,6 +119,22 @@ public interface CamelContext extends Service {
     <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType);
 
     /**
+     * Returns the collection of all registered endpoints.
+     *
+     * @return  all endpoints
+     */
+    Collection<Endpoint> getEndpoints();
+
+    /**
+     * Returns the collection of all registered endpoints for a uri or an empty collection.
+     * For a singleton endpoint the collection will contain exactly one element.
+     *
+     * @param uri  the URI of the endpoints
+     * @return  all non-singleton endpoints
+     */
+    Collection<Endpoint> getEndpoints(String uri);
+    
+    /**
      * Returns the collection of all registered singleton endpoints.
      *
      * @return  all the singleton endpoints
