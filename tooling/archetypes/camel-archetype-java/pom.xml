@@ -31,7 +31,7 @@
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-java</artifactId>
   <name>Camel :: Archetypes :: Router</name>
-  <description>Creates a Camel router with a Java DSL.</description>
+  <description>Creates a new Camel project using Java DSL.</description>
 
   <build>
     <plugins>

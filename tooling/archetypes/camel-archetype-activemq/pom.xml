@@ -31,7 +31,7 @@
   <groupId>org.apache.camel.archetypes</groupId>
   <artifactId>camel-archetype-activemq</artifactId>
   <name>Camel :: Archetypes :: Camel Router with ActiveMQ</name>
-  <description>Creates a Camel router that configures and interacts with ActiveMQ.</description>
+  <description>Creates a new Camel project that configures and interacts with ActiveMQ.</description>
 
   <build>
     <plugins>
