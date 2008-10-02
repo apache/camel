@@ -103,7 +103,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @return a predicate which evaluates to true if the given value expression
      *         is contained within this expression value
      */
-
     public Predicate<E> contains(Object value) {
         Expression<E> right = asExpression(value);
         return onNewPredicate(PredicateBuilder.contains(expression, right));
@@ -117,7 +116,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @return a predicate which evaluates to true if the expression matches the
      *         regex
      */
-
     public Predicate<E> regex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
     }
@@ -138,7 +136,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * Tokenizes the string conversion of this expression using the given
      * regular expression
      */
-
     public ValueBuilder<E> regexTokenize(String regex) {
         Expression<E> newExp = ExpressionBuilder.regexTokenize(expression, regex);
         return new ValueBuilder<E>(newExp);
@@ -148,7 +145,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * Replaces all occurrencies of the regular expression with the given
      * replacement
      */
-
     public ValueBuilder<E> regexReplaceAll(String regex, String replacement) {
         Expression<E> newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
         return new ValueBuilder<E>(newExp);
@@ -158,7 +154,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * Replaces all occurrencies of the regular expression with the given
      * replacement
      */
-
     public ValueBuilder<E> regexReplaceAll(String regex, Expression<E> replacement) {
         Expression<E> newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
         return new ValueBuilder<E>(newExp);
@@ -171,7 +166,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @param type the type to convert the value to
      * @return the current builder
      */
-
     public ValueBuilder<E> convertTo(Class type) {
         Expression<E> newExp = ExpressionBuilder.convertTo(expression, type);
         return new ValueBuilder<E>(newExp);
@@ -182,7 +176,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * 
      * @return the current builder
      */
-
     public ValueBuilder<E> convertToString() {
         return convertTo(String.class);
     }
@@ -193,7 +186,6 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
      * @param value the value or expression to append
      * @return the current builder
      */
-
     public ValueBuilder<E> append(Object value) {
         return new ValueBuilder<E>(ExpressionBuilder.append(expression, asExpression(value)));
     }

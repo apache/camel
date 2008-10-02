@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -27,11 +25,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -63,13 +61,9 @@ public class RecipientList extends ServiceSupport implements Processor {
 
     /**
      * Sends the given exchange to the recipient list
-     *
-     * @param exchange
-     * @param receipientList
-     * @throws Exception
      */
     public void sendToRecipientList(Exchange exchange, Object receipientList) throws Exception {
-        Iterator iter = ObjectConverter.iterator(receipientList);
+        Iterator iter = ObjectHelper.createIterator(receipientList);
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
             Object recipient = iter.next();

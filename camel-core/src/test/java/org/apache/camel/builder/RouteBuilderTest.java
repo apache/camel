@@ -337,7 +337,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e8
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").to("seda:b", "seda:c", "seda:d");
+                from("seda:a").multicast().to("seda:b", "seda:c", "seda:d");
             }
         };
         // END SNIPPET: e8
