@@ -397,6 +397,7 @@
             <link>http://java.sun.com/j2se/1.5.0/docs/api/</link>
             <link>http://java.sun.com/javaee/5/docs/api/</link>
             <link>http://static.springframework.org/spring/docs/2.5.x/api/</link>
+            <link>http://activemq.apache.org/camel/maven/camel-core/apidocs/</link>
           </links>
           <stylesheetfile>${basedir}/../../etc/css/stylesheet.css</stylesheetfile>
           <linksource>true</linksource>
