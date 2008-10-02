@@ -114,6 +114,7 @@ public class JmsConfiguration implements Cloneable {
     private int priority = -1;
     // Transaction related configuration
     private boolean transacted;
+    private boolean transactedInOut;
     private PlatformTransactionManager transactionManager;
     private String transactionName;
     private int transactionTimeout = -1;
@@ -301,6 +302,7 @@ public class JmsConfiguration implements Cloneable {
             JmsTemplate jmsTemplate = (JmsTemplate)answer;
             jmsTemplate.setExplicitQosEnabled(true);
             jmsTemplate.setTimeToLive(requestTimeout);
+            jmsTemplate.setSessionTransacted(isTransactedInOut());
         }
         return answer;
     }
@@ -705,6 +707,21 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTransacted(boolean consumerTransacted) {
         this.transacted = consumerTransacted;
+    }
+
+    /**
+     * Should InOut operations (request reply) default to using transacted mode?
+     *
+     * By default this is false as you need to commit the outgoing request before you can consume the input
+     *
+     * @return
+     */
+    public boolean isTransactedInOut() {
+        return transactedInOut;
+    }
+
+    public void setTransactedInOut(boolean transactedInOut) {
+        this.transactedInOut = transactedInOut;
     }
 
     public boolean isEagerLoadingOfProperties() {
