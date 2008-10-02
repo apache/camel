@@ -37,8 +37,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements
-    Processor {
+public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements Processor {
     private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
     private BlockingQueue<E> queue;
     private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(LOG));

@@ -27,7 +27,7 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class PerformanceCounter extends Counter {
 
     private AtomicLong numCompleted = new AtomicLong(0L);
-    private double minProcessingTime = -1.0;
+    private double minProcessingTime;
     private double maxProcessingTime;
     private double totalProcessingTime;
     private Date lastExchangeCompletionTime;
@@ -40,7 +40,7 @@ public class PerformanceCounter extends Counter {
     public synchronized void reset() {
         super.reset();
         numCompleted.set(0L);
-        minProcessingTime = -1.0;
+        minProcessingTime = 0.0;
         maxProcessingTime = 0.0;
         totalProcessingTime = 0.0;
         lastExchangeCompletionTime = null;
@@ -110,7 +110,7 @@ public class PerformanceCounter extends Counter {
         numCompleted.incrementAndGet();
 
         totalProcessingTime += time;
-        if (minProcessingTime < 0 || time < minProcessingTime) {
+        if (minProcessingTime <= 0 || time < minProcessingTime) {
             minProcessingTime = time;
         }
         if (time > maxProcessingTime) {
@@ -136,5 +136,4 @@ public class PerformanceCounter extends Counter {
         }
         lastExchangeFailureTime = timestamp;
     }
-    
 }

@@ -51,7 +51,7 @@
         <to uri="mock:result"/>
       </loop>
     </route>
-    <!-- END SNIPPET: ex3 -->    
+    <!-- END SNIPPET: ex3 -->
 
     <!-- START SNIPPET: ex4 -->        
     <route>

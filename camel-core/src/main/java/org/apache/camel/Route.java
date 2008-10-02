@@ -29,6 +29,7 @@ import java.util.Map;
  * @version $Revision$
  */
 public class Route<E extends Exchange> {
+    public static final String ID_PROPERTY = "id";
     public static final String PARENT_PROPERTY = "parent";
     public static final String GROUP_PROPERTY = "group";
 
