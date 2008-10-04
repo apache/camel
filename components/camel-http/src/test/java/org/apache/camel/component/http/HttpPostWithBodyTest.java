@@ -33,7 +33,7 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 
 
 public class HttpPostWithBodyTest extends ContextTestSupport {
-    protected String expectedText = "Not Implemented";
+    protected String expectedText = "Method Not Allowed";
 
     public void testHttpPostWithError() throws Exception {
 
@@ -58,6 +58,7 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
         String reason = exception.getStatusLine().getReasonPhrase();
 
         assertNotNull("Should have a body!", reason);
+
         assertTrue("body should contain: " + expectedText, reason.contains(expectedText));
 
     }
@@ -95,7 +96,6 @@ public class HttpPostWithBodyTest extends ContextTestSupport {
 
         log.debug("Body: " + body);
         assertNotNull("Should have a body!", body);
-        System.out.println("The body is " + body);
         assertTrue("body should contain: <html>", body.contains("<html>"));
 
     }
