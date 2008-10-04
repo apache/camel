@@ -68,12 +68,14 @@ public class HttpMessage extends DefaultMessage {
             map.put(name, value);
         }
 
-        // also populate the http request parameters
-        names = request.getParameterNames();
-        while (names.hasMoreElements()) {
-            String name = (String)names.nextElement();
-            Object value = request.getParameter(name);
-            map.put(name, value);
+        //if the request method is Get, we also populate the http request parameters
+        if (request.getMethod().equalsIgnoreCase("GET")) {
+            names = request.getParameterNames();
+            while (names.hasMoreElements()) {
+                String name = (String)names.nextElement();
+                Object value = request.getParameter(name);
+                map.put(name, value);
+            }
         }
 
         // store the method and query as well
