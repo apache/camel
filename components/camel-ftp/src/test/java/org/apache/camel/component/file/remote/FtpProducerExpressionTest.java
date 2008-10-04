@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.component.file.FileComponent;

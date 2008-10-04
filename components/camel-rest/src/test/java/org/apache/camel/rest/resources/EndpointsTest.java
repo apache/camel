@@ -18,9 +18,11 @@ package org.apache.camel.rest.resources;
 
 import java.util.List;
 
+import com.sun.jersey.api.client.WebResource;
+
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
-import com.sun.jersey.api.client.WebResource;
+
 
 /**
  * @version $Revision$
@@ -36,7 +38,7 @@ public class EndpointsTest extends TestSupport {
     }
 
     // TODO test as JSON
-    
+
     protected void assertValidEndpoints(Endpoints endpoints) {
         assertNotNull("Should have found endpoints", endpoints);
 

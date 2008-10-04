@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.RecipientList;
 import org.apache.camel.MessageDriven;
+import org.apache.camel.RecipientList;
 
 /**
  * An example POJO which has a method {@link #route) which can be used as a
