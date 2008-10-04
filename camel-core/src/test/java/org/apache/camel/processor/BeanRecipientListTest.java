@@ -16,14 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
+import javax.naming.Context;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.naming.Context;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @version $Revision$
@@ -82,7 +83,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
         @org.apache.camel.RecipientList
         public String[] route(String body) {
             System.out.println("Called " + this + " with body: " + body);
-            return new String[] { "mock:a", "mock:b" };
+            return new String[] {"mock:a", "mock:b"};
         }
     }
 }

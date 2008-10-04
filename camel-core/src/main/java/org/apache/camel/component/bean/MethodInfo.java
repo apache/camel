@@ -29,7 +29,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
-import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.util.ExchangeHelper;
@@ -38,7 +37,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
-
 /**
  * Information about a method to be used for invocation.
  *

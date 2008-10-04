@@ -47,8 +47,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addInterceptStrategy(new MyTracer());
 
-                from("timer://kickoff_1?period=250").
-                from("timer://kickoff_2?period=250&delay=10");
+                from("timer://kickoff_1?period=250").from("timer://kickoff_2?period=250&delay=10");
             }
         };
     }
