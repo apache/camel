@@ -16,11 +16,13 @@
  */
 package org.apache.camel.rest.resources;
 
+import junit.framework.TestCase;
+
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-import junit.framework.TestCase;
+
 import org.apache.camel.rest.Main;
 
 /**

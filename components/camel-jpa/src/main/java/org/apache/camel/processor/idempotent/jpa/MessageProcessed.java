@@ -27,8 +27,8 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(
-    name="MESSAGEPROCESSED",
-    uniqueConstraints=@UniqueConstraint(columnNames = {"processorName", "messageId"})
+    name = "MESSAGEPROCESSED",
+    uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"})
 )
 public class MessageProcessed {
     private Long id;

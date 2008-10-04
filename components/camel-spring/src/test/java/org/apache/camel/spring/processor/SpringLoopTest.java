@@ -16,10 +16,10 @@
  */
 package org.apache.camel.spring.processor;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.LoopTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
  * @version $Revision$

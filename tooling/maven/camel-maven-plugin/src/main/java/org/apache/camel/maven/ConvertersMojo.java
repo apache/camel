@@ -231,19 +231,13 @@ public class ConvertersMojo extends AbstractMavenReport {
                 .getContextClassLoader();
         try {
             // TODO: this badly needs some refactoring
-            // mojo.createClassLoader creates a URLClassLoader with whatever is
-            // in
-            // ${project.testClasspathElements}, reason why we don't see all
-            // converters
-            // in the report. First we need a list of classpath elements the
-            // user
-            // could customize via plugin configuration, and elements of that
-            // list
-            // be added to the URLClassLoader. This should also be factored out
-            // into
+            // mojo.createClassLoader creates a URLClassLoader with whatever is in
+            // ${project.testClasspathElements}, reason why we don't see all converters
+            // in the report. First we need a list of classpath elements the user
+            // could customize via plugin configuration, and elements of that list
+            // be added to the URLClassLoader. This should also be factored out into
             // a utility class.
-            // TODO: there is some interference with the site plugin that needs
-            // investigated.
+            // TODO: there is some interference with the site plugin that needs investigated.
             List<?> list = project.getTestClasspathElements();
             EmbeddedMojo mojo = new EmbeddedMojo();
             mojo.setClasspathElements(list);

@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
