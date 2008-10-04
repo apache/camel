@@ -29,22 +29,22 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
 
     public void testSendOne() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:one");
-        mock.expectedBodiesReceived("Hello World");
+
         mock.expectedHeaderReceived("one", "true");
 
-        template.sendBody(serverUri + "?one=true", "Hello World");
+        template.sendBody(serverUri + "?one=true", null);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendOther() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:other");
-        mock.expectedBodiesReceived("Bye World");
+
         mock.expectedHeaderReceived("two", "true");
 
-        template.sendBody(serverUri + "?two=true", "Bye World");
+        template.sendBody(serverUri + "?two=true", null);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
