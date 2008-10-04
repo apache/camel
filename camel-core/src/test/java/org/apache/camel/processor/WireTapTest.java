@@ -16,12 +16,13 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class WireTapTest extends ContextTestSupport { 
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+
+public class WireTapTest extends ContextTestSupport {
     protected MockEndpoint tap;
     protected MockEndpoint result;
 

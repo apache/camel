@@ -16,6 +16,11 @@
  */
 package org.apache.camel;
 
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Callable;
+
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
@@ -25,11 +30,6 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.Callable;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -132,7 +132,7 @@ public interface CamelContext extends Service {
      * @return  collection of endpoints
      */
     Collection<Endpoint> getEndpoints(String uri);
-    
+
     /**
      * Returns the collection of all registered singleton endpoints.
      *
@@ -308,7 +308,7 @@ public interface CamelContext extends Service {
      * @param errorHandlerBuilder  the builder
      */
     void setErrorHandlerBuilder(ErrorHandlerBuilder errorHandlerBuilder);
-    
+
     /**
      * Sets the data formats that can be referenced in the routes.
      * @param dataFormats the data formats
