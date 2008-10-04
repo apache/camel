@@ -32,7 +32,7 @@ public class JettySteveIssueTest extends ContextTestSupport {
         mock.expectedBodiesReceived("<html><body>foo</body></html>");
         mock.expectedHeaderReceived("x", "foo");
 
-        template.sendBody(serverUri + "?x=foo", "Hello World");
+        template.sendBody(serverUri + "?x=foo", null);
 
         assertMockEndpointsSatisfied();
     }
