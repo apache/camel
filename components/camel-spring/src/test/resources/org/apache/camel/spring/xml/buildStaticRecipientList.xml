@@ -22,9 +22,6 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-        from("seda:a").to("seda:b", "seda:c", "seda:d");
-  -->
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
@@ -37,6 +34,5 @@
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
-
 
 </beans>

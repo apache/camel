@@ -47,7 +47,7 @@ public class WireTapTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("mock:tap", "mock:result");
+                from("direct:start").multicast().to("mock:tap", "mock:result");
             }
         };
     }
