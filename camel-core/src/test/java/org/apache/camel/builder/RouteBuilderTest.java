@@ -36,6 +36,8 @@ import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
+import org.apache.camel.processor.Interceptor;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
 
@@ -48,6 +50,12 @@ public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
     protected DelegateProcessor interceptor1;
     protected DelegateProcessor interceptor2;
+
+    @Override
+    protected void setUp() throws Exception {
+
+        super.setUp();
+    }
 
     protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1
@@ -231,7 +239,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e6
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").to("seda:tap", "seda:b");
+                from("seda:a").multicast().to("seda:tap", "seda:b");
             }
         };
         // END SNIPPET: e6
@@ -249,6 +257,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
+            processor = unwrapInterceptor(processor);
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
             List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
@@ -462,12 +471,6 @@ public class RouteBuilderTest extends TestSupport {
             processor = unwrapErrorHandler(processor);
         }
 
-        if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            InstrumentationProcessor interceptor =
-                assertIsInstanceOf(InstrumentationProcessor.class, processor);
-            processor = interceptor.getProcessor();
-        }
-
         if (processor instanceof SendProcessor) {
             assertSendTo(processor, uri);
         } else {
@@ -490,6 +493,15 @@ public class RouteBuilderTest extends TestSupport {
         if (processor instanceof DeadLetterChannel) {
             DeadLetterChannel deadLetter = (DeadLetterChannel)processor;
             return deadLetter.getOutput();
+        } else {
+            return processor;
+        }
+    }
+
+    protected Processor unwrapInterceptor(Processor processor) {
+        if (processor instanceof Interceptor) {
+            Interceptor interceptor = (Interceptor) processor;
+            return interceptor.getProcessor();
         } else {
             return processor;
         }
