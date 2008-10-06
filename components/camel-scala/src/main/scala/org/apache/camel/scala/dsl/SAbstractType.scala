@@ -19,6 +19,7 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.ProcessorType
 import org.apache.camel.model.FilterType
 import org.apache.camel.model.ChoiceType
+import org.apache.camel.model.IdempotentConsumerType
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
@@ -72,6 +73,7 @@ abstract class SAbstractType extends DSL {
   def otherwise : SChoiceType = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
+  def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerType(target.idempotentConsumer(expression, null))
   
   def multicast = new SMulticastType(target.multicast)
   
