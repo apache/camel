@@ -54,6 +54,8 @@ public class AggregatorType extends ExpressionNode {
     @XmlAttribute(required = false)
     private Integer batchSize;
     @XmlAttribute(required = false)
+    private Integer outBatchSize;
+    @XmlAttribute(required = false)
     private Long batchTimeout;
     @XmlAttribute(required = false)
     private String strategyRef;
@@ -120,15 +122,21 @@ public class AggregatorType extends ExpressionNode {
 
         final Aggregator aggregator;
         if (aggregationCollection != null) {
+            // create the aggregator using the collection
+            // pre configure the collection if its expression and strategy is not set, then
+            // use the ones that is pre configured with this type
+            if (aggregationCollection.getCorrelationExpression() == null) {
+                aggregationCollection.setCorrelationExpression(getExpression());
+            }
+            if (aggregationCollection.getAggregationStrategy() == null) {
+                AggregationStrategy strategy = createAggregationStrategy(routeContext);
+                aggregationCollection.setAggregationStrategy(strategy);
+            }
             aggregator = new Aggregator(from, processor, aggregationCollection);
         } else {
-            AggregationStrategy strategy = getAggregationStrategy();
-            if (strategy == null && strategyRef != null) {
-                strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
-            }
-            if (strategy == null) {
-                strategy = new UseLatestAggregationStrategy();
-            }
+            // create the aggregator using a default collection
+            AggregationStrategy strategy = createAggregationStrategy(routeContext);
+
             Expression aggregateExpression = getExpression().createExpression(routeContext);
 
             Predicate predicate = null;
@@ -149,9 +157,26 @@ public class AggregatorType extends ExpressionNode {
         if (batchTimeout != null) {
             aggregator.setBatchTimeout(batchTimeout);
         }
+
+        if (outBatchSize != null) {
+            aggregator.setOutBatchSize(outBatchSize);
+        }
         
         return aggregator;
     }
+
+    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+        AggregationStrategy strategy = getAggregationStrategy();
+        if (strategy == null && strategyRef != null) {
+            strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+        }
+        if (strategy == null) {
+            // fallback to use latest
+            strategy = new UseLatestAggregationStrategy();
+        }
+        return strategy;
+    }
+
     public AggregationCollection getAggregationCollection() {
         return aggregationCollection;
     }
@@ -174,6 +199,14 @@ public class AggregatorType extends ExpressionNode {
 
     public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public Integer getOutBatchSize() {
+        return outBatchSize;
+    }
+
+    public void setOutBatchSize(Integer outBatchSize) {
+        this.outBatchSize = outBatchSize;
     }
 
     public Long getBatchTimeout() {
@@ -207,8 +240,28 @@ public class AggregatorType extends ExpressionNode {
         return this;
     }
 
+    public AggregatorType outBatchSize(int batchSize) {
+        setOutBatchSize(batchSize);
+        return this;
+    }
+
     public AggregatorType batchTimeout(long batchTimeout) {
         setBatchTimeout(batchTimeout);
+        return this;
+    }
+
+    public AggregatorType aggregationCollection(AggregationCollection aggregationCollection) {
+        setAggregationCollection(aggregationCollection);
+        return this;
+    }
+
+    public AggregatorType aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    public AggregatorType strategyRef(String strategyRef) {
+        setStrategyRef(strategyRef);
         return this;
     }
 

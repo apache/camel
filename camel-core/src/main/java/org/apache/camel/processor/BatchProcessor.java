@@ -46,6 +46,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
     private Collection<Exchange> collection;
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
+    private int outBatchSize;
     private PollingConsumer consumer;
     private ExceptionHandler exceptionHandler;
 
@@ -89,8 +90,29 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
         return batchSize;
     }
 
+    /**
+     * Sets the <b>in</b> batch size. This is the number of incomiing exchanges that this batch processor
+     * will process before its completed. The default value is {@link #DEFAULT_BATCH_SIZE}.
+     *
+     * @param batchSize the size
+     */
     public void setBatchSize(int batchSize) {
         this.batchSize = batchSize;
+    }
+
+    public int getOutBatchSize() {
+        return outBatchSize;
+    }
+
+    /**
+     * Sets the <b>out</b> batch size. If the batch processor holds more exchanges than this out size then
+     * the completion is triggered. Can for instance be used to ensure that this batch is completed when
+     * a certain number of exchanges has been collected. By default this feature is <b>not</b> used.
+     *
+     * @param outBatchSize the size
+     */
+    public void setOutBatchSize(int outBatchSize) {
+        this.outBatchSize = outBatchSize;
     }
 
     public long getBatchTimeout() {
@@ -119,12 +141,16 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
         for (int i = 0; !isBatchCompleted(i); i++) {
             long timeout = end - System.currentTimeMillis();
             if (timeout < 0L) {                
-                LOG.debug("batch timeout expired at batch index:"  + i);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("batch timeout expired at batch index: " + i);
+                }
                 break;
             }
             Exchange exchange = consumer.receive(timeout);
             if (exchange == null) {
-                LOG.debug("receive with timeout: " + timeout + " expired at batch index:"  + i);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("receive with timeout: " + timeout + " expired at batch index: " + i);
+                }
                 break;
             }
             collection.add(exchange);
@@ -148,6 +174,11 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
      * A strategy method to decide if the batch is completed the resulting exchanges should be sent
      */
     protected boolean isBatchCompleted(int index) {
+        // out batch size is optional and we should only check if its enabled (> 0)
+        if (outBatchSize > 0 && collection.size() >= outBatchSize) {
+            return true;
+        }
+        // fallback yo regular batch size check
         return index >= batchSize;
     }
 

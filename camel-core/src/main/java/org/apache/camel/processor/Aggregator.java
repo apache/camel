@@ -20,9 +20,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.aggregate.AggregationCollection;
+import org.apache.camel.processor.aggregate.DefaultAggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
+import org.apache.camel.processor.aggregate.AggregationCollection;
 
 /**
  * An implementation of the <a
@@ -46,7 +47,7 @@ public class Aggregator extends BatchProcessor {
 
     public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
                       AggregationStrategy aggregationStrategy) {
-        this(endpoint, processor, new AggregationCollection(correlationExpression, aggregationStrategy));
+        this(endpoint, processor, new DefaultAggregationCollection(correlationExpression, aggregationStrategy));
     }
 
     public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
@@ -67,10 +68,12 @@ public class Aggregator extends BatchProcessor {
     @Override
     protected boolean isBatchCompleted(int index) {
         if (aggregationCompletedPredicate != null) {
+            // TODO: (davsclaus) What is the point with this code? I think its wrong
             if (getCollection().size() > 0) {
                 return true;
             }
         }
+        
         return super.isBatchCompleted(index);
     }
 }

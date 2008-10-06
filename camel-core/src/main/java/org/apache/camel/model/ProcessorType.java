@@ -39,8 +39,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -56,8 +54,8 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
@@ -702,15 +700,17 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern using a custom aggregation collection implementation.
+     * pattern using a custom aggregation collection implementation. The aggregation collection must
+     * be configued with the strategy and correlation expression that this aggregator should use.
+     * This avoids duplicating this configuration on both the collection and the aggregator itself.
      *
      * @param aggregationCollection the collection used to perform the aggregation
      */
-    public ExpressionClause<AggregatorType> aggregator(AggregationCollection aggregationCollection) {
+    public AggregatorType aggregator(AggregationCollection aggregationCollection) {
         AggregatorType answer = new AggregatorType();
         answer.setAggregationCollection(aggregationCollection);
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return answer;
     }
 
     /**

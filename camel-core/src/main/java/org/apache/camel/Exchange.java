@@ -47,6 +47,8 @@ public interface Exchange {
      * This typically won't be required as an exchange can be created with a specific MEP
      * by calling {@link Endpoint#createExchange(ExchangePattern)} but it is here just in case
      * it is needed.
+     *
+     * @param pattern  the pattern 
      */
     void setPattern(ExchangePattern pattern);
 
@@ -122,6 +124,7 @@ public interface Exchange {
      * Returns the outbound message; optionally lazily creating one if one has
      * not been associated with this exchange
      *
+     * @param lazyCreate <tt>true</tt> will lazy create the out message
      * @return the response
      */
     Message getOut(boolean lazyCreate);
@@ -145,7 +148,6 @@ public interface Exchange {
      * not been associated with this exchange
      *
      * @param lazyCreate <tt>true</tt> will lazy create the fault message
-     *
      * @return the fault
      */
     Message getFault(boolean lazyCreate);
@@ -216,16 +218,12 @@ public interface Exchange {
     void setUnitOfWork(UnitOfWork unitOfWork);
 
     /**
-     * Returns the exchange id
-     *
-     * @return the unique id of the exchange
+     * Returns the exchange id (unique)
      */
     String getExchangeId();
 
     /**
      * Set the exchange id
-     *
-     * @param id
      */
     void setExchangeId(String id);
 

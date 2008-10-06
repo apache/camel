@@ -70,19 +70,17 @@ public abstract class ContextTestSupport extends TestSupport {
 
         template = context.createProducerTemplate();
 
-        if (useRouteBuilder) {
+        if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
             for (RouteBuilder builder : builders) {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
+            startCamelContext();
+            log.debug("Routing Rules are: " + context.getRoutes());
         } else {
             log.debug("Using route builder from the created context: " + context);
         }
-
-        startCamelContext();
-
-        log.debug("Routing Rules are: " + context.getRoutes());
     }
 
     @Override

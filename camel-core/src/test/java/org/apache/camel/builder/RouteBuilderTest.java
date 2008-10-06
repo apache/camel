@@ -51,12 +51,6 @@ public class RouteBuilderTest extends TestSupport {
     protected DelegateProcessor interceptor1;
     protected DelegateProcessor interceptor2;
 
-    @Override
-    protected void setUp() throws Exception {
-
-        super.setUp();
-    }
-
     protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
