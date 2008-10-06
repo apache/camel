@@ -1,99 +1,60 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.camel.processor.aggregate;
 
-import java.util.AbstractCollection;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
- * A {@link Collection} which aggregates exchanges together using a correlation
- * expression so that there is only a single message exchange sent for a single
- * correlation key.
+ * A {@link Collection} which aggregates exchanges together,
+ * using a correlation {@link Expression} and a {@link AggregationStrategy}.
+ * <p/>
+ * The Default Implementation will group messages based on the correlation expression.
+ * Other implementations could for instance just add all exchanges as a batch.
  *
  * @version $Revision$
  */
-public class AggregationCollection extends AbstractCollection<Exchange> {
-    private static final transient Log LOG = LogFactory.getLog(AggregationCollection.class);
-    private final Expression<Exchange> correlationExpression;
-    private final AggregationStrategy aggregationStrategy;
-    private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
-
-    public AggregationCollection(Expression<Exchange> correlationExpression,
-                                 AggregationStrategy aggregationStrategy) {
-        this.correlationExpression = correlationExpression;
-        this.aggregationStrategy = aggregationStrategy;
-    }
-
-    protected Map<Object, Exchange> getMap() {
-        return map;
-    }
-
-    @Override
-    public boolean add(Exchange exchange) {
-        Object correlationKey = correlationExpression.evaluate(exchange);
-        Exchange oldExchange = map.get(correlationKey);
-        Exchange newExchange = exchange;
-        if (oldExchange != null) {
-            Integer count = oldExchange.getProperty(Exchange.AGGREGATED_COUNT, Integer.class);
-            if (count == null) {
-                count = 1;
-            }
-            count++;
-            newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
-            newExchange.setProperty(Exchange.AGGREGATED_COUNT, count);
-        }
-
-        // the strategy may just update the old exchange and return it
-        if (newExchange != oldExchange) {
-            LOG.debug("put exchange:" + newExchange + " for key:"  + correlationKey);
-            if (oldExchange == null) {
-                newExchange.setProperty(Exchange.AGGREGATED_COUNT, new Integer(1));
-            }
-            map.put(correlationKey, newExchange);
-        }
-        onAggregation(correlationKey, newExchange);
-        return true;
-    }
-
-    public Iterator<Exchange> iterator() {
-        return map.values().iterator();
-    }
-
-    public int size() {
-        return map.size();
-    }
-
-    @Override
-    public void clear() {
-        map.clear();
-    }
+public interface AggregationCollection extends Collection<Exchange> {
 
     /**
-     * A strategy method allowing derived classes such as {@link PredicateAggregationCollection}
-     * to check to see if the aggregation has completed
+     * Gets the correlation expression
      */
-    protected void onAggregation(Object correlationKey, Exchange newExchange) {
-    }
+    Expression<Exchange> getCorrelationExpression();
+
+    /**
+     * Sets the correlation expression to be used
+     */
+    void setCorrelationExpression(Expression<Exchange> correlationExpression);
+
+    /**
+     * Gets the aggregation strategy
+     */
+    AggregationStrategy getAggregationStrategy();
+
+    /**
+     * Sets the aggregation strategy to be used
+     */
+    void setAggregationStrategy(AggregationStrategy aggregationStrategy);
+
+    /**
+     * Adds the given exchange to this collection
+     */
+    boolean add(Exchange exchange);
+
+    /**
+     * Gets the iterator to iterate this collection.
+     */
+    Iterator<Exchange> iterator();
+
+    /**
+     * Gets the size of this collection
+     */
+    int size();
+
+    /**
+     * Clears this colleciton
+     */
+    void clear();
+
 }
