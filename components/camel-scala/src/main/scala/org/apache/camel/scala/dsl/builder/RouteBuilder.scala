@@ -63,6 +63,7 @@ class RouteBuilder extends Preamble with DSL {
   def when(filter: Exchange => Boolean) = stack.top.when(filter)
   def as[Target](toType: Class[Target]) = stack.top.as(toType)
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
+  def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
   def multicast = stack.top.multicast

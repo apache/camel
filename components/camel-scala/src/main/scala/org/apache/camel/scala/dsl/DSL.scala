@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl
+package org.apache.camel.scala.dsl 
 
 /**
  * Defines the 'keywords' in our Scala DSL
@@ -38,5 +38,6 @@ trait DSL {
   def delay(delay: Period) : SDelayerType
   def resequence(expression: Exchange => Any) : SResequencerType
   def aggregate(expression: Exchange => Any) : SAggregatorType
+  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
 
 }
