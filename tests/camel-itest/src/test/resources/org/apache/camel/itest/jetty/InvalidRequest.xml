@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<typens:OptimizationRequestGroups xmlns:typens="http://test">
+  <typens:OptimizationRequest>XXX
+  </typens:OptimizationRequest>
+</typens:OptimizationRequestGroups>
