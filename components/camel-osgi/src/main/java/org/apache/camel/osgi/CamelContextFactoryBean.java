@@ -43,7 +43,9 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
 
     protected SpringCamelContext createContext() {
         SpringCamelContext context = super.createContext();
-        context.setComponentResolver(new OsgiComponentResolver(bundleContext));
+        if (bundleContext != null) {
+            context.setComponentResolver(new OsgiComponentResolver(bundleContext));
+        }
         return context;
     }
 
