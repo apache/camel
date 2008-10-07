@@ -55,8 +55,8 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
                 from("direct:start")
                     // we use the collection based aggregator we already have configued
                     .aggregator(ag)
-                    // wait for 2 seconds to aggregate
-                    .batchTimeout(2000L)
+                    // wait for 0.5 seconds to aggregate
+                    .batchTimeout(500L)
                     .to("mock:result");
                 // END SNIPPET: e1
             }

@@ -187,7 +187,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         from("direct:joinBrothers").aggregator(header(TYPE_HEADER),
                                 brothersAggregator);
 
-                agg.setBatchTimeout(5000L);
+                agg.setBatchTimeout(1000L);
                 agg.removeHeader(SURNAME_HEADER)
                         .removeHeader(TYPE_HEADER)
                         .to("mock:result");
