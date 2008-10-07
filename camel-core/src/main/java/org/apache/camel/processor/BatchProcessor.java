@@ -156,10 +156,9 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
             collection.add(exchange);
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Finished batch size: " + batchSize + " timeout: " + batchTimeout + " so sending set: "
-                      + collection);
-        }
+        // we should NOT log the collection directly as it will invoke a toString() on collection
+        // and it will call collection.iterator() where end-users might do stuff that would break
+        // calling the iterator a 2nd time as below
 
         // lets send the batch
         Iterator<Exchange> iter = collection.iterator();
