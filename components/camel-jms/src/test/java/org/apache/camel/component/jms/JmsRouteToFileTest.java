@@ -24,6 +24,7 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
@@ -36,13 +37,16 @@ public class JmsRouteToFileTest extends ContextTestSupport {
     protected String componentName = "activemq";
 
     public void testRouteToFile() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedMessageCount(1);
+        
         deleteDirectory("target/routetofile");
 
         template.sendBody("activemq:queue:hello", "Hello World");
 
         // pause to let file producer save the file
-        Thread.sleep(1500);
-
+        result.assertIsSatisfied();
+        
         // do file assertions
         File dir = new File("./target/routetofile");
         assertTrue("Should be directory", dir.isDirectory());
@@ -64,7 +68,9 @@ public class JmsRouteToFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:hello").to("file://target/routetofile");
+                // using mock endpoint here purely for testing. You would normally write this route as
+                // from("activemq:queue:hello").to("file://target/routetofile");
+                from("activemq:queue:hello").to("file://target/routetofile").to("mock:result");
             }
         };
     }
