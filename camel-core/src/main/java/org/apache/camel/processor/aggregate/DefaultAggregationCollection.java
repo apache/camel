@@ -93,11 +93,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
         map.clear();
     }
 
-    /**
-     * A strategy method allowing derived classes such as {@link PredicateAggregationCollection}
-     * to check to see if the aggregation has completed
-     */
-    protected void onAggregation(Object correlationKey, Exchange newExchange) {
+    public void onAggregation(Object correlationKey, Exchange newExchange) {
     }
 
     public Expression<Exchange> getCorrelationExpression() {

@@ -91,7 +91,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
     }
 
     /**
-     * Sets the <b>in</b> batch size. This is the number of incomiing exchanges that this batch processor
+     * Sets the <b>in</b> batch size. This is the number of incoming exchanges that this batch processor
      * will process before its completed. The default value is {@link #DEFAULT_BATCH_SIZE}.
      *
      * @param batchSize the size
@@ -107,7 +107,7 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
     /**
      * Sets the <b>out</b> batch size. If the batch processor holds more exchanges than this out size then
      * the completion is triggered. Can for instance be used to ensure that this batch is completed when
-     * a certain number of exchanges has been collected. By default this feature is <b>not</b> used.
+     * a certain number of exchanges has been collected. By default this feature is <b>not</b> enabled.
      *
      * @param outBatchSize the size
      */

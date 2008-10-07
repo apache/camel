@@ -57,4 +57,10 @@ public interface AggregationCollection extends Collection<Exchange> {
      */
     void clear();
 
+    /**
+     * A strategy method allowing derived classes such as {@link PredicateAggregationCollection}
+     * to check to see if the aggregation has completed
+     */
+    void onAggregation(Object correlationKey, Exchange newExchange);
+
 }
