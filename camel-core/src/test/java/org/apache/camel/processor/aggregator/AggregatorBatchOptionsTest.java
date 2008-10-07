@@ -23,8 +23,8 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
                     // as we have not configured more on the aggregator it will default to aggregate the
                     // latest exchange only
                     .aggregator().header("id")
-                    // wait for 2 seconds to aggregate
-                    .batchTimeout(2000L)
+                    // wait for 0.5 seconds to aggregate
+                    .batchTimeout(500L)
                     // batch size in is the limit of number of exchanges recieved, so when we have received 100
                     // exchanges then whatever we have in the collection will be sent
                     .batchSize(100)
@@ -41,7 +41,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect 3 messages grouped by the latest message only
-        result.expectedMessageCount(3);
+        result.expectedMinimumMessageCount(3);
         result.expectedBodiesReceived("Message 1c", "Message 2b", "Message 3a");
 
         // then we sent all the message at once
@@ -72,8 +72,8 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
                     // as we have not configured more on the aggregator it will default to aggregate the
                     // latest exchange only
                     .aggregator().header("id")
-                    // wait for 2 seconds to aggregate
-                    .batchTimeout(2000L)
+                    // wait for 0.5 seconds to aggregate
+                    .batchTimeout(500L)
                     // batch size in is the limit of number of exchanges recieved, so when we have received 100
                     // exchanges then whatever we have in the collection will be sent
                     .batchSize(5)
@@ -87,7 +87,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect 3 messages grouped by the latest message only
-        result.expectedMessageCount(2);
+        result.expectedMinimumMessageCount(2);
         result.expectedBodiesReceived("Message 1c", "Message 2b");
 
         // then we sent all the message at once
@@ -130,7 +130,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         MockEndpoint result = getMockEndpoint("mock:result");
 
         // we expect 3 messages grouped by the latest message only
-        result.expectedMessageCount(3);
+        result.expectedMinimumMessageCount(3);
         result.expectedBodiesReceived("Message 1c", "Message 2b", "Message 3a");
 
         // then we sent all the message at once
