@@ -141,15 +141,15 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
         for (int i = 0; !isBatchCompleted(i); i++) {
             long timeout = end - System.currentTimeMillis();
             if (timeout < 0L) {                
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("batch timeout expired at batch index: " + i);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("batch timeout expired at batch index: " + i);
                 }
                 break;
             }
             Exchange exchange = consumer.receive(timeout);
             if (exchange == null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("receive with timeout: " + timeout + " expired at batch index: " + i);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("receive with timeout: " + timeout + " expired at batch index: " + i);
                 }
                 break;
             }
