@@ -157,10 +157,11 @@ public class DefaultExchange implements Exchange {
             validateExchangePropertyIsExpectedType(property, type, value);
         }
         if (value != null) {
-            // avoid the NULLPointException
+            // avoid the NullPointException
             getProperties().put(name, value);
-        } else { // if the value is null , we just remove the key from the map
-            if (name !=  null) {
+        } else {
+            // if the value is null , we just remove the key from the map
+            if (name != null) {
                 getProperties().remove(name);
             }
         }
