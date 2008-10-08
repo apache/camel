@@ -37,7 +37,6 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.nio.NHttpConnection;
 import org.apache.http.nio.protocol.EventListener;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestHandler;
 
@@ -153,9 +152,9 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
                     // create the default response to this request
                     ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
 
-                    HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK,
-                                                                            context);
-                    HttpParamsLinker.link(response, params);
+                    HttpResponse response = responseFactory.newHttpResponse(
+                        httpVersion, HttpStatus.SC_OK, context);
+                    response.setParams(params);
                     HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
                     response.setEntity(entity);
                     response.setParams(getEndpoint().getParams());
@@ -166,14 +165,11 @@ public class JhcConsumer extends DefaultConsumer<JhcExchange> {
                     }
                 }
             });
-
         }
 
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
             throws HttpException, IOException {
             // now we just handler the requset async, do nothing here
-
         }
     }
-
 }

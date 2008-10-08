@@ -43,7 +43,7 @@ public class JhcComponent extends DefaultComponent<JhcExchange> implements Heade
      
         setHeaderFilterStrategy(new JhcHeaderFilterStrategy());
         
-        params = new BasicHttpParams(null)
+        params = new BasicHttpParams()
             .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000)
             .setIntParameter(HttpConnectionParams.CONNECTION_TIMEOUT, 10000)
             .setIntParameter(HttpConnectionParams.SOCKET_BUFFER_SIZE, 8 * 1024)
