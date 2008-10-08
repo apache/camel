@@ -27,6 +27,7 @@ import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ValueBuilder;
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
+import static org.apache.camel.builder.ExpressionBuilder.propertyExpression;
 
 /**
  * A builder of assertions on message exchanges
@@ -59,6 +60,14 @@ public abstract class AssertionClause implements Runnable {
      */
     public ValueBuilder<Exchange> header(String name) {
         Expression<Exchange> expression = headerExpression(name);
+        return new PredicateValueBuilder(expression);
+    }
+
+    /**
+     * Returns a predicate and value builder for property on an exchange
+     */
+    public ValueBuilder<Exchange> property(String name) {
+        Expression<Exchange> expression = propertyExpression(name);
         return new PredicateValueBuilder(expression);
     }
 
@@ -111,7 +120,9 @@ public abstract class AssertionClause implements Runnable {
     }
 
 
-
+    /**
+     * Public class needed for fluent builders
+     */
     public class PredicateValueBuilder extends ValueBuilder<Exchange> {
 
         public PredicateValueBuilder(Expression<Exchange> expression) {

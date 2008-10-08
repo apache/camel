@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -32,6 +33,10 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
         // we expect 4 messages grouped by the latest message only
         result.expectedMessageCount(4);
         result.expectedBodiesReceived("Message 1d", "Message 2b", "Message 3c", "Message 4");
+        result.message(0).property(Exchange.AGGREGATED_COUNT).isEqualTo(4);
+        result.message(1).property(Exchange.AGGREGATED_COUNT).isEqualTo(2);
+        result.message(2).property(Exchange.AGGREGATED_COUNT).isEqualTo(3);
+        result.message(3).property(Exchange.AGGREGATED_COUNT).isEqualTo(1);
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "Message 1a", "id", "1");
