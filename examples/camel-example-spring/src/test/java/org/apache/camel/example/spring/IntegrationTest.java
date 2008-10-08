@@ -26,7 +26,6 @@ public class IntegrationTest extends TestCase {
 
     public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
         // let's boot up the Spring application context for 2 seconds to check that it works OK
-        // System.setProperty("org.apache.camel.jmx.createRmiConnector", "true");        
         Main.main("-duration", "2s", "-o", "target/site/cameldoc");
     }
 }

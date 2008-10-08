@@ -23,9 +23,11 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.RouteContext;
 
@@ -43,8 +45,8 @@ public class CamelNamingStrategy {
     public static final String TYPE_CONTEXT = "context";
     public static final String TYPE_ENDPOINT = "endpoint";
     public static final String TYPE_PROCESSOR = "processor";
+    public static final String TYPE_CONSUMER = "consumer";
     public static final String TYPE_ROUTE = "route";
-    public static final String TYPE_SERVICE = "service";
 
     protected String domainName;
     protected String hostName = "locahost";
@@ -103,11 +105,21 @@ public class CamelNamingStrategy {
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=service,name=&lt;service-name&gt;</tt>
      */
     public ObjectName getObjectName(CamelContext context, ManagedService mbean) throws MalformedObjectNameException {
+        String serviceBranch;
+        Service service = mbean.getService();
+        if (service instanceof Consumer) {
+            serviceBranch = TYPE_CONSUMER;
+        } else {
+            return null;
+        }
+        
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
-        buffer.append(KEY_NAME + "=").append(Integer.toHexString(mbean.getService().hashCode()));
+        buffer.append(KEY_TYPE + "=" + serviceBranch + ",");
+        buffer.append(KEY_NAME + "=")
+            .append(service.getClass().getSimpleName())
+            .append("(0x").append(Integer.toHexString(mbean.getService().hashCode())).append(")");
         return createObjectName(buffer);
     }
 

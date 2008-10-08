@@ -27,6 +27,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
@@ -136,7 +137,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         if (!initialized) {
             return;
         }
-        if (service instanceof ServiceSupport) {
+        if (service instanceof ServiceSupport && service instanceof Consumer) {
+            // TODO: add support for non-consumer services?
             try {
                 ManagedService ms = new ManagedService((ServiceSupport)service);
                 agent.register(ms, getNamingStrategy().getObjectName(context, ms));
