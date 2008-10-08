@@ -32,12 +32,11 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
+import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
-import org.apache.camel.processor.Interceptor;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
 

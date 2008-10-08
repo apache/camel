@@ -54,8 +54,8 @@ import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationCollection;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
@@ -863,7 +863,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         addOutput(loop);
         return loop;
     }
-    
+
     public Type throwFault(Throwable fault) {
         ThrowFaultType answer = new ThrowFaultType();
         answer.setFault(fault);
@@ -983,25 +983,25 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
         return (Type) this;
     }
-    
+
     /**
      * Catches an exception type.
      *
      * @deprecated Please use {@link #onException(Class)} instead. Will be removed in Camel 2.0.
-     */    
+     */
     public ExceptionType exception(Class exceptionType) {
         return onException(exceptionType);
     }
 
     /**
      * Catches an exception type.
-     */       
+     */
     public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
         addOutput(answer);
         return answer;
-    }   
-    
+    }
+
     /**
      * Apply an interceptor route if the predicate is true
      */
@@ -1021,7 +1021,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Trace logs the exchange before it goes to the next processing step using
      * the {@link #DEFAULT_TRACE_CATEGORY} logging category.
-     * 
+     *
      * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
      * instead. Will be removed in Camel 2.0.
      */
@@ -1034,7 +1034,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * the specified logging category.
      *
      * @param category the logging category trace messages will sent to.
-     * 
+     *
      * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
      * instead. Will be removed in Camel 2.0.
      */
@@ -1323,7 +1323,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
         SetPropertyType answer = new SetPropertyType(name, clause);
         addOutput(answer);
-        return clause;        
+        return clause;
     }
 
     /**
@@ -1332,7 +1332,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type removeHeader(String name) {
         RemoveHeaderType answer = new RemoveHeaderType(name);
         addOutput(answer);
-        return (Type) this;        
+        return (Type) this;
     }
 
     /**
@@ -1348,7 +1348,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type removeProperty(String name) {
         RemovePropertyType answer = new RemovePropertyType(name);
         addOutput(answer);
-        return (Type) this;        
+        return (Type) this;
     }
 
     /**
