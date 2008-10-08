@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,7 +41,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
                     .aggregator().header("id")
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)
-                    // batch size in is the limit of number of exchanges recieved, so when we have received 100
+                    // batch size in is the limit of number of exchanges received, so when we have received 100
                     // exchanges then whatever we have in the collection will be sent
                     .batchSize(100)
                     // limit the out batch size to 3 so when we have aggregated 3 exchanges
@@ -54,9 +70,6 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         // when we send message 4 then we will reach the collection batch size limit and the
         // exchanges above is the ones we have aggregated in the first batch
         template.sendBodyAndHeader("direct:start", "Message 4", "id", "4");
-        template.sendBodyAndHeader("direct:start", "Message 3b", "id", "3");
-        template.sendBodyAndHeader("direct:start", "Message 3c", "id", "3");
-        template.sendBodyAndHeader("direct:start", "Message 1d", "id", "1");
 
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
@@ -74,7 +87,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
                     .aggregator().header("id")
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)
-                    // batch size in is the limit of number of exchanges recieved, so when we have received 100
+                    // batch size in is the limit of number of exchanges received, so when we have received 100
                     // exchanges then whatever we have in the collection will be sent
                     .batchSize(5)
                     .to("mock:result");
@@ -98,6 +111,8 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 1c", "id", "1");
         // when we sent the next message we have reached the in batch size limit and the current
         // aggregated exchanges will be sent
+        // wait a while for aggregating in a slower box
+        Thread.sleep(300L);
         template.sendBodyAndHeader("direct:start", "Message 3a", "id", "3");
         template.sendBodyAndHeader("direct:start", "Message 4", "id", "4");
         template.sendBodyAndHeader("direct:start", "Message 3b", "id", "3");

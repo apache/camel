@@ -20,10 +20,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.aggregate.DefaultAggregationCollection;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationCollection;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.DefaultAggregationCollection;
+import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 
 /**
  * An implementation of the <a
@@ -73,7 +73,7 @@ public class Aggregator extends BatchProcessor {
                 return true;
             }
         }
-        
+
         return super.isBatchCompleted(index);
     }
 }
