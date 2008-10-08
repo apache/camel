@@ -37,7 +37,7 @@ public class CamelJMXAgentType extends IdentifiedType {
      * Disable JMI (default false)
      */
     @XmlAttribute(required = false)
-    private Boolean disabled;
+    private Boolean disabled = Boolean.FALSE;
     
     /**
      * RMI connector registry port (default 1099)
@@ -73,7 +73,7 @@ public class CamelJMXAgentType extends IdentifiedType {
      * A flag that indicates whether the agent should be created
      */
     @XmlAttribute(required = false)
-    private Boolean createConnector;
+    private Boolean createConnector = Boolean.TRUE;
     
     /**
      * A flag that indicates whether the platform mbean server should be used
@@ -126,7 +126,7 @@ public class CamelJMXAgentType extends IdentifiedType {
     }
     
     public void setCreateConnector(Boolean value) {
-        createConnector = value;
+        createConnector = value !=  null ? value : Boolean.FALSE;
     }
 
     public Boolean isUsePlatformMBeanServer() {
@@ -134,7 +134,7 @@ public class CamelJMXAgentType extends IdentifiedType {
     }
     
     public void setUsePlatformMBeanServer(Boolean value) {
-        usePlatformMBeanServer = value;
+        usePlatformMBeanServer = value !=  null ? value : Boolean.FALSE;
     }
 
     public Boolean isDisabled() {
@@ -142,7 +142,6 @@ public class CamelJMXAgentType extends IdentifiedType {
     }
     
     public void setDisabled(Boolean value) {
-        disabled = value;
+        disabled = value != null ? value : Boolean.FALSE;
     }
-    
 }
