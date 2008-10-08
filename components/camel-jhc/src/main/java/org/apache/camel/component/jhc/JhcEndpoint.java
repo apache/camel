@@ -41,7 +41,7 @@ public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
 
     public JhcEndpoint(String endpointUri, JhcComponent component, URI httpUri) {
         super(endpointUri, component);
-        params = new BasicHttpParams(component.getParams());
+        params = component.getParams().copy();
         this.httpUri = httpUri;
     }
 

@@ -31,7 +31,6 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.nio.NHttpServerConnection;
 import org.apache.http.nio.util.ByteBufferAllocator;
 import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpParamsLinker;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.ExecutionContext;
 import org.apache.http.protocol.HttpContext;
@@ -116,10 +115,8 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
                                 AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
                             } catch (HttpException ex) {
                                 response = AsyncBufferingHttpServiceHandler.this.responseFactory.newHttpResponse(
-                                            HttpVersion.HTTP_1_0,
-                                            HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                                            conn.getContext());
-                                HttpParamsLinker.link(response, AsyncBufferingHttpServiceHandler.this.params);
+                                    HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR, conn.getContext());
+                                response.setParams(AsyncBufferingHttpServiceHandler.this.params);
                                 AsyncBufferingHttpServiceHandler.this.handleException(ex, response);
                                 AsyncBufferingHttpServiceHandler.this.sendResponse(conn, response);
                             }
@@ -127,10 +124,8 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
                     });
                 } else { // just hanlder the request with sync request handler
                     HttpResponse response = this.responseFactory.newHttpResponse(
-                                                                                 ver,
-                                                                                 HttpStatus.SC_OK,
-                                                                                 conn.getContext());
-                    HttpParamsLinker.link(response, this.params);
+                        ver, HttpStatus.SC_OK, conn.getContext());
+                    response.setParams(this.params);
                     context.setAttribute(ExecutionContext.HTTP_RESPONSE, response);
                     handler.handle(request, response, context);
                     sendResponse(conn, response);
@@ -138,23 +133,15 @@ public class AsyncBufferingHttpServiceHandler extends BufferingHttpServiceHandle
             } else {
                 // add the default handler here
                 HttpResponse response = this.responseFactory.newHttpResponse(
-                                                                             ver,
-                                                                             HttpStatus.SC_OK,
-                                                                             conn.getContext());
+                    ver, HttpStatus.SC_OK, conn.getContext());
                 response.setStatusCode(HttpStatus.SC_NOT_IMPLEMENTED);
-
             }
-
         } catch (HttpException ex) {
             HttpResponse response = this.responseFactory.newHttpResponse(
-                        HttpVersion.HTTP_1_0,
-                        HttpStatus.SC_INTERNAL_SERVER_ERROR,
-                    context);
-            HttpParamsLinker.link(response, this.params);
+                HttpVersion.HTTP_1_0, HttpStatus.SC_INTERNAL_SERVER_ERROR, context);
+            response.setParams(this.params);
             handleException(ex, response);
             sendResponse(conn, response);
         }
-
     }
-
 }

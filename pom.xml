@@ -45,7 +45,8 @@
     <cxf-version>2.1.2</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
-    <httpcore-version>4.0-alpha6</httpcore-version>
+    <httpcore-version>4.0-beta2</httpcore-version>
+    <httpcore-niossl-version>4.0-alpha6</httpcore-niossl-version>
     <jetty-version>6.1.11</jetty-version>
     <slf4j-version>1.5.2</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
@@ -757,7 +758,7 @@
       <dependency>
         <groupId>org.apache.httpcomponents</groupId>
         <artifactId>httpcore-niossl</artifactId>
-        <version>${httpcore-version}</version>
+        <version>${httpcore-niossl-version}</version>
       </dependency>
 
       <!-- optional scripting support -->
