@@ -52,7 +52,7 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoint,*"), null);
+                new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         s = mbsc.queryNames(
@@ -60,11 +60,11 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processor,*"), null);
+                new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 2 processor: " + s, 2, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=route,*"), null);
+                new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());
 
     }
@@ -79,9 +79,9 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
         resultEndpoint.assertIsSatisfied();
 
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=route,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processor,nodeid=to3,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processor,nodeid=to4,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to3,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to4,*"));
 
     }
 

@@ -53,19 +53,19 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoint,*"), null);
+                new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 0 endpoints: " + s, 0, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=context,*"), null);
+                new ObjectName(domainName + ":type=contexts,*"), null);
         assertEquals("Could not find 0 context: " + s, 0, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processor,*"), null);
+                new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 0 processor: " + s, 0, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=route,*"), null);
+                new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 0 route: " + s, 0, s.size());
 
     }

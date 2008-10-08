@@ -43,10 +43,10 @@ public class CamelNamingStrategy {
     public static final String KEY_ROUTE = "route";
     public static final String KEY_NODE_ID = "nodeid";
     public static final String TYPE_CONTEXT = "context";
-    public static final String TYPE_ENDPOINT = "endpoint";
-    public static final String TYPE_PROCESSOR = "processor";
-    public static final String TYPE_CONSUMER = "consumer";
-    public static final String TYPE_ROUTE = "route";
+    public static final String TYPE_ENDPOINT = "endpoints";
+    public static final String TYPE_PROCESSOR = "processors";
+    public static final String TYPE_CONSUMER = "consumers";
+    public static final String TYPE_ROUTE = "routes";
 
     protected String domainName;
     protected String hostName = "locahost";

@@ -64,8 +64,8 @@ public class DefaultJMXAgentTest extends SpringTestSupport {
     }
 
     public void testQueryMbeans() throws Exception {
-        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=route,*"), null).size());
-        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processor,*"), null).size());
+        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
+        assertEquals(1, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size());
     }
 
     @Override

@@ -36,8 +36,8 @@ public class DisableJmxAgentTest extends DefaultJMXAgentTest {
    
     @Override
     public void testQueryMbeans() throws Exception {
-        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=route,*"), null).size());
-        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processor,*"), null).size());
+        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=routes,*"), null).size());
+        assertEquals(0, mbsc.queryNames(new ObjectName("org.apache.camel" + ":type=processors,*"), null).size());
     }
 
 }

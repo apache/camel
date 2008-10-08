@@ -52,7 +52,7 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoint,*"), null);
+                new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
         s = mbsc.queryNames(
@@ -60,11 +60,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processor,*"), null);
+                new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 1 processor: " + s, 1, s.size());
 
         s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=route,*"), null);
+                new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());
 
     }
@@ -77,8 +77,8 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=route,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processor,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,*"));
 
     }
 
