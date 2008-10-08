@@ -205,7 +205,9 @@ public interface CamelContext extends Service {
      * Sets the routes for this context, replacing any current routes
      *
      * @param routes the new routes to use
+     * @deprecated is considered for deprecation, use addRoutes instead, could be removed in Camel 2.0
      */
+    @Deprecated
     void setRoutes(List<Route> routes);
 
     /**
@@ -282,7 +284,10 @@ public interface CamelContext extends Service {
     Language resolveLanguage(String language);
 
     /**
-     * Creates a new ProducerTemplate
+     * Creates a new ProducerTemplate.
+     * <p/>
+     * See this FAQ before use: <a href="http://activemq.apache.org/camel/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a>
      *
      * @return the template
      */
