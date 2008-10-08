@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class IBatisRouteTest extends ContextTestSupport {
-    
+
     public void testSendAccountBean() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMinimumMessageCount(1);
@@ -60,7 +60,8 @@ public class IBatisRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("ibatis:selectAllAccounts").to("mock:results");
+                //Delaying the query so we will not get the "java.sql.SQLException: Table not found in statement" on the slower box
+                from("timer://pollTheDatabase?delay=2000").to("ibatis:selectAllAccounts").to("mock:results");
 
                 from("direct:start").to("ibatis:insertAccount");
             }
