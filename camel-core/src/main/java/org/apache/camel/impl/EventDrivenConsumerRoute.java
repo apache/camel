@@ -65,8 +65,7 @@ public class EventDrivenConsumerRoute<E extends Exchange> extends Route<E> {
         }
         Processor processor = getProcessor();
         if (processor instanceof Service) {
-            Service service = (Service) processor;
-            services.add(service);
+            services.add((Service)processor);
         }
     }
 }
