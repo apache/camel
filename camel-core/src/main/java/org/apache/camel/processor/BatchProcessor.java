@@ -173,11 +173,11 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
      * A strategy method to decide if the batch is completed the resulting exchanges should be sent
      */
     protected boolean isBatchCompleted(int index) {
-        // out batch size is optional and we should only check if its enabled (> 0)
+        // out batch size is optional and we should only check it if its enabled (= >0)
         if (outBatchSize > 0 && collection.size() >= outBatchSize) {
             return true;
         }
-        // fallback yo regular batch size check
+        // fallback to regular batch size check
         return index >= batchSize;
     }
 

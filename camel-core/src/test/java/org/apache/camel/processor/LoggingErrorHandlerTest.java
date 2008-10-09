@@ -103,9 +103,6 @@ public class LoggingErrorHandlerTest extends ContextTestSupport {
         }
 
         public void info(Object message, Throwable t) {
-            assertNotNull(t);
-            assertNotNull(message);
-            logged = true;
         }
 
         public void warn(Object message) {
@@ -118,6 +115,9 @@ public class LoggingErrorHandlerTest extends ContextTestSupport {
         }
 
         public void error(Object message, Throwable t) {
+            assertNotNull(t);
+            assertNotNull(message);
+            logged = true;
         }
 
         public void fatal(Object message) {
