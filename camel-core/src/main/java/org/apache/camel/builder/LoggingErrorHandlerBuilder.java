@@ -25,22 +25,22 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Uses the {@link Logger} as an error handler
+ * Uses the {@link Logger} as an error handler, will log at <tt>ERROR</tt> level by default.
  *
  * @version $Revision$
  */
 public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     private Log log = LogFactory.getLog(Logger.class);
-    private LoggingLevel level = LoggingLevel.INFO;
+    private LoggingLevel level = LoggingLevel.ERROR;
 
     public LoggingErrorHandlerBuilder() {
     }
 
-    public LoggingErrorHandlerBuilder(Log log) {
+    public LoggingErrorHandlerBuilder(final Log log) {
         this.log = log;
     }
 
-    public LoggingErrorHandlerBuilder(Log log, LoggingLevel level) {
+    public LoggingErrorHandlerBuilder(final Log log, final LoggingLevel level) {
         this.log = log;
         this.level = level;
     }
@@ -52,7 +52,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return answer;
     }
 
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
+    public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
         LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
         configure(handler);
         return handler;
@@ -62,7 +62,7 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return level;
     }
 
-    public void setLevel(LoggingLevel level) {
+    public void setLevel(final LoggingLevel level) {
         this.level = level;
     }
 
@@ -70,7 +70,18 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return log;
     }
 
-    public void setLog(Log log) {
+    public void setLog(final Log log) {
         this.log = log;
     }
+
+    public LoggingErrorHandlerBuilder level(final LoggingLevel level) {
+    	this.level = level;
+    	return this;
+    }
+
+    public LoggingErrorHandlerBuilder log(final Log log) {
+    	this.log = log;
+    	return this;
+    }
+
 }
