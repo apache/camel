@@ -120,6 +120,23 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    public void testSecurityConfiguredWithExceptionList() throws Exception {
+        // test that we also handles a configuration with a list of exceptions
+        MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
+        mock.expectedMessageCount(1);
+        mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some access error");
+
+        try {
+            template.sendBody("direct:a", "I am not allowed to access this");
+            fail("Should have thrown a GeneralSecurityException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof IllegalAccessException);
+            // expected
+        }
+
+        mock.assertIsSatisfied();
+    }
+
     public static class MyBaseBusinessException extends Exception {
     }
 
@@ -130,12 +147,12 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: exceptionBuilder1
-                exception(NullPointerException.class)
-                    .maximumRedeliveries(1)
+                onException(NullPointerException.class)
+                    .maximumRedeliveries(0)
                     .setHeader(MESSAGE_INFO, constant("Damm a NPE"))
                     .to(ERROR_QUEUE);
 
-                exception(IOException.class)
+                onException(IOException.class)
                     .initialRedeliveryDelay(5000L)
                     .maximumRedeliveries(3)
                     .maximumRedeliveryDelay(30000L)
@@ -144,24 +161,28 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception"))
                     .to(ERROR_QUEUE);
 
-                exception(Exception.class)
+                onException(Exception.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(2)
                     .setHeader(MESSAGE_INFO, constant("Damm just exception"))
                     .to(ERROR_QUEUE);
-                // END SNIPPET: exceptionBuilder1
 
-                exception(MyBaseBusinessException.class)
+                onException(MyBaseBusinessException.class)
                     .initialRedeliveryDelay(1000L)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                     .to(BUSINESS_ERROR_QUEUE);
 
-                exception(GeneralSecurityException.class).exception(KeyException.class)
+                onException(GeneralSecurityException.class).onException(KeyException.class)
                     .maximumRedeliveries(1)
                     .setHeader(MESSAGE_INFO, constant("Damm some security error"))
                     .to(SECURITY_ERROR_QUEUE);
 
+                onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class)
+                    .maximumRedeliveries(0)
+                    .setHeader(MESSAGE_INFO, constant("Damm some access error"))
+                    .to(ERROR_QUEUE);
+                // END SNIPPET: exceptionBuilder1
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -176,6 +197,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                             throw new MyBusinessException();
                         } else if ("I am not allowed to do this".equals(s)) {
                             throw new KeyManagementException();
+                        } else if ("I am not allowed to access this".equals(s)) {
+                            throw new IllegalAccessException();
                         }
                         exchange.getOut().setBody("Hello World");
                     }
@@ -183,7 +206,6 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             }
         };
     }
-
 }
 
 
