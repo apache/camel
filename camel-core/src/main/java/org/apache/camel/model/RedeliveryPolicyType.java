@@ -46,7 +46,7 @@ public class RedeliveryPolicyType {
             answer.setMaximumRedeliveries(maximumRedeliveries);
         }
         if (initialRedeliveryDelay != null) {
-            answer.setInitialRedeliveryDelay(initialRedeliveryDelay);
+            answer.setDelay(initialRedeliveryDelay);
         }
         if (backOffMultiplier != null) {
             answer.setBackOffMultiplier(backOffMultiplier);
