@@ -143,7 +143,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     public ExceptionType onException(Class... exceptions) {
         ExceptionType last = null;
         for (Class ex : exceptions) {
-            last = last == null? onException(ex) : last.onException(ex);
+            last = last == null ? onException(ex) : last.onException(ex);
         }
         return last != null ? last : onException(Exception.class);
     }
