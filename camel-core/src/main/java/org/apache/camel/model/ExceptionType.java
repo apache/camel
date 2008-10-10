@@ -71,7 +71,16 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public String toString() {
         return "Exception[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
     }
-
+    
+    /**
+     * Catches an exception type.
+     */
+    @Override
+    public ExceptionType onException(Class exceptionType) {
+        getExceptionClasses().add(exceptionType);
+        return this;
+    }
+    
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
      * @param parentPolicy the current redelivery policy

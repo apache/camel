@@ -138,6 +138,17 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
+     * Adds an exception handler route for the given exception types
+     */
+    public ExceptionType onException(Class... exceptions) {
+        ExceptionType last = null;
+        for (Class ex : exceptions) {
+            last = last == null? onException(ex) : last.onException(ex);
+        }
+        return last != null ? last : onException(Exception.class);
+    }
+
+    /**
      * Adds an exception handler route for the given exception type
      *
      * @deprecated Please use {@link #onException(Class)} instead. Will be removed in Camel 2.0.
