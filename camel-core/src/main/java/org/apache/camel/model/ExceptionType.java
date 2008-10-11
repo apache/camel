@@ -27,9 +27,11 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -46,7 +48,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "redeliveryPolicy", required = false)
+     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
@@ -54,6 +56,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private List<Class> exceptionClasses;
     @XmlTransient
     private Processor errorHandler;
+    @XmlTransient
+    private Predicate handledPolicy;
 
     public ExceptionType() {
     }
@@ -115,6 +119,16 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Fluent API
     //-------------------------------------------------------------------------
+    public ExceptionType handled(boolean cond) {
+        ConstantLanguage constant = new ConstantLanguage();
+        return handled(constant.createPredicate("true"));
+    }
+    
+    public ExceptionType handled(Predicate cond) {
+        setHandledPolicy(cond);
+        return this;
+    }
+    
     public ExceptionType backOffMultiplier(double backOffMultiplier) {
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
@@ -194,6 +208,14 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     public void setRedeliveryPolicy(RedeliveryPolicyType redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    public Predicate getHandledPolicy() {
+        return handledPolicy;
+    }
+
+    public void setHandledPolicy(Predicate handledPolicy) {
+        this.handledPolicy = handledPolicy;
     }
 
     // Implementation methods
