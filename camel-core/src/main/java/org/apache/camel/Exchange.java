@@ -35,6 +35,7 @@ public interface Exchange {
     String AGGREGATED_COUNT = "org.apache.camel.Exchange.AggregatedCount";
 
     String EXCEPTION_HANDLED_PROPERTY = "CamelExceptionHandled";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

@@ -86,7 +86,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     @Override
     public String toString() {
-        return "DeadLetterChannel[" + output + ", " + deadLetter + ", " + redeliveryPolicy + "]";
+        return "DeadLetterChannel[" + output + ", " + deadLetter + "]";
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
