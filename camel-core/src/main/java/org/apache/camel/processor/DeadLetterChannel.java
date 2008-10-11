@@ -45,7 +45,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     public static final String REDELIVERED = "org.apache.camel.Redelivered";
     public static final String EXCEPTION_CAUSE_PROPERTY = "CamelCauseException";
 
-
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
     private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName() + ".FAILURE_HANDLED";
     private Processor output;
@@ -208,9 +207,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     protected static void restoreExceptionOnExchange(Exchange exchange, Predicate handledPredicate) {
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
+            }
             // exception not handled, put exception back in the exchange
             exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
         } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
+            }
             exchange.setProperty(Exchange.EXCEPTION_HANDLED_PROPERTY, Boolean.TRUE);
         }
     }

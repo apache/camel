@@ -147,7 +147,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     /**
      * Sets the exception policy to use
      */
-    public ErrorHandlerBuilderSupport exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+    public DeadLetterChannelBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         setExceptionPolicyStrategy(exceptionPolicyStrategy);
         return this;
     }
