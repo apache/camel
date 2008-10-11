@@ -35,11 +35,14 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ExceptionBuilderTest extends ContextTestSupport {
 
     private static final String MESSAGE_INFO = "messageInfo";
+    private static final String RESULT_QUEUE = "mock:result";
     private static final String ERROR_QUEUE = "mock:error";
     private static final String BUSINESS_ERROR_QUEUE = "mock:badBusiness";
     private static final String SECURITY_ERROR_QUEUE = "mock:securityError";
 
     public void testNPE() throws Exception {
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm a NPE");
@@ -52,10 +55,12 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public void testIOException() throws Exception {
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm somekind of IO exception");
@@ -68,10 +73,12 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public void testException() throws Exception {
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm just exception");
@@ -84,10 +91,12 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public void testMyBusinessException() throws Exception {
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(BUSINESS_ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my business is not going to well");
@@ -100,11 +109,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public void testSecurityConfiguredWithTwoExceptions() throws Exception {
         // test that we also handles a configuration with 2 or more exceptions
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(SECURITY_ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some security error");
@@ -117,11 +128,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public void testSecurityConfiguredWithExceptionList() throws Exception {
         // test that we also handles a configuration with a list of exceptions
+        MockEndpoint result = getMockEndpoint(RESULT_QUEUE);
+        result.expectedMessageCount(0);
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Damm some access error");
@@ -134,7 +147,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        MockEndpoint.assertIsSatisfied(result, mock);
     }
 
     public static class MyBaseBusinessException extends Exception {
