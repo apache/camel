@@ -48,7 +48,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
-     @XmlElement(name = "redeliveryPolicy", required = false)
+    @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
@@ -121,7 +121,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     //-------------------------------------------------------------------------
     public ExceptionType handled(boolean cond) {
         ConstantLanguage constant = new ConstantLanguage();
-        return handled(constant.createPredicate("true"));
+        return handled(constant.createPredicate(Boolean.toString(cond)));
     }
     
     public ExceptionType handled(Predicate cond) {
