@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to verift that redelivery counters is working as expected.
+ * Unit test to verify that redelivery counters is working as expected.
  */
 public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
 

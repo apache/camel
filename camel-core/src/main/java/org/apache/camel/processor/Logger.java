@@ -208,6 +208,7 @@ public class Logger implements Processor {
                 log.warn(message, exception);
             }
             break;
+        case OFF: break;
         default:
             log.error("Unknown level: " + level + " when trying to log exchange: " + message, exception);
         }

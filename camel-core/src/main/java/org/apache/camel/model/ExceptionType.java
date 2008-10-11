@@ -27,10 +27,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -119,16 +121,21 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Fluent API
     //-------------------------------------------------------------------------
-    public ExceptionType handled(boolean cond) {
+    public ExceptionType handled(boolean handled) {
         ConstantLanguage constant = new ConstantLanguage();
-        return handled(constant.createPredicate(Boolean.toString(cond)));
+        return handled(constant.createPredicate(Boolean.toString(handled)));
     }
     
-    public ExceptionType handled(Predicate cond) {
-        setHandledPolicy(cond);
+    public ExceptionType handled(Predicate handled) {
+        setHandledPolicy(handled);
         return this;
     }
     
+    public ExceptionType handled(Expression handled) {
+        setHandledPolicy(toPredicate(handled));
+        return this;
+    }
+
     public ExceptionType backOffMultiplier(double backOffMultiplier) {
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
