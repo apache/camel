@@ -17,6 +17,7 @@
 package org.apache.camel.component.mail;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.mail.BodyPart;
 import javax.mail.Message;
@@ -25,6 +26,7 @@ import javax.mail.Multipart;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.Converter;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * JavaMail specific converters.
@@ -39,7 +41,7 @@ public class MailConverters {
      * Can return null.
      */
     @Converter
-    public String toString(Message message) throws MessagingException, IOException {
+    public static String toString(Message message) throws MessagingException, IOException {
         Object content = message.getContent();
         if (content instanceof MimeMultipart) {
             MimeMultipart multipart = (MimeMultipart) content;
@@ -69,4 +71,31 @@ public class MailConverters {
         }
         return null;
     }
+
+    /**
+     * Converts the given JavaMail message to an InputStream.
+     * Can return null.
+     */
+    @Converter
+    public static InputStream toInputStream(Message message) throws IOException, MessagingException {
+        String s = toString(message);
+        if (s == null) {
+            return null;
+        }
+        return IOConverter.toInputStream(s);
+    }
+
+    /**
+     * Converts the given JavaMail multipart to a InputStream body, where the contenttype of the multipart
+     * must be text based (ie start with text). Can return null.
+     */
+    @Converter
+    public static InputStream toInputStream(Multipart multipart) throws IOException, MessagingException {
+        String s = toString(multipart);
+        if (s == null) {
+            return null;
+        }
+        return IOConverter.toInputStream(s);
+    }
+
 }
