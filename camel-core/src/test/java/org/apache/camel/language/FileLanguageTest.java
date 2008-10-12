@@ -47,6 +47,10 @@ public class FileLanguageTest extends LanguageTestSupport {
         return "file";
     }
 
+    public void testConstantExpression() throws Exception {
+        assertExpression("MyBigFile.txt", "MyBigFile.txt");
+    }
+
     public void testMessageId() throws Exception {
         assertExpression("${id}", exchange.getIn().getMessageId());
         assertExpression("${id}.bak", exchange.getIn().getMessageId() + ".bak");

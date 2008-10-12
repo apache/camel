@@ -23,6 +23,8 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.language.IllegalSyntaxException;
+import org.apache.camel.language.constant.ConstantLanguage;
 
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a> based
@@ -163,7 +165,12 @@ public final class FileExpressionBuilder {
             public Object evaluate(E exchange) {
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
-                return SimpleLanguage.simple(simple).evaluate(exchange);
+                try {
+                    return SimpleLanguage.simple(simple).evaluate(exchange);
+                } catch (IllegalSyntaxException e) {
+                    // fallback to constant so end users can enter a fixed filename
+                    return ConstantLanguage.constant(simple).evaluate(exchange);
+                }
             }
 
             @Override

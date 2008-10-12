@@ -23,6 +23,15 @@ import org.apache.camel.LanguageTestSupport;
  */
 public class SimpleTest extends LanguageTestSupport {
 
+    public void testConstantExpression() throws Exception {
+        try {
+            assertExpression("Hello World", "Hello World");
+            fail("Should have thrown an Exception");
+        } catch (IllegalSyntaxException e) {
+            // constants is not supported
+        }
+    }
+
     public void testSimpleExpressions() throws Exception {
         assertExpression("id", exchange.getIn().getMessageId());
         assertExpression("body", "<hello id='m123'>world!</hello>");
