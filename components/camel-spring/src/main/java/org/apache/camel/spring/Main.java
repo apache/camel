@@ -193,13 +193,19 @@ public class Main extends ServiceSupport {
      * Displays the command line options
      */
     public void showOptions() {
-        System.out.println("Apache Camel Runner takes the following options");
-        System.out.println();
+        showOptionsHeader();
 
         for (Option option : options) {
-            System.out.println("  " + option.getAbbreviation() + " or " + option.getFullName() + " = "
-                    + option.getDescription());
+            System.out.println(option.getInformation());
         }
+    }
+
+    /**
+     * Displays the header message for the command line options
+     */
+    public void showOptionsHeader() {
+      System.out.println("Apache Camel Runner takes the following options");
+      System.out.println();
     }
 
     /**
@@ -267,6 +273,10 @@ public class Main extends ServiceSupport {
             return fullName;
         }
 
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName() + " = " + getDescription();
+        }
+
         protected abstract void doProcess(String arg, LinkedList<String> remainingArgs);
     }
 
@@ -288,6 +298,11 @@ public class Main extends ServiceSupport {
                 String parameter = remainingArgs.removeFirst();
                 doProcess(arg, parameter, remainingArgs);
             }
+        }
+
+        public String getInformation() {
+            return "  " + getAbbreviation() + " or " + getFullName()
+                    + " <" + parameterName + "> = " + getDescription();
         }
 
         protected abstract void doProcess(String arg, String parameter, LinkedList<String> remainingArgs);
