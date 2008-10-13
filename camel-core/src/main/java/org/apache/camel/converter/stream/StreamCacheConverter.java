@@ -22,15 +22,15 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 
-import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,8 +45,25 @@ public class StreamCacheConverter {
     private XmlConverter converter = new XmlConverter();
 
     @Converter
-    public StreamCache convertToStreamCache(Source source) throws TransformerException {
-        return new StreamSourceCache(converter.toString(source));
+    public StreamCache convertToStreamCache(StreamSource source) throws TransformerException {
+        return new SourceCache(converter.toString(source));
+    }
+    
+    @Converter
+    public StreamCache convertToStreamCache(StringSource source) throws TransformerException {
+        //no need to do stream caching for a StringSource
+        return null;
+    }
+    
+    @Converter
+    public StreamCache convertToStreamCache(BytesSource source) throws TransformerException {
+        //no need to do stream caching for a StringSource
+        return null;
+    }
+    
+    @Converter
+    public StreamCache convertToStreamCache(SAXSource source) throws TransformerException {
+        return new SourceCache(converter.toString(source));
     }
 
     @Converter
@@ -59,11 +76,14 @@ public class StreamCacheConverter {
         return new ReaderCache(IOConverter.toString(reader));
     }
 
-    private class StreamSourceCache extends StringSource implements StreamCache {
+    /*
+     * {@link StreamCache} implementation for {@link Source}s
+     */
+    private class SourceCache extends StringSource implements StreamCache {
 
         private static final long serialVersionUID = 4147248494104812945L;
 
-        public StreamSourceCache(String text) {
+        public SourceCache(String text) {
             super(text);
         }
 

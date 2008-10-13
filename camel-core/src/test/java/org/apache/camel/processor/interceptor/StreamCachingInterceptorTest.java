@@ -22,11 +22,16 @@ import java.io.StringReader;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.jaxp.BytesSource;
+import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.InterceptorType;
@@ -34,45 +39,67 @@ import org.apache.camel.processor.DelegateProcessor;
 
 public class StreamCachingInterceptorTest extends ContextTestSupport {
 
+    private static final String MESSAGE = "<hello>world!</hello>";
+    private static final String BODY_TYPE = "body.type";
+    
     private MockEndpoint a;
     private MockEndpoint b;
+    private final XmlConverter converter = new XmlConverter();
 
     public void testConvertStreamSourceWithRouteBuilderStreamCaching() throws Exception {
         a.expectedMessageCount(1);
 
-        StreamSource message = new StreamSource(new StringReader("<hello>world!</hello>"));
+        StreamSource message = new StreamSource(new StringReader(MESSAGE));
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
+    }
+    
+    public void testNoConversionForOtherXmlSourceTypes() throws Exception {
+        a.expectedMessageCount(3);
+
+        send(converter.toDOMSource(MESSAGE));
+        send(new StringSource(MESSAGE));
+        send(new BytesSource(MESSAGE.getBytes()));
+
+        assertMockEndpointsSatisfied();
+        for (Exchange exchange : a.getExchanges()) {
+            assertFalse(exchange.getIn().getHeader(BODY_TYPE, Class.class).toString() + " shouldn't have been converted to StreamCache", 
+                        exchange.getIn().getBody() instanceof StreamCache);
+        }        
+    }
+
+    private void send(Source source) {
+        template.sendBodyAndHeader("direct:a", source, BODY_TYPE, source.getClass());
     }
 
     public void testConvertStreamSourceWithRouteOnlyStreamCaching() throws Exception {
         b.expectedMessageCount(1);
 
-        StreamSource message = new StreamSource(new StringReader("<hello>world!</hello>"));
+        StreamSource message = new StreamSource(new StringReader(MESSAGE));
         template.sendBody("direct:b", message);
 
         assertMockEndpointsSatisfied();
         assertTrue(b.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
-        assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
+        assertEquals(b.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
     public void testConvertInputStreamWithRouteBuilderStreamCaching() throws Exception {
         a.expectedMessageCount(1);
 
-        InputStream message = new ByteArrayInputStream("<hello>world!</hello>".getBytes());
+        InputStream message = new ByteArrayInputStream(MESSAGE.getBytes());
         template.sendBody("direct:a", message);
 
         assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);
-        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), "<hello>world!</hello>");
+        assertEquals(a.assertExchangeReceived(0).getIn().getBody(String.class), MESSAGE);
     }
 
     public void testIgnoreAlreadyRereadable() throws Exception {
         a.expectedMessageCount(1);
 
-        template.sendBody("direct:a", "<hello>world!</hello>");
+        template.sendBody("direct:a", MESSAGE);
 
         assertMockEndpointsSatisfied();
         assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof String);
