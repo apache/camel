@@ -85,7 +85,7 @@ public class MethodInfo {
                 return arguments;
             }
 
-            public Object proceed() throws Throwable {
+            public Object proceed() throws Exception {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace(">>>> invoking: " + method + " on bean: " + pojo + " with arguments: " + asString(arguments) + " for exchange: " + exchange);
                 }

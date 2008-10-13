@@ -30,7 +30,7 @@ public interface MethodInvocation {
 
     Object[] getArguments();
 
-    Object proceed() throws Throwable;
+    Object proceed() throws Exception;
 
     Object getThis();
 
