@@ -92,6 +92,8 @@ abstract class SAbstractType extends DSL {
   
   def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
   
+  def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+  
   def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregator(expression))
 
 }

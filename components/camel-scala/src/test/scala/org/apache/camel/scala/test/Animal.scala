@@ -14,24 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala;
+package org.apache.camel.scala.test;
 
-import org.apache.camel.component.mock.MockEndpoint
+import _root_.scala.reflect.BeanProperty
 
-class RichMockEndpoint(val endpoint: MockEndpoint) {
+/**
+ * Just a simple Animal test class
+ */
+abstract class Animal(@BeanProperty val name: String, @BeanProperty val genus: String)
 
-  def received(messages: AnyRef*) {
-    val list = new java.util.ArrayList[AnyRef](messages.length)
-    messages.foreach(list.add(_))
-    endpoint.expectedBodiesReceived(list)
-  }
-  
-  def headerReceived(name: String, value: String) {
-    endpoint.expectedHeaderReceived(name, value)
-  }
+case class Cat(override val name: String) extends Animal(name, "felis") 
+case class Kitten(override val name: String) extends Cat(name)
 
-  def count : Int = endpoint.getExpectedCount
-  
-  def count_=(count: Int) = endpoint.expectedMessageCount(count)
-}
-
+case class Dog(override val name: String) extends Animal(name, "canis")
+case class Puppy(override val name: String) extends Dog(name)

@@ -20,9 +20,9 @@ import scala.dsl.builder.RouteBuilder
 import org.apache.camel.scala.test.{Cat, Kitten}
 
 /**
- * Test for setting the message body from the Scala DSL
+ * Test for setting the message header from the Scala DSL
  */
-class SetBodyTest extends ScalaTestSupport {
+class SetHeaderTest extends ScalaTestSupport {
 
   def testSimpleSetBody() = doTestConstant("direct:a", "mock:a")
   def testBlockSetBody() = doTestConstant("direct:b", "mock:b")
@@ -32,14 +32,14 @@ class SetBodyTest extends ScalaTestSupport {
   
   
   def doTestConstant(from: String, mock: String) = {
-    mock expect {_.received("pong")}
+    mock expect { _.headerReceived("response", "pong?")}
     test {
       from ! ("ping")
     }    
   }
   
   def doTestExpression(from: String, mock: String) = {
-    mock expect {_.received("Duchess", "Toulouse")}
+    mock expect {_.headerReceived("genus", "felis")}
     test {
       from ! (new Cat("Duchess"), new Kitten("Toulouse"))
     }    
@@ -47,18 +47,18 @@ class SetBodyTest extends ScalaTestSupport {
     
   val builder = new RouteBuilder with languages.El {
      //START SNIPPET: simple
-     "direct:a" setbody "pong" to "mock:a"
-     "direct:c" setbody el("${in.body.name}") to "mock:c"
+     "direct:a" setheader("response", "pong?") to "mock:a"
+     "direct:c" setheader("genus",el("${in.body.genus}")) to "mock:c"
      //END SNIPPET: simple
      
      //START SNIPPET: block
      "direct:b" ==> {
-       setbody("pong")
+       setheader("response", "pong?")
        to ("mock:b")
      }
      
      "direct:d" ==> {
-       setbody(el("${in.body.name}"))
+       setheader("genus", el("${in.body.genus}"))
        to ("mock:d")
      }
      //END SNIPPET: block

@@ -74,6 +74,7 @@ class RouteBuilder extends Preamble with DSL {
   def delay(delay: Period) = stack.top.delay(delay)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
+  def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
 }
