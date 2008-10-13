@@ -57,7 +57,7 @@ public class StreamCacheConverter {
     
     @Converter
     public StreamCache convertToStreamCache(BytesSource source) throws TransformerException {
-        //no need to do stream caching for a StringSource
+        //no need to do stream caching for a BytesSource
         return null;
     }
     
