@@ -133,17 +133,14 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             }
         } catch (InvocationTargetException e) {
             // lets unwrap the exception
-            Throwable cause = e.getCause();
-            if (cause instanceof Exception) {
-                throw (Exception) cause;
+            Throwable throwable = e.getCause();
+            if (throwable instanceof Exception) {
+                Exception exception = (Exception)throwable;
+                throw exception;
             } else {
-                // do not handle errors!
-                throw e;
+                Error error = (Error)throwable;
+                throw error;
             }
-        } catch (Exception e) {
-            throw e;
-        } catch (Throwable throwable) {
-            throw new Exception(throwable);
         } finally {
             if (isExplicitMethod) {
                 in.setHeader(METHOD_NAME, prevMethod);

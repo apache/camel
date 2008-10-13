@@ -221,7 +221,8 @@ public final class IntrospectionSupport {
                 return false;
             }
         } catch (InvocationTargetException e) {
-            Throwable throwable = e.getTargetException();
+            // lets unwrap the exception
+            Throwable throwable = e.getCause();
             if (throwable instanceof Exception) {
                 Exception exception = (Exception)throwable;
                 throw exception;
