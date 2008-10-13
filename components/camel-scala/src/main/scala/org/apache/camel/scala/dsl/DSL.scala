@@ -38,6 +38,7 @@ trait DSL {
   def delay(delay: Period) : SDelayerType
   def resequence(expression: Exchange => Any) : SResequencerType
   def setbody(expression: Exchange => Any) : DSL
+  def setheader(header: String, expression: Exchange => Any) : DSL
   def aggregate(expression: Exchange => Any) : SAggregatorType
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
 
