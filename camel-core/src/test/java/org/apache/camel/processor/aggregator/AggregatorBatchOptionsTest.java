@@ -55,10 +55,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
 
         // START SNIPPET: e2
         MockEndpoint result = getMockEndpoint("mock:result");
-
-        // we expect 3 messages grouped by the latest message only
-        result.expectedMinimumMessageCount(3);
-        result.expectedBodiesReceived("Message 1c", "Message 2b", "Message 3a");
+        result.expectedMessageCount(4);
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "Message 1a", "id", "1");
@@ -72,6 +69,14 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 4", "id", "4");
 
         assertMockEndpointsSatisfied();
+
+        // first batch
+        assertEquals("Message 1c", result.getExchanges().get(0).getIn().getBody());
+        assertEquals("Message 2b", result.getExchanges().get(1).getIn().getBody());
+        assertEquals("Message 3a", result.getExchanges().get(2).getIn().getBody());
+
+        // second batch
+        assertEquals("Message 4", result.getExchanges().get(3).getIn().getBody());
         // END SNIPPET: e2
     }
 
@@ -87,7 +92,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
                     .aggregator().header("id")
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)
-                    // batch size in is the limit of number of exchanges received, so when we have received 100
+                    // batch size in is the limit of number of exchanges received, so when we have received 5
                     // exchanges then whatever we have in the collection will be sent
                     .batchSize(5)
                     .to("mock:result");
@@ -98,10 +103,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
 
         // START SNIPPET: e4
         MockEndpoint result = getMockEndpoint("mock:result");
-
-        // we expect 3 messages grouped by the latest message only
-        result.expectedMinimumMessageCount(2);
-        result.expectedBodiesReceived("Message 1c", "Message 2b");
+        result.expectedMessageCount(5);
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "Message 1a", "id", "1");
@@ -112,7 +114,6 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         // when we sent the next message we have reached the in batch size limit and the current
         // aggregated exchanges will be sent
         // wait a while for aggregating in a slower box
-        Thread.sleep(300L);
         template.sendBodyAndHeader("direct:start", "Message 3a", "id", "3");
         template.sendBodyAndHeader("direct:start", "Message 4", "id", "4");
         template.sendBodyAndHeader("direct:start", "Message 3b", "id", "3");
@@ -120,6 +121,15 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 1d", "id", "1");
 
         assertMockEndpointsSatisfied();
+
+        // first batch
+        assertEquals("Message 1c", result.getExchanges().get(0).getIn().getBody());
+        assertEquals("Message 2b", result.getExchanges().get(1).getIn().getBody());
+
+        // second batch
+        assertEquals("Message 3c", result.getExchanges().get(2).getIn().getBody());
+        assertEquals("Message 4", result.getExchanges().get(3).getIn().getBody());
+        assertEquals("Message 1d", result.getExchanges().get(4).getIn().getBody());
         // END SNIPPET: e4
     }
 
@@ -143,10 +153,7 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
 
         // START SNIPPET: e6
         MockEndpoint result = getMockEndpoint("mock:result");
-
-        // we expect 3 messages grouped by the latest message only
-        result.expectedMinimumMessageCount(3);
-        result.expectedBodiesReceived("Message 1c", "Message 2b", "Message 3a");
+        result.expectedMessageCount(6);
 
         // then we sent all the message at once
         template.sendBodyAndHeader("direct:start", "Message 1a", "id", "1");
@@ -156,13 +163,23 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 1c", "id", "1");
         template.sendBodyAndHeader("direct:start", "Message 3a", "id", "3");
         Thread.sleep(600L);
-        // these messages are not aggregated as the timeout should have accoured
+        // these messages are not aggregated in the first batch as the timeout should have accoured
         template.sendBodyAndHeader("direct:start", "Message 4", "id", "4");
         template.sendBodyAndHeader("direct:start", "Message 3b", "id", "3");
         template.sendBodyAndHeader("direct:start", "Message 3c", "id", "3");
         template.sendBodyAndHeader("direct:start", "Message 1d", "id", "1");
 
         assertMockEndpointsSatisfied();
+
+        // first batch
+        assertEquals("Message 1c", result.getExchanges().get(0).getIn().getBody());
+        assertEquals("Message 2b", result.getExchanges().get(1).getIn().getBody());
+        assertEquals("Message 3a", result.getExchanges().get(2).getIn().getBody());
+
+        // second batch
+        assertEquals("Message 4", result.getExchanges().get(3).getIn().getBody());
+        assertEquals("Message 3c", result.getExchanges().get(4).getIn().getBody());
+        assertEquals("Message 1d", result.getExchanges().get(5).getIn().getBody());
         // END SNIPPET: e6
     }
 
