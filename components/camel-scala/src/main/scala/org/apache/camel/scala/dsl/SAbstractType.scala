@@ -90,6 +90,8 @@ abstract class SAbstractType extends DSL {
   
   def resequence(expression: Exchange => Any) = new SResequencerType(target.resequencer(expression))
   
+  def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+  
   def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregator(expression))
 
 }
