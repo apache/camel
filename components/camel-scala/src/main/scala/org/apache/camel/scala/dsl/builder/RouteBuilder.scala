@@ -37,6 +37,7 @@ class RouteBuilder extends Preamble with DSL {
 
   implicit def stringToRoute(target: String) : SRouteType = new SRouteType(builder.from(target), this)  
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
+  implicit def constantToExpression(value: Any) : (Exchange => Any) = (exchange: Exchange) => value 
 
   def print() = {
     println(builder)
@@ -72,6 +73,7 @@ class RouteBuilder extends Preamble with DSL {
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
+  def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
 }

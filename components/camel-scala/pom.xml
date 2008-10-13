@@ -88,6 +88,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-juel</artifactId>
+      <type>jar</type>
+      <scope>test</scope>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jxpath</artifactId>
       <type>jar</type>
       <scope>test</scope>

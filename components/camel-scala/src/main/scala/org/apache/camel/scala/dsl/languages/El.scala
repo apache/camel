@@ -14,19 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.test;
+package org.apache.camel.scala.dsl.languages;
 
-import _root_.scala.reflect.BeanProperty
+import org.apache.camel.builder.xml.XPathBuilder
 
 /**
- * Just a simple Person test class
+ * Trait to improve expression language support for Scala DSL
  */
-abstract class Person {
-  def canVote : Boolean
-}
-case class Adult(@BeanProperty name: String) extends Person {
-  def canVote = true
-}
-case class Toddler(@BeanProperty name: String) extends Person {
-  def canVote = false
+trait El {
+  
+  implicit def exchangeToEl(exchange: Exchange) = new RichElExchange(exchange)
+  
+  def language(exchange: Exchange) = exchange.getContext().resolveLanguage("el")
+  def el(el: String)(exchange: Exchange) : Any = 
+    language(exchange).createExpression(el).evaluate(exchange)
+  
+  class RichElExchange(val exchange: Exchange) {
+    
+    def el(el: String) : Any = El.this.el(el)(exchange)
+    
+  }
+  
 }
