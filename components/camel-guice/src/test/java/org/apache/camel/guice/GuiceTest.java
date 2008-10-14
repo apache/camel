@@ -17,24 +17,36 @@
 package org.apache.camel.guice;
 
 import com.google.inject.Guice;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 
-
 /**
- * Lets use a RouteBuilder to bind instances of routes to the CamelContext
- *
- * @version $Revision$
+ * @version $Revision: 689344 $
  */
-public class ConciseGuiceRouteTest extends TestCase {
+public class GuiceTest extends TestCase {
+
+    public static class Cheese {
+        private final CamelContext camelContext;
+
+        @Inject
+        public Cheese(CamelContext camelContext) {
+            this.camelContext = camelContext;
+        }
+
+        public CamelContext getCamelContext() {
+            return camelContext;
+        }
+    }
 
     public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class));
-        CamelContext camelContext = injector.getInstance(CamelContext.class);
-        camelContext.start();
-        Thread.sleep(1000);
-        camelContext.stop();
+        Injector injector = Guice.createInjector(new CamelModuleWithMatchingRoutes());
+
+        Cheese cheese = injector.getInstance(Cheese.class);
+        assertNotNull("Should have cheese", cheese);
+        assertNotNull("Should have camelContext", cheese.getCamelContext());
+        System.out.println("Got " + cheese);
     }
 
 }

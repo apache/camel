@@ -16,14 +16,10 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.multibindings.Multibinder;
-
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Routes;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
@@ -32,22 +28,11 @@ import org.apache.camel.Routes;
  */
 public class TraditionalGuiceRouteTest extends TestCase {
 
-    public static class MyModule extends CamelModule {
+    public static class MyModule extends CamelModuleWithRouteTypes {
 
-        /**
-         * Lets add the routes
-         */
-        @Override
-        protected void configureRoutes(Multibinder<Routes> binder) {
-            // use traditional Guice approach to configure routes
-            binder.addBinding().to(MyHardcodeRoute.class);
-            binder.addBinding().to(MyRouteInstaller.class);
-
-            // TODO allow injection by @Named("foo") endpoints? Let the CamelContext provide it??
+        public MyModule() {
+            super(MyHardcodeRoute.class, MyRouteInstaller.class);
         }
-
-        // TODO demo binding endpoints?
-        //bind(Endpoint.class).annotatedWith(Names.name("")).
 
     }
 

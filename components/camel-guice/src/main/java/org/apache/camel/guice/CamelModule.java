@@ -16,56 +16,33 @@
  */
 package org.apache.camel.guice;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.google.inject.AbstractModule;
-import com.google.inject.multibindings.Multibinder;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Routes;
-import org.apache.camel.builder.RouteBuilder;
 
 /**
- * A default Guice module for creating a {@link CamelContext} and registering a list of {@link RouteBuilder} types to register.
- * <p/>
- * You can drive from this class to overload the {@link #configureRoutes(com.google.inject.multibindings.Multibinder)} method to perform custom binding for
- * route builders. Another approach is to create a {@link RouteBuilder} which just initialises all of your individual route builders
+ * A base Guice module for creating a {@link CamelContext} leaving it up to the users module
+ * to bind a Set<Routes> for the routing rules.
+ * <p>
+ * To bind the routes you should create a provider method annotated with @Provides and returning Set<Routes> such as
+ * <code><pre>
+ * public class MyModule extends CamelModule {
+ *   &#64;Provides
+ *   Set&lt;Routes&gt; routes(Injector injector) { ... }
+ * }
+ * </pre></code>
+ * If you wish to bind all of the bound {@link Routes} implementations available - maybe with some filter applied - then
+ * please use the {@link org.apache.camel.guice.CamelModuleWithMatchingRoutes}.
+ * <p>
+ * Otherwise if you wish to list all of the classes of the {@link Routes} implementations then use the
+ * {@link org.apache.camel.guice.CamelModuleWithRouteTypes} module instead.
  *
  * @version $Revision$
  */
 public class CamelModule extends AbstractModule {
-    private List<Class<? extends RouteBuilder>> routeClassList;
-
-    protected CamelModule(Class<? extends RouteBuilder>... routeTypes) {
-        routeClassList = new ArrayList<Class<? extends RouteBuilder>>();
-        for (Class<? extends RouteBuilder> routeType : routeTypes) {
-            routeClassList.add(routeType);
-        }
-    }
-
-    protected CamelModule(List<Class<? extends RouteBuilder>> routeClassList) {
-        this.routeClassList = routeClassList;
-    }
 
     protected void configure() {
         bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
-
-        Multibinder<Routes> routesBinder = Multibinder.newSetBinder(binder(), Routes.class);
-
-        for (Class<? extends Routes> routeType : routeClassList) {
-            routesBinder.addBinding().to(routeType);
-        }
-
-        configureRoutes(routesBinder);
-    }
-
-    /**
-     * Provides a strategy method configure the routes, typically via {@link RouteBuilder} instances
-     *
-     * @param routesBinder
-     */
-    protected void configureRoutes(Multibinder<Routes> routesBinder) {
     }
 
 }

@@ -16,25 +16,31 @@
  */
 package org.apache.camel.guice;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import junit.framework.TestCase;
-import org.apache.camel.CamelContext;
-
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Lets use a RouteBuilder to bind instances of routes to the CamelContext
+ * A route which is reused multiple times with different configurations
  *
  * @version $Revision$
  */
-public class ConciseGuiceRouteTest extends TestCase {
+public class MyConfigurableRoute2 extends RouteBuilder {
+    protected String foo;
+    protected String bar;
 
-    public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class));
-        CamelContext camelContext = injector.getInstance(CamelContext.class);
-        camelContext.start();
-        Thread.sleep(1000);
-        camelContext.stop();
+    @Inject
+    public MyConfigurableRoute2(@Named("bar") String bar, @Named("foo") String foo) {
+        this.bar = bar;
+        this.foo = foo;
     }
 
+    public void configure() throws Exception {
+        from(foo).to(bar);
+    }
+
+    @Override
+    public String toString() {
+        return "MyConfigurableRoute2[foo: " + foo + "; bar: " + bar + "]";
+    }
 }
