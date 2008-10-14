@@ -661,6 +661,12 @@ public final class ObjectHelper {
         if (value instanceof Boolean) {
             Boolean aBoolean = (Boolean)value;
             return aBoolean.booleanValue();
+        } else if (value instanceof String) {
+            if ("true".equals(value)) {
+                return true;
+            } else if ("false".equals(value)) {
+                return false;
+            }
         }
         return value != null;
     }

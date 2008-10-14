@@ -63,6 +63,9 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
             public void configure() throws Exception {
                 //getContext().addInterceptStrategy(new Tracer());
                 errorHandler(deadLetterChannel("mock:handled").maximumRedeliveries(redelivery));
+
+                // using the onException and handled(true) works
+                //onException(Exception.class).maximumRedeliveries(redelivery).handled(true).to("mock:handled");
                 
                 from("seda:errorTest")
                     // TODO: When using thread there is a multi threading / concurreny issue in Camel
