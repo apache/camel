@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.Main;
 
 /**
- * A simple example router from an ActiveMQ queue to a file system
+ * A simple example router from a file system to an ActiveMQ queue and then to a file system
  *
  * @version $Revision$
  */
