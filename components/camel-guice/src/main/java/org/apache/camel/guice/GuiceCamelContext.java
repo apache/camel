@@ -16,13 +16,8 @@
  */
 package org.apache.camel.guice;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.naming.Context;
-
 import com.google.inject.Inject;
-
+import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -36,7 +31,16 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 
+import javax.naming.Context;
+import java.util.List;
+import java.util.Set;
+
 /**
+ * The default CamelContext implementation for working with Guice.
+ *
+ * It is recommended you use this implementation with the
+ * <a href="http://code.google.com/p/guiceyfruit/wiki/GuiceyJndi">Guicey JNDI Provider</a>
+ * 
  * @version $Revision$
  */
 public class GuiceCamelContext extends DefaultCamelContext {
@@ -52,6 +56,12 @@ public class GuiceCamelContext extends DefaultCamelContext {
         for (Routes routeBuilder : routeBuilders) {
             addRoutes(routeBuilder);
         }
+    }
+
+    @Override
+    @Inject(optional = true)
+    public void setRoutes(List<Route> routes) {
+        super.setRoutes(routes);
     }
 
     @Override
