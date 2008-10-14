@@ -141,6 +141,7 @@ public class SplitterTest extends ContextTestSupport {
     public void testSpliterWithAggregationStrategyParallelStreaming() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder("James", "Guillaume", "Hiram", "Rob", "Roman");
 
         Exchange result = template.send("direct:parallel-streaming", new Processor() {
             public void process(Exchange exchange) {
@@ -155,7 +156,6 @@ public class SplitterTest extends ContextTestSupport {
 
         assertMessageHeader(out, "foo", "bar");
         assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
-        System.out.println(result);
     }
     
     public void testSplitterWithStreaming() throws Exception {

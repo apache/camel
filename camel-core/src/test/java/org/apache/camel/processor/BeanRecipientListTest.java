@@ -82,7 +82,7 @@ public class BeanRecipientListTest extends ContextTestSupport {
 
         @org.apache.camel.RecipientList
         public String[] route(String body) {
-            System.out.println("Called " + this + " with body: " + body);
+            LOG.debug("Called " + this + " with body: " + body);
             return new String[] {"mock:a", "mock:b"};
         }
     }

@@ -19,7 +19,12 @@ package org.apache.camel.component.bean;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Body;
@@ -36,11 +41,10 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
+import static org.apache.camel.util.ExchangeHelper.convertToType;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.util.ExchangeHelper.convertToType;
 
 /**
  * Represents the metadata about a bean type created via a combination of
@@ -116,6 +120,9 @@ public class BeanInfo {
     }
 
     protected void introspect(Class clazz) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Introspecting class: " + clazz);
+        }
         Method[] methods = clazz.getDeclaredMethods();
         for (Method method : methods) {
             if (isValidMethod(clazz, method)) {
@@ -129,26 +136,68 @@ public class BeanInfo {
     }
 
     protected MethodInfo introspect(Class clazz, Method method) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Introspecting class: " + clazz + ", method: " + method);
+        }
         String opName = method.getName();
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
+        // skip methods that override existing methods we already have in our methodMap
+        if (overridesExistingMethod(methodInfo)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("This method is already overriden in a subclass, so its skipped: " + method);
+            }
+            return null;
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
+        }
         operations.put(opName, methodInfo);
+        methodMap.put(method, methodInfo);
+
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
         }
         if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
             operationsWithCustomAnnotation.add(methodInfo);
         }
-        methodMap.put(method, methodInfo);
+
         return methodInfo;
+    }
+
+    private boolean overridesExistingMethod(MethodInfo methodInfo) {
+        for (MethodInfo info : methodMap.values()) {
+
+            // name test
+            if (!info.getMethod().getName().equals(methodInfo.getMethod().getName())) {
+                continue;
+            }
+
+            // parameter types
+            if (info.getMethod().getParameterTypes().length != methodInfo.getMethod().getParameterTypes().length) {
+                continue;
+            }
+
+            for (int i = 0; i < info.getMethod().getParameterTypes().length; i++) {
+                Class type1 = info.getMethod().getParameterTypes()[i];
+                Class type2 = methodInfo.getMethod().getParameterTypes()[i];
+                if (!type1.equals(type2)) {
+                    continue;
+                }
+            }
+
+            // sanme name, same parameters, then its overrides an existing class
+            return true;
+        }
+
+        return false;
     }
 
     /**
      * Returns the {@link MethodInfo} for the given method if it exists or null
      * if there is no metadata available for the given method
-     *
-     * @param method
      */
     public MethodInfo getMethodInfo(Method method) {
         MethodInfo answer = methodMap.get(method);
@@ -164,7 +213,6 @@ public class BeanInfo {
         }
         return answer;
     }
-
 
     protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
@@ -240,6 +288,9 @@ public class BeanInfo {
         Object body = in.getBody();
         if (body != null) {
             Class bodyType = body.getClass();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Matching for method with a single parameter that matches type: " + bodyType.getCanonicalName());
+            }
 
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             for (MethodInfo methodInfo : operationList) {
