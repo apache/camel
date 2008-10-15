@@ -143,14 +143,17 @@ public class BeanInfo {
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
-        // skip methods that override existing methods we already have in our methodMap
-        // TODO: CAMEL-983
-        /*if (overridesExistingMethod(methodInfo)) {
+        // methods already registered should be prefered to use instead of super classes of existing methods
+        // we want to us the method from the sub class over super classes, so if we have already registered
+        // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
+        MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
+        if (existingMethodInfo != null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("This method is already overriden in a subclass, so its skipped: " + method);
+                LOG.trace("This method is already overriden in a subclass, so the method from the sub class is prefered: " + existingMethodInfo);
             }
-            return null;
-        }*/
+
+            return existingMethodInfo;
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
@@ -170,7 +173,13 @@ public class BeanInfo {
         return methodInfo;
     }
 
-    private boolean overridesExistingMethod(MethodInfo methodInfo) {
+    /**
+     * Does the given method info override an existing method registered before (from a subclass)
+     *
+     * @param methodInfo  the method to test
+     * @return the already registered method to use, null if not overriding any
+     */
+    private MethodInfo overridesExistingMethod(MethodInfo methodInfo) {
         for (MethodInfo info : methodMap.values()) {
 
             // name test
@@ -192,10 +201,10 @@ public class BeanInfo {
             }
 
             // sanme name, same parameters, then its overrides an existing class
-            return true;
+            return info;
         }
 
-        return false;
+        return null;
     }
 
     /**
