@@ -137,6 +137,8 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>
+            <!-- https://issues.apache.org/activemq/browse/CAMEL-988 -->
+            <exclude>**/BeanInfoInheritanceTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>
