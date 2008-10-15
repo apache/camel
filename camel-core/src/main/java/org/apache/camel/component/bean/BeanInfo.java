@@ -144,12 +144,13 @@ public class BeanInfo {
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
         // skip methods that override existing methods we already have in our methodMap
-        if (overridesExistingMethod(methodInfo)) {
+        // TODO: davsclaus this breaks camel-spring test (CAMEL-983)
+        /*if (overridesExistingMethod(methodInfo)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("This method is already overriden in a subclass, so its skipped: " + method);
             }
             return null;
-        }
+        }*/
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
