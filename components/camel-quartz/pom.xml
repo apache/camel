@@ -37,16 +37,30 @@
 	<camel.osgi.export.pkg>org.apache.camel.component.quartz.*</camel.osgi.export.pkg>
   </properties>
 
-  <dependencies>
+    <repositories>
+        <repository>
+            <id>servicemix</id>
+            <name>Apache ServiceMix Repository</name>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+        </repository>
+    </repositories>
+
+   <dependencies>
 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
-      <groupId>quartz</groupId>
+      <groupId>opensymphony</groupId>
       <artifactId>quartz</artifactId>
-      <version>1.5.2</version>
+      <version>1.6.1</version>
+    </dependency>
+	<!-- commons-collections is needed at runtime by quartz -->
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.1</version>
     </dependency>
 
     <!-- testing -->
