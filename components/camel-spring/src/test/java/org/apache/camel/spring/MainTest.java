@@ -19,6 +19,7 @@ package org.apache.camel.spring;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.util.SimpleRouteBuilder;
@@ -42,10 +43,10 @@ public class MainTest extends TestCase {
         main.addRouteBuilder(builder);
         main.start();
 
-        List<SpringCamelContext> contextList = main.getCamelContexts();
+        List<CamelContext> contextList = main.getCamelContexts();
         assertNotNull(contextList);
         assertEquals("size", 1, contextList.size());
-        SpringCamelContext camelContext = contextList.get(0);
+        CamelContext camelContext = contextList.get(0);
 
         MockEndpoint endpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         endpoint.expectedMessageCount(2);

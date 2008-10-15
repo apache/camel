@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.handler;
+package org.apache.camel.view;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Binder;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -48,9 +50,15 @@ import org.apache.camel.model.RoutesType;
 import org.apache.camel.util.ObjectHelper;
 
 
-public class ModelFileGenerator extends CamelNamespaceHandler {
+public class ModelFileGenerator {
 
     private static final String DEFAULT_ROOT_ELEMENT_NAME = "routes";
+    private final JAXBContext jaxbContext;
+    private Binder<Node> binder;
+
+    public ModelFileGenerator(JAXBContext jaxbContext) {
+        this.jaxbContext = jaxbContext;
+    }
 
     /**
      * Write the specified 'routeTypes' to 'fileName' as XML using JAXB.
@@ -108,7 +116,9 @@ public class ModelFileGenerator extends CamelNamespaceHandler {
      */
     private void addJaxbElementToNode(Node node, Object jaxbElement) {
         try {
-            binder = getJaxbContext().createBinder();
+            if (binder == null) {
+                binder = jaxbContext.createBinder();
+            }
             binder.marshal(jaxbElement, node);
         } catch (JAXBException e) {
             throw new RuntimeCamelException(e);
