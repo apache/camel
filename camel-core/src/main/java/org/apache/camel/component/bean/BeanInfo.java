@@ -144,7 +144,7 @@ public class BeanInfo {
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
         // skip methods that override existing methods we already have in our methodMap
-        // TODO: davsclaus this breaks camel-spring test (CAMEL-983)
+        // TODO: CAMEL-983
         /*if (overridesExistingMethod(methodInfo)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("This method is already overriden in a subclass, so its skipped: " + method);
@@ -156,7 +156,6 @@ public class BeanInfo {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
         }
         operations.put(opName, methodInfo);
-        methodMap.put(method, methodInfo);
 
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
@@ -164,6 +163,9 @@ public class BeanInfo {
         if (methodInfo.isHasCustomAnnotation() && !methodInfo.hasBodyParameter()) {
             operationsWithCustomAnnotation.add(methodInfo);
         }
+
+        // must add to method map last otherwise we break stuff
+        methodMap.put(method, methodInfo);
 
         return methodInfo;
     }
