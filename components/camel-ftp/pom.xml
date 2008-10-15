@@ -37,6 +37,14 @@
     <camel.osgi.export.pkg>org.apache.camel.component.file.remote.*</camel.osgi.export.pkg>
   </properties>
 
+    <repositories>
+        <repository>
+            <id>servicemix</id>
+            <name>Apache ServiceMix Repository</name>
+            <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
+        </repository>
+    </repositories>
+
   <dependencies>
 
     <dependency>
@@ -50,9 +58,9 @@
     </dependency>
 
     <dependency>
-      <groupId>com.jcraft</groupId>
+      <groupId>jsch</groupId> <!-- com.jcraft -->
       <artifactId>jsch</artifactId>
-      <version>0.1.38</version>
+      <version>0.1.40</version>
     </dependency>
     <dependency>
       <groupId>commons-net</groupId>
