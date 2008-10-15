@@ -47,6 +47,7 @@ import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.view.ModelFileGenerator;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -67,6 +68,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Binder<Node> binder;
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
+
+
+    public ModelFileGenerator createModelFileGenerator() throws JAXBException {
+        return new ModelFileGenerator(getJaxbContext());
+    }
 
 
     public void init() {
@@ -143,7 +149,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
-    protected JAXBContext getJaxbContext() throws JAXBException {
+    public JAXBContext getJaxbContext() throws JAXBException {
         if (jaxbContext == null) {
             jaxbContext = createJaxbContext();
         }
