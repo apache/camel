@@ -53,6 +53,11 @@
       <artifactId>activemq-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+    </dependency>
+
     <!-- for testing -->
     <dependency>
       <groupId>junit</groupId>
