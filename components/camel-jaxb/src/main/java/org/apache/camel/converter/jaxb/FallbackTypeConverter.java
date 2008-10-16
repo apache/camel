@@ -140,10 +140,10 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     /**
-     * Unmarshals
+     * Unmarshals the given value with the unmarshaller
      *
      * @param unmarshaller  the unmarshaller
-     * @param value  the stream to unarmashal (will close it after use, also if exception is thrown)
+     * @param value  the stream to unmarshal (will close it after use, also if exception is thrown)
      * @return  the value
      * @throws JAXBException is thrown if an exception occur while unmarshalling
      */

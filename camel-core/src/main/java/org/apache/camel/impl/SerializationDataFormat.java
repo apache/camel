@@ -36,12 +36,28 @@ public class SerializationDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         ObjectOutput out = IOConverter.toObjectOutput(stream);
-        out.writeObject(graph);
-        out.flush();
+        try {
+            out.writeObject(graph);
+        } finally {
+            out.flush();
+            try {
+                out.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         ObjectInput in = IOConverter.toObjectInput(stream);
-        return in.readObject();
+        try {
+            return in.readObject();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                // ignore
+            }
+        }
     }
 }

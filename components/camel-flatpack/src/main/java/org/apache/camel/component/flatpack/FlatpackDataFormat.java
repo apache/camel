@@ -95,9 +95,13 @@ public class FlatpackDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStreamReader reader = new InputStreamReader(stream);
-        Parser parser = createParser(exchange, reader);
-        DataSet dataSet = parser.parse();
-        return new DataSetList(dataSet);
+        try {
+            Parser parser = createParser(exchange, reader);
+            DataSet dataSet = parser.parse();
+            return new DataSetList(dataSet);
+        } finally {
+            reader.close();
+        }
     }
 
     // Properties
