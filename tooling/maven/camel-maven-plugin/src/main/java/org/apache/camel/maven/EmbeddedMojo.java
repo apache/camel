@@ -99,6 +99,15 @@ public class EmbeddedMojo extends AbstractExecMojo {
     private List classpathElements;
 
     /**
+     * The main class to execute.
+     *
+     * @parameter expression="${camel.mainClass}"
+     *            default-value="org.apache.camel.spring.Main"
+     * @required
+     */
+    private String mainClass;
+
+    /**
      * This method will run the mojo
      */
     public void execute() throws MojoExecutionException {
@@ -190,6 +199,14 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.fileApplicationContextUri = fileApplicationContextUri;
     }
 
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public void setMainClass(String mainClass) {
+        this.mainClass = mainClass;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -197,7 +214,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
         IllegalAccessException, MojoExecutionException {
 
         getLog().debug("Running Camel in: " + newLoader);
-        Class<?> type = newLoader.loadClass("org.apache.camel.spring.Main");
+        Class<?> type = newLoader.loadClass(mainClass);
         Method method = type.getMethod("main", String[].class);
         String[] arguments = createArguments();
         getLog().debug("Starting the Camel Main with arguments: " + Arrays.asList(arguments));
