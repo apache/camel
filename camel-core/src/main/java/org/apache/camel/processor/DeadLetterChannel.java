@@ -57,11 +57,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         int redeliveryCounter;
         long redeliveryDelay;
         boolean sync = true;
+        Predicate handledPredicate;
 
-        // default behaviour which can be overloaded on a per exception basis
+        // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
         Processor failureProcessor = deadLetter;
-        Predicate handledPredicate = null;
+        
     }
 
     public DeadLetterChannel(Processor output, Processor deadLetter) {

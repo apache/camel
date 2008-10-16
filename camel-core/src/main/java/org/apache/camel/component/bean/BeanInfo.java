@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -41,10 +42,12 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.LanguageAnnotation;
 import org.apache.camel.spi.Registry;
-import static org.apache.camel.util.ExchangeHelper.convertToType;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ExchangeHelper.convertToType;
+
 
 /**
  * Represents the metadata about a bean type created via a combination of

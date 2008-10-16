@@ -32,12 +32,14 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.builder.PredicateBuilder.toPredicate;
+
 
 /**
  * Represents an XML &lt;onException/&gt; element

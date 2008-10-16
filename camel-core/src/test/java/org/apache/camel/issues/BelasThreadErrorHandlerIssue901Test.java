@@ -19,8 +19,8 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -29,10 +29,13 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(BelasThreadErrorHandlerIssue901Test.class);
-    private String msg1 = "Message Intended For Processor #1",
-        msg2 = "Message Intended For Processor #2",
-        msg3 = "Message Intended For Processor #3";
-    private int callCounter1 = 0, callCounter2 = 0, callCounter3 = 0;
+    private String msg1 = "Message Intended For Processor #1";
+    private String msg2 = "Message Intended For Processor #2";
+    private String msg3 = "Message Intended For Processor #3";
+    
+    private int callCounter1;
+    private int callCounter2;
+    private int callCounter3;
     private int redelivery = 1;
 
     protected void setUp() throws Exception {
