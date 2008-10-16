@@ -75,13 +75,13 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public LoggingErrorHandlerBuilder level(final LoggingLevel level) {
-    	this.level = level;
-    	return this;
+        this.level = level;
+        return this;
     }
 
     public LoggingErrorHandlerBuilder log(final Log log) {
-    	this.log = log;
-    	return this;
+        this.log = log;
+        return this;
     }
 
 }
