@@ -48,12 +48,20 @@ public class XStreamDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
-        getXStream().marshal(body, writer);
+        try {
+            getXStream().marshal(body, writer);
+        } finally {
+            writer.close();
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         HierarchicalStreamReader reader = createHierarchicalStreamReader(exchange, stream);
-        return getXStream().unmarshal(reader);
+        try {
+            return getXStream().unmarshal(reader);
+        } finally {
+            reader.close();
+        }
     }
 
     public XStream getXStream() {

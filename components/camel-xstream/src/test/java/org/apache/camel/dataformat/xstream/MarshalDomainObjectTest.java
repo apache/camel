@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Marhsal tests with domain objects.
  */
-public class MarshalDomainObject extends ContextTestSupport {
+public class MarshalDomainObjectTest extends ContextTestSupport {
 
     public void testMarshalDomainObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
