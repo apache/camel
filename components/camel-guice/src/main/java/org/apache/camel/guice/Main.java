@@ -16,22 +16,24 @@
  */
 package org.apache.camel.guice;
 
+import java.util.Map;
+import java.util.Set;
+
+import javax.naming.InitialContext;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.util.MainSupport;
+import org.apache.camel.view.ModelFileGenerator;
 import org.guiceyfruit.Injectors;
-
-import javax.naming.InitialContext;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A command line tool for booting up a CamelContext using a Guice Injector via JNDI
@@ -116,22 +118,23 @@ public class Main extends MainSupport {
         if (injector != null) {
             Set<Map.Entry<Key<?>, Binding<?>>> entries = injector.getBindings().entrySet();
             for (Map.Entry<Key<?>, Binding<?>> entry : entries) {
-              Key<?> key = entry.getKey();
-              Class<?> keyType = Injectors.getKeyType(key);
-              if (keyType != null && CamelContext.class.isAssignableFrom(keyType)) {
-                Binding<?> binding = entry.getValue();
-                Object value = binding.getProvider().get();
-                if (value != null) {
-                  CamelContext castValue = CamelContext.class.cast(value);
-                  answer.put(key.toString(), castValue);
+                Key<?> key = entry.getKey();
+                Class<?> keyType = Injectors.getKeyType(key);
+                if (keyType != null && CamelContext.class.isAssignableFrom(keyType)) {
+                    Binding<?> binding = entry.getValue();
+                    Object value = binding.getProvider().get();
+                    if (value != null) {
+                        CamelContext castValue = CamelContext.class.cast(value);
+                        answer.put(key.toString(), castValue);
+                    }
                 }
-              }
             }
         }
         return answer;
     }
 
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(JAXBContext.newInstance("org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer"));
+        return new ModelFileGenerator(
+            JAXBContext.newInstance("org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer"));
     }
 }
