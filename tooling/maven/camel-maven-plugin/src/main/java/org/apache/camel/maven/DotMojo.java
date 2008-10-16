@@ -83,6 +83,15 @@ public class DotMojo extends AbstractMavenReport {
     protected boolean runCamel;
 
     /**
+     * The main class to execute.
+     *
+     * @parameter expression="${camel.mainClass}"
+     *            default-value="org.apache.camel.spring.Main"
+     * @required
+     */
+    private String mainClass;
+
+    /**
      * Should we try run the DOT executable on the generated .DOT file to
      * generate images
      *
@@ -358,6 +367,7 @@ public class DotMojo extends AbstractMavenReport {
             EmbeddedMojo mojo = new EmbeddedMojo();
             mojo.setClasspathElements(list);
             mojo.setDotEnabled(true);
+            mojo.setMainClass(mainClass);
             if ("true".equals(getAggregate())) {
                 mojo.setDotAggregationEnabled(true);
             }
