@@ -16,22 +16,22 @@
  */
 package org.apache.camel.spring;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
+
+import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.handler.CamelNamespaceHandler;
-import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.util.MainSupport;
+import org.apache.camel.view.ModelFileGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
-
-import javax.xml.bind.JAXBException;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
@@ -198,7 +198,7 @@ public class Main extends MainSupport {
         }
     }
 
-    protected Map<String,CamelContext> getCamelContextMap() {
+    protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
         Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
         Map<String, CamelContext> answer = new HashMap<String, CamelContext>();

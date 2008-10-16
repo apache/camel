@@ -34,7 +34,11 @@ import org.apache.camel.converter.IOConverter;
  * @version $Revision$
  */
 @Converter
-public class MailConverters {
+public final class MailConverters {
+    
+    private MailConverters() {
+        //Utility Class
+    }
 
     /**
      * Converts the given JavaMail message to a String body.

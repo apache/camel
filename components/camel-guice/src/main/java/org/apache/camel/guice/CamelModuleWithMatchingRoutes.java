@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,14 +16,15 @@
  */
 package org.apache.camel.guice;
 
+import java.util.Set;
+
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.matcher.Matcher;
 import com.google.inject.matcher.Matchers;
+
 import org.apache.camel.Routes;
 import org.guiceyfruit.Injectors;
-
-import java.util.Set;
 
 /**
  * A Guice Module which injects the CamelContext with all available implementations
