@@ -16,9 +16,13 @@
  */
 package org.apache.camel.example;
 
-import junit.framework.TestCase;
+import javax.xml.bind.UnmarshalException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 
@@ -37,4 +41,26 @@ public class JAXBConvertTest extends TestCase {
         assertEquals("name", "foo", purchaseOrder.getName());
         assertEquals("amount", 123.45, purchaseOrder.getAmount());
     }
+
+    public void testStreamShouldBeClosed() throws Exception {
+        String data = "<purchaseOrder name='foo' amount='123.45' price='2.22'/>";
+        InputStream is = new ByteArrayInputStream(data.getBytes());
+
+        PurchaseOrder purchaseOrder = converter.convertTo(PurchaseOrder.class, is);
+        assertNotNull(purchaseOrder);
+        assertEquals(-1, is.read());
+    }
+
+    public void testStreamShouldBeClosedEvenForException() throws Exception {
+        String data = "<errorOrder name='foo' amount='123.45' price='2.22'/>";
+        InputStream is = new ByteArrayInputStream(data.getBytes());
+
+        try {
+            converter.convertTo(PurchaseOrder.class, is);
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof UnmarshalException);
+        }
+        assertEquals(-1, is.read());
+    }
+
 }

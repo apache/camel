@@ -16,10 +16,7 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -34,6 +31,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -93,31 +91,29 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         if (parentTypeConverter != null) {
             InputStream inputStream = parentTypeConverter.convertTo(InputStream.class, value);
             if (inputStream != null) {
-                Object unmarshalled = unmarshaller.unmarshal(inputStream);
+                Object unmarshalled = unmarshal(unmarshaller, inputStream);
                 return type.cast(unmarshalled);
             }
             Reader reader = parentTypeConverter.convertTo(Reader.class, value);
             if (reader != null) {
-                Object unmarshalled = unmarshaller.unmarshal(reader);
+                Object unmarshalled = unmarshal(unmarshaller, reader);
                 return type.cast(unmarshalled);
             }
             Source source = parentTypeConverter.convertTo(Source.class, value);
             if (source != null) {
-                Object unmarshalled = unmarshaller.unmarshal(source);
+                Object unmarshalled = unmarshal(unmarshaller, source);
                 return type.cast(unmarshalled);
             }
         }
+
         if (value instanceof String) {
             value = new StringReader((String) value);
         }
-        if (value instanceof InputStream) {
-            Object unmarshalled = unmarshaller.unmarshal((InputStream) value);
+        if (value instanceof InputStream || value instanceof Reader) {
+            Object unmarshalled = unmarshal(unmarshaller, value);
             return type.cast(unmarshalled);
         }
-        if (value instanceof Reader) {
-            Object unmarshalled = unmarshaller.unmarshal((Reader) value);
-            return type.cast(unmarshalled);
-        }
+
         return null;
     }
 
@@ -140,6 +136,31 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         }
 
         // lets try convert to the type from JAXB
+        return null;
+    }
+
+    /**
+     * Unmarshals
+     *
+     * @param unmarshaller  the unmarshaller
+     * @param value  the stream to unarmashal (will close it after use, also if exception is thrown)
+     * @return  the value
+     * @throws JAXBException is thrown if an exception occur while unmarshalling
+     */
+    protected Object unmarshal(Unmarshaller unmarshaller, Object value) throws JAXBException {
+        try {
+            if (value instanceof InputStream) {
+                return unmarshaller.unmarshal((InputStream) value);
+            } else if (value instanceof Reader) {
+                return unmarshaller.unmarshal((Reader) value);
+            } else if (value instanceof Source) {
+                return unmarshaller.unmarshal((Source) value);
+            }
+        } finally {
+            if (value instanceof Closeable) {
+                ObjectHelper.close((Closeable) value, "Unmarshalling", LOG);
+            }
+        }
         return null;
     }
 
