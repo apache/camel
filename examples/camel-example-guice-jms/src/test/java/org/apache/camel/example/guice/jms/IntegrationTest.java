@@ -14,26 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.guice.impl;
+package org.apache.camel.example.guice.jms;
 
-import org.apache.camel.spi.Injector;
+import junit.framework.TestCase;
+import org.apache.camel.guice.Main;
 
 /**
- * An injector which uses Guice to perform the dependency injection of types
- *
- * @version $Revision$
+ * @version $Revision: 702954 $
  */
-public class GuiceInjector implements Injector {
-    private final com.google.inject.Injector injector;
+public class IntegrationTest extends TestCase {
 
-    public GuiceInjector(com.google.inject.Injector injector) {
-        this.injector = injector;
+    public void testCamelRulesDeployCorrectlyInGuice() throws Exception {
+        // let's boot up the Guicey JNDI context for 2 seconds to check that it works OK
+        Main.main("-duration", "2s", "-o", "target/site/cameldoc");
     }
-
-    public <T> T newInstance(Class<T> type) {
-        // TODO if not bound we could create an instance and inject it?
-        //injector.injectMembers(instance);
-        return injector.getInstance(type);
-    }
-
 }

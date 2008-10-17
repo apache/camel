@@ -17,6 +17,8 @@
 package org.apache.camel.guice;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.jsr250.Jsr250;
+import com.google.inject.jsr250.Jsr250Module;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Routes;
 
@@ -39,9 +41,11 @@ import org.apache.camel.Routes;
  *
  * @version $Revision$
  */
-public class CamelModule extends AbstractModule {
+public class CamelModule extends Jsr250Module {
 
     protected void configure() {
+        super.configure();
+        
         bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
     }
 

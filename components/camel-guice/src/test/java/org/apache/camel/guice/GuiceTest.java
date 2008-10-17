@@ -43,7 +43,8 @@ public class GuiceTest extends TestCase {
     }
 
     public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new CamelModuleWithMatchingRoutes());
+        // lets disable resource injection to avoid JNDI being used
+        Injector injector = Guice.createInjector(new CamelModuleWithMatchingRoutes().noResourceInjection());
 
         Cheese cheese = injector.getInstance(Cheese.class);
         assertNotNull("Should have cheese", cheese);

@@ -32,7 +32,8 @@ import org.apache.camel.CamelContext;
 public class ConciseGuiceRouteTest extends TestCase {
 
     public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class));
+        // lets disable resource injection to avoid JNDI being used
+        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class).noResourceInjection());
         CamelContext camelContext = injector.getInstance(CamelContext.class);
         camelContext.start();
         Thread.sleep(1000);
