@@ -53,6 +53,7 @@
     <module>camel-example-cxf</module>
     <module>camel-example-docs</module>
     <module>camel-example-etl</module>
+    <module>camel-example-guice-jms</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-osgi</module>

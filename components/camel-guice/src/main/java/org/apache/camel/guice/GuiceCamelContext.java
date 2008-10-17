@@ -16,18 +16,17 @@
  */
 package org.apache.camel.guice;
 
-import java.util.List;
-import java.util.Set;
-import javax.naming.Context;
-
 import com.google.inject.Inject;
-
+import com.google.inject.Binding;
+import com.google.inject.ProvisionException;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.guice.impl.GuiceInjector;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
@@ -35,6 +34,14 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.guiceyfruit.jndi.internal.JndiContext;
+
+import javax.naming.Context;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import java.util.List;
+import java.util.Set;
+import java.util.Hashtable;
 
 /**
  * The default CamelContext implementation for working with Guice.
@@ -50,6 +57,18 @@ public class GuiceCamelContext extends DefaultCamelContext {
     @Inject
     public GuiceCamelContext(com.google.inject.Injector injector) {
         this.injector = injector;
+    }
+
+    @PostConstruct
+    @Override
+    public void start() throws Exception {
+        super.start();
+    }
+
+    @PreDestroy
+    @Override
+    public void stop() throws Exception {
+        super.stop();
     }
 
     @Inject
@@ -135,4 +154,20 @@ public class GuiceCamelContext extends DefaultCamelContext {
     protected Injector createInjector() {
         return new GuiceInjector(injector);
     }
+
+    @Override
+    protected Registry createRegistry() {
+        Context context = createContext();
+        return new JndiRegistry(context);
+    }
+
+    protected Context createContext() {
+        try {
+            return (Context) injector.getInstance(Context.class);
+        }
+        catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
 }

@@ -34,10 +34,11 @@ public class TraditionalGuiceRouteTest extends TestCase {
 
         public MyModule() {
             super(MyHardcodeRoute.class, MyRouteInstaller.class);
+
+            // lets disable the use of JNDI
+            noResourceInjection();
         }
-
     }
-
 
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
