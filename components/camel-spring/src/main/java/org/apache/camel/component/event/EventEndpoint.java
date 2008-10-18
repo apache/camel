@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 /**
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
@@ -62,6 +63,9 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
     }
 
     public Producer<Exchange> createProducer() throws Exception {
+        if (applicationContext == null) {
+            throw new IllegalStateException("ApplicationContext is null");
+        }
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {
                 ApplicationEvent event = toApplicationEvent(exchange);
