@@ -47,7 +47,7 @@ public class RecipientListType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "RecipientList[ " + getExpression() + "]";
+        return "RecipientList[" + getExpression() + "]";
     }
 
     @Override

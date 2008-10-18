@@ -79,7 +79,7 @@ public class UnmarshalType extends OutputType<ProcessorType> {
         if (dataFormatType != null) {
             return "Marshal[" + dataFormatType + "]";
         } else {
-            return "Marshal[ref:  " + ref + "]";
+            return "Marshal[ref: " + ref + "]";
         }
     }
 

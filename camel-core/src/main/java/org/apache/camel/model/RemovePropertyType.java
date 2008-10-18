@@ -43,7 +43,7 @@ public class RemovePropertyType extends OutputType<ProcessorType> {
     
     @Override
     public String toString() {
-        return "RemoveProperty[ " + getPropertyName() + "]";
+        return "RemoveProperty[" + getPropertyName() + "]";
     }
 
     @Override

@@ -46,7 +46,7 @@ public class FilterType extends ExpressionNode implements Block {
 
     @Override
     public String toString() {
-        return "Filter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Filter[" + getExpression() + " -> " + getOutputs() + "]";
     }
     
     @Override

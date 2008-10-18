@@ -57,7 +57,7 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "RoutingSlip[ headerName=" + getHeaderName() + " uriDelimiter=" + getUriDelimiter() + "]";
+        return "RoutingSlip[headerName=" + getHeaderName() + ", uriDelimiter=" + getUriDelimiter() + "]";
     }
 
     @Override

@@ -52,7 +52,7 @@ public class LoopType extends ExpressionNode implements Block {
     }
     @Override
     public String toString() {
-        return "Loop[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Loop[" + getExpression() + " -> " + getOutputs() + "]";
     }
     
     @Override

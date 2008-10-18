@@ -48,7 +48,7 @@ public class TryType extends OutputType<TryType> {
 
     @Override
     public String toString() {
-        return "Try[ " + getOutputs() + "]";
+        return "Try[" + getOutputs() + "]";
     }
 
     @Override

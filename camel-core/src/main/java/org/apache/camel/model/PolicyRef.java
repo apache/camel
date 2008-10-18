@@ -97,7 +97,7 @@ public class PolicyRef extends OutputType<ProcessorType> {
         if (policy != null) {
             return policy.toString();
         } else {
-            return "ref:  " + ref;
+            return "ref: " + ref;
         }
     }
 }

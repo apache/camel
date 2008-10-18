@@ -174,14 +174,11 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
 
     @Override
     public String toString() {
-        String result;
         if (loadBalancerType != null) {
-            result = "LoadBalanceType[" + loadBalancerType + ", ";
+            return "LoadBalanceType[" + loadBalancerType + ", " + getOutputs() + "]";
         } else {
-            result =  "LoadBalanceType[" + ref + ", ";
+            return "LoadBalanceType[ref: " + ref + ", " + getOutputs() + "]";
         }
-        result = result + getOutputs() + "]";
-        return result;
     }
 
 }

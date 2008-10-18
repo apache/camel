@@ -57,7 +57,7 @@ public class DelayerType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Delayer[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Delayer[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
