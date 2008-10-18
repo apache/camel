@@ -279,7 +279,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void onApplicationEvent(ApplicationEvent event) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Publishing event: " + event);
+            LOG.debug("Publishing spring-event: " + event);
         }
 
         if (event instanceof ContextRefreshedEvent) {
