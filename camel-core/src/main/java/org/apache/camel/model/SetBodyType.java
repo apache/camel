@@ -42,7 +42,7 @@ public class SetBodyType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "SetBody[ " + getExpression() + "]";
+        return "SetBody[" + getExpression() + "]";
     }
 
     @Override

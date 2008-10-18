@@ -51,7 +51,7 @@ public class IdempotentConsumerType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "IdempotentConsumer[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "IdempotentConsumer[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override

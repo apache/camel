@@ -51,6 +51,15 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
         return "throwFault";
     }
 
+    @Override
+    public String toString() {
+        if (faultRef != null) {
+            return "ThrowFault[ref: " + faultRef + "]";
+        } else {
+            return "ThrowFault[" + fault.getClass().getCanonicalName();
+        }
+    }
+
     public void setFault(Throwable fault) {
         this.fault = fault;
     }
@@ -69,7 +78,6 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-
         if (processor == null) {
             if (fault == null) {
                 fault = routeContext.lookup(faultRef, Throwable.class);

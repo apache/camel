@@ -41,7 +41,7 @@ public class TransformType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Transform[ " + getExpression() + "]";
+        return "Transform[" + getExpression() + "]";
     }
 
     @Override

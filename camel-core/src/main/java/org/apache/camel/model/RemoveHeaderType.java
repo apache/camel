@@ -43,7 +43,7 @@ public class RemoveHeaderType extends OutputType<ProcessorType> {
     
     @Override
     public String toString() {
-        return "RemoveHeader[ " + getHeaderName() + "]";
+        return "RemoveHeader[" + getHeaderName() + "]";
     }
 
     @Override

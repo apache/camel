@@ -77,7 +77,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Exception[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "Exception[" + getExceptionClasses() + " -> " + getOutputs() + "]";
     }
     
     /**

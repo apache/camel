@@ -57,7 +57,7 @@ public class SetPropertyType extends ExpressionNode {
     
     @Override
     public String toString() {
-        return "SetProperty[ " + getPropertyName() + ", " + getExpression() + "]";
+        return "SetProperty[" + getPropertyName() + ", " + getExpression() + "]";
     }
 
     @Override

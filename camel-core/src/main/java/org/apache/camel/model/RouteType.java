@@ -72,7 +72,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     @Override
     public String toString() {
-        return "Route[ " + inputs + " -> " + outputs + "]";
+        return "Route[" + inputs + " -> " + outputs + "]";
     }
 
     public void addRoutes(CamelContext context, Collection<Route> routes) throws Exception {

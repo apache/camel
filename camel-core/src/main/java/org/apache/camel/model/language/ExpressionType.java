@@ -88,7 +88,23 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
 
     @Override
     public String toString() {
-        return getLanguage() + "Expression[" + getExpression() + "]";
+        StringBuilder sb = new StringBuilder();
+        if (getLanguage() != null) {
+            sb.append(getLanguage() + "{");
+        }
+        if (getExpression() != null) {
+            sb.append(getExpression());
+        }
+        if (getPredicate() != null) {
+            sb.append(getPredicate().toString());
+        }
+        if (getExpressionValue() != null) {
+            sb.append(getExpressionValue().toString());
+        }
+        if (getLanguage() != null) {
+            sb.append("}");
+        }
+        return sb.toString();
     }
 
     public Object evaluate(Exchange exchange) {

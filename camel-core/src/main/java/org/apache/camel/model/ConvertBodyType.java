@@ -55,7 +55,7 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "convertBodyTo[ " + getType() + "]";
+        return "convertBodyTo[" + getType() + "]";
     }
 
     @Override
@@ -86,7 +86,6 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
     }
 
     public void setTypeClass(Class typeClass) {
-
         this.typeClass = typeClass;
     }
 
@@ -94,7 +93,7 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
         if (typeClass == null) {
             Class clazz = createTypeClass();
             if (clazz == null) {
-                throw new RuntimeCamelException("can't load the class with the class name " + getType());
+                throw new RuntimeCamelException("Can't load the class with the class name: " + getType());
             }
             setTypeClass(clazz);
         }

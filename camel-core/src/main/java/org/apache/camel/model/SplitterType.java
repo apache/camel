@@ -64,7 +64,7 @@ public class SplitterType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Splitter[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Splitter[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override

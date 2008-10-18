@@ -80,7 +80,7 @@ public class AggregatorType extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Aggregator[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "Aggregator[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override

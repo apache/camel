@@ -120,7 +120,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Resequencer[ " + getExpressions() + " -> " + getOutputs() + "]";
+        return "Resequencer[" + getExpressions() + " -> " + getOutputs() + "]";
     }
 
     @Override

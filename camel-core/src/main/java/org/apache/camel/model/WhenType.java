@@ -44,7 +44,7 @@ public class WhenType<Type extends ProcessorType> extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "When[ " + getExpression() + " -> " + getOutputs() + "]";
+        return "When[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
