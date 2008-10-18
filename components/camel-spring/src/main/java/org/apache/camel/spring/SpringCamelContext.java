@@ -106,7 +106,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public void onApplicationEvent(ApplicationEvent event) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Publishing event: " + event);
+            LOG.debug("Publishing spring-event: " + event);
         }
 
         if (event instanceof ContextRefreshedEvent) {
@@ -126,7 +126,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             if (eventEndpoint != null) {
                 eventEndpoint.onApplicationEvent(event);
             } else {
-                LOG.warn("No eventEndpoint enabled for event: " + event);
+                LOG.warn("No spring-event endpoint enabled for: " + event);
             }
         }
     }
@@ -142,7 +142,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         this.applicationContext = applicationContext;
 
         if (applicationContext instanceof ConfigurableApplicationContext) {
-            addComponent("event", new EventComponent(applicationContext));
+            addComponent("spring-event", new EventComponent(applicationContext));
         }
     }
 
@@ -183,7 +183,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     }
 
     protected EventEndpoint createEventEndpoint() {
-        EventEndpoint endpoint = getEndpoint("event:default", EventEndpoint.class);
+        EventEndpoint endpoint = getEndpoint("spring-event:default", EventEndpoint.class);
         return endpoint;
     }
 
