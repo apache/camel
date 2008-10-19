@@ -159,6 +159,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
     }
 
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
     }
 
     protected void doStop() throws Exception {

@@ -21,7 +21,6 @@ import static org.apache.camel.component.http.HttpMethods.*;
 import org.apache.commons.httpclient.HttpMethod;
 
 import java.io.IOException;
-import java.util.Collections;
 
 /**
  * Unit test to verify the algorithm for selecting either GET or POST.
@@ -31,7 +30,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testNoDataDefaultIsGet() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
         HttpExchange exchange = producer.createExchange();
@@ -48,7 +47,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testDataDefaultIsPost() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
         HttpExchange exchange = producer.createExchange();
@@ -65,7 +64,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testWithMethodPostInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
         HttpExchange exchange = producer.createExchange();
@@ -83,7 +82,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testWithMethodGetInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
         HttpExchange exchange = producer.createExchange();
@@ -101,7 +100,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testWithEndpointQuery() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Camel", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Camel");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         HttpExchange exchange = producer.createExchange();
@@ -118,7 +117,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testWithQueryInHeader() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         HttpExchange exchange = producer.createExchange();
@@ -136,7 +135,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
     public void testWithQueryInHeaderOverrideEndpoint() throws Exception {
         HttpComponent component = new HttpComponent();
         component.setCamelContext(context);
-        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Donkey", "", Collections.EMPTY_MAP);
+        HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Donkey");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
         HttpExchange exchange = producer.createExchange();

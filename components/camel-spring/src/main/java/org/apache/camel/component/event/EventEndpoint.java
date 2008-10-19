@@ -24,12 +24,14 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
@@ -63,9 +65,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
     }
 
     public Producer<Exchange> createProducer() throws Exception {
-        if (applicationContext == null) {
-            throw new IllegalStateException("ApplicationContext is null");
-        }
+        ObjectHelper.notNull(getApplicationContext(), "applicationContext");
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {
                 ApplicationEvent event = toApplicationEvent(exchange);
