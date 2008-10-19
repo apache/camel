@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Routes;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
@@ -112,7 +113,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlTransient
     private RouteBuilder routeBuilder;
     @XmlTransient
-    private List<RouteBuilder> additionalBuilders = new ArrayList<RouteBuilder>();
+    private List<Routes> additionalBuilders = new ArrayList<Routes>();
     @XmlTransient
     private ApplicationContext applicationContext;
     @XmlTransient
@@ -499,7 +500,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 }
             }
         }
-        for (RouteBuilder routeBuilder : additionalBuilders) {
+        for (Routes routeBuilder : additionalBuilders) {
             getContext().addRoutes(routeBuilder);
         }
         if (routeBuilder != null) {
