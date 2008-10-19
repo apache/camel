@@ -77,4 +77,14 @@ public class DefaultComponentTest extends ContextTestSupport {
         assertEquals(value.intValue(), 4);
     }
 
+    public void testContextShouldBeSet() throws Exception {
+        MyComponent my = new MyComponent(null);
+        try {
+            my.start();
+            fail("Should have thrown a IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("camelContext must be specified", e.getMessage());
+        }
+    }
+
 }
