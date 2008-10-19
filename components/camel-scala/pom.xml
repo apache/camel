@@ -13,8 +13,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.scala.*</camel.osgi.export.pkg>
-    <scala-version>2.7.2-rc1</scala-version>
-    <scala-plugin-version>2.7.1</scala-plugin-version>
   </properties>
 
   <repositories>

@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>${groupId}</groupId>
+  <artifactId>${artifactId}</artifactId>
+  <packaging>bundle</packaging>
+  <version>${version}</version>
+
+  <name>Camel :: A RouteBuilder for the Scala DSL</name>
+  <url>http://www.myorganization.org</url>
+
+  <properties>
+    <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
+    <scala-version>$SCALA_VERSION_REPLACEME$</scala-version>
+    <scala-plugin-version>$SCALA_PLUGIN_VERSION_REPLACEME$</scala-plugin-version>
+  </properties>
+
+  <repositories>
+    <repository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <id>scala-tools.org</id>
+      <name>Scala-tools Maven2 Repository</name>
+      <url>http://scala-tools.org/repo-releases</url>
+    </pluginRepository>
+  </pluginRepositories>
+
+  <build>
+    <sourceDirectory>src/main/scala</sourceDirectory>
+    <testSourceDirectory>src/test/scala</testSourceDirectory>
+    <plugins>
+      <!-- the Maven Scala plugin will compile Scala source files -->
+      <plugin>
+        <groupId>org.scala-tools</groupId>
+        <artifactId>maven-scala-plugin</artifactId>
+        <version>${scala-plugin-version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>compile</goal>
+              <goal>testCompile</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      
+      <!-- bundle plugin to package the RouteBuilders in an OSGi bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+	    <artifactId>maven-bundle-plugin</artifactId>
+	    <extensions>true</extensions>
+	    <configuration>
+          <excludeDependencies>true</excludeDependencies>
+	      <instructions>
+	        <Bundle-Name>${artifactId}</Bundle-Name>
+	        <Bundle-SymbolicName>${artifactId}</Bundle-SymbolicName>
+	        <Export-Package>${package}*</Export-Package>
+	        <Implementation-Title>Apache Camel Scala DSL Router</Implementation-Title>
+	        <Implementation-Version>${project.version}</Implementation-Version>
+	      </instructions>
+	    </configuration>
+      </plugin>
+      
+      <!-- configure the eclipse plugin to generate eclipse project descriptors for a Scala project --> 
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-eclipse-plugin</artifactId>
+        <configuration>
+          <projectnatures>
+            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
+            <projectnature>org.eclipse.jdt.core.javanature</projectnature>
+          </projectnatures>
+          <buildcommands>
+            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
+          </buildcommands>
+          <classpathContainers>
+            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+            <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
+          </classpathContainers>
+        </configuration>
+      </plugin>
+      
+      <!-- allows the route to be run via 'mvn camel:run' -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+      </plugin>
+            
+    </plugins>
+  </build>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-scala</artifactId>
+      <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <version>${camel-version}</version>
+    </dependency>    
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala-version}</version>
+    </dependency>
+    <!-- test dependencies -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+      <version>${camel-version}</version>
+    </dependency>
+  </dependencies>
+</project>
