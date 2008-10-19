@@ -49,7 +49,7 @@
     <httpcore-version>4.0-beta2</httpcore-version>
     <httpcore-niossl-version>4.0-alpha6</httpcore-niossl-version>
     <jetty-version>6.1.11</jetty-version>
-    <slf4j-version>1.5.2</slf4j-version>
+    <slf4j-version>1.5.5</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
     <spring-version>2.5.5</spring-version>
     <spring-osgi-version>1.1.1</spring-osgi-version>
