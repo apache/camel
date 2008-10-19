@@ -17,6 +17,7 @@
 package org.apache.camel.component.http;
 
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -26,9 +27,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.Header;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
@@ -36,6 +39,8 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.logging.Log;
 
 import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 
@@ -43,6 +48,7 @@ import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
+    private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";
 
@@ -72,17 +78,21 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
 
         // lets store the result in the output message.
         try {
-            int responseCode = httpClient.executeMethod(method);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Executing http " + method.getName() + " method: " + method.getURI().toString());
+            }
+            int responseCode = executeMethod(method);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Http responseCode: " + responseCode);
+            }
+
             if (responseCode >= 100 && responseCode < 300) {
                 Message answer = exchange.getOut(true);
+
                 answer.setHeaders(in.getHeaders());
                 answer.setHeader(HTTP_RESPONSE_CODE, responseCode);
-                LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
-                InputStream is = method.getResponseBodyAsStream();
-                IOUtils.copy(is, bos);
-                bos.flush();
-                is.close();
-                answer.setBody(bos.createInputStream());
+                answer.setBody(extractResponseBody(method));
+
                 // propagate HTTP response headers
                 Header[] headers = method.getResponseHeaders();
                 for (Header header : headers) {
@@ -121,24 +131,64 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         this.httpClient = httpClient;
     }
 
-    protected HttpMethod createMethod(Exchange exchange) {
-        String uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
+    /**
+     * Strategy when executing the method (calling the remote server).
+     *
+     * @param method    the method to execute
+     * @return the response code
+     * @throws IOException can be thrown
+     */
+    protected int executeMethod(HttpMethod method) throws IOException {
+        return httpClient.executeMethod(method);
+    }
 
-        RequestEntity requestEntity = createRequestEntity(exchange);
-        Object m = exchange.getIn().getHeader(HTTP_METHOD);
-
-        HttpMethods ms = requestEntity == null ? HttpMethods.GET : HttpMethods.POST;
-        ms = m instanceof HttpMethods ? (HttpMethods)m
-            : m == null ? ms : HttpMethods.valueOf(m.toString());
-
-        HttpMethod method = ms.createMethod(uri);
-
-        if (exchange.getIn().getHeader(QUERY) != null) {
-            method.setQueryString(exchange.getIn().getHeader(QUERY, String.class));
+    protected static InputStream extractResponseBody(HttpMethod method) throws IOException {
+        LoadingByteArrayOutputStream bos = null;
+        InputStream is = null;
+        try {
+            bos = new LoadingByteArrayOutputStream();
+            is = method.getResponseBodyAsStream();
+            IOUtils.copy(is, bos);
+            bos.flush();
+            return bos.createInputStream();
+        } finally {
+            ObjectHelper.close(is, "Extracting response body", LOG);
+            ObjectHelper.close(bos, "Extracting response body", LOG);
         }
-        if (ms.isEntityEnclosing()) {
+    }
+
+    protected HttpMethod createMethod(Exchange exchange) {
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(QUERY, String.class);
+        if (queryString == null) {
+            queryString = ((HttpEndpoint)getEndpoint()).getHttpUri().getQuery();
+        }
+        RequestEntity requestEntity = createRequestEntity(exchange);
+
+        // compute what method to use either GET or POST
+        HttpMethods methodToUse;
+        HttpMethods m = exchange.getIn().getHeader(HTTP_METHOD, HttpMethods.class);
+        if (m != null) {
+            // always use what end-user provides in a header
+            methodToUse = m;
+        } else if (queryString != null) {
+            // if a query string is provided then use GET
+            methodToUse = HttpMethods.GET;
+        } else {
+            // fallback to POST if data, otherwise GET
+            methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
+        }
+
+        String uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
+        HttpMethod method = methodToUse.createMethod(uri);
+
+        if (queryString != null) {
+            method.setQueryString(queryString);
+        }
+        if (methodToUse.isEntityEnclosing()) {
             ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
         }
+
         return method;
     }
 
@@ -150,12 +200,18 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         try {
             return in.getBody(RequestEntity.class);
         } catch (NoTypeConversionAvailableException ex) {
-            String data = in.getBody(String.class);
-            String contentType = in.getHeader("Content-Type", String.class);
             try {
-                return new StringRequestEntity(data, null, null);
+                String data = in.getBody(String.class);
+                if (data != null) {
+                    String contentType = in.getHeader("Content-Type", String.class);
+                    String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+                    return new StringRequestEntity(data, contentType, charset);
+                } else {
+                    // no data
+                    return null;
+                }
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeCamelException(e);
             }
         }
     }
