@@ -74,10 +74,17 @@ public class HttpBinding {
                 // Try to stream the body since that would be the most efficient
                 InputStream is = out.getBody(InputStream.class);
                 if (is != null) {
-                    ServletOutputStream os = response.getOutputStream();
-                    int c;
-                    while ((c = is.read()) >= 0) {
-                        os.write(c);
+                    ServletOutputStream os = null;
+                    try {
+                        os = response.getOutputStream();
+                        int c;
+                        while ((c = is.read()) >= 0) {
+                            os.write(c);
+                        }
+                        os.flush();
+                    } finally {
+                        os.close();
+                        is.close();
                     }
                 } else {
                     String data = out.getBody(String.class);

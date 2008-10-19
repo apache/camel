@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;

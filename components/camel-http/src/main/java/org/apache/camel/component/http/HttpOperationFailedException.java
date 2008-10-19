@@ -25,11 +25,11 @@ public class HttpOperationFailedException extends CamelException {
     private final int statusCode;
     private final StatusLine statusLine;
 
-
     public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location) {
+        super("HTTP operation failed with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
         this.statusCode = statusCode;
         this.statusLine = statusLine;
-        redirectLocation = location;
+        this.redirectLocation = location;
     }
 
     public HttpOperationFailedException(int statusCode, StatusLine statusLine) {
@@ -55,6 +55,5 @@ public class HttpOperationFailedException extends CamelException {
     public int getStatusCode() {
         return statusCode;
     }
-
 
 }
