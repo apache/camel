@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 import com.sun.jersey.api.core.PackagesResourceConfig;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelResourceConfig extends PackagesResourceConfig {
     public CamelResourceConfig() {

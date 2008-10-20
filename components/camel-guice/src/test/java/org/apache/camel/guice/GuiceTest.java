@@ -25,7 +25,7 @@ import com.google.inject.Injector;
 import org.apache.camel.CamelContext;
 
 /**
- * @version $Revision: 689344 $
+ * @version $Revision$
  */
 public class GuiceTest extends TestCase {
 

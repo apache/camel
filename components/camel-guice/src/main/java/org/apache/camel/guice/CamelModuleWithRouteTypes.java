@@ -41,7 +41,7 @@ import org.apache.camel.Routes;
  * </pre></code>
  * 
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelModuleWithRouteTypes extends CamelModule {
     private Set<Class<? extends Routes>> routes;
