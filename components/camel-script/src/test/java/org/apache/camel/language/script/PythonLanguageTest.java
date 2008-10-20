@@ -24,7 +24,9 @@ import org.apache.camel.LanguageTestSupport;
 public class PythonLanguageTest extends LanguageTestSupport {
     
     public void testLanguageExpressions() throws Exception {
-        assertExpression("exchange.in.headers", "{foo=abc, bar=123}");
+        // the properties are stored in a set so ordering is not known
+        assertExpression("exchange.in.headers", "{foo=abc, bar=123}", "{bar=123, foo=abc}");
+        
         assertExpression("exchange.in", "Message: <hello id='m123'>world!</hello>");
         assertExpression("exchange.in.headers.get('foo')", "abc");
         assertExpression("request.headers['foo']", "abc");
