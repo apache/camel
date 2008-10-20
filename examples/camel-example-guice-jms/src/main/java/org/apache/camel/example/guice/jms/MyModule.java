@@ -25,7 +25,7 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MyModule extends CamelModuleWithMatchingRoutes {
 

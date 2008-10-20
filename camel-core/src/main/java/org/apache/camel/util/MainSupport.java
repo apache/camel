@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.io.IOException;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Log LOG = LogFactory.getLog(MainSupport.class);

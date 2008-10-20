@@ -18,7 +18,7 @@
 package org.apache.camel.example.guice.jms;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
 */
 public class SomeBean {
 

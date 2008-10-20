@@ -25,7 +25,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class MainTest extends TestCase {
     protected Main main = new Main();

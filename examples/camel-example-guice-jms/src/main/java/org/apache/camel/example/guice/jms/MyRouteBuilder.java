@@ -22,7 +22,7 @@ import org.apache.camel.guice.Main;
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
  *
- * @version $Revision: 644171 $
+ * @version $Revision$
  */
 public class MyRouteBuilder extends RouteBuilder {
 
