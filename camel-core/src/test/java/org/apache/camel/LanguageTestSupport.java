@@ -16,6 +16,9 @@
  */
 package org.apache.camel;
 
+import org.apache.camel.spi.Language;
+import org.apache.camel.util.ExchangeHelper;
+
 /**
  * A useful base class for testing the language plugins in Camel
  * @version $Revision$
@@ -66,4 +69,26 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected void assertExpression(String expressionText, Object expectedValue) {
         assertExpression(exchange, expressionText, expectedValue);
     }
+    
+    /**
+     * Asserts that the expression evaluates to one of the two given values
+     */
+    protected void assertExpression(String expressionText, String expectedValue, String orThisExpectedValue) {
+        Language language = assertResolveLanguage(getLanguageName());
+
+        Expression<Exchange> expression = language.createExpression(expressionText);
+        assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
+        
+        Object value = expression.evaluate(exchange);
+
+        // lets try convert to the type of the expected
+        if (expectedValue != null) {
+          value = ExchangeHelper.convertToType(exchange, expectedValue.getClass(), value);
+        }
+
+        log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);
+
+        assertTrue("Expression: " + expression + " on Exchange: " + exchange, 
+                   expectedValue.equals(value) || orThisExpectedValue.equals(value));
+    }    
 }
