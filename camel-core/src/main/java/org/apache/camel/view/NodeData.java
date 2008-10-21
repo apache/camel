@@ -36,18 +36,7 @@ package org.apache.camel.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.model.AggregatorType;
-import org.apache.camel.model.ChoiceType;
-import org.apache.camel.model.FilterType;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.OtherwiseType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RecipientListType;
-import org.apache.camel.model.ResequencerType;
-import org.apache.camel.model.RoutingSlipType;
-import org.apache.camel.model.SplitterType;
-import org.apache.camel.model.ToType;
-import org.apache.camel.model.WhenType;
+import org.apache.camel.model.*;
 
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
@@ -130,6 +119,14 @@ public class NodeData {
         } else if (node instanceof ResequencerType) {
             this.image = imagePrefix + "ResequencerIcon.png";
             this.nodeType = "Resequencer";
+        } else if (node instanceof BeanRef) {
+            BeanRef beanRef = (BeanRef) node;
+
+            // TODO
+            //this.image = imagePrefix + "Bean.png";
+            this.nodeType = "Bean Ref";
+            this.label = beanRef.getLabel() + " Bean"; 
+            this.shape = "box";
         }
 
         // lets auto-default as many values as we can
