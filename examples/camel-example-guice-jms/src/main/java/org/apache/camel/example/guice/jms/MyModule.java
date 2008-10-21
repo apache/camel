@@ -25,20 +25,25 @@ import com.google.inject.Provides;
 import com.google.inject.name.Named;
 
 /**
+ * Configures the CamelContext, RouteBuilder, Component and Endpoint instances using
+ * Guice
+ *
  * @version $Revision$
  */
 public class MyModule extends CamelModuleWithMatchingRoutes {
 
     @Override
     protected void configure() {
-        System.out.println("Configuring JMS module!!!");
         super.configure();
 
-        System.out.println("Adding my module!");
-        
+        // lets add in any RouteBuilder instances we want to use
         bind(MyRouteBuilder.class);
     }
 
+    /**
+     * Lets configure the JMS component, parameterizing some properties from the
+     * jndi.properties file
+     */
     @Provides
     @JndiBind("jms")
     JmsComponent jms(@Named("activemq.brokerURL") String brokerUrl) {
