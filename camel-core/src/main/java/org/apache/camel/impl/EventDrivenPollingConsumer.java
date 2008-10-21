@@ -64,6 +64,7 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
                 handleInteruptedException(e);
             }
         }
+        LOG.debug("Consumer is not running, so returning null");
         return null;
     }
 

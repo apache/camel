@@ -129,8 +129,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     /**
      * Creates the {@link CamelContext} using the given JNDI context as the
      * registry
-     *
-     * @param jndiContext
      */
     public DefaultCamelContext(Context jndiContext) {
         this();
