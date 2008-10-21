@@ -43,8 +43,10 @@
                 <redeliveryPolicy>
                     <maximumRedeliveries>1</maximumRedeliveries>
                 </redeliveryPolicy>
-                <!-- mark this as handled. Spring DSL only support boolean types -->
-                <handled>true</handled>
+                <!-- mark this as handled -->
+                <handled>
+                  <constant>true</constant>
+                </handled>
                 <!-- let our order service handle this exception, call the orderFailed method -->
                 <bean ref="orderService" method="orderFailed"/>
                 <!-- and since this is a unit test we use mock for assertions -->

@@ -56,7 +56,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
-    private Boolean handled;
+    private HandledPredicate handled;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlTransient
@@ -111,6 +111,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+        setHandledFromExpressionType(routeContext);
         // lets attach a processor to an error handler
         errorHandler = routeContext.createProcessor(this);
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
@@ -223,12 +224,21 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
 
     public Predicate getHandledPolicy() {
-        if (handled != null && handledPolicy == null) {
-            // will set the handled policy using fluent builder with the boolean value from handled that
-            // is from the spring DSL where we currently only support setting either true|false as policy
-            handled(handled);
-        }
         return handledPolicy;
+    }
+
+    public void setHandled(HandledPredicate handled) {
+        this.handled = handled;
+    }
+
+    public HandledPredicate getHandled() {
+        return handled;
+    }    
+    
+    private void setHandledFromExpressionType(RouteContext routeContext) {
+        if (getHandled() != null && handledPolicy == null && routeContext != null) {  
+            handled(getHandled().createPredicate(routeContext));
+        }
     }
 
     public void setHandledPolicy(Predicate handledPolicy) {
