@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
@@ -54,6 +55,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
+    @XmlElement(name = "handled", required = false)
+    private Boolean handled;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlTransient
@@ -220,6 +223,11 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
 
     public Predicate getHandledPolicy() {
+        if (handled != null && handledPolicy == null) {
+            // will set the handled policy using fluent builder with the boolean value from handled that
+            // is from the spring DSL where we currently only support setting either true|false as policy
+            handled(handled);
+        }
         return handledPolicy;
     }
 
