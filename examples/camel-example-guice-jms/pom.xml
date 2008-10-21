@@ -74,11 +74,10 @@
 
   <build>
     <plugins>
-      <!-- TODO use guice plugin!! -->
-      <!-- Allows the routes to be run via 'mvn camel:run' -->
+      <!-- Allows the routes to be run via 'mvn guice:run' -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-maven-plugin</artifactId>
+        <artifactId>guice-maven-plugin</artifactId>
         <version>${pom.version}</version>
       </plugin>
 
