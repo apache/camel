@@ -70,7 +70,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                 } catch (Exception e) {
                     LOG.error("Seda queue caught: " + e, e);
                 }
-            } else {
+            } else if (exchange != null) {
                 LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
                 try {
                     endpoint.getQueue().put(exchange);
