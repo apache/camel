@@ -121,20 +121,20 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
         }
         return loadBalancer;
     }
-
-    // when this method will be called
+    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         LoadBalancer loadBalancer = LoadBalancerType.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorType processorType : getOutputs()) {
             // The outputs should be the SendProcessor
-            SendProcessor processor = (SendProcessor) processorType.createProcessor(routeContext);
-            loadBalancer.addProcessor(processor);
+            Processor processor = processorType.createProcessor(routeContext);
+            processor = processorType.wrapProcessorInInterceptors(routeContext, processor);
+            loadBalancer.addProcessor((SendProcessor)processor);
         }
 
         return loadBalancer;
     }
-
+    
     // Fluent API
     // -------------------------------------------------------------------------
     public LoadBalanceType setLoadBalancer(LoadBalancer loadBalancer) {
