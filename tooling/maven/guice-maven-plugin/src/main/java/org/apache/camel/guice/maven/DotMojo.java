@@ -76,7 +76,7 @@ public class DotMojo extends AbstractMavenReport {
     protected String duration;
 
     /**
-     * Whether we should boot up camel with the META-INF/services/*.xml to
+     * Whether we should boot up camel with the jndi.properties file to
      * generate the DOT file
      *
      * @parameter expression="true"
@@ -87,7 +87,7 @@ public class DotMojo extends AbstractMavenReport {
      * The main class to execute.
      *
      * @parameter expression="${camel.mainClass}"
-     *            default-value="org.apache.camel.spring.Main"
+     *            default-value="org.apache.camel.guice.Main"
      * @required
      */
     private String mainClass;
@@ -99,21 +99,6 @@ public class DotMojo extends AbstractMavenReport {
      * @parameter expression="true"
      */
     protected boolean useDot;
-
-    /**
-     * The classpath based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.applicationContextUri}"
-     */
-    protected String applicationContextUri;
-
-    /**
-     * The filesystem based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.fileApplicationContextUri}"
-     */
-    protected String fileApplicationContextUri;
-
 
     /**
      * Reference to Maven 2 Project.
@@ -353,14 +338,7 @@ public class DotMojo extends AbstractMavenReport {
 
     protected void runCamelEmbedded(File outputDir) throws DependencyResolutionRequiredException {
         if (runCamel) {
-            // default path, but can be overridden by configuration
-            if (applicationContextUri != null) {
-                getLog().info("Running Camel embedded to load Spring XML files from classpath: " + applicationContextUri);
-            } else if (fileApplicationContextUri != null) {
-                getLog().info("Running Camel embedded to load Spring XML files from file path: " + fileApplicationContextUri);
-            } else {
-                getLog().info("Running Camel embedded to load Spring XML files from default path: META-INF/spring/*.xml");
-            }
+            getLog().info("Running Camel embedded to load jndi.properties file from the classpath");
 
             List list = project.getTestClasspathElements();
             getLog().debug("Using classpath: " + list);
@@ -376,8 +354,6 @@ public class DotMojo extends AbstractMavenReport {
             mojo.setDuration(duration);
             mojo.setLog(getLog());
             mojo.setPluginContext(getPluginContext());
-            mojo.setApplicationContextUri(applicationContextUri);
-            mojo.setFileApplicationContextUri(fileApplicationContextUri);
             try {
                 mojo.executeWithoutWrapping();
             } catch (Exception e) {

@@ -30,10 +30,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.mojo.exec.AbstractExecMojo;
 
 /**
- * Runs a CamelContext using any Spring XML configuration files found in
- * <code>META-INF/spring/*.xml</code> and <code>camel-*.xml</code>
- * and starting up the context; then generating
- * the DOT file before closing the context down.
+ * Runs a Camel using the
+ * <code>jndi.properties</code> file on the classpath to
+ * way to <a href="http://activemq.apache.org/camel/guice.html">bootstrap via Guice</a>
  *
  * @goal embedded
  * @requiresDependencyResolution runtime
@@ -76,20 +75,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
     protected boolean dotAggregationEnabled;
 
     /**
-     * The classpath based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.applicationContextUri}"
-     */
-    protected String applicationContextUri;
-
-    /**
-     * The filesystem based application context uri that spring wants to get.
-     *
-     * @parameter expression="${camel.fileApplicationContextUri}"
-     */
-    protected String fileApplicationContextUri;
-
-    /**
      * Project classpath.
      *
      * @parameter expression="${project.testClasspathElements}"
@@ -102,7 +87,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * The main class to execute.
      *
      * @parameter expression="${camel.mainClass}"
-     *            default-value="org.apache.camel.spring.Main"
+     *            default-value="org.apache.camel.guice.Main"
      * @required
      */
     private String mainClass;
@@ -183,22 +168,6 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.dotAggregationEnabled = dotAggregationEnabled;
     }
 
-    public String getApplicationContextUri() {
-        return applicationContextUri;
-    }
-
-    public void setApplicationContextUri(String applicationContextUri) {
-        this.applicationContextUri = applicationContextUri;
-    }
-
-    public String getFileApplicationContextUri() {
-        return fileApplicationContextUri;
-    }
-
-    public void setFileApplicationContextUri(String fileApplicationContextUri) {
-        this.fileApplicationContextUri = fileApplicationContextUri;
-    }
-
     public String getMainClass() {
         return mainClass;
     }
@@ -240,18 +209,10 @@ public class EmbeddedMojo extends AbstractExecMojo {
             args.add("true");
         }
 
-        if (applicationContextUri != null) {
-            args.add("-applicationContext");
-            args.add(applicationContextUri);
-        } else if (fileApplicationContextUri != null) {
-            args.add("-fileApplicationContext");
-            args.add(fileApplicationContextUri);
-        }
-
         args.add("-duration");
         args.add(getDuration());
 
-        return (String[]) args.toArray(new String[0]);
+        return args.toArray(new String[0]);
     }
 
     public ClassLoader createClassLoader(ClassLoader parent) throws MalformedURLException {
