@@ -30,6 +30,9 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 import static org.apache.camel.util.ObjectHelper.notNull;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 
 /**
  * A number of helper methods
@@ -182,4 +185,21 @@ public final class CamelContextHelper {
         }
         return expression;
     }
+
+    /**
+     * Evaluates the @EndpointInject annotation using the given context
+     */
+    public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String name, String injectionPointName) {
+        Endpoint endpoint = null;
+        if (isNotNullAndNonEmpty(uri)) {
+            endpoint = camelContext.getEndpoint(uri);
+        } else {
+            if (isNullOrBlank(name)) {
+                name = injectionPointName;
+            }
+            endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
+        }
+        return endpoint;
+    }
+
 }
