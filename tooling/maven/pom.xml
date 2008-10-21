@@ -33,6 +33,7 @@
 
   <modules>
     <module>camel-maven-plugin</module>
+    <module>guice-maven-plugin</module>
     <module>maven-html-to-pdf</module>
   </modules>
 
