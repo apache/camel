@@ -85,10 +85,7 @@ public class GuiceRouteWithNamedKeysTest extends TestCase {
         assertEquals("route builder list: " + list, 0, list.size());
 */
 
-        CamelContext camelContext = injector.getInstance(CamelContext.class);
-        camelContext.start();
-        Thread.sleep(1000);
-        camelContext.stop();
+        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }
 
 

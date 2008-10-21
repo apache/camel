@@ -21,6 +21,7 @@ import junit.framework.TestCase;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.spi.CloseFailedException;
 
 import org.apache.camel.CamelContext;
 
@@ -28,6 +29,23 @@ import org.apache.camel.CamelContext;
  * @version $Revision$
  */
 public class GuiceTest extends TestCase {
+
+    /**
+     * Asserts that the CamelContext is available in the given Injector, that its been started, then close the injector
+     * @param injector
+     * @throws CloseFailedException
+     */
+    public static void assertCamelContextRunningThenCloseInjector(Injector injector) throws Exception {
+        CamelContext camelContext = injector.getInstance(CamelContext.class);
+
+        org.hamcrest.MatcherAssert.assertThat(camelContext, org.hamcrest.Matchers.is(GuiceCamelContext.class));
+        GuiceCamelContext guiceContext = (GuiceCamelContext) camelContext;
+        assertTrue("is started!", guiceContext.isStarted());
+
+        Thread.sleep(1000);
+
+        injector.close();
+    }
 
     public static class Cheese {
         private final CamelContext camelContext;
@@ -50,6 +68,8 @@ public class GuiceTest extends TestCase {
         assertNotNull("Should have cheese", cheese);
         assertNotNull("Should have camelContext", cheese.getCamelContext());
         System.out.println("Got " + cheese);
+
+        assertCamelContextRunningThenCloseInjector(injector);
     }
 
 }

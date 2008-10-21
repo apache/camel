@@ -21,7 +21,8 @@ import junit.framework.TestCase;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
-import org.apache.camel.CamelContext;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 
 /**
@@ -34,10 +35,7 @@ public class ConciseGuiceRouteTest extends TestCase {
     public void testGuice() throws Exception {
         // lets disable resource injection to avoid JNDI being used
         Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class).noResourceInjection());
-        CamelContext camelContext = injector.getInstance(CamelContext.class);
-        camelContext.start();
-        Thread.sleep(1000);
-        camelContext.stop();
+        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }
 
 }
