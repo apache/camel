@@ -42,10 +42,7 @@ public class TraditionalGuiceRouteTest extends TestCase {
 
     public void testGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
-        CamelContext camelContext = injector.getInstance(CamelContext.class);
-        camelContext.start();
-        Thread.sleep(1000);
-        camelContext.stop();
+        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }
 
 }
