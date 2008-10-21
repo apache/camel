@@ -46,6 +46,13 @@ public class XStreamDataFormat implements DataFormat {
     private XStream xstream;
     private StaxConverter staxConverter;
 
+    public XStreamDataFormat() {
+    }
+
+    public XStreamDataFormat(XStream xstream) {
+        setXStream(xstream);
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
         try {
