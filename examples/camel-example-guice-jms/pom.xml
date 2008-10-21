@@ -89,6 +89,10 @@
         <configuration>
           <mainClass>org.apache.camel.guice.Main</mainClass>
           <includePluginDependencies>false</includePluginDependencies>
+          <arguments>
+             <argument>-duration</argument>
+             <argument>5s</argument>
+          </arguments> 
         </configuration>
       </plugin>
     </plugins>

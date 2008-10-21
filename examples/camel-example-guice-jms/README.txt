@@ -8,7 +8,7 @@ The example consumes messages from a queue and writes them to the file
 system.
 
 To run the example type
-  mvn camel:run
+  mvn compile exec:java
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ installed. It can be downloaded from 
