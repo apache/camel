@@ -46,13 +46,13 @@
     <cxf-version>2.1.2</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
-    <httpcore-version>4.0-beta2</httpcore-version>
+    <httpcore-version>4.0-beta3</httpcore-version>
     <httpcore-niossl-version>4.0-alpha6</httpcore-niossl-version>
     <jetty-version>6.1.11</jetty-version>
     <slf4j-version>1.5.5</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
     <spring-version>2.5.5</spring-version>
-    <spring-osgi-version>1.1.1</spring-osgi-version>
+    <spring-osgi-version>1.1.2</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
     <jaxb-version>2.1.6</jaxb-version>
