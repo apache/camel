@@ -25,6 +25,7 @@ import org.apache.camel.model.FromType;
 import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.InterceptorRef;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 
 /**
@@ -90,8 +91,8 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
     }
 
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
-        if (node instanceof MulticastType) {
-            // no need for a multicast node
+        if (node instanceof MulticastType || node instanceof InterceptorRef) {
+            // no need for a multicast or interceptor node
             List<ProcessorType> outputs = node.getOutputs();
             for (ProcessorType output : outputs) {
                 printNode(writer, fromData, output);
