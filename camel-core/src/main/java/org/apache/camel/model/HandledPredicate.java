@@ -44,7 +44,7 @@ public class HandledPredicate {
         this.predicate = predicate;
     }
 
-    public ExpressionType getCompletePredicate() {
+    public ExpressionType getHandledPredicate() {
         return handledPredicate;
     }
 
