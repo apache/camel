@@ -61,7 +61,7 @@ public class HandledPredicate {
     }
 
     public Predicate createPredicate(RouteContext routeContext) {
-        ExpressionType predicateType = getCompletePredicate();
+        ExpressionType predicateType = getHandledPredicate();
         if (predicateType != null && predicate == null) {
             predicate = predicateType.createPredicate(routeContext);
         }
