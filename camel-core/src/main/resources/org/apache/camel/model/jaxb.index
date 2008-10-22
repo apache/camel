@@ -18,11 +18,11 @@ AggregatorType
 BeanRef
 CatchType
 ChoiceType
-CompletedPredicate
 ConvertBodyType
 DelayerType
 Description
 ExceptionType
+ExpressionSubElementType
 FilterType
 FinallyType
 FromType

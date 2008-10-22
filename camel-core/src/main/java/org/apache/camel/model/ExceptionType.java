@@ -56,7 +56,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
-    private HandledPredicate handled;
+    private ExpressionSubElementType handled;
     @XmlElementRef
     private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlTransient
@@ -227,11 +227,11 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return handledPolicy;
     }
 
-    public void setHandled(HandledPredicate handled) {
+    public void setHandled(ExpressionSubElementType handled) {
         this.handled = handled;
     }
 
-    public HandledPredicate getHandled() {
+    public ExpressionSubElementType getHandled() {
         return handled;
     }    
     
