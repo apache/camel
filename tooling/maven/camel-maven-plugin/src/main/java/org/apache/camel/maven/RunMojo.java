@@ -354,7 +354,7 @@ public class RunMojo extends AbstractExecMojo {
         }        
         
         if (applicationContextUri != null) {
-            args.add("-a");
+            args.add("-ac");
             args.add(applicationContextUri);
         } else if (fileApplicationContextUri != null) {
             args.add("-fa");
