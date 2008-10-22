@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -51,32 +52,35 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     }
 
     public void run() {
-        while (isRunAllowed()) {
+        BlockingQueue<Exchange> queue = endpoint.getQueue();
+        while (queue != null && isRunAllowed()) {
             final Exchange exchange;
             try {
-                exchange = endpoint.getQueue().poll(1000, TimeUnit.MILLISECONDS);
+                exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Interupted: " + e, e);
                 }
                 continue;
             }
-            if (exchange != null && isRunAllowed()) {
-                try {
-                    processor.process(exchange, new AsyncCallback() {
-                        public void done(boolean sync) {
+            if (exchange != null) {
+                if (isRunAllowed()) {
+                    try {
+                        processor.process(exchange, new AsyncCallback() {
+                            public void done(boolean sync) {
+                            }
+                        });
+                    } catch (Exception e) {
+                        LOG.error("Seda queue caught: " + e, e);
+                    }
+                } else {
+                    LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
+                    try {
+                        queue.put(exchange);
+                    } catch (InterruptedException e) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Interupted: " + e, e);
                         }
-                    });
-                } catch (Exception e) {
-                    LOG.error("Seda queue caught: " + e, e);
-                }
-            } else if (exchange != null) {
-                LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);
-                try {
-                    endpoint.getQueue().put(exchange);
-                } catch (InterruptedException e) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Interupted: " + e, e);
                     }
                 }
             }
