@@ -14,32 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.guice;
+package org.apache.camel.guice.produce;
 
-import junit.framework.TestCase;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import org.apache.camel.CamelContext;
+import org.apache.camel.Consume;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
- * Lets use a custom CamelModule to perform explicit binding of route builders
- *
- * @version $Revision$
+ * @version $Revision: 697494 $
  */
-public class TraditionalGuiceRouteTest extends TestCase {
+public class MyListenerService implements MyListener {
 
-    public static class MyModule extends CamelModuleWithRouteTypes {
+    private static final Log LOG = LogFactory.getLog(MyListenerService.class);
 
-        public MyModule() {
-            super(MyHardcodeRoute.class, MyRouteInstaller.class);
-        }
+    public MyListenerService() {
     }
 
-    public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new MyModule());
-        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
+    @Consume(uri = "direct:myService")
+    public String sayHello(String name) {
+        LOG.debug("Invoked sayHello with: " + name);
+        return "Hello " + name;
     }
-
 }

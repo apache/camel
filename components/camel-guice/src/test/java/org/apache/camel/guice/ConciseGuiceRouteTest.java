@@ -34,7 +34,7 @@ public class ConciseGuiceRouteTest extends TestCase {
 
     public void testGuice() throws Exception {
         // lets disable resource injection to avoid JNDI being used
-        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class).noResourceInjection());
+        Injector injector = Guice.createInjector(new CamelModuleWithRouteTypes(MyRouteInstaller.class, MyHardcodeRoute.class));
         GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
     }
 

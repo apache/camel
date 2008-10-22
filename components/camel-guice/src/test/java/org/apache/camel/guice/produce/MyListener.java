@@ -14,32 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.guice;
-
-import junit.framework.TestCase;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import org.apache.camel.CamelContext;
+package org.apache.camel.guice.produce;
 
 /**
- * Lets use a custom CamelModule to perform explicit binding of route builders
- *
- * @version $Revision$
+ * @version $Revision: 697494 $
  */
-public class TraditionalGuiceRouteTest extends TestCase {
+public interface MyListener {
 
-    public static class MyModule extends CamelModuleWithRouteTypes {
-
-        public MyModule() {
-            super(MyHardcodeRoute.class, MyRouteInstaller.class);
-        }
-    }
-
-    public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new MyModule());
-        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
-    }
+    String sayHello(String name);
 
 }

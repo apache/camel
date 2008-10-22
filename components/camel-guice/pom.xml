@@ -57,6 +57,12 @@
 
     <!-- testing -->
     <dependency>
+      <groupId>org.guiceyfruit</groupId>
+      <artifactId>guiceyfruit-junit3</artifactId>
+      <version>${guiceyfruit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
       <scope>test</scope>

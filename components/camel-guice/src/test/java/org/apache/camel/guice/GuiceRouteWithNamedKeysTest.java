@@ -41,11 +41,6 @@ public class GuiceRouteWithNamedKeysTest extends TestCase {
 
     public static class MyModule extends CamelModuleWithMatchingRoutes {
 
-        public MyModule() {
-            // lets disable the use of JNDI
-            noResourceInjection();
-        }
-
         @Provides
         @Named("foo")
         protected MyConfigurableRoute2 createRoute1() {

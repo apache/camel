@@ -14,32 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.guice;
+package org.apache.camel.guice.produce;
 
-import junit.framework.TestCase;
-
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-
-import org.apache.camel.CamelContext;
+import junit.framework.Assert;
+import org.apache.camel.Produce;
+import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
+import org.guiceyfruit.testing.junit3.GuiceyFruitTestCase;
 
 /**
- * Lets use a custom CamelModule to perform explicit binding of route builders
- *
- * @version $Revision$
+ * @version $Revision: 697494 $
  */
-public class TraditionalGuiceRouteTest extends TestCase {
+public class ProduceTest extends GuiceyFruitTestCase {
 
-    public static class MyModule extends CamelModuleWithRouteTypes {
+    @Produce(uri = "direct:myService")
+    protected MyListener producer;
 
-        public MyModule() {
-            super(MyHardcodeRoute.class, MyRouteInstaller.class);
+    public void testInvokeService() throws Exception {
+        // lets send a message
+        String actual = producer.sayHello("James");
+        Assert.assertEquals("response", "Hello James", actual);
+    }
+
+    public static class Configuration extends CamelModuleWithMatchingRoutes {
+        @Override
+        protected void configure() {
+            super.configure();
+
+            bind(MyListenerService.class).asEagerSingleton();
         }
     }
-
-    public void testGuice() throws Exception {
-        Injector injector = Guice.createInjector(new MyModule());
-        GuiceTest.assertCamelContextRunningThenCloseInjector(injector);
-    }
-
 }

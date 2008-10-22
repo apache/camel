@@ -21,6 +21,8 @@ import org.apache.camel.*;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,14 +36,17 @@ import java.lang.reflect.Method;
  *
  * @version $Revision: 1.1 $
  */
-public class CamelPostProcessorSupport implements CamelContextAware {
-    private static final transient Log LOG = LogFactory.getLog(CamelPostProcessorSupport.class);
+public class CamelPostProcessorHelper implements CamelContextAware {
+    private static final transient Log LOG = LogFactory.getLog(CamelPostProcessorHelper.class);
 
     @XmlTransient
     private CamelContext camelContext;
 
-    public CamelPostProcessorSupport(CamelContext camelContext) {
-        this.camelContext = camelContext;
+    public CamelPostProcessorHelper() {
+    }
+
+    public CamelPostProcessorHelper(CamelContext camelContext) {
+        this.setCamelContext(camelContext);
     }
 
     public CamelContext getCamelContext() {
@@ -69,7 +74,7 @@ public class CamelPostProcessorSupport implements CamelContextAware {
     protected void subscribeMethod(Method method, Object bean, String endpointUri, String endpointName) {
         // lets bind this method to a listener
         String injectionPointName = method.getName();
-        Endpoint endpoint = getEndpointInjection(endpointUri, endpointName, injectionPointName);
+        Endpoint endpoint = getEndpointInjection(endpointUri, endpointName, injectionPointName, true);
         if (endpoint != null) {
             try {
                 Processor processor = createConsumerProcessor(bean, method, endpoint);
@@ -84,6 +89,7 @@ public class CamelPostProcessorSupport implements CamelContextAware {
     }
 
     public void startService(Service service) throws Exception {
+        CamelContext camelContext = getCamelContext();
         if (camelContext instanceof DefaultCamelContext) {
             DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
             defaultCamelContext.addService(service);
@@ -103,36 +109,41 @@ public class CamelPostProcessorSupport implements CamelContextAware {
         return answer;
     }
 
-    protected Endpoint getEndpointInjection(String uri, String name, String injectionPointName) {
-        return CamelContextHelper.getEndpointInjection(camelContext, uri, name, injectionPointName);
+    protected Endpoint getEndpointInjection(String uri, String name, String injectionPointName, boolean mandatory) {
+        return CamelContextHelper.getEndpointInjection(getCamelContext(), uri, name, injectionPointName, mandatory);
     }
 
     /**
      * Creates the object to be injected for an {@link org.apache.camel.EndpointInject} or {@link org.apache.camel.Produce} injection point
      */
     public Object getInjectionValue(Class<?> type, String endpointUri, String endpointRef, String injectionPointName) {
-        Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName);
-        if (endpoint != null) {
-            if (type.isInstance(endpoint)) {
-                return endpoint;
-            } else if (type.isAssignableFrom(Producer.class)) {
-                return createInjectionProducer(endpoint);
-            } else if (type.isAssignableFrom(DefaultProducerTemplate.class)) {
-                return new DefaultProducerTemplate(getCamelContext(), endpoint);
-            } else if (type.isAssignableFrom(PollingConsumer.class)) {
-                return createInjectionPollingConsumer(endpoint);
-            } else if (type.isInterface()) {
-                // lets create a proxy
-                try {
-                    return ProxyHelper.createProxy(endpoint, type);
-                } catch (Exception e) {
-                    throw createProxyInstantiationRuntimeException(type, endpoint, e);
-                }
-            } else {
-                throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
-            }
+        if (type.isAssignableFrom(ProducerTemplate.class)) {
+            // endpoint is optional for this injection point
+            Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
+            return new DefaultProducerTemplate(getCamelContext(), endpoint);
         }
-        return null;
+        else {
+            Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, true);
+            if (endpoint != null) {
+                if (type.isInstance(endpoint)) {
+                    return endpoint;
+                } else if (type.isAssignableFrom(Producer.class)) {
+                    return createInjectionProducer(endpoint);
+                } else if (type.isAssignableFrom(PollingConsumer.class)) {
+                    return createInjectionPollingConsumer(endpoint);
+                } else if (type.isInterface()) {
+                    // lets create a proxy
+                    try {
+                        return ProxyHelper.createProxy(endpoint, type);
+                    } catch (Exception e) {
+                        throw createProxyInstantiationRuntimeException(type, endpoint, e);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
+                }
+            }
+            return null;
+        }
     }
 
     protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
