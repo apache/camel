@@ -50,7 +50,7 @@ public class Main extends MainSupport {
 
     public Main() {
 
-        addOption(new ParameterOption("a", "applicationContext",
+        addOption(new ParameterOption("ac", "applicationContext",
                 "Sets the classpath based spring ApplicationContext", "applicationContext") {
             protected void doProcess(String arg, String parameter, LinkedList<String> remainingArgs) {
                 setApplicationContextUri(parameter);
