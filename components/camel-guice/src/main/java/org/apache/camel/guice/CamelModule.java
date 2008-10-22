@@ -21,6 +21,7 @@ import com.google.inject.jsr250.Jsr250;
 import com.google.inject.jsr250.Jsr250Module;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Routes;
+import org.apache.camel.guice.impl.EndpointInjector;
 
 /**
  * A base Guice module for creating a {@link CamelContext} leaving it up to the users module
@@ -47,6 +48,8 @@ public class CamelModule extends Jsr250Module {
         super.configure();
         
         bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
+
+        bind(EndpointInjector.class);
     }
 
 }
