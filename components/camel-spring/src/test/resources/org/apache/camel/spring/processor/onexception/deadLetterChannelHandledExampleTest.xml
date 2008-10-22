@@ -40,9 +40,7 @@
                 <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
                 <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
                 <!-- we can set the redelivery policy here as well -->
-                <redeliveryPolicy>
-                    <maximumRedeliveries>1</maximumRedeliveries>
-                </redeliveryPolicy>
+                <redeliveryPolicy maximumRedeliveries="1"/>
                 <!-- mark this as handled -->
                 <handled>
                   <constant>true</constant>
