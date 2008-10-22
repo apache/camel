@@ -125,11 +125,10 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         LoadBalancer loadBalancer = LoadBalancerType.getLoadBalancer(routeContext, loadBalancerType, ref);
-        for (ProcessorType processorType : getOutputs()) {
-            // The outputs should be the SendProcessor
+        for (ProcessorType processorType : getOutputs()) {            
             Processor processor = processorType.createProcessor(routeContext);
             processor = processorType.wrapProcessorInInterceptors(routeContext, processor);
-            loadBalancer.addProcessor((SendProcessor)processor);
+            loadBalancer.addProcessor(processor);
         }
 
         return loadBalancer;
