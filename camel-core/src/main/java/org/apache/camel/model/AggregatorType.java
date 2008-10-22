@@ -288,7 +288,7 @@ public class AggregatorType extends ExpressionNode {
 
     protected void checkNoCompletedPredicate() {
         if (getCompletedPredicate() != null) {
-            throw new IllegalArgumentException("There already is a completedPredicate defined for this aggregator: " + this);
+            throw new IllegalArgumentException("There is already a completedPredicate defined for this aggregator: " + this);
         }
     }
 }
