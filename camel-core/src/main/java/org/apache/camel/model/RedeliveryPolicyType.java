@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -30,12 +31,19 @@ import org.apache.camel.processor.RedeliveryPolicy;
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyType {
+    @XmlAttribute
     private Integer maximumRedeliveries;
+    @XmlAttribute
     private Long initialRedeliveryDelay;
+    @XmlAttribute
     private Double backOffMultiplier;
+    @XmlAttribute
     private Boolean useExponentialBackOff;
+    @XmlAttribute
     private Double collisionAvoidanceFactor;
+    @XmlAttribute
     private Boolean useCollisionAvoidance;
+    @XmlAttribute
     private Long maximumRedeliveryDelay;
 
     public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
