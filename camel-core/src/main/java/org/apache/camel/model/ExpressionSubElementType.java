@@ -22,49 +22,72 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;handled/&gt; element
+ * Represents an expression sub element
  */
-@XmlRootElement(name = "handled")
+@XmlRootElement(name = "expression")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HandledPredicate {
+public class ExpressionSubElementType {
     @XmlElementRef
-    private ExpressionType handledPredicate;
+    private ExpressionType expressionType;
+    @XmlTransient
+    private Expression expression;
     @XmlTransient
     private Predicate predicate;
 
-    public HandledPredicate() {
+    public ExpressionSubElementType() {
     }
 
-    public HandledPredicate(Predicate predicate) {
+    public ExpressionSubElementType(Expression expression) {
+        this.expression = expression;
+    }
+
+    public ExpressionSubElementType(Predicate predicate) {
         this.predicate = predicate;
+    }   
+    
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
-    public ExpressionType getHandledPredicate() {
-        return handledPredicate;
+    public void setExpressionType(ExpressionType expressionType) {
+        this.expressionType = expressionType;
     }
 
-    public void setHandledPredicate(ExpressionType handledPredicate) {
-        this.handledPredicate = handledPredicate;
-    }
-
-    public Predicate getPredicate() {
-        return predicate;
+    public Expression getExpression() {
+        return expression;
+    }   
+    
+    public void setExpression(Expression expression) {
+        this.expression = expression;
     }
 
     public void setPredicate(Predicate predicate) {
         this.predicate = predicate;
     }
 
-    public Predicate createPredicate(RouteContext routeContext) {
-        ExpressionType predicateType = getHandledPredicate();
-        if (predicateType != null && predicate == null) {
-            predicate = predicateType.createPredicate(routeContext);
-        }
+    public Predicate getPredicate() {
         return predicate;
+    }    
+    
+    public Expression createExpression(RouteContext routeContext) {
+        ExpressionType expressionType = getExpressionType();
+        if (expressionType != null && expression == null) {
+            expression = expressionType.createExpression(routeContext);
+        }
+        return expression;
+    }
+    
+    public Predicate createPredicate(RouteContext routeContext) {
+        ExpressionType expressionType = getExpressionType();
+        if (expressionType != null && getPredicate() == null) {
+            setPredicate(expressionType.createPredicate(routeContext));
+        }
+        return getPredicate();
     }
 }

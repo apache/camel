@@ -60,7 +60,7 @@ public class AggregatorType extends ExpressionNode {
     @XmlAttribute(required = false)
     private String strategyRef;
     @XmlElement(name = "completedPredicate", required = false)
-    private CompletedPredicate completedPredicate;
+    private ExpressionSubElementType completedPredicate;
 
     public AggregatorType() {
     }
@@ -140,8 +140,8 @@ public class AggregatorType extends ExpressionNode {
             Expression aggregateExpression = getExpression().createExpression(routeContext);
 
             Predicate predicate = null;
-            if (completedPredicate != null) {
-                predicate = completedPredicate.createPredicate(routeContext);
+            if (getCompletedPredicate() != null) {
+                predicate = getCompletedPredicate().createPredicate(routeContext);
             }
             if (predicate != null) {
                 aggregator = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
@@ -225,12 +225,12 @@ public class AggregatorType extends ExpressionNode {
         this.strategyRef = strategyRef;
     }
 
-    public CompletedPredicate getCompletePredicate() {
-        return completedPredicate;
+    public void setCompletedPredicate(ExpressionSubElementType completedPredicate) {
+        this.completedPredicate = completedPredicate;
     }
 
-    public void setCompletePredicate(CompletedPredicate completedPredicate) {
-        this.completedPredicate = completedPredicate;
+    public ExpressionSubElementType getCompletedPredicate() {
+        return completedPredicate;
     }
 
     // Fluent API
@@ -273,7 +273,7 @@ public class AggregatorType extends ExpressionNode {
     public ExpressionClause<AggregatorType> completedPredicate() {
         checkNoCompletedPredicate();
         ExpressionClause<AggregatorType> clause = new ExpressionClause<AggregatorType>(this);
-        completedPredicate = new CompletedPredicate(clause);
+        setCompletedPredicate(new ExpressionSubElementType((Expression)clause));
         return clause;
     }
 
@@ -282,12 +282,12 @@ public class AggregatorType extends ExpressionNode {
      */
     public AggregatorType completedPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
-        completedPredicate = new CompletedPredicate(predicate);
+        setCompletedPredicate(new ExpressionSubElementType(predicate));
         return this;
     }
 
     protected void checkNoCompletedPredicate() {
-        if (completedPredicate != null) {
+        if (getCompletedPredicate() != null) {
             throw new IllegalArgumentException("There already is a completedPredicate defined for this aggregator: " + this);
         }
     }
