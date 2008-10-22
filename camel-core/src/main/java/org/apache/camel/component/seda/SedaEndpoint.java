@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
 
@@ -50,6 +51,7 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
     public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue) {
         super(endpointUri);
+        ObjectHelper.notNull(queue, "queue");
         this.queue = queue;
     }
 
