@@ -102,7 +102,12 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
     public void setCamelContext(SpringCamelContext camelContext) {
         this.camelContext = camelContext;
-        postProcessor = new CamelPostProcessorSupport(camelContext);
+        postProcessor = new CamelPostProcessorSupport(camelContext) {
+            @Override
+            protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
+                return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
+            }
+        };
     }
 
     // Implementation methods
