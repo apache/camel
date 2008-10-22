@@ -17,22 +17,12 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.MessageDriven;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Consume;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.Consumer;
-import org.apache.camel.Service;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Producer;
-import org.apache.camel.PollingConsumer;
+import org.apache.camel.*;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanInstantiationException;
 
 import javax.xml.bind.annotation.XmlTransient;
 import java.lang.reflect.Method;
@@ -136,13 +126,17 @@ public class CamelPostProcessorSupport implements CamelContextAware {
                 try {
                     return ProxyHelper.createProxy(endpoint, type);
                 } catch (Exception e) {
-                    throw new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
+                    throw createProxyInstantiationRuntimeException(type, endpoint, e);
                 }
             } else {
                 throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
             }
         }
         return null;
+    }
+
+    protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
+        return new ProxyInstantiationException(type, endpoint, e);
     }
 
     /**
