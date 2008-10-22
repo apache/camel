@@ -42,8 +42,6 @@ public class EndpointInjectionTest extends TestCase {
 
         @Override
         protected void configure() {
-            noResourceInjection();
-
             super.configure();
 
             bind(MyBean.class);

@@ -27,32 +27,32 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
-import org.apache.camel.EndpointInject;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Produce;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 
 /**
- * Injects values into the {@link EndpointInject} injection point
+ * Injects values into the {@link Produce} injection point
  *
  * @version $Revision: 1.1 $
  */
-@InjectionAnnotation(EndpointInject.class)
-public class EndpointInjector extends CamelPostProcessorHelper implements AnnotationProviderFactory {
+@InjectionAnnotation(Produce.class)
+public class ProduceInjector extends CamelPostProcessorHelper implements AnnotationProviderFactory {
 
     @Inject
-    public EndpointInjector(CamelContext camelContext) {
+    public ProduceInjector(CamelContext camelContext) {
         super(camelContext);
     }
 
     public Provider createProvider(final AnnotatedElement member) {
-        final EndpointInject inject = member.getAnnotation(EndpointInject.class);
-        Objects.nonNull(inject, "@EndpointInject is not present!");
+        final Produce inject = member.getAnnotation(Produce.class);
+        Objects.nonNull(inject, "@Produce is not present!");
 
 
         final Class<?> type;
         final String injectionPointName;
-        final String endpointRef = inject.name();
+        final String endpointRef = inject.ref();
         final String uri = inject.uri();
 
         if (member instanceof Field) {
@@ -68,7 +68,7 @@ public class EndpointInjector extends CamelPostProcessorHelper implements Annota
                 injectionPointName = ObjectHelper.getPropertyName(method);
             }
             else {
-                throw new UnsupportedOperationException("Only a single method parameter value supported for @EndpointInject on " + method);
+                throw new UnsupportedOperationException("Only a single method parameter value supported for @Produce on " + method);
             }
         }
         else {

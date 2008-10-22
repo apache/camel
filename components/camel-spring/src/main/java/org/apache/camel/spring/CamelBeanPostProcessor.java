@@ -25,9 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.*;
-import org.apache.camel.component.bean.ProxyHelper;
-import org.apache.camel.impl.DefaultProducerTemplate;
-import org.apache.camel.impl.CamelPostProcessorSupport;
+import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -37,8 +35,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A bean post processor which implements the <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>
@@ -66,7 +62,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     @XmlTransient
     private ApplicationContext applicationContext;
     @XmlTransient
-    private CamelPostProcessorSupport postProcessor;
+    private CamelPostProcessorHelper postProcessor;
 
     public CamelBeanPostProcessor() {
     }
@@ -102,7 +98,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
 
     public void setCamelContext(SpringCamelContext camelContext) {
         this.camelContext = camelContext;
-        postProcessor = new CamelPostProcessorSupport(camelContext) {
+        postProcessor = new CamelPostProcessorHelper(camelContext) {
             @Override
             protected RuntimeException createProxyInstantiationRuntimeException(Class<?> type, Endpoint endpoint, Exception e) {
                 return new BeanInstantiationException(type, "Could not instantiate proxy of type " + type.getName() + " on endpoint " + endpoint, e);
@@ -198,7 +194,7 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         });
     }
 
-    public CamelPostProcessorSupport getPostProcessor() {
+    public CamelPostProcessorHelper getPostProcessor() {
         ObjectHelper.notNull(postProcessor, "postProcessor");
         return postProcessor;
     }
