@@ -176,7 +176,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                         return;
                     }
                     data.sync = false;
-                    if (exchange.getException() != null) {
+                    // only process if the exchange hasn't failed
+                    // and it has not been handled by the error processor
+                    if (exchange.getException() != null && !isFailureHandled(exchange)) {
                         process(exchange, callback, data);
                     } else {
                         callback.done(sync);

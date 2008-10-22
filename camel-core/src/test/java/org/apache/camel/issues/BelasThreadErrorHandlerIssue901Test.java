@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
@@ -45,14 +46,14 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
 
     public void testThreadErrorHandlerLogging() throws Exception {
         MockEndpoint handled = getMockEndpoint("mock:handled");
-
-        template.sendBody("seda:errorTest", msg1);
-
-        handled.expectedMessageCount(1);
         handled.expectedBodiesReceived(msg3);
 
-        // TODO: Enable this when looking into this issue
-        //Thread.sleep(3000);
+        try {
+            template.sendBody("direct:errorTest", msg1);
+            fail("Should have thrown a MyBelaException");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof MyBelaException);
+        }
 
         assertMockEndpointsSatisfied();
 
@@ -64,18 +65,10 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                //getContext().addInterceptStrategy(new Tracer());
                 errorHandler(deadLetterChannel("mock:handled").maximumRedeliveries(redelivery));
 
-                // using the onException and handled(true) works
-                //onException(Exception.class).maximumRedeliveries(redelivery).handled(true).to("mock:handled");
-                
-                from("seda:errorTest")
-                    // TODO: When using thread there is a multi threading / concurreny issue in Camel
-                    // hard to debug as it tend only to surface when unit test is running really fast
-                    // (no break points)
-
-                    //.thread(5).maxSize(5)
+                from("direct:errorTest")
+                    .thread(5)
                     // Processor #1
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
@@ -95,14 +88,19 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
                     // Processor #3
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            //Thread.sleep(100);
                             callCounter3++;
                             LOG.debug("Processor #3 Received A " + exchange.getIn().getBody());
-                            throw new Exception("Forced exception by unit test");
+                            throw new MyBelaException("Forced exception by unit test");
                         }
                     });
             }
         };
+    }
+
+    public static class MyBelaException extends Exception {
+        public MyBelaException(String message) {
+            super(message);
+        }
     }
 
 }
