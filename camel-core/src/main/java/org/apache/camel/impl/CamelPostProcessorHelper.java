@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,17 +16,26 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.*;
+import java.lang.reflect.Method;
+
+import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consume;
+import org.apache.camel.Consumer;
+import org.apache.camel.Endpoint;
+import org.apache.camel.MessageDriven;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.xml.bind.annotation.XmlTransient;
-import java.lang.reflect.Method;
 
 /**
  * A helper class for Camel based injector or post processing hooks which can be reused by
@@ -93,8 +101,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         if (camelContext instanceof DefaultCamelContext) {
             DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
             defaultCamelContext.addService(service);
-        }
-        else {
+        } else {
             service.start();
         }
     }
@@ -121,8 +128,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             // endpoint is optional for this injection point
             Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, false);
             return new DefaultProducerTemplate(getCamelContext(), endpoint);
-        }
-        else {
+        } else {
             Endpoint endpoint = getEndpointInjection(endpointUri, endpointRef, injectionPointName, true);
             if (endpoint != null) {
                 if (type.isInstance(endpoint)) {

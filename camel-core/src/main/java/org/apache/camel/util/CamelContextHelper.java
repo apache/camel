@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,11 +28,10 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
-import static org.apache.camel.util.ObjectHelper.notNull;
+
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-
+import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A number of helper methods
  *
@@ -199,8 +197,7 @@ public final class CamelContextHelper {
             }
             if (mandatory) {
                 endpoint = mandatoryLookup(camelContext, name, Endpoint.class);
-            }
-            else {
+            } else {
                 endpoint = lookup(camelContext, name, Endpoint.class);
             }
         }

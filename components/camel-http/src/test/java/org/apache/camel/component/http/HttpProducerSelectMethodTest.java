@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
-import static org.apache.camel.component.http.HttpMethods.*;
 import org.apache.commons.httpclient.HttpMethod;
 
-import java.io.IOException;
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
+import static org.apache.camel.component.http.HttpMethods.POST;
 
 /**
  * Unit test to verify the algorithm for selecting either GET or POST.

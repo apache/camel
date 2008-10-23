@@ -16,16 +16,12 @@
  */
 package org.apache.camel.guice.consume;
 
-import junit.framework.Assert;
-import org.apache.camel.Produce;
+import com.google.inject.Inject;
 import org.apache.camel.Consume;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.apache.camel.guice.produce.MyListener;
-import org.apache.camel.guice.produce.MyListenerService;
 import org.guiceyfruit.testing.junit3.GuiceyFruitTestCase;
-import com.google.inject.Inject;
 
 /**
  * @version $Revision: 697494 $

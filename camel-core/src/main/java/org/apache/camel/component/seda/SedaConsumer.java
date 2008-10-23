@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.seda;
 
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;

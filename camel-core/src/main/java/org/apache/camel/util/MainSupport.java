@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,41 +16,42 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.interceptor.Debugger;
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.view.RouteDotGenerator;
-import org.apache.camel.view.ModelFileGenerator;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.xml.bind.JAXBException;
-import java.util.LinkedList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.io.IOException;
+
+import javax.xml.bind.JAXBException;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.view.ModelFileGenerator;
+import org.apache.camel.view.RouteDotGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public abstract class MainSupport extends ServiceSupport {
     protected static final Log LOG = LogFactory.getLog(MainSupport.class);
+    protected String dotOutputDir;
     private List<Option> options = new ArrayList<Option>();
     private CountDownLatch latch = new CountDownLatch(1);
     private AtomicBoolean completed = new AtomicBoolean(false);
     private long duration = -1;
-    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
-    protected String dotOutputDir;
+    private TimeUnit timeUnit = TimeUnit.MILLISECONDS;    
     private String routesOutputFile;
     private boolean aggregateDot;
     private boolean debug;
@@ -314,8 +314,8 @@ public abstract class MainSupport extends ServiceSupport {
      * Displays the header message for the command line options
      */
     public void showOptionsHeader() {
-      System.out.println("Apache Camel Runner takes the following options");
-      System.out.println();
+        System.out.println("Apache Camel Runner takes the following options");
+        System.out.println();
     }
 
     public List<CamelContext> getCamelContexts() {
@@ -351,7 +351,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected abstract ProducerTemplate findOrCreateCamelTemplate();
 
-    protected abstract Map<String,CamelContext> getCamelContextMap();
+    protected abstract Map<String, CamelContext> getCamelContextMap();
 
     protected void postProcessContext() throws Exception {
         Map<String, CamelContext> map = getCamelContextMap();
@@ -402,8 +402,7 @@ public abstract class MainSupport extends ServiceSupport {
     private CamelContext aggregateCamelContext() throws Exception {
         if (camelContexts.size() == 1) {
             return camelContexts.get(0);
-        }
-        else {
+        } else {
             DefaultCamelContext answer = new DefaultCamelContext();
             for (CamelContext camelContext : camelContexts) {
                 answer.addRouteDefinitions(camelContext.getRouteDefinitions());

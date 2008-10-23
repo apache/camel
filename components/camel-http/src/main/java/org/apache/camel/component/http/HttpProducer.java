@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -39,23 +39,21 @@ import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
-
 /**
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
-    private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
-    public static final String QUERY = "org.apache.camel.component.http.query";
-
+    public static final String QUERY = "org.apache.camel.component.http.query";    
     // This should be a set of lower-case strings
     @Deprecated
     public static final Set<String> HEADERS_TO_SKIP =
         new HashSet<String>(Arrays.asList("content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
+    private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
 
     public HttpProducer(HttpEndpoint endpoint) {
