@@ -128,12 +128,21 @@ public class ResolverUtil<T> {
      */
     public static class AnnotatedWith implements Test {
         private Class<? extends Annotation> annotation;
+        private boolean checkMetaAnnotations;
 
         /**
          * Constructs an AnnotatedWith test for the specified annotation type.
          */
         public AnnotatedWith(Class<? extends Annotation> annotation) {
+            this(annotation, false);
+        }
+
+        /**
+         * Constructs an AnnotatedWith test for the specified annotation type.
+         */
+        public AnnotatedWith(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
             this.annotation = annotation;
+            this.checkMetaAnnotations = checkMetaAnnotations;
         }
 
         /**
@@ -153,11 +162,12 @@ public class ResolverUtil<T> {
             if (clazz.isAnnotationPresent(annotationType)) {
                 return true;
             }
-            // check for meta annotations
-            for (Annotation a : clazz.getAnnotations()) {
-                for (Annotation meta : a.annotationType().getAnnotations()) {
-                    if (meta.annotationType().getName().equals(annotationType.getName())) {
-                        return true;
+            if (checkMetaAnnotations) {
+                for (Annotation a : clazz.getAnnotations()) {
+                    for (Annotation meta : a.annotationType().getAnnotations()) {
+                        if (meta.annotationType().getName().equals(annotationType.getName())) {
+                            return true;
+                        }
                     }
                 }
             }
