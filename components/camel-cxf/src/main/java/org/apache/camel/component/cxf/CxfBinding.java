@@ -22,12 +22,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.ws.BindingProvider;
+import javax.xml.ws.handler.MessageContext;
+import javax.xml.ws.handler.MessageContext.Scope;
+
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.jaxws.support.ContextPropertiesMapping;
+import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Message;
 
 /**
@@ -140,7 +144,7 @@ public final class CxfBinding {
     // Copy the Camel message to CXF message
     public static void copyMessage(HeaderFilterStrategy strategy,
             org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
-        
+
         CxfHeaderHelper.propagateCamelToCxf(strategy, camelMessage.getHeaders(), cxfMessage);
         try {
             InputStream is = camelMessage.getBody(InputStream.class);
@@ -159,8 +163,9 @@ public final class CxfBinding {
 
     public static void storeCXfResponseContext(Message response, Map<String, Object> context) {
         if (context != null) {
-            ContextPropertiesMapping.mapResponsefromCxf2Jaxws(context);
-            response.put(Client.RESPONSE_CONTEXT, context);
+            MessageContext messageContext = new WrappedMessageContext(context, null, Scope.HANDLER);
+            response.put(Client.RESPONSE_CONTEXT, messageContext);
+
         }
     }
 
@@ -184,7 +189,13 @@ public final class CxfBinding {
         Map<String, Object> responseContext = CastUtils.cast((Map)message.get(Client.RESPONSE_CONTEXT));
         // TODO map the JAXWS properties to cxf
         if (requestContext != null) {
-            ContextPropertiesMapping.mapRequestfromJaxws2Cxf(requestContext);
+            Map<String, Object> realMap = new HashMap<String, Object>();
+            WrappedMessageContext ctx = new WrappedMessageContext(realMap,
+                                                                  null,
+                                                                  Scope.APPLICATION);
+            ctx.putAll(requestContext);
+            requestContext = realMap;
+
         }
 
         if (responseContext == null) {

@@ -35,7 +35,7 @@ import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.staxutils.StaxUtils;
 
-public class    CxfSoapTest extends ContextTestSupport {
+public class CxfSoapTest extends ContextTestSupport {
     private static final String SOAP_STRING =
         "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         + "<soap:Body><testMethod xmlns=\"http://camel.apache.org/testService\" />"
