@@ -35,7 +35,30 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.ldap.*</camel.osgi.export.pkg>
+
+    <!-- TODO we can remove this line when https://issues.apache.org/jira/browse/DIRSERVER-1279 
+         appears in a Apache DS release.
+
+         janstey: Version 1.5.4.0-fuse of ApacheDS is a patched version of 1.5.4 that I needed to create
+         to get around a bug on IBM's JDK. The next release of ApacheDS should contain this fix. 
+     -->
+    <apacheds-version>1.5.4.0-fuse</apacheds-version>
   </properties>
+
+  <repositories>
+    <!-- TODO we can remove this when we depend again on a Apache release of Apache DS -->
+    <repository>
+      <id>open.iona.m2</id>
+      <name>IONA Open Source Community Release Repository</name>
+      <url>http://repo.open.iona.com/maven2</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
 
   <dependencies>
     <dependency>
