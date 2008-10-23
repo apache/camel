@@ -46,6 +46,30 @@ public class XStreamDataFormat implements DataFormat {
     private XStream xstream;
     private StaxConverter staxConverter;
 
+    /**
+     * A factory method which takes a collection of types to be annotated
+     */
+    public static XStreamDataFormat processAnnotations(Iterable<Class<?>> types) {
+        XStreamDataFormat answer = new XStreamDataFormat();
+        XStream xstream = answer.getXStream();
+        for (Class<?> type : types) {
+            xstream.processAnnotations(type);
+        }
+        return answer;
+    }
+
+    /**
+     * A factory method which takes a number of types to be annotated
+     */
+    public static XStreamDataFormat processAnnotations(Class<?>... types) {
+        XStreamDataFormat answer = new XStreamDataFormat();
+        XStream xstream = answer.getXStream();
+        for (Class<?> type : types) {
+            xstream.processAnnotations(type);
+        }
+        return answer;
+    }
+
     public XStreamDataFormat() {
     }
 
