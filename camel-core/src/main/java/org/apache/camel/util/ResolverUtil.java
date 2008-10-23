@@ -150,28 +150,12 @@ public class ResolverUtil<T> {
          * constructor.
          */
         public boolean matches(Class type) {
-            return type != null && hasAnnotation(type, annotation);
+            return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
         }
 
         @Override
         public String toString() {
             return "annotated with @" + annotation.getSimpleName();
-        }
-        
-        private boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotationType) {
-            if (clazz.isAnnotationPresent(annotationType)) {
-                return true;
-            }
-            if (checkMetaAnnotations) {
-                for (Annotation a : clazz.getAnnotations()) {
-                    for (Annotation meta : a.annotationType().getAnnotations()) {
-                        if (meta.annotationType().getName().equals(annotationType.getName())) {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
         }
     }
 
@@ -275,7 +259,7 @@ public class ResolverUtil<T> {
                 .asList(packageNames));
         }
 
-        Test test = new AnnotatedWith(annotation);
+        Test test = new AnnotatedWith(annotation, true);
         for (String pkg : packageNames) {
             find(test, pkg);
         }

@@ -20,6 +20,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -449,12 +450,25 @@ public final class ObjectHelper {
      * @return a list of the methods found
      */
     public static List<Method> findMethodsWithAnnotation(Class<?> type,
-                                                         Class<? extends Annotation> annotationType) {
+            Class<? extends Annotation> annotationType) {
+        return findMethodsWithAnnotation(type, annotationType, false);
+    }
+    
+    /**
+     * Returns a list of methods which are annotated with the given annotation
+     *
+     * @param type the type to reflect on
+     * @param annotationType the annotation type
+     * @param checkMetaAnnotations check for meta annotations
+     * @return a list of the methods found
+     */
+    public static List<Method> findMethodsWithAnnotation(Class<?> type,
+            Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
         List<Method> answer = new ArrayList<Method>();
         do {
             Method[] methods = type.getDeclaredMethods();
             for (Method method : methods) {
-                if (method.getAnnotation(annotationType) != null) {
+                if (hasAnnotation(method, annotationType, checkMetaAnnotations)) {
                     answer.add(method);
                 }
             }
@@ -463,6 +477,31 @@ public final class ObjectHelper {
         return answer;
     }
 
+    /**
+     * Checks if a Class or Method are annotated with the given annotation
+     *
+     * @param elem the Class or Method to reflect on
+     * @param annotationType the annotation type
+     * @param checkMetaAnnotations check for meta annotations
+     * @return true if annotations is present
+     */
+    public static boolean hasAnnotation(AnnotatedElement elem, 
+            Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
+        if (elem.isAnnotationPresent(annotationType)) {
+            return true;
+        }
+        if (checkMetaAnnotations) {
+            for (Annotation a : elem.getAnnotations()) {
+                for (Annotation meta : a.annotationType().getAnnotations()) {
+                    if (meta.annotationType().getName().equals(annotationType.getName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+    
     /**
      * Turns the given object arrays into a meaningful string
      *
