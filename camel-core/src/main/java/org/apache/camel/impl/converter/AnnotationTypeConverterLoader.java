@@ -141,25 +141,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             for (Method method : methods) {
                 // this may be prone to ClassLoader or packaging problems when the same class is defined
                 // in two different jars (as is the case sometimes with specs).
-                boolean found = method.getAnnotation(Converter.class) != null;
-                if (!found) {
-                    // try to find meta annotation
-                    Annotation[] annotations = method.getAnnotations();
-                    for (Annotation a : annotations) {
-                        Annotation[] metaAnnotations = a.annotationType().getAnnotations();
-                        for (Annotation meta : metaAnnotations) {
-                            if (meta.annotationType().getName().equals(Converter.class.getName())) {
-                                found = true;
-                                break;
-                            }
-                        }
-                        if (found) {
-                            break;
-                        }
-                    }
-                }
-
-                if (found) {
+                if (ObjectHelper.hasAnnotation(method, Converter.class, true)) {
                     if (isValidConverterMethod(method)) {
                         int modifiers = method.getModifiers();
                         if (isAbstract(modifiers) || !isPublic(modifiers)) {
