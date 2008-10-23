@@ -16,13 +16,11 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 import com.google.inject.spi.CloseFailedException;
-
+import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 
 /**
@@ -32,6 +30,7 @@ public class GuiceTest extends TestCase {
 
     /**
      * Asserts that the CamelContext is available in the given Injector, that its been started, then close the injector
+     *
      * @param injector
      * @throws CloseFailedException
      */

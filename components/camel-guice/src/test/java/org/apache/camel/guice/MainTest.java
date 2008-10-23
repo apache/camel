@@ -16,13 +16,12 @@
  */
 package org.apache.camel.guice;
 
-import java.util.List;
-
 import junit.framework.TestCase;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -44,7 +43,7 @@ public class MainTest extends TestCase {
         endpoint.expectedBodiesReceived(expectedBody);
 
         template.sendBody(uri, expectedBody);
-        
+
         endpoint.assertIsSatisfied();
     }
 
