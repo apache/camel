@@ -141,12 +141,27 @@ public class ResolverUtil<T> {
          * constructor.
          */
         public boolean matches(Class type) {
-            return type != null && type.isAnnotationPresent(annotation);
+            return type != null && hasAnnotation(type, annotation);
         }
 
         @Override
         public String toString() {
             return "annotated with @" + annotation.getSimpleName();
+        }
+        
+        private boolean hasAnnotation(Class<?> clazz, Class<? extends Annotation> annotationType) {
+            if (clazz.isAnnotationPresent(annotationType)) {
+                return true;
+            }
+            // check for meta annotations
+            for (Annotation a : clazz.getAnnotations()) {
+                for (Annotation meta : a.annotationType().getAnnotations()) {
+                    if (meta.annotationType().getName().equals(annotationType.getName())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
     }
 
