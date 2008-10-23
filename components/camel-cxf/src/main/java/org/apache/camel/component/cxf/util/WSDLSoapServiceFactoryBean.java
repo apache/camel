@@ -72,6 +72,10 @@ public class WSDLSoapServiceFactoryBean extends ReflectionServiceFactoryBean {
         }
 
     }
+    
+    protected void checkServiceClassAnnotations(Class<?> sc) {
+        // do nothing here
+    }
 
 
     // do not handle any payload information here
