@@ -16,13 +16,9 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.is;
+import junit.framework.TestCase;
 
 
 /**

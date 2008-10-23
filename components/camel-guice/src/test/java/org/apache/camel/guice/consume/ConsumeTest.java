@@ -21,12 +21,12 @@ import org.apache.camel.Consume;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.junit3.GuiceyFruitTestCase;
+import org.guiceyfruit.testing.junit3.GuiceyTestCase;
 
 /**
  * @version $Revision: 697494 $
  */
-public class ConsumeTest extends GuiceyFruitTestCase {
+public class ConsumeTest extends GuiceyTestCase {
 
     @Inject
     protected MyBean bean;
@@ -42,7 +42,7 @@ public class ConsumeTest extends GuiceyFruitTestCase {
         assertEquals("Body of bean", expectedBody, bean.body);
     }
 
-    public static class Configuration extends CamelModuleWithMatchingRoutes {
+    public static class TestModule extends CamelModuleWithMatchingRoutes {
         @Override
         protected void configure() {
             super.configure();

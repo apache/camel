@@ -19,12 +19,12 @@ package org.apache.camel.guice.produce;
 import junit.framework.Assert;
 import org.apache.camel.Produce;
 import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
-import org.guiceyfruit.testing.junit3.GuiceyFruitTestCase;
+import org.guiceyfruit.testing.junit3.GuiceyTestCase;
 
 /**
  * @version $Revision: 697494 $
  */
-public class ProduceTest extends GuiceyFruitTestCase {
+public class ProduceTest extends GuiceyTestCase {
 
     @Produce(uri = "direct:myService")
     protected MyListener producer;
@@ -35,7 +35,7 @@ public class ProduceTest extends GuiceyFruitTestCase {
         Assert.assertEquals("response", "Hello James", actual);
     }
 
-    public static class Configuration extends CamelModuleWithMatchingRoutes {
+    public static class TestModule extends CamelModuleWithMatchingRoutes {
         @Override
         protected void configure() {
             super.configure();

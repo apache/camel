@@ -16,12 +16,9 @@
  */
 package org.apache.camel.guice;
 
-import junit.framework.TestCase;
-
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import org.apache.camel.CamelContext;
+import junit.framework.TestCase;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
