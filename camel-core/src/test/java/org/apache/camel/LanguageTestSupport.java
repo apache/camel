@@ -83,7 +83,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
 
         // lets try convert to the type of the expected
         if (expectedValue != null) {
-          value = ExchangeHelper.convertToType(exchange, expectedValue.getClass(), value);
+            value = ExchangeHelper.convertToType(exchange, expectedValue.getClass(), value);
         }
 
         log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);

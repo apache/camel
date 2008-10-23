@@ -22,11 +22,13 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.model.FromType;
+import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import org.apache.camel.model.InterceptorRef;
+
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+
 
 /**
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which

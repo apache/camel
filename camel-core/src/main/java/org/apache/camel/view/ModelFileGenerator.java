@@ -25,9 +25,9 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Binder;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -40,7 +40,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.builder.xml.Namespaces;
@@ -48,6 +47,8 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.util.ObjectHelper;
+
+
 
 
 public class ModelFileGenerator {

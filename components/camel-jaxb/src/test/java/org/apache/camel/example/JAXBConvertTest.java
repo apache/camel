@@ -16,9 +16,10 @@
  */
 package org.apache.camel.example;
 
-import javax.xml.bind.UnmarshalException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+
+import javax.xml.bind.UnmarshalException;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;

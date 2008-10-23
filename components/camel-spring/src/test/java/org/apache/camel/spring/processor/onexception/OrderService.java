@@ -16,47 +16,49 @@
  */
 package org.apache.camel.spring.processor.onexception;
 
+import java.util.Map;
+
 import org.apache.camel.Body;
 import org.apache.camel.Headers;
 import org.apache.camel.OutHeaders;
-
-import java.util.Map;
 
 /**
  * Order service as a plain POJO class
  */
 public class OrderService {
 
-     /**
-         * This method handle our order input and return the order
-         *
-         * @param in      the in headers
-         * @param payload the in payload
-         * @param out     the out headers
-         * @return the out payload
-         * @throws OrderFailedException is thrown if the order can not be processed
-         */
-        public Object handleOrder(@Headers Map in, @Body String payload, @OutHeaders Map out)
-            throws OrderFailedException {
-            out.put("customerid", in.get("customerid"));
-            if ("Order: kaboom".equals(payload)) {
-                throw new OrderFailedException("Can not order: kaboom");
-            } else {
-                out.put("orderid", "123");
-                return "Order OK";
-            }
+    /**
+     * This method handle our order input and return the order
+     * 
+     * @param in the in headers
+     * @param payload the in payload
+     * @param out the out headers
+     * @return the out payload
+     * @throws OrderFailedException is thrown if the order can not be processed
+     */
+    public Object handleOrder(@Headers Map in, @Body String payload, @OutHeaders Map out)
+        throws OrderFailedException {
+        out.put("customerid", in.get("customerid"));
+        if ("Order: kaboom".equals(payload)) {
+            throw new OrderFailedException("Can not order: kaboom");
+        } else {
+            out.put("orderid", "123");
+            return "Order OK";
         }
+    }
 
-        /**
-         * This method creates the response to the caller if the order could not be processed
-         * @param in      the in headers
-         * @param payload the in payload
-         * @param out     the out headers
-         * @return the out payload
-         */
-        public Object orderFailed(@Headers Map in, @Body String payload, @OutHeaders Map out) {
-            out.put("customerid", in.get("customerid"));
-            out.put("orderid", "failed");
-            return "Order ERROR";
-        }
+    /**
+     * This method creates the response to the caller if the order could not be
+     * processed
+     * 
+     * @param in the in headers
+     * @param payload the in payload
+     * @param out the out headers
+     * @return the out payload
+     */
+    public Object orderFailed(@Headers Map in, @Body String payload, @OutHeaders Map out) {
+        out.put("customerid", in.get("customerid"));
+        out.put("orderid", "failed");
+        return "Order ERROR";
+    }
 }

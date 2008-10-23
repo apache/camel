@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,20 +16,20 @@
  */
 package org.apache.camel.guice.impl;
 
-import com.google.inject.spi.AnnotationProviderFactory;
-import com.google.inject.spi.InjectionAnnotation;
-import com.google.inject.Provider;
-import com.google.inject.Inject;
-import com.google.common.base.Objects;
-
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import com.google.common.base.Objects;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+import com.google.inject.spi.AnnotationProviderFactory;
+import com.google.inject.spi.InjectionAnnotation;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Injects values into the {@link Produce} injection point
@@ -59,19 +58,16 @@ public class ProduceInjector extends CamelPostProcessorHelper implements Annotat
             Field field = (Field) member;
             type = field.getType();
             injectionPointName = field.getName();
-        }
-        else if (member instanceof Method) {
+        } else if (member instanceof Method) {
             Method method = (Method) member;
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes.length == 1) {
                 type = parameterTypes[0];
                 injectionPointName = ObjectHelper.getPropertyName(method);
-            }
-            else {
+            } else {
                 throw new UnsupportedOperationException("Only a single method parameter value supported for @Produce on " + method);
             }
-        }
-        else {
+        } else {
             throw new UnsupportedOperationException("Annotated element " + member + " not supported");
         }
 
