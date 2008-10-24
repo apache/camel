@@ -41,7 +41,7 @@
   <target name="run" depends="build" description="Compile and run the sample CamelServer">
     <camelrun>
       <arguments>
-        <arg value="-a"/>
+        <arg value="-ac"/>
         <arg value="META-INF/spring/camel-server.xml"/>
       </arguments>
     </camelrun>
