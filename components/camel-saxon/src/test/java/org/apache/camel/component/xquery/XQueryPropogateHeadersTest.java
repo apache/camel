@@ -35,7 +35,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:one",
             "<mail><subject>Hey</subject><body>Hello world!</body></mail>", "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testPropogateHeadersUsingTransform() throws Exception {
@@ -47,7 +47,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:two",
             "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testPropogateHeadersUsingSetBody() throws Exception {
@@ -59,7 +59,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:three",
             "<person name='James' city='London'/>", "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

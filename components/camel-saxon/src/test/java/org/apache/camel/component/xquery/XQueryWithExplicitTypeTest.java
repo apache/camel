@@ -33,7 +33,7 @@ public class XQueryWithExplicitTypeTest extends SpringTestSupport {
 
         template.sendBody("direct:start", "<person name='Hadrian' city='Raleigh'/>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
