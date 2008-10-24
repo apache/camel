@@ -21,6 +21,7 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -47,9 +48,27 @@ public class Client extends RouteBuilder {
         for (int i = 0; i < 2; i++) {
             template.sendBodyAndHeader("jms:queue:loanRequestQueue",
                                        "Quote for the lowerst rate of loaning bank",
-                                       Constants.PROPERTY_SSN, "Client" + i);
+                                       Constants.PROPERTY_SSN, "Client-A" + i);
             Thread.sleep(100);
         }
+        // wait for the response
+        Thread.sleep(2000);
+        
+        // send the request and get the response from the same queue       
+        Exchange exchange = template.send("jms:queue2:parallelLoanRequestQueue", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOut);
+                exchange.getIn().setBody("Quote for the lowerst rate of loaning bank");
+                exchange.getIn().setHeader(Constants.PROPERTY_SSN, "Client-B");
+            }
+        });
+        
+        String bank = (String)exchange.getOut().getHeader(Constants.PROPERTY_BANK);
+        Double rate = (Double)exchange.getOut().getHeader(Constants.PROPERTY_RATE);
+        String ssn = (String)exchange.getOut().getHeader(Constants.PROPERTY_SSN);
+        System.out.println("Loan quotion for Client " + ssn + "."
+                           + " The lowest rate bank is " + bank + ", the rate is " + rate);
+        
         // Wait a while before stop the context
         Thread.sleep(1000 * 5);
         context.stop();

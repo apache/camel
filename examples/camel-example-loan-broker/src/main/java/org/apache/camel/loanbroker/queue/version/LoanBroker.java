@@ -93,5 +93,21 @@ public class LoanBroker extends RouteBuilder {
             .process(new Translator()).to("jms:queue:loanReplyQueue");
 
     // END SNIPPET: dsl
+        
+    // START SNIPPET: dsl-2
+        // CreditAgency will get the request from parallelLoanRequestQueue
+        from("jms:queue2:parallelLoanRequestQueue").process(new CreditAgency())
+            // Set the aggregation strategy for aggregating the out message            
+            .multicast(new BankResponseAggregationStrategy().setAggregatingOutMessage(true))
+                // Send out the request the below three different banks parallelly
+                .setParallelProcessing(true).to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
+        
+        // Each bank processor will process the message and put the response message back
+        from("jms:queue2:bank1").process(new Bank("bank1"));
+        from("jms:queue2:bank2").process(new Bank("bank2"));
+        from("jms:queue2:bank3").process(new Bank("bank3"));
+        
+
+    // END SNIPPET: dsl-2
     }
 }
