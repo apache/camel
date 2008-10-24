@@ -65,7 +65,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>2.5.5</version>
+            <version>2.5.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>2.5.3</version>
         </dependency>
         <dependency>
             <groupId>org.aspectj</groupId>
@@ -98,7 +103,7 @@
             <properties>
                 <!-- we use Camel spring Main class as the server got all what it needs to start in the camel-server.xml file -->
                 <target.main.class>org.apache.camel.spring.Main</target.main.class>
-                <target.cmd.args>-a META-INF/spring/camel-server.xml</target.cmd.args>
+                <target.cmd.args>-ac META-INF/spring/camel-server.xml</target.cmd.args>
             </properties>
         </profile>
         <profile>
@@ -106,7 +111,7 @@
             <properties>
                 <!-- we use Camel spring Main class as the server got all what it needs to start in the camel-server-aop.xml file -->
                 <target.main.class>org.apache.camel.spring.Main</target.main.class>
-                <target.cmd.args>-a META-INF/spring/camel-server-aop.xml</target.cmd.args>
+                <target.cmd.args>-ac META-INF/spring/camel-server-aop.xml</target.cmd.args>
             </properties>
         </profile>
         <profile>
