@@ -17,20 +17,35 @@
 package org.apache.camel.loanbroker.queue.version;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 //START SNIPPET: aggregation
-public class BankResponseAggregationStrategy implements AggregationStrategy {
+public class BankResponseAggregationStrategy implements AggregationStrategy {    
     private static final transient Log LOG = LogFactory.getLog(BankResponseAggregationStrategy.class);
-
+    private boolean aggregatingOutMessage;
+    
+    public BankResponseAggregationStrategy setAggregatingOutMessage(boolean flag) {
+        aggregatingOutMessage = flag;
+        return this;
+    }
+    
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
-
-        Double oldRate = oldExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
-        Double newRate = newExchange.getIn().getHeader(Constants.PROPERTY_RATE, Double.class);
+        Message oldMessage = null;
+        Message newMessage = null;
+        if (aggregatingOutMessage) {
+            oldMessage = oldExchange.getOut(false);
+            newMessage = newExchange.getOut(false);
+        } else {
+            oldMessage = oldExchange.getIn();
+            newMessage = newExchange.getIn();
+        }
+        Double oldRate = oldMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
+        Double newRate = newMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
         Exchange result = null;
 
         if (newRate >= oldRate) {
