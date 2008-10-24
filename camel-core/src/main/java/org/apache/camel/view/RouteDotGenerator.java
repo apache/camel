@@ -26,6 +26,8 @@ import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.PipelineType;
+import org.apache.camel.model.ToType;
 
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 
@@ -37,6 +39,7 @@ import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
  * @version $Revision$
  */
 public class RouteDotGenerator extends GraphGeneratorSupport {
+
     public RouteDotGenerator(String dir) {
         super(dir, ".dot");
     }
@@ -96,8 +99,13 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         if (node instanceof MulticastType || node instanceof InterceptorRef) {
             // no need for a multicast or interceptor node
             List<ProcessorType> outputs = node.getOutputs();
+            boolean isPipeline = isPipeline(node);
             for (ProcessorType output : outputs) {
-                printNode(writer, fromData, output);
+                NodeData out = printNode(writer, fromData, output);
+                // if in pipeline then we should move the from node to the next in the pipeline
+                if (isPipeline) {
+                    fromData = out;
+                }
             }
             return fromData;
         }
@@ -173,4 +181,27 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
 
         writer.println("}");
     }
+
+    /**
+     * Is the given node a pipeline
+     */
+    private static boolean isPipeline(ProcessorType node) {
+        if (node instanceof MulticastType) {
+            return false;
+        }
+        if (node instanceof PipelineType) {
+            return true;
+        }
+        if (node.getOutputs().size() > 1) {
+            // is pipeline if there is more than 1 output and they are all To types
+            for (Object type : node.getOutputs()) {
+                if (!(type instanceof ToType)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return false;
+    }
+
 }
