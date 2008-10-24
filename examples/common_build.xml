@@ -37,6 +37,7 @@
   <property name="hsqldb.home" value="${env.HSQLDB_HOME}"/>
   <property name="aspectj.home" value="${env.ASPECTJ_HOME}"/>
   <property name="spring.home" value="${env.SPRING_HOME}"/>
+  <property name="guice.home" value="${env.GUICE_HOME}"/>
 
   <condition property="build.src">
     <available file="${build.src.dir}"/>
@@ -92,6 +93,12 @@
   <path id="spring.classpath">
     <fileset dir="${spring.home}/dist">
       <include name="spring.jar"/>
+    </fileset>
+  </path>
+
+  <path id="guice.classpath">
+    <fileset dir="${guice.home}/lib">
+      <include name="guice*.jar"/>
     </fileset>
   </path>
 

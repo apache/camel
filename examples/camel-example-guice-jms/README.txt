@@ -1,5 +1,5 @@
-Spring Example
-==============
+Guice Example
+=============
 
 This example shows how to work with files and JMS, using Guice to boot up
 Camel and configure the routes. It can be run using Maven or Ant.
@@ -21,7 +21,17 @@ To run the example with Ant
     Windows
     set ACTIVEMQ_HOME=<path to ActiveMQ install directory>
 
-  c. To Run the example using Ant, type
+  c. You need to have Guiceyfruit installed. It can be downloaded from 
+    http://code.google.com/p/guiceyfruit/
+
+  d. Export / Set GUICE_HOME to the top level Guiceyfruit intall
+  directory
+    UNIX
+    export GUICE_HOME=<path to Guiceyfruit install directory>
+    Windows
+    set GUICE_HOME=<path to Guiceyfruit install directory>
+
+  e. To Run the example using Ant, type
     ant
   or to run the example and generate visualization graphs (refer to
   http://activemq.apache.org/camel/visualisation.html), type

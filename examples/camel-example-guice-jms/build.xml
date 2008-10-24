@@ -17,14 +17,15 @@
   limitations under the License.
 -->
 
-<project name="camel-example-spring" default="run" basedir=".">
+<project name="camel-example-guice-jms" default="run" basedir=".">
 
   <import file="../common_build.xml"/>
 
   <fail unless="env.SPRING_HOME" message="You must download Spring Framework and set your SPRING_HOME to run this demo."/>
   <fail unless="env.ACTIVEMQ_HOME" message="You must download ActiveMQ and set your ACTIVEMQ_HOME to run this demo."/>
+  <fail unless="env.GUICE_HOME" message="You must download Guice and set your GUICE_HOME to run this demo."/>
 
-  <property name="project.name" value="camel-example-spring"/>
+  <property name="project.name" value="camel-example-guice-jms"/>
 
   <path id="sample.build.classpath">
     <fileset dir="${camel.lib}">
@@ -34,6 +35,7 @@
     <path refid="spring.classpath"/>
     <path refid="camel.spring.classpath"/>
     <path refid="activemq.classpath"/>
+    <path refid="guice.classpath"/>
   </path>
 
   <target name="run" depends="build" description="Compile and run the sample">

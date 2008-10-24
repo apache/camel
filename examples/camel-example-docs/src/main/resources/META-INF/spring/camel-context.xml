@@ -32,6 +32,15 @@
       <to uri="seda:other.b"/>
       <to uri="seda:other.c"/>
     </route>
+
+    <route>
+      <from uri="seda:queue:order"/>
+	  <filter>
+	     <xpath>/person[@name='Test']</xpath>
+		 <to uri="log:testOrder"/>
+	  </filter>	 
+      <to uri="bean:processOrder"/>
+    </route>
   </camelContext>
 
 </beans>
