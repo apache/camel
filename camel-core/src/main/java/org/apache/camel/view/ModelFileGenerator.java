@@ -48,9 +48,6 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.util.ObjectHelper;
 
-
-
-
 public class ModelFileGenerator {
 
     private static final String DEFAULT_ROOT_ELEMENT_NAME = "routes";

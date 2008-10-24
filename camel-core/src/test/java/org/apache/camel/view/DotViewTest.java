@@ -38,6 +38,7 @@ public class DotViewTest extends ContextTestSupport {
 
         context.addRoutes(new MulticastRoute());
         context.addRoutes(new PipelineRoute());
+        context.addRoutes(new FromToRoute());
         context.addRoutes(new ChoiceRoute());
         context.addRoutes(new FilterRoute());
         context.addRoutes(new ComplexRoute());
@@ -52,8 +53,13 @@ public class DotViewTest extends ContextTestSupport {
 
     static class PipelineRoute extends RouteBuilder {
         public void configure() throws Exception {
-            from("seda:pipeline.in").
-                    to("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
+            from("seda:pipeline.in").to("seda:pipeline.out1", "seda:pipeline.out2", "seda:pipeline.out3");
+        }
+    }
+
+    static class FromToRoute extends RouteBuilder {
+        public void configure() throws Exception {
+            from("seda:foo").to("seda:bar");
         }
     }
 
