@@ -8,6 +8,9 @@ Maven or Ant
 For a full description of this example please see
   http://activemq.apache.org/camel/etl-example.html
 
+You will need to compile this example first:
+  mvn compile
+
 To run the example type
   mvn camel:run
 
