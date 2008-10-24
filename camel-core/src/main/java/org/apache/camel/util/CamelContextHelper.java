@@ -78,10 +78,29 @@ public final class CamelContextHelper {
      * @param type the type of the endpoints requested
      * @return a list which may be empty of all the endpoint instances of the
      *         given type
+     */    
+    public <T> List<T> getEndpoints(CamelContext camelContext, Class<T> type) {
+        return getEndpointsImpl(camelContext, type, false);
+    }        
+    
+    /**
+     * Returns a list of all singleton endpoints of the given type
+     *
+     * @param camelContext the camel context
+     * @param type the type of the endpoints requested
+     * @return a list which may be empty of all the endpoint instances of the
+     *         given type
      */
     public static <T> List<T> getSingletonEndpoints(CamelContext camelContext, Class<T> type) {
+        return getEndpointsImpl(camelContext, type, true);
+    }
+
+    /**
+     * Returns a list of all singleton or regular endpoints of the given type
+     */
+    private static <T> List<T> getEndpointsImpl(CamelContext camelContext, Class<T> type, boolean singleton) {
         List<T> answer = new ArrayList<T>();
-        Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
+        Collection<Endpoint> endpoints = singleton ? camelContext.getSingletonEndpoints() : camelContext.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (type.isInstance(endpoint)) {
                 T value = type.cast(endpoint);
@@ -89,8 +108,8 @@ public final class CamelContextHelper {
             }
         }
         return answer;
-    }
-
+    }          
+    
     /**
      * Converts the given value to the requested type
      */
