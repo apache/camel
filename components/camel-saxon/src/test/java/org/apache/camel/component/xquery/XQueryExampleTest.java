@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.xquery;
 
-import java.util.List;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -26,33 +23,20 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version $Revision$
  */
-public class XQueryEndpointTest extends SpringTestSupport {
+public class XQueryExampleTest extends SpringTestSupport {
 
-    public void testSendMessageAndHaveItTransformed() throws Exception {
-        MockEndpoint endpoint = getMockEndpoint("mock:result");
-        endpoint.expectedMessageCount(1);
+    public void testExample() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("<employee id=\"James\"><name><firstName>James</firstName>" +
+                "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
-        template.sendBody("direct:start",
-            "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>" +
+                "<lastName>Strachan</lastName><city>London</city></person>");
 
         assertMockEndpointsSatisfied();
-
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        Exchange exchange = list.get(0);
-        String xml = exchange.getIn().getBody(String.class);
-        assertNotNull("The transformed XML should not be null", xml);
-        assertEquals("transformed", "<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
-            + "<body>Hello world!</body></mail></transformed>", xml);
-
-        TestBean bean = getMandatoryBean(TestBean.class, "testBean");
-        assertEquals("bean.subject", "Hey", bean.getSubject());
-    }
-
-    protected int getExpectedRouteCount() {
-        return 0;
     }
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/camelContext.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/xqueryExampleTest.xml");
     }
 }

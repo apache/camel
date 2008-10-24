@@ -34,7 +34,7 @@ public class XQueryRecipientListTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "<person name='James' city='London'/>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendTampaMessage() throws Exception {
@@ -43,7 +43,7 @@ public class XQueryRecipientListTest extends ContextTestSupport {
 
         template.sendBody("direct:start", "<person name='Hiram' city='Tampa'/>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override
