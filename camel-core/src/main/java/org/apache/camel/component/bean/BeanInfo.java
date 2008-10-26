@@ -35,6 +35,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.Properties;
 import org.apache.camel.Property;
@@ -332,15 +333,21 @@ public class BeanInfo {
                 Object newBody = null;
                 MethodInfo matched = null;
                 for (MethodInfo methodInfo : operationList) {
-                    Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
-                    if (value != null) {
-                        if (newBody != null) {
-                            throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
-                                                                                           methodInfo));
-                        } else {
-                            newBody = value;
-                            matched = methodInfo;
+                    Object value = null;
+                    try {
+                        value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
+                        if (value != null) {
+                            if (newBody != null) {
+                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
+                                                                                               methodInfo));
+                            } else {
+                                newBody = value;
+                                matched = methodInfo;
+                            }
                         }
+                    } catch (NoTypeConversionAvailableException e) {
+                        // we can safely ignore this exception as we want a behaviour similar to
+                        // that if convertToType return null
                     }
                 }
                 if (matched != null) {
