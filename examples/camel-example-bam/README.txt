@@ -4,6 +4,9 @@ BAM Example
 This example shows how to perform Business Activity Monitoring (BAM)
 with Camel. It can be run using Maven or Ant.
 
+You will need to compile this example first:
+  mvn compile
+  
 For a background in BAM see
   http://activemq.apache.org/camel/bam.html
 

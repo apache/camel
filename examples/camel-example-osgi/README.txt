@@ -2,7 +2,10 @@ OSGi Example
 =====================
 
 This example shows how use OSGi with Camel. It can be run using Maven or
-Ant.  
+Ant.
+
+You will need to compile this example first:
+  mvn compile
 
 To run the example using Maven type
   mvn camel:run

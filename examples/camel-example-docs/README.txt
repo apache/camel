@@ -8,6 +8,9 @@ tools can visualise routes
 This example also acts as an integration test case for the GraphViz
 visualisation feature 
   http://activemq.apache.org/camel/visualisation.html
+  
+You will need to compile this example first:
+  mvn compile
 
 NOTE before you run this example you MUST install GraphViz so that
 the 'dot' executable is available on your path. 

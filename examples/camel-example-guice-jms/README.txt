@@ -7,8 +7,11 @@ Camel and configure the routes. It can be run using Maven or Ant.
 The example consumes messages from a queue and writes them to the file
 system.
 
+You will need to compile this example first:
+  mvn compile
+  
 To run the example type
-  mvn compile exec:java
+  mvn exec:java
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ installed. It can be downloaded from 
