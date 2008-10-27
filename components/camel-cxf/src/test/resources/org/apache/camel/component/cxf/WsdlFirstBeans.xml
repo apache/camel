@@ -30,19 +30,25 @@
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"
-                   xmlns:person="http://camel.apache.org/wsdl-first"/>
+                   wsdlURL="person.wsdl"
+                   xmlns:person="http://camel.apache.org/wsdl-first">
+      <cxf:properties>            
+            <entry key="schema-validation-enabled" value="true" />
+      </cxf:properties>           
+  </cxf:cxfEndpoint> 
 
 
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9000/PersonService/"
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
-                   serviceName="person:PersonService"
+                   serviceName="person:PersonService"                   
                    xmlns:person="http://camel.apache.org/wsdl-first"/>
+      
 
    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
-            <from uri="cxf:bean:routerEndpoint?dataFormat=MESSAGE"/>
-            <to uri="cxf:bean:serviceEndpoint?dataFormat=MESSAGE"/>
+            <from uri="cxf:bean:routerEndpoint"/>
+            <to uri="cxf:bean:serviceEndpoint"/>
       </route>
 
       <route>
