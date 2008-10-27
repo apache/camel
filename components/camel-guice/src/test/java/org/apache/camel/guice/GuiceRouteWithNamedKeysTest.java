@@ -16,6 +16,10 @@
  */
 package org.apache.camel.guice;
 
+import java.util.Collection;
+
+import junit.framework.TestCase;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -23,11 +27,9 @@ import com.google.inject.Provides;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.name.Named;
 import com.google.inject.name.Names;
-import junit.framework.TestCase;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.guiceyfruit.Injectors;
-
-import java.util.Collection;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders

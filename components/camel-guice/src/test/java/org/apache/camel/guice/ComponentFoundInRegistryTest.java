@@ -16,9 +16,14 @@
  */
 package org.apache.camel.guice;
 
+import java.util.Hashtable;
+
+import javax.naming.InitialContext;
+
+import junit.framework.TestCase;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
-import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -27,11 +32,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.guiceyfruit.Injectors;
 import org.guiceyfruit.jndi.GuiceInitialContextFactory;
 import org.guiceyfruit.jndi.JndiBind;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
-
-import javax.naming.InitialContext;
-import java.util.Hashtable;
 
 /**
  * Lets use a custom CamelModule to perform explicit binding of route builders
