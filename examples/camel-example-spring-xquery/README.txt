@@ -10,6 +10,9 @@ This example shows how to
 The example consumes messages from a directory, transforms them, then sends
 them to a queue. It can be run using either Maven or Ant.
 
+You will need to compile this example first:
+  mvn compile
+
 To run the example using Maven, type
   mvn camel:run
 

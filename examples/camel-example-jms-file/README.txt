@@ -10,9 +10,12 @@ system.
 For the latest & greatest documentation on how to use this example
 please see 
   http://activemq.apache.org/camel/walk-through-an-example.html
-
+  
+You will need to compile this example first:
+  mvn compile
+  
 The example should run if you type
-  mvn compile exec:java
+  mvn exec:java
 
 To run the example with Ant
   a. You need to have Apache ActiveMQ installed. It can be downloaded from 

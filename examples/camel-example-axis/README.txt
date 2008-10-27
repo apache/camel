@@ -2,7 +2,8 @@ Axis Example
 ============
 
 This example shows how Camel integrates with older frameworks such as Apache Axis 1.4.
-It can be run using Maven.
+It can be run using Maven, and you will need to compile this example first:
+  mvn compile
 
 The example exposes a webservice using Apache Axis that uses Camel to send the input
 as a message to an endpoint. The endpoint is a file endpoint that stores a backup of the request.
