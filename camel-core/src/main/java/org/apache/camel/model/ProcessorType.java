@@ -1373,6 +1373,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         addOutput(new ConvertBodyType(type));
         return (Type) this;
     }
+    
+    /**
+     * Converts the IN message body to the specified class type
+     */
+    public Type convertBodyTo(String typeString) {
+        addOutput(new ConvertBodyType(typeString));
+        return (Type) this;
+    }
 
     /**
      * Converts the OUT message body to the specified type

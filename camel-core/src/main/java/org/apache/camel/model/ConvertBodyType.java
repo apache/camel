@@ -51,10 +51,11 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
 
     public ConvertBodyType(Class typeClass) {
         setTypeClass(typeClass);
+        setType(typeClass.getName());
     }
 
     @Override
-    public String toString() {
+    public String toString() {        
         return "convertBodyTo[" + getType() + "]";
     }
 
