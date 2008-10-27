@@ -27,11 +27,11 @@ public class XQueryExampleTest extends SpringTestSupport {
 
     public void testExample() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("<employee id=\"James\"><name><firstName>James</firstName>" +
-                "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
+        mock.expectedBodiesReceived("<employee id=\"James\"><name><firstName>James</firstName>"
+                                    + "<lastName>Strachan</lastName></name><location><city>London</city></location></employee>");
 
-        template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>" +
-                "<lastName>Strachan</lastName><city>London</city></person>");
+        template.sendBody("direct:start", "<person user='James'><firstName>James</firstName>"
+                          + "<lastName>Strachan</lastName><city>London</city></person>");
 
         assertMockEndpointsSatisfied();
     }

@@ -45,6 +45,13 @@ public class XStreamDataFormat implements DataFormat {
 
     private XStream xstream;
     private StaxConverter staxConverter;
+    
+    public XStreamDataFormat() {
+    }
+
+    public XStreamDataFormat(XStream xstream) {
+        setXStream(xstream);
+    }
 
     /**
      * A factory method which takes a collection of types to be annotated
@@ -68,13 +75,6 @@ public class XStreamDataFormat implements DataFormat {
             xstream.processAnnotations(type);
         }
         return answer;
-    }
-
-    public XStreamDataFormat() {
-    }
-
-    public XStreamDataFormat(XStream xstream) {
-        setXStream(xstream);
     }
 
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
