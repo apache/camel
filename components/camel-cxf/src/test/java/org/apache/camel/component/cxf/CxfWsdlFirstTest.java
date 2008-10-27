@@ -21,8 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
+import javax.xml.ws.WebServiceException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -101,6 +103,16 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         } catch (UnknownPersonFault fault) {
             // We expect to get fault here
         }
+        
+        personId.value = "Invoking getPerson with invalid length string, expecting exception...xxxxxxxxx";
+        try {            
+            client.getPerson(personId, ssn, name);
+            fail("We expect to get the WebSerivceException here");        
+        } catch (WebServiceException ex) {
+            // Caught expected WebServiceException here
+            assertTrue("Should get the xml vaildate error!", ex.getMessage().indexOf("MyStringType") > 0);         
+        }
+
     }
 
     @SuppressWarnings("unchecked")

@@ -28,19 +28,29 @@
 	targetNamespace="http://camel.apache.org/wsdl-first">
 
 	<wsdl:types>
-		<xsd:schema targetNamespace="http://camel.apache.org/wsdl-first/types"
-		            elementFormDefault="qualified">
+	<xsd:schema targetNamespace="http://camel.apache.org/wsdl-first/types"
+	    xmlns="http://www.w3.org/2001/XMLSchema"
+	    xmlns:tns="http://camel.apache.org/wsdl-first/types"	    
+		elementFormDefault="qualified">
+		
+		<simpleType name="MyStringType">
+			<restriction base="string">
+				<maxLength value="30" />
+			</restriction>
+		</simpleType>
+
+
 			<xsd:element name="GetPerson">
 			  <xsd:complexType>
 					<xsd:sequence>
-						<xsd:element name="personId" type="xsd:string"/>
+						<xsd:element name="personId" type="tns:MyStringType"/>
 					</xsd:sequence>
 				</xsd:complexType>
 			</xsd:element>
 			<xsd:element name="GetPersonResponse">
 			  <xsd:complexType>
 					<xsd:sequence>
-					    <xsd:element name="personId" type="xsd:string"/>
+					    <xsd:element name="personId" type="tns:MyStringType"/>
 						<xsd:element name="ssn" type="xsd:string"/>
 						<xsd:element name="name" type="xsd:string"/>
 					</xsd:sequence>
