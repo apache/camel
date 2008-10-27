@@ -120,21 +120,19 @@
       		<phase>generate-sources</phase>
       		<configuration>
       		   <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
-               <wsdlOptions>
-                  <wsdlOption>
-                    <wsdl>${basedir}/src/test/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
-                    <extraargs>
-                    	<extraarg>-verbose</extraarg>
-                    </extraargs>
-                  </wsdlOption>
-                <wsdlOption>
-                    <wsdl>${basedir}/src/test/resources/wsdl/hello_world.wsdl</wsdl>
-                    <extraargs>
-                    	<extraarg>-verbose</extraarg>
-                    </extraargs>
-                </wsdlOption>
-                </wsdlOptions>
-               </configuration>
+      		   <wsdlOptions>
+      		     <wsdlOption>
+      		       <wsdl>
+      		         ${basedir}/src/test/resources/wsdl/CustomerService-1.0.0.wsdl
+      		       </wsdl>
+      		     </wsdlOption>
+      		     <wsdlOption>
+      		       <wsdl>
+      		         ${basedir}/src/test/resources/wsdl/hello_world.wsdl
+      		       </wsdl>
+      		     </wsdlOption>
+      		   </wsdlOptions>
+      		</configuration>
               <goals>
                 <goal>wsdl2java</goal>
               </goals>
