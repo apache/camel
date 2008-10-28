@@ -59,9 +59,7 @@ public class RubyTest extends ContextTestSupport {
         // TODO make a better way to load ruby based route definitions!
 
         // now lets run the script
-        System.out.println("JA1");
         runScript(scriptName);
-        System.out.println("JA2");
         
         List<RouteBuilder> list = RubyCamel.getRoutes();
 
