@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
- * Unit test of bean can propogate headers in a pipleline
+ * Unit test of bean can propagate headers in a pipeline
  */
 public class BeanPipelineTest extends ContextTestSupport {
 
