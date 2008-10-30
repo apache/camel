@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
  * Channel</a>
  * <p>
- * The default values is:
+ * The default values are:
  * <ul>
  *   <li>maximumRedeliveries = 5</li>
  *   <li>delay = 1000L (the initial delay)</li>
@@ -40,6 +40,8 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
  *   <li>useCollisionAvoidance = false</li>
+ *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
+ *   <li>retryAttemptedLogLevel = LoggingLevel.ERROR</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -343,6 +345,9 @@ public class RedeliveryPolicy extends DelayPolicy {
         return randomNumberGenerator;
     }
 
+    /**
+     * Sets the logging level to use for log messages when retries have been exhausted.
+     */    
     public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;        
     }
@@ -351,6 +356,9 @@ public class RedeliveryPolicy extends DelayPolicy {
         return retriesExhaustedLogLevel;
     }
 
+    /**
+     * Sets the logging level to use for log messages when retries are attempted.
+     */    
     public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
