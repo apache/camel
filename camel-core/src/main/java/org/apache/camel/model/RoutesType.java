@@ -192,7 +192,7 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
         return answer.when(predicate);
     }
 
-    public ExceptionType exception(Class exceptionType) {
+    public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
         getExceptions().add(answer);
         return answer;

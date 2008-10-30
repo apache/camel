@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.IntrospectionSupport;
 

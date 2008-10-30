@@ -134,7 +134,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * Adds an exception handler route for the given exception type
      */
     public ExceptionType onException(Class exceptionType) {
-        return routeCollection.exception(exceptionType);
+        return routeCollection.onException(exceptionType);
     }
 
     /**

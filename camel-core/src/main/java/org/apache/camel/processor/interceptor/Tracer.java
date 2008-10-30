@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**

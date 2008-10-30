@@ -14,13 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.model;
+
+import javax.xml.bind.annotation.XmlEnum;
 
 /**
  * Used to configure the logging levels
  *
- * @version $Revision$
+ * @version $Revision: 703680 $
  */
+@XmlEnum
 public enum LoggingLevel {
     DEBUG, ERROR, FATAL, INFO, TRACE, WARN, OFF
 }

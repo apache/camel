@@ -20,6 +20,7 @@ import java.text.NumberFormat;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.commons.logging.Log;
 
 /**

@@ -18,10 +18,10 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;

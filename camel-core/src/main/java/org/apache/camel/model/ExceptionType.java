@@ -159,7 +159,17 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         getOrCreateRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
         return this;
     }
+    
+    public ExceptionType retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        getOrCreateRedeliveryPolicy().retriesExhaustedLogLevel(retriesExhaustedLogLevel);
+        return this;
+    }
 
+    public ExceptionType retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        getOrCreateRedeliveryPolicy().retryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+    
     public ExceptionType maximumRedeliveries(int maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
