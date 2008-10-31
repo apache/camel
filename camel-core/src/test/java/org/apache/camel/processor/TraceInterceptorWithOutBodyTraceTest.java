@@ -36,7 +36,7 @@ public class TraceInterceptorWithOutBodyTraceTest extends TraceInterceptorTest {
                 tracer.getFormatter().setShowOutBodyType(true);
                 
                 getContext().addInterceptStrategy(tracer);
-                // START SNIPPET: tracingOutExchanges
+                // END SNIPPET: tracingOutExchanges
                 
                 from("direct:start").
                   transform().body().
