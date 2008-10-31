@@ -41,7 +41,8 @@ public class Tracer implements InterceptStrategy {
     private Predicate<Exchange> traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
-
+    private boolean traceOutExchanges = false;
+    
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
      *
@@ -89,7 +90,7 @@ public class Tracer implements InterceptStrategy {
     }
 
     /**
-     * Sets wether interceptors should be traced or not
+     * Sets whether interceptors should be traced or not
      */
     public void setTraceInterceptors(boolean traceInterceptors) {
         this.traceInterceptors = traceInterceptors;
@@ -111,7 +112,7 @@ public class Tracer implements InterceptStrategy {
     }
 
     /**
-     * Sets the logging level to ouput tracing. Will default use <tt>INFO</tt> level.
+     * Sets the logging level to output tracing. Will use <tt>INFO</tt> level by default.
      */
     public void setLogLevel(LoggingLevel logLevel) {
         this.logLevel = logLevel;
@@ -122,7 +123,7 @@ public class Tracer implements InterceptStrategy {
     }
 
     /**
-     * Sets wether thrown exceptions should be traced
+     * Sets whether thrown exceptions should be traced
      */
     public void setTraceExceptions(boolean traceExceptions) {
         this.traceExceptions = traceExceptions;
@@ -138,5 +139,16 @@ public class Tracer implements InterceptStrategy {
      */
     public void setLogName(String logName) {
         this.logName = logName;
+    }
+
+    /**
+     * Sets whether exchanges coming out of processors should be traced
+     */    
+    public void setTraceOutExchanges(boolean traceOutExchanges) {
+        this.traceOutExchanges = traceOutExchanges;
+    }
+    
+    public boolean isTraceOutExchanges() {
+        return traceOutExchanges;
     }
 }
