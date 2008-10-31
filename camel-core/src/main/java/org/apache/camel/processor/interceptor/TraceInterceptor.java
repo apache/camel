@@ -82,6 +82,9 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 logExchange(exchange);
             }
             super.proceed(exchange);
+            if (tracer.isTraceOutExchanges() && shouldLogNode(node) && shouldLogExchange(exchange)) {
+                logExchange(exchange);
+            }            
         } catch (Exception e) {
             if (shouldLogException(exchange)) {
                 logException(exchange, e);
@@ -135,7 +138,13 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return tracer.isTraceExceptions();
     }
 
-
+    /**
+     * Returns whether exchanges coming out of processors should be traced
+     */   
+    public boolean shouldTraceOutExchanges() {
+        return tracer.isTraceOutExchanges();
+    }
+    
     /**
      * Returns true if the given node should be logged in the trace list
      */
