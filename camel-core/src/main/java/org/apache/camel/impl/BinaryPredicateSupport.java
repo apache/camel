@@ -26,12 +26,12 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * 
  * @version $Revision$
  */
-public abstract class BinaryPredicateSupport<E extends Exchange> implements Predicate<E> {
+public abstract class BinaryPredicateSupport implements Predicate {
 
-    private final Expression<E> left;
-    private final Expression<E> right;
+    private final Expression left;
+    private final Expression right;
 
-    protected BinaryPredicateSupport(Expression<E> left, Expression<E> right) {
+    protected BinaryPredicateSupport(Expression left, Expression right) {
         notNull(left, "left");
         notNull(right, "right");
 
@@ -44,13 +44,13 @@ public abstract class BinaryPredicateSupport<E extends Exchange> implements Pred
         return left + " " + getOperationText() + " " + right;
     }
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         Object leftValue = left.evaluate(exchange);
         Object rightValue = right.evaluate(exchange);
         return matches(exchange, leftValue, rightValue);
     }
 
-    public void assertMatches(String text, E exchange) {
+    public void assertMatches(String text, Exchange exchange) {
         Object leftValue = left.evaluate(exchange);
         Object rightValue = right.evaluate(exchange);
         if (!matches(exchange, leftValue, rightValue)) {
@@ -58,11 +58,11 @@ public abstract class BinaryPredicateSupport<E extends Exchange> implements Pred
         }
     }
 
-    protected abstract boolean matches(E exchange, Object leftValue, Object rightValue);
+    protected abstract boolean matches(Exchange exchange, Object leftValue, Object rightValue);
 
     protected abstract String getOperationText();
 
-    protected String assertionFailureMessage(E exchange, Object leftValue, Object rightValue) {
+    protected String assertionFailureMessage(Exchange exchange, Object leftValue, Object rightValue) {
         return this + " failed on " + exchange + " with left value <" + leftValue + "> right value <"
                + rightValue + ">";
     }

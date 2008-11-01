@@ -35,15 +35,15 @@ import org.apache.camel.Expression;
  * 
  * @version $Revision$
  */
-public class DefaultExchangeComparator implements ExpressionResultComparator<Exchange> {
+public class DefaultExchangeComparator implements ExpressionResultComparator {
 
-    private Expression<Exchange> expression;
+    private Expression expression;
 
-    public Expression<Exchange> getExpression() {
+    public Expression getExpression() {
         return expression;
     }
 
-    public void setExpression(Expression<Exchange> expression) {
+    public void setExpression(Expression expression) {
         this.expression = expression;
     }
 

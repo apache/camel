@@ -40,7 +40,7 @@ import org.apache.camel.impl.ExpressionSupport;
  *
  * @version $Revision$
  */
-public class JuelExpression extends ExpressionSupport<Exchange> {
+public class JuelExpression extends ExpressionSupport {
     private final String expression;
     private final Class<?> type;
     private ExpressionFactory expressionFactory;

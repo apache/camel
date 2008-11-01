@@ -196,7 +196,7 @@ public final class CamelContextHelper {
         notNull(expressionText, "expressionText");
 
         Language language = resolveMandatoryLanguage(camelContext, languageName);
-        Expression<Exchange> expression = language.createExpression(expressionText);
+        Expression expression = language.createExpression(expressionText);
         if (expression == null) {
             throw new IllegalArgumentException("Could not create expression: " + expressionText + " with language: " + language);
         }

@@ -31,18 +31,18 @@ import org.apache.camel.spi.Language;
  */
 public abstract class AbstractSimpleLanguage implements Language {
     
-    public Predicate<Exchange> createPredicate(String expression) {
+    public Predicate createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
 
-    public Expression<Exchange> createExpression(String expression) {
+    public Expression createExpression(String expression) {
         if (expression.indexOf("${") >= 0) {
             return createComplexExpression(expression);
         }
         return createSimpleExpression(expression);
     }
 
-    protected Expression<Exchange> createComplexExpression(String expression) {
+    protected Expression createComplexExpression(String expression) {
         List<Expression> results = new ArrayList<Expression>();
 
         int pivot = 0;
@@ -81,7 +81,7 @@ public abstract class AbstractSimpleLanguage implements Language {
      * @param expression  the content between ${ and }
      * @return the expression
      */
-    protected abstract <E extends Exchange> Expression<Exchange> createSimpleExpression(String expression);
+    protected abstract Expression createSimpleExpression(String expression);
 
     protected String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {

@@ -42,11 +42,11 @@ public class ExpressionBuilderTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
     public void testRegexTokenize() throws Exception {
-        Expression<Exchange> expression = regexTokenize(headerExpression("location"), ",");
+        Expression expression = regexTokenize(headerExpression("location"), ",");
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
-        Predicate<Exchange> predicate = contains(regexTokenize(headerExpression("location"), ","),
+        Predicate predicate = contains(regexTokenize(headerExpression("location"), ","),
                                                  constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 
@@ -56,7 +56,7 @@ public class ExpressionBuilderTest extends TestSupport {
     }
 
     public void testRegexReplaceAll() throws Exception {
-        Expression<Exchange> expression = regexReplaceAll(headerExpression("location"), "London",
+        Expression expression = regexReplaceAll(headerExpression("location"), "London",
                                                           "Westminster");
         assertExpression(expression, exchange, "Islington,Westminster,UK");
 
@@ -65,12 +65,12 @@ public class ExpressionBuilderTest extends TestSupport {
     }
 
     public void testTokenize() throws Exception {
-        Expression <Exchange> expression = tokenizeExpression(headerExpression("location"), ",");
+        Expression expression = tokenizeExpression(headerExpression("location"), ",");
 
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
-        Predicate<Exchange> predicate = contains(tokenizeExpression(headerExpression("location"), ","),
+        Predicate predicate = contains(tokenizeExpression(headerExpression("location"), ","),
                                                  constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 

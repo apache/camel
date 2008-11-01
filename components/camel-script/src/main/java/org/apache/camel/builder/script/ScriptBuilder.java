@@ -45,7 +45,7 @@ import org.springframework.core.io.UrlResource;
  *
  * @version $Revision$
  */
-public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, Processor {
+public class ScriptBuilder implements Expression, Predicate, Processor {
     private static final transient Log LOG = LogFactory.getLog(ScriptBuilder.class);
 
     private String scriptEngineName;
@@ -73,16 +73,16 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         return getScriptDescription();
     }
 
-    public Object evaluate(E exchange) {
+    public Object evaluate(Exchange exchange) {
         return evaluateScript(exchange);
     }
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         Object scriptValue = evaluateScript(exchange);
         return matches(exchange, scriptValue);
     }
 
-    public void assertMatches(String text, E exchange) throws AssertionError {
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
         Object scriptValue = evaluateScript(exchange);
         if (!matches(exchange, scriptValue)) {
             throw new AssertionError(this + " failed on " + exchange + " as script returned <" + scriptValue + ">");
@@ -499,7 +499,7 @@ public class ScriptBuilder<E extends Exchange> implements Expression<E>, Predica
         }
     }
 
-    protected boolean matches(E exchange, Object scriptValue) {
+    protected boolean matches(Exchange exchange, Object scriptValue) {
         return ObjectConverter.toBool(scriptValue);
     }
 

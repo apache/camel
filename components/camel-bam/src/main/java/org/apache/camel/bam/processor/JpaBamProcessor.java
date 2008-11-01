@@ -38,11 +38,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
     private static final transient Log LOG = LogFactory.getLog(JpaBamProcessor.class);
 
-    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, template, correlationKeyExpression, activityRules);
     }
 
-    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression<Exchange> correlationKeyExpression, 
+    public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression correlationKeyExpression, 
                            ActivityRules activityRules, Class<ProcessInstance> entitytype) {
         super(transactionTemplate, template, correlationKeyExpression, activityRules, entitytype);
     }

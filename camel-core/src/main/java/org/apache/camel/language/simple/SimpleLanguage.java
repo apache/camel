@@ -52,7 +52,7 @@ public class SimpleLanguage extends AbstractSimpleLanguage {
         return language.createExpression(expression);
     }
 
-    protected Expression<Exchange> createSimpleExpression(String expression) {
+    protected Expression createSimpleExpression(String expression) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "out.body")) {

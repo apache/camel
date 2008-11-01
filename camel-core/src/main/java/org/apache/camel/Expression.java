@@ -27,7 +27,7 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface Expression<E extends Exchange> {
+public interface Expression {
 
     /**
      * Returns the value of the expression on the given exchange
@@ -35,5 +35,5 @@ public interface Expression<E extends Exchange> {
      * @param exchange the message exchange on which to evaluate the expression
      * @return the value of the expression
      */
-    Object evaluate(E exchange);
+    Object evaluate(Exchange exchange);
 }

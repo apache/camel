@@ -26,18 +26,18 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public abstract class ExpressionSupport<E extends Exchange> implements Expression<E> , Predicate<E> {
+public abstract class ExpressionSupport implements Expression, Predicate {
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         Object value = evaluate(exchange);
         return ObjectHelper.evaluateValuePredicate(value);
     }
 
-    public void assertMatches(String text, E exchange) {
+    public void assertMatches(String text, Exchange exchange) {
         if (!matches(exchange)) {
             throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);
         }
     }
 
-    protected abstract String assertionFailureMessage(E exchange);
+    protected abstract String assertionFailureMessage(Exchange exchange);
 }

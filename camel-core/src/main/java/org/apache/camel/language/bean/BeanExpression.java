@@ -29,7 +29,7 @@ import org.apache.camel.impl.ExpressionSupport;
  *
  * @version $Revision$
  */
-public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
+public class BeanExpression extends ExpressionSupport {
     private String beanName;
     private String method;
     private Object bean;
@@ -49,11 +49,11 @@ public class BeanExpression<E extends Exchange> extends ExpressionSupport<E> {
         return "BeanExpression[bean:" + (bean == null ? beanName : bean) + " method: " + method + "]";
     }
 
-    protected String assertionFailureMessage(E exchange) {
+    protected String assertionFailureMessage(Exchange exchange) {
         return "bean: " + beanName + " method: " + method;
     }
 
-    public Object evaluate(E exchange) {
+    public Object evaluate(Exchange exchange) {
         // either use registry lookup or a constant bean
         BeanHolder holder;
         if (bean == null) {

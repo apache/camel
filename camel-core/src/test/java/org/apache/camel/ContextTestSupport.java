@@ -239,7 +239,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void assertExpression(Exchange exchange, String languageName, String expressionText, Object expectedValue) {
         Language language = assertResolveLanguage(languageName);
 
-        Expression<Exchange> expression = language.createExpression(expressionText);
+        Expression expression = language.createExpression(expressionText);
         assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
 
         assertExpression(expression, exchange, expectedValue);
@@ -252,7 +252,7 @@ public abstract class ContextTestSupport extends TestSupport {
     protected void assertPredicate(String languageName, String expressionText, Exchange exchange, boolean expected) {
         Language language = assertResolveLanguage(languageName);
 
-        Predicate<Exchange> predicate = language.createPredicate(expressionText);
+        Predicate predicate = language.createPredicate(expressionText);
         assertNotNull("No Predicate could be created for text: " + expressionText + " language: " + language, predicate);
 
         assertPredicate(predicate, exchange, expected);

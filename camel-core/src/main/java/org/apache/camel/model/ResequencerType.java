@@ -190,7 +190,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         
     }
     
-    public ResequencerType comparator(ExpressionResultComparator<Exchange> comparator) {
+    public ResequencerType comparator(ExpressionResultComparator comparator) {
         if (streamConfig == null) {
             throw new IllegalStateException("comparator() only supported for stream resequencer");
         }

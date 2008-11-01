@@ -27,14 +27,14 @@ import org.apache.camel.Expression;
  *  
  * @version $Revision$
  */
-public class ExpressionComparator<E extends Exchange> implements Comparator<E> {
-    private final Expression<E> expression;
+public class ExpressionComparator implements Comparator<Exchange> {
+    private final Expression expression;
 
-    public ExpressionComparator(Expression<E> expression) {
+    public ExpressionComparator(Expression expression) {
         this.expression = expression;
     }
 
-    public int compare(E e1, E e2) {
+    public int compare(Exchange e1, Exchange e2) {
         Object o1 = expression.evaluate(e1);
         Object o2 = expression.evaluate(e2);
         return ObjectHelper.compare(o1, o2);

@@ -33,7 +33,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class StickyLoadBalancer extends QueueLoadBalancer {
-    private Expression<Exchange> correlationExpression;
+    private Expression correlationExpression;
     private QueueLoadBalancer loadBalancer;
     private int numberOfHashGroups = 64 * 1024;
     private final Map<Object, Processor> stickyMap = new HashMap<Object, Processor>();
@@ -42,16 +42,16 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         this.loadBalancer = new RoundRobinLoadBalancer();
     }
 
-    public StickyLoadBalancer(Expression<Exchange> correlationExpression) {
+    public StickyLoadBalancer(Expression correlationExpression) {
         this(correlationExpression, new RoundRobinLoadBalancer());
     }
 
-    public StickyLoadBalancer(Expression<Exchange> correlationExpression, QueueLoadBalancer loadBalancer) {
+    public StickyLoadBalancer(Expression correlationExpression, QueueLoadBalancer loadBalancer) {
         this.correlationExpression = correlationExpression;
         this.loadBalancer = loadBalancer;
     }
 
-    public void setCorrelationExpression(Expression<Exchange> correlationExpression) {
+    public void setCorrelationExpression(Expression correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
 

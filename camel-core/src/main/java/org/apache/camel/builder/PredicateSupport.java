@@ -24,15 +24,15 @@ import org.apache.camel.Predicate;
  *
  * @version $Revision$
  */
-public abstract class PredicateSupport<E extends Exchange> implements Predicate<E> {
+public abstract class PredicateSupport implements Predicate {
 
-    public void assertMatches(String text, E exchange) {
+    public void assertMatches(String text, Exchange exchange) {
         if (!matches(exchange)) {
             throw new AssertionError(assertionFailureMessage(exchange)  + " on " + exchange);
         }
     }
 
-    protected String assertionFailureMessage(E exchange) {
+    protected String assertionFailureMessage(Exchange exchange) {
         return toString();
     }
 }

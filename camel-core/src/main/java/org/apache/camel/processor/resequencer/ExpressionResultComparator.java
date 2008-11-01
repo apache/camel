@@ -29,7 +29,7 @@ import org.apache.camel.Expression;
  * 
  * @version $Revision$
  */
-public interface ExpressionResultComparator<E extends Exchange> extends SequenceElementComparator<E> {
+public interface ExpressionResultComparator extends SequenceElementComparator<Exchange> {
 
     /**
      * Sets the list expressions used for comparing {@link Exchange}s.

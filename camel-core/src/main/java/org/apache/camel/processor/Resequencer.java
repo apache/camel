@@ -35,7 +35,7 @@ import org.apache.camel.util.ExpressionListComparator;
  * @version $Revision$
  */
 public class Resequencer extends BatchProcessor {
-    public Resequencer(Endpoint endpoint, Processor processor, Expression<Exchange> expression) {
+    public Resequencer(Endpoint endpoint, Processor processor, Expression expression) {
         this(endpoint, processor, createSet(expression));
     }
 
@@ -55,8 +55,8 @@ public class Resequencer extends BatchProcessor {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected static Set<Exchange> createSet(Expression<Exchange> expression) {
-        return createSet(new ExpressionComparator<Exchange>(expression));
+    protected static Set<Exchange> createSet(Expression expression) {
+        return createSet(new ExpressionComparator(expression));
     }
 
     protected static Set<Exchange> createSet(List<Expression> expressions) {

@@ -42,7 +42,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
     private EntityManagerFactory entityManagerFactory;
     private String persistenceUnit = "camel";
     private JpaTemplate template;
-    private Expression<Exchange> producerExpression;
+    private Expression producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
     private Map entityManagerProperties;
@@ -102,14 +102,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         this.template = template;
     }
 
-    public Expression<Exchange> getProducerExpression() {
+    public Expression getProducerExpression() {
         if (producerExpression == null) {
             producerExpression = createProducerExpression();
         }
         return producerExpression;
     }
 
-    public void setProducerExpression(Expression<Exchange> producerExpression) {
+    public void setProducerExpression(Expression producerExpression) {
         this.producerExpression = producerExpression;
     }
 
@@ -207,12 +207,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         // return new DefaultTransactionStrategy(emf);
     }
 
-    protected Expression<Exchange> createProducerExpression() {
+    protected Expression createProducerExpression() {
         final Class<?> type = getEntityType();
         if (type == null) {
             return ExpressionBuilder.bodyExpression();
         } else {
-            return new Expression<Exchange>() {
+            return new Expression() {
                 public Object evaluate(Exchange exchange) {
                     Object answer = exchange.getIn().getBody(type);
                     if (answer == null) {

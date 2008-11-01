@@ -45,7 +45,7 @@ public class LoopType extends ExpressionNode implements Block {
         super(expression);
     }
 
-    public void setExpression(Expression<?> expr) {
+    public void setExpression(Expression expr) {
         if (expr != null) {
             setExpression(new ExpressionType(expr));
         }

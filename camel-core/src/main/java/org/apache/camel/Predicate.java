@@ -27,7 +27,7 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface Predicate<E> {
+public interface Predicate {
 
     /**
      * Evaluates the predicate on the message exchange and returns true if this
@@ -36,7 +36,7 @@ public interface Predicate<E> {
      * @param exchange the message exchange
      * @return true if the predicate matches
      */
-    boolean matches(E exchange);
+    boolean matches(Exchange exchange);
 
     /**
      * Allows this predicate to be used nicely in testing to generate a nicely
@@ -47,6 +47,6 @@ public interface Predicate<E> {
      * @param exchange the exchange to evaluate the expression on
      * @throws AssertionError if the predicate does not match
      */
-    void assertMatches(String text, E exchange) throws AssertionError;
+    void assertMatches(String text, Exchange exchange) throws AssertionError;
 
 }

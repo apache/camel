@@ -613,7 +613,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression the expression on which to compare messages in order
      * @return the builder
      */
-    public ResequencerType resequencer(Expression<Exchange> expression) {
+    public ResequencerType resequencer(Expression expression) {
         return resequencer(Collections.<Expression>singletonList(expression));
     }
 
@@ -787,7 +787,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                            the messages should be processed
      * @return the builder
      */
-    public DelayerType delayer(Expression<Exchange> processAtExpression) {
+    public DelayerType delayer(Expression processAtExpression) {
         return delayer(processAtExpression, 0L);
     }
 
@@ -804,7 +804,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                            should be processed
      * @return the builder
      */
-    public DelayerType delayer(Expression<Exchange> processAtExpression, long delay) {
+    public DelayerType delayer(Expression processAtExpression, long delay) {
         DelayerType answer = new DelayerType(processAtExpression, delay);
         addOutput(answer);
         return answer;
@@ -862,7 +862,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return ExpressionClause.createAndSetExpression(loop);
     }
 
-    public LoopType loop(Expression<?> expression) {
+    public LoopType loop(Expression expression) {
         LoopType loop = getNodeFactory().createLoop();
         loop.setExpression(expression);
         addOutput(loop);

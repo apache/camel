@@ -34,9 +34,9 @@ import org.springframework.orm.jpa.JpaCallback;
 public class JpaProducer extends DefaultProducer<Exchange> {
     private final TransactionStrategy template;
     private final JpaEndpoint endpoint;
-    private final Expression<Exchange> expression;
+    private final Expression expression;
 
-    public JpaProducer(JpaEndpoint endpoint, Expression<Exchange> expression) {
+    public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
         this.endpoint = endpoint;
         this.expression = expression;

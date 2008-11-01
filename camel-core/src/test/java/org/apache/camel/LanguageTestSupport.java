@@ -76,7 +76,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected void assertExpression(String expressionText, String expectedValue, String orThisExpectedValue) {
         Language language = assertResolveLanguage(getLanguageName());
 
-        Expression<Exchange> expression = language.createExpression(expressionText);
+        Expression expression = language.createExpression(expressionText);
         assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
         
         Object value = expression.evaluate(exchange);

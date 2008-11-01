@@ -38,7 +38,7 @@ public class Tracer implements InterceptStrategy {
     private boolean enabled = true;
     private String logName;
     private LoggingLevel logLevel;
-    private Predicate<Exchange> traceFilter;
+    private Predicate traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
     private boolean traceOutExchanges = false;

@@ -45,9 +45,9 @@ public final class PredicateBuilder {
     /**
      * Converts the given expression into an {@link Predicate}
      */
-    public static <E extends Exchange> Predicate<E> toPredicate(final Expression<E> expression) {
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+    public static Predicate toPredicate(final Expression expression) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 return ObjectHelper.evaluateValuePredicate(value);
             }
@@ -62,10 +62,10 @@ public final class PredicateBuilder {
     /**
      * A helper method to return the logical not of the given predicate
      */
-    public static <E extends Exchange> Predicate<E> not(final Predicate<E> predicate) {
+    public static Predicate not(final Predicate predicate) {
         notNull(predicate, "predicate");
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 return !predicate.matches(exchange);
             }
 
@@ -79,11 +79,11 @@ public final class PredicateBuilder {
     /**
      * A helper method to combine multiple predicates by a logical AND
      */
-    public static <E extends Exchange> Predicate<E> and(final Predicate<E> left, final Predicate<E> right) {
+    public static Predicate and(final Predicate left, final Predicate right) {
         notNull(left, "left");
         notNull(right, "right");
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 return left.matches(exchange) && right.matches(exchange);
             }
 
@@ -97,11 +97,11 @@ public final class PredicateBuilder {
     /**
      * A helper method to combine multiple predicates by a logical OR
      */
-    public static <E extends Exchange> Predicate<E> or(final Predicate<E> left, final Predicate<E> right) {
+    public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
         notNull(right, "right");
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 return left.matches(exchange) || right.matches(exchange);
             }
 
@@ -112,11 +112,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isEqualTo(final Expression<E> left,
-                                                              final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isEqualTo(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return ObjectHelper.equal(leftValue, rightValue);
             }
 
@@ -126,11 +125,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isNotEqualTo(final Expression<E> left,
-                                                                 final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isNotEqualTo(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return !ObjectHelper.equal(leftValue, rightValue);
             }
 
@@ -140,11 +138,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isLessThan(final Expression<E> left,
-                                                               final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isLessThan(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return compare(leftValue, rightValue) < 0;
             }
 
@@ -154,11 +151,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isLessThanOrEqualTo(final Expression<E> left,
-                                                                        final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isLessThanOrEqualTo(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return compare(leftValue, rightValue) <= 0;
             }
 
@@ -168,11 +164,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isGreaterThan(final Expression<E> left,
-                                                                  final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isGreaterThan(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return compare(leftValue, rightValue) > 0;
             }
 
@@ -182,11 +177,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isGreaterThanOrEqualTo(final Expression<E> left,
-                                                                           final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate isGreaterThanOrEqualTo(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return compare(leftValue, rightValue) >= 0;
             }
 
@@ -196,11 +190,10 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> contains(final Expression<E> left,
-                                                             final Expression<E> right) {
-        return new BinaryPredicateSupport<E>(left, right) {
+    public static Predicate contains(final Expression left, final Expression right) {
+        return new BinaryPredicateSupport(left, right) {
 
-            protected boolean matches(E exchange, Object leftValue, Object rightValue) {
+            protected boolean matches(Exchange exchange, Object leftValue, Object rightValue) {
                 return ObjectHelper.contains(leftValue, rightValue);
             }
 
@@ -210,21 +203,20 @@ public final class PredicateBuilder {
         };
     }
 
-    public static <E extends Exchange> Predicate<E> isNull(final Expression<E> expression) {
-        return isEqualTo(expression, ExpressionBuilder.<E> constantExpression(null));
+    public static Predicate isNull(final Expression expression) {
+        return isEqualTo(expression, ExpressionBuilder.constantExpression(null));
     }
 
-    public static <E extends Exchange> Predicate<E> isNotNull(final Expression<E> expression) {
-        return isNotEqualTo(expression, ExpressionBuilder.<E> constantExpression(null));
+    public static Predicate isNotNull(final Expression expression) {
+        return isNotEqualTo(expression, ExpressionBuilder.constantExpression(null));
     }
 
-    public static <E extends Exchange> Predicate<E> isInstanceOf(final Expression<E> expression,
-                                                                 final Class type) {
+    public static Predicate isInstanceOf(final Expression expression, final Class<?> type) {
         notNull(expression, "expression");
         notNull(type, "type");
 
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 return type.isInstance(value);
             }
@@ -235,7 +227,7 @@ public final class PredicateBuilder {
             }
 
             @Override
-            protected String assertionFailureMessage(E exchange) {
+            protected String assertionFailureMessage(Exchange exchange) {
                 return super.assertionFailureMessage(exchange)
                     + " for <" + expression.evaluate(exchange) + ">";
             }
@@ -250,7 +242,7 @@ public final class PredicateBuilder {
      * @param regex the regular expression to match against
      * @return a new predicate
      */
-    public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression, final String regex) {
+    public static Predicate regex(final Expression expression, final String regex) {
         return regex(expression, Pattern.compile(regex));
     }
 
@@ -262,13 +254,12 @@ public final class PredicateBuilder {
      * @param pattern the regular expression to match against
      * @return a new predicate
      */
-    public static <E extends Exchange> Predicate<E> regex(final Expression<E> expression,
-                                                          final Pattern pattern) {
+    public static Predicate regex(final Expression expression, final Pattern pattern) {
         notNull(expression, "expression");
         notNull(pattern, "pattern");
 
-        return new PredicateSupport<E>() {
-            public boolean matches(E exchange) {
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 if (value != null) {
                     Matcher matcher = pattern.matcher(value.toString());
@@ -283,7 +274,7 @@ public final class PredicateBuilder {
             }
 
             @Override
-            protected String assertionFailureMessage(E exchange) {
+            protected String assertionFailureMessage(Exchange exchange) {
                 return super.assertionFailureMessage(exchange) + " for <" + expression.evaluate(exchange)
                        + ">";
             }

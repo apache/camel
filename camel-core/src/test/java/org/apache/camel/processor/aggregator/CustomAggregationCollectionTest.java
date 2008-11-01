@@ -76,14 +76,14 @@ public class CustomAggregationCollectionTest extends ContextTestSupport {
     private static class MyReverseAggregationCollection extends AbstractCollection<Exchange> implements AggregationCollection {
 
         private List<Exchange> collection = new ArrayList<Exchange>();
-        private Expression<Exchange> correlation;
+        private Expression correlation;
         private AggregationStrategy strategy;
 
-        public Expression<Exchange> getCorrelationExpression() {
+        public Expression getCorrelationExpression() {
             return correlation;
         }
 
-        public void setCorrelationExpression(Expression<Exchange> correlationExpression) {
+        public void setCorrelationExpression(Expression correlationExpression) {
             this.correlation = correlationExpression;
         }
 

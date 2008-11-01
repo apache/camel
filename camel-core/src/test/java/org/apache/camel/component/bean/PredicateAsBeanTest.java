@@ -57,7 +57,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
         };
     }
 
-    public static class MyPredicate implements Predicate<Exchange> {
+    public static class MyPredicate implements Predicate {
         public String body;
 
         public boolean matches(Exchange exchange) {

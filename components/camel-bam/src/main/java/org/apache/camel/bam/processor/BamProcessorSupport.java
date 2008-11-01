@@ -41,13 +41,13 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public abstract class BamProcessorSupport<T> implements Processor {
     private static final transient Log LOG = LogFactory.getLog(BamProcessorSupport.class);
     private Class<T> entityType;
-    private Expression<Exchange> correlationKeyExpression;
+    private Expression correlationKeyExpression;
     private TransactionTemplate transactionTemplate;
     private int retryCount = 20;
     private long retrySleep = 1000L;
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate,
-                                  Expression<Exchange> correlationKeyExpression) {
+                                  Expression correlationKeyExpression) {
         this.transactionTemplate = transactionTemplate;
         this.correlationKeyExpression = correlationKeyExpression;
 
@@ -68,7 +68,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
     }
 
     protected BamProcessorSupport(TransactionTemplate transactionTemplate,
-                                  Expression<Exchange> correlationKeyExpression, Class<T> entitytype) {
+                                  Expression correlationKeyExpression, Class<T> entitytype) {
         this.transactionTemplate = transactionTemplate;
         this.entityType = entitytype;
         this.correlationKeyExpression = correlationKeyExpression;
@@ -115,7 +115,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     // Properties
     // -----------------------------------------------------------------------
-    public Expression<Exchange> getCorrelationKeyExpression() {
+    public Expression getCorrelationKeyExpression() {
         return correlationKeyExpression;
     }
 
@@ -129,11 +129,11 @@ public abstract class BamProcessorSupport<T> implements Processor {
 
     protected abstract T loadEntity(Exchange exchange, Object key) throws Exception;
 
-    protected abstract Class getKeyType();
+    protected abstract Class<?> getKeyType();
 
     protected Object getCorrelationKey(Exchange exchange) throws NoCorrelationKeyException {
         Object value = correlationKeyExpression.evaluate(exchange);
-        Class keyType = getKeyType();
+        Class<?> keyType = getKeyType();
         if (keyType != null) {
             value = ExchangeHelper.convertToType(exchange, keyType, value);
         }

@@ -36,12 +36,12 @@ public interface AggregationCollection extends Collection<Exchange> {
     /**
      * Gets the correlation expression
      */
-    Expression<Exchange> getCorrelationExpression();
+    Expression getCorrelationExpression();
 
     /**
      * Sets the correlation expression to be used
      */
-    void setCorrelationExpression(Expression<Exchange> correlationExpression);
+    void setCorrelationExpression(Expression correlationExpression);
 
     /**
      * Gets the aggregation strategy

@@ -49,16 +49,15 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private String keyPropertyName = "correlationKey";
     private boolean correlationKeyIsPrimary = true;
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
-                                  Expression<Exchange> correlationKeyExpression, ActivityRules activityRules,
-                                  Class<T> entitytype) {
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+            Expression correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
         super(transactionTemplate, correlationKeyExpression, entitytype);
         this.activityRules = activityRules;
         this.template = template;
     }
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
-                                  Expression<Exchange> correlationKeyExpression, ActivityRules activityRules) {
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+            Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
         this.template = template;

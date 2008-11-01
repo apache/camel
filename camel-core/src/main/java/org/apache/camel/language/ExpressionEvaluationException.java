@@ -26,21 +26,23 @@ import org.apache.camel.RuntimeCamelException;
  * @version $Revision$
  */
 public class ExpressionEvaluationException extends RuntimeCamelException {
-    private final Expression<Exchange> expression;
+
+    private static final long serialVersionUID = 2939802714638174540L;
+    
+    private final Expression expression;
     private final Exchange exchange;
 
-    public ExpressionEvaluationException(Expression<Exchange> expression, Exchange exchange, Throwable cause) {
+    public ExpressionEvaluationException(Expression expression, Exchange exchange, Throwable cause) {
         super(cause);
         this.expression = expression;
         this.exchange = exchange;
     }
 
-    public Expression<Exchange> getExpression() {
+    public Expression getExpression() {
         return expression;
     }
 
     public Exchange getExchange() {
         return exchange;
     }
-    
 }
