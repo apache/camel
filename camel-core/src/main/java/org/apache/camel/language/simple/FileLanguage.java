@@ -50,7 +50,7 @@ public class FileLanguage extends AbstractSimpleLanguage {
         return language.createExpression(expression);
     }
 
-    protected Expression<FileExchange> createSimpleExpression(String expression) {
+    protected Expression createSimpleExpression(String expression) {
 
         // file: prefix
         String remainder = ifStartsWithReturnRemainder("file:", expression);

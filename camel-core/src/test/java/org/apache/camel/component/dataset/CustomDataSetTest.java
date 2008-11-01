@@ -33,12 +33,12 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class CustomDataSetTest extends ContextTestSupport {
     protected DataSet dataSet = new DataSetSupport() {
-        Expression<Exchange> expression = new XPathBuilder<Exchange>("/message/@index").resultType(Long.class);
+        Expression expression = new XPathBuilder("/message/@index").resultType(Long.class);
 
         @Override
         public void assertMessageExpected(DataSetEndpoint dataSetEndpoint, Exchange expected, Exchange actual, long index) throws Exception {
             // lets compare the XPath result
-            Predicate<Exchange> predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
+            Predicate predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
             log.debug("evaluating predicate: " + predicate);
             predicate.assertMatches("Actual: " + actual, actual);
         }

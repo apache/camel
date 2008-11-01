@@ -38,84 +38,83 @@ public final class Builder {
     /**
      * Returns a constant expression
      */
-    public static <E extends Exchange> ValueBuilder<E> constant(Object value) {
-        Expression<E> expression = ExpressionBuilder.constantExpression(value);
-        return new ValueBuilder<E>(expression);
+    public static ValueBuilder constant(Object value) {
+        Expression expression = ExpressionBuilder.constantExpression(value);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for headers on an exchange
      */
-    public static <E extends Exchange> ValueBuilder<E> header(String name) {
-        Expression<E> expression = ExpressionBuilder.headerExpression(name);
-        return new ValueBuilder<E>(expression);
+    public static ValueBuilder header(String name) {
+        Expression expression = ExpressionBuilder.headerExpression(name);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
-    public static <E extends Exchange> ValueBuilder<E> body() {
-        Expression<E> expression = ExpressionBuilder.bodyExpression();
-        return new ValueBuilder<E>(expression);
+    public static ValueBuilder body() {
+        Expression expression = ExpressionBuilder.bodyExpression();
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder<E> bodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.bodyExpression(type);
-        return new ValueBuilder<E>(expression);
+    public static <E extends Exchange, T> ValueBuilder bodyAs(Class<T> type) {
+        Expression expression = ExpressionBuilder.bodyExpression(type);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the outbound body on an
      * exchange
      */
-    public static <E extends Exchange> ValueBuilder<E> outBody() {
-        Expression<E> expression = ExpressionBuilder.outBodyExpression();
-        return new ValueBuilder<E>(expression);
+    public static ValueBuilder outBody() {
+        Expression expression = ExpressionBuilder.outBodyExpression();
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder<E> outBodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.outBodyExpression(type);
-        return new ValueBuilder<E>(expression);
+    public static <E extends Exchange, T> ValueBuilder outBodyAs(Class<T> type) {
+        Expression expression = ExpressionBuilder.outBodyExpression(type);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the fault body on an
      * exchange
      */
-    public static <E extends Exchange> ValueBuilder<E> faultBody() {
-        Expression<E> expression = ExpressionBuilder.faultBodyExpression();
-        return new ValueBuilder<E>(expression);
+    public static ValueBuilder faultBody() {
+        Expression expression = ExpressionBuilder.faultBodyExpression();
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns a predicate and value builder for the fault message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder<E> faultBodyAs(Class<T> type) {
-        Expression<E> expression = ExpressionBuilder.faultBodyExpression(type);
-        return new ValueBuilder<E>(expression);
+    public static <E extends Exchange, T> ValueBuilder faultBodyAs(Class<T> type) {
+        Expression expression = ExpressionBuilder.faultBodyExpression(type);
+        return new ValueBuilder(expression);
     }
 
     /**
      * Returns an expression for the given system property
      */
-    public static <E extends Exchange> ValueBuilder<E> systemProperty(final String name) {
+    public static ValueBuilder systemProperty(final String name) {
         return systemProperty(name, null);
     }
 
     /**
      * Returns an expression for the given system property
      */
-    public static <E extends Exchange> ValueBuilder<E> systemProperty(final String name,
-                                                                      final String defaultValue) {
-        return new ValueBuilder<E>(ExpressionBuilder.<E> systemProperty(name, defaultValue));
+    public static ValueBuilder systemProperty(final String name, final String defaultValue) {
+        return new ValueBuilder(ExpressionBuilder.systemProperty(name, defaultValue));
     }
 }

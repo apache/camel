@@ -49,7 +49,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement
 @XmlType(name = "expressionType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionType implements Expression<Exchange>, Predicate<Exchange> {
+public class ExpressionType implements Expression, Predicate {
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -135,7 +135,7 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         return "";
     }
 
-    public Predicate<Exchange> createPredicate(RouteContext routeContext) {
+    public Predicate createPredicate(RouteContext routeContext) {
         if (predicate == null) {
             if (expressionType != null) {
                 predicate = expressionType.createPredicate(routeContext);

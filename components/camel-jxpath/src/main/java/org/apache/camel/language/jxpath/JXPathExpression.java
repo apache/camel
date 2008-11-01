@@ -28,7 +28,7 @@ import org.apache.commons.jxpath.JXPathException;
 /**
  * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Expression} support 
  */
-public class JXPathExpression extends ExpressionSupport<Exchange> {
+public class JXPathExpression extends ExpressionSupport {
 
     private String expression;
     private CompiledExpression compiledExpression;

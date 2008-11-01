@@ -41,10 +41,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
-    private final Expression<Exchange> expression;
+    private final Expression expression;
     private ProducerCache<Exchange> producerCache = new ProducerCache<Exchange>();
 
-    public RecipientList(Expression<Exchange> expression) {
+    public RecipientList(Expression expression) {
         notNull(expression, "expression");
         this.expression = expression;
     }

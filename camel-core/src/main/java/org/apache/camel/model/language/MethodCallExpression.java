@@ -71,8 +71,8 @@ public class MethodCallExpression extends ExpressionType {
     }
 
     @Override
-    public Predicate<Exchange> createPredicate(RouteContext routeContext) {
-        return new BeanExpression<Exchange>(beanName(), getMethod());
+    public Predicate createPredicate(RouteContext routeContext) {
+        return new BeanExpression(beanName(), getMethod());
     }
 
     protected String beanName() {

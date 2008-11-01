@@ -34,12 +34,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IdempotentConsumer extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
-    private Expression<Exchange> messageIdExpression;
+    private Expression messageIdExpression;
     private Processor nextProcessor;
     private MessageIdRepository messageIdRepository;
 
-    public IdempotentConsumer(Expression<Exchange> messageIdExpression,
-                              MessageIdRepository messageIdRepository, Processor nextProcessor) {
+    public IdempotentConsumer(Expression messageIdExpression, 
+            MessageIdRepository messageIdRepository, Processor nextProcessor) {
         this.messageIdExpression = messageIdExpression;
         this.messageIdRepository = messageIdRepository;
         this.nextProcessor = nextProcessor;
@@ -65,7 +65,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
 
     // Properties
     // -------------------------------------------------------------------------
-    public Expression<Exchange> getMessageIdExpression() {
+    public Expression getMessageIdExpression() {
         return messageIdExpression;
     }
 

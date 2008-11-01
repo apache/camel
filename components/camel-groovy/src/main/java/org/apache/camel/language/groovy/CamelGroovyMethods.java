@@ -40,7 +40,7 @@ public final class CamelGroovyMethods {
     }
 
     public static ExpressionSupport toExpression(final Closure filter) {
-        return new ExpressionSupport<Exchange>() {
+        return new ExpressionSupport() {
             protected String assertionFailureMessage(Exchange exchange) {
                 return filter.toString();
             }

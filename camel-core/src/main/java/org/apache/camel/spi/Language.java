@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 
@@ -33,7 +32,7 @@ public interface Language {
      * @param expression  the expression
      * @return the created predicate
      */
-    Predicate<Exchange> createPredicate(String expression);
+    Predicate createPredicate(String expression);
 
     /**
      * Creates an expression based on the given string input
@@ -41,5 +40,5 @@ public interface Language {
      * @param expression  the expression as a string input
      * @return the created expression
      */
-    Expression<Exchange> createExpression(String expression);
+    Expression createExpression(String expression);
 }

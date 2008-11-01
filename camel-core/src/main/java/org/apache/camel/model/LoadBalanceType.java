@@ -151,7 +151,7 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
         return this;
     }
 
-    public LoadBalanceType sticky(Expression<Exchange> correlationExpression) {
+    public LoadBalanceType sticky(Expression correlationExpression) {
         loadBalancerType = new LoadBalancerType(new StickyLoadBalancer(correlationExpression));
         return this;
     }

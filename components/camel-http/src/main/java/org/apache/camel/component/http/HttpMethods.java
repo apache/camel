@@ -29,7 +29,7 @@ import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.TraceMethod;
 
-public enum HttpMethods implements Expression<Exchange> {
+public enum HttpMethods implements Expression {
 
     GET(GetMethod.class), POST(PostMethod.class), PUT(PutMethod.class), DELETE(DeleteMethod.class), HEAD(
         HeadMethod.class), OPTIONS(OptionsMethod.class), TRACE(TraceMethod.class);

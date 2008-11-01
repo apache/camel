@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.script;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
@@ -31,11 +30,11 @@ public class ScriptLanguage implements Language {
         this.language = language;
     }
 
-    public Predicate<Exchange> createPredicate(String expression) {
+    public Predicate createPredicate(String expression) {
         return new ScriptBuilder(language, expression);
     }
 
-    public Expression<Exchange> createExpression(String expression) {
+    public Expression createExpression(String expression) {
         return new ScriptBuilder(language, expression);
     }
 }

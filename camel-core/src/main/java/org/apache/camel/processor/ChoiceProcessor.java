@@ -43,7 +43,7 @@ public class ChoiceProcessor extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         for (FilterProcessor filterProcessor : filters) {
-            Predicate<Exchange> predicate = filterProcessor.getPredicate();
+            Predicate predicate = filterProcessor.getPredicate();
             if (predicate != null && predicate.matches(exchange)) {
                 // process next will also take care (has not null test) if next was a stop().
                 // stop() has no processor to execute, and thus we will end in a NPE 

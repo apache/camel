@@ -75,11 +75,11 @@ public class BeanLanguage implements Language {
         return language.createExpression(bean, method);
     }
 
-    public Predicate<Exchange> createPredicate(String expression) {
+    public Predicate createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
 
-    public Expression<Exchange> createExpression(String expression) {
+    public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
         int idx = expression.lastIndexOf('.');
@@ -92,7 +92,7 @@ public class BeanLanguage implements Language {
         return new BeanExpression(beanName, method);
     }
 
-    public Expression<Exchange> createExpression(Object bean, String method) {
+    public Expression createExpression(Object bean, String method) {
         ObjectHelper.notNull(bean, "bean");
         return new BeanExpression(bean, method);
     }

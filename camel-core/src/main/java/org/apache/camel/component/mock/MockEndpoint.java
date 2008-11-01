@@ -383,7 +383,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      *
      * @param expression
      */
-    public void expectsAscending(final Expression<Exchange> expression) {
+    public void expectsAscending(final Expression expression) {
         expects(new Runnable() {
             public void run() {
                 assertMessagesAscending(expression);
@@ -397,7 +397,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      *
      * @param expression
      */
-    public void expectsDescending(final Expression<Exchange> expression) {
+    public void expectsDescending(final Expression expression) {
         expects(new Runnable() {
             public void run() {
                 assertMessagesDescending(expression);
@@ -415,7 +415,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      *                {@link Object#equals(Object)} and
      *                {@link Object#hashCode()}
      */
-    public void expectsNoDuplicates(final Expression<Exchange> expression) {
+    public void expectsNoDuplicates(final Expression expression) {
         expects(new Runnable() {
             public void run() {
                 assertNoDuplicates(expression);
@@ -426,18 +426,18 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     /**
      * Asserts that the messages have ascending values of the given expression
      */
-    public void assertMessagesAscending(Expression<Exchange> expression) {
+    public void assertMessagesAscending(Expression expression) {
         assertMessagesSorted(expression, true);
     }
 
     /**
      * Asserts that the messages have descending values of the given expression
      */
-    public void assertMessagesDescending(Expression<Exchange> expression) {
+    public void assertMessagesDescending(Expression expression) {
         assertMessagesSorted(expression, false);
     }
 
-    protected void assertMessagesSorted(Expression<Exchange> expression, boolean ascending) {
+    protected void assertMessagesSorted(Expression expression, boolean ascending) {
         String type = ascending ? "ascending" : "descending";
         ExpressionComparator comparator = new ExpressionComparator(expression);
         List<Exchange> list = getReceivedExchanges();
@@ -461,7 +461,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         }
     }
 
-    public void assertNoDuplicates(Expression<Exchange> expression) {
+    public void assertNoDuplicates(Expression expression) {
         Map<Object, Exchange> map = new HashMap<Object, Exchange>();
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {

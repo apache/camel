@@ -35,9 +35,9 @@ public class LoopProcessor extends DelegateProcessor {
 
     private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
 
-    private Expression<Exchange> expression;
+    private Expression expression;
 
-    public LoopProcessor(Expression<Exchange> expression, Processor processor) {
+    public LoopProcessor(Expression expression, Processor processor) {
         super(processor);
         this.expression = expression;
     }
@@ -66,7 +66,7 @@ public class LoopProcessor extends DelegateProcessor {
         return "Loop[for: " + expression + " times do: " + getProcessor() + "]";
     }
 
-    public Expression<Exchange> getExpression() {
+    public Expression getExpression() {
         return expression;
     }
 }

@@ -170,7 +170,7 @@ public class MethodInfo {
             Expression parameterExpression = parameters.get(i).getExpression();
             expressions[i] = parameterExpression;
         }
-        return new Expression<Exchange>() {
+        return new Expression() {
             public Object evaluate(Exchange exchange) {
                 Object[] answer = new Object[size];
                 Object body = exchange.getIn().getBody();

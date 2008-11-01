@@ -72,7 +72,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<Exchange>, NamespaceAware, Processor {
+public abstract class XQueryBuilder implements Expression, Predicate, NamespaceAware, Processor {
     private static final transient Log LOG = LogFactory.getLog(XQueryBuilder.class);
     private Configuration configuration;
     private XQueryExpression expression;

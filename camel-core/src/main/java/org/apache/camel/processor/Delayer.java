@@ -32,10 +32,10 @@ import org.apache.camel.util.ExpressionHelper;
  * @version $Revision$
  */
 public class Delayer extends DelayProcessorSupport {
-    private Expression<Exchange> timeExpression;
+    private Expression timeExpression;
     private long delay;
 
-    public Delayer(Processor processor, Expression<Exchange> timeExpression, long delay) {
+    public Delayer(Processor processor, Expression timeExpression, long delay) {
         super(processor);
         this.timeExpression = timeExpression;
         this.delay = delay;

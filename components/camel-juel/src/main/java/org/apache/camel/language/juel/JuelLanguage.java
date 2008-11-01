@@ -28,11 +28,11 @@ import org.apache.camel.spi.Language;
  * @version $Revision$
  */
 public class JuelLanguage implements Language {
-    public Predicate<Exchange> createPredicate(String expression) {
+    public Predicate createPredicate(String expression) {
         return new JuelExpression(expression, Boolean.class);
     }
 
-    public Expression<Exchange> createExpression(String expression) {
+    public Expression createExpression(String expression) {
         return new JuelExpression(expression, Object.class);
     }
 }

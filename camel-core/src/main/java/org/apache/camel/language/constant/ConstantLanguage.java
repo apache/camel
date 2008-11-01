@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.constant;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -28,15 +27,15 @@ import org.apache.camel.spi.Language;
  */
 public class ConstantLanguage implements Language {
 
-    public static Expression<Exchange> constant(Object value) {        
+    public static Expression constant(Object value) {        
         return ExpressionBuilder.constantExpression(value);
     }
 
-    public Predicate<Exchange> createPredicate(String expression) {
+    public Predicate createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
     }
 
-    public Expression<Exchange> createExpression(String expression) {
+    public Expression createExpression(String expression) {
         return ConstantLanguage.constant(expression);
     }
 }

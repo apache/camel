@@ -26,12 +26,11 @@ import org.apache.camel.impl.ExpressionSupport;
  *
  * @version $Revision$
  */
-public abstract class ExpressionAdapter extends ExpressionSupport<Exchange> {
+public abstract class ExpressionAdapter extends ExpressionSupport {
 
     public abstract Object evaluate(Exchange exchange);
 
     protected String assertionFailureMessage(Exchange exchange) {
         return toString();
     }
-
 }

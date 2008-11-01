@@ -55,11 +55,11 @@ public class PredicateBuilderTest extends TestSupport {
         in.setHeader("size", 10);
     }
 
-    protected void assertMatches(Predicate<Exchange> predicate) {
+    protected void assertMatches(Predicate predicate) {
         assertPredicateMatches(predicate, exchange);
     }
 
-    protected void assertDoesNotMatch(Predicate<Exchange> predicate) {
+    protected void assertDoesNotMatch(Predicate predicate) {
         assertPredicateDoesNotMatch(predicate, exchange);
     }
 

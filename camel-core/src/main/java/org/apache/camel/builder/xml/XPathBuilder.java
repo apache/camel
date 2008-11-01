@@ -60,22 +60,22 @@ import static org.apache.camel.converter.ObjectConverter.toBoolean;
  *
  * @version $Revision$
  */
-public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicate<E>, NamespaceAware {
+public class XPathBuilder implements Expression, Predicate, NamespaceAware {
     private final String text;
     private XPathFactory xpathFactory;
-    private Class documentType = Document.class;
+    private Class<?> documentType = Document.class;
     // For some reason the default expression of "a/b" on a document such as
     // <a><b>1</b><b>2</b></a>
     // will evaluate as just "1" by default which is bizarre. So by default
     // lets assume XPath expressions result in nodesets.
-    private Class resultType;
+    private Class<?> resultType;
     private QName resultQName = XPathConstants.NODESET;
     private String objectModelUri;
     private DefaultNamespaceContext namespaceContext;
     private XPathFunctionResolver functionResolver;
     private XPathExpression expression;
     private MessageVariableResolver variableResolver = new MessageVariableResolver();
-    private E exchange;
+    private Exchange exchange;
     private XPathFunction bodyFunction;
     private XPathFunction headerFunction;
     private XPathFunction outBodyFunction;
@@ -94,19 +94,19 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return "XPath: " + text;
     }
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
         return toBoolean(booleanResult);
     }
 
-    public void assertMatches(String text, E exchange) throws AssertionError {
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
         Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
         if (!toBoolean(booleanResult)) {
             throw new AssertionError(this + " failed on " + exchange + " as returned <" + booleanResult + ">");
         }
     }
 
-    public Object evaluate(E exchange) {
+    public Object evaluate(Exchange exchange) {
         Object answer = evaluateAs(exchange, resultQName);
         if (resultType != null) {
             return ExchangeHelper.convertToType(exchange, resultType, answer);
@@ -122,7 +122,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> booleanResult() {
+    public XPathBuilder booleanResult() {
         resultQName = XPathConstants.BOOLEAN;
         return this;
     }
@@ -132,7 +132,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> nodeResult() {
+    public XPathBuilder nodeResult() {
         resultQName = XPathConstants.NODE;
         return this;
     }
@@ -142,7 +142,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> nodeSetResult() {
+    public XPathBuilder nodeSetResult() {
         resultQName = XPathConstants.NODESET;
         return this;
     }
@@ -152,7 +152,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> numberResult() {
+    public XPathBuilder numberResult() {
         resultQName = XPathConstants.NUMBER;
         return this;
     }
@@ -162,7 +162,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> stringResult() {
+    public XPathBuilder stringResult() {
         resultQName = XPathConstants.STRING;
         return this;
     }
@@ -172,7 +172,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> resultType(Class resultType) {
+    public XPathBuilder resultType(Class<?> resultType) {
         setResultType(resultType);
         return this;
     }
@@ -182,7 +182,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> objectModel(String uri) {
+    public XPathBuilder objectModel(String uri) {
         this.objectModelUri = uri;
         return this;
     }
@@ -193,7 +193,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *
      * @return the current builder
      */
-    public XPathBuilder<E> functionResolver(XPathFunctionResolver functionResolver) {
+    public XPathBuilder functionResolver(XPathFunctionResolver functionResolver) {
         this.functionResolver = functionResolver;
         return this;
     }
@@ -207,7 +207,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * @param uri is the namespace URI to which the prefix refers
      * @return the current builder
      */
-    public XPathBuilder<E> namespace(String prefix, String uri) {
+    public XPathBuilder namespace(String prefix, String uri) {
         getNamespaceContext().add(prefix, uri);
         return this;
     }
@@ -220,7 +220,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      *                      XPath expression
      * @return the current builder
      */
-    public XPathBuilder<E> namespaces(Namespaces namespaces) {
+    public XPathBuilder namespaces(Namespaces namespaces) {
         namespaces.configure(this);
         return this;
     }
@@ -229,7 +229,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
      * Registers a variable (in the global namespace) which can be referred to
      * from XPath expressions
      */
-    public XPathBuilder<E> variable(String name, Object value) {
+    public XPathBuilder variable(String name, Object value) {
         variableResolver.addVariable(name, value);
         return this;
     }
@@ -413,7 +413,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Evaluates the expression as the given result type
      */
-    protected synchronized Object evaluateAs(E exchange, QName resultQName) {
+    protected synchronized Object evaluateAs(Exchange exchange, QName resultQName) {
         this.exchange = exchange;
         variableResolver.setExchange(exchange);
         try {
@@ -520,7 +520,7 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
     /**
      * Strategy method to extract the document from the exchange
      */
-    protected Object getDocument(E exchange) {
+    protected Object getDocument(Exchange exchange) {
         Message in = exchange.getIn();
         Class type = getDocumentType();
         Object answer = null;

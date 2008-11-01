@@ -65,7 +65,7 @@ public class StreamResequencerConfig {
     private Long timeout; // optional XML attribute requires wrapper object
     
     @XmlTransient
-    private ExpressionResultComparator<Exchange> comparator;
+    private ExpressionResultComparator comparator;
 
     /**
      * Creates a new {@link StreamResequencerConfig} instance using default
@@ -98,7 +98,7 @@ public class StreamResequencerConfig {
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
      */
-    public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator<Exchange> comparator) {
+    public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator comparator) {
         this.capacity = capacity;
         this.timeout = timeout;
         this.comparator = comparator;
@@ -132,11 +132,11 @@ public class StreamResequencerConfig {
         this.timeout = timeout;
     }
 
-    public ExpressionResultComparator<Exchange> getComparator() {
+    public ExpressionResultComparator getComparator() {
         return comparator;
     }
 
-    public void setComparator(ExpressionResultComparator<Exchange> comparator) {
+    public void setComparator(ExpressionResultComparator comparator) {
         this.comparator = comparator;
     }
     

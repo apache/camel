@@ -34,7 +34,7 @@ public class PredicateAggregationCollection extends DefaultAggregationCollection
     private Predicate aggregationCompletedPredicate;
     private List<Exchange> collection = new ArrayList<Exchange>();
 
-    public PredicateAggregationCollection(Expression<Exchange> correlationExpression, AggregationStrategy aggregationStrategy, Predicate aggregationCompletedPredicate) {
+    public PredicateAggregationCollection(Expression correlationExpression, AggregationStrategy aggregationStrategy, Predicate aggregationCompletedPredicate) {
         super(correlationExpression, aggregationStrategy);
         this.aggregationCompletedPredicate = aggregationCompletedPredicate;
     }

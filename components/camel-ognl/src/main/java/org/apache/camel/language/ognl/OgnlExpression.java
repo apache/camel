@@ -30,7 +30,7 @@ import org.apache.camel.language.IllegalSyntaxException;
  *
  * @version $Revision$
  */
-public class OgnlExpression extends ExpressionSupport<Exchange> {
+public class OgnlExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;

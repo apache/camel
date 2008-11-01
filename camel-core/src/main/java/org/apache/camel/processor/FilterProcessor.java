@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class FilterProcessor extends DelegateProcessor {
-    private Predicate<Exchange> predicate;
+    private Predicate predicate;
 
-    public FilterProcessor(Predicate<Exchange> predicate, Processor processor) {
+    public FilterProcessor(Predicate predicate, Processor processor) {
         super(processor);
         this.predicate = predicate;
     }
@@ -45,7 +45,7 @@ public class FilterProcessor extends DelegateProcessor {
         return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
     }
 
-    public Predicate<Exchange> getPredicate() {
+    public Predicate getPredicate() {
         return predicate;
     }
 }

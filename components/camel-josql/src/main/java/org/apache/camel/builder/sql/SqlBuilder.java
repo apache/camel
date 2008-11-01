@@ -39,7 +39,7 @@ import org.josql.QueryParseException;
  * 
  * @version $Revision$
  */
-public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<E> {
+public class SqlBuilder implements Expression, Predicate {
 
     private Query query;
     private Map<String, Object> variables = new HashMap<String, Object>();
@@ -48,16 +48,16 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         this.query = query;
     }
 
-    public Object evaluate(E exchange) {
+    public Object evaluate(Exchange exchange) {
         return evaluateQuery(exchange);
     }
 
-    public boolean matches(E exchange) {
+    public boolean matches(Exchange exchange) {
         List list = evaluateQuery(exchange);
         return matches(exchange, list);
     }
 
-    public void assertMatches(String text, E exchange) throws AssertionError {
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
         List list = evaluateQuery(exchange);
         if (!matches(exchange, list)) {
             throw new AssertionError(this + " failed on " + exchange + " as found " + list);
@@ -74,7 +74,7 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
      * @return a new builder
      * @throws QueryParseException if there is an issue with the SQL
      */
-    public static <E extends Exchange> SqlBuilder<E> sql(String sql) throws QueryParseException {
+    public static SqlBuilder sql(String sql) throws QueryParseException {
         Query q = new Query();
         q.parse(sql);
         return new SqlBuilder(q);
@@ -83,7 +83,7 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
     /**
      * Adds the variable value to be used by the SQL query
      */
-    public SqlBuilder<E> variable(String name, Object value) {
+    public SqlBuilder variable(String name, Object value) {
         getVariables().put(name, value);
         return this;
     }
@@ -100,11 +100,11 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
 
     // Implementation methods
     // -----------------------------------------------------------------------
-    protected boolean matches(E exchange, List list) {
+    protected boolean matches(Exchange exchange, List list) {
         return ObjectHelper.matches(list);
     }
 
-    protected List evaluateQuery(E exchange) {
+    protected List evaluateQuery(Exchange exchange) {
         configureQuery(exchange);
         Message in = exchange.getIn();
         List list = in.getBody(List.class);
@@ -118,7 +118,7 @@ public class SqlBuilder<E extends Exchange> implements Expression<E>, Predicate<
         }
     }
 
-    protected void configureQuery(E exchange) {
+    protected void configureQuery(Exchange exchange) {
         // lets pass in the headers as variables that the SQL can use
         addVariables(exchange.getProperties());
         addVariables(exchange.getIn().getHeaders());

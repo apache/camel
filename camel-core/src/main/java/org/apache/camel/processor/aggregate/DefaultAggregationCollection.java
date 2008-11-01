@@ -37,14 +37,14 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultAggregationCollection extends AbstractCollection<Exchange> implements AggregationCollection {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultAggregationCollection.class);
-    private Expression<Exchange> correlationExpression;
+    private Expression correlationExpression;
     private AggregationStrategy aggregationStrategy;
     private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
 
     public DefaultAggregationCollection() {
     }
 
-    public DefaultAggregationCollection(Expression<Exchange> correlationExpression, AggregationStrategy aggregationStrategy) {
+    public DefaultAggregationCollection(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this.correlationExpression = correlationExpression;
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -101,11 +101,11 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     public void onAggregation(Object correlationKey, Exchange newExchange) {
     }
 
-    public Expression<Exchange> getCorrelationExpression() {
+    public Expression getCorrelationExpression() {
         return correlationExpression;
     }
 
-    public void setCorrelationExpression(Expression<Exchange> correlationExpression) {
+    public void setCorrelationExpression(Expression correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
 
