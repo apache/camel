@@ -35,8 +35,8 @@ public class TraceFormatter {
     private boolean showHeaders = true;
     private boolean showBody = true;    
     private boolean showBodyType = true;
-    private boolean showOutBody = false;    
-    private boolean showOutBodyType = false;
+    private boolean showOutBody;    
+    private boolean showOutBodyType;
     private boolean showException = true;
 
     public Object format(TraceInterceptor interceptor, Exchange exchange) {
