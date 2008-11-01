@@ -133,7 +133,7 @@ public class ExceptionBuilderWithRetryLoggingLevelSetTest extends ContextTestSup
                 // END SNIPPET: exceptionBuilder1
 
                 from("direct:a")
-                  .processRef("myExceptionThrowingProcessor").to("mock:result");
+                    .processRef("myExceptionThrowingProcessor").to("mock:result");
             }
         };
     }

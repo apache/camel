@@ -29,8 +29,9 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
@@ -46,12 +47,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
     private boolean useEndpointCache = true;
     private final Map<String, Endpoint<E>> endpointCache = new HashMap<String, Endpoint<E>>();
     private Endpoint<E> defaultEndpoint;
-
-    public static DefaultProducerTemplate newInstance(CamelContext camelContext, String defaultEndpointUri) {
-        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, defaultEndpointUri);
-        return new DefaultProducerTemplate(camelContext, endpoint);
-    }
-
+    
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
     }
@@ -60,6 +56,11 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         this(context);
         this.defaultEndpoint = defaultEndpoint;
     }
+
+    public static DefaultProducerTemplate newInstance(CamelContext camelContext, String defaultEndpointUri) {
+        Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, defaultEndpointUri);
+        return new DefaultProducerTemplate(camelContext, endpoint);
+    }   
 
     public E send(String endpointUri, E exchange) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);

@@ -51,7 +51,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testTCPEncodeUTF8InputIsString() throws Exception {
@@ -71,7 +71,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
@@ -91,7 +91,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     // Note: MINA does not support sending bytes with the textline codec
@@ -114,7 +114,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         endpoint.expectedBodiesReceived(body);
 
         template.sendBody(uri, body);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUDPEncodeUTF8InputIsString() throws Exception {
@@ -135,7 +135,7 @@ public class MinaEncodingTest extends ContextTestSupport {
 
         template.sendBody(uri, body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUDPEncodeUTF8InputIsStringNoMock() throws Exception {

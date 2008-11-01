@@ -63,7 +63,7 @@ public abstract class BinaryPredicateSupport implements Predicate {
     protected abstract String getOperationText();
 
     protected String assertionFailureMessage(Exchange exchange, Object leftValue, Object rightValue) {
-        return this + " failed on " + exchange + 
-            " with left value <" + leftValue + "> right value <" + rightValue + ">";
+        return this + " failed on " + exchange
+            + " with left value <" + leftValue + "> right value <" + rightValue + ">";
     }
 }
