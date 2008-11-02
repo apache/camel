@@ -65,7 +65,7 @@
     <dependency>
       <groupId>commons-net</groupId>
       <artifactId>commons-net</artifactId>
-      <version>1.4.1</version>
+      <version>2.0</version>
     </dependency>
 
     <!-- testing -->
@@ -104,22 +104,14 @@
     </dependency>
 
     <dependency>
-      <groupId>backport-util-concurrent</groupId>
-      <artifactId>backport-util-concurrent</artifactId>
-      <version>3.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
       <scope>test</scope>
-      <version>1.5.2</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
-      <version>1.5.2</version>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
