@@ -17,35 +17,31 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.util.ExchangeHelper;
 
-/**
- * @version $Revision$
- */
-public class TracerConfigurationTest extends ContextTestSupport {
-
-    public void testTracerConfiguration() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
-
-        template.sendBody("direct:start", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
+public class TraceInterceptorWithOutBodyTraceTest extends TraceInterceptorTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: tracingOutExchanges
                 Tracer tracer = new Tracer();
-                tracer.setLogLevel(LoggingLevel.FATAL);
-                tracer.setLogName("com.mycompany");
-
+                tracer.setTraceOutExchanges(true);
+                tracer.getFormatter().setShowOutBody(true);
+                tracer.getFormatter().setShowOutBodyType(true);
+                
                 getContext().addInterceptStrategy(tracer);
-
-                from("direct:start").to("mock:result");
+                // END SNIPPET: tracingOutExchanges
+                
+                from("direct:start").
+                  transform().body().
+                  to("mock:a").
+                  to("mock:b");
             }
         };
     }

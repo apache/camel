@@ -14,19 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package org.apache.camel.spring.processor;
-
+package org.apache.camel.spring.processor.onexception;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.FaultRouteTest;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.ExceptionBuilderWithRetryLoggingLevelSetTest;
+import org.apache.camel.component.mock.MockEndpoint;
+
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * The spring context test for the FaultRoute
- */
-public class SpringFaultRouteTest extends FaultRouteTest {
+public class SpringExceptionBuilderWithRetryLoggingLevelSetTest extends ExceptionBuilderWithRetryLoggingLevelSetTest {
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/faultRoute.xml");
+        return createSpringCamelContext(this, "/org/apache/camel/spring/processor/onexception/exceptionBuilderWithRetryLoggingLevelSet.xml");
     }
 }

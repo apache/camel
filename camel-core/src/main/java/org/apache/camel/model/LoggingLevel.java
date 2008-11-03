@@ -14,19 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.apache.camel.model;
 
-package org.apache.camel.spring.processor;
-
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.FaultRouteTest;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import javax.xml.bind.annotation.XmlEnum;
 
 /**
- * The spring context test for the FaultRoute
+ * Used to configure the logging levels
+ *
+ * @version $Revision: 703680 $
  */
-public class SpringFaultRouteTest extends FaultRouteTest {
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/faultRoute.xml");
-    }
+@XmlEnum
+public enum LoggingLevel {
+    DEBUG, ERROR, FATAL, INFO, TRACE, WARN, OFF
 }

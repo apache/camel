@@ -200,7 +200,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     }
 
     public void process(Exchange exchange) throws Exception {
-        // empty since exchanges come from endpoint's polling consumer
+        engine.insert(exchange);
     }
 
 }

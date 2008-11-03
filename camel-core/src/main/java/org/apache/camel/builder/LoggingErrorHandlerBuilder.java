@@ -17,9 +17,9 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.LoggingErrorHandler;
-import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

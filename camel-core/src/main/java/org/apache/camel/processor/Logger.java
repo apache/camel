@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchangeFormatter;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.interceptor.ExchangeFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -139,6 +140,13 @@ public class Logger implements Processor {
         }
     }
 
+    public void log(String message, LoggingLevel loggingLevel) {
+        LoggingLevel oldLogLevel = getLevel();
+        setLevel(loggingLevel);
+        log(message);
+        setLevel(oldLogLevel);
+    }
+    
     public void log(String message) {
         switch (level) {
         case DEBUG:
@@ -176,6 +184,13 @@ public class Logger implements Processor {
         }
     }
 
+    public void log(String message, Throwable exception, LoggingLevel loggingLevel) {
+        LoggingLevel oldLogLevel = getLevel();
+        setLevel(loggingLevel);
+        log(message, exception);
+        setLevel(oldLogLevel);
+    }   
+    
     public void log(String message, Throwable exception) {
         switch (level) {
         case DEBUG:

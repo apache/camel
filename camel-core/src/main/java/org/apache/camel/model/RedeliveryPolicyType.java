@@ -45,6 +45,10 @@ public class RedeliveryPolicyType {
     private Boolean useCollisionAvoidance;
     @XmlAttribute
     private Long maximumRedeliveryDelay;
+    @XmlAttribute
+    private LoggingLevel retriesExhaustedLogLevel;
+    @XmlAttribute
+    private LoggingLevel retryAttemptedLogLevel;
 
     public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
         RedeliveryPolicy answer =  parentPolicy.copy();
@@ -55,6 +59,12 @@ public class RedeliveryPolicyType {
         }
         if (initialRedeliveryDelay != null) {
             answer.setDelay(initialRedeliveryDelay);
+        }
+        if (retriesExhaustedLogLevel != null) {
+            answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+        }
+        if (retryAttemptedLogLevel != null) {
+            answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         }
         if (backOffMultiplier != null) {
             answer.setBackOffMultiplier(backOffMultiplier);
@@ -100,6 +110,16 @@ public class RedeliveryPolicyType {
         return this;
     }
 
+    public RedeliveryPolicyType retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+        return this;
+    }    
+    
+    public RedeliveryPolicyType retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+        
     public RedeliveryPolicyType maximumRedeliveries(int maximumRedeliveries) {
         setMaximumRedeliveries(maximumRedeliveries);
         return this;
@@ -178,4 +198,21 @@ public class RedeliveryPolicyType {
     public void setMaximumRedeliveryDelay(Long maximumRedeliveryDelay) {
         this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
+
+    private void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
+    }
+
+    private LoggingLevel getRetriesExhaustedLogLevel() {
+        return retriesExhaustedLogLevel;
+    } 
+
+    private void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        this.retryAttemptedLogLevel = retryAttemptedLogLevel;
+    }
+
+    private LoggingLevel getRetryAttemptedLogLevel() {
+        return retryAttemptedLogLevel;
+    }     
+   
 }

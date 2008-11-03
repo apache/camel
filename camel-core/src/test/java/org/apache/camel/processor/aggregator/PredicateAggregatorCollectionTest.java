@@ -70,7 +70,7 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
 
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
-                    // we use the collection based aggregator we already have configued
+                    // we use the collection based aggregator we already have configured
                     .aggregator(ag)
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)

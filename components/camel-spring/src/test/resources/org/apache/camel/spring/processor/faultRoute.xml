@@ -43,10 +43,42 @@
       <throwFault faultRef="ExceptionMessage"/>
       <to uri="mock:b"/>
     </route>
+    
+    <route errorHandlerRef="deadLetterErrorHandler">
+      <from uri="direct:fault" />
+      <to uri="mock:a" />
+      <throwFault faultRef="camelFault" />
+      <to uri="mock:b" />
+    </route>
+    
+    <route errorHandlerRef="deadLetterErrorHandler">
+      <from uri="direct:error" />
+      <to uri="mock:a" />
+      <interceptor ref="handleFaultProcessor">
+        <throwFault faultRef="camelFault" />
+        <to uri="mock:b" />
+      </interceptor>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 
   <bean id="myFault" class="java.lang.IllegalStateException" >
   	<constructor-arg index="0" value="It makes no sense of business logic"/>
   </bean>
+  
+  <bean id="camelFault" class="org.apache.camel.CamelException" >
+    <constructor-arg value="ExceptionMessage" />
+  </bean>
+  
+  <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+    <property name="redeliveryPolicy" ref="redeliveryPolicyConfig" />
+    <property name="defaultDeadLetterEndpointUri" value="mock:error"/>
+  </bean>
+	
+  <bean id="redeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+    <property name="maximumRedeliveries" value="2" />
+  </bean>
+  
+  <bean id="handleFaultProcessor" class="org.apache.camel.processor.HandleFaultProcessor" />
+  
 </beans>
