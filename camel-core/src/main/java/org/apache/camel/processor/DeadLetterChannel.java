@@ -26,6 +26,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -120,9 +121,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // set the original caused exception
                 exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, e);
 
-                logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, e);
-                data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
-
                 // find the error handler to use (if any)
                 ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
                 if (exceptionPolicy != null) {
@@ -131,8 +129,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     Processor processor = exceptionPolicy.getErrorHandler();
                     if (processor != null) {
                         data.failureProcessor = processor;
-                    }
+                    }                    
                 }
+                
+                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, data, e);
+                data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
             }
 
             // should we redeliver or not?
@@ -153,7 +154,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
                 // The line below shouldn't be needed, it is invoked by the AsyncCallback above
                 //restoreExceptionOnExchange(exchange, data.handledPredicate);
-                logger.log("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor);
+                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor, data, null);
                 return sync;
             }
 
@@ -197,6 +198,20 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             // error occurred so loop back around.....
         }
 
+    }
+
+    private void logFailedDelivery(String message, RedeliveryData data, Throwable e) {
+        LoggingLevel newLogLevel = null;
+        if (data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+            newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
+        } else {
+            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+        }
+        if (e != null) {
+            logger.log(message, e, newLogLevel);
+        } else {
+            logger.log(message, newLogLevel);
+        }
     }
 
     public static boolean isFailureHandled(Exchange exchange) {

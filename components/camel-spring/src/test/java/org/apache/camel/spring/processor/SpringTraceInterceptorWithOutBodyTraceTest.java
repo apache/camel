@@ -14,13 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
 
-/**
- * Used to configure the logging levels
- *
- * @version $Revision$
- */
-public enum LoggingLevel {
-    DEBUG, ERROR, FATAL, INFO, TRACE, WARN, OFF
+package org.apache.camel.spring.processor;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.TraceInterceptorWithOutBodyTraceTest;
+
+public class SpringTraceInterceptorWithOutBodyTraceTest extends TraceInterceptorWithOutBodyTraceTest {
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/traceInterceptorWithOutBodyTrace.xml");
+    }
 }

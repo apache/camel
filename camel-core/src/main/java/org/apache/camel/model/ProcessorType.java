@@ -131,8 +131,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Sends the exchange to a list of endpoints using the
-     * {@link org.apache.camel.processor.MulticastProcessor} pattern
+     * Sends the exchange to a list of endpoints
      */
     public Type to(String... uris) {
         for (String uri : uris) {
@@ -142,8 +141,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Sends the exchange to a list of endpoints using the
-     * {@link org.apache.camel.processor.MulticastProcessor} pattern
+     * Sends the exchange to a list of endpoints
      */
     public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -153,8 +151,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Sends the exchange to a list of endpoint using the
-     * {@link org.apache.camel.processor.MulticastProcessor} pattern
+     * Sends the exchange to a list of endpoint
      */
     public Type to(Collection<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {

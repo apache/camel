@@ -53,9 +53,6 @@ import java.util.Timer;
  * element needs <code>timeout</code> milliseconds in any case for becoming
  * <i>ready-for-delivery</i>.
  * <p>
- * <strong>Note:</strong> Instances of this class are not thread-safe.
- * Resequencing should be done by calling {@link #insert(Object)} and
- * {@link #deliver()} or {@link #deliverNext()} from a single thread.
  *
  * @author Martin Krasser
  *
@@ -117,7 +114,7 @@ public class ResequencerEngine<E> {
      *
      * @return the number of elements currently maintained by this resequencer.
      */
-    public int size() {
+    public synchronized int size() {
         return sequence.size();
     }
 
@@ -186,7 +183,7 @@ public class ResequencerEngine<E> {
      *
      * @param o an element.
      */
-    public void insert(E o) {
+    public synchronized void insert(E o) {
         // wrap object into internal element
         Element<E> element = new Element<E>(o);
         // add element to sequence in proper order
@@ -217,7 +214,7 @@ public class ResequencerEngine<E> {
      *
      * @see ResequencerEngine#deliverNext() 
      */
-    public void deliver() throws Exception {
+    public synchronized void deliver() throws Exception {
         while (deliverNext()) {
             // do nothing here
         }

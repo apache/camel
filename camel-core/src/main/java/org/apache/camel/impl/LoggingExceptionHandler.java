@@ -16,8 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.Logger;
-import org.apache.camel.processor.LoggingLevel;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.LogFactory;
 

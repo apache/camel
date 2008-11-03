@@ -31,6 +31,7 @@ InterceptType
 InterceptorRef
 InterceptorType
 LoadBalanceType
+LoggingLevel
 LoopType
 MarshalType
 MulticastType

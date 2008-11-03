@@ -44,8 +44,5 @@ public class BeanWithRecipientListTest extends AbstractJUnit38SpringContextTests
         template.sendBody("direct:start", body);
 
         MockEndpoint.assertIsSatisfied(a, b);
-
-        System.out.println(a.getReceivedExchanges());
     }
-
 }

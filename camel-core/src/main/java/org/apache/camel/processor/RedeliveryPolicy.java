@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.io.Serializable;
 import java.util.Random;
 
+import org.apache.camel.model.LoggingLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
  * Channel</a>
  * <p>
- * The default values is:
+ * The default values are:
  * <ul>
  *   <li>maximumRedeliveries = 5</li>
  *   <li>delay = 1000L (the initial delay)</li>
@@ -39,6 +40,8 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useExponentialBackOff = false</li>
  *   <li>collisionAvoidanceFactor = 0.15d</li>
  *   <li>useCollisionAvoidance = false</li>
+ *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
+ *   <li>retryAttemptedLogLevel = LoggingLevel.ERROR</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -57,6 +60,8 @@ public class RedeliveryPolicy extends DelayPolicy {
     // +/-15% for a 30% spread -cgs
     protected double collisionAvoidanceFactor = 0.15d;
     protected boolean useCollisionAvoidance;
+    protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
+    protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.ERROR;
 
     public RedeliveryPolicy() {
     }
@@ -66,6 +71,8 @@ public class RedeliveryPolicy extends DelayPolicy {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
             + ", initialRedeliveryDelay=" + delay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
+            + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
+            + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -88,7 +95,7 @@ public class RedeliveryPolicy extends DelayPolicy {
         if (getMaximumRedeliveries() < 0) {
             return true;
         }
-        // redeliver until we hitted the max
+        // redeliver until we hit the max
         return redeliveryCounter <= getMaximumRedeliveries();
     }
 
@@ -213,6 +220,22 @@ public class RedeliveryPolicy extends DelayPolicy {
         return this;
     }
 
+    /**
+     * Sets the logging level to use for log messages when retries have been exhausted.
+     */
+    public RedeliveryPolicy retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+        return this;
+    }    
+
+    /**
+     * Sets the logging level to use for log messages when retries are attempted.
+     */    
+    public RedeliveryPolicy retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }    
+    
     // Properties
     // -------------------------------------------------------------------------
     public double getBackOffMultiplier() {
@@ -320,5 +343,27 @@ public class RedeliveryPolicy extends DelayPolicy {
             randomNumberGenerator = new Random();
         }
         return randomNumberGenerator;
+    }
+
+    /**
+     * Sets the logging level to use for log messages when retries have been exhausted.
+     */    
+    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;        
+    }
+    
+    public LoggingLevel getRetriesExhaustedLogLevel() {
+        return retriesExhaustedLogLevel;
+    }
+
+    /**
+     * Sets the logging level to use for log messages when retries are attempted.
+     */    
+    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        this.retryAttemptedLogLevel = retryAttemptedLogLevel;
+    }
+
+    public LoggingLevel getRetryAttemptedLogLevel() {
+        return retryAttemptedLogLevel;
     }
 }

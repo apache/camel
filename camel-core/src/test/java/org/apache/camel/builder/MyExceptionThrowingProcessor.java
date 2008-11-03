@@ -15,18 +15,21 @@
  * limitations under the License.
  */
 
-package org.apache.camel.spring.processor;
+package org.apache.camel.builder;
 
+import java.net.ConnectException;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.FaultRouteTest;
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
-/**
- * The spring context test for the FaultRoute
- */
-public class SpringFaultRouteTest extends FaultRouteTest {
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/faultRoute.xml");
+class MyExceptionThrowingProcessor implements Processor {
+    public void process(Exchange exchange) throws Exception {
+        String s = exchange.getIn().getBody(String.class);
+        if ("Hello NPE".equals(s)) {
+            throw new NullPointerException();
+        } else if ("Hello IO".equals(s)) {
+            throw new ConnectException("Forced for testing - can not connect to remote server");
+        }
+        exchange.getOut().setBody("Hello World");
     }
 }
