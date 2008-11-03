@@ -216,19 +216,15 @@ public class TraceFormatter {
 
     protected String getNodeMessage(TraceInterceptor interceptor) {
         String message = interceptor.getNode().getShortName() + "(" + interceptor.getNode().getLabel() + ")";
-        return String.format("%1$-25s", message);
+        return String.format("%1$-25.25s", message);
     }
     
     /**
      * Returns the exchange id and node, ordered based on whether this was a trace of
      * an exchange coming out of or into a processing step. For example, 
-     * 
-     * transform(body) -> ID-mojo/39713-1225468755256/2-0
-     * 
-     * Or
-     * 
-     * ID-mojo/39713-1225468755256/2-0 -> transform(body)
-     * 
+     * <br/><tt>transform(body) -> ID-mojo/39713-1225468755256/2-0</tt>
+     * <br/>or
+     * <br/><tt>ID-mojo/39713-1225468755256/2-0 -> transform(body)</tt>
      */
     protected String getExchangeAndNode(TraceInterceptor interceptor, Exchange exchange) {
         String id = "";
@@ -242,12 +238,12 @@ public class TraceFormatter {
             node = getNodeMessage(interceptor);
         }
         if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
-            result = node.trim() + " -> " + id;
+            result = node.trim() + " -> " + id.trim();
         } else {
-            result = id.trim() + " -> " + node;            
+            result = id.trim() + " -> " + node.trim();
         }
         
         // we want to ensure text coming after this is aligned for readability
-        return String.format("%1$-60s", result);
+        return String.format("%1$-65.65s", result);
     }
 }
