@@ -29,7 +29,7 @@
 
   <groupId>org.apache.camel</groupId>
   <artifactId>camel-parent</artifactId>
-  <version>1.5.0</version>
+  <version>1.5.1-SNAPSHOT</version>
   <packaging>pom</packaging>
   <name>Camel</name>
   <description>Camel Parent POM</description>
@@ -189,9 +189,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/activemq/camel/trunk/</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/branches/camel-1.x</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/branches/camel-1.x</developerConnection>
+    <url>http://svn.apache.org/viewvc/activemq/camel/branches/camel-1.x</url>
   </scm>
 
   <dependencyManagement>
