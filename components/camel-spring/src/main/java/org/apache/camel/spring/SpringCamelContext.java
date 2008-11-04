@@ -96,7 +96,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             LOG.debug("Starting the CamelContext now that the ApplicationContext has started");
             start();
         } else {
-            LOG.debug("Not starting the CamelContext since shouldStartContext property was true.");
+            LOG.debug("Not starting the CamelContext since shouldStartContext property was false.");
         }
     }
 
