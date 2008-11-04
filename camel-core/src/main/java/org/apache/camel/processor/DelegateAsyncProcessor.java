@@ -39,7 +39,7 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
 
     @Override
     public String toString() {
-        return "Delegate(" + processor + ")";
+        return "DelegateAsync(" + processor + ")";
     }
 
     public AsyncProcessor getProcessor() {

@@ -32,6 +32,11 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
         super(processor);
     }
     
+    @Override
+    public String toString() {
+        return "UnitOfWrok(" + processor + ")";
+    }
+    
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (exchange.getUnitOfWork() == null) {
             // If there is no existing UoW, then we should start one and

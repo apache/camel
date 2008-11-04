@@ -56,7 +56,7 @@ public class StreamCachingInterceptor extends Interceptor {
 
     @Override
     public String toString() {
-        return "StreamCachingInterceptor";
+        return "StreamCachingInterceptor(" + processor + ")";
     }
 
     /**
