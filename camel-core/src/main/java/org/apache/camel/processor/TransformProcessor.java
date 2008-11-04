@@ -50,6 +50,6 @@ public class TransformProcessor extends DelegateProcessor implements Processor {
 
     @Override
     public String toString() {
-        return "transform(" + expression + ")";
+        return "transform(" + expression + "," +processor + ")";
     }
 }
