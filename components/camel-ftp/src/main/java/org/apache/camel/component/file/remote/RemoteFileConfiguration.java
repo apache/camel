@@ -34,6 +34,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private boolean directory = true;
     private FTPClientConfig ftpClientConfig;
     private Expression expression;
+    private boolean passiveMode;
 
     public RemoteFileConfiguration() {
     }
@@ -171,5 +172,18 @@ public class RemoteFileConfiguration implements Cloneable {
      */
     public void setExpression(String fileLanguageExpression) {
         this.expression = FileLanguage.file(fileLanguageExpression);
+    }
+
+    public boolean isPassiveMode() {
+        return passiveMode;
+    }
+
+    /**
+     * Sets passive mode connections.
+     * <br/>
+     * Default is active mode connections.
+     */
+    public void setPassiveMode(boolean passiveMode) {
+        this.passiveMode = passiveMode;
     }
 }

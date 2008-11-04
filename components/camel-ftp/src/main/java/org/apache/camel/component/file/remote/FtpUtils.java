@@ -44,6 +44,12 @@ public final class FtpUtils {
         LOG.trace("Connecting to " + config);
         client.connect(host, port);
 
+        // must enter passive mode directly after connect
+        if (config.isPassiveMode()) {
+            LOG.trace("Using passive mode connections");
+            client.enterLocalPassiveMode();
+        }
+
         boolean login;
         if (username != null) {
             LOG.trace("Attempting to login user: " + username);
