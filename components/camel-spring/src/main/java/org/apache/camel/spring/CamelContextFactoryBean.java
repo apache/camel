@@ -88,6 +88,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Long delay;
     @XmlAttribute(required = false)
     private String errorHandlerRef;
+    @XmlAttribute(required = false)
+    private Boolean shouldStartContext = Boolean.TRUE;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
@@ -485,6 +487,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
             ctx.setErrorHandlerBuilder(errorHandlerBuilder);
         }
+
+        if (shouldStartContext != null) {
+            ctx.setShouldStartContext(shouldStartContext);
+        }
+
         return ctx;
     }
 
