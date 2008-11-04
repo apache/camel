@@ -51,7 +51,7 @@
     <jetty-version>6.1.11</jetty-version>
     <slf4j-version>1.5.5</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
-    <spring-version>2.5.5</spring-version>
+    <spring-version>2.5.6</spring-version>
     <spring-osgi-version>1.1.2</spring-osgi-version>
     <mina-version>1.1.7</mina-version>
     <uface-version>1.0-m1</uface-version>
@@ -77,7 +77,7 @@
     <saxon-version>9.1.0.1</saxon-version>
     <scala-version>2.7.2-rc1</scala-version>
     <scala-plugin-version>2.7.1</scala-plugin-version>
-    <testng-version>5.7</testng-version>
+    <testng-version>5.8</testng-version>
     <xbean-spring-version>3.4</xbean-spring-version>
 
     <!-- Repositories -->
