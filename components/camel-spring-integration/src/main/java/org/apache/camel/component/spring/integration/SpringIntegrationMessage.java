@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultMessage;
-import org.springframework.integration.message.MessageHeaders;
+import org.springframework.integration.core.MessageHeaders;
 
 /**
  * The Message {@link DefaultMessage} implementation
@@ -29,9 +29,9 @@ import org.springframework.integration.message.MessageHeaders;
  * @version $Revision$
  */
 public class SpringIntegrationMessage extends DefaultMessage {
-    private org.springframework.integration.message.Message siMessage;
+    private org.springframework.integration.core.Message siMessage;
 
-    public SpringIntegrationMessage(org.springframework.integration.message.Message message) {
+    public SpringIntegrationMessage(org.springframework.integration.core.Message message) {
         siMessage = message;
     }
 
@@ -39,11 +39,11 @@ public class SpringIntegrationMessage extends DefaultMessage {
 
     }
 
-    public void setMessage(org.springframework.integration.message.Message message) {
+    public void setMessage(org.springframework.integration.core.Message message) {
         siMessage = message;
     }
 
-    public org.springframework.integration.message.Message getMessage() {
+    public org.springframework.integration.core.Message getMessage() {
         return siMessage;
     }
 

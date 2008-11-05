@@ -19,7 +19,6 @@ package org.apache.camel.component.spring.integration.adapter;
 import junit.framework.TestCase;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.endpoint.MessagingBridge;
 
 public class ConfigurationTest extends TestCase {
     private AbstractXmlApplicationContext context;

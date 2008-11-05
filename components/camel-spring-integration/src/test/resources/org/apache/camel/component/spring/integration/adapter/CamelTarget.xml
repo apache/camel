@@ -33,10 +33,10 @@
  <!-- END SNIPPET: header -->
    	<message-bus/>
 
-    <channel-adapter id="channelA" target="camelTargetA"/>
-   	<channel-adapter id="channelB" target="camelTargetB"/>
+    <outbound-channel-adapter id="channelA" ref="camelTargetA"/>
+   	<outbound-channel-adapter id="channelB" ref="camelTargetB"/>
     <channel id="channelC"/>
-    <channel-adapter id="channelD" target="camelTargetD"/>
+    <outbound-channel-adapter id="channelD" ref="camelTargetD"/>
    <!-- START SNIPPET: example -->
    <!-- Create the camel context here -->
    <camelContext id="camelTargetContext" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -66,4 +66,5 @@
    <beans:bean id="myProcessor" class="org.apache.camel.component.spring.integration.MyProcessor"/>
    <!-- END SNIPPET: example -->
 </beans:beans>
+
 

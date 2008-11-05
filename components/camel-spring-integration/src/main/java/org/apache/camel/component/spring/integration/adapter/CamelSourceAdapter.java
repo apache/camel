@@ -16,22 +16,28 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.spring.integration.SpringIntegrationBinding;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.integration.ConfigurationException;
-import org.springframework.integration.bus.MessageBus;
-import org.springframework.integration.bus.MessageBusAware;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PollableChannel;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.gateway.SimpleMessagingGateway;
-import org.springframework.integration.handler.MessageHandler;
-import org.springframework.integration.message.Message;
+import org.springframework.integration.message.MessageHandler;
+import org.springframework.integration.transformer.Transformer;
 
 /**
  * A CamelContext will be injected into CameSourceAdapter which will
@@ -41,59 +47,55 @@ import org.springframework.integration.message.Message;
  *
  * @version $Revision$
  */
-public class CamelSourceAdapter extends AbstractCamelAdapter implements MessageHandler, InitializingBean, MessageBusAware {
+public class CamelSourceAdapter extends AbstractCamelAdapter implements InitializingBean {
     protected final Object lifecycleMonitor = new Object();
     private final Log logger = LogFactory.getLog(this.getClass());
     private Consumer consumer;
     private Endpoint camelEndpoint;
     private MessageChannel requestChannel;
-    private SimpleMessagingGateway messageGateway = new SimpleMessagingGateway();
-
+    private DirectChannel replyChannel;
+    
     private volatile boolean initialized;
 
     public void setRequestChannel(MessageChannel channel) {
-        requestChannel = channel;
-        messageGateway.setRequestChannel(requestChannel);
+        requestChannel = channel;        
     }
 
     public MessageChannel getChannel() {
         return requestChannel;
     }
 
-    public void setReplyChannel(PollableChannel channel) {
-        messageGateway.setReplyChannel(channel);
+    public void setReplyChannel(DirectChannel channel) {        
+        replyChannel = channel;
     }
 
-    public void setRequestTimeout(long requestTimeout) {
-        this.messageGateway.setRequestTimeout(requestTimeout);
-    }
-
-    public void setReplyTimeout(long replyTimeout) {
-        this.messageGateway.setReplyTimeout(replyTimeout);
-    }
-
-    private void incoming(Exchange exchange) {
-        org.springframework.integration.message.Message request =
-            SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
-
-        org.springframework.integration.message.Message response = handle(request);
-        if (response != null) {
-            // TODO How to deal with the fault message
-            SpringIntegrationBinding.storeToCamelMessage(response, exchange.getOut());
+    protected class ConsumerProcessor implements AsyncProcessor {
+        public void process(Exchange exchange) throws Exception {
+            AsyncProcessorHelper.process(this, exchange);      
         }
-    }
 
-    protected class ConsumerProcessor implements Processor {
-        public void process(Exchange exchange) {
-            try {
-                incoming(exchange);
-            } catch (Throwable ex) {
-                ex.printStackTrace();
-                logger.warn("Failed to process incoming message : " + ex);
-                //TODO Maybe we should set the exception as the fault message
+        public boolean process(final Exchange exchange, final AsyncCallback callback) {
+            org.springframework.integration.core.Message request =
+                SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
+            Map<String, Object> headers = new HashMap<String, Object>();
+            if (exchange.getPattern().isOutCapable()) {
+                headers.put(MessageHeaders.REPLY_CHANNEL , replyChannel);
+                replyChannel.subscribe(new MessageHandler() {                
+                    public void handleMessage(Message<?> message) {
+                        //TODO set the corralationID
+                        SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
+                        callback.done(true);
+                    }
+                });
             }
+                 
+            requestChannel.send(request);
+            
+            if (!exchange.getPattern().isOutCapable()) {
+                callback.done(true);
+            }            
+            return true;
         }
-
     }
 
     public final void afterPropertiesSet() throws Exception {
@@ -111,27 +113,5 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements MessageH
         camelEndpoint = getCamelContext().getEndpoint(getCamelEndpointUri());
         consumer = camelEndpoint.createConsumer(new ConsumerProcessor());
         consumer.start();
-    }
-
-    public final Message<?> handle(Message<?> message) {
-        if (!this.initialized) {
-            try {
-                this.afterPropertiesSet();
-            } catch (Exception e) {
-                throw new ConfigurationException("unable to initialize " + this.getClass().getName(), e);
-            }
-        }
-        if (!isExpectReply()) {
-            messageGateway.send(message);
-            return null;
-        }
-        return messageGateway.sendAndReceiveMessage(message);
-    }
-
-    public void setMessageBus(MessageBus bus) {
-        messageGateway.setMessageBus(bus);
-    }
-
-
-
+    }   
 }

@@ -16,23 +16,28 @@
  */
 package org.apache.camel.component.spring.integration.adapter;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.spring.integration.HelloWorldService;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.channel.PollableChannel;
-import org.springframework.integration.message.Message;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.message.MessageHandler;
 
 public class CamelSourceAdapterTest extends SpringTestSupport {
     public void testSendingOneWayMessage() throws Exception {
-        PollableChannel channelA = (PollableChannel) applicationContext.getBean("channelA");
+        DirectChannel channelA = (DirectChannel) applicationContext.getBean("channelA");
+        channelA.subscribe(new MessageHandler() {
+            public void handleMessage(Message<?> message) {
+                assertEquals("We should get the message from channelA", message.getPayload(), "Willem");             
+            }            
+        });
         template.sendBody("direct:OneWay", "Willem");
-        Message message = channelA.receive();
-        assertEquals("We should get the message from channelA", message.getPayload(), "Willem");
-
     }
 
     public void testSendingTwoWayMessage() throws Exception {
-        String result = (String) template.sendBody("direct:TwoWay", "Willem");
+        String result = (String) template.sendBody("direct:TwoWay", ExchangePattern.InOut, "Willem");
         assertEquals("Can't get the right response", result, "Hello Willem");
     }
 

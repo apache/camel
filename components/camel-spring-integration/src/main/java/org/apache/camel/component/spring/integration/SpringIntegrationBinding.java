@@ -33,26 +33,26 @@ public final class SpringIntegrationBinding {
         // Helper class
     }
 
-    public static org.springframework.integration.message.Message createSpringIntegrationMessage(Exchange exchange) {
+    public static org.springframework.integration.core.Message createSpringIntegrationMessage(Exchange exchange) {
         return createSpringIntegrationMessage(exchange, null);
     }
 
     @SuppressWarnings("unchecked")
-    public static org.springframework.integration.message.Message createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
+    public static org.springframework.integration.core.Message createSpringIntegrationMessage(Exchange exchange, Map<String, Object> headers) {
         org.apache.camel.Message message = exchange.getIn();
         GenericMessage siMessage = new GenericMessage(message.getBody(), headers);
         return siMessage;
     }
 
     @SuppressWarnings("unchecked")
-    public static org.springframework.integration.message.Message storeToSpringIntegrationMessage(org.apache.camel.Message message) {
+    public static org.springframework.integration.core.Message storeToSpringIntegrationMessage(org.apache.camel.Message message) {
         GenericMessage siMessage = new GenericMessage(message.getBody());
         return siMessage;
     }
 
-    public static void storeToCamelMessage(org.springframework.integration.message.Message siMessage, org.apache.camel.Message cMessage) {
+    public static void storeToCamelMessage(org.springframework.integration.core.Message siMessage, org.apache.camel.Message cMessage) {
         cMessage.setBody(siMessage.getPayload());
-        //TODO copy the message header
+        cMessage.setHeaders(siMessage.getHeaders());
     }
 
 }

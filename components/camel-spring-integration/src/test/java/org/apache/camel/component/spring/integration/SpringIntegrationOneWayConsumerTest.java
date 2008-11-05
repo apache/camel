@@ -20,8 +20,7 @@ package org.apache.camel.component.spring.integration;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.message.Message;
+import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.message.StringMessage;
 
 
