@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.core.MessageChannel;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/springIntergration.html">Spring Intergration Endpoint</a>

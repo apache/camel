@@ -36,7 +36,7 @@
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
         <!-- Using the &amp; as the separator of & -->
-        <from uri="spring-integration://requestChannel?outputChannel=responseChannel&amp;inOut=true&amp;consumer.delay=5000"/>
+        <from uri="spring-integration://requestChannel?outputChannel=responseChannel&amp;inOut=true"/>
         <process ref="myProcessor"/>
       </route>
     </camelContext>

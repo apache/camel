@@ -26,8 +26,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.beans.factory.xml.AbstractSimpleBeanDefinitionParser;
 import org.springframework.beans.factory.xml.ParserContext;
-import org.springframework.integration.ConfigurationException;
-import org.springframework.integration.endpoint.MessagingBridge;
 import org.springframework.util.StringUtils;
 
 /**

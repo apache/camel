@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.spring.integration.converter;
 
-import java.util.Map;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationEndpoint;
 import org.apache.camel.component.spring.integration.SpringIntegrationMessage;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.message.GenericMessage;
-import org.springframework.integration.message.MessageHeaders;
 
 /**
  * The <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
@@ -57,10 +55,10 @@ public final class SpringIntegrationConverter {
 
     @SuppressWarnings("unchecked")
     @Converter
-    public static org.springframework.integration.message.Message toSpringMessage(final org.apache.camel.Message camelMessage) throws Exception {
+    public static org.springframework.integration.core.Message toSpringMessage(final org.apache.camel.Message camelMessage) throws Exception {
         if (camelMessage instanceof SpringIntegrationMessage) {
             SpringIntegrationMessage siMessage = (SpringIntegrationMessage)camelMessage;
-            org.springframework.integration.message.Message message =  siMessage.getMessage();
+            org.springframework.integration.core.Message message =  siMessage.getMessage();
             if (message != null) {
                 return message;
             }
@@ -72,7 +70,7 @@ public final class SpringIntegrationConverter {
     }
 
     @Converter
-    public static org.apache.camel.Message toCamelMessage(final org.springframework.integration.message.Message springMessage) throws Exception {
+    public static org.apache.camel.Message toCamelMessage(final org.springframework.integration.core.Message springMessage) throws Exception {
         return new SpringIntegrationMessage(springMessage);
     }
 

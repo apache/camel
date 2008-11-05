@@ -17,7 +17,6 @@
 package org.apache.camel.component.spring.integration.adapter;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ProducerTemplate;
@@ -26,14 +25,12 @@ import org.apache.camel.component.spring.integration.SpringIntegrationExchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.integration.bus.MessageBus;
-import org.springframework.integration.bus.MessageBusAware;
-import org.springframework.integration.channel.MessageChannel;
-import org.springframework.integration.message.Message;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.message.MessageDeliveryException;
-import org.springframework.integration.message.MessageHeaders;
+import org.springframework.integration.message.MessageHandler;
 import org.springframework.integration.message.MessageRejectedException;
-import org.springframework.integration.message.MessageTarget;
 
 /**
  * CamelTargeAdapter will redirect the Spring Integration message to the Camel context.
@@ -43,7 +40,7 @@ import org.springframework.integration.message.MessageTarget;
  *
  * @version $Revision$
  */
-public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageTarget {
+public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageHandler {
 
     private final Log logger = LogFactory.getLog(this.getClass());
     private ProducerTemplate<Exchange> camelTemplate;
@@ -88,7 +85,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageT
             //Check the message header for the return address
             response = SpringIntegrationBinding.storeToSpringIntegrationMessage(outExchange.getOut());
             if (replyChannel == null) {
-                MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.RETURN_ADDRESS);
+                MessageChannel messageReplyChannel = (MessageChannel) message.getHeaders().get(MessageHeaders.REPLY_CHANNEL);
                 if (messageReplyChannel != null) {
                     result = messageReplyChannel.send(response);
                 } else {
@@ -99,6 +96,10 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageT
             }
         }
         return result;
+    }
+
+    public void handleMessage(Message<?> message) {
+        send(message);        
     }
 
 }
