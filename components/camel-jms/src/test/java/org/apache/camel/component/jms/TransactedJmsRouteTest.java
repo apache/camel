@@ -105,10 +105,10 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
                 // within the failed transaction.
                 inheritErrorHandler(false);
                 // Used to validate messages are sent to the target.
-                from("activemq:queue:mock.a").trace().to("mock:a");
-                from("activemq:queue:mock.b").trace().to("mock:b");
-                from("activemq:queue:mock.c").trace().to("mock:c");
-                from("activemq:queue:mock.d").trace().to("mock:d");
+                from("activemq:queue:mock.a").to("mock:a");
+                from("activemq:queue:mock.b").to("mock:b");
+                from("activemq:queue:mock.c").to("mock:c");
+                from("activemq:queue:mock.d").to("mock:d");
 
                 // Receive from a and send to target in 1 tx.
                 from("activemq:queue:a").to("activemq:queue:mock.a");

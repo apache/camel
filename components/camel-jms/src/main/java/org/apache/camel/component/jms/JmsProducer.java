@@ -84,7 +84,7 @@ public class JmsProducer extends DefaultProducer {
     }
 
     public long getRequestTimeout() {
-        return endpoint.getRequestTimeout();
+        return endpoint.getConfiguration().getRequestTimeout();
     }
 
     protected void doStart() throws Exception {
@@ -177,8 +177,8 @@ public class JmsProducer extends DefaultProducer {
 
                     FutureTask future = null;
                     future = (!msgIdAsCorrId)
-                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint
-                            .getRequestTimeout()) : requestor.getReceiveFuture(callback);
+                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
+                            : requestor.getReceiveFuture(callback);
 
                     futureHolder.set(future);
 

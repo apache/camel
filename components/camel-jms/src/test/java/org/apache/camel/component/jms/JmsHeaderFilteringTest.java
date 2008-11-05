@@ -92,7 +92,7 @@ public class JmsHeaderFilteringTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                exception(AssertionFailedError.class).maximumRedeliveries(1).to(assertionReceiver);
+                onException(AssertionFailedError.class).maximumRedeliveries(1).to(assertionReceiver);
 
                 from(testQueueEndpointA).process(new OutHeaderChecker()).to(testQueueEndpointB);
                 from(testQueueEndpointB).process(new InHeaderChecker());

@@ -34,7 +34,7 @@ public class JmsMessageBindTest extends SpringTestSupport {
         template.sendBodyAndHeader("activemq:Test.BindingQueue", "SomeBody", "foo", "bar");
 
         // lets wait for the method to be invoked
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // now lets test that the bean is correct
         MyBean bean = getMandatoryBean(MyBean.class, "myBean");
