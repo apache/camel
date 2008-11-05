@@ -59,6 +59,8 @@ public class AggregatorType extends ExpressionNode {
     private Long batchTimeout;
     @XmlAttribute(required = false)
     private String strategyRef;
+    @XmlAttribute(required = false)
+    private String collectionRef;    
     @XmlElement(name = "completedPredicate", required = false)
     private ExpressionSubElementType completedPredicate;
 
@@ -121,6 +123,10 @@ public class AggregatorType extends ExpressionNode {
         final Processor processor = routeContext.createProcessor(this);
 
         final Aggregator aggregator;
+        if (getAggregationCollection() == null) {
+            setAggregationCollection(createAggregationCollection(routeContext));
+        }
+        
         if (aggregationCollection != null) {
             // create the aggregator using the collection
             // pre configure the collection if its expression and strategy is not set, then
@@ -177,6 +183,14 @@ public class AggregatorType extends ExpressionNode {
         return strategy;
     }
 
+    private AggregationCollection createAggregationCollection(RouteContext routeContext) {
+        AggregationCollection collection = getAggregationCollection();
+        if (collection == null && collectionRef != null) {
+            collection = routeContext.lookup(collectionRef, AggregationCollection.class);
+        }
+        return collection;
+    }    
+    
     public AggregationCollection getAggregationCollection() {
         return aggregationCollection;
     }
