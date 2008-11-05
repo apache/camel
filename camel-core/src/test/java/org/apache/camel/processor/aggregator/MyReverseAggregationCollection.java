@@ -28,6 +28,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
+//START SNIPPET: e1
 class MyReverseAggregationCollection extends AbstractCollection<Exchange> implements AggregationCollection {
 
     private List<Exchange> collection = new ArrayList<Exchange>();
@@ -73,3 +74,4 @@ class MyReverseAggregationCollection extends AbstractCollection<Exchange> implem
         add(newExchange);
     }
 }
+//END SNIPPET: e1
