@@ -49,6 +49,8 @@ public class SplitterType extends ExpressionNode {
     @XmlTransient
     private ThreadPoolExecutor threadPoolExecutor;
     @XmlAttribute(required = false)
+    private String threadPoolExecutorRef;
+    @XmlAttribute(required = false)
     private Boolean streaming = false;
     
     public SplitterType() {
@@ -78,9 +80,7 @@ public class SplitterType extends ExpressionNode {
         if (aggregationStrategy == null) {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        if (threadPoolExecutor == null) {
-            threadPoolExecutor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
-        }
+        threadPoolExecutor = createThreadPoolExecutor(routeContext);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
                 isParallelProcessing(), threadPoolExecutor, streaming);
     }
@@ -125,6 +125,18 @@ public class SplitterType extends ExpressionNode {
         return this;
     }
 
+    private ThreadPoolExecutor createThreadPoolExecutor(RouteContext routeContext) {
+        ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
+        if (threadPoolExecutor == null && threadPoolExecutorRef != null) {
+            threadPoolExecutor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
+        }
+        if (threadPoolExecutor == null) {
+            // fall back and use default
+            threadPoolExecutor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+        }
+        return threadPoolExecutor;
+    }    
+   
     public ThreadPoolExecutor getThreadPoolExecutor() {
         return threadPoolExecutor;
     }

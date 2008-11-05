@@ -448,11 +448,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * This splitter responds with the latest message returned from destination
      * endpoint.
      *
-     * @param receipients the expression on which to split
+     * @param recipients the expression on which to split
      * @return the builder
      */
-    public SplitterType splitter(Expression receipients) {
-        SplitterType answer = new SplitterType(receipients);
+    public SplitterType splitter(Expression recipients) {
+        SplitterType answer = new SplitterType(recipients);
         addOutput(answer);
         return answer;
     }
@@ -516,17 +516,38 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * This splitter responds with the latest message returned from destination
      * endpoint.
      *
-     * @param receipients the expression on which to split
+     * @param recipients the expression on which to split
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
-    public SplitterType splitter(Expression receipients, boolean parallelProcessing) {
-        SplitterType answer = new SplitterType(receipients);
+    public SplitterType splitter(Expression recipients, boolean parallelProcessing) {
+        SplitterType answer = new SplitterType(recipients);
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
         return answer;
     }
 
+    /**
+     * Creates the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * This splitter responds with the latest message returned from destination
+     * endpoint.
+     *
+     * @param recipients the expression on which to split
+     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
+     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @return the builder
+     */
+    public SplitterType splitter(Expression recipients, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType(recipients);
+        addOutput(answer);
+        answer.setParallelProcessing(parallelProcessing);
+        answer.setThreadPoolExecutor(threadPoolExecutor);
+        return answer;
+    }    
+    
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
@@ -545,6 +566,26 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return ExpressionClause.createAndSetExpression(answer);
     }
 
+    /**
+     * Creates the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * This splitter responds with the latest message returned from destination
+     * endpoint.
+     *
+     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
+     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @return the expression clause for the expression on which to split
+     */
+    public ExpressionClause<SplitterType> splitter(boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType();
+        addOutput(answer);
+        answer.setParallelProcessing(parallelProcessing);
+        answer.setThreadPoolExecutor(threadPoolExecutor);
+        return ExpressionClause.createAndSetExpression(answer);
+    }    
+    
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
@@ -572,6 +613,29 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * pattern where an expression is evaluated to iterate through each of the
      * parts of a message and then each part is then send to some endpoint.
      * Answer from the splitter is produced using given {@link AggregationStrategy}
+     * @param partsExpression the expression on which to split
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
+     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @return the builder
+     */
+    public SplitterType splitter(Expression partsExpression,
+            AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType(partsExpression);
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        answer.setParallelProcessing(parallelProcessing);
+        answer.setThreadPoolExecutor(threadPoolExecutor);        
+        return answer;
+    }    
+    
+    /**
+     * Creates the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * Answer from the splitter is produced using given {@link AggregationStrategy}
      * @param aggregationStrategy the strategy used to aggregate responses for
      *          every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
@@ -585,7 +649,27 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return ExpressionClause.createAndSetExpression(answer);
     }
 
-
+    /**
+     * Creates the <a
+     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
+     * pattern where an expression is evaluated to iterate through each of the
+     * parts of a message and then each part is then send to some endpoint.
+     * Answer from the splitter is produced using given {@link AggregationStrategy}
+     * @param aggregationStrategy the strategy used to aggregate responses for
+     *          every part
+     * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
+     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @return the expression clause for the expression on which to split
+     */
+    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType();
+        addOutput(answer);
+        answer.setAggregationStrategy(aggregationStrategy);
+        answer.setParallelProcessing(parallelProcessing);
+        answer.setThreadPoolExecutor(threadPoolExecutor);           
+        return ExpressionClause.createAndSetExpression(answer);
+    }   
+    
     /**
      * Creates the <a
      * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
