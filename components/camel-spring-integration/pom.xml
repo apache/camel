@@ -13,7 +13,7 @@
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.component.spring.integration.*</camel.osgi.export.pkg>
-    <spring-integration-version>1.0.0.M6</spring-integration-version>
+    <spring-integration-version>1.0.0.RC1</spring-integration-version>
   </properties>
 
   <version>2.0-SNAPSHOT</version>
