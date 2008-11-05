@@ -23,10 +23,19 @@ package org.apache.camel.component.spring.integration;
 public class HelloWorldService {
 
     private int count;
+    private String greetName;
 
     public String sayHello(String name) {
         count++;
         return "Hello " + name;
+    }
+    
+    public void greet(String name) {        
+        greetName = name;
+    }
+    
+    public String getGreetName() {
+        return greetName;
     }
 
     public int getCount() {

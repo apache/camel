@@ -29,19 +29,28 @@
 	<message-bus/>
 	<channel id="inputChannel"/>
    	<channel id="outputChannel"/>
+   	<channel id="onewayChannel"/>
 
-	<service-activator input-channel="inputChannel"
-	          output-channel="outputChannel"
+	<service-activator input-channel="inputChannel"	          
 	          ref="helloService"
 	          method="sayHello"/>
-
+	          	      
+	<service-activator input-channel="onewayChannel"	          
+	          ref="helloService"
+	          method="greet"/>
+	          
 	<beans:bean id="helloService" class="org.apache.camel.component.spring.integration.HelloWorldService"/>
+    
     <!-- START SNIPPET: example -->
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>
-        <from uri="direct:start"/>
+        <from uri="direct:twowayMessage"/>
         <!-- Using the &amp; as the separator of & -->
         <to uri="spring-integration:inputChannel?inOut=true&amp;inputChannel=outputChannel"/>
+      </route>
+      <route>      
+        <from uri="direct:onewayMessage"/>
+        <to uri="spring-integration:onewayChannel?inOut=false"/>
       </route>
     </camelContext>
     <!-- END SNIPPET: example -->

@@ -49,9 +49,7 @@
 		</xsd:annotation>
         <xsd:complexContent>
           <xsd:extension base="camelEndpointType">
-           <xsd:attribute name="requestChannel" type="xsd:string" use="required" />
-	       <xsd:attribute name="requestTimeout" type="xsd:long"/>
-		   <xsd:attribute name="replyTimeout" type="xsd:long"/>
+           <xsd:attribute name="requestChannel" type="xsd:string" use="required" />	       
 		  </xsd:extension>
 		</xsd:complexContent>
      </xsd:complexType>

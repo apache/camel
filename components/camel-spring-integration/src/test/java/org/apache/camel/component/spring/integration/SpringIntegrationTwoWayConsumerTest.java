@@ -20,40 +20,35 @@ package org.apache.camel.component.spring.integration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.integration.channel.AbstractPollableChannel;
-import org.springframework.integration.channel.MessageChannel;
+import org.springframework.integration.channel.DirectChannel;
+import org.springframework.integration.core.Message;
+import org.springframework.integration.core.MessageChannel;
+import org.springframework.integration.core.MessageHeaders;
 import org.springframework.integration.message.GenericMessage;
-import org.springframework.integration.message.Message;
-import org.springframework.integration.message.MessageHeaders;
-import org.springframework.integration.message.StringMessage;
+import org.springframework.integration.message.MessageHandler;
 
 
 public class SpringIntegrationTwoWayConsumerTest extends SpringTestSupport {
-    private static final String MESSAGE_BODY = "Request message";
-    public void testDelyConfiguration() throws Exception {
-        SpringIntegrationEndpoint endpoint = (SpringIntegrationEndpoint)resolveMandatoryEndpoint("spring-integration://requestChannel?outputChannel=responseChannel&inOut=true&consumer.delay=5000");
-        Map map = endpoint.getConsumerProperties();
-        assertEquals("There should have a delay property ", map.size(), 1);
-        assertEquals("The delay value is not right", map.get("delay"), "5000");
-    }
+    private static final String MESSAGE_BODY = "Request message";    
 
     public void testSendingTwoWayMessage() throws Exception {
-
+        
         MessageChannel requestChannel = (MessageChannel) applicationContext.getBean("requestChannel");
         Map<String, Object> maps = new HashMap<String, Object>();
-        maps.put(MessageHeaders.RETURN_ADDRESS, "responseChannel");
+        maps.put(MessageHeaders.REPLY_CHANNEL, "responseChannel");
         Message<String> message = new GenericMessage<String>(MESSAGE_BODY, maps);
-
-        requestChannel.send(message);
-
-        AbstractPollableChannel responseChannel = (AbstractPollableChannel) applicationContext.getBean("responseChannel");
-        Message responseMessage = responseChannel.receive();
-        String result = (String) responseMessage.getPayload();
-
-        assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);
+        DirectChannel responseChannel = (DirectChannel) applicationContext.getBean("responseChannel");
+        responseChannel.subscribe(new MessageHandler() {
+            public void handleMessage(Message<?> message) {
+                String result = (String) message.getPayload();
+                assertEquals("Get the wrong result", MESSAGE_BODY + " is processed",  result);                
+            }             
+        });
+        requestChannel.send(message);        
+        
     }
 
     public ClassPathXmlApplicationContext createApplicationContext() {
