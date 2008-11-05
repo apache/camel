@@ -37,7 +37,6 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.listener.serversession.ServerSessionFactory;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -268,10 +267,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     public void setRecoveryInterval(long recoveryInterval) {
         getConfiguration().setRecoveryInterval(recoveryInterval);
-    }
-
-    public void setServerSessionFactory(ServerSessionFactory serverSessionFactory) {
-        getConfiguration().setServerSessionFactory(serverSessionFactory);
     }
 
     public void setSubscriptionDurable(boolean subscriptionDurable) {

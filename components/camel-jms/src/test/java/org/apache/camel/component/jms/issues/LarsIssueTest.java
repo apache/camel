@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -31,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
-
 /**
  * Lets test that a number of headers MQSeries doesn't like to be sent are excluded when
  * forwarding a JMS message from one destination to another
@@ -40,7 +38,6 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  */
 public class LarsIssueTest  extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(LarsIssueTest.class);
-
 
     public void testSendSomeMessages() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
@@ -51,7 +48,7 @@ public class LarsIssueTest  extends ContextTestSupport {
         template.sendBody("activemq:queue:foo.bar", body1);
         template.sendBody("activemq:queue:foo.bar", body2);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -74,8 +71,8 @@ public class LarsIssueTest  extends ContextTestSupport {
 
                 // lets enable CACHE_CONSUMER so that the consumer stays around in JMX
                 // as the default due to the spring bug means we keep creating & closing consumers
-                from("activemq:queue:foo.bar?cacheLevelName=CACHE_CONSUMER").
-                        trace("DEBUG").process(myProcessor)
+                from("activemq:queue:foo.bar?cacheLevelName=CACHE_CONSUMER")
+                        .process(myProcessor)
                         .to("mock:results");
             }
         };

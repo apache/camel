@@ -43,9 +43,6 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.listener.DefaultMessageListenerContainer102;
 import org.springframework.jms.listener.SimpleMessageListenerContainer;
 import org.springframework.jms.listener.SimpleMessageListenerContainer102;
-import org.springframework.jms.listener.serversession.ServerSessionFactory;
-import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer;
-import org.springframework.jms.listener.serversession.ServerSessionMessageListenerContainer102;
 import org.springframework.jms.support.JmsUtils;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -94,7 +91,6 @@ public class JmsConfiguration implements Cloneable {
     private boolean pubSubNoLocal;
     private int concurrentConsumers = 1;
     private int maxMessagesPerTask = 1;
-    private ServerSessionFactory serverSessionFactory;
     private int cacheLevel = -1;
     private String cacheLevelName;
     private long recoveryInterval = -1;
@@ -537,14 +533,6 @@ public class JmsConfiguration implements Cloneable {
         this.maxMessagesPerTask = maxMessagesPerTask;
     }
 
-    public ServerSessionFactory getServerSessionFactory() {
-        return serverSessionFactory;
-    }
-
-    public void setServerSessionFactory(ServerSessionFactory serverSessionFactory) {
-        this.serverSessionFactory = serverSessionFactory;
-    }
-
     public int getCacheLevel() {
         return cacheLevel;
     }
@@ -928,15 +916,6 @@ public class JmsConfiguration implements Cloneable {
             if (transactionTimeout >= 0) {
                 listenerContainer.setTransactionTimeout(transactionTimeout);
             }
-        } else if (container instanceof ServerSessionMessageListenerContainer) {
-            // this includes ServerSessionMessageListenerContainer102
-            ServerSessionMessageListenerContainer listenerContainer = (ServerSessionMessageListenerContainer)container;
-            if (maxMessagesPerTask >= 0) {
-                listenerContainer.setMaxMessagesPerTask(maxMessagesPerTask);
-            }
-            if (serverSessionFactory != null) {
-                listenerContainer.setServerSessionFactory(serverSessionFactory);
-            }
         } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
             SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer)container;
@@ -974,10 +953,6 @@ public class JmsConfiguration implements Cloneable {
         case Simple:
             return isUseVersion102()
                 ? new SimpleMessageListenerContainer102() : new SimpleMessageListenerContainer();
-        case ServerSessionPool:
-            return isUseVersion102()
-                ? new ServerSessionMessageListenerContainer102()
-                : new ServerSessionMessageListenerContainer();
         case Default:
             return isUseVersion102()
                 ? new DefaultMessageListenerContainer102() : new DefaultMessageListenerContainer();
