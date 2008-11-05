@@ -94,8 +94,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer<SpringIntegratio
             getProcessor().process(exchange);
         } catch (Exception e) {
             //TODO need to find a way to deal with this exception
-            //Now I just throw it out
-            throw new RuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         if (endpoint.isInOut()) {
             // get the output channel from message header
