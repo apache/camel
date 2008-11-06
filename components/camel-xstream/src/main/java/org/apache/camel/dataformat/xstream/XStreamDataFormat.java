@@ -37,7 +37,7 @@ import org.apache.camel.spi.DataFormat;
 
 /**
  * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * ({@link DataFormat}) using XmlBeans to marshal to and from XML
+ * ({@link DataFormat}) using XStream to marshal to and from XML
  *
  * @version $Revision$
  */
