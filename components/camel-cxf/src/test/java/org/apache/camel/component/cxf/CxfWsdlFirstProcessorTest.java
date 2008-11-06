@@ -16,22 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.net.URL;
-
-import javax.xml.namespace.QName;
-import javax.xml.ws.Endpoint;
-import javax.xml.ws.Holder;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.wsdl_first.Person;
-import org.apache.camel.wsdl_first.PersonImpl;
-import org.apache.camel.wsdl_first.PersonService;
-import org.apache.camel.wsdl_first.UnknownPersonFault;
-import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
@@ -41,4 +25,13 @@ public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstProcessor.xml");
     }
 
+    @Override
+    protected int getExpectedJaxwsHandlerMessageCount() {
+        return 4;
+    }
+    
+    @Override
+    protected int getExpectedJaxwsHandlerFaultCount() {
+        return 2;
+    }
 }
