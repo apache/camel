@@ -21,6 +21,7 @@ HL7DataFormat
 DataFormatType
 DataFormatsType
 JaxbDataFormat
+JsonDataFormat
 SerializationDataFormat
 StringDataFormat
 XMLBeansDataFormat
