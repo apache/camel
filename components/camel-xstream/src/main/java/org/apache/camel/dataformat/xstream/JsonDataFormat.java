@@ -36,7 +36,7 @@ import org.codehaus.jettison.mapped.MappedXMLOutputFactory;
 
 /**
  * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
- * ({@link DataFormat}) using XmlBeans to marshal to and from XML
+ * ({@link DataFormat}) using XStream and Jettison to marshal to and from JSON
  *
  * @version $Revision$
  */
