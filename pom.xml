@@ -909,6 +909,19 @@
         <artifactId>mail</artifactId>
         <version>1.4</version>
       </dependency>
+   
+      <!-- optional XStream -->
+      <dependency>
+        <groupId>com.thoughtworks.xstream</groupId>
+        <artifactId>xstream</artifactId>
+        <version>1.3</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.codehaus.jettison</groupId>
+        <artifactId>jettison</artifactId>
+        <version>1.0.1</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
