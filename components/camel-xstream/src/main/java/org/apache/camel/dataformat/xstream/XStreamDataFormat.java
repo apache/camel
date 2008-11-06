@@ -41,16 +41,14 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision$
  */
-public class XStreamDataFormat implements DataFormat {
-
-    private XStream xstream;
-    private StaxConverter staxConverter;
+public class XStreamDataFormat extends AbstractXStreamWrapper  {
     
     public XStreamDataFormat() {
+        super();
     }
 
     public XStreamDataFormat(XStream xstream) {
-        setXStream(xstream);
+        super(xstream);
     }
 
     /**
@@ -75,51 +73,7 @@ public class XStreamDataFormat implements DataFormat {
             xstream.processAnnotations(type);
         }
         return answer;
-    }
-
-    public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
-        HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
-        try {
-            getXStream().marshal(body, writer);
-        } finally {
-            writer.close();
-        }
-    }
-
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        HierarchicalStreamReader reader = createHierarchicalStreamReader(exchange, stream);
-        try {
-            return getXStream().unmarshal(reader);
-        } finally {
-            reader.close();
-        }
-    }
-
-    public XStream getXStream() {
-        if (xstream == null) {
-            xstream = createXStream();
-        }
-        return xstream;
-    }
-
-    public void setXStream(XStream xstream) {
-        this.xstream = xstream;
-    }
-
-    public StaxConverter getStaxConverter() {
-        if (staxConverter == null) {
-            staxConverter = new StaxConverter();
-        }
-        return staxConverter;
-    }
-
-    public void setStaxConverter(StaxConverter staxConverter) {
-        this.staxConverter = staxConverter;
-    }
-
-    protected XStream createXStream() {
-        return new XStream();
-    }
+    }    
 
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
         XMLStreamWriter xmlWriter = getStaxConverter().createXMLStreamWriter(stream);
