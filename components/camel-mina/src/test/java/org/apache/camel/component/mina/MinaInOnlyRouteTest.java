@@ -33,7 +33,7 @@ public class MinaInOnlyRouteTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye Claus");
         mock.setResultWaitTime(5000);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

@@ -111,7 +111,7 @@ public class CamelConduitTest extends CamelTestSupport {
         Message message = new MessageImpl();
         // set the isOneWay to be true
         sendoutMessage(conduit, message, true, "HelloWorld");
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         // verify the endpoint get the response
     }
 
@@ -124,7 +124,7 @@ public class CamelConduitTest extends CamelTestSupport {
         // set the isOneWay to be false
         sendoutMessage(conduit, message, false, "HelloWorld");
         // verify the endpoint get the response
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         verifyReceivedMessage("HelloWorld");
     }
 

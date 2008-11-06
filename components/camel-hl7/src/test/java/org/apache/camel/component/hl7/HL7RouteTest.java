@@ -70,7 +70,7 @@ public class HL7RouteTest extends ContextTestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADR^A19||||123", lines[0]);
         assertEquals("MSA|AA|123", lines[1]);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendA01() throws Exception {
@@ -91,7 +91,7 @@ public class HL7RouteTest extends ContextTestSupport {
         assertEquals("MSH|^~\\&|MYSENDER||||200701011539||ADT^A01||||123", lines[0]);
         assertEquals("PID|||123456||Doe^John", lines[1]);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendUnknown() throws Exception {
@@ -109,7 +109,7 @@ public class HL7RouteTest extends ContextTestSupport {
 
         template.requestBody("mina:tcp://localhost:8888?sync=true&codec=hl7codec", in.toString());
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

@@ -33,7 +33,7 @@ public class MinaVmTest extends ContextTestSupport {
 
         template.sendBodyAndHeader(uri, body, "cheese", 123);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -40,7 +40,7 @@ public class HL7DataFormatTest extends ContextTestSupport {
         Message message = createHL7AsMessage();
         template.sendBody("direct:marshal", message);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testUnmarshal() throws Exception {
@@ -65,7 +65,7 @@ public class HL7DataFormatTest extends ContextTestSupport {
         String body = createHL7AsString();
         template.sendBody("direct:unmarshal", body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         Message msg = mock.getExchanges().get(0).getIn().getBody(Message.class);
         assertEquals("2.4", msg.getVersion());

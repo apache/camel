@@ -67,7 +67,7 @@ public class MinaProducerShutdownMockTest extends ContextTestSupport {
 
         verify(mockConnector);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

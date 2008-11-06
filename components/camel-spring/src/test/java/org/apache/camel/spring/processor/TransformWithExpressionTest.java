@@ -29,7 +29,7 @@ public class TransformWithExpressionTest extends SpringTestSupport {
 
         template.sendBody("direct:start", "Some data plus ...");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

@@ -39,7 +39,7 @@ public class FlatpackFixedLengthWithHeaderAndTrailerDataFormatTest extends Conte
         String data = IOConverter.toString(new File("src/test/data/headerandtrailer/PEOPLE-HeaderAndTrailer.txt").getAbsoluteFile());
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(6, list.size());

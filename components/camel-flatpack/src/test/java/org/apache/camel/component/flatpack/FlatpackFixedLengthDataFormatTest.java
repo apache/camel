@@ -42,7 +42,7 @@ public class FlatpackFixedLengthDataFormatTest extends ContextTestSupport {
         String data = IOConverter.toString(new File("src/test/data/fixed/PEOPLE-FixedLength.txt").getAbsoluteFile());
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
@@ -66,7 +66,7 @@ public class FlatpackFixedLengthDataFormatTest extends ContextTestSupport {
         data.add(row);
 
         template.sendBody("direct:marshal", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         String s = mock.getExchanges().get(0).getIn().getBody(String.class);
         assertTrue(s.startsWith("JOHN                               DOE"));

@@ -48,7 +48,7 @@ public class HL7MLLPCodecPlainStringTest extends ContextTestSupport {
         // send plain hello world as String
         Object out = template.requestBody("mina:tcp://localhost:8888?sync=true&codec=hl7codec", "Hello World");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         // and the response is also just plain String
         assertEquals("Bye World", out);

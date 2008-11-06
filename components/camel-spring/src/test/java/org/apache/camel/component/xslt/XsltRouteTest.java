@@ -36,7 +36,7 @@ public class XsltRouteTest extends SpringTestSupport {
         template.sendBody("direct:start",
                 "<mail><subject>Hey</subject><body>Hello world!</body></mail>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);

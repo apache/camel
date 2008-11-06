@@ -43,7 +43,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         StreamSource message = new StreamSource(new StringReader("<hello>world!</hello>"));
         template.sendBody("direct:a", message);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         Exchange exchange = a.getExchanges().get(0);
         StreamCache streamCache = Assertions.assertInstanceOf(exchange.getIn().getBody(), StreamCache.class);
         //assertTrue(a.assertExchangeReceived(0).getIn().getBody() instanceof StreamCache);

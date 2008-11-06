@@ -37,7 +37,7 @@ public class MinaInOutRouteTest extends ContextTestSupport {
 
         Object out = template.requestBodyAndHeader("direct:in", "Claus", "city", "Copenhagen");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertEquals("Bye Claus", out);
     }
 

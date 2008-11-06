@@ -45,7 +45,7 @@ public class MailMultipleRecipientsTest extends ContextTestSupport {
         template.sendBodyAndHeaders("smtp://localhost", "Hello World", headers);
         // END SNIPPET: e1
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendWithMultipleRecipientsPreConfigured() throws Exception {
@@ -60,7 +60,7 @@ public class MailMultipleRecipientsTest extends ContextTestSupport {
         template.sendBody("smtp://localhost?To=claus@localhost,willem@localhost&CC=james@localhost", "Hello World");
         // END SNIPPET: e2
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     private void assertMailbox(String name) throws Exception {
