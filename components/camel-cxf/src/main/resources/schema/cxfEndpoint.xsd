@@ -41,6 +41,7 @@
             <xsd:element name="inFaultInterceptors" type="xsd:anyType" minOccurs="0"/>            
             <xsd:element name="outInterceptors" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="outFaultInterceptors" type="xsd:anyType" minOccurs="0"/>
+            <xsd:element name="handlers" type="xsd:anyType" minOccurs="0"/>
             <xsd:element name="properties" type="beans:mapType" minOccurs="0"/>
             <xsd:element name="schemaLocations" type="schemasType" minOccurs="0"/>
             <xsd:element name="serviceBean" type="xsd:anyType" minOccurs="0"/>
