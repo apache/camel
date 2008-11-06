@@ -30,7 +30,7 @@ public class UFaceTest extends ContextTestSupport {
 
         template.sendBody("swing:a", "<hello>world!</hello>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

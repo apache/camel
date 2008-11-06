@@ -85,7 +85,7 @@ public class CxfSoapTest extends ContextTestSupport {
         endpoint.expectedMessageCount(1);
         Object result = template.sendBody("direct:producer", source);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         assertFalse("The result should not be changed", source.equals(result));
         assertTrue("The result should be the instance of DOMSource", result instanceof DOMSource);
         assertEquals("The DOMSource should be equal", XMLUtils.toString(source), XMLUtils.toString((Source)result));

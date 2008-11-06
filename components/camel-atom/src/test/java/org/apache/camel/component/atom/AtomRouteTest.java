@@ -36,7 +36,7 @@ public class AtomRouteTest extends ContextTestSupport {
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount(7);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         List<Exchange> list = endpoint.getReceivedExchanges();
         String[] expectedTitles = {"Speaking at the Irish Java Technology Conference on Thursday and Friday",

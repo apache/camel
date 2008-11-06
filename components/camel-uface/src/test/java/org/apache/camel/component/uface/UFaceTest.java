@@ -34,7 +34,7 @@ public class UFaceTest extends ContextTestSupport {
 
         template.sendBody("uface:a", "<hello>world!</hello>");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

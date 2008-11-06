@@ -35,7 +35,7 @@ public class GroovyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", expected, "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         log.debug("Should have received one exchange: " + resultEndpoint.getReceivedExchanges());
     }
@@ -46,7 +46,7 @@ public class GroovyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", expected, "foo", "123");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         log.debug("Should not have received any messages: " + resultEndpoint.getReceivedExchanges());
     }

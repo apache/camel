@@ -39,7 +39,7 @@ public class MinaUdpTest extends ContextTestSupport {
         Thread.sleep(1000);
         sendUdpMessages();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendUdpMessages() throws Exception {

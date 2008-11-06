@@ -42,7 +42,7 @@ public class FlatpackDelimitedDataFormatTest extends ContextTestSupport {
         String data = IOConverter.toString(new File("src/test/data/delim/INVENTORY-CommaDelimitedWithQualifier.txt").getAbsoluteFile());
 
         template.sendBody("direct:unmarshal", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
 
         DataSetList list = mock.getExchanges().get(0).getIn().getBody(DataSetList.class);
         assertEquals(4, list.size());
@@ -71,7 +71,7 @@ public class FlatpackDelimitedDataFormatTest extends ContextTestSupport {
         data.add(row2);
 
         template.sendBody("direct:marshal", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testMarshalNoDefinition() throws Exception {
@@ -95,7 +95,7 @@ public class FlatpackDelimitedDataFormatTest extends ContextTestSupport {
         data.add(row2);
 
         template.sendBody("direct:marshal2", data);
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     @Override

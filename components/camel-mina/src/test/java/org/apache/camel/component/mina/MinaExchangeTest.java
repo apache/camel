@@ -38,7 +38,7 @@ public class MinaExchangeTest extends ContextTestSupport {
 
         template.sendBody(uri, body);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

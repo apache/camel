@@ -29,7 +29,7 @@ public class JXPathFilterTest extends ContextTestSupport {
 
         sendBody("direct:start", new PersonBean("James", "London"));
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -37,7 +37,7 @@ public class JXPathFilterTest extends ContextTestSupport {
 
         sendBody("direct:start", new PersonBean("Hiram", "Tampa"));
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
     
     public void testSendNullMessage() throws Exception {
@@ -45,7 +45,7 @@ public class JXPathFilterTest extends ContextTestSupport {
 
         sendBody("direct:start", new PersonBean(null, "Tampa"));
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {

@@ -160,7 +160,4 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         });
         return exchange;
     }
-
-
-
 }

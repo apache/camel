@@ -58,7 +58,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
 
         producer.stop();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testLoggerOptionFalse() throws Exception {
@@ -88,7 +88,7 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
 
         producer.stop();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testNoLoggerOption() throws Exception {
@@ -118,8 +118,6 @@ public class MinaLoggerOptionTest extends ContextTestSupport {
 
         producer.stop();
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
-
-
 }

@@ -26,87 +26,75 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class IBatisQueueTest extends ContextTestSupport {
 
-	   public void testConsume() throws Exception {
+   public void testConsume() throws Exception {
 
-	        MockEndpoint endpoint = getMockEndpoint("mock:results");
-	        endpoint.expectedMinimumMessageCount(2);
+        MockEndpoint endpoint = getMockEndpoint("mock:results");
+        endpoint.expectedMinimumMessageCount(2);
+        
+        Account account = new Account();
+        account.setId(1);
+        account.setFirstName("Bob");
+        account.setLastName("Denver");
+        account.setEmailAddress("TryGuessingGilligan@gmail.com");
 
-	        
-	        Account account = new Account();
-	        account.setId(1);
-	        account.setFirstName("Bob");
-	        account.setLastName("Denver");
-	        account.setEmailAddress("TryGuessingGilligan@gmail.com");
+        template.sendBody("direct:start", account);
+        
+        account = new Account();
+        account.setId(2);
+        account.setFirstName("Alan");
+        account.setLastName("Hale");
+        account.setEmailAddress("TryGuessingSkipper@gmail.com");
 
-	        template.sendBody("direct:start", account);
-	        
-	        account = new Account();
-	        account.setId(2);
-	        account.setFirstName("Alan");
-	        account.setLastName("Hale");
-	        account.setEmailAddress("TryGuessingSkipper@gmail.com");
+        template.sendBody("direct:start", account);
+        
+        assertMockEndpointsSatisfied();
+        
+        // now lets poll that the account has been inserted
+        Object answer = template.sendBody("ibatis:selectProcessedAccounts", null);
+        List body = assertIsInstanceOf(List.class, answer);
 
-	        template.sendBody("direct:start", account);
-	        
-	        assertMockEndpointsSatisifed();
-	        
-	        // now lets poll that the account has been inserted
-	        Object answer = template.sendBody("ibatis:selectProcessedAccounts", null);
-	        List body = assertIsInstanceOf(List.class, answer);
+        assertEquals("Wrong size: " + body, 2, body.size());
+        Account actual = assertIsInstanceOf(Account.class, body.get(0));
 
-	        assertEquals("Wrong size: " + body, 2, body.size());
-	        Account actual = assertIsInstanceOf(Account.class, body.get(0));
+        assertEquals("Account.getFirstName()", "Bob", actual.getFirstName());
+        assertEquals("Account.getLastName()", "Denver", actual.getLastName());
 
-	        assertEquals("Account.getFirstName()", "Bob", actual.getFirstName());
-	        assertEquals("Account.getLastName()", "Denver", actual.getLastName());
+        answer = template.sendBody("ibatis:selectUnprocessedAccounts", null);
+        
+        body = assertIsInstanceOf(List.class, answer);
+        assertEquals("Wrong size: " + body, 0, body.size());
+    }
+    
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                from("ibatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
 
-	        answer = template.sendBody("ibatis:selectUnprocessedAccounts", null);
-	        
-	        
-	        
-	        body = assertIsInstanceOf(List.class, answer);
-	        assertEquals("Wrong size: " + body, 0, body.size());
-	        
-		   
-	    }
-	    
-	   
+                from("direct:start").to("ibatis:insertAccount");
+            }
+        };
+    }
 
-	    @Override
-	    protected RouteBuilder createRouteBuilder() throws Exception {
-	        return new RouteBuilder() {
-	            public void configure() throws Exception {
-	                from("ibatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
+   @Override
+    protected void setUp() throws Exception {
+        super.setUp();
 
-	                from("direct:start").to("ibatis:insertAccount");
-	                
-	                
-	            }
-	        };
-	    }
-	
-	   @Override
-	    protected void setUp() throws Exception {
-	        super.setUp();
-
-	        // lets create the database...
-	        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
-	        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
-	        Statement statement = connection.createStatement();
-	        statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)");
-	        connection.close();
-	    }
-	    
-	    @Override
-	    protected void tearDown() throws Exception{
-	    	super.tearDown();
-	        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
-	        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
-	        Statement statement = connection.createStatement();
-	        statement.execute("drop table ACCOUNT");
-	        connection.close();
-	    	
-	    	
-	    }
-	
+        // lets create the database...
+        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
+        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("create table ACCOUNT ( ACC_ID INTEGER , ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)");
+        connection.close();
+    }
+    
+    @Override
+    protected void tearDown() throws Exception{
+    super.tearDown();
+        IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
+        Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
+        Statement statement = connection.createStatement();
+        statement.execute("drop table ACCOUNT");
+        connection.close();
+    }
 }

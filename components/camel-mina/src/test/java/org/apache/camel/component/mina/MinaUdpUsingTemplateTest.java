@@ -39,7 +39,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
         // sleeping for while to let the mock endpoint get all the message
         Thread.sleep(2000);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendUdpMessages() throws Exception {
@@ -58,7 +58,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
         // sleeping for while to let the mock endpoint get all the message
         Thread.sleep(2000);
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
         List<Exchange> list = endpoint.getReceivedExchanges();
         byte[] out = list.get(0).getIn().getBody(byte[].class);
 

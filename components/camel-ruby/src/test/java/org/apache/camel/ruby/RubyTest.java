@@ -38,7 +38,7 @@ public class RubyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", expected, "foo", "bar");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
     public void testSendNotMatchingMessage() throws Exception {
@@ -47,7 +47,7 @@ public class RubyTest extends ContextTestSupport {
         
         template.sendBodyAndHeader("direct:a", expected, "foo", "123");
 
-        assertMockEndpointsSatisifed();
+        assertMockEndpointsSatisfied();
     }
 
 
