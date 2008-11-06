@@ -23,6 +23,7 @@ import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
@@ -154,6 +155,13 @@ public class DataFormatClause<T extends ProcessorType> {
      */
     public T xstream() {
         return dataFormat(new XStreamDataFormat());
+    }
+    
+    /**
+     * Uses the JSON data format
+     */
+    public T json() {
+        return dataFormat(new JsonDataFormat());
     }
 
     private T dataFormat(DataFormatType dataFormatType) {

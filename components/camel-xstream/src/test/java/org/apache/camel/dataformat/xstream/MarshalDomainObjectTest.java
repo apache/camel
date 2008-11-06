@@ -71,7 +71,7 @@ public class MarshalDomainObjectTest extends ContextTestSupport {
 
         // we get it back as byte array so type convert it to string
         Object result = (Object)template.sendBody("direct:marshal", order);
-        String body = context.getTypeConverter().convertTo(String.class, result);
+        String body = context.getTypeConverter().convertTo(String.class, result);        
         template.sendBody("direct:reverse", body);
 
         mock.assertIsSatisfied();
