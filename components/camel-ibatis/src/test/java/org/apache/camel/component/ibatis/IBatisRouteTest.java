@@ -91,7 +91,6 @@ public class IBatisRouteTest extends ContextTestSupport {
 
     private Connection createConnection() throws Exception {
         IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
-        return endpoint.getSqlClient().getDataSource().getConnection();
+        return endpoint.getSqlMapClient().getDataSource().getConnection();
     }
-
 }

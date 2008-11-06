@@ -89,7 +89,7 @@ public class IBatisPollingDelayRouteTest extends ContextTestSupport {
 
     private Connection createConnection() throws Exception {
         IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:selectAllAccounts", IBatisEndpoint.class);
-        return endpoint.getSqlClient().getDataSource().getConnection();
+        return endpoint.getSqlMapClient().getDataSource().getConnection();
     }
 
 }

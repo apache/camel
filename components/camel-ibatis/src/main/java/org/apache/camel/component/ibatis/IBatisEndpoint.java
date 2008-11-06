@@ -19,13 +19,21 @@ package org.apache.camel.component.ibatis;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.ibatis.strategy.DefaultIBatisProcessingStategy;
+import org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An <a href="http://activemq.apache.org/camel/ibatis.html>iBatis Endpoint</a>
@@ -33,24 +41,43 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
  *
  * @version $Revision$
  */
-public class IBatisEndpoint extends DefaultPollingEndpoint {
-    private final String entityName;
+public class IBatisEndpoint extends DefaultPollingEndpoint<Exchange> {
+    private static final transient Log logger = LogFactory.getLog(IBatisEndpoint.class);
 
-    public IBatisEndpoint(String endpointUri, IBatisComponent component, String entityName) {
-        super(endpointUri, component);
-        this.entityName = entityName;
-    }
+    private IBatisProcessingStrategy strategy;
+    /**
+     * Indicates if transactions are necessary.  Defaulted in IBatisComponent.
+     */
+    private boolean useTransactions;
+    /**
+     * Statement to run when polling or processing
+     */
+    private String statement;
+    /**
+     * Name of a strategy to use for dealing w/
+     * polling a database and consuming the message.  Can be a bean name
+     * or a class name.
+     */
+    private String consumeStrategyName;
+    /**
+     * URI parameters
+     */
+    private Map params;
 
-    public IBatisEndpoint(String endpointUri, String entityName) {
-        super(endpointUri);
-        this.entityName = entityName;
+    public IBatisEndpoint(String uri, IBatisComponent component, 
+            String statement, Map params) throws Exception {
+
+        super(uri, component);
+        this.params = params;
+        setUseTransactions(component.isUseTransactions());
+        setStatement(statement);
     }
 
     @Override
     public IBatisComponent getComponent() {
         return (IBatisComponent) super.getComponent();
     }
-
+    
     public boolean isSingleton() {
         return true;
     }
@@ -60,26 +87,106 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    public PollingConsumer createPollingConsumer() throws Exception {
+    public IBatisPollingConsumer createConsumer(Processor processor) throws Exception {
+        IBatisPollingConsumer consumer = new IBatisPollingConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+    }
+/*
+    @Override
+    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
         return new IBatisPollingConsumer(this);
     }
-
+*/
     /**
-     * Returns the iBatis SQL client
+     * @return SqlMapClient
+     * @throws IOException if the component is configured with a SqlMapConfig
+     * and there is a problem reading the file
      */
-    public SqlMapClient getSqlClient() throws IOException {
+    public SqlMapClient getSqlMapClient() throws IOException {
         return getComponent().getSqlMapClient();
     }
 
-    public String getEntityName() {
-        return entityName;
+    /**
+     * Gets the IbatisProcessingStrategy to to use when consuming messages+        * from the database
+     * @return IbatisProcessingStrategy
+     * @throws Exception
+     */
+    public IBatisProcessingStrategy getProcessingStrategy() throws Exception {
+        if (strategy == null) {
+            String strategyName = (String) params.get("consumeStrategy");
+            strategy = getStrategy(strategyName, new DefaultIBatisProcessingStategy());
+        }
+        return strategy;
     }
 
-    public void query(Message message) throws IOException, SQLException {
-        String name = getEntityName();
-        List list = getSqlClient().queryForList(name);
-        message.setBody(list);
-        message.setHeader("org.apache.camel.ibatis.queryName", name);
+    /**
+     * Statement to run when polling or processing
+     * @return name of the statement
+    */
+    public String getStatement() {
+        return statement;
+    }
+    
+    /**
+     * Statement to run when polling or processing
+     * @param statement
+     */
+    public void setStatement(String statement) {
+        this.statement = statement;
+    }
 
+    /**
+     * Resolves a strategy in the camelContext or by class name
+     * @param name
+     * @param defaultStrategy
+     * @return IbatisProcessingStrategy
+     * @throws Exception
+     */
+    private IBatisProcessingStrategy getStrategy(String name, IBatisProcessingStrategy defaultStrategy) throws Exception {
+
+        if (name == null) {
+            return defaultStrategy;
+        }
+
+        IBatisProcessingStrategy strategy = getComponent().getCamelContext().getRegistry().lookup(name, IBatisProcessingStrategy.class);
+        if (strategy == null) {
+            try {
+                Class<?> clazz = ObjectHelper.loadClass(name);
+                if (clazz != null) {
+                    strategy = ObjectHelper.newInstance(clazz, IBatisProcessingStrategy.class);
+                }
+            } catch(Exception e) {
+                logger.error("Failed to resolve/create processing strategy (" + name + ")", e);
+                throw e;
+            }
+        }
+        
+        return strategy != null ? strategy : defaultStrategy;
+    }
+
+    /**
+     * Indicates if transactions should be used when calling statements.  Useful if using a comma separated list when
+     * consuming records.
+     * @return boolean
+     */
+    public boolean isUseTransactions() {
+        return useTransactions;
+    }
+
+    /**
+     * Sets indicator to use transactions for consuming and error handling statements.
+     * @param useTransactions
+     */
+    public void setUseTransactions(boolean useTransactions) {
+        this.useTransactions = useTransactions;
+    }
+
+    public String getConsumeStrategyName() {
+        return consumeStrategyName;
+    }
+    
+    public void setConsumeStrategyName(String consumeStrategyName) {
+        this.consumeStrategyName = consumeStrategyName;
     }
 }

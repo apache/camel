@@ -17,19 +17,25 @@
 package org.apache.camel.component.ibatis;
 
 import java.util.Iterator;
+import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+
+import com.ibatis.sqlmap.client.SqlMapClient;
 
 /**
  * @version $Revision$
  */
-public class IBatisProducer extends DefaultProducer {
-    private final IBatisEndpoint endpoint;
+public class IBatisProducer extends DefaultProducer<Exchange> {
+    private String statement;
+    private IBatisEndpoint endpoint;
 
     public IBatisProducer(IBatisEndpoint endpoint) {
         super(endpoint);
+        statement = endpoint.getStatement();
         this.endpoint = endpoint;
     }
 
@@ -38,26 +44,24 @@ public class IBatisProducer extends DefaultProducer {
         return (IBatisEndpoint) super.getEndpoint();
     }
 
+    /**
+     * Calls insert on the SqlMapClient.
+     */
     public void process(Exchange exchange) throws Exception {
+        SqlMapClient client = endpoint.getSqlMapClient();
         Object body = exchange.getIn().getBody();
         if (body == null) {
             // must be a poll so lets do a query
-            endpoint.query(exchange.getOut(true));
+            Message msg = exchange.getOut(true);
+            List list = client.queryForList(statement);
+            msg.setBody(list);
+            msg.setHeader("org.apache.camel.ibatis.queryName", statement);
         } else {
-            String operation = getOperationName(exchange);
-
             // lets handle arrays or collections of objects
             Iterator iter = ObjectHelper.createIterator(body);
             while (iter.hasNext()) {
-                endpoint.getSqlClient().insert(operation, iter.next());
+                client.insert(statement, iter.next());
             }
         }
-    }
-
-    /**
-     * Returns the iBatis insert operation name
-     */
-    protected String getOperationName(Exchange exchange) {
-        return endpoint.getEntityName();
     }
 }

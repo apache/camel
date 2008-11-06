@@ -80,4 +80,16 @@
     delete from ACCOUNT where ACC_ID = #id#
   </delete>
 
+  <select id="selectUnprocessedAccounts" resultMap="AccountResult">
+       select * from ACCOUNT where PROCESSED = false
+  </select>
+ 
+  <select id="selectProcessedAccounts" resultMap="AccountResult">
+       select * from ACCOUNT where PROCESSED = true
+  </select>
+ 
+  <update id="consumeAccount" parameterClass="Account">
+       update ACCOUNT set PROCESSED = true where ACC_ID = #id#
+  </update>
+
 </sqlMap>
