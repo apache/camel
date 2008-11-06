@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Holder;
 import javax.xml.ws.WebServiceException;
@@ -31,13 +30,12 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
 import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.frontend.ClientProxy;
-import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -86,6 +84,8 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
 
     public void testInvokingServiceFromCXFClient() throws Exception {
 
+        JaxwsTestHandler myHandler = getMandatoryBean(JaxwsTestHandler.class, "myJaxwsHandler");
+        myHandler.reset();
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
@@ -112,7 +112,18 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
             // Caught expected WebServiceException here
             assertTrue("Should get the xml vaildate error!", ex.getMessage().indexOf("MyStringType") > 0);         
         }
+        
+        assertEquals(getExpectedJaxwsHandlerFaultCount(), myHandler.getFaultCount());
+        assertEquals(getExpectedJaxwsHandlerMessageCount(), myHandler.getMessageCount());
 
+    }
+
+    protected int getExpectedJaxwsHandlerMessageCount() {
+        return 11;
+    }
+
+    protected int getExpectedJaxwsHandlerFaultCount() {
+        return 8;
     }
 
     @SuppressWarnings("unchecked")

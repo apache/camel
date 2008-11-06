@@ -34,7 +34,10 @@
                    xmlns:person="http://camel.apache.org/wsdl-first">
       <cxf:properties>            
             <entry key="schema-validation-enabled" value="true" />
-      </cxf:properties>           
+      </cxf:properties>      
+      <cxf:handlers>
+          <ref bean="myJaxwsHandler"/> 
+      </cxf:handlers>     
   </cxf:cxfEndpoint> 
 
 
@@ -57,6 +60,8 @@
       </route>
 
     </camelContext>
+
+    <bean id="myJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
 
 </beans>

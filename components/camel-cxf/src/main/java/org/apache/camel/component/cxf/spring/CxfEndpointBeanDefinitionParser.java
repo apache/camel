@@ -55,7 +55,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)
-            || "features".equals(name) || "schemaLocations".equals(name)) {
+            || "features".equals(name) || "schemaLocations".equals(name)
+            || "handlers".equals(name)) {
             java.util.List list = (java.util.List)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else {

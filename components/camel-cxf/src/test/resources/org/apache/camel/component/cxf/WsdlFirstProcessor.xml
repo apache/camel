@@ -36,6 +36,9 @@
         <cxf:properties>            
             <entry key="schema-validation-enabled" value="true" />
         </cxf:properties>
+        <cxf:handlers>
+          <ref bean="myJaxwsHandler"/> 
+      </cxf:handlers>     
     </cxf:cxfEndpoint> 
 
 	<cxf:cxfEndpoint id="serviceEndpoint"
@@ -63,6 +66,8 @@
 
 
 	</camelContext>
+	
+	<bean id="myJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
 
 </beans>
