@@ -108,14 +108,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     }
 
     /**
-     * @deprecated use delay - will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder initialRedeliveryDelay(long initialRedeliveryDelay) {
-        getDelayPolicy().delay(initialRedeliveryDelay);
-        return this;
-    }
-
-    /**
      * @deprecated will be removed in Camel 2.0
      */
     public TransactionErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {

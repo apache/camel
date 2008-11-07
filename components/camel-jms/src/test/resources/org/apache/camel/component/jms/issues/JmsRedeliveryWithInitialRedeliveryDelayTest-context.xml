@@ -46,7 +46,7 @@
 
     <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="4"/>
-        <property name="initialRedeliveryDelay" value="500"/>
+        <property name="delay" value="500"/>
         <property name="useExponentialBackOff" value="true"/>
         <property name="backOffMultiplier" value="2"/>
     </bean>
