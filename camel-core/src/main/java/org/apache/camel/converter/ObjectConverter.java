@@ -77,7 +77,16 @@ public final class ObjectConverter {
         return Boolean.FALSE;
     }
 
-
+    /**
+     * Creates an iterator over the value
+     */
+    @SuppressWarnings("unchecked")
+    @Converter
+    public static Iterator iterator(Object value) {
+        return ObjectHelper.createIterator(value);
+    }
+    
+    
     /**
      * Returns the converted value, or null if the value is null
      */
