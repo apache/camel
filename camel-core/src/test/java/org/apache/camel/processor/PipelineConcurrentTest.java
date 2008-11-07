@@ -51,7 +51,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody("seda:in", "" + (start + i));
+                        template.sendBody("seda:in?size=10000", "" + (start + i));
                     }
                 }
             });
@@ -67,7 +67,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                 // to force any exceptions coming forward imeddiately
                 errorHandler(noErrorHandler());
 
-                from("seda:in")
+                from("seda:in?size=10000")
                     .thread(10)
                     .pipeline("direct:do", "mock:result");
 
