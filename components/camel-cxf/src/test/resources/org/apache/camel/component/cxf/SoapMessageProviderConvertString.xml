@@ -50,7 +50,7 @@
             <from uri="cxf:bean:soapMessageEndpoint"/>
             <process ref="parameterProcessor" />
             <convertBodyTo type="java.lang.String"/>
-            <to uri="bean:targetBean?methodName=invokeString"/>
+            <to uri="bean:targetBean?method=invokeString"/>
         </route>
    </camelContext>
 

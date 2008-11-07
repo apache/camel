@@ -28,13 +28,13 @@ public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";
 
     public void testSayHello() throws Exception {
-        Object value = template.sendBody("bean:myBean?methodName=sayHello", body);
+        Object value = template.sendBody("bean:myBean?method=sayHello", body);
 
         assertEquals("Returned value", "Hello James!", value);
     }
 
     public void testSayGoodbye() throws Exception {
-        Object value = template.sendBody("bean:myBean?methodName=sayGoodbye", body);
+        Object value = template.sendBody("bean:myBean?method=sayGoodbye", body);
 
         assertEquals("Returned value", "Bye James!", value);
     }

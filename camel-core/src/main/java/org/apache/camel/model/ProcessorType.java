@@ -1082,15 +1082,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Catches an exception type.
-     *
-     * @deprecated Please use {@link #onException(Class)} instead. Will be removed in Camel 2.0.
-     */
-    public ExceptionType exception(Class exceptionType) {
-        return onException(exceptionType);
-    }
-
-    /**
-     * Catches an exception type.
      */
     public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
@@ -1112,37 +1103,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
             interceptor(ref);
         }
         return (Type) this;
-    }
-
-    /**
-     * Trace logs the exchange before it goes to the next processing step using
-     * the {@link #DEFAULT_TRACE_CATEGORY} logging category.
-     *
-     * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
-     * instead. Will be removed in Camel 2.0.
-     */
-    public Type trace() {
-        return trace(DEFAULT_TRACE_CATEGORY);
-    }
-
-    /**
-     * Trace logs the exchange before it goes to the next processing step using
-     * the specified logging category.
-     *
-     * @param category the logging category trace messages will sent to.
-     *
-     * @deprecated Please use <a href="http://activemq.apache.org/camel/tracer.html>Tracer Support</a>
-     * instead. Will be removed in Camel 2.0.
-     */
-    public Type trace(String category) {
-        final Log log = LogFactory.getLog(category);
-        return intercept(new DelegateProcessor() {
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                log.trace(exchange);
-                processNext(exchange);
-            }
-        });
     }
 
     public PolicyRef policies() {
@@ -1303,26 +1263,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the OUT message
-     *
-     * @deprecated Please use {@link #transform(Expression)} instead. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public Type setOutBody(Expression expression) {
-        return transform(expression);
-    }
-
-    /**
-     * Adds a processor which sets the body on the OUT message
-     *
-     * @deprecated Please use {@link #transform()} instead. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public ExpressionClause<ProcessorType<Type>> setOutBody() {
-        return transform();
-    }
-
-    /**
-     * Adds a processor which sets the body on the OUT message
      */
     public Type transform(Expression expression) {
         TransformType answer = new TransformType(expression);
@@ -1362,16 +1302,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public Type setHeader(String name, Expression expression) {
         SetHeaderType answer = new SetHeaderType(name, expression);
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
-     * Adds a processor which sets the header on the IN message to the given value
-     * @deprecated Please use {@link #setHeader(String, Expression)} instead. Will be removed in Camel 2.0.
-     */
-    public Type setHeader(String name, String value) {
-        SetHeaderType answer = new SetHeaderType(name, value);
         addOutput(answer);
         return (Type) this;
     }
@@ -1461,26 +1391,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type convertBodyTo(String typeString) {
         addOutput(new ConvertBodyType(typeString));
         return (Type) this;
-    }
-
-    /**
-     * Converts the OUT message body to the specified type
-     *
-     * @deprecated Please use {@link #convertBodyTo(Class)} instead. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public Type convertOutBodyTo(Class type) {
-        return process(new ConvertBodyProcessor(type));
-    }
-
-    /**
-     * Converts the FAULT message body to the specified type
-     *
-     * @deprecated Please use {@link #convertBodyTo(Class)} instead. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public Type convertFaultBodyTo(Class type) {
-        return process(new ConvertBodyProcessor(type));
     }
 
     // DataFormat support

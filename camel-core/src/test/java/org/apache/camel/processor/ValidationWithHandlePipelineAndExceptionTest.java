@@ -29,7 +29,7 @@ public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                exception(ValidationException.class).to("mock:invalid");
+                onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").tryBlock().process(validator).to("mock:valid").handle(
                         ValidationException.class).process(validator);

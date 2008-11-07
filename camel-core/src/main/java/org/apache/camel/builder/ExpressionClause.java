@@ -27,9 +27,9 @@ import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 
 /**
- * Represents an expression clause within the DSL which when the expression is complete
- * the clause continues to another part of the DSL
- *
+ * Represents an expression clause within the DSL which when the expression is
+ * complete the clause continues to another part of the DSL
+ * 
  * @version $Revision$
  */
 public class ExpressionClause<T> extends ExpressionType {
@@ -46,9 +46,8 @@ public class ExpressionClause<T> extends ExpressionType {
         return clause;
     }
 
-
     // Helper expressions
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
      * Specify an {@link Expression} instance
@@ -157,13 +156,14 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     // Languages
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
 
     /**
-     * Evaluates an expression using the
-     * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
-     * which basically means the bean is invoked to determine the expression value.
-     *
+     * Evaluates an expression using the <a
+     * href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
+     * 
      * @param bean the name of the bean looked up the registry
      * @return the builder to continue processing the DSL
      */
@@ -174,11 +174,12 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an expression using the
-     * <a href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
-     * which basically means the bean is invoked to determine the expression value.
-     *
-     * @param bean   the name of the bean looked up the registry
+     * Evaluates an expression using the <a
+     * href="http://activemq.apache.org/camel/bean-language.html>bean language</a>
+     * which basically means the bean is invoked to determine the expression
+     * value.
+     * 
+     * @param bean the name of the bean looked up the registry
      * @param method the name of the method to invoke on the bean
      * @return the builder to continue processing the DSL
      */
@@ -189,20 +190,10 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/beanshell.html">BeanShell expression</a>
-     *
-     * @param text the expression to be evaluated
-     * @return the builder to continue processing the DSL
-     * @deprecated use language(<tt>"beanshell"</tt>, text). Will be removed in Camel 2.0.
-     */
-    public T beanShell(String text) {
-        return language("beanshell", text);
-    }
-
-    /**
-     * Evaluates the  <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>
-     * using the <a href="http://activemq.apache.org/camel/juel.html">JUEL library</a>
-     *
+     * Evaluates the <a href="http://activemq.apache.org/camel/el.html">EL
+     * Language from JSP and JSF</a> using the <a
+     * href="http://activemq.apache.org/camel/juel.html">JUEL library</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -211,8 +202,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/groovy.html">Groovy expression</a>
-     *
+     * Evaluates a <a href="http://activemq.apache.org/camel/groovy.html">Groovy
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -221,8 +213,10 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/java-script.html">JavaScript expression</a>
-     *
+     * Evaluates a <a
+     * href="http://activemq.apache.org/camel/java-script.html">JavaScript
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -232,7 +226,7 @@ public class ExpressionClause<T> extends ExpressionType {
 
     /**
      * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
-     *
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -241,8 +235,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/ognl.html">OGNL expression</a>
-     *
+     * Evaluates an <a href="http://activemq.apache.org/camel/ognl.html">OGNL
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -251,8 +246,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/php.html">PHP expression</a>
-     *
+     * Evaluates a <a href="http://activemq.apache.org/camel/php.html">PHP
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -261,8 +257,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/python.html">Python expression</a>
-     *
+     * Evaluates a <a href="http://activemq.apache.org/camel/python.html">Python
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -271,8 +268,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/ruby.html">Ruby expression</a>
-     *
+     * Evaluates a <a href="http://activemq.apache.org/camel/ruby.html">Ruby
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -281,8 +279,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/sql.html">SQL expression</a>
-     *
+     * Evaluates an <a href="http://activemq.apache.org/camel/sql.html">SQL
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -291,8 +290,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates a <a href="http://activemq.apache.org/camel/simple.html">Simple expression</a>
-     *
+     * Evaluates a <a href="http://activemq.apache.org/camel/simple.html">Simple
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -301,8 +301,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     *
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -311,10 +312,10 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     * with the specified result type
-     *
-     * @param text       the expression to be evaluated
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a> with the specified result type
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expressiopn
      * @return the builder to continue processing the DSL
      */
@@ -326,10 +327,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     * with the specified result type and set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a> with the specified result type and set of namespace
+     * prefixes and URIs
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
@@ -339,10 +341,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     * with the specified result type and set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a> with the specified result type and set of namespace
+     * prefixes and URIs
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
@@ -356,10 +359,10 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a> with the specified set of namespace prefixes and URIs
+     * 
+     * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
@@ -368,10 +371,10 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath expression</a>
-     * with the specified set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * Evaluates an <a href="http://activemq.apache.org/camel/xpath.html">XPath
+     * expression</a> with the specified set of namespace prefixes and URIs
+     * 
+     * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
@@ -383,8 +386,9 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
-     *
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * 
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
@@ -393,10 +397,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      * with the specified result type
-     *
-     * @param text       the expression to be evaluated
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expressiopn
      * @return the builder to continue processing the DSL
      */
@@ -408,10 +413,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      * with the specified result type and set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
@@ -421,10 +427,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      * with the specified result type and set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * 
+     * @param text the expression to be evaluated
      * @param resultType the return type expected by the expression
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
@@ -438,10 +445,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      * with the specified set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * 
+     * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
@@ -450,10 +458,11 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
-     * Evaluates an <a href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
+     * Evaluates an <a
+     * href="http://activemq.apache.org/camel/xquery.html">XQuery expression</a>
      * with the specified set of namespace prefixes and URIs
-     *
-     * @param text       the expression to be evaluated
+     * 
+     * @param text the expression to be evaluated
      * @param namespaces the namespace prefix and URIs to use
      * @return the builder to continue processing the DSL
      */
@@ -466,8 +475,8 @@ public class ExpressionClause<T> extends ExpressionType {
 
     /**
      * Evaluates a given language name with the expression text
-     *
-     * @param language   the name of the language
+     * 
+     * @param language the name of the language
      * @param expression the expression in the given language
      * @return the builder to continue processing the DSL
      */
@@ -478,7 +487,7 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     // Properties
-    //-------------------------------------------------------------------------
+    // -------------------------------------------------------------------------
     public String getLanguage() {
         return language;
     }

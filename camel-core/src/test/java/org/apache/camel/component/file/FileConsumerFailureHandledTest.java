@@ -102,7 +102,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2));
 
                 // special failure handler for ValidationException
-                exception(ValidationException.class).to("mock:invalid");
+                onException(ValidationException.class).to("mock:invalid");
 
                 // our route logic to process files from the input folder
                 from("file:target/messages/input/?delete=true").

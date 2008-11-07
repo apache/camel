@@ -182,17 +182,6 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         this.method = method;
     }
 
-    /**
-     * Kept around for backwards compatibility, please use {@link #setMethod(String)}
-     * in future instead.
-     *
-     * @deprecated use {@link #setMethod(String)}. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public void setMethodName(String method) {
-        setMethod(method);
-    }
-
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void doStart() throws Exception {

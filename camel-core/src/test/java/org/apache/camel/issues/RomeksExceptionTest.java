@@ -75,7 +75,7 @@ public class RomeksExceptionTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                exception(IllegalArgumentException.class).to("mock:exception");
+                onException(IllegalArgumentException.class).to("mock:exception");
 
                 from("direct:start").
                         recipientList().simple("direct:${header.route}").

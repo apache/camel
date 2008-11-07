@@ -78,9 +78,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(required = false)
-    @Deprecated
-    private Boolean useJmx = Boolean.TRUE;
-    @XmlAttribute(required = false)
     private Boolean autowireRouteBuilders = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Boolean trace;
@@ -228,7 +225,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
-        if (!isJmxEnabled() || (camelJMXAgent != null && camelJMXAgent.isDisabled())) {
+        if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
             LOG.debug("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
@@ -384,31 +381,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public BeanPostProcessor getBeanPostProcessor() {
         return beanPostProcessor;
-    }
-
-    /**
-     * This method merely retrieves the value of the "useJmx" attribute and does
-     * not consider the "disabled" flag in jmxAgent element.  The useJmx
-     * attribute will be removed in 2.0.  Please the jmxAgent element instead.
-     *
-     * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
-     */
-    public boolean isJmxEnabled() {
-        return useJmx.booleanValue();
-    }
-
-    /**
-     * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
-     */
-    public Boolean getUseJmx() {
-        return useJmx;
-    }
-
-    /**
-     * @deprecated Please the jmxAgent element instead. Will be removed in Camel 2.0.
-     */
-    public void setUseJmx(Boolean useJmx) {
-        this.useJmx = useJmx;
     }
 
     public void setCamelJMXAgent(CamelJMXAgentType agent) {

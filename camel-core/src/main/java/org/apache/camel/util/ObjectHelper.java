@@ -34,15 +34,13 @@ import java.util.List;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
 /**
  * A number of useful helper methods for working with Objects
- *
+ * 
  * @version $Revision$
  */
 public final class ObjectHelper {
@@ -55,16 +53,6 @@ public final class ObjectHelper {
     }
 
     /**
-     * @deprecated use the equal method instead. Will be removed in Camel 2.0.
-     *
-     * @see #equal(Object, Object)
-     */
-    @Deprecated
-    public static boolean equals(Object a, Object b) {
-        return equal(a, b);
-    }
-
-    /**
      * A helper method for comparing objects for equality while handling nulls
      */
     public static boolean equal(Object a, Object b) {
@@ -73,14 +61,15 @@ public final class ObjectHelper {
         }
 
         if (a instanceof byte[] && b instanceof byte[]) {
-            return equalByteArray((byte[]) a, (byte[]) b);
+            return equalByteArray((byte[])a, (byte[])b);
         }
 
         return a != null && b != null && a.equals(b);
     }
 
     /**
-     * A helper method for comparing byte arrays for equality while handling nulls
+     * A helper method for comparing byte arrays for equality while handling
+     * nulls
      */
     public static boolean equalByteArray(byte[] a, byte[] b) {
         if (a == b) {
@@ -176,7 +165,7 @@ public final class ObjectHelper {
     /**
      * Removes any starting characters on the given text which match the given
      * character
-     *
+     * 
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
@@ -207,7 +196,6 @@ public final class ObjectHelper {
         return answer;
     }
 
-
     /**
      * Returns true if the collection contains the specified value
      */
@@ -217,8 +205,8 @@ public final class ObjectHelper {
             Collection collection = (Collection)collectionOrArray;
             return collection.contains(value);
         } else if (collectionOrArray instanceof String && value instanceof String) {
-            String str = (String) collectionOrArray;
-            String subStr = (String) value;
+            String str = (String)collectionOrArray;
+            String subStr = (String)value;
             return str.contains(subStr);
         } else {
             Iterator iter = createIterator(collectionOrArray);
@@ -241,17 +229,17 @@ public final class ObjectHelper {
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
         } else if (value instanceof Iterator) {
-            return (Iterator) value;
+            return (Iterator)value;
         } else if (value instanceof Collection) {
             Collection collection = (Collection)value;
             return collection.iterator();
         } else if (value.getClass().isArray()) {
             // TODO we should handle primitive array types?
-            List<Object> list = Arrays.asList((Object[]) value);
+            List<Object> list = Arrays.asList((Object[])value);
             return list.iterator();
         } else if (value instanceof NodeList) {
             // lets iterate through DOM results after performing XPaths
-            final NodeList nodeList = (NodeList) value;
+            final NodeList nodeList = (NodeList)value;
             return new Iterator<Node>() {
                 int idx = -1;
 
@@ -276,9 +264,9 @@ public final class ObjectHelper {
      * Returns the predicate matching boolean on a {@link List} result set where
      * if the first element is a boolean its value is used otherwise this method
      * returns true if the collection is not empty
-     *
-     * @return <tt>true</tt> if the first element is a boolean and its value is true or
-     *          if the list is non empty
+     * 
+     * @return <tt>true</tt> if the first element is a boolean and its value
+     *         is true or if the list is non empty
      */
     public static boolean matches(List list) {
         if (!list.isEmpty()) {
@@ -305,7 +293,7 @@ public final class ObjectHelper {
     /**
      * A helper method to access a system property, catching any security
      * exceptions
-     *
+     * 
      * @param name the name of the system property required
      * @param defaultValue the default value to use if the property is not
      *                available or a security exception prevents access
@@ -323,23 +311,23 @@ public final class ObjectHelper {
             return defaultValue;
         }
     }
-    
+
     /**
-     * A helper method to access a boolean system property, catching any security
-     * exceptions
-     *
+     * A helper method to access a boolean system property, catching any
+     * security exceptions
+     * 
      * @param name the name of the system property required
      * @param defaultValue the default value to use if the property is not
      *                available or a security exception prevents access
-     * @return the boolean representation of the system property value 
-     *         or the default value if the property is not available or 
-     *         security does not allow its access
+     * @return the boolean representation of the system property value or the
+     *         default value if the property is not available or security does
+     *         not allow its access
      */
     public static boolean getSystemProperty(String name, Boolean defaultValue) {
         String result = getSystemProperty(name, defaultValue.toString());
         return Boolean.parseBoolean(result);
-    }    
-    
+    }
+
     /**
      * Returns the type name of the given type or null if the type variable is
      * null
@@ -369,7 +357,7 @@ public final class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the class loader used to load this class
-     *
+     * 
      * @param name the name of the class to load
      * @return the class or null if it could not be loaded
      */
@@ -380,7 +368,7 @@ public final class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the given class loader
-     *
+     * 
      * @param name the name of the class to load
      * @param loader the class loader to use after the thread context class
      *                loader
@@ -403,9 +391,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Attempts to load the given resource as a stream using the thread context class
-     * loader or the class loader used to load this class
-     *
+     * Attempts to load the given resource as a stream using the thread context
+     * class loader or the class loader used to load this class
+     * 
      * @param name the name of the resource to load
      * @return the stream or null if it could not be loaded
      */
@@ -426,7 +414,7 @@ public final class ObjectHelper {
     /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
-     *
+     * 
      * @param method the method to invoke
      * @param instance the object instance (or null for static methods)
      * @param parameters the parameters to the method
@@ -444,26 +432,27 @@ public final class ObjectHelper {
 
     /**
      * Returns a list of methods which are annotated with the given annotation
-     *
+     * 
      * @param type the type to reflect on
      * @param annotationType the annotation type
      * @return a list of the methods found
      */
     public static List<Method> findMethodsWithAnnotation(Class<?> type,
-            Class<? extends Annotation> annotationType) {
+                                                         Class<? extends Annotation> annotationType) {
         return findMethodsWithAnnotation(type, annotationType, false);
     }
-    
+
     /**
      * Returns a list of methods which are annotated with the given annotation
-     *
+     * 
      * @param type the type to reflect on
      * @param annotationType the annotation type
      * @param checkMetaAnnotations check for meta annotations
      * @return a list of the methods found
      */
     public static List<Method> findMethodsWithAnnotation(Class<?> type,
-            Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
+                                                         Class<? extends Annotation> annotationType,
+                                                         boolean checkMetaAnnotations) {
         List<Method> answer = new ArrayList<Method>();
         do {
             Method[] methods = type.getDeclaredMethods();
@@ -479,14 +468,14 @@ public final class ObjectHelper {
 
     /**
      * Checks if a Class or Method are annotated with the given annotation
-     *
+     * 
      * @param elem the Class or Method to reflect on
      * @param annotationType the annotation type
      * @param checkMetaAnnotations check for meta annotations
      * @return true if annotations is present
      */
-    public static boolean hasAnnotation(AnnotatedElement elem, 
-            Class<? extends Annotation> annotationType, boolean checkMetaAnnotations) {
+    public static boolean hasAnnotation(AnnotatedElement elem, Class<? extends Annotation> annotationType,
+                                        boolean checkMetaAnnotations) {
         if (elem.isAnnotationPresent(annotationType)) {
             return true;
         }
@@ -501,10 +490,10 @@ public final class ObjectHelper {
         }
         return false;
     }
-    
+
     /**
      * Turns the given object arrays into a meaningful string
-     *
+     * 
      * @param objects an array of objects or null
      * @return a meaningful string
      */
@@ -557,11 +546,10 @@ public final class ObjectHelper {
                 rc = Short.class;
             } else if (type == byte.class) {
                 rc = Byte.class;
-            // TODO: Why is boolean disabled
-/*
-            } else if (type == boolean.class) {
-                rc = Boolean.class;
-*/
+                // TODO: Why is boolean disabled
+                /*
+                 * } else if (type == boolean.class) { rc = Boolean.class;
+                 */
             }
         }
         return rc;
@@ -575,7 +563,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns the Java Bean property name of the given method, if it is a setter
+     * Returns the Java Bean property name of the given method, if it is a
+     * setter
      */
     public static String getPropertyName(Method method) {
         String propertyName = method.getName();
@@ -586,7 +575,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Returns true if the given collection of annotations matches the given type
+     * Returns true if the given collection of annotations matches the given
+     * type
      */
     public static boolean hasAnnotation(Annotation[] annotations, Class<?> type) {
         for (Annotation annotation : annotations) {
@@ -598,8 +588,9 @@ public final class ObjectHelper {
     }
 
     /**
-     * Closes the given resource if it is available, logging any closing exceptions to the given log
-     *
+     * Closes the given resource if it is available, logging any closing
+     * exceptions to the given log
+     * 
      * @param closeable the object to close
      * @param name the name of the resource
      * @param log the log to use when reporting closure warnings
@@ -617,7 +608,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * Converts the given value to the required type or throw a meaningful exception
+     * Converts the given value to the required type or throw a meaningful
+     * exception
      */
     public static <T> T cast(Class<T> toType, Object value) {
         if (toType == boolean.class) {
@@ -637,7 +629,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to create a new instance of a type using the default constructor arguments.
+     * A helper method to create a new instance of a type using the default
+     * constructor arguments.
      */
     public static <T> T newInstance(Class<T> type) {
         try {
@@ -650,7 +643,8 @@ public final class ObjectHelper {
     }
 
     /**
-     * A helper method to create a new instance of a type using the default constructor arguments.
+     * A helper method to create a new instance of a type using the default
+     * constructor arguments.
      */
     public static <T> T newInstance(Class<?> actualType, Class<T> expectedType) {
         try {
@@ -711,15 +705,16 @@ public final class ObjectHelper {
     }
 
     /**
-     * Wraps the caused exception in a {@link RuntimeCamelException} if its not already such an exception.
-     *
-     * @param e  the caused exception
-     * @return  the wrapper exception
+     * Wraps the caused exception in a {@link RuntimeCamelException} if its not
+     * already such an exception.
+     * 
+     * @param e the caused exception
+     * @return the wrapper exception
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
         if (e instanceof RuntimeCamelException) {
             // don't double wrap if already a RuntimeCamelException
-            return (RuntimeCamelException) e;
+            return (RuntimeCamelException)e;
         } else {
             return new RuntimeCamelException(e);
         }

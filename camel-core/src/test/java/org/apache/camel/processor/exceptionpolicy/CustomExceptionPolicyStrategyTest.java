@@ -72,12 +72,12 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                 // configure the error handler to use my policy instead of the default from Camel
                 errorHandler(deadLetterChannel().exceptionPolicyStrategy(new MyPolicy()));
 
-                exception(MyPolicyException.class)
+                onException(MyPolicyException.class)
                     .maximumRedeliveries(1)
                     .setHeader(MESSAGE_INFO, constant("Damm my policy exception"))
                     .to(ERROR_QUEUE);
 
-                exception(CamelException.class)
+                onException(CamelException.class)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, constant("Damm a Camel exception"))
                     .to(ERROR_QUEUE);
