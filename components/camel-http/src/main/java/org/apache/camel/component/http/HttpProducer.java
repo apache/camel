@@ -47,6 +47,7 @@ import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer<HttpExchange> implements Producer<HttpExchange> {
+    public static final String HTTP_URI = "http.uri";
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";    
     // This should be a set of lower-case strings
@@ -177,7 +178,11 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
             methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
         }
 
-        String uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
+        String uri = exchange.getIn().getHeader(HTTP_URI, String.class);
+        if (uri == null) {
+            uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
+        }
+        
         HttpMethod method = methodToUse.createMethod(uri);
 
         if (queryString != null) {
