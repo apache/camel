@@ -423,8 +423,9 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter("exchange", exchange);
-        if (exchange.getPattern().isOutCapable()) {
-            dynamicQueryContext.setParameter("out", exchange.getOut());
+        Message out = exchange.getOut(false);
+        if (out != null && exchange.getPattern().isOutCapable()) {
+            dynamicQueryContext.setParameter("out", out);
         }
     }
 
