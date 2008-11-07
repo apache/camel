@@ -20,20 +20,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import javax.jms.ExceptionListener;
 import javax.jms.Message;
-import javax.jms.Session;
 
-import org.apache.camel.component.jms.JmsConfiguration;
-import org.apache.camel.component.jms.JmsProducer;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
 import org.apache.camel.component.jms.requestor.PersistentReplyToRequestor.MessageSelectorComposer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.transaction.PlatformTransactionManager;
 
 public class PersistentReplyToFutureHandler extends FutureHandler {
 

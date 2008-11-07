@@ -49,7 +49,7 @@ import org.springframework.jms.core.MessageCreator;
  */
 public class JmsProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(JmsProducer.class);
-    RequestorAffinity affinity;
+    private RequestorAffinity affinity;
     private final JmsEndpoint endpoint;
     private JmsOperations inOnlyTemplate;
     private JmsOperations inOutTemplate;
@@ -257,7 +257,7 @@ public class JmsProducer extends DefaultProducer {
     /**
      * Preserved for backwards compatibility.
      *
-     * @deprecated
+     * @deprecated will be removed in Camel 2.0
      * @see #getInOnlyTemplate()
      */
     public JmsOperations getTemplate() {

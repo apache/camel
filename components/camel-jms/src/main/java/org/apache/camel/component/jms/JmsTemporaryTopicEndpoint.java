@@ -21,9 +21,6 @@ import javax.jms.JMSException;
 import javax.jms.Session;
 import javax.jms.TemporaryTopic;
 
-import org.springframework.jms.core.JmsOperations;
-import org.springframework.jms.core.SessionCallback;
-
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
  * for working with a {@link TemporaryTopic}
@@ -62,6 +59,5 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
     protected Destination createJmsDestination(Session session) throws JMSException {
         return session.createTemporaryTopic();
     }
-
 
 }

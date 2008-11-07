@@ -27,5 +27,7 @@ import javax.jms.Session;
  * @version $Revision$
  */
 public interface DestinationEndpoint {
+
     Destination getJmsDestination(Session session) throws JMSException;
+
 }

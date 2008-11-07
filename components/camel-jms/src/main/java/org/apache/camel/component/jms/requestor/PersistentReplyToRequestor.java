@@ -143,7 +143,7 @@ public class PersistentReplyToRequestor extends Requestor {
         JmsConfiguration config = getConfiguration();
         String replyToSelectorName = getConfiguration().getReplyToDestinationSelectorName();
 
-        AbstractMessageListenerContainer container =
+        DefaultMessageListenerContainer container =
             config.isUseVersion102()
                     ? (replyToSelectorName != null) ? new DefaultMessageListenerContainer102()
                            : new CamelDefaultMessageListenerContainer102()
@@ -171,10 +171,12 @@ public class PersistentReplyToRequestor extends Requestor {
         container.setMessageListener(this);
         container.setPubSubDomain(false);
         container.setSubscriptionDurable(false);
+
         ExceptionListener exceptionListener = config.getExceptionListener();
         if (exceptionListener != null) {
             container.setExceptionListener(exceptionListener);
         }
+
         container.setSessionTransacted(config.isTransacted());
         if (config.isTransacted()) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
@@ -185,34 +187,33 @@ public class PersistentReplyToRequestor extends Requestor {
                 container.setSessionAcknowledgeModeName(config.getAcknowledgementModeName());
             }
         }
-        if (container instanceof DefaultMessageListenerContainer) {
-            DefaultMessageListenerContainer defContainer = (DefaultMessageListenerContainer)container;
-            defContainer.setConcurrentConsumers(1);
-            defContainer.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
 
-            if (config.getReceiveTimeout() >= 0) {
-                defContainer.setReceiveTimeout(config.getReceiveTimeout());
-            }
-            if (config.getRecoveryInterval() >= 0) {
-                defContainer.setRecoveryInterval(config.getRecoveryInterval());
-            }
-            TaskExecutor taskExecutor = config.getTaskExecutor();
-            if (taskExecutor != null) {
-                defContainer.setTaskExecutor(taskExecutor);
-            }
-            PlatformTransactionManager tm = config.getTransactionManager();
-            if (tm != null) {
-                defContainer.setTransactionManager(tm);
-            } else if (config.isTransacted()) {
-                throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
-            }
-            if (config.getTransactionName() != null) {
-                defContainer.setTransactionName(config.getTransactionName());
-            }
-            if (config.getTransactionTimeout() >= 0) {
-                defContainer.setTransactionTimeout(config.getTransactionTimeout());
-            }
+        container.setConcurrentConsumers(1);
+        container.setCacheLevel(DefaultMessageListenerContainer.CACHE_SESSION);
+
+        if (config.getReceiveTimeout() >= 0) {
+            container.setReceiveTimeout(config.getReceiveTimeout());
         }
+        if (config.getRecoveryInterval() >= 0) {
+            container.setRecoveryInterval(config.getRecoveryInterval());
+        }
+        TaskExecutor taskExecutor = config.getTaskExecutor();
+        if (taskExecutor != null) {
+            container.setTaskExecutor(taskExecutor);
+        }
+        PlatformTransactionManager tm = config.getTransactionManager();
+        if (tm != null) {
+            container.setTransactionManager(tm);
+        } else if (config.isTransacted()) {
+            throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
+        }
+        if (config.getTransactionName() != null) {
+            container.setTransactionName(config.getTransactionName());
+        }
+        if (config.getTransactionTimeout() >= 0) {
+            container.setTransactionTimeout(config.getTransactionTimeout());
+        }
+
         return container;
     }
 

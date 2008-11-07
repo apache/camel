@@ -51,7 +51,6 @@ import org.springframework.util.Assert;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
-
 /**
  * @version $Revision$
  */
@@ -353,8 +352,7 @@ public class JmsConfiguration implements Cloneable {
             template.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
             // This is here for completeness, but the template should not get
-            // used
-            // for receiving messages.
+            // used for receiving messages.
             if (acknowledgementMode >= 0) {
                 template.setSessionAcknowledgeMode(acknowledgementMode);
             } else if (acknowledgementModeName != null) {
@@ -421,8 +419,7 @@ public class JmsConfiguration implements Cloneable {
      * Sets the connection factory to be used for sending messages via the
      * {@link JmsTemplate} via {@link #createInOnlyTemplate(JmsEndpoint,boolean, String)}
      *
-     * @param templateConnectionFactory the connection factory for sending
-     *                messages
+     * @param templateConnectionFactory the connection factory for sending messages
      */
     public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
         this.templateConnectionFactory = templateConnectionFactory;
@@ -701,8 +698,6 @@ public class JmsConfiguration implements Cloneable {
      * Should InOut operations (request reply) default to using transacted mode?
      *
      * By default this is false as you need to commit the outgoing request before you can consume the input
-     *
-     * @return
      */
     public boolean isTransactedInOut() {
         return transactedInOut;
