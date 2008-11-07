@@ -325,14 +325,5 @@ public class URISupport {
         }
         return result;
     }
-
-    /**
-     * @deprecated this method will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public int indexOfParenthesisMatch(String str) {
-        int result = -1;
-        return result;
-    }
-    
+   
 }

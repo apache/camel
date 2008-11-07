@@ -26,10 +26,10 @@ public class ValidationWithInFlowExceptionTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                exception(ValidationException.class).to("mock:invalid");
+                onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").
-                        exception(ValidationException.class).to("mock:invalid").
+                        onException(ValidationException.class).to("mock:invalid").
                         end().
                         process(validator).
                         to("mock:valid");

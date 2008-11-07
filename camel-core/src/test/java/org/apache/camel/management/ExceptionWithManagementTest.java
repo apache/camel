@@ -61,7 +61,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                exception(AssertionFailedError.class).maximumRedeliveries(1).to("mock:error");
+                onException(AssertionFailedError.class).maximumRedeliveries(1).to("mock:error");
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

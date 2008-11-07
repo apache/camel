@@ -49,7 +49,7 @@
        <route>
             <from uri="cxf:bean:soapMessageEndpoint"/>
             <process ref="parameterProcessor" />
-            <to uri="bean:targetBean?methodName=invokeSoapMessage"/>
+            <to uri="bean:targetBean?method=invokeSoapMessage"/>
         </route>
    </camelContext>
 

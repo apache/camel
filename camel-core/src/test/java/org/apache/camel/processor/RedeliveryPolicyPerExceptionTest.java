@@ -87,8 +87,8 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
-                exception(IllegalArgumentException.class).maximumRedeliveries(2).to("mock:a");
-                exception(NullPointerException.class).to("mock:b");
+                onException(IllegalArgumentException.class).maximumRedeliveries(2).to("mock:a");
+                onException(NullPointerException.class).to("mock:b");
 
                 from("direct:start").process(processor);
             }

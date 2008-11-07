@@ -74,7 +74,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                exception(ValidationException.class).to("mock:invalid");
+                onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").beanRef("myBean").to("mock:valid");
             }

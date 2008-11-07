@@ -103,9 +103,9 @@ public class HttpTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jhc:http://localhost:8192/test1").setOutBody(constant("<response> Test1<response/>"));
+                from("jhc:http://localhost:8192/test1").transform(constant("<response> Test1<response/>"));
                 from("direct:start").to("jhc:http://localhost:8192/test1/pom.xml").to("mock:results");
-                from("jhc:http://localhost:8192/test2").setOutBody(constant("<response> Test2<response/>"));
+                from("jhc:http://localhost:8192/test2").transform(constant("<response> Test2<response/>"));
                 
             }
         };

@@ -102,11 +102,11 @@ public class ExceptionTest extends ContextTestSupport {
             public void configure() {
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
-                    exception(IllegalArgumentException.class).setBody(constant("<handled/>")).
+                    onException(IllegalArgumentException.class).setBody(constant("<handled/>")).
                         to("mock:exception");
                 } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
-                    exception(IllegalArgumentException.class).to("mock:exception");
+                    onException(IllegalArgumentException.class).to("mock:exception");
                 }
                 from("direct:start").process(exceptionThrower).to("mock:result");
                 from("direct:start2").to("direct:intermediate").to("mock:result");

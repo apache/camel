@@ -47,11 +47,11 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:myBean?methodName=a")
+                    .to("bean:myBean?method=a")
                     .bean(beanMock, "b")
                     .beanRef("myBean", "c");
                 from("direct:start2")
-                    .to("bean:myBean?methodName=a")
+                    .to("bean:myBean?method=a")
                     .to("bean:myBean")
                     .bean(beanMock, "b")
                     .bean(beanMock)

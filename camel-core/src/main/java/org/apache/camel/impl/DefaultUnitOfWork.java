@@ -69,12 +69,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public void reset() {
-    }
-
     public void done(Exchange exchange) {
         if (synchronizations != null) {
             boolean failed = exchange.isFailed();

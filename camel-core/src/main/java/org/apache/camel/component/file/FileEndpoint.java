@@ -221,28 +221,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return excludedNamePrefixes;
     }
 
-    /**
-     * Sets the excluded file name prefixes, such as <tt>"."</tt> for hidden files which
-     * are excluded by default
-     *
-     * @deprecated use ExcludedNamePrefix. Will be removed in Camel 2.0.
-     */
-    public void setExcludedNamePrefixes(String[] excludedNamePrefixes) {
-        this.excludedNamePrefixes = excludedNamePrefixes;
-    }
-
     public String[] getExcludedNamePostfixes() {
         return excludedNamePostfixes;
-    }
-
-    /**
-     * Sets the excluded file name postfixes, such as {@link FileEndpoint#DEFAULT_LOCK_FILE_POSTFIX}
-     * to ignore lock files by default.
-     *
-     * @deprecated use ExcludedNamePostfix. Will be removed in Camel 2.0.
-     */
-    public void setExcludedNamePostfixes(String[] excludedNamePostfixes) {
-        this.excludedNamePostfixes = excludedNamePostfixes;
     }
 
     public boolean isNoop() {
