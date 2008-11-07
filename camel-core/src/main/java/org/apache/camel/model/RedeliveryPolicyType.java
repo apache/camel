@@ -34,7 +34,7 @@ public class RedeliveryPolicyType {
     @XmlAttribute
     private Integer maximumRedeliveries;
     @XmlAttribute
-    private Long initialRedeliveryDelay;
+    private Long delay;
     @XmlAttribute
     private Double backOffMultiplier;
     @XmlAttribute
@@ -57,8 +57,8 @@ public class RedeliveryPolicyType {
         if (maximumRedeliveries != null) {
             answer.setMaximumRedeliveries(maximumRedeliveries);
         }
-        if (initialRedeliveryDelay != null) {
-            answer.setDelay(initialRedeliveryDelay);
+        if (delay != null) {
+            answer.setDelay(delay);
         }
         if (retriesExhaustedLogLevel != null) {
             answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
@@ -105,8 +105,8 @@ public class RedeliveryPolicyType {
         return this;
     }
 
-    public RedeliveryPolicyType initialRedeliveryDelay(long initialRedeliveryDelay) {
-        setInitialRedeliveryDelay(initialRedeliveryDelay);
+    public RedeliveryPolicyType delay(long delay) {
+        setDelay(delay);
         return this;
     }
 
@@ -159,12 +159,12 @@ public class RedeliveryPolicyType {
         this.collisionAvoidanceFactor = collisionAvoidanceFactor;
     }
 
-    public Long getInitialRedeliveryDelay() {
-        return initialRedeliveryDelay;
+    public Long getDelay() {
+        return delay;
     }
 
-    public void setInitialRedeliveryDelay(Long initialRedeliveryDelay) {
-        this.initialRedeliveryDelay = initialRedeliveryDelay;
+    public void setDelay(Long delay) {
+        this.delay = delay;
     }
 
     public Integer getMaximumRedeliveries() {

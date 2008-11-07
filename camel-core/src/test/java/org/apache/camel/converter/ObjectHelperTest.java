@@ -18,16 +18,18 @@ package org.apache.camel.converter;
 
 import java.util.Iterator;
 
+import org.apache.camel.util.ObjectHelper;
+
 import junit.framework.TestCase;
 
 /**
- * @version $Revision$
+ * @version $Revision: 640438 $
  */
-public class ObjectConverterTest extends TestCase {
+public class ObjectHelperTest extends TestCase {
     public void testArrayAsIterator() throws Exception {
         String[] data = {"a", "b"};
 
-        Iterator iter = ObjectConverter.iterator(data);
+        Iterator iter = ObjectHelper.createIterator(data);
         assertTrue("should have next", iter.hasNext());
         Object a = iter.next();
         assertEquals("a", "a", a);

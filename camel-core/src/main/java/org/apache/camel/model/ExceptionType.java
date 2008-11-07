@@ -155,8 +155,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return this;
     }
 
-    public ExceptionType initialRedeliveryDelay(long initialRedeliveryDelay) {
-        getOrCreateRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
+    public ExceptionType delay(long delay) {
+        getOrCreateRedeliveryPolicy().delay(delay);
         return this;
     }
     
