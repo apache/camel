@@ -27,7 +27,9 @@
     <route>
       <from uri="direct:start"/>
       <aggregator>
-        <simple>header.cheese</simple>
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
         <to uri="mock:result"/>
       </aggregator>
     </route>
@@ -41,7 +43,9 @@
     <route>
       <from uri="direct:temp"/>
       <aggregator>
-        <simple>header.cheese</simple>
+        <correlationExpression>      
+          <simple>header.cheese</simple>
+        </correlationExpression>
         <to uri="mock:result"/>
       </aggregator>
     </route>
@@ -49,7 +53,9 @@
     <route>
       <from uri="direct:predicate"/>
       <aggregator strategyRef="myAggregatorStrategy">
-        <simple>header.cheese</simple>
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
         <to uri="mock:result"/>
         <completedPredicate>
           <method bean="myAggregatorStrategy" method="isCompleted"/>

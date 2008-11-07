@@ -16,12 +16,15 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -31,9 +34,12 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
+import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -46,7 +52,13 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aggregator")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregatorType extends ExpressionNode {
+public class AggregatorType extends ProcessorType<ProcessorType> {
+    @XmlElement(name = "correlationExpression", required = false)
+    private ExpressionSubElementType correlationExpression;
+    @XmlTransient
+    private ExpressionType expression;
+    @XmlElementRef
+    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -67,22 +79,31 @@ public class AggregatorType extends ExpressionNode {
     public AggregatorType() {
     }
 
+    public AggregatorType(Predicate predicate) {
+        if (predicate != null) {
+            setExpression(new ExpressionType(predicate));
+        }
+    }    
+    
     public AggregatorType(Expression correlationExpression) {
-        super(correlationExpression);
+        if (correlationExpression != null) {
+            setExpression(new ExpressionType(correlationExpression));
+        }
     }
 
     public AggregatorType(ExpressionType correlationExpression) {
-        super(correlationExpression);
+        this.expression = correlationExpression;
     }
 
     public AggregatorType(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
-        super(correlationExpression);
+        this(correlationExpression);
         this.aggregationStrategy = aggregationStrategy;
     }
 
     @Override
     public String toString() {
-        return "Aggregator[" + getExpression() + " -> " + getOutputs() + "]";
+        String expressionString = (getExpression() != null) ? getExpression().getLabel() : "";     
+        return "Aggregator[" + expressionString + " -> " + getOutputs() + "]";
     }
 
     @Override
@@ -90,6 +111,7 @@ public class AggregatorType extends ExpressionNode {
         return "aggregator";
     }
 
+    
     @SuppressWarnings("unchecked")
     @Override
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
@@ -118,6 +140,12 @@ public class AggregatorType extends ExpressionNode {
         return aggregator;
     }
 
+    public ExpressionClause<AggregatorType> createAndSetExpression() {
+        ExpressionClause<AggregatorType> clause = new ExpressionClause<AggregatorType>(this);
+        this.setExpression(clause);
+        return clause;
+    }
+    
     protected Aggregator createAggregator(RouteContext routeContext) throws Exception {
         Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
@@ -143,7 +171,12 @@ public class AggregatorType extends ExpressionNode {
             // create the aggregator using a default collection
             AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
-            Expression aggregateExpression = getExpression().createExpression(routeContext);
+            if (getExpression() == null) {
+                throw new RuntimeCamelException("You need to specify an expression or aggregation collection " +
+                                                "for the aggregator.");
+            }
+            
+            Expression aggregateExpression = getExpression().createExpression(routeContext);           
 
             Predicate predicate = null;
             if (getCompletedPredicate() != null) {
@@ -305,4 +338,48 @@ public class AggregatorType extends ExpressionNode {
             throw new IllegalArgumentException("There is already a completedPredicate defined for this aggregator: " + this);
         }
     }
+
+    public void setCorrelationExpression(ExpressionSubElementType correlationExpression) {
+        this.correlationExpression = correlationExpression;
+    }
+
+    public ExpressionSubElementType getCorrelationExpression() {
+        return correlationExpression;
+    }
+
+    // Section - Methods from ExpressionNode
+    // Needed to copy methods from ExpressionNode here so that I could specify the
+    // correlation expression as optional in JAXB
+    
+    public ExpressionType getExpression() {
+        if (expression == null && correlationExpression != null) {
+            expression = correlationExpression.getExpressionType();            
+        }
+        return expression;
+    }
+
+    public void setExpression(ExpressionType expression) {
+        this.expression = expression;
+    }
+
+    public List<ProcessorType<?>> getOutputs() {
+        return outputs;
+    }
+
+    public void setOutputs(List<ProcessorType<?>> outputs) {
+        this.outputs = outputs;
+    }    
+
+    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = routeContext.createProcessor(this);
+        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
+    }
+    
+    @Override
+    protected void configureChild(ProcessorType output) {
+        super.configureChild(output);
+        if (isInheritErrorHandler()) {
+            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
+        }
+    }    
 }

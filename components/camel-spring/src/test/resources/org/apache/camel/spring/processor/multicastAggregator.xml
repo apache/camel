@@ -61,7 +61,9 @@
     <route>
        <from uri="direct:aggregater"/>
        <aggregator strategyRef="bodyInAggregatorStrategy">
-        <simple>header.cheese</simple>
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
         <to uri="mock:result"/>
         <completedPredicate>
           <method bean="bodyInAggregatorStrategy" method="isCompleted"/>

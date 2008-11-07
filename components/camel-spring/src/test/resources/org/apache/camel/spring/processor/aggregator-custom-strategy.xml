@@ -27,7 +27,9 @@
     <route>
       <from uri="direct:start"/>
       <aggregator strategyRef="aggregatorStrategy">
-        <simple>header.cheese</simple>
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
         <to uri="mock:result"/>
       </aggregator>
     </route>
