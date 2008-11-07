@@ -754,7 +754,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         }
         AggregatorType answer = new AggregatorType();
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return answer.createAndSetExpression();
     }
 
     /**
@@ -781,14 +781,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         AggregatorType answer = new AggregatorType();
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
+        return answer.createAndSetExpression();
     }
 
     /**
      * Creates an <a
      * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
      * pattern using a custom aggregation collection implementation. The aggregation collection must
-     * be configued with the strategy and correlation expression that this aggregator should use.
+     * be configured with the strategy and correlation expression that this aggregator should use.
      * This avoids duplicating this configuration on both the collection and the aggregator itself.
      *
      * @param aggregationCollection the collection used to perform the aggregation

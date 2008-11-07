@@ -27,7 +27,6 @@
     <route>
       <from uri="direct:start"/>
       <aggregator batchTimeout="500" collectionRef="aggregatorCollection">
-        <expression/>
         <to uri="mock:result"/>
       </aggregator>
     </route>
