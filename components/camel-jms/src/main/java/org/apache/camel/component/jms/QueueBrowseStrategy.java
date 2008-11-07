@@ -25,5 +25,7 @@ import org.springframework.jms.core.JmsOperations;
  * @version $Revision$
  */
 public interface QueueBrowseStrategy {
+
     List<Exchange> browse(JmsOperations template, String queue, JmsQueueEndpoint endpoint);
+
 }

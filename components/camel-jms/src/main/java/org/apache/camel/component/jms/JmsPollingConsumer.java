@@ -22,7 +22,6 @@ import org.apache.camel.impl.PollingConsumerSupport;
 
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.JmsTemplate102;
 
 /**
  * @version $Revision$
@@ -67,11 +66,8 @@ public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
         if (template instanceof JmsTemplate) {
             JmsTemplate jmsTemplate = (JmsTemplate)template;
             jmsTemplate.setReceiveTimeout(timeout);
-        } else if (template instanceof JmsTemplate102) {
-            JmsTemplate102 jmsTemplate102 = (JmsTemplate102)template;
-            jmsTemplate102.setReceiveTimeout(timeout);
         } else {
-            throw new IllegalArgumentException("Cannot set the receiveTimeout property on unknown JmsOperations type: " + template);
+            throw new IllegalArgumentException("Cannot set the receiveTimeout property on unknown JmsOperations type: " + template.getClass().getName());
         }
     }
 }

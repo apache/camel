@@ -20,8 +20,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.Serializable;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Enumeration;
@@ -158,6 +156,7 @@ public class JmsBinding {
 
     protected byte[] createByteArrayFromBytesMessage(BytesMessage message) throws JMSException {
         if (message.getBodyLength() > Integer.MAX_VALUE) {
+            LOG.warn("Length of BytesMessage is too long: " + message.getBodyLength());
             return null;
         }
         byte[] result = new byte[(int)message.getBodyLength()];
@@ -264,7 +263,7 @@ public class JmsBinding {
      *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
      *   <li>String and any other litterals, Character, CharSequence</li>
      *   <li>Boolean</li>
-     *   <li>BigDecimal and BigInteger</li>
+     *   <li>Number</li>
      *   <li>java.util.Date</li>
      * </ul>
      *
@@ -280,8 +279,6 @@ public class JmsBinding {
         } else if (headerValue instanceof Number) {
             return headerValue;
         } else if (headerValue instanceof Character) {
-            return headerValue.toString();
-        } else if (headerValue instanceof BigDecimal || headerValue instanceof BigInteger) {
             return headerValue.toString();
         } else if (headerValue instanceof CharSequence) {
             return headerValue.toString();

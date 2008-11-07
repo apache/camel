@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import javax.jms.JMSException;
 
 /**
+ * @deprecated will be removed in Camel 2.0.
  * @version $Revision:520964 $
  */
 public class RuntimeJmsException extends RuntimeException {

@@ -146,7 +146,7 @@ public class Requestor extends ServiceSupport implements MessageListener {
                 LOG.debug("Message correlationID: " + correlationID);
             }
             if (correlationID == null) {
-                LOG.warn("Ignoring message with no correlationID! " + message);
+                LOG.warn("Ignoring message with no correlationID: " + message);
                 return;
             }
             // lets notify the monitor for this response

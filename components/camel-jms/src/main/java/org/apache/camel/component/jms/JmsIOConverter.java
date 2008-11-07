@@ -40,7 +40,6 @@ import org.apache.camel.converter.NIOConverter;
  *
  * @version $Revision$
  */
-
 @Converter
 public final class JmsIOConverter {
 
@@ -49,7 +48,6 @@ public final class JmsIOConverter {
 
     @Converter
     public static ByteBuffer toByteBuffer(final Message message, Exchange exchange) throws Exception {
-
         if (message instanceof TextMessage) {
             final String text = ((TextMessage)message).getText();
             return NIOConverter.toByteBuffer(text, exchange);
@@ -98,12 +96,11 @@ public final class JmsIOConverter {
             objectOut.close();
             return NIOConverter.toByteBuffer(bytesOut.toByteArray());
         }
-        return null;
 
+        return null;
     }
 
     private static void writeData(DataOutputStream dataOut, Object data) throws Exception {
-
         if (data instanceof byte[]) {
             dataOut.write((byte[])data);
         } else if (data instanceof String) {
@@ -125,6 +122,6 @@ public final class JmsIOConverter {
         } else if (data instanceof Boolean) {
             dataOut.writeBoolean(((Boolean)data).booleanValue());
         }
-
     }
+
 }

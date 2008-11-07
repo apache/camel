@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 

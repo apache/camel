@@ -451,6 +451,6 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
-        
     }
+
 }

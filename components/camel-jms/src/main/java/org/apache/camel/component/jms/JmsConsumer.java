@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jms;
 
-import javax.jms.MessageListener;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
