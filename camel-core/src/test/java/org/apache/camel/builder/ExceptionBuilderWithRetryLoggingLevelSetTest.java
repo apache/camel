@@ -121,7 +121,7 @@ public class ExceptionBuilderWithRetryLoggingLevelSetTest extends ContextTestSup
                 
                 // START SNIPPET: exceptionBuilder1
                 onException(IOException.class)
-                    .initialRedeliveryDelay(1000L)
+                    .delay(1000L)
                     .maximumRedeliveries(3)
                     .maximumRedeliveryDelay(10000L)
                     .backOffMultiplier(1.0)

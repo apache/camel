@@ -166,7 +166,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .to(ERROR_QUEUE);
 
                 onException(IOException.class)
-                    .initialRedeliveryDelay(5000L)
+                    .delay(5000L)
                     .maximumRedeliveries(3)
                     .maximumRedeliveryDelay(30000L)
                     .backOffMultiplier(1.0)
@@ -175,13 +175,13 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                     .to(ERROR_QUEUE);
 
                 onException(Exception.class)
-                    .initialRedeliveryDelay(1000L)
+                    .delay(1000L)
                     .maximumRedeliveries(2)
                     .setHeader(MESSAGE_INFO, constant("Damm just exception"))
                     .to(ERROR_QUEUE);
 
                 onException(MyBaseBusinessException.class)
-                    .initialRedeliveryDelay(1000L)
+                    .delay(1000L)
                     .maximumRedeliveries(3)
                     .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                     .to(BUSINESS_ERROR_QUEUE);

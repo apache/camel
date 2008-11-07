@@ -81,8 +81,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
-    public DeadLetterChannelBuilder initialRedeliveryDelay(long initialRedeliveryDelay) {
-        getRedeliveryPolicy().initialRedeliveryDelay(initialRedeliveryDelay);
+    public DeadLetterChannelBuilder delay(long delay) {
+        getRedeliveryPolicy().delay(delay);
         return this;
     }
 

@@ -69,7 +69,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     @Override
     public String toString() {
         return "RedeliveryPolicy[maximumRedeliveries=" + maximumRedeliveries
-            + ", initialRedeliveryDelay=" + delay
+            + ", delay=" + delay
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
@@ -161,16 +161,6 @@ public class RedeliveryPolicy extends DelayPolicy {
      */
     public RedeliveryPolicy maximumRedeliveries(int maximumRedeliveries) {
         setMaximumRedeliveries(maximumRedeliveries);
-        return this;
-    }
-
-    /**
-     * Sets the initial redelivery delay in milliseconds on the first redelivery
-     *
-     * @deprecated use delay. Will be removed in Camel 2.0.
-     */
-    public RedeliveryPolicy initialRedeliveryDelay(long initialRedeliveryDelay) {
-        setDelay(initialRedeliveryDelay);
         return this;
     }
 
@@ -272,22 +262,6 @@ public class RedeliveryPolicy extends DelayPolicy {
      */
     public void setCollisionAvoidanceFactor(double collisionAvoidanceFactor) {
         this.collisionAvoidanceFactor = collisionAvoidanceFactor;
-    }
-
-    /**
-     * @deprecated  use delay instead. Will be removed in Camel 2.0.
-     */
-    public long getInitialRedeliveryDelay() {
-        return getDelay();
-    }
-
-    /**
-     * Sets the initial redelivery delay in milliseconds on the first redelivery
-     *
-     * @deprecated use delay instead. Will be removed in Camel 2.0.
-     */
-    public void setInitialRedeliveryDelay(long initialRedeliveryDelay) {
-        setDelay(initialRedeliveryDelay);
     }
 
     public int getMaximumRedeliveries() {

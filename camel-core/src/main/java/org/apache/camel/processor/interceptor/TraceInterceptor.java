@@ -60,13 +60,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         }
     }
 
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter) {
-        this(node, target, formatter, new Tracer());
-    }
-
     public TraceInterceptor(ProcessorType node, Processor target, Tracer tracer) {
         this(node, target, null, tracer);
     }
