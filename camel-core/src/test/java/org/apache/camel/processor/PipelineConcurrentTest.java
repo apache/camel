@@ -51,7 +51,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody("seda:in", "" + (start + i));
+                        template.sendBody("seda:in?size=10000", "" + (start + i));
                     }
                 }
             });
@@ -64,10 +64,10 @@ public class PipelineConcurrentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // to force any exceptions coming forward imeddiately
+                // to force any exceptions coming forward immediately
                 errorHandler(noErrorHandler());
 
-                from("seda:in")
+                from("seda:in?size=10000")
                     .thread(10)
                     .pipeline("direct:do", "mock:result");
 
