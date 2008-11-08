@@ -172,8 +172,8 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
             AggregationStrategy strategy = createAggregationStrategy(routeContext);
 
             if (getExpression() == null) {
-                throw new RuntimeCamelException("You need to specify an expression or aggregation collection " +
-                                                "for the aggregator.");
+                throw new IllegalArgumentException("You need to specify an expression or " + 
+                                                   "aggregation collection for this aggregator: " + this);
             }
             
             Expression aggregateExpression = getExpression().createExpression(routeContext);           
