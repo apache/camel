@@ -42,7 +42,7 @@ public class LogComponent extends DefaultComponent<Exchange> {
 
         Logger logger;
         if (groupSize != null) {
-            logger = new ThroughputLogger(remaining, level, ObjectConverter.toInteger(groupSize));
+            logger = new ThroughputLogger(remaining, level, groupSize);
         } else {
             LogFormatter formatter = new LogFormatter();
             IntrospectionSupport.setProperties(formatter, parameters);

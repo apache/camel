@@ -98,6 +98,8 @@ public class Logger implements Processor {
                 log.warn(logMessage(exchange));
             }
             break;
+        case OFF:
+            break;
         default:
             log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange));
         }
@@ -178,6 +180,8 @@ public class Logger implements Processor {
             if (log.isWarnEnabled()) {
                 log.warn(message);
             }
+            break;
+        case OFF:
             break;
         default:
             log.error("Unknown level: " + level + " when trying to log exchange: " + message);
