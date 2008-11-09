@@ -47,7 +47,7 @@ public interface Endpoint<E extends Exchange> {
     /**
      * Create a new exchange for communicating with this endpoint
      */
-    E createExchange();
+    Exchange createExchange();
 
     /**
      * Create a new exchange for communicating with this endpoint
@@ -56,13 +56,13 @@ public interface Endpoint<E extends Exchange> {
      *
      * @param pattern the message exchange pattern for the exchange
      */
-    E createExchange(ExchangePattern pattern);
+    Exchange createExchange(ExchangePattern pattern);
 
     /**
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
      */
-    E createExchange(Exchange exchange);
+    Exchange createExchange(Exchange exchange);
 
     /**
      * Returns the context which created the endpoint
@@ -129,5 +129,4 @@ public interface Endpoint<E extends Exchange> {
      * Most endpoints is configued to be <b>not</b> lenient.
      */
     boolean isLenientProperties();
-    
 }

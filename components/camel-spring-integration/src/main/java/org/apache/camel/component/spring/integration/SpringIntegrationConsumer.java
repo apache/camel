@@ -88,7 +88,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer<SpringIntegratio
     }
     
     public void handleMessage(org.springframework.integration.core.Message<?> siInMessage) {        
-        SpringIntegrationExchange  exchange = getEndpoint().createExchange();
+        SpringIntegrationExchange  exchange = (SpringIntegrationExchange) getEndpoint().createExchange();
         exchange.setIn(new SpringIntegrationMessage(siInMessage));
         try {
             getProcessor().process(exchange);

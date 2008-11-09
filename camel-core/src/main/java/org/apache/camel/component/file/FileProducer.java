@@ -57,7 +57,7 @@ public class FileProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        FileExchange fileExchange = endpoint.createExchange(exchange);
+        FileExchange fileExchange = (FileExchange) endpoint.createExchange(exchange);
         process(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }

@@ -48,7 +48,7 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
             }
 
-            process(endpoint.createExchange(exchange));
+            process((RemoteFileExchange)endpoint.createExchange(exchange));
         } catch (Exception e) {
             loggedIn = false;
             if (isStopping() || isStopped()) {

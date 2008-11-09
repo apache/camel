@@ -40,5 +40,4 @@ public class FtpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         configureConsumer(consumer);
         return consumer;
     }
-
 }

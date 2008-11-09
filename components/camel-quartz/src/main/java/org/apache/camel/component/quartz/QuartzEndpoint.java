@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -123,7 +124,7 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
     }
 
     @Override
-    public QuartzExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new QuartzExchange(getCamelContext(), pattern, null);
     }
 

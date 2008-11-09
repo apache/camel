@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -105,12 +106,12 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     }
 
     @Override
-    public FileExchange createExchange() {
+    public Exchange createExchange() {
         return createExchange(getFile());
     }
 
     @Override
-    public FileExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new FileExchange(getCamelContext(), pattern, file);
     }
 
