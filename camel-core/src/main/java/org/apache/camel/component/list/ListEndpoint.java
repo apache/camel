@@ -27,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
@@ -39,24 +40,22 @@ import org.apache.camel.spi.BrowsableEndpoint;
  *
  * @version $Revision$
  */
-public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
+public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange>, Service {
     private List<Exchange> exchanges;
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
+    // TODO: firing of property changes not implemented
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     public ListEndpoint(String uri, CamelContext camelContext) {
         super(uri, camelContext);
-        reset();
     }
 
     public ListEndpoint(String uri, Component component) {
         super(uri, component);
-        reset();
     }
 
     public ListEndpoint(String endpointUri) {
         super(endpointUri);
-        reset();
     }
 
     public boolean isSingleton() {
@@ -91,21 +90,31 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         return new LoadBalancerConsumer(this, processor, loadBalancer);
     }
 
-    public void reset() {
-        exchanges = createExchangeList();
-    }
-
     protected List<Exchange> createExchangeList() {
         return new CopyOnWriteArrayList<Exchange>();
     }
 
     /**
      * Invoked on a message exchange being sent by a producer
+     *
+     * @param exchange the exchange
+     * @throws Exception is thrown if failed to process the exchange
      */
     protected void onExchange(Exchange exchange) throws Exception {
         exchanges.add(exchange);
 
         // lets fire any consumers
         loadBalancer.process(exchange);
+    }
+
+    public void start() throws Exception {
+        exchanges = createExchangeList();
+    }
+
+    public void stop() throws Exception {
+        if (exchanges != null) {
+            exchanges.clear();
+            exchanges = null;
+        }
     }
 }
