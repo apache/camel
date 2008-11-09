@@ -29,8 +29,6 @@ public interface DataSet {
 
     /**
      * Populates a message exchange when using the DataSet as a source of messages
-     *
-     * @param exchange
      */
     void populateMessage(Exchange exchange, long messageIndex) throws Exception;
 

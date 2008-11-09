@@ -101,7 +101,7 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            getExceptionHandler().handleException(e);
+            handleException(e);
         }
     }
 }
