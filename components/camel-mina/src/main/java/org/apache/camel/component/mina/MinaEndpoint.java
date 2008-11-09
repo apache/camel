@@ -20,6 +20,7 @@ import java.net.SocketAddress;
 import java.nio.charset.Charset;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -80,7 +81,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
     }
 
     @Override
-    public MinaExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new MinaExchange(getCamelContext(), pattern, null);
     }
 

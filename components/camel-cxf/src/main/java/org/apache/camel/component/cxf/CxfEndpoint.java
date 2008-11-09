@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -78,11 +79,11 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return new CxfConsumer(this, processor);
     }
 
-    public CxfExchange createExchange() {
+    public Exchange createExchange() {
         return new CxfExchange(getCamelContext(), getExchangePattern());
     }
 
-    public CxfExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new CxfExchange(getCamelContext(), pattern);
     }
 

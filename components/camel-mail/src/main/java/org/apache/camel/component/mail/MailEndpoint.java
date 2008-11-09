@@ -19,6 +19,7 @@ package org.apache.camel.component.mail;
 import javax.mail.Message;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -88,7 +89,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
 
 
     @Override
-    public MailExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new MailExchange(getCamelContext(), pattern, getBinding());
     }
 

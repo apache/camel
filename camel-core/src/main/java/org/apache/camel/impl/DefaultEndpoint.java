@@ -134,14 +134,14 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return getCamelContext().getExchangeConverter().convertTo(type, exchange);
     }
 
-    public E createExchange(Exchange exchange) {
+    public Exchange createExchange(Exchange exchange) {
         Class<E> exchangeType = getExchangeType();
         if (exchangeType != null) {
             if (exchangeType.isInstance(exchange)) {
                 return exchangeType.cast(exchange);
             }
         }
-        E answer = createExchange();
+        E answer = (E) createExchange();
         answer.copyFrom(exchange);
         return answer;
     }
@@ -164,11 +164,11 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return null;
     }
 
-    public E createExchange() {
+    public Exchange createExchange() {
         return createExchange(getExchangePattern());
     }
 
-    public E createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return (E) new DefaultExchange(getCamelContext(), pattern);
     }
 

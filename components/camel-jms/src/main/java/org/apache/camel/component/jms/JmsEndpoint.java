@@ -20,6 +20,7 @@ import javax.jms.Message;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.PollingConsumer;
@@ -114,7 +115,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     @Override
-    public JmsExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new JmsExchange(getCamelContext(), pattern, getBinding());
     }
 

@@ -54,7 +54,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
     }
 
     public HttpExchange receiveNoWait() {
-        HttpExchange exchange = endpoint.createExchange();
+        HttpExchange exchange = (HttpExchange) endpoint.createExchange();
         HttpMethod method = createMethod();
 
         try {

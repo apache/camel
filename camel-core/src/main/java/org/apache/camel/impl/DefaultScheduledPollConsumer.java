@@ -53,7 +53,7 @@ public class DefaultScheduledPollConsumer<E extends Exchange> extends ScheduledP
             Message out = exchange.getOut(false);
             if (out != null) {
                 // lets create a new exchange
-                E newExchange = getEndpoint().createExchange();
+                E newExchange = (E) getEndpoint().createExchange();
                 newExchange.getIn().copyFrom(out);
                 exchange = newExchange;
             }

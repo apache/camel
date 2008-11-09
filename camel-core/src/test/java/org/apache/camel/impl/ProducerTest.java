@@ -46,8 +46,7 @@ public class ProducerTest extends TestSupport {
                 return null;
             }
 
-
-            public MyExchange createExchange(ExchangePattern pattern) {
+            public Exchange createExchange(ExchangePattern pattern) {
                 return new MyExchange(getCamelContext(), pattern);
             }
 
@@ -58,7 +57,6 @@ public class ProducerTest extends TestSupport {
             public boolean isSingleton() {
                 return false;
             }
-
         };
 
         DefaultProducer producer = new DefaultProducer(endpoint) {
@@ -71,15 +69,15 @@ public class ProducerTest extends TestSupport {
         Exchange exchange = new DefaultExchange(context);
         producer.process(exchange);
 
-        Class type = endpoint.getExchangeType();
+        Class<?> type = endpoint.getExchangeType();
         assertEquals("exchange type", MyExchange.class, type);
 
-        MyExchange actual = endpoint.createExchange(exchange);
+        MyExchange actual = (MyExchange) endpoint.createExchange(exchange);
         assertNotNull(actual);
         assertTrue("Not same exchange", actual != exchange);
 
         MyExchange expected = new MyExchange(context, pattern);
-        actual = endpoint.createExchange(expected);
+        actual = (MyExchange) endpoint.createExchange(expected);
 
         assertSame("Should not copy an exchange when of the correct type", expected, actual);
 

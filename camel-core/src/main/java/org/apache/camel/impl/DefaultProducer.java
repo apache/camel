@@ -43,15 +43,15 @@ public abstract class DefaultProducer<E extends Exchange> extends ServiceSupport
     }
 
     public E createExchange() {
-        return endpoint.createExchange();
+        return (E) endpoint.createExchange();
     }
 
     public E createExchange(ExchangePattern pattern) {
-        return endpoint.createExchange(pattern);
+        return (E) endpoint.createExchange(pattern);
     }
 
     public E createExchange(E exchange) {
-        return endpoint.createExchange(exchange);
+        return (E) endpoint.createExchange(exchange);
     }
 
     protected void doStart() throws Exception {

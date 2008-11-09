@@ -18,6 +18,7 @@ package org.apache.camel.component.spring.integration;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -63,11 +64,11 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint<SpringInteg
         return new SpringIntegrationConsumer(this, processor);
     }
 
-    public SpringIntegrationExchange createExchange() {
+    public Exchange createExchange() {
         return createExchange(getExchangePattern());
     }
 
-    public SpringIntegrationExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new SpringIntegrationExchange(getCamelContext(), pattern);
     }
 

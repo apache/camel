@@ -22,6 +22,7 @@ import java.net.URISyntaxException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
@@ -69,7 +70,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         return new HttpPollingConsumer(this);
     }
 
-    public HttpExchange createExchange(ExchangePattern pattern) {
+    public Exchange createExchange(ExchangePattern pattern) {
         return new HttpExchange(this, pattern);
     }
 

@@ -86,7 +86,7 @@ public class RmiConsumer extends DefaultConsumer<BeanExchange> implements Invoca
             throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
         }
         BeanInvocation invocation = new BeanInvocation(method, args);
-        BeanExchange exchange = getEndpoint().createExchange();
+        BeanExchange exchange = (BeanExchange) getEndpoint().createExchange();
         exchange.setInvocation(invocation);
         getProcessor().process(exchange);
         Throwable fault = exchange.getException();
