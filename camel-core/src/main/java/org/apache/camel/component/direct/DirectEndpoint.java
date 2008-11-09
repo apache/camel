@@ -25,8 +25,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents a direct endpoint that synchronously invokes the consumers of the
@@ -35,7 +33,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
-    private static final transient Log LOG = LogFactory.getLog(DirectEndpoint.class);
     private boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
 
