@@ -80,7 +80,7 @@ public class DataSetConsumer extends DefaultConsumer<Exchange> {
                 }
             }
         } catch (Exception e) {
-            LOG.error(e);
+            handleException(e);
         }
     }
 

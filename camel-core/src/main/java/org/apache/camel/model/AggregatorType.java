@@ -34,9 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
 import org.apache.camel.processor.FilterProcessor;
@@ -368,8 +366,11 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
 
     public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
-    }    
+    }
 
+    /**
+     * @deprecated not used. Will be removed in Camel 2.0.
+     */
     protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
