@@ -34,9 +34,9 @@ public class FileAsyncRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String uri = "file:target/test-async-inbox?delete=true&consumer.delay=10000&consumer.recursive=true";
 
-    CountDownLatch receivedLatch = new CountDownLatch(1);
-    CountDownLatch processingLatch = new CountDownLatch(1);
-    AtomicReference<File> file = new AtomicReference<File>();
+    private CountDownLatch receivedLatch = new CountDownLatch(1);
+    private CountDownLatch processingLatch = new CountDownLatch(1);
+    private AtomicReference<File> file = new AtomicReference<File>();
 
     @Override
     protected void setUp() throws Exception {
@@ -65,15 +65,13 @@ public class FileAsyncRouteTest extends ContextTestSupport {
         // The file consumer support async processing of the exchange,
         // so the file should not get deleted until the exchange
         // finishes being asynchronously processed.
-        Thread.sleep(1000);
-        assertTrue("File should exist", file.exists());
+        assertTrue("File should exist", file.getAbsoluteFile().exists());
 
         // Release the async processing thread so that the exchange completes
-        // and the file
-        // gets deleted.
+        // and the file gets deleted.
         processingLatch.countDown();
-        Thread.sleep(1000);
-        assertFalse("File should not exist", file.exists());
+        Thread.sleep(500);
+        assertFalse("File should not exist", file.getAbsoluteFile().exists());
 
         result.assertIsSatisfied();
     }

@@ -57,6 +57,7 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
     @Override
     protected void doStop() throws Exception {
         task.cancel();
+        task = null;
     }
 
     protected void configureTask(TimerTask task, Timer timer) {
@@ -94,10 +95,13 @@ public class TimerConsumer extends DefaultConsumer<Exchange> {
         // also set now on in header with same key as quaartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Timer " + endpoint.getTimerName() + " is firing");
+        }
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Caught: " + e, e);
+            getExceptionHandler().handleException(e);
         }
     }
 }
