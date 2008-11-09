@@ -41,7 +41,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
 
     public void process(Exchange exchange) throws Exception {
         if (endpoint.getConsumers().isEmpty()) {
-            LOG.warn("No getConsumers() available on " + this + " for " + exchange);
+            LOG.warn("No consumers available on " + this + " to process " + exchange);
         } else {
             for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
                 consumer.getProcessor().process(exchange);
@@ -52,7 +52,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
     public boolean process(Exchange exchange, AsyncCallback callback) {
         int size = endpoint.getConsumers().size();
         if (size == 0) {
-            LOG.warn("No getConsumers() available on " + this + " for " + exchange);
+            LOG.warn("No consumers available on " + this + " to process " + exchange);
         } else if (size == 1) {
             DefaultConsumer<E> consumer = endpoint.getConsumers().get(0);
             AsyncProcessor processor = AsyncProcessorTypeConverter.convert(consumer.getProcessor());
