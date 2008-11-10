@@ -31,7 +31,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  *
  * @version $Revision:520964 $
  */
-public class MailComponent extends DefaultComponent<MailExchange> implements HeaderFilterStrategyAware {
+public class MailComponent extends DefaultComponent implements HeaderFilterStrategyAware {
     private MailConfiguration configuration;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 

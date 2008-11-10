@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class DirectComponent<E extends Exchange> extends DefaultComponent<E> {
+public class DirectComponent<E extends Exchange> extends DefaultComponent {
 
     protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Endpoint<E> endpoint = new DirectEndpoint<E>(uri, this);

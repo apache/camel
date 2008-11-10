@@ -28,7 +28,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version
  */
-public class LdapComponent<E extends Exchange> extends DefaultComponent<E> {
+public class LdapComponent<E extends Exchange> extends DefaultComponent {
 
     public LdapComponent() {
     }

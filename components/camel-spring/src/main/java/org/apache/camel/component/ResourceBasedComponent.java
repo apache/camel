@@ -31,7 +31,7 @@ import org.springframework.core.io.ResourceLoader;
  *
  * @version $Revision$
  */
-public abstract class ResourceBasedComponent extends DefaultComponent<Exchange> {
+public abstract class ResourceBasedComponent extends DefaultComponent {
     protected final transient Log log = LogFactory.getLog(getClass());
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
 

@@ -322,7 +322,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                     if (splitURI[1] != null) {
                         String scheme = splitURI[0];
-                        Component<?> component = getComponent(scheme);
+                        Component component = getComponent(scheme);
 
                         // Ask the component to resolve the endpoint.
                         if (component != null) {

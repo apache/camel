@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * Component providing streams connectivity
  */
-public class StreamComponent extends DefaultComponent<Exchange> {
+public class StreamComponent extends DefaultComponent {
 
     // TODO: remove file and url support in this component. Will be removed in Camel 2.0
     // (Should use other components for such needs.)
@@ -34,5 +34,4 @@ public class StreamComponent extends DefaultComponent<Exchange> {
         throws Exception {
         return new StreamEndpoint(uri, this);
     }
-
 }

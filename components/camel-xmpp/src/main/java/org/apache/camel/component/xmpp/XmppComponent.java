@@ -29,7 +29,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 /**
  * @version $Revision:520964 $
  */
-public class XmppComponent extends DefaultComponent<XmppExchange> implements HeaderFilterStrategyAware {
+public class XmppComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 

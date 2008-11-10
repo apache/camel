@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,7 +30,7 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-public class JhcComponent extends DefaultComponent<JhcExchange> implements HeaderFilterStrategyAware {
+public class JhcComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private static final Log LOG = LogFactory.getLog(JhcComponent.class);
 

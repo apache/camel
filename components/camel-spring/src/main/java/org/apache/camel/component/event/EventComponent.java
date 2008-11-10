@@ -32,7 +32,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 
  * @version $Revision$
  */
-public class EventComponent extends DefaultComponent<Exchange> implements ApplicationContextAware {
+public class EventComponent extends DefaultComponent implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     public EventComponent() {

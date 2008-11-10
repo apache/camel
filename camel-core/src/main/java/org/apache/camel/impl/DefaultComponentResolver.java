@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
@@ -33,12 +32,12 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultComponentResolver<E extends Exchange> implements ComponentResolver<E> {
+public class DefaultComponentResolver implements ComponentResolver {
     protected static final FactoryFinder COMPONENT_FACTORY =
             new FactoryFinder("META-INF/services/org/apache/camel/component/");
     private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
 
-    public Component<E> resolveComponent(String name, CamelContext context) {
+    public Component resolveComponent(String name, CamelContext context) {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
@@ -70,7 +69,7 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
             return null;
         }
         if (Component.class.isAssignableFrom(type)) {
-            return (Component<E>) context.getInjector().newInstance(type);
+            return (Component) context.getInjector().newInstance(type);
         } else {
             throw new IllegalArgumentException("Type is not a Component implementation. Found: "
                     + type.getName());

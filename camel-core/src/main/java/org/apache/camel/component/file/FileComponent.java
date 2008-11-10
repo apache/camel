@@ -29,7 +29,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class FileComponent extends DefaultComponent<FileExchange> {
+public class FileComponent extends DefaultComponent {
 
     /**
      * Header key holding the value: the fixed filename to use for producing files.

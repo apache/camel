@@ -18,7 +18,6 @@ package org.apache.camel.spi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.Exchange;
 
 /**
  * Represents a resolver of components from a URI to be able to auto-load them using some
@@ -26,7 +25,7 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision$
  */
-public interface ComponentResolver<E extends Exchange> {
+public interface ComponentResolver {
     
     /**
      * Attempts to resolve the component for the given URI
@@ -36,5 +35,5 @@ public interface ComponentResolver<E extends Exchange> {
      * @return the component which is added to the context or null if it can not be resolved
      * @throws Exception is thrown if the the component could not be loaded
      */
-    Component<E> resolveComponent(String name, CamelContext context) throws Exception;
+    Component resolveComponent(String name, CamelContext context) throws Exception;
 }

@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public abstract class DefaultComponent<E extends Exchange> extends ServiceSupport implements Component<E> {
+public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final transient Log LOG = LogFactory.getLog(DefaultComponent.class);
 
     private int defaultThreadPoolSize = 5;
@@ -57,7 +57,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
         this.camelContext = context;
     }
 
-    public Endpoint<E> createEndpoint(String uri) throws Exception {
+    public Endpoint createEndpoint(String uri) throws Exception {
         ObjectHelper.notNull(getCamelContext(), "camelContext");
         //encode URI string to the unsafe URI characters
         URI u = new URI(UnsafeUriCharactersEncoder.encode(uri));
@@ -78,7 +78,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating endpoint uri=[" + uri + "], path=[" + path + "], parameters=[" + parameters + "]");
         }
-        Endpoint<E> endpoint = createEndpoint(uri, path, parameters);
+        Endpoint endpoint = createEndpoint(uri, path, parameters);
         if (endpoint == null) {
             return null;
         }
@@ -179,7 +179,7 @@ public abstract class DefaultComponent<E extends Exchange> extends ServiceSuppor
      * @return a newly created endpoint or null if the endpoint cannot be
      *         created based on the inputs
      */
-    protected abstract Endpoint<E> createEndpoint(String uri, String remaining, Map parameters)
+    protected abstract Endpoint createEndpoint(String uri, String remaining, Map parameters)
         throws Exception;
 
     /**

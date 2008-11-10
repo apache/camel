@@ -34,7 +34,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  *
  * @version $Revision$
  */
-public class TestComponent extends DefaultComponent<Exchange> {
+public class TestComponent extends DefaultComponent {
 
     public Endpoint<Exchange> createEndpoint(String uri) throws Exception {
         // lets not use the normal parameter handling so that all parameters are sent to the nested endpoint
@@ -51,5 +51,4 @@ public class TestComponent extends DefaultComponent<Exchange> {
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
         return new TestEndpoint(uri, this, endpoint);
     }
-
 }

@@ -51,8 +51,6 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private ConfigurerImpl configurer;
     private CxfEndpointBean cxfEndpointBean;
 
-
-
     public CxfEndpoint(String uri, String address, CxfComponent component) {
         super(uri, component);
         this.component = component;

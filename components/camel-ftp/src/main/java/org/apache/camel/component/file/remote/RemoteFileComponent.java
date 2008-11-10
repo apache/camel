@@ -24,7 +24,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
-public class RemoteFileComponent extends DefaultComponent<RemoteFileExchange> {
+public class RemoteFileComponent extends DefaultComponent {
     private RemoteFileConfiguration configuration;
 
     public RemoteFileComponent() {

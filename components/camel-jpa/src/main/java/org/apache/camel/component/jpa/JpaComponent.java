@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class JpaComponent extends DefaultComponent<Exchange> {
+public class JpaComponent extends DefaultComponent {
     private EntityManagerFactory entityManagerFactory;
 
     public Component resolveComponent(CamelContext container, String uri) throws Exception {
