@@ -36,7 +36,7 @@ import org.springframework.orm.jpa.JpaCallback;
 /**
  * @version $Revision$
  */
-public class JpaConsumer extends ScheduledPollConsumer<Exchange> {
+public class JpaConsumer extends ScheduledPollConsumer {
     private static final transient Log LOG = LogFactory.getLog(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;

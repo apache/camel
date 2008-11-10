@@ -25,6 +25,7 @@ import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -36,7 +37,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision$
  */
-public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
+public class MailConsumer extends ScheduledPollConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
     private static final transient Log LOG = LogFactory.getLog(MailConsumer.class);
 
@@ -46,7 +47,7 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
     private Store store;
 
     public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSenderImpl sender) {
-        super(endpoint, processor);
+        super((DefaultEndpoint)endpoint, processor);
         this.endpoint = endpoint;
         this.sender = sender;
     }

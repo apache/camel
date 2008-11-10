@@ -20,11 +20,12 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends ScheduledPollConsumer<T> {
+public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends ScheduledPollConsumer {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected RemoteFileEndpoint<T> endpoint;
 
@@ -43,13 +44,13 @@ public abstract class RemoteFileConsumer<T extends RemoteFileExchange> extends S
     private boolean timestamp;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor) {
-        super(endpoint, processor);
+        super((DefaultEndpoint)endpoint, processor);
         this.endpoint = endpoint;
     }
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor,
                               ScheduledExecutorService executor) {
-        super(endpoint, processor, executor);
+        super((DefaultEndpoint)endpoint, processor, executor);
     }
 
     /**
