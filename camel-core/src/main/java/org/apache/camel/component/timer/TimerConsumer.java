@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class TimerConsumer extends DefaultConsumer<Exchange> {
+public class TimerConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private TimerTask task;

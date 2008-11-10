@@ -44,7 +44,7 @@ import org.apache.http.protocol.HttpRequestHandler;
  * Created by IntelliJ IDEA. User: gnodet Date: Sep 7, 2007 Time: 8:15:54 PM To
  * change this template use File | Settings | File Templates.
  */
-public class JhcConsumer extends DefaultConsumer<JhcExchange> {
+public class JhcConsumer extends DefaultConsumer {
 
     private static final Log LOG = LogFactory.getLog(JhcConsumer.class);
     private JhcServerEngine engine;

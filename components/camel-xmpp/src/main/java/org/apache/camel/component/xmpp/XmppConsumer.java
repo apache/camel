@@ -34,7 +34,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  *
  * @version $Revision$
  */
-public class XmppConsumer extends DefaultConsumer<XmppExchange> implements PacketListener, MessageListener {
+public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener {
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private Chat privateChat;

@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultConsumer<E> implements
+public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultConsumer implements
     Runnable {
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 

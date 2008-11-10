@@ -20,15 +20,11 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.springframework.integration.channel.AbstractPollableChannel;
 import org.springframework.integration.channel.BeanFactoryChannelResolver;
 import org.springframework.integration.channel.ChannelResolver;
 import org.springframework.integration.channel.DirectChannel;
-import org.springframework.integration.core.Message;
 import org.springframework.integration.core.MessageChannel;
 import org.springframework.integration.message.MessageHandler;
 
@@ -40,7 +36,7 @@ import org.springframework.integration.message.MessageHandler;
  *
  * @version $Revision$
  */
-public class SpringIntegrationConsumer  extends DefaultConsumer<SpringIntegrationExchange> implements MessageHandler {
+public class SpringIntegrationConsumer  extends DefaultConsumer implements MessageHandler {
     private SpringCamelContext context;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;

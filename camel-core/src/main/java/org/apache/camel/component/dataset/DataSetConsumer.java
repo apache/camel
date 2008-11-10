@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DataSetConsumer extends DefaultConsumer<Exchange> {
+public class DataSetConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(DataSetConsumer.class);
     private DataSetEndpoint endpoint;
     private Processor reporter;

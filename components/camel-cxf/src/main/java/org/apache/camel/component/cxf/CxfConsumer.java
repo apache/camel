@@ -40,7 +40,7 @@ import org.apache.cxf.frontend.ServerFactoryBean;
  *
  * @version $Revision$
  */
-public class CxfConsumer extends DefaultConsumer<CxfExchange> {
+public class CxfConsumer extends DefaultConsumer {
     private CxfEndpoint endpoint;
     private Server server;
 
