@@ -24,7 +24,7 @@ import org.apache.camel.language.simple.FileLanguage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends DefaultProducer<T> {
+public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends DefaultProducer {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected RemoteFileEndpoint<T> endpoint;
 

@@ -25,7 +25,6 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -33,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $
  */
-public class LdapProducer<E extends Exchange> extends DefaultProducer<DefaultExchange> {
+public class LdapProducer<E extends Exchange> extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(LdapProducer.class);
     private DirContext ldapContext;
     private SearchControls controls;

@@ -42,7 +42,7 @@ import org.mortbay.jetty.client.HttpExchange.ContentExchange;
 /**
  * @deprecated use org.apache.camel.component.http.HttpProducer instead. Will be removed in Camel 2.0.
  */
-public class JettyHttpProducer extends DefaultProducer<HttpExchange> implements Producer, AsyncProcessor {
+public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
 
     private final class CamelContentExchange extends ContentExchange {
 

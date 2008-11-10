@@ -38,7 +38,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Producer that can write to streams
  */
-public class StreamProducer extends DefaultProducer<Exchange> {
+public class StreamProducer extends DefaultProducer {
 
     private static final transient Log LOG = LogFactory.getLog(StreamProducer.class);
     private static final String TYPES = "out,err,file,header,url";

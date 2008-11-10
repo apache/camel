@@ -45,7 +45,7 @@ import org.springframework.integration.message.MessageHandler;
  * should be set for receiving the response message.
  * @version $Revision$
  */
-public class SpringIntegrationProducer extends DefaultProducer<SpringIntegrationExchange> implements AsyncProcessor {
+public class SpringIntegrationProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);
     private SpringCamelContext context;
     private DirectChannel inputChannel;

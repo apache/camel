@@ -28,7 +28,6 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -64,7 +63,7 @@ import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 
-public class JhcProducer extends DefaultProducer<JhcExchange> implements AsyncProcessor {
+public class JhcProducer extends DefaultProducer implements AsyncProcessor {
 
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
 

@@ -28,7 +28,6 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.logging.Log;
@@ -37,7 +36,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class JdbcProducer extends DefaultProducer<DefaultExchange> {
+public class JdbcProducer extends DefaultProducer {
 
     private static final transient Log LOG = LogFactory.getLog(JdbcProducer.class);
     private DataSource source;

@@ -24,7 +24,7 @@ import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
 import org.schwering.irc.lib.IRCEventListener;
 
-public class IrcProducer extends DefaultProducer<IrcExchange> {
+public class IrcProducer extends DefaultProducer {
 
     public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES", "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO",
                                                           "WHOIS", "WHOWAS", "USERHOST"};

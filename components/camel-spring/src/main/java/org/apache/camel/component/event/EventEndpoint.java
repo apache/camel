@@ -66,7 +66,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
 
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(getApplicationContext(), "applicationContext");
-        return new DefaultProducer<Exchange>(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
                 ApplicationEvent event = toApplicationEvent(exchange);
                 getApplicationContext().publishEvent(event);

@@ -79,7 +79,7 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     }
 
     public Producer createProducer() throws Exception {
-        return new DefaultProducer<Exchange>(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
                 onExchange(exchange);
             }
