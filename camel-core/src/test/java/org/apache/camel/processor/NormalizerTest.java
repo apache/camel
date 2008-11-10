@@ -29,18 +29,20 @@ import org.apache.camel.util.jndi.JndiContext;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class NormalizerTest extends ContextTestSupport {
-    protected MockEndpoint result;
-    protected MyNormalizer myNormalizer = new MyNormalizer();
-    
+   
     public void testSendToFirstWhen() throws Exception {
         String employeeBody1 = "<employee><name>Jon</name></employee>";
         String employeeBody2 = "<employee><name>Hadrian</name></employee>";
         String employeeBody3 = "<employee><name>Claus</name></employee>";        
         String customerBody = "<customer name=\"James\"/>";
+
+        MockEndpoint result = getMockEndpoint("mock:result");
         
-        // expect only one person named Jon
-        result.expectedMessageCount(1);
-        result.expectedBodiesReceived("<person name=\"Jon\"/>");
+        result.expectedMessageCount(4);
+        result.expectedBodiesReceivedInAnyOrder("<person name=\"Jon\"/>",
+                                                "<person name=\"Hadrian\"/>",
+                                                "<person name=\"Claus\"/>",
+                                                "<person name=\"James\"/>");
 
         template.sendBody("direct:start", employeeBody1);
         template.sendBody("direct:start", employeeBody2);
@@ -49,18 +51,11 @@ public class NormalizerTest extends ContextTestSupport {
         
         assertMockEndpointsSatisfied();
     }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        result = getMockEndpoint("mock:result");
-    }
     
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
-        answer.bind("normalizer", myNormalizer);
+        answer.bind("normalizer", new MyNormalizer());
         return answer;
     }
     
@@ -68,13 +63,10 @@ public class NormalizerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example                
-                // before we can filter, we need to normalize the incoming messages
+                // we need to normalize two types of incoming messages
                 from("direct:start").choice()
-                  .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").to("seda:queue")
-                  .when().xpath("/customer").to("bean:normalizer?method=customerToPerson").to("seda:queue");
-                
-                // filter the normalized messages
-                from("seda:queue").filter().xpath("/person[@name='Jon']").to("mock:result");
+                  .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").to("mock:result")
+                  .when().xpath("/customer").to("bean:normalizer?method=customerToPerson").to("mock:result");               
                 // END SNIPPET: example
             }
         };
