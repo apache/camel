@@ -18,6 +18,7 @@ package org.apache.camel.component.jms;
 
 import javax.jms.Message;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.PollingConsumerSupport;
 
 import org.springframework.jms.core.JmsOperations;
@@ -39,15 +40,15 @@ public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
         return (JmsEndpoint)super.getEndpoint();
     }
 
-    public JmsExchange receiveNoWait() {
+    public Exchange receiveNoWait() {
         return receive(0);
     }
 
-    public JmsExchange receive() {
+    public Exchange receive() {
         return receive(-1);
     }
 
-    public JmsExchange receive(long timeout) {
+    public Exchange receive(long timeout) {
         setReceiveTimeout(timeout);
         Message message = template.receive();
         if (message != null) {

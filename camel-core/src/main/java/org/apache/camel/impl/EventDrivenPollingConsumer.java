@@ -52,11 +52,11 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
         this.queue = queue;
     }
 
-    public E receiveNoWait() {
+    public Exchange receiveNoWait() {
         return receive(0);
     }
 
-    public E receive() {
+    public Exchange receive() {
         while (isRunAllowed()) {
             try {
                 return queue.take();
@@ -68,7 +68,7 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
         return null;
     }
 
-    public E receive(long timeout) {
+    public Exchange receive(long timeout) {
         try {
             return queue.poll(timeout, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {

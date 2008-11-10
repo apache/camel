@@ -33,7 +33,7 @@ public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
      * 
      * @return the message exchange received.
      */
-    E receive();
+    Exchange receive();
 
     /**
      * Attempts to receive a message exchange immediately without waiting and
@@ -42,7 +42,7 @@ public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
      * @return the message exchange if one is immediately available otherwise
      *         <tt>null</tt>
      */
-    E receiveNoWait();
+    Exchange receiveNoWait();
 
     /**
      * Attempts to receive a message exchange, waiting up to the given timeout
@@ -54,6 +54,6 @@ public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
      * @return the message exchange if one iwas available within the timeout
      *         period, or <tt>null</tt> if the timeout expired
      */
-    E receive(long timeout);
+    Exchange receive(long timeout);
 
 }

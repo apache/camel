@@ -36,7 +36,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody(null);
         try {
             producer.process(exchange);
@@ -53,7 +53,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("This is some data to post");
         try {
             producer.process(exchange);
@@ -70,7 +70,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "POST", null);
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
         exchange.getIn().setHeader(HTTP_METHOD, POST);
         try {
@@ -88,7 +88,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", null);
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
         exchange.getIn().setHeader(HTTP_METHOD, GET);
         try {
@@ -106,7 +106,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Camel");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
         try {
             producer.process(exchange);
@@ -123,7 +123,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
         exchange.getIn().setHeader(HttpProducer.QUERY, "q=Camel");
         try {
@@ -141,7 +141,7 @@ public class HttpProducerSelectMethodTest extends ContextTestSupport {
         HttpEndpoint endpoiont = (HttpEndpoint) component.createEndpoint("http://www.google.com?q=Donkey");
         MyHttpProducer producer = new MyHttpProducer(endpoiont, "GET", "q=Camel");
 
-        HttpExchange exchange = producer.createExchange();
+        HttpExchange exchange = (HttpExchange) producer.createExchange();
         exchange.getIn().setBody("");
         exchange.getIn().setHeader(HttpProducer.QUERY, "q=Camel");
         try {
