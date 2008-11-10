@@ -44,7 +44,7 @@ public class PojoRouteTest extends TestCase {
         // lets add simple route
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("direct:hello").to("pojo:bye");
+                from("direct:hello").to("bean:bye");
             }
         });
         // END SNIPPET: route
