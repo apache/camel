@@ -160,6 +160,9 @@ public class DefaultMessage extends MessageSupport {
     }
 
     public boolean hasAttachments() {
+        if (attachments == null) {
+            attachments = createAttachments();
+        }
         return this.attachments != null && this.attachments.size() > 0;
     }
 
