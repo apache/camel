@@ -23,6 +23,7 @@ import javax.jms.ExceptionListener;
 import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.component.jms.requestor.Requestor;
@@ -36,6 +37,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.jms.support.destination.DestinationResolver;
@@ -401,6 +403,20 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         String selector = getAndRemoveParameter(parameters, "selector", String.class);
         if (selector != null) {
             endpoint.setSelector(selector);
+        }
+        String username = getAndRemoveParameter(parameters, "username", String.class);
+        String password = getAndRemoveParameter(parameters, "password", String.class);
+        if (username != null && password != null) {
+            ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
+            UserCredentialsConnectionFactoryAdapter ucfa = new UserCredentialsConnectionFactoryAdapter();
+            ucfa.setTargetConnectionFactory(cf);
+            ucfa.setPassword(password);
+            ucfa.setUsername(username);
+            endpoint.getConfiguration().setConnectionFactory(ucfa);
+        } else {
+            if (username != null || password != null) {
+                throw new CamelException("The JmsComponent's username or password is null");
+            }
         }
         setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
