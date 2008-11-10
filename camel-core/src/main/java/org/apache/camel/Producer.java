@@ -31,18 +31,18 @@ public interface Producer<E extends Exchange> extends Processor, Service {
      * 
      * @return a newly created exchange
      */
-    E createExchange();
+    Exchange createExchange();
 
     /**
      * Creates a new exchange of the given pattern to send to this endpoint
      *
      * @return a newly created exchange
      */
-    E createExchange(ExchangePattern pattern);
+    Exchange createExchange(ExchangePattern pattern);
 
     /**
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
      */
-    E createExchange(E exchange);
+    Exchange createExchange(Exchange exchange);
 }

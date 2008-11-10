@@ -19,6 +19,7 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
@@ -45,15 +46,15 @@ public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
         httpClient = endpoint.createHttpClient();
     }
 
-    public HttpExchange receive() {
+    public Exchange receive() {
         return receiveNoWait();
     }
 
-    public HttpExchange receive(long timeout) {
+    public Exchange receive(long timeout) {
         return receiveNoWait();
     }
 
-    public HttpExchange receiveNoWait() {
+    public Exchange receiveNoWait() {
         HttpExchange exchange = (HttpExchange) endpoint.createExchange();
         HttpMethod method = createMethod();
 

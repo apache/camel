@@ -84,7 +84,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
     public E send(Endpoint<E> endpoint, Processor processor) {
         try {
             Producer<E> producer = getProducer(endpoint);
-            E exchange = producer.createExchange();
+            E exchange = (E) producer.createExchange();
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
@@ -102,7 +102,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
     public E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback) {
         try {
             Producer<E> producer = getProducer(endpoint);
-            E exchange = producer.createExchange();
+            E exchange = (E) producer.createExchange();
             boolean sync = sendExchange(endpoint, producer, processor, exchange, callback);
             setProcessedSync(exchange, sync);
             return exchange;
@@ -132,7 +132,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
     public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
         try {
             Producer<E> producer = getProducer(endpoint);
-            E exchange = producer.createExchange(pattern);
+            E exchange = (E) producer.createExchange(pattern);
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
