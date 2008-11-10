@@ -50,7 +50,7 @@ public class ProducerTest extends TestSupport {
                 return new MyExchange(getCamelContext(), pattern);
             }
 
-            public Producer<MyExchange> createProducer() throws Exception {
+            public Producer createProducer() throws Exception {
                 return null;
             }
 

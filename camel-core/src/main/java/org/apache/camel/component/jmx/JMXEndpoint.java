@@ -56,7 +56,7 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
         super(endpointUri);
     }
 
-    public Producer<JMXExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer not supported");
     }
 

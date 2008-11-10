@@ -132,7 +132,7 @@ public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
         return new QuartzExchange(getCamelContext(), getExchangePattern(), jobExecutionContext);
     }
 
-    public Producer<QuartzExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("You cannot send messages to this endpoint");
     }
 

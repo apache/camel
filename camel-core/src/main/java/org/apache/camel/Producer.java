@@ -22,9 +22,9 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface Producer<E extends Exchange> extends Processor, Service {
+public interface Producer extends Processor, Service {
 
-    Endpoint<E> getEndpoint();
+    Endpoint getEndpoint();
 
     /**
      * Creates a new exchange to send to this endpoint

@@ -64,7 +64,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         super(endpointUri);
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         validate();
         return new JpaProducer(this, getProducerExpression());
     }

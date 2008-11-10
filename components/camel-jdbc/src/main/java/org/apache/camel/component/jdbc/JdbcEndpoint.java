@@ -56,7 +56,7 @@ public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
         throw new RuntimeCamelException("A JDBC Consumer would be the server side of database! No such support here");
     }
 
-    public Producer<DefaultExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new JdbcProducer(this, remaining, readSize);
     }
 

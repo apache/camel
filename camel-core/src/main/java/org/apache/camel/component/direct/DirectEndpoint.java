@@ -44,7 +44,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         super(endpointUri);
     }
 
-    public Producer<E> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new DirectProducer<E>(this);
     }
 

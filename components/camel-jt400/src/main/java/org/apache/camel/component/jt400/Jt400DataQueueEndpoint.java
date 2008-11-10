@@ -87,7 +87,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint<Exchange> {
         return new Jt400DataQueueConsumer(this);
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new Jt400DataQueueProducer(this);
     }
 

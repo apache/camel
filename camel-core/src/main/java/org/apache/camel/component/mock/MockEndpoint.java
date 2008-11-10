@@ -166,7 +166,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) {
                 onExchange(exchange);

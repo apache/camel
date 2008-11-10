@@ -63,7 +63,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         super(endpointUri);
     }
 
-    public Producer<XmppExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer();
         } else {
@@ -75,11 +75,11 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         }
     }
 
-    public Producer<XmppExchange> createGroupChatProducer() throws Exception {
+    public Producer createGroupChatProducer() throws Exception {
         return new XmppGroupChatProducer(this);
     }
 
-    public Producer<XmppExchange> createPrivateChatProducer(String participant) throws Exception {
+    public Producer createPrivateChatProducer(String participant) throws Exception {
         return new XmppPrivateChatProducer(this, participant);
     }
 

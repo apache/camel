@@ -22,6 +22,7 @@ import javax.xml.transform.Source;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -92,7 +93,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
 
     }
 
-    public org.apache.camel.Endpoint getEndpoint() {
+    public Endpoint getEndpoint() {
         return producer.getEndpoint();
     }
 

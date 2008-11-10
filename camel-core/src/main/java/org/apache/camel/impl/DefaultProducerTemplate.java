@@ -212,7 +212,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     // Properties
     // -----------------------------------------------------------------------
-    public Producer<E> getProducer(Endpoint<E> endpoint) {
+    public Producer getProducer(Endpoint<E> endpoint) {
         return producerCache.getProducer(endpoint);
     }
 

@@ -56,7 +56,7 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint<SpringInteg
         this.messageChannel = messageChannel;
     }
 
-    public Producer<SpringIntegrationExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new SpringIntegrationProducer(this);
     }
 

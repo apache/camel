@@ -78,7 +78,7 @@ public class ListEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {
                 onExchange(exchange);

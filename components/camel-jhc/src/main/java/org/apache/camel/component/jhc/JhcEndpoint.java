@@ -94,7 +94,7 @@ public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
         return true;
     }
 
-    public Producer<JhcExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new JhcProducer(this);
     }
 

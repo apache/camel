@@ -75,7 +75,7 @@ public class JcrEndpoint extends DefaultEndpoint<DefaultExchange> {
     /**
      * Creates a new {@link Producer} 
      */
-    public Producer<DefaultExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new JcrProducer(this);
     }
 

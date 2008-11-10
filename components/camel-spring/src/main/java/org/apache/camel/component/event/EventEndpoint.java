@@ -64,7 +64,7 @@ public class EventEndpoint extends DefaultEndpoint<Exchange> implements Applicat
         return true;
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         ObjectHelper.notNull(getApplicationContext(), "applicationContext");
         return new DefaultProducer<Exchange>(this) {
             public void process(Exchange exchange) throws Exception {

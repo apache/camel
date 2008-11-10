@@ -51,7 +51,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         this(endpointUri, new MailConfiguration());
     }
 
-    public Producer<MailExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         JavaMailSender sender = configuration.createJavaMailSender();
         return createProducer(sender);
     }
@@ -59,7 +59,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     /**
      * Creates a producer using the given sender
      */
-    public Producer<MailExchange> createProducer(JavaMailSender sender) throws Exception {
+    public Producer createProducer(JavaMailSender sender) throws Exception {
         return new MailProducer(this, sender);
     }
 
