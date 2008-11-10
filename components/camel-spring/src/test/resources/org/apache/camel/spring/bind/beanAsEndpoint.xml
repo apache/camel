@@ -22,6 +22,7 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
+  <!-- START SNIPPET: e1 -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
@@ -31,4 +32,5 @@
   </camelContext>
 
   <bean id="myBean" class="org.apache.camel.spring.bind.ExampleBean"/>
+  <!-- END SNIPPET: e1 -->
 </beans>

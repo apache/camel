@@ -17,14 +17,16 @@
 package org.apache.camel.spring.bind;
 
 /**
- * An example POJO with no annotations or interfaces to test out the POJO
+ * An example Bean with no annotations or interfaces to test out the Bean
  * Camel binding
  *
  * @version $Revision$
  */
+// START SNIPPET: e1
 public class ExampleBean {
 
     public String sayHello(String name) {
         return "Hello " + name + "!";
     }
 }
+// END SNIPPET: e1
