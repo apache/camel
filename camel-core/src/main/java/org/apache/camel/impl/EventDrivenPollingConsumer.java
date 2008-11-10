@@ -37,17 +37,17 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsumerSupport<E> implements Processor {
+public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
-    private BlockingQueue<E> queue;
+    private BlockingQueue<Exchange> queue;
     private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(LOG));
     private Consumer consumer;
 
-    public EventDrivenPollingConsumer(Endpoint<E> endpoint) {
-        this(endpoint, new ArrayBlockingQueue<E>(1000));
+    public EventDrivenPollingConsumer(Endpoint endpoint) {
+        this(endpoint, new ArrayBlockingQueue<Exchange>(1000));
     }
 
-    public EventDrivenPollingConsumer(Endpoint<E> endpoint, BlockingQueue<E> queue) {
+    public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
     }
@@ -78,7 +78,7 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
     }
 
     public void process(Exchange exchange) throws Exception {
-        queue.offer((E)exchange);
+        queue.offer(exchange);
     }
 
     public ExceptionHandler getInteruptedExceptionHandler() {

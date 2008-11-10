@@ -120,7 +120,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
     }
 
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new EventDrivenPollingConsumer<E>(this);
+        return new EventDrivenPollingConsumer(this);
     }
 
     /**
