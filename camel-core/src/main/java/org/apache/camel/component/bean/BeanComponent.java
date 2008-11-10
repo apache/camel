@@ -27,9 +27,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An alternative to the <a href="http://activemq.apache.org/pojo.html">POJO Component</a>
- * which implements the <a href="http://activemq.apache.org/bean.html">Bean Component</a>
- * which will look up the URI in the Spring ApplicationContext and use that to handle message dispatching.
+ * The <a href="http://activemq.apache.org/bean.html">Bean Component</a>
+ * will look up the URI in the Spring ApplicationContext and use that to handle message dispatching.
  *
  * @version $Revision$
  */
