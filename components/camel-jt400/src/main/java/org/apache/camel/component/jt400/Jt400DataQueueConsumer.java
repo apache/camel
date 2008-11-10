@@ -37,7 +37,7 @@ import org.apache.camel.impl.PollingConsumerSupport;
 /**
  * {@link PollingConsumer} that polls a data queue for data
  */
-public class Jt400DataQueueConsumer extends PollingConsumerSupport<Exchange> {
+public class Jt400DataQueueConsumer extends PollingConsumerSupport {
 
     private final Jt400DataQueueEndpoint endpoint;
 

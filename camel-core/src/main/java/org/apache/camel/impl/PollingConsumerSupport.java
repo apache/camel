@@ -26,11 +26,11 @@ import org.apache.camel.spi.ExceptionHandler;
  * 
  * @version $Revision$
  */
-public abstract class PollingConsumerSupport<E extends Exchange> extends ServiceSupport implements PollingConsumer {
-    private final Endpoint<E> endpoint;
+public abstract class PollingConsumerSupport extends ServiceSupport implements PollingConsumer {
+    private final Endpoint endpoint;
     private ExceptionHandler exceptionHandler;
 
-    public PollingConsumerSupport(Endpoint<E> endpoint) {
+    public PollingConsumerSupport(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -39,7 +39,7 @@ public abstract class PollingConsumerSupport<E extends Exchange> extends Service
         return "PullConsumer on " + endpoint;
     }
 
-    public Endpoint<E> getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 

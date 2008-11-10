@@ -64,7 +64,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
 
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
-        return new EventDrivenPollingConsumer<Exchange>(this);
+        return new EventDrivenPollingConsumer(this);
     }
 
     @Override

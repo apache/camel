@@ -36,7 +36,7 @@ import org.apache.commons.io.IOUtils;
  *
  * @version $Revision$
  */
-public class HttpPollingConsumer extends PollingConsumerSupport<HttpExchange> {
+public class HttpPollingConsumer extends PollingConsumerSupport {
     private final HttpEndpoint endpoint;
     private HttpClient httpClient;
 
