@@ -29,7 +29,7 @@ import org.apache.camel.processor.ThroughputLogger;
  *
  * @version $Revision$
  */
-public class MockComponent extends DefaultComponent<Exchange> {
+public class MockComponent extends DefaultComponent {
 
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {

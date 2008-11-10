@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class JMXComponent extends DefaultComponent<JMXExchange> {
+public class JMXComponent extends DefaultComponent {
     private MBeanServer mbeanServer;
 
     public JMXComponent() {

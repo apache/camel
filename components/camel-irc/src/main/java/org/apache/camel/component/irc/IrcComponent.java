@@ -32,7 +32,7 @@ import org.schwering.irc.lib.IRCConnection;
  *
  * @version $Revision$
  */
-public class IrcComponent extends DefaultComponent<IrcExchange> {
+public class IrcComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(IrcComponent.class);
     private IrcConfiguration configuration;
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();

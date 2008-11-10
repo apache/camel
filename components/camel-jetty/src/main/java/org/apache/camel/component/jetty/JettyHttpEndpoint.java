@@ -19,6 +19,7 @@ package org.apache.camel.component.jetty;
 import java.net.URI;
 import java.net.URISyntaxException;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
@@ -56,7 +57,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     }
 
     @Override
-    public JettyHttpComponent getComponent() {
+    public Component getComponent() {
         return component;
     }
 
@@ -67,5 +68,4 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     public boolean isSessionSupport() {
         return sessionSupport;
     }
-
 }

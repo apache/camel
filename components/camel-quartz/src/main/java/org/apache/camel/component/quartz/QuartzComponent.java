@@ -37,7 +37,7 @@ import org.quartz.impl.StdSchedulerFactory;
  *
  * @version $Revision:520964 $
  */
-public class QuartzComponent extends DefaultComponent<QuartzExchange> {
+public class QuartzComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(QuartzComponent.class);
     private SchedulerFactory factory;
     private Scheduler scheduler;

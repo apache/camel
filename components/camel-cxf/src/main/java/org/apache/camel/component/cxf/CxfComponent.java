@@ -24,14 +24,12 @@ import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
-
 /**
  * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Component</a>
 
  * @version $Revision$
  */
-public class CxfComponent extends DefaultComponent<CxfExchange> implements HeaderFilterStrategyAware {
-
+public class CxfComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
 

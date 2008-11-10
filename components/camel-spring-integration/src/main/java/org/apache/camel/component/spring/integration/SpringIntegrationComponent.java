@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class SpringIntegrationComponent extends DefaultComponent<SpringIntegrationExchange> {
+public class SpringIntegrationComponent extends DefaultComponent {
 
     protected SpringIntegrationEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         SpringIntegrationEndpoint endpoint = new SpringIntegrationEndpoint(uri, remaining, this);

@@ -34,7 +34,7 @@ import org.apache.camel.util.IntrospectionSupport;
  *
  * @version $Revision$
  */
-public class LogComponent extends DefaultComponent<Exchange> {
+public class LogComponent extends DefaultComponent {
 
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);

@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class SedaComponent extends DefaultComponent<Exchange> {
+public class SedaComponent extends DefaultComponent {
 
     public BlockingQueue<Exchange> createQueue(String uri, Map parameters) {
         int size = getAndRemoveParameter(parameters, "size", Integer.class, 1000);

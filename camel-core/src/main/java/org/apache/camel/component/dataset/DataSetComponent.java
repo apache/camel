@@ -28,7 +28,7 @@ import org.apache.camel.util.CamelContextHelper;
  *
  * @version $Revision$
  */
-public class DataSetComponent extends DefaultComponent<Exchange> {
+public class DataSetComponent extends DefaultComponent {
 
     @Override
     protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {

@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * @version $Revision:520964 $
  */
-public class JdbcComponent extends DefaultComponent<DefaultExchange> {
+public class JdbcComponent extends DefaultComponent {
 
     public JdbcComponent() {
     }
@@ -39,5 +39,4 @@ public class JdbcComponent extends DefaultComponent<DefaultExchange> {
     protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new JdbcEndpoint(uri, remaining, this);
     }
-
 }

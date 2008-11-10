@@ -62,7 +62,7 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
  *
  * @version $Revision$
  */
-public class MinaComponent extends DefaultComponent<MinaExchange> {
+public class MinaComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
 
     private static final long DEFAULT_CONNECT_TIMEOUT = 30000;

@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class TimerComponent extends DefaultComponent<Exchange> {
+public class TimerComponent extends DefaultComponent {
     private Map<String, Timer> timers = new HashMap<String, Timer>();
 
     public Timer getTimer(TimerEndpoint endpoint) {

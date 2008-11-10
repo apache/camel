@@ -22,7 +22,7 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface Component<E extends Exchange> {
+public interface Component {
 
     /**
      * Returns the context
@@ -45,6 +45,6 @@ public interface Component<E extends Exchange> {
      * @return a newly created endpoint or null if this component cannot create
      *         instances of the given uri
      */
-    Endpoint<E> createEndpoint(String uri) throws Exception;
+    Endpoint createEndpoint(String uri) throws Exception;
     
 }

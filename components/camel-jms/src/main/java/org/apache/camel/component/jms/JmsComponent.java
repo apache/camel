@@ -48,7 +48,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  *
  * @version $Revision:520964 $
  */
-public class JmsComponent extends DefaultComponent<JmsExchange> implements ApplicationContextAware,
+public class JmsComponent extends DefaultComponent implements ApplicationContextAware,
     HeaderFilterStrategyAware {
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);

@@ -35,7 +35,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpComponent extends DefaultComponent<HttpExchange> implements HeaderFilterStrategyAware {
+public class HttpComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();

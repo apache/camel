@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultComponent;
 /**
  * @version $Revision:520964 $
  */
-public class RmiComponent extends DefaultComponent<BeanExchange> {
+public class RmiComponent extends DefaultComponent {
 
     public RmiComponent() {
     }

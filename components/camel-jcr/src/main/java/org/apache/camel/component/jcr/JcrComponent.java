@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultExchange;
 /**
  * A component for integrating with JSR-170 (JCR) compliant content repositories
  */
-public class JcrComponent extends DefaultComponent<DefaultExchange> {
+public class JcrComponent extends DefaultComponent {
 
     /**
      * Property key for specifying the name of a node in the repository 
