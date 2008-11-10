@@ -21,5 +21,5 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public interface Consumer<E extends Exchange> extends Service {
+public interface Consumer extends Service {
 }

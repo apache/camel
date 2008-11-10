@@ -98,7 +98,7 @@ public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
         return new JhcProducer(this);
     }
 
-    public Consumer<JhcExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new JhcConsumer(this, processor);
     }
 

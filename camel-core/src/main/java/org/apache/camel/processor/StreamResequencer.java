@@ -56,7 +56,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     private ExceptionHandler exceptionHandler;
     private ResequencerEngine<Exchange> engine;
-    private PollingConsumer<? extends Exchange> consumer;
+    private PollingConsumer consumer;
     private Endpoint<? extends Exchange> endpoint;
     private Processor processor;
     private Thread worker;

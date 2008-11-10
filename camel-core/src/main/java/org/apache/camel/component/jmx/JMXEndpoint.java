@@ -60,7 +60,7 @@ public class JMXEndpoint extends DefaultEndpoint<JMXExchange> {
         throw new UnsupportedOperationException("Producer not supported");
     }
 
-    public Consumer<JMXExchange> createConsumer(Processor proc) throws Exception {
+    public Consumer createConsumer(Processor proc) throws Exception {
         ObjectName observedName = new ObjectName(observedObjectName);
         if (name == null) {
             String type = observedName.getKeyProperty("type");

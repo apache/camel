@@ -69,7 +69,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
         return new JpaProducer(this, getProducerExpression());
     }
 
-    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         validate();
         JpaConsumer consumer = new JpaConsumer(this, processor);
         configureConsumer(consumer);

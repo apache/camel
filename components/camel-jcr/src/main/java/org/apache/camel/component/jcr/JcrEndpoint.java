@@ -68,7 +68,7 @@ public class JcrEndpoint extends DefaultEndpoint<DefaultExchange> {
      * Currently unsupported
      * @throws RuntimeCamelException
      */
-    public Consumer<DefaultExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("No consumer endpoint support for JCR available");
     }
 

@@ -23,7 +23,7 @@ package org.apache.camel;
  * 
  * @version $Revision$
  */
-public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
+public interface PollingConsumer extends Consumer {
 
     /**
      * Waits until a message is available and then returns it. Warning that this
@@ -55,5 +55,4 @@ public interface PollingConsumer<E extends Exchange> extends Consumer<E> {
      *         period, or <tt>null</tt> if the timeout expired
      */
     Exchange receive(long timeout);
-
 }

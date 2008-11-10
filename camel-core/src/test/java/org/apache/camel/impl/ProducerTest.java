@@ -42,7 +42,7 @@ public class ProducerTest extends TestSupport {
             }
 
         }) {
-            public Consumer<MyExchange> createConsumer(Processor processor) throws Exception {
+            public Consumer createConsumer(Processor processor) throws Exception {
                 return null;
             }
 

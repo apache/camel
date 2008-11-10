@@ -26,7 +26,7 @@ import org.apache.camel.spi.ExceptionHandler;
  * 
  * @version $Revision$
  */
-public abstract class PollingConsumerSupport<E extends Exchange> extends ServiceSupport implements PollingConsumer<E> {
+public abstract class PollingConsumerSupport<E extends Exchange> extends ServiceSupport implements PollingConsumer {
     private final Endpoint<E> endpoint;
     private ExceptionHandler exceptionHandler;
 

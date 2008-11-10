@@ -41,7 +41,7 @@ public class EventDrivenPollingConsumer<E extends Exchange> extends PollingConsu
     private static final transient Log LOG = LogFactory.getLog(EventDrivenPollingConsumer.class);
     private BlockingQueue<E> queue;
     private ExceptionHandler interuptedExceptionHandler = new LoggingExceptionHandler(new Logger(LOG));
-    private Consumer<E> consumer;
+    private Consumer consumer;
 
     public EventDrivenPollingConsumer(Endpoint<E> endpoint) {
         this(endpoint, new ArrayBlockingQueue<E>(1000));

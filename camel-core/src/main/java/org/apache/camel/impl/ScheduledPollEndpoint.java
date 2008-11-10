@@ -57,7 +57,7 @@ public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultE
         this.consumerProperties = consumerProperties;
     }
 
-    protected void configureConsumer(Consumer<E> consumer) throws Exception {
+    protected void configureConsumer(Consumer consumer) throws Exception {
         if (consumerProperties != null) {
             // TODO pass in type converter
             IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), consumer, consumerProperties);

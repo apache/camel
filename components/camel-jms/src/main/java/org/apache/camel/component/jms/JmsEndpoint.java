@@ -109,7 +109,7 @@ public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
     }
 
     @Override
-    public PollingConsumer<JmsExchange> createPollingConsumer() throws Exception {
+    public PollingConsumer createPollingConsumer() throws Exception {
         JmsOperations template = createInOnlyTemplate();
         return new JmsPollingConsumer(this, template);
     }

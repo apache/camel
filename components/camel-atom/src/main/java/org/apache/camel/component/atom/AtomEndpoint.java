@@ -70,7 +70,7 @@ public class AtomEndpoint extends DefaultPollingEndpoint<Exchange> {
         throw new UnsupportedOperationException("AtomProducer is not implemented");
     }
 
-    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         AtomConsumerSupport answer;
         if (isSplitEntries()) {
             answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);

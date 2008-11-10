@@ -44,11 +44,11 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         super(endpointUri);
     }
 
-    public Producer createProducer() throws Exception {
+    public Producer<E> createProducer() throws Exception {
         return new DirectProducer<E>(this);
     }
 
-    public Consumer<E> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new DefaultConsumer<E>(this, processor) {
             @Override
             public void start() throws Exception {
