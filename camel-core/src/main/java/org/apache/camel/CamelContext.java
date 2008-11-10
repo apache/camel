@@ -291,7 +291,7 @@ public interface CamelContext extends Service {
      *
      * @return the template
      */
-    <E extends Exchange> ProducerTemplate<E> createProducerTemplate();
+    ProducerTemplate createProducerTemplate();
 
     /**
      * Adds the given interceptor strategy

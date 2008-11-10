@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.greeter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.ws.Endpoint;
@@ -24,15 +23,12 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
@@ -71,7 +67,7 @@ public class CamelGreeterTest extends AbstractJUnit38SpringContextTests {
         assertNotNull(camelContext);
         assertNotNull(resultEndpoint);
 
-        ProducerTemplate<Exchange> template = camelContext.createProducerTemplate();
+        ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBodyAndHeader("jms:requestQueue", "Willem", CxfConstants.OPERATION_NAME, "greetMe");
 
         // Sleep a while and wait for the message whole processing

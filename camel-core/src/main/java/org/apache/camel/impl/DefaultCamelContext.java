@@ -581,8 +581,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.delay = delay;
     }
 
-    public <E extends Exchange> ProducerTemplate<E> createProducerTemplate() {
-        return new DefaultProducerTemplate<E>(this);
+    public ProducerTemplate createProducerTemplate() {
+        return new DefaultProducerTemplate(this);
     }
 
     public ErrorHandlerBuilder getErrorHandlerBuilder() {

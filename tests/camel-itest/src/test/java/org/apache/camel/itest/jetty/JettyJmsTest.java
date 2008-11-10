@@ -57,7 +57,7 @@ public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
         resultEndpoint.reset();
         assertNotNull(resultEndpoint);
 
-        ProducerTemplate<Exchange> template = camelContext.createProducerTemplate();
+        ProducerTemplate template = camelContext.createProducerTemplate();
         template.sendBodyAndHeader("jetty:http://localhost:9000/test", "Hello form Willem", "Operation", "greetMe");
 
         // Sleep a while and wait for the message whole processing

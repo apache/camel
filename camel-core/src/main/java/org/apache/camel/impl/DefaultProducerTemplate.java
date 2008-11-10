@@ -41,12 +41,12 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version $Revision$
  */
-public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport implements ProducerTemplate<E> {
+public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private CamelContext context;
-    private final ProducerCache<E> producerCache = new ProducerCache<E>();
+    private final ProducerCache producerCache = new ProducerCache();
     private boolean useEndpointCache = true;
-    private final Map<String, Endpoint<E>> endpointCache = new HashMap<String, Endpoint<E>>();
-    private Endpoint<E> defaultEndpoint;
+    private final Map<String, Endpoint> endpointCache = new HashMap<String, Endpoint>();
+    private Endpoint defaultEndpoint;
     
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
@@ -62,51 +62,51 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return new DefaultProducerTemplate(camelContext, endpoint);
     }   
 
-    public E send(String endpointUri, E exchange) {
+    public Exchange send(String endpointUri, Exchange exchange) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint, exchange);
     }
 
-    public E send(String endpointUri, Processor processor) {
+    public Exchange send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint, processor);
     }
 
-    public E send(String endpointUri, Processor processor, AsyncCallback callback) {
+    public Exchange send(String endpointUri, Processor processor, AsyncCallback callback) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint, processor, callback);
     }
 
-    public E send(String endpointUri, ExchangePattern pattern, Processor processor) {
+    public Exchange send(String endpointUri, ExchangePattern pattern, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint, pattern, processor);
     }
 
-    public E send(Endpoint<E> endpoint, E exchange) {
-        E convertedExchange = exchange;
+    public Exchange send(Endpoint endpoint, Exchange exchange) {
+        Exchange convertedExchange = exchange;
         producerCache.send(endpoint, convertedExchange);
         return convertedExchange;
     }
 
-    public E send(Endpoint<E> endpoint, Processor processor) {
+    public Exchange send(Endpoint endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
     }
 
-    public E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback) {
+    public Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback) {
         return producerCache.send(endpoint, processor, callback);
     }
 
-    public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
+    public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
         return producerCache.send(endpoint, pattern, processor);
     }
 
-    public Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body) {
-        E result = send(endpoint, pattern, createSetBodyProcessor(body));
+    public Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body) {
+        Exchange result = send(endpoint, pattern, createSetBodyProcessor(body));
         return extractResultBody(result, pattern);
     }
 
-    public Object sendBody(Endpoint<E> endpoint, Object body) {
-        E result = send(endpoint, createSetBodyProcessor(body));
+    public Object sendBody(Endpoint endpoint, Object body) {
+        Exchange result = send(endpoint, createSetBodyProcessor(body));
         return extractResultBody(result);
     }
 
@@ -127,19 +127,19 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     public Object sendBodyAndHeader(Endpoint endpoint, final Object body, final String header,
             final Object headerValue) {
-        E result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
+        Exchange result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result);
     }
 
     public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body, final String header,
             final Object headerValue) {
-        E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        Exchange result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result, pattern);
     }
 
     public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body, final String header,
             final Object headerValue) {
-        E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        Exchange result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result, pattern);
     }
 
@@ -148,7 +148,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
     }
 
     public Object sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
-        E result = send(endpoint, new Processor() {
+        Exchange result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
@@ -163,19 +163,19 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
     // Methods using an InOut ExchangePattern
     // -----------------------------------------------------------------------
 
-    public E request(Endpoint<E> endpoint, Processor processor) {
+    public Exchange request(Endpoint endpoint, Processor processor) {
         return send(endpoint, ExchangePattern.InOut, processor);
     }
 
-    public Object requestBody(Endpoint<E> endpoint, Object body) {
+    public Object requestBody(Endpoint endpoint, Object body) {
         return sendBody(endpoint, ExchangePattern.InOut, body);
     }
 
-    public Object requestBodyAndHeader(Endpoint<E> endpoint, Object body, String header, Object headerValue) {
+    public Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue) {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
     }
 
-    public E request(String endpoint, Processor processor) {
+    public Exchange request(String endpoint, Processor processor) {
         return send(endpoint, ExchangePattern.InOut, processor);
     }
 
@@ -194,11 +194,11 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return sendBody(getMandatoryDefaultEndpoint(), body);
     }
 
-    public E send(E exchange) {
+    public Exchange send(Exchange exchange) {
         return send(getMandatoryDefaultEndpoint(), exchange);
     }
 
-    public E send(Processor processor) {
+    public Exchange send(Processor processor) {
         return send(getMandatoryDefaultEndpoint(), processor);
     }
 
@@ -212,7 +212,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     // Properties
     // -----------------------------------------------------------------------
-    public Producer getProducer(Endpoint<E> endpoint) {
+    public Producer getProducer(Endpoint endpoint) {
         return producerCache.getProducer(endpoint);
     }
 
@@ -220,11 +220,11 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return context;
     }
 
-    public Endpoint<E> getDefaultEndpoint() {
+    public Endpoint getDefaultEndpoint() {
         return defaultEndpoint;
     }
 
-    public void setDefaultEndpoint(Endpoint<E> defaultEndpoint) {
+    public void setDefaultEndpoint(Endpoint defaultEndpoint) {
         this.defaultEndpoint = defaultEndpoint;
     }
 
@@ -298,8 +298,8 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return endpoint;
     }
 
-    protected Endpoint<E> getMandatoryDefaultEndpoint() {
-        Endpoint<E> answer = getDefaultEndpoint();
+    protected Endpoint getMandatoryDefaultEndpoint() {
+        Endpoint answer = getDefaultEndpoint();
         ObjectHelper.notNull(answer, "defaultEndpoint");
         return answer;
     }
@@ -319,7 +319,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
      * @param result   the result
      * @return  the result, can be <tt>null</tt>.
      */
-    protected Object extractResultBody(E result) {
+    protected Object extractResultBody(Exchange result) {
         return extractResultBody(result, null);
     }
 
@@ -333,7 +333,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
      * @param pattern  exchange pattern if given, can be <tt>null</tt>
      * @return  the result, can be <tt>null</tt>.
      */
-    protected Object extractResultBody(E result, ExchangePattern pattern) {
+    protected Object extractResultBody(Exchange result, ExchangePattern pattern) {
         Object answer = null;
         if (result != null) {
             // rethrow if there was an exception
@@ -359,7 +359,7 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return answer;
     }
 
-    protected boolean hasFaultMessage(E result) {
+    protected boolean hasFaultMessage(Exchange result) {
         Message faultMessage = result.getFault(false);
         if (faultMessage != null) {
             Object faultBody = faultMessage.getBody();
@@ -369,5 +369,4 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         }
         return false;
     }
-
 }

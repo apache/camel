@@ -32,7 +32,7 @@ public class JettyJmsTwowayTest extends AbstractJUnit38SpringContextTests {
 
     public void testSendingRequest() throws Exception {
         assertNotNull("the camelContext should not be null", camelContext);
-        ProducerTemplate<Exchange> template = camelContext.createProducerTemplate();
+        ProducerTemplate template = camelContext.createProducerTemplate();
         Exchange exchange = template.send("jetty:http://localhost:9000/test", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("<hello>Willem</hello>");

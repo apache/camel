@@ -53,7 +53,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     private CamelContext camelContext;
     private EndpointInfo endpointInfo;
     private String targetCamelEndpointUri;
-    private ProducerTemplate<Exchange> camelTemplate;
+    private ProducerTemplate camelTemplate;
     private Bus bus;
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -122,7 +122,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         }
     }
 
-    public ProducerTemplate<Exchange> getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
             camelTemplate = ctx.createProducerTemplate();
@@ -130,7 +130,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
         return camelTemplate;
     }
 
-    public void setCamelTemplate(ProducerTemplate<Exchange> template) {
+    public void setCamelTemplate(ProducerTemplate template) {
         camelTemplate = template;
     }
 
