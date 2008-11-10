@@ -22,9 +22,12 @@ import javax.jms.DeliveryMode;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -51,6 +54,31 @@ public class JmsEndpointConfigurationTest extends ContextTestSupport {
     public void testDurableSubscriberConfiguredWithNoSlashes() throws Exception {
         JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?durableSubscriptionName=James&clientId=ABC");
         assertDurableSubscriberEndpointIsValid(endpoint);
+    }
+    
+    public void testSetUsernameAndPassword() throws Exception {
+        JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James&password=ABC");
+        ConnectionFactory cf = endpoint.getConfiguration().getConnectionFactory();
+        assertNotNull("The connectionFactory should not be null", cf);
+        assertTrue("The connectionFactory should be the instance of UserCredentialsConnectionFactoryAdapter",
+                   cf instanceof UserCredentialsConnectionFactoryAdapter);        
+    }
+    
+    public void testNotSetUsernameOrPassword() {
+        try {
+            JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?username=James");
+            fail("Expect the exception here");
+        } catch (ResolveEndpointFailedException exception) {
+            // Expect the exception here
+        }
+        
+        try {
+            JmsEndpoint endpoint = (JmsEndpoint) resolveMandatoryEndpoint("jms:topic:Foo.Bar?password=ABC");
+            fail("Expect the exception here");
+        } catch (ResolveEndpointFailedException exception) {
+            // Expect the exception here
+        }
+        
     }
 
     public void testSelector() throws Exception {
