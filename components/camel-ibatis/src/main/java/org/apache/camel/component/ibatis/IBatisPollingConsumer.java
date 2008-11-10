@@ -93,7 +93,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @see strategy.IBatisProcessingStrategy
  */
-public class IBatisPollingConsumer extends ScheduledPollConsumer<Exchange> {
+public class IBatisPollingConsumer extends ScheduledPollConsumer {
     private static Log logger = LogFactory.getLog(IBatisPollingConsumer.class);
     /**
      * Statement to run after data has been processed in the route

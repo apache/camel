@@ -46,7 +46,7 @@ public abstract class DefaultPollingEndpoint<E extends Exchange> extends Schedul
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer(this, processor);
+        DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer((DefaultEndpoint<Exchange>) this, processor);
         configureConsumer(result);
         return result;
     }

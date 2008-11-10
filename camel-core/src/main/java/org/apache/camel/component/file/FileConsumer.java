@@ -25,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.util.ObjectHelper;
@@ -36,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
+public class FileConsumer extends ScheduledPollConsumer {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
 
     private FileEndpoint endpoint;
@@ -56,7 +57,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     private boolean exclusiveReadLock = true;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+        super((DefaultEndpoint)endpoint, processor);
         this.endpoint = endpoint;
     }
 

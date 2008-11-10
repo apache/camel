@@ -30,20 +30,20 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public class DefaultScheduledPollConsumer<E extends Exchange> extends ScheduledPollConsumer<E> {
+public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     private PollingConsumer pollingConsumer;
 
-    public DefaultScheduledPollConsumer(DefaultEndpoint<E> defaultEndpoint, Processor processor) {
+    public DefaultScheduledPollConsumer(DefaultEndpoint<Exchange> defaultEndpoint, Processor processor) {
         super(defaultEndpoint, processor);
     }
 
-    public DefaultScheduledPollConsumer(Endpoint<E> endpoint, Processor processor, ScheduledExecutorService executor) {
+    public DefaultScheduledPollConsumer(Endpoint<Exchange> endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor, executor);
     }
 
     protected void poll() throws Exception {
         while (true) {
-            E exchange = (E) pollingConsumer.receiveNoWait();
+            Exchange exchange = pollingConsumer.receiveNoWait();
             if (exchange == null) {
                 break;
             }
@@ -53,7 +53,7 @@ public class DefaultScheduledPollConsumer<E extends Exchange> extends ScheduledP
             Message out = exchange.getOut(false);
             if (out != null) {
                 // lets create a new exchange
-                E newExchange = (E) getEndpoint().createExchange();
+                Exchange newExchange = getEndpoint().createExchange();
                 newExchange.getIn().copyFrom(out);
                 exchange = newExchange;
             }

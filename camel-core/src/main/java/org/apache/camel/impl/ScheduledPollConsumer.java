@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultConsumer implements
+public abstract class ScheduledPollConsumer extends DefaultConsumer implements
     Runnable {
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 
@@ -43,11 +43,11 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
     private ScheduledFuture<?> future;
     private Exception firstExceptionThrown;
     
-    public ScheduledPollConsumer(DefaultEndpoint<E> endpoint, Processor processor) {
+    public ScheduledPollConsumer(DefaultEndpoint<Exchange> endpoint, Processor processor) {
         this(endpoint, processor, endpoint.getExecutorService());
     }
 
-    public ScheduledPollConsumer(Endpoint<E> endpoint, Processor processor, ScheduledExecutorService executor) {
+    public ScheduledPollConsumer(Endpoint<Exchange> endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
         this.executor = executor;
         if (executor == null) {
