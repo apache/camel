@@ -65,4 +65,18 @@
     </dependency>
   </dependencies>
 
+  <repositories>
+    <repository>
+      <id>guiceyfruit.release</id>
+      <name>GuiceyFruit Release Repository</name>
+      <url>http://guiceyfruit.googlecode.com/svn/repo/releases/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <releases>
+        <enabled>true</enabled>
+      </releases>
+    </repository>
+  </repositories>
+
 </project>
