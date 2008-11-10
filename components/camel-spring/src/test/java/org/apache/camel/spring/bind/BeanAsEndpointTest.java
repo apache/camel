@@ -38,7 +38,6 @@ public class BeanAsEndpointTest extends SpringTestSupport {
     }
 
     protected int getExpectedRouteCount() {
-        // TODO why zero?
         return 0;
     }
 
