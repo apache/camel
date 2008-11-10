@@ -24,10 +24,9 @@ import javax.jcr.Value;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultProducer;
 
-public class JcrProducer extends DefaultProducer<DefaultExchange> {
+public class JcrProducer extends DefaultProducer {
 
     public JcrProducer(JcrEndpoint jcrEndpoint) throws LoginException,
             RepositoryException {

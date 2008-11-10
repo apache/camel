@@ -61,7 +61,7 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
     }
 
     public Producer createProducer() throws Exception {
-        return new DefaultProducer<Exchange>(this) {
+        return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
                 onExchange(exchange);
             }

@@ -55,7 +55,7 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  *
  * @version $Revision$
  */
-public class CxfProducer extends DefaultProducer<CxfExchange> {
+public class CxfProducer extends DefaultProducer {
     private CxfEndpoint endpoint;
     private Client client;
     private DataFormat dataFormat;

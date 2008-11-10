@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultProducer;
 /**
  * {@link Producer} to send data to an AS/400 data queue.
  */
-public class Jt400DataQueueProducer extends DefaultProducer<Exchange> {
+public class Jt400DataQueueProducer extends DefaultProducer {
 
     private final Jt400DataQueueEndpoint endpoint;
 

@@ -31,7 +31,7 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
  *  
  * @version $Revision$
  */
-public class MailProducer extends DefaultProducer<MailExchange> {
+public class MailProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(MailProducer.class);
     private final MailEndpoint endpoint;
     private final JavaMailSender sender;

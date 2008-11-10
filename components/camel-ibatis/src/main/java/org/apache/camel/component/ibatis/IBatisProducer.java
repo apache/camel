@@ -30,7 +30,7 @@ import com.ibatis.sqlmap.client.SqlMapClient;
 /**
  * @version $Revision$
  */
-public class IBatisProducer extends DefaultProducer<Exchange> {
+public class IBatisProducer extends DefaultProducer {
     private String statement;
     private IBatisEndpoint endpoint;
 

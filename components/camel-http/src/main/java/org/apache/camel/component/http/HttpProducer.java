@@ -46,7 +46,7 @@ import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 /**
  * @version $Revision$
  */
-public class HttpProducer extends DefaultProducer<HttpExchange> {
+public class HttpProducer extends DefaultProducer {
     public static final String HTTP_URI = "http.uri";
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";    
