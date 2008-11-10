@@ -120,8 +120,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
      * Returns true if the given exchange should be logged in the trace list
      */
     protected boolean shouldLogExchange(Exchange exchange) {
-        return (tracer == null || tracer.isEnabled())
-            && (tracer.getTraceFilter() == null || tracer.getTraceFilter().matches(exchange));
+        return tracer.isEnabled() && (tracer.getTraceFilter() == null || tracer.getTraceFilter().matches(exchange));
     }
 
     /**

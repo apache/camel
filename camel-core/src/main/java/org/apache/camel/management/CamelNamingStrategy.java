@@ -150,8 +150,15 @@ public class CamelNamingStrategy {
     public ObjectName getObjectName(RouteContext routeContext, ProcessorType processor)
         throws MalformedObjectNameException {
         Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
-        String ctxid = ep != null ? getContextId(ep.getCamelContext()) : VALUE_UNKNOWN;
-        String cid = ObjectName.quote(ep.getEndpointUri());
+        String ctxid;
+        String cid;
+        if (ep != null) {
+            ctxid = getContextId(ep.getCamelContext());            
+            cid = ObjectName.quote(ep.getEndpointUri());            
+        } else {
+            ctxid = VALUE_UNKNOWN;
+            cid = null;
+        }
         //String id = VALUE_UNKNOWN.equals(cid) ? ObjectName.quote(getEndpointId(ep) : "[" + cid + "]" + ObjectName.quote(getEndpointId(ep);
         String nodeId = processor.idOrCreate();
 
