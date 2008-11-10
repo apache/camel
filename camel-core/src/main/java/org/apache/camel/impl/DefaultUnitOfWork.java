@@ -38,7 +38,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     private String id;
     private List<Synchronization> synchronizations;
     private List<AsyncCallback> asyncCallbacks;
-    private CountDownLatch latch;
 
     public DefaultUnitOfWork() {
     }
