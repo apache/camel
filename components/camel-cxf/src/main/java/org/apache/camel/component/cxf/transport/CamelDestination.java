@@ -58,7 +58,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     CamelContext camelContext;
     Consumer consumer;
     String camelDestinationUri;
-    private ProducerTemplate<Exchange> camelTemplate;
+    private ProducerTemplate camelTemplate;
     private Endpoint distinationEndpoint;
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -121,7 +121,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         this.deactivate();
     }
 
-    public ProducerTemplate<Exchange> getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
             camelTemplate = ctx.createProducerTemplate();
@@ -129,7 +129,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         return camelTemplate;
     }
 
-    public void setCamelTemplate(ProducerTemplate<Exchange> template) {
+    public void setCamelTemplate(ProducerTemplate template) {
         camelTemplate = template;
     }
 

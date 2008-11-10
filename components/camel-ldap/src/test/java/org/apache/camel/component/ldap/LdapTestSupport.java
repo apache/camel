@@ -47,7 +47,7 @@ import org.apache.directory.server.unit.AbstractServerTest;
 public abstract class LdapTestSupport extends AbstractServerTest {
     protected transient Log log = LogFactory.getLog(getClass());
     protected CamelContext context;
-    protected ProducerTemplate<Exchange> template;
+    protected ProducerTemplate template;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 

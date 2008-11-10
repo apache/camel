@@ -67,7 +67,7 @@ public class Camel715ThreadProcessorTest extends TestCase {
 
             });
 
-            final ProducerTemplate<Exchange> template = context.createProducerTemplate();
+            final ProducerTemplate template = context.createProducerTemplate();
 
             final Endpoint e = context.getEndpoint("direct:a");
             context.start();

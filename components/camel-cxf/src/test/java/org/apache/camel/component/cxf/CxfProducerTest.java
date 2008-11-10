@@ -54,7 +54,7 @@ public class CxfProducerTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(CxfProducerTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
-    protected ProducerTemplate<CxfExchange> template = camelContext.createProducerTemplate();
+    protected ProducerTemplate template = camelContext.createProducerTemplate();
 
     private ServerImpl simpleServer;
     private Endpoint jaxwsEndpoint;

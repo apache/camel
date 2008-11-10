@@ -42,7 +42,7 @@ public class CustomProcessorWithNamespacesTest extends TestSupport {
         assertValidContext(context);
 
         // now lets send a message
-        ProducerTemplate<Exchange> template = context.createProducerTemplate();
+        ProducerTemplate template = context.createProducerTemplate();
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();

@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public interface ProducerTemplate<E extends Exchange> extends Service {
+public interface ProducerTemplate extends Service {
 
     /**
      * Sends the exchange to the default endpoint
@@ -46,7 +46,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param exchange the exchange to send
      * @return the returned exchange
      */
-    E send(E exchange);
+    Exchange send(Exchange exchange);
 
     /**
      * Sends an exchange to the default endpoint using a supplied
@@ -55,7 +55,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * {@link Processor} to populate the exchange
      * @return the returned exchange
      */
-    E send(Processor processor);
+    Exchange send(Processor processor);
 
     /**
      * Sends the body to the default endpoint and returns the result content
@@ -96,7 +96,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param exchange    the exchange to send
      * @return the returned exchange
      */
-    E send(String endpointUri, E exchange);
+    Exchange send(String endpointUri, Exchange exchange);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -106,7 +106,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * {@link Processor} to populate the exchange
      * @return the returned exchange
      */
-    E send(String endpointUri, Processor processor);
+    Exchange send(String endpointUri, Processor processor);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -118,7 +118,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * {@link Processor} to populate the exchange
      * @return the returned exchange
      */
-    E send(String endpointUri, ExchangePattern pattern, Processor processor);
+    Exchange send(String endpointUri, ExchangePattern pattern, Processor processor);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -129,7 +129,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param callback    the callback will be called when the exchange is completed.
      * @return the returned exchange
      */
-    E send(String endpointUri, Processor processor, AsyncCallback callback);
+    Exchange send(String endpointUri, Processor processor, AsyncCallback callback);
 
     /**
      * Sends the exchange to the given endpoint
@@ -138,7 +138,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param exchange the exchange to send
      * @return the returned exchange
      */
-    E send(Endpoint<E> endpoint, E exchange);
+    Exchange send(Endpoint endpoint, Exchange exchange);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -148,7 +148,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * {@link Processor} to populate the exchange
      * @return the returned exchange
      */
-    E send(Endpoint<E> endpoint, Processor processor);
+    Exchange send(Endpoint endpoint, Processor processor);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -160,7 +160,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * {@link Processor} to populate the exchange
      * @return the returned exchange
      */
-    E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor);
+    Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
 
     /**
      * Sends an exchange to an endpoint using a supplied processor
@@ -171,7 +171,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param callback  the callback will be called when the exchange is completed.
      * @return the returned exchange
      */
-    E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback);
+    Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback);
 
     /**
      * Send the body to an endpoint returning any result output body
@@ -180,7 +180,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param body       the payload
      * @return the result (see class javadoc)
      */
-    Object sendBody(Endpoint<E> endpoint, Object body);
+    Object sendBody(Endpoint endpoint, Object body);
 
     /**
      * Send the body to an endpoint returning any result output body
@@ -201,7 +201,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @return the result (see class javadoc)
      */
-    Object sendBody(Endpoint<E> endpoint, ExchangePattern pattern, Object body);
+    Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body);
 
     /**
      * Send the body to an endpoint returning any result output body
@@ -300,7 +300,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param processor the processor which will populate the exchange before sending
      * @return the result (see class javadoc)
      */
-    E request(Endpoint<E> endpoint, Processor processor);
+    Exchange request(Endpoint endpoint, Processor processor);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -310,7 +310,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param body     the payload
      * @return the result (see class javadoc)
      */
-    Object requestBody(Endpoint<E> endpoint, Object body);
+    Object requestBody(Endpoint endpoint, Object body);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -322,7 +322,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param headerValue the header value
      * @return the result (see class javadoc)
      */
-    Object requestBodyAndHeader(Endpoint<E> endpoint, Object body, String header, Object headerValue);
+    Object requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -332,7 +332,7 @@ public interface ProducerTemplate<E extends Exchange> extends Service {
      * @param processor the processor which will populate the exchange before sending
      * @return the result (see class javadoc)
      */
-    E request(String endpointUri, Processor processor);
+    Exchange request(String endpointUri, Processor processor);
 
     /**
      * Send the body to an endpoint returning any result output body.

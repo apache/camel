@@ -43,7 +43,7 @@ import org.springframework.integration.message.MessageRejectedException;
 public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageHandler {
 
     private final Log logger = LogFactory.getLog(this.getClass());
-    private ProducerTemplate<Exchange> camelTemplate;
+    private ProducerTemplate camelTemplate;
     private MessageChannel replyChannel;
 
 
@@ -55,7 +55,7 @@ public class CamelTargetAdapter extends AbstractCamelAdapter implements MessageH
         return replyChannel;
     }
 
-    public ProducerTemplate<Exchange> getCamelTemplate() {
+    public ProducerTemplate getCamelTemplate() {
         if (camelTemplate == null) {
             CamelContext ctx = getCamelContext();
             if (ctx == null) {

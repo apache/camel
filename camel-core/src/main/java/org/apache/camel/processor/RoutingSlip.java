@@ -43,7 +43,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     private final String header;
     private final String uriDelimiter;
 
-    private ProducerCache<Exchange> producerCache = new ProducerCache<Exchange>();
+    private ProducerCache producerCache = new ProducerCache();
 
     public RoutingSlip(String header) {
         this(header, RoutingSlipType.DEFAULT_DELIMITER);
