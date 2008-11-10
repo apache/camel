@@ -75,7 +75,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         return new CxfProducer(this);
     }
 
-    public Consumer<CxfExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new CxfConsumer(this, processor);
     }
 

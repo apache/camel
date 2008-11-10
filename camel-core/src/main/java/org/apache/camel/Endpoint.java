@@ -86,7 +86,7 @@ public interface Endpoint<E extends Exchange> {
      *
      * @return a newly created consumer
      */
-    Consumer<E> createConsumer(Processor processor) throws Exception;
+    Consumer createConsumer(Processor processor) throws Exception;
 
     /**
      * Creates a new <a
@@ -102,7 +102,7 @@ public interface Endpoint<E extends Exchange> {
      * @return a newly created pull consumer
      * @throws Exception if the pull consumer could not be created
      */
-    PollingConsumer<E> createPollingConsumer() throws Exception;
+    PollingConsumer createPollingConsumer() throws Exception;
 
     void configureProperties(Map options);
 

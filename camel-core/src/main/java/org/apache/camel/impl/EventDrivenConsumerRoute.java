@@ -59,7 +59,7 @@ public class EventDrivenConsumerRoute<E extends Exchange> extends Route<E> {
     @Override
     protected void addServices(List<Service> services) throws Exception {
         Endpoint<E> endpoint = getEndpoint();
-        Consumer<E> consumer = endpoint.createConsumer(processor);
+        Consumer consumer = endpoint.createConsumer(processor);
         if (consumer != null) {
             services.add(consumer);
         }

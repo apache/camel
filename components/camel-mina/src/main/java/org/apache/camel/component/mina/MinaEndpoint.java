@@ -76,7 +76,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return new MinaProducer(this);
     }
 
-    public Consumer<MinaExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new MinaConsumer(this, processor);
     }
 

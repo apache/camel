@@ -60,7 +60,7 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint<SpringInteg
         return new SpringIntegrationProducer(this);
     }
 
-    public Consumer<SpringIntegrationExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new SpringIntegrationConsumer(this, processor);
     }
 

@@ -63,7 +63,7 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         return new BeanExchange(getCamelContext(), pattern);
     }
 
-    public Consumer<BeanExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         if (remoteInterfaces == null || remoteInterfaces.size() == 0) {
             throw new RuntimeCamelException("To create a RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
         }

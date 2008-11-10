@@ -83,7 +83,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint<Exchange> {
     }
 
     @Override
-    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
+    public PollingConsumer createPollingConsumer() throws Exception {
         return new Jt400DataQueueConsumer(this);
     }
 

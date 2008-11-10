@@ -66,7 +66,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
     }
 
     @Override
-    public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
+    public PollingConsumer createPollingConsumer() throws Exception {
         return new HttpPollingConsumer(this);
     }
 

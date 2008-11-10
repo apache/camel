@@ -52,7 +52,7 @@ public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
         return false;
     }
 
-    public Consumer<DefaultExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("A JDBC Consumer would be the server side of database! No such support here");
     }
 

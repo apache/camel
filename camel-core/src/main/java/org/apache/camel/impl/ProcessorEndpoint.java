@@ -69,7 +69,7 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
     }
 
     @Override
-    public PollingConsumer<Exchange> createPollingConsumer() throws Exception {
+    public PollingConsumer createPollingConsumer() throws Exception {
         return new ProcessorPollingConsumer(this, getProcessor());
     }
 

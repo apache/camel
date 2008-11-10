@@ -47,12 +47,12 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     }
 
     @Override
-    public Consumer<HttpExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new HttpConsumer(this, processor);
     }
 
     @Override
-    public PollingConsumer<HttpExchange> createPollingConsumer() throws Exception {
+    public PollingConsumer createPollingConsumer() throws Exception {
         return new HttpPollingConsumer(this);
     }
 

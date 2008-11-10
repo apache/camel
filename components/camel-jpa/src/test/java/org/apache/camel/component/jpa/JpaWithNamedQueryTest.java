@@ -49,7 +49,7 @@ public class JpaWithNamedQueryTest extends TestCase {
     protected JpaEndpoint endpoint;
     protected TransactionStrategy transactionStrategy;
     protected JpaTemplate jpaTemplate;
-    protected Consumer<Exchange> consumer;
+    protected Consumer consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
     protected String entityName = MultiSteps.class.getName();

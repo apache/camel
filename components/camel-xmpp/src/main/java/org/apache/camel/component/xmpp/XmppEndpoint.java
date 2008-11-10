@@ -83,7 +83,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         return new XmppPrivateChatProducer(this, participant);
     }
 
-    public Consumer<XmppExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         return new XmppConsumer(this, processor);
     }
 

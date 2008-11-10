@@ -63,7 +63,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
         return new MailProducer(this, sender);
     }
 
-    public Consumer<MailExchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getProtocol().startsWith("smtp")) {
             throw new IllegalArgumentException("Protocol " + configuration.getProtocol()
                 + " can not be used for a MailConsumer. Please use another protocol such as pop3 or imap.");
@@ -76,7 +76,7 @@ public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
     /**
      * Creates a consumer using the given processor and sender
      */
-    public Consumer<MailExchange> createConsumer(Processor processor, JavaMailSenderImpl sender) throws Exception {
+    public Consumer createConsumer(Processor processor, JavaMailSenderImpl sender) throws Exception {
         MailConsumer answer = new MailConsumer(this, processor, sender);
 
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a mailbox,

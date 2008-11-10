@@ -89,8 +89,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         return result;
     }
 
-    public Consumer<FileExchange> createConsumer(Processor processor) throws Exception {
-        Consumer<FileExchange> result = new FileConsumer(this, processor);
+    public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer result = new FileConsumer(this, processor);
         configureConsumer(result);
         return result;
     }

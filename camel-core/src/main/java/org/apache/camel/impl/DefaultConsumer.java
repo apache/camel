@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer<E> {
+public class DefaultConsumer<E extends Exchange> extends ServiceSupport implements Consumer {
     private Endpoint<E> endpoint;
     private Processor processor;
     private AsyncProcessor asyncProcessor;

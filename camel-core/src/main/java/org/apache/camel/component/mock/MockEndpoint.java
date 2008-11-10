@@ -162,7 +162,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
 
-    public Consumer<Exchange> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 

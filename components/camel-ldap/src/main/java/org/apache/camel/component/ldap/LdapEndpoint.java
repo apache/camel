@@ -52,7 +52,7 @@ public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         this.remaining = remaining;
     }
 
-    public Consumer<E> createConsumer(Processor processor) throws Exception {
+    public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("An LDAP Consumer would be the LDAP server itself! No such support here");
     }
 
