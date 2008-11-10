@@ -55,7 +55,7 @@ public class TimerEndpoint extends DefaultEndpoint<Exchange> {
         super(endpointUri);
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         throw new RuntimeCamelException("Cannot produce to a TimerEndpoint: " + getEndpointUri());
     }
 

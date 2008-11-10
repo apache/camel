@@ -137,6 +137,7 @@
           <excludes>
             <!-- TODO FIXME ASAP -->
             <exclude>**/XXXTest.*</exclude>
+            <exclude>**/DataSetSedaTest.*</exclude>
           </excludes>
         </configuration>
       </plugin>

@@ -70,9 +70,7 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         this.sync = sync;
     }
 
-
-    @SuppressWarnings({"unchecked"})
-    public Producer<MinaExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new MinaProducer(this);
     }
 

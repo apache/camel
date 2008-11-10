@@ -60,7 +60,7 @@ public class SedaRouteTest extends TestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
-        Producer<Exchange> producer = endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
         producer.process(exchange);
 
         // now lets sleep for a while
@@ -89,7 +89,6 @@ public class SedaRouteTest extends TestSupport {
             }
         });
 
-
         context.start();
 
         // now lets fire in a message
@@ -97,7 +96,7 @@ public class SedaRouteTest extends TestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
-        Producer<Exchange> producer = endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
         producer.process(exchange);
 
         // now lets sleep for a while
@@ -106,5 +105,4 @@ public class SedaRouteTest extends TestSupport {
 
         context.stop();
     }
-
 }

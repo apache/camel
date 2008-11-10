@@ -66,7 +66,7 @@ public class AtomEndpoint extends DefaultPollingEndpoint<Exchange> {
         return true;
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("AtomProducer is not implemented");
     }
 

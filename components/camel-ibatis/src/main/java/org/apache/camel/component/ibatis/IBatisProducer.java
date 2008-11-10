@@ -19,6 +19,7 @@ package org.apache.camel.component.ibatis;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
@@ -40,7 +41,7 @@ public class IBatisProducer extends DefaultProducer<Exchange> {
     }
 
     @Override
-    public IBatisEndpoint getEndpoint() {
+    public Endpoint getEndpoint() {
         return (IBatisEndpoint) super.getEndpoint();
     }
 

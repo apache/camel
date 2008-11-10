@@ -61,7 +61,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         this.httpConnectionManager = httpConnectionManager;
     }
 
-    public Producer<HttpExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new HttpProducer(this);
     }
 

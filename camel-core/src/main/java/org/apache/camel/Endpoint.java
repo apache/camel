@@ -76,7 +76,7 @@ public interface Endpoint<E extends Exchange> {
      *
      * @return a newly created producer
      */
-    Producer<E> createProducer() throws Exception;
+    Producer createProducer() throws Exception;
 
     /**
      * Creates a new <a

@@ -50,7 +50,7 @@ public class StreamEndpoint extends DefaultEndpoint<Exchange> {
         return new StreamConsumer(this, processor, uri);
     }
 
-    public Producer<Exchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new StreamProducer(this, uri);
     }
 

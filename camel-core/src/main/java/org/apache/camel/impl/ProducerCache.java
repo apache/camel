@@ -42,11 +42,11 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache<E extends Exchange> extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    private Map<String, Producer<E>> producers = new HashMap<String, Producer<E>>();
+    private Map<String, Producer> producers = new HashMap<String, Producer>();
 
-    public synchronized Producer<E> getProducer(Endpoint<E> endpoint) {
+    public synchronized Producer getProducer(Endpoint<E> endpoint) {
         String key = endpoint.getEndpointUri();
-        Producer<E> answer = producers.get(key);
+        Producer answer = producers.get(key);
         if (answer == null) {
             try {
                 answer = endpoint.createProducer();
@@ -67,7 +67,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      */
     public void send(Endpoint<E> endpoint, E exchange) {
         try {
-            Producer<E> producer = getProducer(endpoint);
+            Producer producer = getProducer(endpoint);
             producer.process(exchange);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
@@ -83,7 +83,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      */
     public E send(Endpoint<E> endpoint, Processor processor) {
         try {
-            Producer<E> producer = getProducer(endpoint);
+            Producer producer = getProducer(endpoint);
             E exchange = (E) producer.createExchange();
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
@@ -101,7 +101,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      */
     public E send(Endpoint<E> endpoint, Processor processor, AsyncCallback callback) {
         try {
-            Producer<E> producer = getProducer(endpoint);
+            Producer producer = getProducer(endpoint);
             E exchange = (E) producer.createExchange();
             boolean sync = sendExchange(endpoint, producer, processor, exchange, callback);
             setProcessedSync(exchange, sync);
@@ -131,7 +131,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
      */
     public E send(Endpoint<E> endpoint, ExchangePattern pattern, Processor processor) {
         try {
-            Producer<E> producer = getProducer(endpoint);
+            Producer producer = getProducer(endpoint);
             E exchange = (E) producer.createExchange(pattern);
             return sendExchange(endpoint, producer, processor, exchange);
         } catch (Exception e) {
@@ -140,7 +140,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
     }
 
 
-    protected E sendExchange(Endpoint<E> endpoint, Producer<E> producer, Processor processor, E exchange) throws Exception {
+    protected E sendExchange(Endpoint<E> endpoint, Producer producer, Processor processor, E exchange) throws Exception {
         // lets populate using the processor callback
         processor.process(exchange);
 
@@ -152,7 +152,7 @@ public class ProducerCache<E extends Exchange> extends ServiceSupport {
         return exchange;
     }
 
-    protected boolean sendExchange(Endpoint<E> endpoint, Producer<E> producer, Processor processor, E exchange, AsyncCallback callback) throws Exception {
+    protected boolean sendExchange(Endpoint<E> endpoint, Producer producer, Processor processor, E exchange, AsyncCallback callback) throws Exception {
         // lets populate using the processor callback
         processor.process(exchange);
 

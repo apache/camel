@@ -71,7 +71,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
         }
     }
 
-    public Producer<CxfExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new CxfProducer(this);
     }
 

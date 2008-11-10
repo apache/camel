@@ -70,7 +70,7 @@ public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
         return new RmiConsumer(this, processor);
     }
 
-    public Producer<BeanExchange> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new RmiProducer(this);
     }
 

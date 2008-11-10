@@ -56,7 +56,7 @@ public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         throw new RuntimeCamelException("An LDAP Consumer would be the LDAP server itself! No such support here");
     }
 
-    public Producer<E> createProducer() throws Exception {
+    public Producer createProducer() throws Exception {
         return new LdapProducer(this, remaining, base, toSearchControlScope(scope));
     }
 

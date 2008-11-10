@@ -84,9 +84,8 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     public FileEndpoint() {
     }
 
-    public Producer<FileExchange> createProducer() throws Exception {
-        Producer<FileExchange> result = new FileProducer(this);
-        return result;
+    public Producer createProducer() throws Exception {
+        return new FileProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

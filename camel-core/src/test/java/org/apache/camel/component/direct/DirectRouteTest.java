@@ -57,7 +57,7 @@ public class DirectRouteTest extends TestCase {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
-        Producer<Exchange> producer = endpoint.createProducer();
+        Producer producer = endpoint.createProducer();
         producer.process(exchange);
 
         // now lets sleep for a while

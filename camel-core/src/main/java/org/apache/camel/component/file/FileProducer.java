@@ -25,6 +25,7 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -52,7 +53,7 @@ public class FileProducer extends DefaultProducer {
     /**
      * @deprecated will be removed in Camel 2.0.
      */
-    public FileEndpoint getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 

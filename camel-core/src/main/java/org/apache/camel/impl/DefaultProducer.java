@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
  *
  * @version $Revision$
  */
-public abstract class DefaultProducer<E extends Exchange> extends ServiceSupport implements Producer<E> {
+public abstract class DefaultProducer<E extends Exchange> extends ServiceSupport implements Producer {
     private Endpoint<E> endpoint;
 
     public DefaultProducer(Endpoint<E> endpoint) {
@@ -38,7 +38,7 @@ public abstract class DefaultProducer<E extends Exchange> extends ServiceSupport
         return "Producer[" + endpoint.getEndpointUri() + "]";
     }
 
-    public Endpoint<E> getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 
