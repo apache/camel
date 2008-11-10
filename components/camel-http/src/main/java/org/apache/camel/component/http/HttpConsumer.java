@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * @version $Revision$
  */
-public class HttpConsumer extends DefaultConsumer<HttpExchange> {
+public class HttpConsumer extends DefaultConsumer {
 
     private final HttpEndpoint endpoint;
 

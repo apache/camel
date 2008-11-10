@@ -25,7 +25,7 @@ import org.schwering.irc.lib.IRCEventAdapter;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
-public class IrcConsumer extends DefaultConsumer<IrcExchange> {
+public class IrcConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(IrcConsumer.class);
     
     private final IrcConfiguration configuration;

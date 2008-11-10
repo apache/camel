@@ -35,7 +35,7 @@ import org.apache.mina.common.IoSession;
  *
  * @version $Revision$
  */
-public class MinaConsumer extends DefaultConsumer<MinaExchange> {
+public class MinaConsumer extends DefaultConsumer {
     private static final transient Log LOG = LogFactory.getLog(MinaConsumer.class);
 
     private final MinaEndpoint endpoint;

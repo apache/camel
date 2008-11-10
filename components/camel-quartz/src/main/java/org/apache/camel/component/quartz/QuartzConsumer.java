@@ -22,7 +22,7 @@ import org.apache.camel.impl.DefaultConsumer;
 /**
  * @version $Revision$
  */
-public class QuartzConsumer extends DefaultConsumer<QuartzExchange> {
+public class QuartzConsumer extends DefaultConsumer {
     public QuartzConsumer(QuartzEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }

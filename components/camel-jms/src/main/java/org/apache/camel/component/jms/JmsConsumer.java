@@ -26,7 +26,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  *
  * @version $Revision$
  */
-public class JmsConsumer extends DefaultConsumer<JmsExchange> {
+public class JmsConsumer extends DefaultConsumer {
     private final AbstractMessageListenerContainer listenerContainer;
     private EndpointMessageListener messageListener;
 

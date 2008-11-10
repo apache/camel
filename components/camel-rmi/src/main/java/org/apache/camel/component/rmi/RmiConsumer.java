@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultConsumer;
  * 
  * @version $Revision$
  */
-public class RmiConsumer extends DefaultConsumer<BeanExchange> implements InvocationHandler {
+public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
 
     private final RmiEndpoint endpoint;
     private Remote stub;

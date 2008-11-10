@@ -27,7 +27,7 @@ import org.apache.camel.impl.DefaultConsumer;
  *
  * @version $Revision$
  */
-public class LoadBalancerConsumer extends DefaultConsumer<Exchange> {
+public class LoadBalancerConsumer extends DefaultConsumer {
     private final LoadBalancer loadBalancer;
 
     public LoadBalancerConsumer(Endpoint endpoint, Processor processor, LoadBalancer loadBalancer) {

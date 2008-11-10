@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Consumer that can read from streams
  */
-public class StreamConsumer extends DefaultConsumer<Exchange> {
+public class StreamConsumer extends DefaultConsumer {
 
     private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
     private static final String TYPES = "in,file,url";

@@ -43,7 +43,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
         if (endpoint.getConsumers().isEmpty()) {
             LOG.warn("No consumers available on " + this + " to process " + exchange);
         } else {
-            for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
+            for (DefaultConsumer consumer : endpoint.getConsumers()) {
                 consumer.getProcessor().process(exchange);
             }
         }
@@ -54,13 +54,13 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
         if (size == 0) {
             LOG.warn("No consumers available on " + this + " to process " + exchange);
         } else if (size == 1) {
-            DefaultConsumer<E> consumer = endpoint.getConsumers().get(0);
+            DefaultConsumer consumer = endpoint.getConsumers().get(0);
             AsyncProcessor processor = AsyncProcessorTypeConverter.convert(consumer.getProcessor());
             return processor.process(exchange, callback);
         } else if (size > 1) {
             // Too hard to do multiple async.. do it sync
             try {
-                for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
+                for (DefaultConsumer consumer : endpoint.getConsumers()) {
                     consumer.getProcessor().process(exchange);
                 }
             } catch (Throwable error) {
