@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.Processor;
@@ -32,7 +29,6 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
 /**
@@ -93,18 +89,15 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
         // apply feature here
         if (!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
-            List<AbstractFeature> features = new ArrayList<AbstractFeature>();
 
             if (dataFormat.equals(DataFormat.PAYLOAD)) {
-                features.add(new PayLoadDataFormatFeature());
+                svrBean.getFeatures().add(new PayLoadDataFormatFeature());
                 // adding the logging feature here for debug
                 //features.add(new LoggingFeature());
             } else if (dataFormat.equals(DataFormat.MESSAGE)) {
-                features.add(new MessageDataFormatFeature());
+                svrBean.getFeatures().add(new MessageDataFormatFeature());
                 //features.add(new LoggingFeature());
             }
-            svrBean.setFeatures(features);
-
         }
         svrBean.setBus(bus);
         svrBean.setStart(false);
