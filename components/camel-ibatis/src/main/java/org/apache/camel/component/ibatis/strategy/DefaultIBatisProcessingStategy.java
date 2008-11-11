@@ -19,11 +19,11 @@ package org.apache.camel.component.ibatis.strategy;
 import java.sql.Connection;
 import java.util.List;
 
+import com.ibatis.sqlmap.client.SqlMapClient;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.ibatis.IBatisEndpoint;
 import org.apache.camel.component.ibatis.IBatisPollingConsumer;
-
-import com.ibatis.sqlmap.client.SqlMapClient;
 
 /**
  * Default strategy for consuming messages for a route
@@ -39,14 +39,14 @@ public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy 
         SqlMapClient client = endpoint.getSqlMapClient();
         boolean useTrans = endpoint.isUseTransactions();
         String[] statements = consumeStatement.split(",");
-        try{
-            if (useTrans){
+        try {
+            if (useTrans) {
                 client.startTransaction(Connection.TRANSACTION_REPEATABLE_READ);
             }
-            for (String statement: statements) {
+            for (String statement : statements) {
                 client.update(statement.trim(), data);
             }
-            if (useTrans){
+            if (useTrans) {
                 client.commitTransaction();
             }
         } finally {

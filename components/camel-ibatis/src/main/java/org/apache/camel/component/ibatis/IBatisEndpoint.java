@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class IBatisEndpoint extends DefaultPollingEndpoint {
-    private static final transient Log logger = LogFactory.getLog(IBatisEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(IBatisEndpoint.class);
 
     private IBatisProcessingStrategy strategy;
     /**
@@ -156,8 +156,8 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
                 if (clazz != null) {
                     strategy = ObjectHelper.newInstance(clazz, IBatisProcessingStrategy.class);
                 }
-            } catch(Exception e) {
-                logger.error("Failed to resolve/create processing strategy (" + name + ")", e);
+            } catch (Exception e) {
+                LOG.error("Failed to resolve/create processing strategy (" + name + ")", e);
                 throw e;
             }
         }
