@@ -88,6 +88,17 @@ public class CxfEndpoint extends DefaultEndpoint {
     public CxfExchange createExchange(Message inMessage) {
         return new CxfExchange(getCamelContext(), getExchangePattern(), inMessage);
     }
+    
+    /* Override the defaultEndpoint exchange create method */
+    public Exchange createExchange(Exchange exchange) {
+        if (exchange instanceof CxfExchange) {
+            return exchange;
+        } else {
+            Exchange answer = createExchange();
+            answer.copyFrom(exchange);
+            return answer;
+        }
+    }
 
     public String getDataFormat() {
         return dataFormat;
