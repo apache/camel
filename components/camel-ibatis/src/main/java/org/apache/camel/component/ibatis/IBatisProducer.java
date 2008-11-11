@@ -19,13 +19,13 @@ package org.apache.camel.component.ibatis;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibatis.sqlmap.client.SqlMapClient;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
-import com.ibatis.sqlmap.client.SqlMapClient;
 
 /**
  * @version $Revision$

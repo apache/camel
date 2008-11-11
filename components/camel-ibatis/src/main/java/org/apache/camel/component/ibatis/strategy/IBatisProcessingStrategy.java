@@ -23,27 +23,29 @@ import org.apache.camel.component.ibatis.IBatisEndpoint;
 import org.apache.camel.component.ibatis.IBatisPollingConsumer;
 
 /**
- * Processing strategy for dealing with IBatis records 
- *
+ * Processing strategy for dealing with IBatis records
  */
 public interface IBatisProcessingStrategy {
 
-	/**
-	 * Called when record is being queried.
-	 * @param consumer     The Ibatis Polling Consumer
-	 * @param endpoint     The Ibatis Endpoint
-	 * @return             Results of the query as a java.util.List
-	 * @throws Exception
-	 */
-	List poll (IBatisPollingConsumer consumer, IBatisEndpoint endpoint) throws Exception;
-	
-	/**
-	 * Called if there is a statement to be run after processing
-	 * @param endpoint     The Ibatis Enpoint
-	 * @param exchange     The exchange after it has been processed
-	 * @param data         The original data delivered to the route
-	 * @param consumeStatement The update statement to run
-	 * @throws Exception
-	 */
-	void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatement) throws Exception;
+    /**
+     * Called when record is being queried.
+     * 
+     * @param consumer The Ibatis Polling Consumer
+     * @param endpoint The Ibatis Endpoint
+     * @return Results of the query as a java.util.List
+     * @throws Exception
+     */
+    List poll(IBatisPollingConsumer consumer, IBatisEndpoint endpoint) throws Exception;
+
+    /**
+     * Called if there is a statement to be run after processing
+     * 
+     * @param endpoint The Ibatis Enpoint
+     * @param exchange The exchange after it has been processed
+     * @param data The original data delivered to the route
+     * @param consumeStatement The update statement to run
+     * @throws Exception
+     */
+    void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatement)
+        throws Exception;
 }

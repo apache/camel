@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class IBatisQueueTest extends ContextTestSupport {
 
-   public void testConsume() throws Exception {
+    public void testConsume() throws Exception {
 
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMinimumMessageCount(2);
@@ -76,7 +76,7 @@ public class IBatisQueueTest extends ContextTestSupport {
         };
     }
 
-   @Override
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
 
@@ -89,8 +89,8 @@ public class IBatisQueueTest extends ContextTestSupport {
     }
     
     @Override
-    protected void tearDown() throws Exception{
-    super.tearDown();
+    protected void tearDown() throws Exception {
+        super.tearDown();
         IBatisEndpoint endpoint = resolveMandatoryEndpoint("ibatis:Account", IBatisEndpoint.class);
         Connection connection = endpoint.getSqlMapClient().getDataSource().getConnection();
         Statement statement = connection.createStatement();

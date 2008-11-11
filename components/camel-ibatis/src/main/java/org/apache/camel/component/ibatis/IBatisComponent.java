@@ -70,10 +70,10 @@ public class IBatisComponent extends ResourceBasedComponent {
     private String sqlMapConfig = DEFAULT_CONFIG_URI;
     private boolean useTransactions = true;
 
-    public IBatisComponent(){
+    public IBatisComponent() {
     }
 
-    public IBatisComponent(SqlMapClient sqlMapClient){
+    public IBatisComponent(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
     }
 
