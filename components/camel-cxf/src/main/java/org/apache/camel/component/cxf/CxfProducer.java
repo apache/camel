@@ -42,7 +42,6 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
@@ -90,17 +89,14 @@ public class CxfProducer extends DefaultProducer {
 
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
-
         dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-        List<AbstractFeature> features = new ArrayList<AbstractFeature>();
         if (dataFormat.equals(DataFormat.MESSAGE)) {
-            features.add(new MessageDataFormatFeature());
+            cfb.getFeatures().add(new MessageDataFormatFeature());
             // features.add(new LoggingFeature());
         } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
-            features.add(new PayLoadDataFormatFeature());
+            cfb.getFeatures().add(new PayLoadDataFormatFeature());
             // features.add(new LoggingFeature());
         }
-        cfb.setFeatures(features);
 
         return createClientFromClientFactoryBean(cfb);
     }
