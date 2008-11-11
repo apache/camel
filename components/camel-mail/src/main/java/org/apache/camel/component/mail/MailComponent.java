@@ -50,6 +50,8 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
 
     /**
      * Static builder method
+     *
+     * @deprecated will be removed in Camel 2.0
      */
     public static MailComponent mailComponent() {
         return new MailComponent();
@@ -57,6 +59,8 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
 
     /**
      * Static builder method
+     *
+     * @deprecated will be removed in Camel 2.0
      */
     public static MailComponent mailComponent(MailConfiguration configuration) {
         return new MailComponent(configuration);
@@ -64,7 +68,6 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
 
     @Override
     protected Endpoint<MailExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-
         URI url = new URI(uri);
         if ("nntp".equalsIgnoreCase(url.getScheme())) {
             throw new UnsupportedOperationException("nntp protocol is not supported");
@@ -107,6 +110,5 @@ public class MailComponent extends DefaultComponent<MailExchange> implements Hea
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
-        
     }
 }
