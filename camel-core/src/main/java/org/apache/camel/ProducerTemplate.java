@@ -49,7 +49,7 @@ public interface ProducerTemplate extends Service {
     Exchange send(Exchange exchange);
 
     /**
-     * Sends an exchange to the default endpoint using a supplied
+     * Sends an exchange to the default endpoint using a supplied processor
      *
      * @param processor the transformer used to populate the new exchange
      * {@link Processor} to populate the exchange
@@ -288,12 +288,40 @@ public interface ProducerTemplate extends Service {
      */
     Object sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
 
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param headers headers
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body,
+                              Map<String, Object> headers);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param headers headers
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, Object body,
+                              Map<String, Object> headers);
+
 
     // Methods using an InOut ExchangePattern
     // -----------------------------------------------------------------------
 
     /**
-     * Send the body to an endpoint returning any result output body.
+     * Sends an exchange to an endpoint using a supplied processor
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
      * @param endpoint  the Endpoint to send to
@@ -301,6 +329,16 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      */
     Exchange request(Endpoint endpoint, Processor processor);
+
+    /**
+     * Sends an exchange to an endpoint using a supplied processor
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param processor the processor which will populate the exchange before sending
+     * @return the result (see class javadoc)
+     */
+    Exchange request(String endpointUri, Processor processor);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -311,6 +349,16 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      */
     Object requestBody(Endpoint endpoint, Object body);
+
+    /**
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload
+     * @return the result (see class javadoc)
+     */
+    Object requestBody(String endpointUri, Object body);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -329,26 +377,6 @@ public interface ProducerTemplate extends Service {
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
      * @param endpointUri the endpoint URI to send to
-     * @param processor the processor which will populate the exchange before sending
-     * @return the result (see class javadoc)
-     */
-    Exchange request(String endpointUri, Processor processor);
-
-    /**
-     * Send the body to an endpoint returning any result output body.
-     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param endpointUri the endpoint URI to send to
-     * @param body        the payload
-     * @return the result (see class javadoc)
-     */
-    Object requestBody(String endpointUri, Object body);
-
-    /**
-     * Send the body to an endpoint returning any result output body.
-     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
-     *
-     * @param endpointUri the endpoint URI to send to
      * @param body        the payload
      * @param header      the header name
      * @param headerValue the header value
@@ -356,4 +384,27 @@ public interface ProducerTemplate extends Service {
      */
     Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
 
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload to send
+     * @param headers headers
+     * @return the result (see class javadoc)
+     */
+    Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param body the payload to send
+     * @param headers headers
+     * @return the result (see class javadoc)
+     */
+    Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
 }

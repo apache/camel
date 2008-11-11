@@ -160,6 +160,23 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return extractResultBody(result);
     }
 
+    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) {
+        return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), pattern, body, headers);
+    }
+
+    public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) {
+        Exchange result = send(endpoint,  pattern, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                for (Map.Entry<String, Object> header : headers.entrySet()) {
+                    in.setHeader(header.getKey(), header.getValue());
+                }
+                in.setBody(body);
+            }
+        });
+        return extractResultBody(result);
+    }
+
     // Methods using an InOut ExchangePattern
     // -----------------------------------------------------------------------
 
@@ -185,6 +202,14 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
+    }
+
+    public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) {
+        return requestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
+    }
+
+    public Object requestBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+        return sendBodyAndHeaders(endpoint, ExchangePattern.InOut, body, headers);
     }
 
     // Methods using the default endpoint
