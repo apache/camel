@@ -33,7 +33,7 @@ public class MinaConsumerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("mina:tcp://localhost:6200?textline=true", "Hello World");
+        template.sendBody("mina:tcp://localhost:6200?textline=true&sync=false", "Hello World");
 
         assertMockEndpointsSatisfied();
         // END SNIPPET: e2
@@ -41,7 +41,7 @@ public class MinaConsumerTest extends ContextTestSupport {
 
     public void testSendTextlineSyncText() throws Exception {
         // START SNIPPET: e4
-        String response = (String)template.sendBody("mina:tcp://localhost:6201?textline=true&sync=true", "World");
+        String response = (String)template.requestBody("mina:tcp://localhost:6201?textline=true&sync=true", "World");
         assertEquals("Bye World", response);
         // END SNIPPET: e4
     }
@@ -50,7 +50,7 @@ public class MinaConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("mina:tcp://localhost:6200?textline=true").to("mock:result");
+                from("mina:tcp://localhost:6200?textline=true&sync=false").to("mock:result");
                 // END SNIPPET: e1
 
                 // START SNIPPET: e3
