@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class MulticastTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;

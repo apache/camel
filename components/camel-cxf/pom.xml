@@ -255,6 +255,11 @@
           <includes>
             <include>**/*Test.*</include>
           </includes>
+          <excludes>
+            <exclude>**/CxfGreeterPayLoadRouterTest.*</exclude>
+            <exclude>**/CxfPayLoadMessageRouterTest.*</exclude>
+            <exclude>**/CxfWsdlFirstTest.*</exclude>
+          </excludes>
           <systemProperties>
                <property>
                     <name>java.util.logging.config.file</name>

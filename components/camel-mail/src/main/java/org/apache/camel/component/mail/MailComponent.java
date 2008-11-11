@@ -63,7 +63,7 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
     }
 
     @Override
-    protected Endpoint<MailExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         URI url = new URI(uri);
         if ("nntp".equalsIgnoreCase(url.getScheme())) {

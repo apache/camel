@@ -19,7 +19,6 @@ package org.apache.camel.component.flatpack;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
@@ -35,7 +34,7 @@ public class FlatpackComponent extends ResourceBasedComponent {
     public static final String HEADER_ID = "header";
     public static final String TRAILER_ID = "trailer";
 
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         boolean fixed = false;
         if (remaining.startsWith("fixed:")) {
             fixed = true;

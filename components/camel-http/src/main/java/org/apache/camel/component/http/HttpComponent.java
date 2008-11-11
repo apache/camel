@@ -75,7 +75,7 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
     }
 
     @Override
-    protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters)
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {
         HttpClientParams params = new HttpClientParams();
         IntrospectionSupport.setProperties(params, parameters, "httpClient.");

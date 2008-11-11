@@ -31,7 +31,7 @@ import static org.apache.camel.builder.xml.XPathBuilder.xpath;
  * @version $Revision$
  */
 public class NeilSplitterTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
     class CatFight {

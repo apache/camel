@@ -51,10 +51,7 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         Thread.sleep(2000);
         error.assertIsSatisfied();
         out.assertIsSatisfied();
-        
     }
-    
-    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

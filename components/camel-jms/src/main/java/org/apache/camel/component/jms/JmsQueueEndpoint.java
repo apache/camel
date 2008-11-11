@@ -30,7 +30,7 @@ import org.springframework.jms.core.JmsOperations;
  *
  * @version $Revision$
  */
-public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint<JmsExchange> {
+public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(JmsQueueEndpoint.class);
 
     private int maximumBrowseSize = -1;

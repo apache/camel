@@ -89,7 +89,7 @@ public class CamelNamingStrategy {
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,type=endpoint,component=&lt;component-name&gt;name=&lt;endpoint-name&gt;</tt>
      */
     public ObjectName getObjectName(ManagedEndpoint mbean) throws MalformedObjectNameException {
-        Endpoint<? extends Exchange> ep = mbean.getEndpoint();
+        Endpoint ep = mbean.getEndpoint();
 
         StringBuffer buffer = new StringBuffer();
         buffer.append(domainName).append(":");
@@ -131,7 +131,7 @@ public class CamelNamingStrategy {
      */
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
         Route<? extends Exchange> route = mbean.getRoute();
-        Endpoint<? extends Exchange> ep = route.getEndpoint();
+        Endpoint ep = route.getEndpoint();
         String id = (String)route.getProperties().get(Route.ID_PROPERTY);
 
         StringBuffer buffer = new StringBuffer();
@@ -149,7 +149,7 @@ public class CamelNamingStrategy {
      */
     public ObjectName getObjectName(RouteContext routeContext, ProcessorType processor)
         throws MalformedObjectNameException {
-        Endpoint<? extends Exchange> ep = routeContext.getEndpoint();
+        Endpoint ep = routeContext.getEndpoint();
         String ctxid;
         String cid;
         if (ep != null) {
@@ -192,7 +192,7 @@ public class CamelNamingStrategy {
         return hostName + "/" + (context != null ? context.getName() : VALUE_UNKNOWN);
     }
 
-    protected String getEndpointId(Endpoint<? extends Exchange> ep) {
+    protected String getEndpointId(Endpoint ep) {
         String uri = ep.getEndpointUri();
         int pos = uri.indexOf('?');
         String id = (pos == -1) ? uri : uri.substring(0, pos);

@@ -39,7 +39,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  *
  * @version $Revision:520964 $
  */
-public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
+public class XmppEndpoint extends DefaultEndpoint {
     private static final transient Log LOG = LogFactory.getLog(XmppEndpoint.class);
     private XmppBinding binding;
     private XMPPConnection connection;

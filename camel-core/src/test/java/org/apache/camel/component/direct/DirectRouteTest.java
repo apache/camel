@@ -53,7 +53,7 @@ public class DirectRouteTest extends TestCase {
         container.start();
 
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = container.getEndpoint("direct:test.a");
+        Endpoint endpoint = container.getEndpoint("direct:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 

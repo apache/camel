@@ -76,11 +76,11 @@ public final class ExchangeHelper {
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
     @SuppressWarnings({"unchecked" })
-    public static <E extends Exchange> Endpoint<E> resolveEndpoint(E exchange, Object value)
+    public static Endpoint resolveEndpoint(Exchange exchange, Object value)
         throws NoSuchEndpointException {
-        Endpoint<E> endpoint;
+        Endpoint endpoint;
         if (value instanceof Endpoint) {
-            endpoint = (Endpoint<E>)value;
+            endpoint = (Endpoint)value;
         } else {
             String uri = value.toString();
             endpoint = CamelContextHelper.getMandatoryEndpoint(exchange.getContext(), uri);

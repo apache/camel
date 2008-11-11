@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class AtomEndpoint extends DefaultPollingEndpoint<Exchange> {
+public class AtomEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.

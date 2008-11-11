@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class SedaEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
+public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {

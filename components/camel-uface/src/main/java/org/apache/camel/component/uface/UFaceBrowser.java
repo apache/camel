@@ -66,7 +66,7 @@ public class UFaceBrowser {
 
         camelContext.setLifecycleStrategy(new DelegateLifecycleStrategy(camelContext.getLifecycleStrategy()) {
             @Override
-            public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
+            public void onEndpointAdd(Endpoint endpoint) {
                 super.onEndpointAdd(endpoint);
 
                 if (endpoint instanceof BrowsableEndpoint) {

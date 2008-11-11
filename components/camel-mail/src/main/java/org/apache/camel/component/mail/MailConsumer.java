@@ -47,7 +47,7 @@ public class MailConsumer extends ScheduledPollConsumer {
     private Store store;
 
     public MailConsumer(MailEndpoint endpoint, Processor processor, JavaMailSenderImpl sender) {
-        super((DefaultEndpoint)endpoint, processor);
+        super(endpoint, processor);
         this.endpoint = endpoint;
         this.sender = sender;
     }

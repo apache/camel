@@ -29,7 +29,7 @@ import java.util.Map;
  * @see Message
  * @version $Revision$
  */
-public interface Endpoint<E extends Exchange> {
+public interface Endpoint {
 
     /**
      * Returns if the endpoint should be a CamelContext singleton. If the

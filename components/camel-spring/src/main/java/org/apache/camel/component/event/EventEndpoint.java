@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  *
  * @version $Revision$
  */
-public class EventEndpoint extends DefaultEndpoint<Exchange> implements ApplicationContextAware {
+public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
     private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
 

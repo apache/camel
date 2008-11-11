@@ -40,8 +40,7 @@ public class JMXComponent extends DefaultComponent {
         super(context);
     }
 
-    protected Endpoint<JMXExchange> createEndpoint(String uri, String remaining, Map parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         JMXEndpoint result = new JMXEndpoint(remaining, this);
         setProperties(result, parameters);

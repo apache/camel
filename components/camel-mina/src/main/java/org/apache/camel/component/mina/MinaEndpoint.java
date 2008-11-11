@@ -36,7 +36,7 @@ import org.apache.mina.common.IoSession;
  *
  * @version $Revision$
  */
-public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
+public class MinaEndpoint extends DefaultEndpoint {
 
     private static final long DEFAULT_TIMEOUT = 30000;
     private long timeout = DEFAULT_TIMEOUT;

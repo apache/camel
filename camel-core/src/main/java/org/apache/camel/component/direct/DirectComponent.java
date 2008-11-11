@@ -19,7 +19,6 @@ package org.apache.camel.component.direct;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -28,10 +27,10 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version $Revision$
  */
-public class DirectComponent<E extends Exchange> extends DefaultComponent {
+public class DirectComponent extends DefaultComponent {
 
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        Endpoint<E> endpoint = new DirectEndpoint<E>(uri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint endpoint = new DirectEndpoint(uri, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

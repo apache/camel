@@ -54,7 +54,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class MockEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
+public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final transient Log LOG = LogFactory.getLog(MockEndpoint.class);
     private int expectedCount;
     private int counter;

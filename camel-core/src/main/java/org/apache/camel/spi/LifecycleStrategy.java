@@ -41,7 +41,7 @@ public interface LifecycleStrategy {
      *
      * @param endpoint the added endpoint
      */
-    void onEndpointAdd(Endpoint<? extends Exchange> endpoint);
+    void onEndpointAdd(Endpoint endpoint);
 
     /**
      * Notification on adding a {@link Service}.

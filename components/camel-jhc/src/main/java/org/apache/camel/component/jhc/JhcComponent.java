@@ -23,8 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
@@ -32,14 +30,10 @@ import org.apache.http.params.HttpProtocolParams;
 
 public class JhcComponent extends DefaultComponent implements HeaderFilterStrategyAware {
 
-    private static final Log LOG = LogFactory.getLog(JhcComponent.class);
-
     private HttpParams params;
-
     private HeaderFilterStrategy headerFilterStrategy;
 
     public JhcComponent() {
-     
         setHeaderFilterStrategy(new JhcHeaderFilterStrategy());
         
         params = new BasicHttpParams()
@@ -59,7 +53,7 @@ public class JhcComponent extends DefaultComponent implements HeaderFilterStrate
         this.params = params;
     }
 
-    protected Endpoint<JhcExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new JhcEndpoint(uri, this, new URI(uri.substring(uri.indexOf(':') + 1)));
     }
 
@@ -70,5 +64,4 @@ public class JhcComponent extends DefaultComponent implements HeaderFilterStrate
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
-
 }

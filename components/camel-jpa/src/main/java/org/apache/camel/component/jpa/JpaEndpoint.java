@@ -37,7 +37,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 /**
  * @version $Revision$
  */
-public class JpaEndpoint extends ScheduledPollEndpoint<Exchange> {
+public class JpaEndpoint extends ScheduledPollEndpoint {
     private EntityManagerFactory entityManagerFactory;
     private String persistenceUnit = "camel";
     private JpaTemplate template;

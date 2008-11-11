@@ -32,7 +32,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  *
  * @version
  */
-public class LdapEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public class LdapEndpoint extends DefaultEndpoint {
     public static final String SYSTEM_DN  = "ou=system";
     public static final String OBJECT_SCOPE = "object";
     public static final String ONELEVEL_SCOPE = "onelevel";

@@ -24,12 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision:520964 $
  */
-public class JdbcEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class JdbcEndpoint extends DefaultEndpoint {
 
     private URI uri;
     private String remaining;

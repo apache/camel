@@ -43,7 +43,7 @@ public class ManagedRoute extends PerformanceCounter {
 
     @ManagedAttribute(description = "Route Endpoint Uri")
     public String getEndpointUri() {
-        Endpoint<? extends Exchange> ep = route.getEndpoint();
+        Endpoint ep = route.getEndpoint();
         return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
     }
 

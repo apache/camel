@@ -36,7 +36,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 /**
  * @version $Revision:520964 $
  */
-public class RmiEndpoint extends DefaultEndpoint<BeanExchange> {
+public class RmiEndpoint extends DefaultEndpoint {
 
     private List<Class> remoteInterfaces;
     private ClassLoader classLoader;

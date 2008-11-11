@@ -17,8 +17,8 @@
 package org.apache.camel.component.stream;
 
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -30,7 +30,7 @@ public class StreamComponent extends DefaultComponent {
     // (Should use other components for such needs.)
 
     @Override
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters)
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {
         return new StreamEndpoint(uri, this);
     }

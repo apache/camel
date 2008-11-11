@@ -38,7 +38,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
+public class HttpEndpoint extends DefaultPollingEndpoint {
 
     private HttpBinding binding;
     private HttpComponent component;
@@ -65,7 +65,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         return new HttpProducer(this);
     }
 
-    @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         return new HttpPollingConsumer(this);
     }
@@ -99,7 +98,6 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
         component.disconnect(consumer);
     }
 
-    @Override
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;

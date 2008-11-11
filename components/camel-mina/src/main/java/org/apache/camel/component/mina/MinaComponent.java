@@ -85,7 +85,7 @@ public class MinaComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint<MinaExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating MinaEndpoint from uri: " + uri);
         }

@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -31,7 +30,7 @@ import org.apache.camel.util.IntrospectionSupport;
  *
  * @version $Revision$
  */
-public abstract class ScheduledPollEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private Map consumerProperties;
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {

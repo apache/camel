@@ -94,7 +94,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
     }
 
-    public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
+    public void onEndpointAdd(Endpoint endpoint) {
         // the agent hasn't been started
         if (!initialized) {
             return;

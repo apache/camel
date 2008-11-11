@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -36,8 +35,7 @@ public class RmiComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint<BeanExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new RmiEndpoint(uri, this);
     }
-
 }

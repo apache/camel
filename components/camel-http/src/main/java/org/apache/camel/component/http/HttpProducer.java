@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -26,7 +28,6 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
@@ -41,8 +42,6 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 /**
  * @version $Revision$
  */

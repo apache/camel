@@ -40,7 +40,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
     @XmlAttribute
     private String ref;
     @XmlTransient
-    private Endpoint<? extends Exchange> endpoint;
+    private Endpoint endpoint;
 
     public FromType() {
     }
@@ -49,7 +49,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
         setUri(uri);
     }
 
-    public FromType(Endpoint<? extends Exchange> endpoint) {
+    public FromType(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
@@ -68,7 +68,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
         return description(getUri(), getRef(), getEndpoint());
     }
 
-    public Endpoint<? extends Exchange> resolveEndpoint(RouteContext context) {
+    public Endpoint resolveEndpoint(RouteContext context) {
         if (endpoint == null) {
             endpoint = context.resolveEndpoint(getUri(), getRef());
         }

@@ -19,7 +19,6 @@ package org.apache.camel.component.validator.jing;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.springframework.core.io.Resource;
@@ -31,7 +30,7 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class JingComponent extends ResourceBasedComponent {
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         JingValidator validator = new JingValidator();
         Resource resource = resolveMandatoryResource(remaining);
         validator.setSchemaResource(resource);

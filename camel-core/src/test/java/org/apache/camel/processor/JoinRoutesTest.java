@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class JoinRoutesTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
     public void testMessagesThroughDifferentRoutes() throws Exception {

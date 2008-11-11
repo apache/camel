@@ -30,7 +30,7 @@ import org.apache.camel.Producer;
  *
  * @version $Revision$
  */
-public class ProcessorEndpoint extends DefaultPollingEndpoint<Exchange> {
+public class ProcessorEndpoint extends DefaultPollingEndpoint {
     private Processor processor;
 
     protected ProcessorEndpoint() {

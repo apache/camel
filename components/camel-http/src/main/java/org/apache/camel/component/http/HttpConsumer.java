@@ -55,5 +55,4 @@ public class HttpConsumer extends DefaultConsumer {
         endpoint.disconnect(this);
         super.doStop();
     }
-
 }

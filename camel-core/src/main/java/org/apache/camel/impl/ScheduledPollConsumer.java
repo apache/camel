@@ -43,11 +43,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements
     private ScheduledFuture<?> future;
     private Exception firstExceptionThrown;
     
-    public ScheduledPollConsumer(DefaultEndpoint<Exchange> endpoint, Processor processor) {
+    public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         this(endpoint, processor, endpoint.getExecutorService());
     }
 
-    public ScheduledPollConsumer(Endpoint<Exchange> endpoint, Processor processor, ScheduledExecutorService executor) {
+    public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
         this.executor = executor;
         if (executor == null) {

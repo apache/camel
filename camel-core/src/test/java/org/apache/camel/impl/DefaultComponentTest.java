@@ -34,7 +34,7 @@ public class DefaultComponentTest extends ContextTestSupport {
             super(context);
         }
 
-        protected Endpoint<DefaultExchange> createEndpoint(String uri, String remaining, Map parameters)
+        protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
             throws Exception {
             return null;
         }
