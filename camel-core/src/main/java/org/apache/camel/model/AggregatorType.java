@@ -367,14 +367,6 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
     public void setOutputs(List<ProcessorType<?>> outputs) {
         this.outputs = outputs;
     }
-
-    /**
-     * @deprecated not used. Will be removed in Camel 2.0.
-     */
-    protected FilterProcessor createFilterProcessor(RouteContext routeContext) throws Exception {
-        Processor childProcessor = routeContext.createProcessor(this);
-        return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
-    }
     
     @Override
     protected void configureChild(ProcessorType output) {
