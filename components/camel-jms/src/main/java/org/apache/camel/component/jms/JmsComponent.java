@@ -415,7 +415,8 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             endpoint.getConfiguration().setConnectionFactory(ucfa);
         } else {
             if (username != null || password != null) {
-                throw new CamelException("The JmsComponent's username or password is null");
+                // exclude the the saturation of username and password are all empty
+                throw new IllegalArgumentException("The JmsComponent's username or password is null");
             }
         }
         setProperties(endpoint.getConfiguration(), parameters);
