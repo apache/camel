@@ -83,16 +83,6 @@ public class TryType extends OutputType<TryType> {
         return this;
     }
 
-    /**
-     * @deprecated Use {@link #finallyBlock()} instead, as the name
-     * is better. Current name sugests that it handles exception,
-     * while it mimics java finally keyword. Will be removed in Camel 2.0.
-     */
-    @Deprecated
-    public TryType handleAll() {
-        return finallyBlock();
-    }
-
     public TryType finallyBlock() {
         popBlock();
         FinallyType answer = new FinallyType();

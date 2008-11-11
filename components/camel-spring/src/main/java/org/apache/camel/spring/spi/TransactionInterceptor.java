@@ -57,15 +57,6 @@ public class TransactionInterceptor extends DelegateProcessor {
         this.transactionTemplate = transactionTemplate;
     }
 
-    /**
-     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
-     */
-    public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate, RedeliveryPolicy redeliveryPolicy) {
-        this(processor, transactionTemplate);
-        this.redeliveryPolicy = redeliveryPolicy;
-        this.delayPolicy = redeliveryPolicy;
-    }
-
     public TransactionInterceptor(Processor processor, TransactionTemplate transactionTemplate, DelayPolicy delayPolicy) {
         this(processor, transactionTemplate);
         this.delayPolicy = delayPolicy;
@@ -159,20 +150,6 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
             }
         }
-    }
-
-    /**
-     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
-     */
-    public RedeliveryPolicy getRedeliveryPolicy() {
-        return redeliveryPolicy;
-    }
-
-    /**
-     * @deprecated use DelayPolicy. Will be removed in Camel 2.0
-     */
-    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
     }
 
     public DelayPolicy getDelayPolicy() {

@@ -37,7 +37,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements Cloneable, InitializingBean {
 
     private TransactionTemplate transactionTemplate;
-    private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
     private DelayPolicy delayPolicy = new DelayPolicy();
 
     public TransactionErrorHandlerBuilder() {
@@ -49,20 +48,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
         this.transactionTemplate = transactionTemplate;
-    }
-
-    /**
-     * @deprecated use setDelayPolicy. Will be removed in Camel 2.0
-     */
-    public RedeliveryPolicy getRedeliveryPolicy() {
-        return redeliveryPolicy;
-    }
-
-    /**
-     * @deprecated use setDelayPolicy. Will be removed in Camel 2.0
-     */
-    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
     }
 
     public DelayPolicy getDelayPolicy() {
@@ -91,53 +76,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     // Builder methods
     // -------------------------------------------------------------------------
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder backOffMultiplier(double backOffMultiplier) {
-        getRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
-        return this;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder collisionAvoidancePercent(short collisionAvoidancePercent) {
-        getRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
-        return this;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder maximumRedeliveries(int maximumRedeliveries) {
-        getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
-        return this;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
-        getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
-        return this;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder useCollisionAvoidance() {
-        getRedeliveryPolicy().useCollisionAvoidance();
-        return this;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public TransactionErrorHandlerBuilder useExponentialBackOff() {
-        getRedeliveryPolicy().useExponentialBackOff();
-        return this;
-    }
 
     public TransactionErrorHandlerBuilder delay(long delay) {
         getDelayPolicy().delay(delay);
