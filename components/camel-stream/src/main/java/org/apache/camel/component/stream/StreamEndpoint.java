@@ -20,14 +20,13 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class StreamEndpoint extends DefaultEndpoint<Exchange> {
+public class StreamEndpoint extends DefaultEndpoint {
     private static final transient Log LOG = LogFactory.getLog(StreamEndpoint.class);
 
     private String uri;

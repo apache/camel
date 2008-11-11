@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class SetHeaderIssueTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
     protected String matchingBody = "<person xmlns='urn:cheese' name='James' city='London'/>";
     protected String notMatchingBody = "<person xmlns='urn:cheese' name='Hiram' city='Tampa'/>";

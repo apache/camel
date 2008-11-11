@@ -25,16 +25,12 @@ import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.component.http.HttpExchange;
-
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.HashSessionIdManager;
-import org.mortbay.jetty.servlet.HashSessionManager;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.SessionHandler;
 
@@ -74,7 +70,7 @@ public class JettyHttpComponent extends HttpComponent {
     private SslSocketConnector sslSocketConnector;
 
     @Override
-    protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
         JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
         setProperties(result, parameters);

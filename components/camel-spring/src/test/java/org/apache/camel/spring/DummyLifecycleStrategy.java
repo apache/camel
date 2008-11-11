@@ -35,33 +35,27 @@ import org.apache.camel.spi.RouteContext;
 public class DummyLifecycleStrategy implements LifecycleStrategy {
 
     public void onContextCreate(CamelContext context) {
-        // TODO Auto-generated method stub
-        
+        // Do nothing
     }
 
-    public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
-        // TODO Auto-generated method stub
-        
+    public void onEndpointAdd(Endpoint endpoint) {
+        // Do nothing
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        // TODO Auto-generated method stub
-        
+        // Do nothing
     }
 
     public void onRoutesAdd(Collection<Route> routes) {
-        // TODO Auto-generated method stub
-        
+        // Do nothing
     }
 
     public void onServiceAdd(CamelContext context, Service service) {
-        // TODO Auto-generated method stub
-        
+        // Do nothing
     }
 
     public void onContextStart(CamelContext arg0) {
-        // TODO Auto-generated method stub
-        
+        // Do nothing
     }
 
 }

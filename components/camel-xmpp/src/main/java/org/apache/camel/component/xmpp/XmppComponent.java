@@ -48,7 +48,7 @@ public class XmppComponent extends DefaultComponent implements HeaderFilterStrat
     }
 
     @Override
-    protected Endpoint<XmppExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         XmppEndpoint endpoint = new XmppEndpoint(uri, this);
 
         URI u = new URI(uri);

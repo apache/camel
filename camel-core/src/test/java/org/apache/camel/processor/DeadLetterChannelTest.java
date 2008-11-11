@@ -28,7 +28,7 @@ import org.apache.camel.model.LoggingLevel;
  * @version $Revision$
  */
 public class DeadLetterChannelTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint deadEndpoint;
     protected MockEndpoint successEndpoint;
     protected int failUntilAttempt = 2;

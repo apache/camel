@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Timer;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -49,7 +48,7 @@ public class TimerComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         TimerEndpoint answer = new TimerEndpoint(uri, this, remaining);
         setProperties(answer, parameters);
         return answer;

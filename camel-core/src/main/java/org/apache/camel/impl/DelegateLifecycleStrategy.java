@@ -42,7 +42,7 @@ public class DelegateLifecycleStrategy implements LifecycleStrategy {
         delegate.onContextStart(context);
     }
 
-    public void onEndpointAdd(Endpoint<? extends Exchange> endpoint) {
+    public void onEndpointAdd(Endpoint endpoint) {
         delegate.onEndpointAdd(endpoint);
     }
 

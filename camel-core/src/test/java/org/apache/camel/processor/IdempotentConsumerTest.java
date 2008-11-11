@@ -30,7 +30,7 @@ import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.me
  * @version $Revision$
  */
 public class IdempotentConsumerTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
     public void testDuplicateMessagesAreFilteredOut() throws Exception {

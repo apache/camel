@@ -40,7 +40,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
  *
  * @version $Revision$
  */
-public class ListEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange>, Service {
+public class ListEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
     private List<Exchange> exchanges;
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
     // TODO: firing of property changes not implemented

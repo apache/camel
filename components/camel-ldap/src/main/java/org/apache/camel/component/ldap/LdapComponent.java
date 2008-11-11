@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -28,7 +27,7 @@ import org.apache.camel.impl.DefaultComponent;
  *
  * @version
  */
-public class LdapComponent<E extends Exchange> extends DefaultComponent {
+public class LdapComponent extends DefaultComponent {
 
     public LdapComponent() {
     }
@@ -37,8 +36,8 @@ public class LdapComponent<E extends Exchange> extends DefaultComponent {
         super(context);
     }
 
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        Endpoint<E> endpoint = new LdapEndpoint<E>(uri, remaining, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint endpoint = new LdapEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

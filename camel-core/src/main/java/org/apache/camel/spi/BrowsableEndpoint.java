@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
  *
  * @version $Revision$
  */
-public interface BrowsableEndpoint<T extends Exchange> extends Endpoint<T> {
+public interface BrowsableEndpoint extends Endpoint {
 
     /**
      * Return the exchanges available on this endpoint

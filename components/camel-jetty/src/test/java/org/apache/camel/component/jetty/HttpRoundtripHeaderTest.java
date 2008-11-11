@@ -62,14 +62,13 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         // override the default set of ignored headers which includes Content-Length
         ((DefaultHeaderFilterStrategy)endpoint.getHeaderFilterStrategy()).setOutFilter(null);
 
+        // read the response data
         InputStream answer = (InputStream) template.sendBody(uri, inputText);
-
         verifyMockGotExpectedText(mockEndpoint, expectedText);
 
-        // read the response data
         String lastLine = readLastLine(answer);
-
         assertNotNull("last response line", lastLine);
+        
         // Content-Length from request will truncate the output to just the inputText
         assertEquals("response matches: " + inputText, inputText, lastLine);
     }

@@ -33,11 +33,11 @@ import org.apache.camel.Processor;
 public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
     private PollingConsumer pollingConsumer;
 
-    public DefaultScheduledPollConsumer(DefaultEndpoint<Exchange> defaultEndpoint, Processor processor) {
+    public DefaultScheduledPollConsumer(DefaultEndpoint defaultEndpoint, Processor processor) {
         super(defaultEndpoint, processor);
     }
 
-    public DefaultScheduledPollConsumer(Endpoint<Exchange> endpoint, Processor processor, ScheduledExecutorService executor) {
+    public DefaultScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor, executor);
     }
 

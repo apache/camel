@@ -17,20 +17,19 @@
 package org.apache.camel.management;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedResource;
 
 @ManagedResource(description = "Managed Endpoint", currencyTimeLimit = 15)
 public class ManagedEndpoint {
 
-    private Endpoint<? extends Exchange> endpoint;
+    private Endpoint endpoint;
 
-    public ManagedEndpoint(Endpoint<? extends Exchange> endpoint) {
+    public ManagedEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
-    public Endpoint<? extends Exchange> getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 

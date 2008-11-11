@@ -312,7 +312,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Endpoint getEndpoint(String uri) {
-        Endpoint<?> answer;
+        Endpoint answer;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
             if (answer == null) {

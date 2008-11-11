@@ -19,8 +19,6 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.model.LoggingLevel;
@@ -36,7 +34,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public class LogComponent extends DefaultComponent {
 
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
 

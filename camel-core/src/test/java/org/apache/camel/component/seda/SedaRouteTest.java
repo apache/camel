@@ -33,7 +33,6 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class SedaRouteTest extends TestSupport {
 
-
     public void testSedaQueue() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
 
@@ -52,11 +51,10 @@ public class SedaRouteTest extends TestSupport {
             }
         });
 
-        
         context.start();
 
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = context.getEndpoint("seda:test.a");
+        Endpoint endpoint = context.getEndpoint("seda:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 
@@ -69,7 +67,6 @@ public class SedaRouteTest extends TestSupport {
 
         context.stop();
     }
-
 
     public void testThatShowsEndpointResolutionIsNotConsistent() throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
@@ -92,7 +89,7 @@ public class SedaRouteTest extends TestSupport {
         context.start();
 
         // now lets fire in a message
-        Endpoint<Exchange> endpoint = context.getEndpoint("seda:test.a");
+        Endpoint endpoint = context.getEndpoint("seda:test.a");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setHeader("cheese", 123);
 

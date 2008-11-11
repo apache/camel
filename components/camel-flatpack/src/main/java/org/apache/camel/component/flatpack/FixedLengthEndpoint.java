@@ -44,7 +44,7 @@ import org.springframework.core.io.Resource;
  *
  * @version $Revision$
  */
-public class FixedLengthEndpoint extends DefaultPollingEndpoint<Exchange> {
+public class FixedLengthEndpoint extends DefaultPollingEndpoint {
     private final Resource resource;
     private LoadBalancer loadBalancer = new RoundRobinLoadBalancer();
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();

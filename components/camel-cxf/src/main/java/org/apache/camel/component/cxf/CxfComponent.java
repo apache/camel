@@ -41,7 +41,7 @@ public class CxfComponent extends DefaultComponent implements HeaderFilterStrate
     }
 
     @Override
-    protected Endpoint<CxfExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // Now we need to add the address, endpoint name, WSDL url or the SEI to build up an endpoint
         CxfEndpoint result = new CxfEndpoint(uri, remaining, this);
         setProperties(result, parameters);

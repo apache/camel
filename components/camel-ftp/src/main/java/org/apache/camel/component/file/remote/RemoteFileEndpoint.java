@@ -24,7 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.UuidGenerator;
 
-public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends ScheduledPollEndpoint<T> {
+public abstract class RemoteFileEndpoint<T extends RemoteFileExchange> extends ScheduledPollEndpoint {
     private RemoteFileBinding binding;
     private RemoteFileConfiguration configuration;
 

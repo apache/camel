@@ -53,7 +53,7 @@ public class DefaultRouteContext implements RouteContext {
     private RouteType route;
     private FromType from;
     private Collection<Route> routes;
-    private Endpoint<? extends Exchange> endpoint;
+    private Endpoint endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
@@ -76,7 +76,7 @@ public class DefaultRouteContext implements RouteContext {
         route = new RouteType("temporary");
     }
 
-    public Endpoint<? extends Exchange> getEndpoint() {
+    public Endpoint getEndpoint() {
         if (endpoint == null) {
             endpoint = from.resolveEndpoint(this);
         }
@@ -102,12 +102,12 @@ public class DefaultRouteContext implements RouteContext {
         return node.createOutputsProcessor(this);
     }
 
-    public Endpoint<? extends Exchange> resolveEndpoint(String uri) {
+    public Endpoint resolveEndpoint(String uri) {
         return route.resolveEndpoint(uri);
     }
 
-    public Endpoint<? extends Exchange> resolveEndpoint(String uri, String ref) {
-        Endpoint<? extends Exchange> endpoint = null;
+    public Endpoint resolveEndpoint(String uri, String ref) {
+        Endpoint endpoint = null;
         if (uri != null) {
             endpoint = resolveEndpoint(uri);
             if (endpoint == null) {

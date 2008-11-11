@@ -57,7 +57,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     private ExceptionHandler exceptionHandler;
     private ResequencerEngine<Exchange> engine;
     private PollingConsumer consumer;
-    private Endpoint<? extends Exchange> endpoint;
+    private Endpoint endpoint;
     private Processor processor;
     private Thread worker;
     private int capacity;
@@ -72,7 +72,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * @param comparator
      *            a sequence element comparator for exchanges.
      */
-    public StreamResequencer(Endpoint<? extends Exchange> endpoint, Processor processor, SequenceElementComparator<Exchange> comparator) {
+    public StreamResequencer(Endpoint endpoint, Processor processor, SequenceElementComparator<Exchange> comparator) {
         this.exceptionHandler = new LoggingExceptionHandler(getClass());
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);

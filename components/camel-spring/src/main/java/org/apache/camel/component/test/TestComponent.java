@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -36,7 +35,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public class TestComponent extends DefaultComponent {
 
-    public Endpoint<Exchange> createEndpoint(String uri) throws Exception {
+    public Endpoint createEndpoint(String uri) throws Exception {
         // lets not use the normal parameter handling so that all parameters are sent to the nested endpoint
 
         ObjectHelper.notNull(getCamelContext(), "camelContext");
@@ -47,7 +46,7 @@ public class TestComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
         return new TestEndpoint(uri, this, endpoint);
     }

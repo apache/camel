@@ -32,11 +32,11 @@ import org.apache.camel.impl.DefaultEndpoint;
  *
  * @version $Revision$
  */
-public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public class DirectEndpoint extends DefaultEndpoint {
     private boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
 
-    public DirectEndpoint(String uri, DirectComponent<E> component) {
+    public DirectEndpoint(String uri, DirectComponent component) {
         super(uri, component);
     }
 
@@ -45,7 +45,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
     }
 
     public Producer createProducer() throws Exception {
-        return new DirectProducer<E>(this);
+        return new DirectProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

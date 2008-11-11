@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,7 +32,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
  * @version $Revision$
  */
 public class ResequencerTest extends ContextTestSupport {
-    protected Endpoint<Exchange> startEndpoint;
+    protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
     public void testSendMessagesInWrongOrderButReceiveThemInCorrectOrder() throws Exception {

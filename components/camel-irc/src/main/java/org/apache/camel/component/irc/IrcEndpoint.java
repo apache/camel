@@ -28,7 +28,7 @@ import org.schwering.irc.lib.IRCUser;
  *
  * @version $Revision$
  */
-public class IrcEndpoint extends DefaultEndpoint<IrcExchange> {
+public class IrcEndpoint extends DefaultEndpoint {
     private IrcBinding binding;
     private IrcConfiguration configuration;
     private IrcComponent component;

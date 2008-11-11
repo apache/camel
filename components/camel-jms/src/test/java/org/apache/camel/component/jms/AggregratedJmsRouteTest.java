@@ -53,7 +53,6 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-
     public void testJmsMulticastAndAggregration() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:reply", MockEndpoint.class);
 

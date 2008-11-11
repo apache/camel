@@ -34,14 +34,14 @@ public class Route<E extends Exchange> {
     public static final String GROUP_PROPERTY = "group";
 
     private final Map<String, Object> properties = new HashMap<String, Object>(16);
-    private Endpoint<E> endpoint;
+    private Endpoint endpoint;
     private List<Service> services = new ArrayList<Service>();
 
-    public Route(Endpoint<E> endpoint) {
+    public Route(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
-    public Route(Endpoint<E> endpoint, Service... services) {
+    public Route(Endpoint endpoint, Service... services) {
         this(endpoint);
         for (Service service : services) {
             addService(service);
@@ -53,11 +53,11 @@ public class Route<E extends Exchange> {
         return "Route";
     }
 
-    public Endpoint<E> getEndpoint() {
+    public Endpoint getEndpoint() {
         return endpoint;
     }
 
-    public void setEndpoint(Endpoint<E> endpoint) {
+    public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 

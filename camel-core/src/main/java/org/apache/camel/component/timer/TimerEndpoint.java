@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultEndpoint;
  *
  * @version $Revision$
  */
-public class TimerEndpoint extends DefaultEndpoint<Exchange> {
+public class TimerEndpoint extends DefaultEndpoint {
     private String timerName;
     private Date time;
     private long period = 1000;

@@ -19,7 +19,6 @@ package org.apache.camel.component.xquery;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.springframework.core.io.Resource;
@@ -33,7 +32,7 @@ import org.springframework.core.io.Resource;
  */
 public class XQueryComponent extends ResourceBasedComponent {
 
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         if (log.isDebugEnabled()) {
             log.debug(this + " using schema resource: " + resource);

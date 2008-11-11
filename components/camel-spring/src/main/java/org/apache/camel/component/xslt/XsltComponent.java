@@ -19,7 +19,6 @@ package org.apache.camel.component.xslt;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -43,7 +42,7 @@ public class XsltComponent extends ResourceBasedComponent {
         this.xmlConverter = xmlConverter;
     }
 
-    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         if (log.isDebugEnabled()) {
             log.debug(this + " using schema resource: " + resource);

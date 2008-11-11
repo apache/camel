@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public abstract class DefaultPollingEndpoint<E extends Exchange> extends ScheduledPollEndpoint<E>  {
+public abstract class DefaultPollingEndpoint extends ScheduledPollEndpoint  {
 
     protected DefaultPollingEndpoint() {
     }
@@ -46,7 +46,7 @@ public abstract class DefaultPollingEndpoint<E extends Exchange> extends Schedul
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer((DefaultEndpoint<Exchange>) this, processor);
+        DefaultScheduledPollConsumer result = new DefaultScheduledPollConsumer(this, processor);
         configureConsumer(result);
         return result;
     }

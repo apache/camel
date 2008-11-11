@@ -358,7 +358,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     }
 
     @Override
-    protected Endpoint<JmsExchange> createEndpoint(String uri, String remaining, Map parameters)
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {
 
         boolean pubSubDomain = false;

@@ -32,13 +32,12 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
 /**
  * AS/400 Data queue endpoint
  */
-public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint<Exchange> {
+public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
 
     /**
      * Enumeration of supported data formats
      */
     public enum Format {
-
         /**
          * Using <code>String</code> for transferring data
          */

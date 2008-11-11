@@ -40,7 +40,7 @@ public interface RouteContext {
      *
      * @return the endpoint
      */
-    Endpoint<? extends Exchange> getEndpoint();
+    Endpoint getEndpoint();
 
     /**
      * Gets the from type
@@ -78,7 +78,7 @@ public interface RouteContext {
      * @param uri the URI
      * @return the resolved endpoint
      */
-    Endpoint<? extends Exchange> resolveEndpoint(String uri);
+    Endpoint resolveEndpoint(String uri);
 
     /**
      * Resolves an endpoint from either a URI or a named reference
@@ -87,7 +87,7 @@ public interface RouteContext {
      * @param ref  the named reference
      * @return the resolved endpoint
      */
-    Endpoint<? extends Exchange> resolveEndpoint(String uri, String ref);
+    Endpoint resolveEndpoint(String uri, String ref);
 
     /**
      * lookup an object by name and type

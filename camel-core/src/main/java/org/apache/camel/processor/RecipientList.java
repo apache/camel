@@ -67,7 +67,7 @@ public class RecipientList extends ServiceSupport implements Processor {
         List<Processor> processors = new ArrayList<Processor>();
         while (iter.hasNext()) {
             Object recipient = iter.next();
-            Endpoint<Exchange> endpoint = resolveEndpoint(exchange, recipient);
+            Endpoint endpoint = resolveEndpoint(exchange, recipient);
             Producer producer = producerCache.getProducer(endpoint);
             processors.add(producer);
         }
@@ -75,7 +75,7 @@ public class RecipientList extends ServiceSupport implements Processor {
         mp.process(exchange);
     }
 
-    protected Endpoint<Exchange> resolveEndpoint(Exchange exchange, Object recipient) {
+    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 

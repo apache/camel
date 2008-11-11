@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class IBatisEndpoint extends DefaultPollingEndpoint<Exchange> {
+public class IBatisEndpoint extends DefaultPollingEndpoint {
     private static final transient Log logger = LogFactory.getLog(IBatisEndpoint.class);
 
     private IBatisProcessingStrategy strategy;

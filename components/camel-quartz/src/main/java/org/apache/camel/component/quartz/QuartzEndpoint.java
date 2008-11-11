@@ -43,7 +43,7 @@ import org.quartz.Trigger;
  *
  * @version $Revision:520964 $
  */
-public class QuartzEndpoint extends DefaultEndpoint<QuartzExchange> {
+public class QuartzEndpoint extends DefaultEndpoint {
     public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
     private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
     private Scheduler scheduler;

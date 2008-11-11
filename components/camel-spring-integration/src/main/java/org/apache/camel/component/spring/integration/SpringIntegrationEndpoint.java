@@ -32,7 +32,7 @@ import org.springframework.integration.core.MessageChannel;
  *
  * @version $Revision$
  */
-public class SpringIntegrationEndpoint extends ScheduledPollEndpoint<SpringIntegrationExchange> {
+public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
     private static final Log LOG = LogFactory.getLog(SpringIntegrationEndpoint.class);
     private String inputChannel;
     private String outputChannel;

@@ -28,12 +28,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * A JCR endpoint
  */
-public class JcrEndpoint extends DefaultEndpoint<DefaultExchange> {
+public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
     private Repository repository;

@@ -30,11 +30,11 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DirectProducer<E extends Exchange> extends DefaultProducer implements AsyncProcessor {
+public class DirectProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(DirectProducer.class);
-    private DirectEndpoint<E> endpoint;
+    private DirectEndpoint endpoint;
 
-    public DirectProducer(DirectEndpoint<E> endpoint) {
+    public DirectProducer(DirectEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }

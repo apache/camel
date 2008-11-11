@@ -243,8 +243,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         this.useEndpointCache = useEndpointCache;
     }
 
-    public <T extends Endpoint<?>> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        Endpoint<?> e = null;
+    public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
+        Endpoint e = null;
         synchronized (endpointCache) {
             e = endpointCache.get(endpointUri);
         }

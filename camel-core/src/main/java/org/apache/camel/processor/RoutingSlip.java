@@ -68,7 +68,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
         Exchange current = exchange;
 
         for (String nextRecipient : recipients) {
-            Endpoint<Exchange> endpoint = resolveEndpoint(exchange, nextRecipient);
+            Endpoint endpoint = resolveEndpoint(exchange, nextRecipient);
             Producer producer = producerCache.getProducer(endpoint);
             Exchange ex = current.newInstance();
 
@@ -82,7 +82,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
         ExchangeHelper.copyResults(exchange, current);
     }
 
-    protected Endpoint<Exchange> resolveEndpoint(Exchange exchange, Object recipient) {
+    protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 

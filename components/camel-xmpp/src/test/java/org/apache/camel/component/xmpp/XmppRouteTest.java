@@ -50,7 +50,7 @@ public class XmppRouteTest extends TestCase {
     protected XmppExchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);
-    protected Endpoint<XmppExchange> endpoint;
+    protected Endpoint endpoint;
     protected ProducerCache client = new ProducerCache();
 
     public static void main(String[] args) {

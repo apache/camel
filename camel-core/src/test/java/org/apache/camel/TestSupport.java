@@ -121,7 +121,7 @@ public abstract class TestSupport extends TestCase {
         return expectedType.cast(value);
     }
 
-    protected void assertEndpointUri(Endpoint<Exchange> endpoint, String uri) {
+    protected void assertEndpointUri(Endpoint endpoint, String uri) {
         assertNotNull("Endpoint is null when expecting endpoint for: " + uri, endpoint);
         assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
     }

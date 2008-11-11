@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
+public class FileEndpoint extends ScheduledPollEndpoint {
     public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);

@@ -37,7 +37,7 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
  *
  * @version $Revision:520964 $
  */
-public class JmsEndpoint extends DefaultEndpoint<JmsExchange> {
+public class JmsEndpoint extends DefaultEndpoint {
     private final boolean pubSubDomain;
     private JmsBinding binding;
     private String destination;

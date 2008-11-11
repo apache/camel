@@ -49,7 +49,7 @@ public class FileComponent extends DefaultComponent {
         super(context);
     }
 
-    protected Endpoint<FileExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
         FileEndpoint result = new FileEndpoint(file, uri, this);
         setProperties(result, parameters);

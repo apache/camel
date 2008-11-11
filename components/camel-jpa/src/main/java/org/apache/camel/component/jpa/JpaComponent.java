@@ -23,7 +23,6 @@ import javax.persistence.EntityManagerFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 
@@ -53,7 +52,7 @@ public class JpaComponent extends DefaultComponent {
     //-------------------------------------------------------------------------
 
     @Override
-    protected Endpoint<Exchange> createEndpoint(String uri, String path, Map options) throws Exception {
+    protected Endpoint createEndpoint(String uri, String path, Map options) throws Exception {
         JpaEndpoint endpoint = new JpaEndpoint(uri, this);
 
         // lets interpret the next string as a class

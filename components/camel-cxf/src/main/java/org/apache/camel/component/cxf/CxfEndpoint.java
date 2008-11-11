@@ -35,7 +35,7 @@ import org.springframework.context.ApplicationContext;
  *
  * @version $Revision$
  */
-public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
+public class CxfEndpoint extends DefaultEndpoint {
     private final CxfComponent component;
     private final String address;
     private String wsdlURL;

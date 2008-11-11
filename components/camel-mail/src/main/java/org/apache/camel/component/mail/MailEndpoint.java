@@ -32,7 +32,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision:520964 $
  */
-public class MailEndpoint extends ScheduledPollEndpoint<MailExchange> {
+public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     private MailConfiguration configuration;
 

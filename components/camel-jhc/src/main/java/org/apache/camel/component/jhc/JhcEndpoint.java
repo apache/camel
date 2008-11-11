@@ -34,7 +34,7 @@ import org.apache.http.params.HttpParams;
  * Time: 8:06:42 PM
  * To change this template use File | Settings | File Templates.
  */
-public class JhcEndpoint extends DefaultEndpoint<JhcExchange> {
+public class JhcEndpoint extends DefaultEndpoint {
 
     private HttpParams params;
     private URI httpUri;
