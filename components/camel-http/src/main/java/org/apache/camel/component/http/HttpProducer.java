@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.http;
 
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,6 +40,8 @@ import org.apache.commons.httpclient.methods.StringRequestEntity;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 /**
  * @version $Revision$
  */

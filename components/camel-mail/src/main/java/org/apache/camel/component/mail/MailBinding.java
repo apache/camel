@@ -21,6 +21,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.Address;
@@ -37,11 +38,11 @@ import javax.mail.util.ByteArrayDataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CollectionHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A Strategy used to convert between a Camel {@link Exchange} and {@link Message} to and
