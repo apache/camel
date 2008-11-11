@@ -19,7 +19,6 @@ package org.apache.camel.component.mina;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.commons.logging.Log;
@@ -41,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
  *     <li>exchange properties</li>
  *     <li>exception</li>
  * </ul>
+ * Any object that is not serializable will be skipped and Camel will log this at WARN level.
  *
  * @version $Revision$
  */
@@ -67,18 +67,18 @@ public class MinaPayloadHolder implements Serializable {
     public static MinaPayloadHolder marshal(Exchange exchange) {
         MinaPayloadHolder payload = new MinaPayloadHolder();
 
-        payload.inBody = checkSerializableObject(exchange.getIn().getBody());
+        payload.inBody = checkSerializableObject("in body", exchange.getIn().getBody());
+        payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange.getIn().getHeaders()));
         if (exchange.getOut(false) != null) {
-            payload.outBody = checkSerializableObject(exchange.getOut().getBody());
+            payload.outBody = checkSerializableObject("out body", exchange.getOut().getBody());
+            payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange.getOut().getHeaders()));
         }
-        payload.inHeaders.putAll(checkMapSerializableObjects(exchange.getIn().getHeaders()));
-        payload.outHeaders.putAll(checkMapSerializableObjects(exchange.getOut().getHeaders()));
-        payload.properties.putAll(checkMapSerializableObjects(exchange.getProperties()));
-        payload.exception = exchange.getException();
         if (exchange.getFault(false) != null) {
-            payload.faultBody = exchange.getFault().getBody();
-            payload.faultHeaders.putAll(checkMapSerializableObjects(exchange.getFault().getHeaders()));
+            payload.faultBody = checkSerializableObject("fault body", exchange.getFault().getBody());
+            payload.faultHeaders.putAll(checkMapSerializableObjects("fault headers", exchange.getFault().getHeaders()));
         }
+        payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange.getProperties()));
+        payload.exception = exchange.getException();
 
         return payload;
     }
@@ -91,9 +91,11 @@ public class MinaPayloadHolder implements Serializable {
      */
     public static void unmarshal(Exchange exchange, MinaPayloadHolder payload) {
         exchange.getIn().setBody(payload.inBody);
-        exchange.getOut().setBody(payload.outBody);
         exchange.getIn().setHeaders(payload.inHeaders);
-        exchange.getOut().setHeaders(payload.outHeaders);
+        if (payload.outBody != null) {
+            exchange.getOut().setBody(payload.outBody);
+            exchange.getOut().setHeaders(payload.outHeaders);
+        }
         if (payload.faultBody != null) {
             exchange.getFault().setBody(payload.faultBody);
             exchange.getFault().setHeaders(payload.faultHeaders);
@@ -106,37 +108,35 @@ public class MinaPayloadHolder implements Serializable {
 
     public String toString() {
         return "MinaPayloadHolder{" + "inBody=" + inBody + ", outBody=" + outBody + ", inHeaders="
-               + inHeaders + ", outHeaders=" + outHeaders + ", faultBody=" + faultBody + " , faultHeaders="
+               + inHeaders + ", outHeaders=" + outHeaders + ", faultBody=" + faultBody + ", faultHeaders="
                + faultHeaders + ", properties=" + properties + ", exception=" + exception + '}';
     }
 
-    private static Object checkSerializableObject(Object object) {
+    private static Object checkSerializableObject(String type, Object object) {
         if (object instanceof Serializable) {
             return object;
         } else {
-            LOG.warn("Object " + object + " can't be serialized, it will be excluded by the MinaPayloadHolder");
+            LOG.warn(type + " containig object " + object + " can not be serialized, it will be excluded by the MinaPayloadHolder");
             return null;
         }
     }
 
-    private static Map<String, Object> checkMapSerializableObjects(Map<String, Object> map) {
+    private static Map<String, Object> checkMapSerializableObjects(String type, Map<String, Object> map) {
         if (map == null) {
             return null;
         }
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-
             if (entry.getValue() instanceof Serializable) {
                 result.put(entry.getKey(), entry.getValue());
             } else {
-                LOG.warn("Object " + entry.getValue() + " of key " + entry.getKey()
-                         + " can't be serialized, it will be excluded by the MinaPayloadHolder");
+                LOG.warn(type + " containing object " + entry.getValue() + " of key " + entry.getKey()
+                         + " can not be serialized, it will be excluded by the MinaPayloadHolder");
             }
         }
+
         return result;
-
     }
-
 
 }
