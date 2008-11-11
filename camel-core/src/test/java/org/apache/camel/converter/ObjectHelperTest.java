@@ -18,9 +18,8 @@ package org.apache.camel.converter;
 
 import java.util.Iterator;
 
-import org.apache.camel.util.ObjectHelper;
-
 import junit.framework.TestCase;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision: 640438 $

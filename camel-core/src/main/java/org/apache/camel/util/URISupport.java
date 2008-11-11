@@ -32,7 +32,11 @@ import java.util.Map;
  *
  * @version $Revision$
  */
-public class URISupport {
+public final class URISupport {
+    
+    private URISupport() {
+        // Helper class
+    }
 
     /**
      * Holder to get parts of the URI.
