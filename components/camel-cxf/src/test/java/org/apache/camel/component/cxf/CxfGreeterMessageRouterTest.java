@@ -34,12 +34,7 @@ public class CxfGreeterMessageRouterTest extends CXFGreeterRouterTest {
             }
         };
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
-
+    
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointBeans.xml");
