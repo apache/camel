@@ -141,12 +141,14 @@ public class JhcProducer extends DefaultProducer implements AsyncProcessor {
         }
         SocketAddress addr = new InetSocketAddress(getEndpoint().getHost(), getEndpoint().getPort());
         exchange.setProperty(AsyncCallback.class.getName(), callback);
-        SessionRequest req = ioReactor.connect(addr, null, exchange, new MySessionRequestCallback());
+        ioReactor.connect(addr, null, exchange, new MySessionRequestCallback());
         return false;
     }
 
     protected HttpRequest createRequest(Exchange exchange) {
-        String uri = getEndpoint().getEndpointUri();
+        // force creation of uri
+        getEndpoint().getEndpointUri();
+        
         HttpEntity entity = createEntity(exchange);
         HttpRequest req;
         if (entity == null) {

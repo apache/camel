@@ -165,7 +165,7 @@ public final class CxfEndpointUtils {
     }
 
     //TODO check the CxfEndpoint information integration
-    public static void checkEndpiontIntegration(CxfEndpoint endpoint, Bus bus) throws CamelException {
+    public static void checkEndpointIntegration(CxfEndpoint endpoint, Bus bus) throws CamelException {
 
         String wsdlLocation = endpoint.getWsdlURL();
         QName serviceQName = CxfEndpointUtils.getQName(endpoint.getServiceName());
