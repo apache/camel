@@ -27,6 +27,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -91,16 +92,18 @@ public class JMXEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public JMXExchange createExchange(Notification notification) {
-        return new JMXExchange(getCamelContext(), getExchangePattern(), notification);
+    public Exchange createExchange(Notification notification) {
+        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        exchange.setIn(new JMXMessage(notification));
+        return exchange;
     }
 
     public Exchange createExchange() {
-        return new JMXExchange(getCamelContext(), getExchangePattern(), null);
+        return createExchange(getExchangePattern());
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new JMXExchange(getCamelContext(), pattern, null);
+        return new DefaultExchange(getCamelContext(), pattern);
     }
 
     public String getAttributeName() {
