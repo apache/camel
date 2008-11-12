@@ -49,10 +49,6 @@ public class HttpProducer extends DefaultProducer {
     public static final String HTTP_URI = "http.uri";
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";    
-    // This should be a set of lower-case strings
-    @Deprecated
-    public static final Set<String> HEADERS_TO_SKIP =
-        new HashSet<String>(Arrays.asList("content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
     private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
 

@@ -184,12 +184,6 @@ public class MailBinding {
         if (recipients.containsKey(Message.RecipientType.BCC)) {
             appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.BCC.toString(), recipients.get(Message.RecipientType.BCC));
         }
-
-        // fallback to use destination if no TO provided at all
-        String destination = endpoint.getConfiguration().getDestination();
-        if (destination != null && mimeMessage.getRecipients(Message.RecipientType.TO) == null) {
-            appendRecipientToMimeMessage(mimeMessage, Message.RecipientType.TO.toString(), destination);
-        }
     }
 
     /**
