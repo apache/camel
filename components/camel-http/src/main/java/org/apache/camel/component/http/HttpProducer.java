@@ -113,7 +113,9 @@ public class HttpProducer extends DefaultProducer {
                     exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
                 }
 
-                throw exception;
+                if (exception != null) {
+                    throw exception;
+                }
             }
 
         } finally {
