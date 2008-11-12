@@ -48,24 +48,6 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
         this.configuration = new MailConfiguration();
     }
 
-    /**
-     * Static builder method
-     *
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static MailComponent mailComponent() {
-        return new MailComponent();
-    }
-
-    /**
-     * Static builder method
-     *
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static MailComponent mailComponent(MailConfiguration configuration) {
-        return new MailComponent(configuration);
-    }
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         URI url = new URI(uri);

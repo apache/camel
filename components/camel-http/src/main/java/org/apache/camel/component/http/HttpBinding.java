@@ -35,11 +35,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  */
 public class HttpBinding {
 
-    // This should be a set of lower-case strings
-    @Deprecated
-    public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
-            "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
-
     private boolean useReaderForPayload;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
 
@@ -122,34 +117,6 @@ public class HttpBinding {
 
         return headerFilterStrategy != null
             && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
-    }
-
-    /*
-     * Override the set of headers to ignore for responses and new requests.
-     * @param headersToIgnore should be a set of lower-case strings
-     *
-     * @deprecated please use {@link HeaderPropagationStrategy} instead
-     */
-    @Deprecated
-    public void setIgnoredHeaders(Set<String> headersToIgnore) {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                .setOutFilter(headersToIgnore);
-        }
-    }
-
-    /**
-     * @deprecated please use {@link org.apache.camel.spi.HeaderFilterStrategy} instead
-     */
-    @Deprecated
-    public Set<String> getIgnoredHeaders() {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            return ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                    .getOutFilter();
-        } else {
-            return null;
-        }
-
     }
 
     public boolean isUseReaderForPayload() {

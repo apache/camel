@@ -66,11 +66,6 @@ import org.apache.http.protocol.RequestUserAgent;
 public class JhcProducer extends DefaultProducer implements AsyncProcessor {
 
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
-
-    @Deprecated
-    public static final Set<String> HEADERS_TO_SKIP = new HashSet<String>(Arrays.asList(
-            "content-length", "content-type", HTTP_RESPONSE_CODE.toLowerCase()));
-
     private static final transient Log LOG = LogFactory.getLog(JhcProducer.class);
 
     private int nbThreads = 2;

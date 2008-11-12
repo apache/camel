@@ -197,16 +197,6 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }
-    
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
-    }
-    
-    @Deprecated
-    public void setContext(CamelContext context) {
-        setCamelContext(context);
-    }
 
     public boolean isLenientProperties() {
         // default should be false for most components

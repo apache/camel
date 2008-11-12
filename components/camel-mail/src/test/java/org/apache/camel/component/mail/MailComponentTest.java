@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mail;
 
+import javax.mail.Message;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 
@@ -31,7 +33,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 25, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
@@ -42,7 +44,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 143, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
@@ -53,7 +55,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 110, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
     }
 
@@ -64,7 +66,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", MailUtils.DEFAULT_PORT_SMTP, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
@@ -83,7 +85,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", MailUtils.DEFAULT_PORT_POP3, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
@@ -102,7 +104,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", MailUtils.DEFAULT_PORT_IMAP, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
@@ -123,7 +125,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 30, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "riders", config.getFolderName());
         assertEquals("encoding", "iso-8859-1", config.getDefaultEncoding());
         assertEquals("from", "me@camelriders.org", config.getFrom());
@@ -135,14 +137,14 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("contentType", "text/html", config.getContentType());
     }
 
-    public void testDestination() {
-        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&destination=someone@outthere.com&folderName=XXX");
+    public void testTo() {
+        MailEndpoint endpoint = resolveMandatoryEndpoint("smtp://james@myhost:25/?password=secret&to=someone@outthere.com&folderName=XXX");
         MailConfiguration config = endpoint.getConfiguration();
         assertEquals("getProtocol()", "smtp", config.getProtocol());
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 25, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "someone@outthere.com", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "someone@outthere.com", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "XXX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
@@ -159,7 +161,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 25, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("encoding", null, config.getDefaultEncoding());
         assertEquals("from", "camel@localhost", config.getFrom());
@@ -176,7 +178,7 @@ public class MailComponentTest extends ContextTestSupport {
         assertEquals("getHost()", "myhost", config.getHost());
         assertEquals("getPort()", 110, config.getPort());
         assertEquals("getUsername()", "james", config.getUsername());
-        assertEquals("getDestination()", "james@myhost", config.getDestination());
+        assertEquals("getRecipients().get(Message.RecipientType.TO)", "james@myhost", config.getRecipients().get(Message.RecipientType.TO));
         assertEquals("folder", "INBOX", config.getFolderName());
         assertEquals("fetchSize", 5, config.getFetchSize());
     }

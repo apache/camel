@@ -123,12 +123,6 @@ public interface Endpoint {
      */
     void setCamelContext(CamelContext context);
 
-    @Deprecated
-    CamelContext getContext();
-    
-    @Deprecated
-    void setContext(CamelContext context);
-
     /**
      * Should all properties be known or does the endpoint allow unknown options?
      * <p/>
@@ -141,7 +135,7 @@ public interface Endpoint {
      * This options is used by a few components for instance the HTTP based that can have
      * dynamic URI options appended that is targeted for an external system.
      * <p/>
-     * Most endpoints is configued to be <b>not</b> lenient.
+     * Most endpoints is configured to be <b>not</b> lenient.
      */
     boolean isLenientProperties();
 }
