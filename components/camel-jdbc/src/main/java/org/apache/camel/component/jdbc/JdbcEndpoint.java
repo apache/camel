@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.net.URISyntaxException;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -34,7 +32,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
     private DataSource dataSource;
 
-    protected JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) throws URISyntaxException {
+    public JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) {
         super(endpointUri, component);
         this.dataSource = dataSource;
     }
