@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
 
 /**

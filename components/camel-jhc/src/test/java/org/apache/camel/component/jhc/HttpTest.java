@@ -106,7 +106,6 @@ public class HttpTest extends ContextTestSupport {
                 from("jhc:http://localhost:8192/test1").transform(constant("<response> Test1<response/>"));
                 from("direct:start").to("jhc:http://localhost:8192/test1/pom.xml").to("mock:results");
                 from("jhc:http://localhost:8192/test2").transform(constant("<response> Test2<response/>"));
-                
             }
         };
     }
