@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoAcceptorConfig;
 import org.apache.mina.common.IoConnector;
@@ -80,11 +81,11 @@ public class MinaEndpoint extends DefaultEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new MinaExchange(getCamelContext(), pattern, null);
+        return new DefaultExchange(getCamelContext(), pattern);
     }
 
-    public MinaExchange createExchange(IoSession session, Object payload) {
-        MinaExchange exchange = new MinaExchange(getCamelContext(), getExchangePattern(), session);
+    public Exchange createExchange(IoSession session, Object payload) {
+        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
         MinaPayloadHelper.setIn(exchange, payload);
         return exchange;
     }
