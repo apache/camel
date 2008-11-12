@@ -45,7 +45,7 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
     }
 
     public void testSimpleBody() throws Exception {
-        // END SNIPPET: e3
+        // START SNIPPET: e3
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
