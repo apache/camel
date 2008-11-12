@@ -19,27 +19,42 @@ package org.apache.camel.component.jdbc;
 import javax.sql.DataSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-/**
- * Unit test based on user forum request about this component
- */
-public class JdbcAnotherRouteTest extends ContextTestSupport {
+import java.util.List;
+import java.util.ArrayList;
+
+public class JdbcOptionsTest extends ContextTestSupport {
     private String driverClass = "org.hsqldb.jdbcDriver";
     private String url = "jdbc:hsqldb:mem:camel_jdbc";
     private String user = "sa";
     private String password = "";
     private DataSource ds;
 
-    public void testTimerInvoked() throws Exception {
+    public void testReadSize() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
+        template.sendBody("direct:start", "select * from customer");
+
         mock.assertIsSatisfied();
+
+        List list = mock.getExchanges().get(0).getIn().getBody(ArrayList.class);
+        assertEquals(1, list.size());
+    }
+
+    public void testNoDataSourceInRegistry() throws Exception {
+        try {
+            template.sendBody("jdbc:xxx", "Hello World");
+            fail("Should have thrown a ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
+            assertEquals("DataSource xxx not found in registry", e.getCause().getMessage());
+        }
     }
 
     protected JndiRegistry createRegistry() throws Exception {
@@ -51,10 +66,7 @@ public class JdbcAnotherRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("timer://kickoff?period=10000").
-                    setBody(constant("select * from customer")).
-                    to("jdbc:testdb").
-                    to("mock:result");
+                from("direct:start").to("jdbc:testdb?readSize=1").to("mock:result");
             }
         };
     }
