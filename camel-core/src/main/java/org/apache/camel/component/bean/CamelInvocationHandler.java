@@ -21,8 +21,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * An {@link java.lang.reflect.InvocationHandler} which invokes a
@@ -48,8 +50,8 @@ public class CamelInvocationHandler implements InvocationHandler {
         if (methodInfo != null) {
             pattern = methodInfo.getPattern();
         }
-        BeanExchange exchange = new BeanExchange(endpoint.getCamelContext(), pattern);
-        exchange.setInvocation(invocation);
+        Exchange exchange = new DefaultExchange(endpoint.getCamelContext(), pattern);
+        exchange.getIn().setBody(invocation);
 
         producer.process(exchange);
         Throwable fault = exchange.getException();
