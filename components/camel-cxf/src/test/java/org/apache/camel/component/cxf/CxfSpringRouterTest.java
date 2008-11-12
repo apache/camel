@@ -23,7 +23,7 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfSpringRouterTest extends CxfRouterTest {
+public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
 
     @Override

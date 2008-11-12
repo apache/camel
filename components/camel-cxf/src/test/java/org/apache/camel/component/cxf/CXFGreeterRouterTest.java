@@ -22,25 +22,50 @@ import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.processor.SpringTestHelper;
+import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
 
-public class CXFGreeterRouterTest extends CxfSpringRouterTest {
+public class CXFGreeterRouterTest extends CxfRouterTestSupport {
+    protected AbstractXmlApplicationContext applicationContext;
+    
     private final QName serviceName = new QName("http://apache.org/hello_world_soap_http",
                                                 "SOAPService");
     private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",
                                                 "RouterPort");
+
+    @Override
+    protected void setUp() throws Exception {
+        applicationContext = createApplicationContext();
+        super.setUp();
+        assertNotNull("Should have created a valid spring context", applicationContext);
+
+
+    }
+
+    @Override
+    protected void tearDown() throws Exception {
+        if (applicationContext != null) {
+            applicationContext.destroy();
+        }
+        super.tearDown();
+    }
     @Override
     protected void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:9000/SoapContext/SoapPort";
-        Endpoint.publish(address, implementor);
+        EndpointImpl endpoint = (EndpointImpl)Endpoint.publish(address, implementor);
+        server = endpoint.getServer();
     }
 
-    @Override
+    
     public void testInvokingServiceFromCXFClient() throws Exception {
         Service service = Service.create(serviceName);
         service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
@@ -67,20 +92,17 @@ public class CXFGreeterRouterTest extends CxfSpringRouterTest {
         }
 
     }
-
-    @Override
-    public void testOnwayInvocation() throws Exception {
-        Service service = Service.create(serviceName);
-        service.addPort(routerPortName, "http://schemas.xmlsoap.org/soap/",
-                        "http://localhost:9003/CamelContext/RouterPort");
-        Greeter greeter = service.getPort(routerPortName, Greeter.class);
-        greeter.greetMeOneWay("call greetMe OneWay !");
-    }
-
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
+        return SpringCamelContext.springCamelContext(applicationContext);
     }
+
+
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
+    }
+   
 }
 
 
