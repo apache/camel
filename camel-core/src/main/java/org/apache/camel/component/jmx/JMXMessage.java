@@ -17,6 +17,8 @@
 package org.apache.camel.component.jmx;
 
 import javax.management.Notification;
+
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -42,8 +44,8 @@ public class JMXMessage extends DefaultMessage {
     }
 
     @Override
-    public JMXExchange getExchange() {
-        return (JMXExchange)super.getExchange();
+    public Exchange getExchange() {
+        return super.getExchange();
     }
 
     @Override
