@@ -32,13 +32,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
  * SQL Endpoint. Endpoint URI should contain valid SQL statement, but instead of
  * question marks (that are parameter placeholders), sharp signs should be used.
  * This is because in camel question mark has other meaning.
- *
- * @author romkal
  */
 public class SqlEndpoint extends DefaultEndpoint {
-
     private JdbcTemplate jdbcTemplate;
-
     private String query;
 
     public SqlEndpoint(String uri, String query, Component component, DataSource dataSource, Map parameters) throws Exception {
@@ -55,7 +51,7 @@ public class SqlEndpoint extends DefaultEndpoint {
     }
     
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     public Producer createProducer() throws Exception {
