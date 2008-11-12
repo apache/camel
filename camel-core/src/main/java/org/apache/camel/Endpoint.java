@@ -61,6 +61,8 @@ public interface Endpoint {
     /**
      * Creates a new exchange for communicating with this exchange using the
      * given exchange to pre-populate the values of the headers and messages
+     *
+     * @param exchange given exchange to use for pre-polulate
      */
     Exchange createExchange(Exchange exchange);
 
@@ -75,6 +77,7 @@ public interface Endpoint {
      * Creates a new producer which is used send messages into the endpoint
      *
      * @return a newly created producer
+     * @throws Exception can be thrown
      */
     Producer createProducer() throws Exception;
 
@@ -84,7 +87,9 @@ public interface Endpoint {
      * Driven Consumer</a> which consumes messages from the endpoint using the
      * given processor
      *
+     * @param processor  the given processor
      * @return a newly created consumer
+     * @throws Exception can be thrown
      */
     Consumer createConsumer(Processor processor) throws Exception;
 
@@ -104,8 +109,18 @@ public interface Endpoint {
      */
     PollingConsumer createPollingConsumer() throws Exception;
 
+    /**
+     * Configure properties on this endpoint.
+     * 
+     * @param options  the options (properties)
+     */
     void configureProperties(Map options);
 
+    /**
+     * Sets the camel context.
+     *
+     * @param context the camel context
+     */
     void setCamelContext(CamelContext context);
 
     @Deprecated
@@ -117,8 +132,8 @@ public interface Endpoint {
     /**
      * Should all properties be known or does the endpoint allow unknown options?
      * <p/>
-     * <tt>Lenient = false</tt> means that the endpoint should validate that all
-     * given options is known and configured properly
+     * <tt>lenient = false</tt> means that the endpoint should validate that all
+     * given options is known and configured properly.
      * <tt>lenient = true</tt> means that the endpoint allows additional unknown options to
      * be passed to it but does not throw a ResolveEndpointFailedException when creating
      * the endpoint.
