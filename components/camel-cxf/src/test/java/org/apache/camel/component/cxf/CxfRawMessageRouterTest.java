@@ -18,7 +18,7 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.builder.RouteBuilder;
 
-public class CxfRawMessageRouterTest extends CxfRouterTest {
+public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
     protected RouteBuilder createRouteBuilder() {

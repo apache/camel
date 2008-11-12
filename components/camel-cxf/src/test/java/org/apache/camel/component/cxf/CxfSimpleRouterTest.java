@@ -14,63 +14,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
-
-public class CxfRouterTest extends ContextTestSupport {
+public class CxfSimpleRouterTest extends CxfRouterTestSupport {    
     protected static final String ROUTER_ADDRESS = "http://localhost:9000/router";
     protected static final String SERVICE_ADDRESS = "http://localhost:9002/helloworld";
     protected static final String SERVICE_CLASS = "serviceClass=org.apache.camel.component.cxf.HelloService";
 
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=POJO";
-
-    private ServerImpl server;
-    private Bus bus;
-
-
-    @Override
-    protected void setUp() throws Exception {
-
-        BusFactory.setDefaultBus(null);
-        bus = BusFactory.getDefaultBus();
-        super.setUp();
-        startService();
-    }
-
+    
     protected void startService() {
         //start a service
         ServerFactoryBean svrBean = new ServerFactoryBean();
-
+    
         svrBean.setAddress(SERVICE_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
         svrBean.setBus(bus);
-
-        server = (ServerImpl)svrBean.create();
+    
+        server = svrBean.create();
         server.start();
     }
-
-    @Override
-    protected void tearDown() throws Exception {
-        //TODO need to shutdown the server
-        super.tearDown();
-        //server.stop();
-        //bus.shutdown(false);
-        BusFactory.setDefaultBus(null);
-    }
-
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -111,4 +86,5 @@ public class CxfRouterTest extends ContextTestSupport {
         //oneway ping invoked, so invocationCount ++
         assertEquals("The ping should be invocated", client.getInvocationCount(), ++count);
     }
+
 }
