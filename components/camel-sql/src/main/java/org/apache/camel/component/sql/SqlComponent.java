@@ -28,7 +28,6 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision:520964 $
  */
 public class SqlComponent extends DefaultComponent {
-
     private DataSource dataSource;
 
     public SqlComponent() {
@@ -39,12 +38,20 @@ public class SqlComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
-        throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
+        if (dataSourceRef != null) {
+            dataSource = getCamelContext().getRegistry().lookup(dataSourceRef, DataSource.class);
+            if (dataSource == null) {
+                throw new IllegalArgumentException("DataSource " + dataSourceRef + " not found in registry");
+            }
+        }
+        
         return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource, parameters);
     }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
+
 }
