@@ -37,9 +37,8 @@ public class JdbcRouteTest extends ContextTestSupport {
     private String user = "sa";
     private String password = "";
     private DataSource ds;
-    private JdbcTemplate jdbc;
 
-    public void testPojoRoutes() throws Exception {
+    public void testJdbcRoutes() throws Exception {
         // START SNIPPET: invoke
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:hello");

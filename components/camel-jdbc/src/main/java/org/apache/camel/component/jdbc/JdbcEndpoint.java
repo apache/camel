@@ -16,59 +16,39 @@
  */
 package org.apache.camel.component.jdbc;
 
-import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Component;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.impl.DefaultEndpoint;
+
+import javax.sql.DataSource;
 
 /**
  * @version $Revision:520964 $
  */
 public class JdbcEndpoint extends DefaultEndpoint {
+    private int readSize;
+    private DataSource dataSource;
 
-    private URI uri;
-    private String remaining;
-    /** The maximum size for reading a result set <code>readSize</code> */
-    private int readSize = 20000;
-
-    protected JdbcEndpoint(String endpointUri, String remaining, JdbcComponent component) throws URISyntaxException {
+    protected JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) throws URISyntaxException {
         super(endpointUri, component);
-        this.uri = new URI(endpointUri);
-        this.remaining = remaining;
-    }
-
-    public JdbcEndpoint(String endpointUri, String remaining) throws URISyntaxException {
-        super(endpointUri);
-        this.remaining = remaining;
-        this.uri = new URI(endpointUri);
+        this.dataSource = dataSource;
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        throw new RuntimeCamelException("A JDBC Consumer would be the server side of database! No such support here");
+        throw new UnsupportedOperationException("Not supported");
     }
 
     public Producer createProducer() throws Exception {
-        return new JdbcProducer(this, remaining, readSize);
-    }
-
-    public String getName() {
-        String path = uri.getPath();
-        if (path == null) {
-            path = uri.getSchemeSpecificPart();
-        }
-        return path;
-    }
-
-    public int getReadSize() {
-        return this.readSize;
+        return new JdbcProducer(this, dataSource, readSize);
     }
 
     public void setReadSize(int readSize) {
