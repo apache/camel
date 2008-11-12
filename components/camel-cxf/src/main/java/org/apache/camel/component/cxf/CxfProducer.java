@@ -89,15 +89,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
-        dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-        if (dataFormat.equals(DataFormat.MESSAGE)) {
-            cfb.getFeatures().add(new MessageDataFormatFeature());
-            // features.add(new LoggingFeature());
-        } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
-            cfb.getFeatures().add(new PayLoadDataFormatFeature());
-            // features.add(new LoggingFeature());
-        }
-
+        
         return createClientFromClientFactoryBean(cfb);
     }
 
@@ -153,6 +145,13 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             }
         }
+        
+        if (dataFormat.equals(DataFormat.MESSAGE)) {
+            cfb.getFeatures().add(new MessageDataFormatFeature());
+        } else if (dataFormat.equals(DataFormat.PAYLOAD)) {
+            cfb.getFeatures().add(new PayLoadDataFormatFeature());
+        }
+        
         cfb.setBus(bus);
         return cfb.create();
     }

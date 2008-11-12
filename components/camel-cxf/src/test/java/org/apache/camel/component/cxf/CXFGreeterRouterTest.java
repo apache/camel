@@ -16,22 +16,18 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.lang.reflect.UndeclaredThrowableException;
-
 import javax.xml.namespace.QName;
 import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
-import org.springframework.context.support.AbstractXmlApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.spring.processor.SpringTestHelper;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.apache.hello_world_soap_http.NoSuchCodeLitFault;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CXFGreeterRouterTest extends CxfRouterTestSupport {
     protected AbstractXmlApplicationContext applicationContext;
