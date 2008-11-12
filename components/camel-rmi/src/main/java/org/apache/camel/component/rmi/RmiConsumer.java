@@ -24,8 +24,8 @@ import java.rmi.Remote;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.impl.DefaultConsumer;
 
@@ -86,8 +86,8 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
             throw new IllegalStateException("The endpoint is not active: " + getEndpoint().getEndpointUri());
         }
         BeanInvocation invocation = new BeanInvocation(method, args);
-        BeanExchange exchange = (BeanExchange) getEndpoint().createExchange();
-        exchange.setInvocation(invocation);
+        Exchange exchange = getEndpoint().createExchange();
+        exchange.getIn().setBody(invocation);
         getProcessor().process(exchange);
         Throwable fault = exchange.getException();
         if (fault != null) {

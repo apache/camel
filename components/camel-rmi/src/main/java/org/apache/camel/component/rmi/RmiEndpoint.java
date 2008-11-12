@@ -30,8 +30,8 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.bean.BeanExchange;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version $Revision:520964 $
@@ -60,7 +60,7 @@ public class RmiEndpoint extends DefaultEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new BeanExchange(getCamelContext(), pattern);
+        return new DefaultExchange(getCamelContext(), pattern);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
