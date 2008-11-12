@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
@@ -113,7 +114,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Firing Quartz Job with context: " + jobExecutionContext);
         }
-        QuartzExchange exchange = createExchange(jobExecutionContext);
+        Exchange exchange = createExchange(jobExecutionContext);
         try {
             getLoadBalancer().process(exchange);
         } catch (JobExecutionException e) {
@@ -125,11 +126,13 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new QuartzExchange(getCamelContext(), pattern, null);
+        return new DefaultExchange(getCamelContext(), pattern);
     }
 
-    public QuartzExchange createExchange(JobExecutionContext jobExecutionContext) {
-        return new QuartzExchange(getCamelContext(), getExchangePattern(), jobExecutionContext);
+    public Exchange createExchange(JobExecutionContext jobExecutionContext) {
+        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        exchange.setIn(new QuartzMessage(exchange, jobExecutionContext));
+        return exchange;
     }
 
     public Producer createProducer() throws Exception {

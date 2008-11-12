@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 
 import org.quartz.JobExecutionContext;
@@ -29,7 +30,7 @@ import org.quartz.Trigger;
 public class QuartzMessage extends DefaultMessage {
     private final JobExecutionContext jobExecutionContext;
 
-    public QuartzMessage(QuartzExchange exchange, JobExecutionContext jobExecutionContext) {
+    public QuartzMessage(Exchange exchange, JobExecutionContext jobExecutionContext) {
         this.jobExecutionContext = jobExecutionContext;
         setExchange(exchange);
         if (jobExecutionContext != null) {
