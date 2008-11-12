@@ -22,12 +22,13 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
  * @version $Revision:520964 $
  */
-public class SqlComponent extends DefaultComponent {
+public class SqlComponent extends DefaultComponent<Exchange> {
     private DataSource dataSource;
 
     public SqlComponent() {
@@ -38,7 +39,7 @@ public class SqlComponent extends DefaultComponent {
     }
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected Endpoint<Exchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
         if (dataSourceRef != null) {
             dataSource = getCamelContext().getRegistry().lookup(dataSourceRef, DataSource.class);
