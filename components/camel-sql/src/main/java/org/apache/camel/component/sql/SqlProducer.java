@@ -30,11 +30,8 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 public class SqlProducer extends DefaultProducer {
-
     public static final String UPDATE_COUNT = "org.apache.camel.sql.update-count";
-
     private String query;
-
     private JdbcTemplate jdbcTemplate;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate) {
@@ -44,10 +41,7 @@ public class SqlProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) throws Exception {
-
-
         jdbcTemplate.execute(query, new PreparedStatementCallback() {
-
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException,
                 DataAccessException {
                 int argNumber = 1;
@@ -56,18 +50,15 @@ public class SqlProducer extends DefaultProducer {
                 }
                 boolean isResultSet = ps.execute();
                 if (isResultSet) {
-                    RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(
-                                                                                         new ColumnMapRowMapper());
-                    List<?> result = (List<?>)mapper.extractData(ps.getResultSet());
+                    RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
+                    List<?> result = (List<?>) mapper.extractData(ps.getResultSet());
                     exchange.getOut().setBody(result);
                 } else {
                     exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
                 }
                 return null;
             }
-
         });
-
     }
 
 }

@@ -45,13 +45,27 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
     }
 
     public void testSimpleBody() throws Exception {
+        // END SNIPPET: e3
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+
+        // send the query to direct that will route it to the sql where we will execute the query
+        // and bind the parameters with the data from the body. The body only contains one value
+        // in this case (GPL) but if we should use multi values then the body will be iterated
+        // so we could supply a List<String> instead containing each binding value.
         template.sendBody("direct:simple", "GPL");
+
         mock.assertIsSatisfied();
+
+        // the result is a List
         List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+
+        // and each row in the list is a Map
         Map row = assertIsInstanceOf(Map.class, received.get(0));
+
+        // and we should be able the get the project from the map that should be Linux
         assertEquals("Linux", row.get("PROJECT"));
+        // END SNIPPET: e3
     }
 
     protected void setUp() throws Exception {
@@ -59,11 +73,14 @@ public class SqlDataSourceRefTest extends ContextTestSupport {
         super.setUp();
 
         jdbcTemplate = new JdbcTemplate(createDataSource());
+        // START SNIPPET: e2
+        // this is the database we create with some initial data for our unit test
         jdbcTemplate.execute("create table projects (id integer primary key,"
                              + "project varchar(10), license varchar(5))");
         jdbcTemplate.execute("insert into projects values (1, 'Camel', 'ASF')");
         jdbcTemplate.execute("insert into projects values (2, 'AMQ', 'ASF')");
         jdbcTemplate.execute("insert into projects values (3, 'Linux', 'GPL')");
+        // END SNIPPET: e2
     }
 
     protected void tearDown() throws Exception {
