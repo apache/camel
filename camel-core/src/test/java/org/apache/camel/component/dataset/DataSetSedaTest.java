@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Unit test to demonstrate high concurrency with seda. Offspring by CAMEL-605.
  */
 public class DataSetSedaTest extends ContextTestSupport {
-    private SimpleDataSet dataSet = new SimpleDataSet(500);
+    private SimpleDataSet dataSet = new SimpleDataSet(200);
 
     public void test() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("dataset:foo");
@@ -46,8 +46,8 @@ public class DataSetSedaTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("dataset:foo").to("seda:queue:test");
-                from("seda:queue:test").to("dataset:foo");
+                from("dataset:foo").to("seda:queue:test?size=100");
+                from("seda:queue:test?size=100").to("dataset:foo");
             }
         };
     }
