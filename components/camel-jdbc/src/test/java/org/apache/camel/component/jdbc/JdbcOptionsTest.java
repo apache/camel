@@ -53,7 +53,8 @@ public class JdbcOptionsTest extends ContextTestSupport {
             template.sendBody("jdbc:xxx", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertEquals("DataSource xxx not found in registry", e.getCause().getMessage());
+            assertEquals("registry entry called xxx of type javax.sql.DataSource must be specified", 
+                e.getCause().getMessage());
         }
     }
 

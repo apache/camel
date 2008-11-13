@@ -77,10 +77,7 @@ public class RemoteFileComponent extends DefaultComponent {
         // lookup client config in registry if provided
         String ref = getAndRemoveParameter(parameters, "ftpClientConfig", String.class);
         if (ref != null) {
-            FTPClientConfig ftpClientConfig = this.getCamelContext().getRegistry().lookup(ref, FTPClientConfig.class);
-            if (ftpClientConfig == null) {
-                throw new IllegalArgumentException("FTPClientConfig " + ref + " not found in registry.");
-            }
+            FTPClientConfig ftpClientConfig = mandatoryLookup(ref, FTPClientConfig.class);
             endpoint.getConfiguration().setFtpClientConfig(ftpClientConfig);
         }
     }

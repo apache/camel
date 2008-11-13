@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.spi.Injector;
@@ -32,12 +31,14 @@ import org.apache.camel.spi.Registry;
 import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
 import static org.apache.camel.util.ObjectHelper.notNull;
+
 /**
  * A number of helper methods
  *
  * @version $Revision$
  */
 public final class CamelContextHelper {
+
     /**
      * Utility classes should not have a public constructor.
      */
@@ -156,7 +157,7 @@ public final class CamelContextHelper {
 
     /**
      * Look up the given named bean in the {@link Registry} on the
-     * {@link CamelContext} or throws
+     * {@link CamelContext} or throws IllegalArgumentException if not found.
      */
     public static Object mandatoryLookup(CamelContext context, String name) {
         Object answer = lookup(context, name);
@@ -166,7 +167,7 @@ public final class CamelContextHelper {
 
     /**
      * Look up the given named bean of the given type in the {@link Registry} on the
-     * {@link CamelContext}
+     * {@link CamelContext} or throws IllegalArgumentException if not found.
      */
     public static <T> T mandatoryLookup(CamelContext context, String name, Class<T> beanType) {
         T answer = lookup(context, name, beanType);

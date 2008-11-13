@@ -41,10 +41,7 @@ public class SqlComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         String dataSourceRef = getAndRemoveParameter(parameters, "dataSourceRef", String.class);
         if (dataSourceRef != null) {
-            dataSource = getCamelContext().getRegistry().lookup(dataSourceRef, DataSource.class);
-            if (dataSource == null) {
-                throw new IllegalArgumentException("DataSource " + dataSourceRef + " not found in registry");
-            }
+            dataSource = mandatoryLookup(dataSourceRef, DataSource.class);
         }
         
         return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource, parameters);

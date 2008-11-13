@@ -41,14 +41,10 @@ public class JdbcComponent extends DefaultComponent {
         DataSource dataSource;
 
         if (ds != null) {
-            // use data source set by setter
+            // perfer to use datasource set by setter
             dataSource = ds;
         } else {
-            // lookup in registry instead
-            dataSource = getCamelContext().getRegistry().lookup(remaining, DataSource.class);
-            if (dataSource == null) {
-                throw new IllegalArgumentException("DataSource " + remaining + " not found in registry");
-            }
+            dataSource = mandatoryLookup(remaining, DataSource.class);
         }
 
         JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
