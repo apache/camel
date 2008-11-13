@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.List;
+
+import org.w3c.dom.Element;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
@@ -24,7 +31,22 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
+                // START SNIPPET: payload
+                from(routerEndpointURI).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        Message inMessage = exchange.getIn();
+                        if(inMessage instanceof CxfMessage) {
+                            CxfMessage message = (CxfMessage) inMessage;
+                            List<Element> elements = message.getMessage().get(List.class);
+                            assertNotNull("We should get the elements here" , elements);
+                            assertEquals("Get the wrong elements size" , elements.size(), 1);
+                            assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
+                        }                        
+                    }
+                    
+                })
+                .to(serviceEndpointURI);
+                // END SNIPPET: payload
             }
         };
     }
