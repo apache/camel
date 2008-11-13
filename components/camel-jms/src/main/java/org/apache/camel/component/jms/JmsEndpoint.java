@@ -134,7 +134,7 @@ public class JmsEndpoint extends DefaultEndpoint {
      * Factory method for creating a new template for InOut message exchanges
      */
     public JmsOperations createInOutTemplate() {
-        return configuration.createInOutTemplate(this, pubSubDomain, destination, getRequestTimeout());
+        return configuration.createInOutTemplate(this, pubSubDomain, destination, configuration.getRequestTimeout());
     }
 
     // Properties
@@ -189,22 +189,6 @@ public class JmsEndpoint extends DefaultEndpoint {
 
     public void setRequestor(Requestor requestor) {
         this.requestor = requestor;
-    }
-
-    /**
-     * @deprecated use configuration.requestTimeout. Will be removed in Camel 2.0
-     */
-    public long getRequestTimeout() {
-        return configuration.getRequestTimeout();
-    }
-
-    /**
-     * Sets the timeout in milliseconds which requests should timeout after
-     *
-     * @deprecated use configuration.requestTimeout. Will be removed in Camel 2.0
-     */
-    public void setRequestTimeout(long requestTimeout) {
-        configuration.setRequestTimeout(requestTimeout);
     }
 
     public boolean isPubSubDomain() {

@@ -38,13 +38,6 @@ public final class CxfSoapBinding {
 
     }
     
-    /**
-     * @deprecated  Please use {@link #getCxfInMessage(HeaderFilterStrategy, org.apache.camel.Exchange, boolean)}
-     */
-    public static org.apache.cxf.message.Message getCxfInMessage(org.apache.camel.Exchange exchange, boolean isClient) {
-        return CxfSoapBinding.getCxfInMessage(new DefaultHeaderFilterStrategy(), exchange, isClient);
-    }
-    
     public static org.apache.cxf.message.Message getCxfInMessage(HeaderFilterStrategy headerFilterStrategy,
             org.apache.camel.Exchange exchange, boolean isClient) {
         MessageImpl answer = new MessageImpl();
@@ -75,14 +68,7 @@ public final class CxfSoapBinding {
         answer.setExchange(cxfExchange);
         cxfExchange.setInMessage(answer);
         return answer;
-    }
-
-    /**
-     * @deprecated Please use {@link #getCxfOutMessage(HeaderFilterStrategy, org.apache.camel.Exchange, boolean)}
-     */
-    public static org.apache.cxf.message.Message getCxfOutMessage(org.apache.camel.Exchange exchange, boolean isClient) {
-        return CxfSoapBinding.getCxfOutMessage(new DefaultHeaderFilterStrategy(), exchange, isClient);
-    }
+    }    
     
     public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
             org.apache.camel.Exchange exchange, boolean isClient) {
@@ -111,28 +97,4 @@ public final class CxfSoapBinding {
         outMessage.putAll(message.getHeaders());
         return outMessage;
     }
-
-    /**
-     * @deprecated Please use {@link CxfHeaderHelper#propagateCxfToCamel(HeaderFilterStrategy, org.apache.cxf.message.Message, Map)}
-     */
-    public static void setProtocolHeader(Map<String, Object> headers, Map<String, List<String>> protocolHeader) {
-        if (protocolHeader != null) {
-            StringBuilder value = new StringBuilder(256);
-            for (Map.Entry<String, List<String>> entry : protocolHeader.entrySet()) {
-                value.setLength(0);
-                boolean first = true;
-                for (String s : entry.getValue()) {
-                    if (!first) {
-                        value.append("; ");
-                    }
-                    value.append(s);
-                    first = false;
-                }
-                headers.put(entry.getKey(), value.toString());
-            }
-        }
-
-    }
-
-
 }
