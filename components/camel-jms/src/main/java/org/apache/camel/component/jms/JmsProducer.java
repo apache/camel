@@ -254,16 +254,6 @@ public class JmsProducer extends DefaultProducer {
         }
     }
 
-    /**
-     * Preserved for backwards compatibility.
-     *
-     * @deprecated will be removed in Camel 2.0
-     * @see #getInOnlyTemplate()
-     */
-    public JmsOperations getTemplate() {
-        return getInOnlyTemplate();
-    }
-
     public JmsOperations getInOnlyTemplate() {
         if (inOnlyTemplate == null) {
             inOnlyTemplate = endpoint.createInOnlyTemplate();

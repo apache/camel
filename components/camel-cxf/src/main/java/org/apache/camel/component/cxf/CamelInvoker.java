@@ -112,7 +112,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
             }
             // Copy the outMessage back if we set the out's body
             org.apache.camel.Message camelMessage = result.getOut();
-            CxfBinding.copyMessage(camelMessage, outMessage);
+            CxfBinding.copyMessage(new CxfHeaderFilterStrategy(), camelMessage, outMessage);
         }
         // set the CXF outMessage back to the exchange
         exchange.setOutMessage(outMessage);

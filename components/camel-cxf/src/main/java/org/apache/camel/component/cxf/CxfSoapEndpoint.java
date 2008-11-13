@@ -164,16 +164,6 @@ public class CxfSoapEndpoint implements Endpoint {
     public void setCamelContext(CamelContext context) {
         endpoint.setCamelContext(context);
     }
-    
-    @Deprecated
-    public CamelContext getContext() {
-        return getCamelContext();
-    }
-    
-    @Deprecated
-    public void setContext(CamelContext context) {
-        setCamelContext(context);
-    }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;

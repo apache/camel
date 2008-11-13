@@ -42,6 +42,7 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -261,7 +262,7 @@ public class JmsBinding {
      * This default implementation will allow:
      * <ul>
      *   <li>any primitives and their counter Objects (Integer, Double etc.)</li>
-     *   <li>String and any other litterals, Character, CharSequence</li>
+     *   <li>String and any other literals, Character, CharSequence</li>
      *   <li>Boolean</li>
      *   <li>Number</li>
      *   <li>java.util.Date</li>
@@ -358,33 +359,6 @@ public class JmsBinding {
             answer.put(name, value);
         }
         return answer;
-    }
-
-    /**
-     * @deprecated Please use {@link DefaultHeaderFilterStrategy#getOutFilter()}
-     */
-    public Set<String> getIgnoreJmsHeaders() {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            return ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                .getOutFilter();
-        } else {
-            // Shouldn't get here unless a strategy that isn't an extension of
-            // DefaultHeaderPropagationStrategy has been injected.
-            return null;
-        }
-    }
-
-    /**
-     * @deprecated Please use {@link DefaultHeaderFilterStrategy#setOutFilter()}
-     */
-    public void setIgnoreJmsHeaders(Set<String> ignoreJmsHeaders) {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                .setOutFilter(ignoreJmsHeaders);
-        } else {
-            // Shouldn't get here unless a strategy that isn't an extension of
-            // DefaultHeaderPropagationStrategy has been injected.
-        }
     }
 
     /**

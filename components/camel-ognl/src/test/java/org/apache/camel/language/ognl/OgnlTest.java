@@ -25,10 +25,10 @@ public class OgnlTest extends LanguageTestSupport {
     public void testOgnlExpressions() throws Exception {
         assertExpression("exchange", exchange);
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
-        assertExpression("getIn().body", "<hello id='m123'>world!</hello>");
+        assertExpression("getRequest().body", "<hello id='m123'>world!</hello>");
         assertExpression("request.body", "<hello id='m123'>world!</hello>");
-        assertExpression("getIn().headers['foo']", "abc");
-        assertExpression("getIn().headers.foo", "abc");
+        assertExpression("getRequest().headers['foo']", "abc");
+        assertExpression("getRequest().headers.foo", "abc");
         assertExpression("request.headers.foo", "abc");
     }
 

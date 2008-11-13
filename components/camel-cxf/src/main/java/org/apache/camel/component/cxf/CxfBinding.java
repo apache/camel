@@ -61,13 +61,6 @@ public final class CxfBinding {
         return null;
     }
 
-    /**
-     * @deprecated please use {@link #createCxfMessage(HeaderFilterStrategy, CxfExchange)} instead
-     */
-    public static Message createCxfMessage(CxfExchange exchange) {
-        return CxfBinding.createCxfMessage(new CxfHeaderFilterStrategy(), exchange);
-    }
-
     public static Message createCxfMessage(HeaderFilterStrategy strategy, CxfExchange exchange) {
 
         Message answer = exchange.getInMessage();
@@ -111,13 +104,6 @@ public final class CxfBinding {
         return answer;
     }
 
-    /**
-     * @deprecated please use {@link #storeCxfResponse(HeaderFilterStrategy, CxfExchange, Message)} instead.
-     */
-    public static void storeCxfResponse(CxfExchange exchange, Message response) {
-        CxfBinding.storeCxfResponse(new CxfHeaderFilterStrategy(), exchange, response);
-    }
-
     public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange,
             Message response) {
         CxfMessage out = exchange.getOut();
@@ -132,14 +118,7 @@ public final class CxfBinding {
                 out.setBody(response);
             }
         }
-    }
-
-    /**
-     * @deprecated Please use {@link #copyMessage(HeaderFilterStrategy, org.apache.camel.Message, Message)} instead.
-     */
-    public static void copyMessage(org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
-        CxfBinding.copyMessage(new CxfHeaderFilterStrategy(), camelMessage, cxfMessage);
-    }
+    }  
 
     // Copy the Camel message to CXF message
     public static void copyMessage(HeaderFilterStrategy strategy,

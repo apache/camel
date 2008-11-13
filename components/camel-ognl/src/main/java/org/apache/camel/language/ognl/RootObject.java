@@ -54,21 +54,7 @@ public class RootObject {
 
     public Message getRequest() {
         return exchange.getIn();
-    }
-    
-    /**
-     * @deprecated doesnt work in OGNL use request instead
-     */
-    public Message getIn() {
-        return exchange.getIn();
-    }
-
-    /**
-     * @deprecated doesnt work in OGNL use response instead
-     */
-    public Message getOut() {
-        return exchange.getOut();
-    }
+    }   
 
     public Message getResponse() {
         return exchange.getOut();
