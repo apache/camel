@@ -242,7 +242,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Look up the given named bean in the {@link Registry} on the
-     * {@link CamelContext} or throws
+     * {@link CamelContext} or throws exception if not found.
      */
     public Object mandatoryLookup(String name) {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name);
@@ -250,7 +250,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Look up the given named bean of the given type in the {@link Registry} on the
-     * {@link CamelContext}
+     * {@link CamelContext} or throws exception if not found.
      */
     public <T> T mandatoryLookup(String name, Class<T> beanType) {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name, beanType);

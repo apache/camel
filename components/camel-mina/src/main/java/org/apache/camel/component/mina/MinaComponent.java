@@ -86,10 +86,6 @@ public class MinaComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Creating MinaEndpoint from uri: " + uri);
-        }
-
         setProperties(this, parameters);
 
         URI u = new URI(remaining);
@@ -303,10 +299,7 @@ public class MinaComponent extends DefaultComponent {
     protected ProtocolCodecFactory getCodecFactory(String type, String codec) {
         ProtocolCodecFactory codecFactory = null;
         if (codec != null) {
-            codecFactory = getCamelContext().getRegistry().lookup(codec, ProtocolCodecFactory.class);
-            if (codecFactory == null) {
-                throw new IllegalArgumentException("Codec " + codec + " not found in registry.");
-            }
+            codecFactory = mandatoryLookup(codec, ProtocolCodecFactory.class);
             if (LOG.isDebugEnabled()) {
                 LOG.debug(type + ": Using custom CodecFactory: " + codecFactory);
             }
