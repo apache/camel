@@ -124,13 +124,13 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
-    public Object sendBodyAndHeader(Endpoint endpoint, final Object body, final String header,
+    public Object sendBodyAndHeader(Endpoint<E> endpoint, final Object body, final String header,
             final Object headerValue) {
         E result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result);
     }
 
-    public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body, final String header,
+    public Object sendBodyAndHeader(Endpoint<E> endpoint, ExchangePattern pattern, final Object body, final String header,
             final Object headerValue) {
         E result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
         return extractResultBody(result, pattern);
@@ -146,9 +146,26 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
         return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
-    public Object sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+    public Object sendBodyAndHeaders(Endpoint<E> endpoint, final Object body, final Map<String, Object> headers) {
         E result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                for (Map.Entry<String, Object> header : headers.entrySet()) {
+                    in.setHeader(header.getKey(), header.getValue());
+                }
+                in.setBody(body);
+            }
+        });
+        return extractResultBody(result);
+    }
+
+    public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) {
+        return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), pattern, body, headers);
+    }
+
+    public Object sendBodyAndHeaders(Endpoint<E> endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) {
+        E result = send(endpoint, pattern, new Processor() {
+            public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
                     in.setHeader(header.getKey(), header.getValue());
@@ -184,6 +201,14 @@ public class DefaultProducerTemplate<E extends Exchange> extends ServiceSupport 
 
     public Object requestBodyAndHeader(String endpoint, Object body, String header, Object headerValue) {
         return sendBodyAndHeader(endpoint, ExchangePattern.InOut, body, header, headerValue);
+    }
+
+    public Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) {
+        return requestBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
+    }
+
+    public Object requestBodyAndHeaders(Endpoint<E> endpoint, final Object body, final Map<String, Object> headers) {
+        return sendBodyAndHeaders(endpoint, ExchangePattern.InOut, body, headers);
     }
 
     // Methods using the default endpoint
