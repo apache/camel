@@ -165,7 +165,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) {
-        Exchange result = send(endpoint,  pattern, new Processor() {
+        Exchange result = send(endpoint, pattern, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
