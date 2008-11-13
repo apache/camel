@@ -55,7 +55,6 @@ public class StreamHeaderTest extends ContextTestSupport {
     private class MyOutputStream extends OutputStream {
 
         public void write(int b) throws IOException {
-            char c = (char)b;
             sb.append((char)b);
         }
     }
