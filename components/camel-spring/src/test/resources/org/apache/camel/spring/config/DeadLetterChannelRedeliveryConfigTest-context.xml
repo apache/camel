@@ -21,25 +21,36 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
          http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
+	<!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
         <template id="myTemplate"/>
+		<!-- set the errorHandlerRef to our DeadLetterChannel, this applies for this route only -->
         <route errorHandlerRef="myDeadLetterErrorHandler">
             <from uri="direct:in"/>
             <process ref="myFailureProcessor"/>
             <to uri="mock:result"/>
         </route>
     </camelContext>
+	<!-- END SNIPPET: e1 -->
 
-    <bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+	<!-- START SNIPPET: e2 -->
+    <!-- here we configure our DeadLetterChannel -->
+	<bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+	    <!-- exchanges is routed to mock:dead in cased redelivery failed -->
         <property name="defaultDeadLetterEndpointUri" value="mock:dead"/>
+		<!-- reference the redelivery policy to use -->
         <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
     </bean>
 
-    <bean id="myFailureProcessor" class="org.apache.camel.spring.config.MyFailureProcessor"/>
-
-    <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+    <!-- here we set the redelivery settings -->
+	<bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+	    <!-- try redelivery at most 3 times, after that the exchange is dead and its routed to the mock:dead endpoint -->
         <property name="maximumRedeliveries" value="3"/>
+		<!-- delay 250ms before redelivery -->
         <property name="delay" value="250"/>
     </bean>
+	<!-- END SNIPPET: e2 -->
+
+    <bean id="myFailureProcessor" class="org.apache.camel.spring.config.MyFailureProcessor"/>
 
 </beans>
