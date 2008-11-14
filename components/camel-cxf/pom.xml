@@ -309,6 +309,13 @@
       							<extraarg>${basedir}/src/test/resources/person-non-wrapper-binding.xml</extraarg>
       						</extraargs>
       					</wsdlOption>
+      					<wsdlOption>
+      						<wsdl>${basedir}/src/test/resources/pizza_service.wsdl</wsdl>
+      						<extraargs>
+      							<extraarg>-exsh</extraarg>
+      							<extraarg>true</extraarg>
+      						</extraargs>
+      					</wsdlOption>
       				</wsdlOptions>
       			</configuration>
       			<goals>
