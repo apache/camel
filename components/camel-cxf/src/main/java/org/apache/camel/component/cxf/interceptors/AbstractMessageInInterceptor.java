@@ -116,9 +116,7 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
         BindingMessageInfo bmi = isRequestor(message) ?  boi.getOutput() : boi.getInput();
         List<Element> partList = getPartList(message, payloadEl, bmi);
         message.put(List.class, partList);
-
-        Element header = getHeader(message);
-        message.put(Element.class, header);
+        
     }
 
     /**
@@ -160,11 +158,5 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
      */
     protected abstract List<Element> getPartList(T inMessage, Element rootElement, BindingMessageInfo boi);
 
-    /**
-     * This method is called when the routing message interceptor has intercepted a inbound
-     * message as a DOM Content.  It retreives the header parts as DOM Element
-     * and returns a Element.
-     */
-    protected abstract Element getHeader(T inMessage);
-
+   
 }

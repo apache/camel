@@ -141,8 +141,4 @@ public class XMLMessageInInterceptor extends AbstractMessageInInterceptor<XMLMes
         return partList;
     }
     
-    protected Element getHeader(XMLMessage inMessage) {
-        return null;
-    }
-    
 }
