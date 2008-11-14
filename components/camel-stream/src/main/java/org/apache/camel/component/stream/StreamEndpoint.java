@@ -62,24 +62,10 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public String getFile() {
         return file;
-    }
-
-    /**
-     * @deprecated use camel-file component. Will be removed in Camel 2.0
-     */
-    public void setFile(String file) {
-        this.file = file;
-    }
-
+    }   
+    
     public String getUrl() {
         return url;
-    }
-
-    /**
-     * @deprecated use camel-jetty or camel-http component. Will be removed in Camel 2.0
-     */
-    public void setUrl(String url) {
-        this.url = url;
     }
 
     public long getDelay() {

@@ -26,6 +26,7 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -121,7 +122,7 @@ public class JmsMessage extends DefaultMessage {
             try {
                 answer = jmsMessage.getObjectProperty(name);
             } catch (JMSException e) {
-                throw new MessagePropertyAccessException(name, e);
+                throw new RuntimeCamelException(name, e);
             }
         }
         if (answer == null) {

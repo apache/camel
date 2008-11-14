@@ -116,7 +116,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
      * Creates a script builder for the named language and script contents
      *
      * @param language the language to use for the script
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder script(String language, String scriptText) {
@@ -156,60 +156,13 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return new ScriptBuilder(language, new UrlResource(scriptURL));
     }
 
-    // Beanshell
-    // -------------------------------------------------------------------------
-
-    /**
-     * Creates a script builder for the BeanShell script contents
-     *
-     * @param scriptText the script text to be evaluted
-     * @return the builder
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static ScriptBuilder beanShell(String scriptText) {
-        return new ScriptBuilder("beanshell", scriptText);
-    }
-
-    /**
-     * Creates a script builder for the BeanShell script {@link Resource}
-     *
-     * @param scriptResource the resource used to load the script
-     * @return the builder
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static ScriptBuilder beanShell(Resource scriptResource) {
-        return new ScriptBuilder("beanshell", scriptResource);
-    }
-
-    /**
-     * Creates a script builder for the BeanShell script {@link File}
-     *
-     * @param scriptFile the file used to load the script
-     * @return the builder
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static ScriptBuilder beanShell(File scriptFile) {
-        return new ScriptBuilder("beanshell", new FileSystemResource(scriptFile));
-    }
-
-    /**
-     * Creates a script builder for the BeanShell script {@link URL}
-     *
-     * @param scriptURL the URL used to load the script
-     * @return the builder
-     * @deprecated will be removed in Camel 2.0
-     */
-    public static ScriptBuilder beanShell(URL scriptURL) {
-        return new ScriptBuilder("beanshell", new UrlResource(scriptURL));
-    }
-
     // Groovy
     // -------------------------------------------------------------------------
 
     /**
      * Creates a script builder for the groovy script contents
      *
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder groovy(String scriptText) {
@@ -252,7 +205,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     /**
      * Creates a script builder for the JavaScript/ECMAScript script contents
      *
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder javaScript(String scriptText) {
@@ -296,7 +249,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     /**
      * Creates a script builder for the PHP script contents
      *
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder php(String scriptText) {
@@ -339,7 +292,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     /**
      * Creates a script builder for the Python script contents
      *
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder python(String scriptText) {
@@ -382,7 +335,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     /**
      * Creates a script builder for the Ruby/JRuby script contents
      *
-     * @param scriptText the script text to be evaluted
+     * @param scriptText the script text to be evaluated
      * @return the builder
      */
     public static ScriptBuilder ruby(String scriptText) {

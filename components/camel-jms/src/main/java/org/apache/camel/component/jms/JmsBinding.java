@@ -101,7 +101,7 @@ public class JmsBinding {
                 return null;
             }
         } catch (JMSException e) {
-            throw new RuntimeJmsException("Failed to extract body due to: " + e + ". Message: " + message, e);
+            throw new RuntimeCamelException("Failed to extract body due to: " + e + ". Message: " + message, e);
         }
     }
 
@@ -124,14 +124,14 @@ public class JmsBinding {
                 // TODO this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
             } catch (JMSException e) {
-                throw new MessageJMSPropertyAccessException(e);
+                throw new RuntimeCamelException(e);
             }
 
             Enumeration names;
             try {
                 names = jmsMessage.getPropertyNames();
             } catch (JMSException e) {
-                throw new MessagePropertyNamesAccessException(e);
+                throw new RuntimeCamelException(e);
             }
             while (names.hasMoreElements()) {
                 String name = names.nextElement().toString();
@@ -147,7 +147,7 @@ public class JmsBinding {
                     String key = JmsBinding.decodeFromSafeJmsHeaderName(name);
                     map.put(key, value);
                 } catch (JMSException e) {
-                    throw new MessagePropertyAccessException(name, e);
+                    throw new RuntimeCamelException(name, e);
                 }
             }
         }
