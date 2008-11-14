@@ -22,7 +22,7 @@ import java.util.Map;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-import static org.apache.camel.builder.script.ScriptBuilder.beanShell;
+import static org.apache.camel.builder.script.ScriptBuilder.script;;
 
 
 /**
@@ -56,7 +56,7 @@ public class BeanShellScriptRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start").choice().
-                        when(beanShell("request.headers['foo'] = 'bar'")).to("mock:result")
+                        when(script("beanshell", "request.headers['foo'] = 'bar'")).to("mock:result")
                         .otherwise().to("mock:unmatched");
             }
         };
