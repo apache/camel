@@ -16,13 +16,12 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.spring.processor.SpringTestHelper;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * The Greeter Payload mode test that is configured with CXF features.
  */
-public class CxfGreeterPayLoadWithFeatureRouterTest  extends CXFGreeterRouterTest {
+public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest {
 
     @Override
     protected void setUp() throws Exception {
@@ -35,11 +34,12 @@ public class CxfGreeterPayLoadWithFeatureRouterTest  extends CXFGreeterRouterTes
         assertEquals(TestCxfFeature.class, endpoint.getCxfEndpointBean().getFeatures().get(0).getClass());
         assertEquals(DataFormat.PAYLOAD.toString(), endpoint.getDataFormat());
     }   
-    
+
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, 
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/cxf/GreeterEndpointWithFeatureBeans.xml");
     }
+
 
 }
