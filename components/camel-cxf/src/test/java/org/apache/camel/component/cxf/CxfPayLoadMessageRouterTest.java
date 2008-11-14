@@ -35,7 +35,7 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Message inMessage = exchange.getIn();
-                        if(inMessage instanceof CxfMessage) {
+                        if (inMessage instanceof CxfMessage) {
                             CxfMessage message = (CxfMessage) inMessage;
                             List<Element> elements = message.getMessage().get(List.class);
                             assertNotNull("We should get the elements here" , elements);
