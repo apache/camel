@@ -98,7 +98,6 @@ public class CxfClient extends ClientImpl {
 
         Exchange exchange = new ExchangeImpl();
         // put the message Observer to call the CxfClient onMessage()
-        setExchangeProperties(exchange, getEndpoint(), bi);
         exchange.put(InvokingContext.class, invokingContext);
 
         if (bi != null) {
@@ -118,6 +117,7 @@ public class CxfClient extends ClientImpl {
             message.putAll(ep);
         }
 
+        setExchangeProperties(exchange, ep, bi);
         PhaseInterceptorChain chain = setupInterceptorChain(getEndpoint());
 
         message.setInterceptorChain(chain);
@@ -208,4 +208,5 @@ public class CxfClient extends ClientImpl {
     }
 
 }
+
 
