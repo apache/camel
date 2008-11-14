@@ -28,6 +28,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.TypeConverterAware;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -159,7 +160,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         synchronized (typeMappings) {
             converter = typeMappings.get(key);
             if (converter == null) {
-                converter = findTypeConverter(toType, fromType, value);
+                converter = lookup(toType, fromType);
                 if (converter != null) {
                     typeMappings.put(key, converter);
                 }
@@ -168,10 +169,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return converter;
     }
 
-    /**
-     * Tries to auto-discover any available type converters
-     */
-    protected TypeConverter findTypeConverter(Class toType, Class fromType, Object value) {
+    public TypeConverter lookup(Class toType, Class fromType) {
+        // make sure we have loaded the converters
+        checkLoaded();
+
         // lets try the super classes of the from type
         if (fromType != null) {
             Class fromSuperClass = fromType.getSuperclass();
@@ -179,7 +180,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
                 TypeConverter converter = getTypeConverter(toType, fromSuperClass);
                 if (converter == null) {
-                    converter = findTypeConverter(toType, fromSuperClass, value);
+                    converter = lookup(toType, fromSuperClass);
                 }
                 if (converter != null) {
                     return converter;
@@ -200,7 +201,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
                     TypeConverter converter = getTypeConverter(toType, fromSuperClass);
                     if (converter == null) {
-                        converter = findTypeConverter(toType, fromSuperClass, value);
+                        converter = lookup(toType, fromSuperClass);
                     }
                     if (converter != null) {
                         return converter;

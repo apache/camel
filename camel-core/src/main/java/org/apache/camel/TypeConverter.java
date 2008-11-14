@@ -33,7 +33,7 @@ public interface TypeConverter {
      * @param type the requested type
      * @param value the value to be converted
      * @return the converted value
-     * @throws {@link NoTypeConversionAvailableException} if conversion not possible
+     * @throws NoTypeConversionAvailableException if conversion not possible
      */
     <T> T convertTo(Class<T> type, Object value);
 
@@ -47,7 +47,7 @@ public interface TypeConverter {
      * @param exchange the current exchange
      * @param value the value to be converted
      * @return the converted value
-     * @throws {@link NoTypeConversionAvailableException} if conversion not possible
+     * @throws NoTypeConversionAvailableException} if conversion not possible
      */
     <T> T convertTo(Class<T> type, Exchange exchange, Object value);
 }

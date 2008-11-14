@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl.converter;
 
+import org.apache.camel.spi.TypeConverterRegistry;
+
 /**
  * A caching proxy
  *

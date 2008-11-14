@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.converter.TypeConverterRegistry;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.Injector;
 
 /**
@@ -36,6 +36,19 @@ public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
     }
 
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
+        if (errors.size() == 0) {
+            errors.add("Method should not be invoked.");
+        }
+    }
+
+    public TypeConverter lookup(Class toType, Class fromType) {
+        if (errors.size() == 0) {
+            errors.add("Method should not be invoked.");
+        }
+        return null;
+    }
+
+    public void setInjector(Injector injector) {
         if (errors.size() == 0) {
             errors.add("Method should not be invoked.");
         }
