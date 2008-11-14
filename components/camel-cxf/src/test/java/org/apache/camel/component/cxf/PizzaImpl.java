@@ -14,35 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.invoker;
+package org.apache.camel.component.cxf;
 
-import java.util.List;
-import org.w3c.dom.Element;
-import org.apache.cxf.binding.soap.SoapHeader;
+import org.apache.camel.pizza.Pizza;
+import org.apache.camel.pizza.types.CallerIDHeaderType;
+import org.apache.camel.pizza.types.OrderPizzaResponseType;
+import org.apache.camel.pizza.types.OrderPizzaType;
 
+public class PizzaImpl implements Pizza {
 
+    public OrderPizzaResponseType orderPizza(OrderPizzaType body, CallerIDHeaderType callerID) {
+        OrderPizzaResponseType resp = new OrderPizzaResponseType();
+        if (callerID == null) {
+            resp.setMinutesUntilReady(100);
+        } else {
+            resp.setMinutesUntilReady(100 + Integer.parseInt(callerID.getPhoneNumber()));
+        }
+        return resp;
+    }
 
-public class PayloadMessage {
-    private List<Element> payload;
-    private List<SoapHeader> headers;
-    
-    public PayloadMessage(List<Element> payload, List<SoapHeader> headers) {
-        this.payload = payload;
-        this.headers = headers;
-    }
-    
-    public List<Element> getPayload() {
-        return payload;
-    }
-    
-    public List<SoapHeader> getHeaders() {
-        return headers;
-    }
-    
-    public String toString() {
-        StringBuffer buf = new StringBuffer();
-        buf.append("payload: " + payload);
-        buf.append(" headers: " + headers);
-        return buf.toString();
-    }
 }

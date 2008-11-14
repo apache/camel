@@ -23,7 +23,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.w3c.dom.Element;
 
+import org.apache.camel.Headers;
+import org.apache.cxf.binding.soap.SoapHeader;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.headers.Header;
+import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 
@@ -41,14 +45,14 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
 
         PayloadMessage request = (PayloadMessage)contents.get(PayloadMessage.class);
 
-        Element header = request.getHeader();
+        List<SoapHeader> headers = request.getHeaders();
         List<Element> payload = request.getPayload();
 
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.finest("header = " + header + ", paylaod = " + payload);
+            LOG.finest("header = " + headers + ", paylaod = " + payload);
         }
 
-        message.put(Element.class, header);
+        message.put(Header.HEADER_LIST, headers);
         message.put(List.class, payload);
     }
 
@@ -58,7 +62,7 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
 
         Message msg = exchange.getInMessage();
         List<Element> payload = getResponseObject(msg , responseContext, List.class);
-        Element header = exchange.getInMessage().get(Element.class);
+        List<SoapHeader> header = CastUtils.cast((List<?>)exchange.getInMessage().get(Header.HEADER_LIST));
         payloadMsg = new PayloadMessage(payload, header);
 
         if (LOG.isLoggable(Level.FINEST)) {
@@ -90,7 +94,7 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
                 LOG.finest(payloadMessage.toString());
             }
             outMessage.put(List.class, payloadMessage.getPayload());
-            outMessage.put(Element.class, payloadMessage.getHeader());
+            outMessage.put(Header.HEADER_LIST, payloadMessage.getHeaders());
         }
     }
 
@@ -98,14 +102,14 @@ public class PayloadInvokingContext extends AbstractInvokingContext {
     @SuppressWarnings("unchecked")
     public Map<Class, Object> getRequestContent(Message inMessage) {
         List<Element> payload = inMessage.get(List.class);
-        Element header = inMessage.get(Element.class);
+        List<SoapHeader> headers = CastUtils.cast((List<?>)inMessage.get(Header.HEADER_LIST));
 
         if (LOG.isLoggable(Level.FINEST)) {
-            LOG.finest("Header = " + header + ", Payload = " + payload);
+            LOG.finest("Header = " + headers + ", Payload = " + payload);
         }
 
         Map<Class, Object> contents = new IdentityHashMap<Class, Object>();
-        contents.put(PayloadMessage.class, new PayloadMessage(payload, header));
+        contents.put(PayloadMessage.class, new PayloadMessage(payload, headers));
 
         return contents;
     }

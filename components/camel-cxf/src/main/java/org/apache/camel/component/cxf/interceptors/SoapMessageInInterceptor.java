@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.cxf.interceptors;
 
+
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-//import java.util.ResourceBundle;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,10 +32,11 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
+import org.apache.camel.pizza.types.CallerIDHeaderType;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.model.SoapBindingInfo;
 import org.apache.cxf.common.logging.LogUtils;
-//import org.apache.cxf.common.i18n.BundleUtils;
+
 
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.message.Exchange;
@@ -113,11 +116,8 @@ public class SoapMessageInInterceptor extends AbstractMessageInInterceptor<SoapM
         return partList;
     }
 
-    protected Element getHeader(SoapMessage inMessage) {
-        // need to find out the soap header information
-        Element element = null;
-        return element;
-        // return inMessage.getHeaders(Element.class);
-    }
+   
+
+    
 
 }

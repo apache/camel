@@ -57,64 +57,13 @@ public class SoapMessageOutInterceptor extends AbstractMessageOutInterceptor<Soa
     }
 
     @SuppressWarnings("unchecked")
-    public void handleMessage(SoapMessage message) throws Fault {
-        // header is not store as the element
-        Element header = message.get(Element.class);
+    public void handleMessage(SoapMessage message) throws Fault {        
 
         List<Element> payload = message.get(List.class);
         Exchange exchange = message.getExchange();
         BindingMessageInfo bmi = exchange.get(BindingMessageInfo.class);
+        //The soap header is handled by the SoapOutInterceptor
 
-
-        //Headers -represent as -Element,Body -represent as StaxStream.
-        //Check if BindingOperationInfo contains header
-        List<SoapHeaderInfo> bindingHdr = bmi.getExtensors(SoapHeaderInfo.class);
-        if (bindingHdr != null && !bindingHdr.isEmpty()) {
-            if (LOG.isLoggable(Level.INFO)) {
-                LOG.info("SoapMessageOutInterceptor BindingOperation header processing.");
-            }
-
-            List<Element> headerList = new ArrayList<Element>();
-            List<Element> newPayload = new ArrayList<Element>(payload);
-            //Look for headers in Payload.
-            for (SoapHeaderInfo shi : bindingHdr) {
-                List<Element> tmpList = new ArrayList<Element>();
-                MessagePartInfo mpi = shi.getPart();
-                QName hdrName = mpi.getConcreteName();
-                for (Element el : payload) {
-                    QName elName = new QName(el.getNamespaceURI(), el.getLocalName());
-                    if (elName.equals(hdrName)) {
-                        newPayload.remove(el);
-                        tmpList.add(el);
-                    }
-                }
-
-                if (tmpList.size() > 1) {
-                    throw new Fault(new org.apache.cxf.common.i18n.Message(
-                                    "MULTIPLE_HDR_PARTS", LOG, hdrName));
-                }
-                headerList.addAll(tmpList);
-            }
-
-            if (LOG.isLoggable(Level.INFO)) {
-                LOG.info("DOMOutInterceptor Copy Payload parts to SOAPHeaders");
-            }
-            if (headerList.size() != 0) {
-                SoapVersion version = ((SoapMessage)message).getVersion();
-                header = createElement(version.getHeader(), headerList);
-            }
-            payload = newPayload;
-        }
-
-        //Set SOAP Header Element.
-        //Child Elements Could be binding specified parts or user specified headers.
-        //REVISTED the soap headers
-        //message.setHeaders(Element.class, header);
-
-        //TODO Moving Parts from Header to Payload.
-        //For e.g Payload ROuting from SOAP11 <-> SOAP12
-
-        //So write payload and header to outbound message
         if (LOG.isLoggable(Level.INFO)) {
             LOG.info("SoapMessageOutInterceptor binding operation style processing.");
         }
