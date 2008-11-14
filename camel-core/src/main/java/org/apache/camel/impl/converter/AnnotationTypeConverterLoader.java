@@ -20,7 +20,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 
 import java.net.URL;
@@ -35,6 +34,7 @@ import static java.lang.reflect.Modifier.isStatic;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.camel.util.WebSphereResolverUtil;

@@ -30,6 +30,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -220,6 +221,13 @@ public interface CamelContext extends Service {
      * @return the converter
      */
     TypeConverter getTypeConverter();
+
+    /**
+     * Returns the type converter registry where type converters can be added or looked up
+     *
+     * @return the type converter registry
+     */
+    TypeConverterRegistry getTypeConverterRegistry();
 
     /**
      * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,

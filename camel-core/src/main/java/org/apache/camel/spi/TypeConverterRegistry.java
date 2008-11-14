@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.impl.converter;
+package org.apache.camel.spi;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
@@ -27,7 +27,7 @@ import org.apache.camel.spi.Injector;
 public interface TypeConverterRegistry {
 
     /**
-     * Allows a new type converter to be registered
+     * Registers a new type converter
      *
      * @param toType        the type to convert to
      * @param fromType      the type to convert from
@@ -35,5 +35,22 @@ public interface TypeConverterRegistry {
      */
     void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter);
 
+    /**
+     * Performs a lookup for a given type converter.
+     *
+     * @param toType        the type to convert to
+     * @param fromType      the type to convert from
+     * @return the type converter or null if not found.
+     */
+    TypeConverter lookup(Class toType, Class fromType);
+
+    /**
+     * Sets the injector to be used for creating new instances during type convertions.
+     */
+    void setInjector(Injector injector);
+
+    /**
+     * Gets the injector
+     */
     Injector getInjector();
 }

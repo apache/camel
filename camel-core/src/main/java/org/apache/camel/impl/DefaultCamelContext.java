@@ -55,6 +55,7 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
@@ -84,6 +85,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<Route> routes;
     private List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
+    private TypeConverterRegistry typeConverterRegistry;
     private ExchangeConverter exchangeConverter;
     private Injector injector;
     private ComponentResolver componentResolver;
@@ -454,6 +456,24 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.typeConverter = typeConverter;
     }
 
+    public TypeConverterRegistry getTypeConverterRegistry() {
+        if (typeConverterRegistry == null) {
+            // init type converter as its lazy
+            if (typeConverter == null) {
+                getTypeConverter();
+            }
+            // type converter is usually the default one that also is the registry
+            if (typeConverter instanceof DefaultTypeConverter) {
+                typeConverterRegistry = (DefaultTypeConverter) typeConverter;
+            } 
+        }
+        return typeConverterRegistry;
+    }
+
+    public void setTypeConverterRegistry(TypeConverterRegistry typeConverterRegistry) {
+        this.typeConverterRegistry = typeConverterRegistry;
+    }
+
     public Injector getInjector() {
         if (injector == null) {
             injector = createInjector();
@@ -684,7 +704,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        return new DefaultTypeConverter(getInjector());
+        DefaultTypeConverter answer = new DefaultTypeConverter(getInjector());
+        typeConverterRegistry = answer;
+        return answer;
     }
 
     /**
