@@ -123,9 +123,10 @@ public class ThroughputLogger extends Logger {
         double rate = messagesPerSecond(groupSize, groupStartTime, time);
         double average = messagesPerSecond(receivedCount, startTime, time);
 
+        long duration = time - groupStartTime;
         groupStartTime = time;
 
-        return getAction() + ": " + receivedCount + " messages so far. Last group took: " + (time - groupStartTime)
+        return getAction() + ": " + receivedCount + " messages so far. Last group took: " + (duration)
                 + " millis which is: " + numberFormat.format(rate)
                 + " messages per second. average: " + numberFormat.format(average);
     }
