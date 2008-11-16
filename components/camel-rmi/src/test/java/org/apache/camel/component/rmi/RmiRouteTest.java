@@ -59,7 +59,7 @@ public class RmiRouteTest extends TestCase {
                 // be configured.
                 RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:37541/bye");
                 bye.setRemoteInterfaces(ISay.class);
-                from(bye).to("pojo:bye");
+                from(bye).to("bean:bye");
             }
         });
         // END SNIPPET: route
