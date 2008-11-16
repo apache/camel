@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,7 +43,9 @@ import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
-import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
@@ -86,15 +89,16 @@ public class CxfProducer extends DefaultProducer {
                 throw new CamelException(e);
             }
         }
-
+        
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
-        
-        return createClientFromClientFactoryBean(cfb);
+       
+        return createClientFromClientFactoryBean(jsr181Enabled ? new JaxWsProxyFactoryBean(cfb) :
+            new ClientProxyFactoryBean(cfb));
     }
 
     // If cfb is null, we will try to find the right cfb to use.
-    private Client createClientFromClientFactoryBean(ClientFactoryBean cfb) throws CamelException {
+    private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws CamelException {
         Bus bus = null;
         if (endpoint.getApplicationContext() != null) {
             SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
@@ -153,7 +157,7 @@ public class CxfProducer extends DefaultProducer {
         }
         
         cfb.setBus(bus);
-        return cfb.create();
+        return ((ClientProxy)Proxy.getInvocationHandler(cfb.create())).getClient();
     }
 
     public void process(Exchange exchange) throws Exception {
