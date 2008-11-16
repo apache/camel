@@ -84,8 +84,12 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
 
     public void testInvokingServiceFromCXFClient() throws Exception {
 
-        JaxwsTestHandler myHandler = getMandatoryBean(JaxwsTestHandler.class, "myJaxwsHandler");
-        myHandler.reset();
+        JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
+        fromHandler.reset();
+        
+        JaxwsTestHandler toHandler = getMandatoryBean(JaxwsTestHandler.class, "toEndpointJaxwsHandler");
+        toHandler.reset();
+
         URL wsdlURL = getClass().getClassLoader().getResource("person.wsdl");
         PersonService ss = new PersonService(wsdlURL, new QName("http://camel.apache.org/wsdl-first", "PersonService"));
         Person client = ss.getSoap();
@@ -113,17 +117,14 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
             assertTrue("Should get the xml vaildate error!", ex.getMessage().indexOf("MyStringType") > 0);         
         }
         
-        assertEquals(getExpectedJaxwsHandlerFaultCount(), myHandler.getFaultCount());
-        assertEquals(getExpectedJaxwsHandlerMessageCount(), myHandler.getMessageCount());
-
+        verifyJaxwsHandlers(fromHandler, toHandler);
     }
 
-    protected int getExpectedJaxwsHandlerMessageCount() {
-        return 11;
-    }
-
-    protected int getExpectedJaxwsHandlerFaultCount() {
-        return 8;
+    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
+        assertEquals(8, fromHandler.getFaultCount());
+        assertEquals(11, fromHandler.getMessageCount());
+        assertEquals(7, toHandler.getGetHeadersCount());
+        
     }
 
     @SuppressWarnings("unchecked")

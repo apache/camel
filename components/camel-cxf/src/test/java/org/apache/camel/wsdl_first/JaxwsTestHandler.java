@@ -26,8 +26,14 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
 
     private int faultCount;
     private int messageCount;
+    private int getHeadersCount;
+
+    public int getGetHeadersCount() {
+        return getHeadersCount;
+    }
 
     public Set<QName> getHeaders() {
+        getHeadersCount++;
         return null;
     }
 
@@ -48,6 +54,7 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
     public void reset() {
         faultCount = 0;
         messageCount = 0;
+        getHeadersCount = 0;
     }
     
     public int getFaultCount() {
