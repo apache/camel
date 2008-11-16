@@ -48,7 +48,7 @@
     <felix-osgi-version>1.2.0</felix-osgi-version>
     <httpcore-version>4.0-beta3</httpcore-version>
     <httpcore-niossl-version>4.0-alpha6</httpcore-niossl-version>
-    <jetty-version>6.1.11</jetty-version>
+    <jetty-version>6.1.14</jetty-version>
     <slf4j-version>1.5.5</slf4j-version>
     <openjpa-version>1.2.0</openjpa-version>
     <spring-version>2.5.6</spring-version>
