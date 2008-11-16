@@ -35,9 +35,9 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.i18n.Message;
 import org.apache.cxf.common.logging.LogUtils;
-import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.jaxws.support.JaxWsServiceFactoryBean;
 import org.apache.cxf.service.Service;
@@ -147,16 +147,16 @@ public final class CxfEndpointUtils {
 
     }
 
-    public static ClientFactoryBean getClientFactoryBean(Class<?> cls) throws CamelException {
-        ClientFactoryBean clientFactory = null;
+    public static ClientProxyFactoryBean getClientFactoryBean(Class<?> cls) throws CamelException {
+        ClientProxyFactoryBean clientFactory = null;
         try {
             if (cls == null) {
-                clientFactory = new ClientFactoryBean();
+                clientFactory = new ClientProxyFactoryBean();
                 clientFactory.setServiceFactory(new WSDLSoapServiceFactoryBean());
             } else {
                 boolean isJSR181SEnabled = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-                clientFactory = isJSR181SEnabled ? new JaxWsClientFactoryBean()
-                        : new ClientFactoryBean();
+                clientFactory = isJSR181SEnabled ? new JaxWsProxyFactoryBean()
+                        : new ClientProxyFactoryBean();
             }
             return clientFactory;
         } catch (Exception e) {
@@ -272,5 +272,6 @@ public final class CxfEndpointUtils {
         return retval;
     }
 }
+
 
 

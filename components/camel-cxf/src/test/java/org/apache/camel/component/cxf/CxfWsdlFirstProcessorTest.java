@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
@@ -26,12 +27,11 @@ public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
     }
 
     @Override
-    protected int getExpectedJaxwsHandlerMessageCount() {
-        return 4;
+    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
+        assertEquals(2, fromHandler.getFaultCount());
+        assertEquals(4, fromHandler.getMessageCount());
+        assertEquals(0, toHandler.getGetHeadersCount());
+        
     }
-    
-    @Override
-    protected int getExpectedJaxwsHandlerFaultCount() {
-        return 2;
-    }
+
 }
