@@ -32,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SpringRemotingRouteTest extends TestCase {
     private static final Log LOG = LogFactory.getLog(SpringRemotingRouteTest.class);
 
-    public void testPojoRoutes() throws Exception {
+    public void testBeanRoutes() throws Exception {
         AbstractXmlApplicationContext applicationContext = createApplicationContext();
 /*
         Object service = applicationContext.getBean("say");
