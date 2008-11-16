@@ -36,7 +36,7 @@
             <entry key="schema-validation-enabled" value="true" />
       </cxf:properties>      
       <cxf:handlers>
-          <ref bean="myJaxwsHandler"/> 
+          <ref bean="fromEndpointJaxwsHandler"/> 
       </cxf:handlers>     
   </cxf:cxfEndpoint> 
 
@@ -45,7 +45,13 @@
                    serviceClass="org.apache.camel.wsdl_first.Person"
                    endpointName="person:soap"
                    serviceName="person:PersonService"                   
-                   xmlns:person="http://camel.apache.org/wsdl-first"/>
+                   xmlns:person="http://camel.apache.org/wsdl-first">
+      
+      <cxf:handlers>
+          <ref bean="toEndpointJaxwsHandler"/> 
+      </cxf:handlers>     
+
+  </cxf:cxfEndpoint>
       
 
    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -61,7 +67,9 @@
 
     </camelContext>
 
-    <bean id="myJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
+    <bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
+    <bean id="toEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
+    
 
 
 </beans>

@@ -17,6 +17,6 @@
 package org.apache.camel.component.cxf.util;
 
 // Dummy class for setting service class
-public class Dummy {
+public interface Dummy {
 
 }

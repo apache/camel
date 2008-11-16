@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf;
 
 import java.io.OutputStream;
+import java.lang.reflect.Proxy;
 
 import javax.xml.transform.Source;
 
@@ -36,6 +37,8 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.interceptor.InterceptorChain;
 import org.apache.cxf.interceptor.OutgoingChainInterceptor;
 import org.apache.cxf.io.CachedOutputStream;
@@ -74,7 +77,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
 
         //create the endpoint and setup the interceptors
         Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
-        ClientFactoryBean cfb = CxfEndpointUtils.getClientFactoryBean(sei);
+        ClientProxyFactoryBean cfb = CxfEndpointUtils.getClientFactoryBean(sei);
         if (sei == null) {
             cfb.setServiceClass(Dummy.class);
         } else {
@@ -88,7 +91,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
             cfb.setEndpointName(endpoint.getEndpointName());
         }
         cfb.setConduitSelector(new NullConduitSelector());
-        client = (ClientImpl) cfb.create();
+        client = (ClientImpl)((ClientProxy)Proxy.getInvocationHandler(cfb.create())).getClient();
 
     }
 
