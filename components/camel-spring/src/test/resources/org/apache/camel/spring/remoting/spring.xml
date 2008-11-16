@@ -38,7 +38,7 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:say"/>
-      <to uri="pojo:sayService"/>
+      <to uri="bean:sayService"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
