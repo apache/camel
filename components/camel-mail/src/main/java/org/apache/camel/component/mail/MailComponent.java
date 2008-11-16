@@ -17,7 +17,9 @@
 package org.apache.camel.component.mail;
 
 import java.net.URI;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -57,12 +59,29 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
         
         MailConfiguration config = new MailConfiguration();
         config.configure(url);
+        configureAdditionalJavaMailProperties(config, parameters);
 
         // lets make sure we copy the configuration as each endpoint can customize its own version
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
 
         setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
+    }
+
+    private void configureAdditionalJavaMailProperties(MailConfiguration config, Map parameters) {
+        // we can not remove while iterating, as we will get a modification exception
+        Set toRemove = new HashSet();
+
+        for (Object key : parameters.keySet()) {
+            if (key.toString().startsWith("mail.")) {
+                config.getAdditionalJavaMailProperties().put(key, parameters.get(key));
+                toRemove.add(key);
+            }
+        }
+
+        for (Object key : toRemove) {
+            parameters.remove(key);
+        }
     }
 
     public MailConfiguration getConfiguration() {

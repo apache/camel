@@ -41,6 +41,7 @@ public class MailConfiguration {
     public static final long DEFAULT_CONNECTION_TIMEOUT = 30000L;
 
     private Properties javaMailProperties;
+    private Properties additionalJavaMailProperties;
     private String protocol;
     private String host;
     private int port = -1;
@@ -101,6 +102,10 @@ public class MailConfiguration {
         } else {
             // set default properties if none provided
             answer.setJavaMailProperties(createJavaMailProperties());
+            // add additional properties if provided
+            if (additionalJavaMailProperties != null) {
+                answer.getJavaMailProperties().putAll(additionalJavaMailProperties);
+            }
         }
 
         if (defaultEncoding != null) {
@@ -217,8 +222,28 @@ public class MailConfiguration {
         return javaMailProperties;
     }
 
+    /**
+     * Sets the java mail options. Will clear any default properties and only use the properties
+     * provided for this method.
+     */
     public void setJavaMailProperties(Properties javaMailProperties) {
         this.javaMailProperties = javaMailProperties;
+    }
+
+    public Properties getAdditionalJavaMailProperties() {
+        if (additionalJavaMailProperties == null) {
+            additionalJavaMailProperties = new Properties();
+        }
+        return additionalJavaMailProperties;
+    }
+
+    /**
+     * Sets additional java mail properties, that will append/override any default properties
+     * that is set based on all the other options. This is useful if you need to add some
+     * special options but want to keep the others as is.
+     */
+    public void setAdditionalJavaMailProperties(Properties additionalJavaMailProperties) {
+        this.additionalJavaMailProperties = additionalJavaMailProperties;
     }
 
     public String getPassword() {
