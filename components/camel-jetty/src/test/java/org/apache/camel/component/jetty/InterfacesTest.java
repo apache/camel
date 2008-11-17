@@ -123,7 +123,7 @@ public class InterfacesTest extends ContextTestSupport {
                         .setBody().constant("allInterfacesV6")
                         .to("mock:endpoint");
                     
-                    from("jetty:http://[" + remoteInterfaceAddress + "]:5568/testRoute")
+                    from("jetty:http://[" + remoteInterfaceAddressV6 + "]:5568/testRoute")
                         .setBody().constant("remoteV6")
                         .to("mock:endpoint"); 
                 }
