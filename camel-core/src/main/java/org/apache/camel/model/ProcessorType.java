@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -51,7 +50,6 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
-import org.apache.camel.processor.ConvertBodyProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
@@ -116,6 +114,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to the given endpoint
+     *
+     * @param uri  the endpoint to send to
+     * @return the builder
      */
     public Type to(String uri) {
         addOutput(new ToType(uri));
@@ -124,6 +125,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to the given endpoint
+     *
+     * @param endpoint  the endpoint to send to
+     * @return the builder
      */
     public Type to(Endpoint endpoint) {
         addOutput(new ToType(endpoint));
@@ -132,6 +136,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoints
+     *
+     * @param uris  list of endpoints to send to
+     * @return the builder
      */
     public Type to(String... uris) {
         for (String uri : uris) {
@@ -142,6 +149,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoints
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
      */
     public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -152,6 +162,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the exchange to a list of endpoints
+     *
+     * @param endpoints  list of endpoints to send to
+     * @return the builder
      */
     public Type to(Collection<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -164,6 +177,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
+     *
+     * @return the builder
      */
     public MulticastType multicast() {
         MulticastType answer = new MulticastType();
@@ -175,10 +190,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
+     *
      * @param aggregationStrategy the strategy used to aggregate responses for
      *          every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
-     * @return the multicast type
+     * @return the builder
      */
     public MulticastType multicast(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
         MulticastType answer = new MulticastType();
@@ -192,9 +208,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
+     *
      * @param aggregationStrategy the strategy used to aggregate responses for
      *          every part
-     * @return the multicast type
+     * @return the builder
      */
     public MulticastType multicast(AggregationStrategy aggregationStrategy) {
         MulticastType answer = new MulticastType();
@@ -207,9 +224,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
+     *
+     * @param uris  list of endpoints
+     * @return the builder
      */
     public Type pipeline(String... uris) {
-        // TODO pipeline v mulicast
         return to(uris);
     }
 
@@ -217,9 +236,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
+     *
+     * @param endpoints  list of endpoints
+     * @return the builder
      */
     public Type pipeline(Endpoint... endpoints) {
-        // TODO pipeline v mulicast
         return to(endpoints);
     }
 
@@ -227,14 +248,18 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
+     *
+     * @param endpoints  list of endpoints
+     * @return the builder
      */
     public Type pipeline(Collection<Endpoint> endpoints) {
-        // TODO pipeline v mulicast
         return to(endpoints);
     }
 
     /**
      * Ends the current block
+     *
+     * @return the builder
      */
     public ProcessorType<? extends ProcessorType> end() {
         if (blocks.isEmpty()) {
@@ -278,6 +303,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
      * to avoid duplicate messages
+     *
+     * @param messageIdExpression  expression to test of duplicate messages
+     * @param messageIdRepository  the repository to use for duplicate chedck
+     * @return the builder
      */
     public IdempotentConsumerType idempotentConsumer(Expression messageIdExpression,
             MessageIdRepository messageIdRepository) {
@@ -393,6 +422,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param recipients is the builder of the expression used in the
      *                    {@link org.apache.camel.processor.RecipientList}
      *                    to decide the destinations
+     * @return the builder
      */
     public Type recipientList(Expression recipients) {
         RecipientListType answer = new RecipientListType(recipients);
@@ -426,6 +456,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * class will look in for the list of URIs to route the message to.
      * @param uriDelimiter is the delimiter that will be used to split up
      * the list of URIs in the routing slip.
+     * @return the buiider
      */
     public Type routingSlip(String header, String uriDelimiter) {
         RoutingSlipType answer = new RoutingSlipType(header, uriDelimiter);
@@ -442,6 +473,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * class will look in for the list of URIs to route the message to. The list of URIs
      * will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     * @return the builder
      */
     public Type routingSlip(String header) {
         RoutingSlipType answer = new RoutingSlipType(header);
@@ -455,6 +487,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Slip</a> pattern with the default header {@link RoutingSlipType#ROUTING_SLIP_HEADER}.
      * The list of URIs in the header will be split based on the default delimiter
      * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     * @return the builder
      */
     public Type routingSlip() {
         RoutingSlipType answer = new RoutingSlipType();
@@ -769,6 +802,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * messages for the same stock are combined (or just the latest message is used
      * and older prices are discarded). Another idea is to combine line item messages
      * together into a single invoice message.
+     *
+     * @return the builder
      */
     public ExpressionClause<AggregatorType> aggregator() {
         if (!getOutputs().isEmpty()) {
@@ -795,6 +830,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * together into a single invoice message.
      *
      * @param aggregationStrategy the strategy used for the aggregation
+     * @return the builder
      */
     public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
         if (!getOutputs().isEmpty()) {
@@ -814,6 +850,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * This avoids duplicating this configuration on both the collection and the aggregator itself.
      *
      * @param aggregationCollection the collection used to perform the aggregation
+     * @return the builder
      */
     public AggregatorType aggregator(AggregationCollection aggregationCollection) {
         if (!getOutputs().isEmpty()) {
@@ -844,6 +881,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                              correlation key. For a JMS message this could be the
      *                              expression <code>header("JMSDestination")</code> or
      *                              <code>header("JMSCorrelationID")</code>
+     * @return the builder
      */
     public AggregatorType aggregator(Expression correlationExpression) {
         if (!getOutputs().isEmpty()) {
@@ -873,6 +911,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                              correlation key. For a JMS message this could be the
      *                              expression <code>header("JMSDestination")</code> or
      *                              <code>header("JMSCorrelationID")</code>
+     * @param aggregationStrategy the strategy used for the aggregation
+     * @return the builder
      */
     public AggregatorType aggregator(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         if (!getOutputs().isEmpty()) {
@@ -1198,10 +1238,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Apply an interceptor route if the predicate is true.
      *
      * @param predicate the predicate to test
-     * @return  a choice
+     * @return  the choice builder to configure
      */
     public ChoiceType intercept(Predicate predicate) {
-        // TODO: Maybe not correct name? Not used/unit tested
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer.when(predicate);
@@ -1596,7 +1635,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the builder
      */
     public Type unmarshal(DataFormatType dataFormatType) {
-        // TODO: why is the parameter a xxType object? Isn't this wrong?
         addOutput(new UnmarshalType(dataFormatType));
         return (Type) this;
     }
@@ -1643,7 +1681,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the builder
      */
     public Type marshal(DataFormatType dataFormatType) {
-        // TODO: why is the parameter a xxType object? Isn't this wrong?
         addOutput(new MarshalType(dataFormatType));
         return (Type) this;
     }
@@ -1776,7 +1813,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * A strategy method which allows derived classes to wrap the child
      * processor in some kind of interceptor
      *
-     * @param routeContext
+     * @param routeContext the route context
      * @param target       the processor which can be wrapped
      * @return the original processor or a new wrapped interceptor
      */

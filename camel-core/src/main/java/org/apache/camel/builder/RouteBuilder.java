@@ -60,12 +60,20 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Called on initialization to to build the required destinationBuilders
+     * <b>Called on initialization to build the routes using the fluent builder syntax.</b>
+     * <p/>
+     * This is a central method for RouteBuilder implementations to implement
+     * the routes using the Java fluent builder syntax.
+     *
+     * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
 
     /**
      * Creates a new route from the given URI input
+     *
+     * @param uri  the from uri
+     * @return the builder
      */
     public RouteType from(String uri) {
         RouteType answer = routeCollection.from(uri);
@@ -75,6 +83,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * Creates a new route from the given endpoint
+     *
+     * @param endpoint  the from endpoint
+     * @return the builder
      */
     public RouteType from(Endpoint endpoint) {
         RouteType answer = routeCollection.from(endpoint);
@@ -108,6 +119,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * Adds the given interceptor to this route
+     *
+     * @param interceptor  the interceptor
+     * @return the builder
      */
     public RouteBuilder intercept(DelegateProcessor interceptor) {
         routeCollection.intercept(interceptor);
@@ -117,6 +131,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     /**
      * Adds a route for an interceptor; use the {@link ProcessorType#proceed()} method
      * to continue processing the underlying route being intercepted.
+     * @return the builder
      */
     public InterceptType intercept() {
         return routeCollection.intercept();
@@ -125,6 +140,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     /**
      * Applies a route for an interceptor if the given predicate is true
      * otherwise the interceptor route is not applied
+     *
+     * @param predicate  the predicate
+     * @return the builder
      */
     public ChoiceType intercept(Predicate predicate) {
         return routeCollection.intercept(predicate);
@@ -132,6 +150,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * Adds an exception handler route for the given exception type
+     *
+     * @param exceptionType  the exception type
+     * @return the builder
      */
     public ExceptionType onException(Class exceptionType) {
         return routeCollection.onException(exceptionType);
@@ -139,6 +160,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * Adds an exception handler route for the given exception types
+     *
+     * @param exceptions  list of exceptions types
+     * @return the builder
      */
     public ExceptionType onException(Class... exceptions) {
         ExceptionType last = null;
