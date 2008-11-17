@@ -3,7 +3,6 @@ package org.apache.camel.component.jetty;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.URL;
 import java.util.Enumeration;
 
@@ -19,13 +18,13 @@ public class InterfacesTest extends ContextTestSupport {
         // Retrieve an address of some remote network interface
         Enumeration<NetworkInterface> interfaces =  NetworkInterface.getNetworkInterfaces();
         
-        while(interfaces.hasMoreElements()) {
+        while(remoteInterfaceAddress == null && interfaces.hasMoreElements()) {
             NetworkInterface interfaze = interfaces.nextElement();
             Enumeration<InetAddress> addresses =  interfaze.getInetAddresses();
             if(addresses.hasMoreElements()) {                
                 InetAddress nextAddress = addresses.nextElement();
-                if (nextAddress.isLoopbackAddress() || nextAddress.isReachable(2000)) {
-                    break;
+                if (nextAddress.isLoopbackAddress() || !nextAddress.isReachable(2000)) {
+                    continue;
                 }
                 remoteInterfaceAddress = nextAddress.getHostAddress();
             }
