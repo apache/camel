@@ -115,7 +115,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // -------------------------------------------------------------------------
 
     /**
-     * Sends the exchange to the given endpoint URI
+     * Sends the exchange to the given endpoint
      */
     public Type to(String uri) {
         addOutput(new ToType(uri));
@@ -151,7 +151,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Sends the exchange to a list of endpoint
+     * Sends the exchange to a list of endpoints
      */
     public Type to(Collection<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
@@ -290,6 +290,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
      * to avoid duplicate messages
      *
+     * @param messageIdRepository the repository to use for duplicate chedck
      * @return the builder used to create the expression
      */
     public ExpressionClause<IdempotentConsumerType> idempotentConsumer(MessageIdRepository messageIdRepository) {
@@ -300,7 +301,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a predicate expression which only if it is true then the
+     * Creates a predicate expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
      * @return the clause used to create the filter expression
@@ -312,10 +313,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a predicate which is applied and only if it is true then the
+     * Creates a predicate which is applied and only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
-     * @return the builder for a predicate
+     * @param predicate  predicate to use
+     * @return the builder 
      */
     public FilterType filter(Predicate predicate) {
         FilterType filter = new FilterType(predicate);
@@ -323,6 +325,13 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return filter;
     }
 
+    /**
+     * Creates a predicate expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination
+     *
+     * @param expression  the predicate expression to use
+     * @return the builder
+     */
     public FilterType filter(ExpressionType expression) {
         FilterType filter = getNodeFactory().createFilter();
         filter.setExpression(expression);
@@ -330,10 +339,23 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return filter;
     }
 
+    /**
+     * Creates a predicate language expression which only if it is <tt>true</tt> then the
+     * exchange is forwarded to the destination
+     *
+     * @param language     language for expression
+     * @param expression   the expression
+     * @return the builder
+     */
     public FilterType filter(String language, String expression) {
         return filter(new LanguageExpression(language, expression));
     }
 
+    /**
+     * Creates a loadbalance
+     *
+     * @return  the builder
+     */
     public LoadBalanceType loadBalance() {
         LoadBalanceType answer = new LoadBalanceType();
         addOutput(answer);
@@ -950,6 +972,13 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return ExpressionClause.createAndSetExpression(loop);
     }
 
+    /**
+     * Creates a loop which must evaluate to an integer that determines
+     * how many times the exchange should be sent down the rest of the route.
+     *
+     * @param expression the loop expression
+     * @return the builder
+     */
     public LoopType loop(Expression expression) {
         LoopType loop = getNodeFactory().createLoop();
         loop.setExpression(expression);
@@ -957,6 +986,13 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return loop;
     }
 
+    /**
+     * Creates a loop which must evaluate to an integer that determines
+     * how many times the exchange should be sent down the rest of the route.
+     *
+     * @param count  the number of times
+     * @return the builder
+     */
     public LoopType loop(int count) {
         LoopType loop = getNodeFactory().createLoop();
         loop.setExpression(new ConstantExpression(Integer.toString(count)));
@@ -989,7 +1025,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public Type intercept(DelegateProcessor interceptor) {
         intercept(new InterceptorRef(interceptor));
-        //lastInterceptor = interceptor;
         return (Type) this;
     }
 
