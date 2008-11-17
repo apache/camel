@@ -15,25 +15,27 @@ public class InterfacesTest extends ContextTestSupport {
     
     private String remoteInterfaceAddress;
 
-    public InterfacesTest() throws SocketException {
-        // retirieve an address of some remote network interface
+    public InterfacesTest() throws IOException {
+        // Retrieve an address of some remote network interface
         Enumeration<NetworkInterface> interfaces =  NetworkInterface.getNetworkInterfaces();
         
         while(interfaces.hasMoreElements()) {
             NetworkInterface interfaze = interfaces.nextElement();
-            if (!interfaze.isUp() || interfaze.isLoopback()) {
-                continue;
-            }
             Enumeration<InetAddress> addresses =  interfaze.getInetAddresses();
-            if(addresses.hasMoreElements()) {
-                remoteInterfaceAddress = addresses.nextElement().getHostAddress();
+            if(addresses.hasMoreElements()) {                
+                InetAddress nextAddress = addresses.nextElement();
+                if (nextAddress.isLoopbackAddress() || nextAddress.isReachable(2000)) {
+                    break;
+                }
+                remoteInterfaceAddress = nextAddress.getHostAddress();
             }
         };
         
     }
     
     public void testLocalInterfaceHandled() throws IOException, InterruptedException {
-        getMockEndpoint("mock:endpoint").expectedMessageCount(3);
+        int expectedMessages = (remoteInterfaceAddress != null) ? 3 : 2;
+        getMockEndpoint("mock:endpoint").expectedMessageCount(expectedMessages);
         
         URL localUrl = new URL("http://localhost:4567/testRoute");
         String localResponse = IOUtils.toString(localUrl.openStream());
@@ -44,9 +46,11 @@ public class InterfacesTest extends ContextTestSupport {
         localResponse = IOUtils.toString(localUrl.openStream());
         assertEquals("local-differentPort", localResponse);
         
-        URL url = new URL("http://" + remoteInterfaceAddress + ":4567/testRoute");
-        String remoteResponse = IOUtils.toString(url.openStream());
-        assertEquals("remote", remoteResponse);
+        if (remoteInterfaceAddress != null) {
+            URL url = new URL("http://" + remoteInterfaceAddress + ":4567/testRoute");
+            String remoteResponse = IOUtils.toString(url.openStream());
+            assertEquals("remote", remoteResponse);
+        }
         
         assertMockEndpointsSatisfied();
     }
@@ -65,9 +69,11 @@ public class InterfacesTest extends ContextTestSupport {
                     .setBody().constant("local-differentPort")
                     .to("mock:endpoint");
                 
-                from("jetty:http://" + remoteInterfaceAddress + ":4567/testRoute")
-                    .setBody().constant("remote")
-                    .to("mock:endpoint");
+                if (remoteInterfaceAddress != null) {
+                    from("jetty:http://" + remoteInterfaceAddress + ":4567/testRoute")
+                        .setBody().constant("remote")
+                        .to("mock:endpoint");
+                }
             }
         };
     }
