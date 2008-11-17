@@ -1000,6 +1000,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return loop;
     }
 
+    /**
+     * Creates a fault message based on the given throwable.
+     *
+     * @param fault   the fault
+     * @return the builder
+     */
     public Type throwFault(Throwable fault) {
         ThrowFaultType answer = new ThrowFaultType();
         answer.setFault(fault);
@@ -1007,12 +1013,21 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return (Type) this;
     }
 
+    /**
+     * Creates a fault message based on the given message.
+     *
+     * @param message  the fault message
+     * @return the builder
+     */
     public Type throwFault(String message) {
         return throwFault(new CamelException(message));
     }
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @param ref  a reference in the registry to lookup the interceptor that must be of type {@link DelegateProcessor}
+     * @return the builder
      */
     public Type interceptor(String ref) {
         InterceptorRef interceptor = new InterceptorRef(ref);
@@ -1022,6 +1037,23 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @param refs  a list of reference in the registry to lookup the interceptor that must
+     *              be of type {@link DelegateProcessor}
+     * @return the builder
+     */
+    public Type interceptors(String... refs) {
+        for (String ref : refs) {
+            interceptor(ref);
+        }
+        return (Type) this;
+    }
+
+    /**
+     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @param interceptor  the interceptor
+     * @return the builder
      */
     public Type intercept(DelegateProcessor interceptor) {
         intercept(new InterceptorRef(interceptor));
@@ -1030,6 +1062,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @return the intercept builder to configure
      */
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
@@ -1039,6 +1073,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @param  interceptor  the interceptor
      */
     public void intercept(InterceptorType interceptor) {
         addOutput(interceptor);
@@ -1048,7 +1084,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds an interceptor around the whole of this nodes processing
      *
-     * @param interceptor
+     * @param interceptor  the interceptor
      */
     public void addInterceptor(InterceptorType interceptor) {
         interceptors.add(interceptor);
@@ -1057,20 +1093,38 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds an interceptor around the whole of this nodes processing
      *
-     * @param interceptor
+     * @param interceptor  the interceptor
      */
     public void addInterceptor(DelegateProcessor interceptor) {
         addInterceptor(new InterceptorRef(interceptor));
     }
 
+    /**
+     * Pushes the given block on the stack as current block
+     * @param block  the block
+     */
     public void pushBlock(Block block) {
         blocks.add(block);
     }
 
+    /**
+     * Pops the block off the stack as current block
+     * @return the block
+     */
     public Block popBlock() {
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
+    /**
+     * Procceeds the given intercepted route.
+     * <p/>
+     * Proceed is used in conjunction with intercept where calling proceed will route the message through the
+     * original route path from the point of interception. This can be used to implement the
+     * <a href="http://www.enterpriseintegrationpatterns.com/Detour.html">detour</a> pattern.
+     *
+     * @return the builder
+     * @see ProcessorType#proceed()
+     */
     public Type proceed() {
         ProceedType proceed = null;
         ProcessorType currentProcessor = this;
@@ -1098,6 +1152,15 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return (Type) this;
     }
 
+    /**
+     * Stops the given intercepted route.
+     * <p/>
+     * As opposed to {@link #proceed()} calling stop will stop the message route and <b>not</b> continue
+     * from the interepted origin.
+     *
+     * @return the builder
+     * @see #proceed()
+     */
     public Type stop() {
         ProcessorType currentProcessor = this;
 
@@ -1121,6 +1184,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Catches an exception type.
+     *
+     * @param exceptionType  the exception to catch
+     * @return the exception builder to configure
      */
     public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
@@ -1129,19 +1195,16 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Apply an interceptor route if the predicate is true
+     * Apply an interceptor route if the predicate is true.
+     *
+     * @param predicate the predicate to test
+     * @return  a choice
      */
     public ChoiceType intercept(Predicate predicate) {
+        // TODO: Maybe not correct name? Not used/unit tested
         InterceptType answer = new InterceptType();
         addOutput(answer);
         return answer.when(predicate);
-    }
-
-    public Type interceptors(String... refs) {
-        for (String ref : refs) {
-            interceptor(ref);
-        }
-        return (Type) this;
     }
 
     public PolicyRef policies() {
@@ -1197,6 +1260,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds the custom processor to this destination which could be a final
      * destination, or could be a transformation in a pipeline
+     *
+     * @param processor  the custom processor
+     * @return the builder
      */
     public Type process(Processor processor) {
         ProcessorRef answer = new ProcessorRef(processor);
@@ -1207,6 +1273,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds the custom processor reference to this destination which could be a final
      * destination, or could be a transformation in a pipeline
+     *
+     * @param ref   reference to a processor to lookup in the registry
+     * @return the builder
      */
     public Type processRef(String ref) {
         ProcessorRef answer = new ProcessorRef();
@@ -1218,6 +1287,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke
+     * @return the builder
      */
     public Type bean(Object bean) {
         BeanRef answer = new BeanRef();
@@ -1229,6 +1301,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean and method which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
      */
     public Type bean(Object bean, String method) {
         BeanRef answer = new BeanRef();
@@ -1241,6 +1317,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean by type which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
+     *
+     * @param  beanType  the bean class, Camel will instantiate an object at runtime
+     * @return the builder
      */
     public Type bean(Class beanType) {
         BeanRef answer = new BeanRef();
@@ -1252,6 +1331,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean type and method which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
+     *
+     * @param  beanType  the bean class, Camel will instantiate an object at runtime
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
      */
     public Type bean(Class beanType, String method) {
         BeanRef answer = new BeanRef();
@@ -1264,6 +1347,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean which is invoked which could be a final destination, or could
      * be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @return the builder
      */
     public Type beanRef(String ref) {
         BeanRef answer = new BeanRef(ref);
@@ -1274,6 +1360,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     /**
      * Adds a bean and method which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
+     * 
+     * @param ref  reference to a bean to lookup in the registry
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
+     * @return the builder
      */
     public Type beanRef(String ref, String method) {
         BeanRef answer = new BeanRef(ref, method);
@@ -1283,6 +1373,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the IN message
+     *
+     * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorType<Type>> setBody() {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
@@ -1293,6 +1385,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the IN message
+     *
+     * @param expression   the expression used to set the body
+     * @return the builder
      */
     public Type setBody(Expression expression) {
         SetBodyType answer = new SetBodyType(expression);
@@ -1302,6 +1397,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the OUT message
+     *
+     * @param expression   the expression used to set the body
+     * @return the builder
      */
     public Type transform(Expression expression) {
         TransformType answer = new TransformType(expression);
@@ -1311,6 +1409,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the OUT message
+     *
+     * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorType<Type>> transform() {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
@@ -1321,6 +1421,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the body on the FAULT message
+     *
+     * @param expression   the expression used to set the body
+     * @return the builder
      */
     public Type setFaultBody(Expression expression) {
         return process(ProcessorBuilder.setFaultBody(expression));
@@ -1328,6 +1431,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the IN message
+     *
+     * @param name  the header name
+     * @return a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorType<Type>> setHeader(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
@@ -1338,6 +1444,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the IN message
+     *
+     * @param name  the header name
+     * @param expression  the expression used to set the header
+     * @return the builder
      */
     public Type setHeader(String name, Expression expression) {
         SetHeaderType answer = new SetHeaderType(name, expression);
@@ -1347,6 +1457,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the OUT message
+     *
+     * @param name  the header name
+     * @return a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorType<Type>> setOutHeader(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
@@ -1357,6 +1470,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the OUT message
+     *
+     * @param name  the header name
+     * @param expression  the expression used to set the header
+     * @return the builder
      */
     public Type setOutHeader(String name, Expression expression) {
         SetOutHeaderType answer = new SetOutHeaderType(name, expression);
@@ -1366,6 +1483,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the header on the FAULT message
+     *
+     * @param name  the header name
+     * @param expression  the expression used to set the header
+     * @return the builder
      */
     public Type setFaultHeader(String name, Expression expression) {
         return process(ProcessorBuilder.setFaultHeader(name, expression));
@@ -1373,6 +1494,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the exchange property
+     *
+     * @param name  the property name
+     * @param expression  the expression used to set the property
+     * @return the builder
      */
     public Type setProperty(String name, Expression expression) {
         SetPropertyType answer = new SetPropertyType(name, expression);
@@ -1383,6 +1508,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which sets the exchange property
+     *
+     * @param name  the property name
+     * @return a expression builder clause to set the property
      */
     public ExpressionClause<ProcessorType<Type>> setProperty(String name) {
         ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
@@ -1393,6 +1521,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which removes the header on the IN message
+     *
+     * @param name  the header name
+     * @return the builder
      */
     public Type removeHeader(String name) {
         RemoveHeaderType answer = new RemoveHeaderType(name);
@@ -1402,6 +1533,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which removes the header on the FAULT message
+     *
+     * @param name  the header name
+     * @return the builder
      */
     public Type removeFaultHeader(String name) {
         return process(ProcessorBuilder.removeFaultHeader(name));
@@ -1409,6 +1543,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Adds a processor which removes the exchange property
+     *
+     * @param name  the property name
+     * @return the builder
      */
     public Type removeProperty(String name) {
         RemovePropertyType answer = new RemovePropertyType(name);
@@ -1418,6 +1555,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Converts the IN message body to the specified type
+     *
+     * @param type the type to convert to
+     * @return the builder
      */
     public Type convertBodyTo(Class type) {
         addOutput(new ConvertBodyType(type));
@@ -1426,6 +1566,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     
     /**
      * Converts the IN message body to the specified class type
+     *
+     * @param typeString the type to convert to as a fully qualified classname
+     * @return the builder
      */
     public Type convertBodyTo(String typeString) {
         addOutput(new ConvertBodyType(typeString));
@@ -1449,9 +1592,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
-     * @return this object
+     * @param dataFormatType  the dataformat
+     * @return the builder
      */
     public Type unmarshal(DataFormatType dataFormatType) {
+        // TODO: why is the parameter a xxType object? Isn't this wrong?
         addOutput(new UnmarshalType(dataFormatType));
         return (Type) this;
     }
@@ -1460,7 +1605,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
-     * @return this object
+     * @param dataFormat  the dataformat
+     * @return the builder
      */
     public Type unmarshal(DataFormat dataFormat) {
         return unmarshal(new DataFormatType(dataFormat));
@@ -1471,7 +1617,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.
      *
-     * @return this object
+     * @param dataTypeRef  reference to a {@link DataFormat} to lookup in the registry
+     * @return the builder
      */
     public Type unmarshal(String dataTypeRef) {
         addOutput(new UnmarshalType(dataTypeRef));
@@ -1492,9 +1639,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
-     * @return this object
+     * @param dataFormatType  the dataformat
+     * @return the builder
      */
     public Type marshal(DataFormatType dataFormatType) {
+        // TODO: why is the parameter a xxType object? Isn't this wrong?
         addOutput(new MarshalType(dataFormatType));
         return (Type) this;
     }
@@ -1503,7 +1652,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
-     * @return this object
+     * @param dataFormat  the dataformat
+     * @return the builder
      */
     public Type marshal(DataFormat dataFormat) {
         return marshal(new DataFormatType(dataFormat));
@@ -1514,7 +1664,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.
      *
-     * @return this object
+     * @param dataTypeRef  reference to a {@link DataFormat} to lookup in the registry
+     * @return the builder
      */
     public Type marshal(String dataTypeRef) {
         addOutput(new MarshalType(dataTypeRef));
