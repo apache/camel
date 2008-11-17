@@ -26,10 +26,12 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
-
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.client.HttpClient;
+import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
@@ -48,10 +50,12 @@ public class JettyHttpComponent extends HttpComponent {
 
     class ConnectorRef {
         Connector connector;
+        CamelServlet servlet;
         int refCount;
 
-        public ConnectorRef(Connector connector) {
+        public ConnectorRef(Connector connector, CamelServlet servlet) {
             this.connector = connector;
+            this.servlet = servlet;
             increment();
         }
 
@@ -63,10 +67,11 @@ public class JettyHttpComponent extends HttpComponent {
             return --refCount;
         }
     }
-
-    private CamelServlet camelServlet;
+    
+    private static final Log LOGGER = LogFactory.getLog(JettyHttpComponent.class);
+    
     private Server server;
-    private final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+    private HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
     private HttpClient httpClient;
     private String sslKeyPassword;
     private String sslPassword;
@@ -91,7 +96,7 @@ public class JettyHttpComponent extends HttpComponent {
 
         // Make sure that there is a connector for the requested endpoint.
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
+        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
 
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);
@@ -103,26 +108,27 @@ public class JettyHttpComponent extends HttpComponent {
                     connector = new SelectChannelConnector();
                 }
                 connector.setPort(endpoint.getPort());
-                getServer().addConnector(connector);
-                // check the session support
-                if (endpoint.isSessionSupport()) {
-                    enableSessionSupport();
+                connector.setHost(endpoint.getHttpUri().getHost());
+                if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
+                    LOGGER.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
+                getServer().addConnector(connector);
+
+                connectorRef = new ConnectorRef(connector, createServletForConnector(connector));
                 connector.start();
-                connectorRef = new ConnectorRef(connector);
+                
                 connectors.put(connectorKey, connectorRef);
+                
             } else {
                 // ref track the connector
                 connectorRef.increment();
-                // check the session support
-                if (endpoint.isSessionSupport()) {
-                    enableSessionSupport();
-                }
             }
-
+            // check the session support
+            if (endpoint.isSessionSupport()) {
+                enableSessionSupport();
+            }
+            connectorRef.servlet.connect(consumer);
         }
-
-        camelServlet.connect(consumer);
     }
 
     private void enableSessionSupport() throws Exception {
@@ -145,8 +151,6 @@ public class JettyHttpComponent extends HttpComponent {
      */
     @Override
     public void disconnect(HttpConsumer consumer) throws Exception {
-        camelServlet.disconnect(consumer);
-
         // If the connector is not needed anymore then stop it
         HttpEndpoint endpoint = consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
@@ -154,6 +158,7 @@ public class JettyHttpComponent extends HttpComponent {
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);
             if (connectorRef != null) {
+                connectorRef.servlet.disconnect(consumer);
                 if (connectorRef.decrement() == 0) {
                     getServer().removeConnector(connectorRef.connector);
                     connectorRef.connector.stop();
@@ -219,22 +224,32 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnector = connector;
     }
 
+    protected CamelServlet createServletForConnector(Connector connector) throws Exception {
+        CamelServlet camelServlet = new CamelContinuationServlet();
+        
+        Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
+        context.setConnectorNames(new String[] {connector.getName()});
+
+        ServletHolder holder = new ServletHolder();
+        holder.setServlet(camelServlet);
+        context.addServlet(holder, "/*");
+        connector.start();
+        context.start();
+        
+
+        return camelServlet;
+    }
+    
     // Implementation methods
     // -------------------------------------------------------------------------
 
     protected Server createServer() throws Exception {
-        camelServlet = new CamelContinuationServlet();
-
         Server server = new Server();
-        Context context = new Context(Context.NO_SECURITY | Context.NO_SESSIONS);
-
-        context.setContextPath("/");
-        ServletHolder holder = new ServletHolder();
-        holder.setServlet(camelServlet);
-        context.addServlet(holder, "/*");
-        server.setHandler(context);
-
+        ContextHandlerCollection collection = new ContextHandlerCollection();
+        collection.setServer(server);
+        server.addHandler(collection);
         server.start();
+
         return server;
     }
 
