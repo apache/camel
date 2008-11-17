@@ -26,7 +26,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpExchange;
-
 import org.mortbay.util.ajax.Continuation;
 import org.mortbay.util.ajax.ContinuationSupport;
 
@@ -34,6 +33,8 @@ import org.mortbay.util.ajax.ContinuationSupport;
  * @version $Revision$
  */
 public class CamelContinuationServlet extends CamelServlet {
+
+    private static final long serialVersionUID = 1L;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
