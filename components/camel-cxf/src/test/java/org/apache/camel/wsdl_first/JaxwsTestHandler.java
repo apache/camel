@@ -64,6 +64,11 @@ public class JaxwsTestHandler implements SOAPHandler<SOAPMessageContext> {
     public int getMessageCount() {
         return messageCount;
     }
+    
+    public String toString() {
+        return "faultCount=" + faultCount + ", messageCount=" 
+            + messageCount + ", getHeadersCount=" + getHeadersCount;
+    }
   
 
 }
