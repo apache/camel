@@ -21,22 +21,24 @@ import java.net.URL;
 
 import javax.xml.namespace.QName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.spring.processor.SpringTestHelper;
+import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.hello_world_soap_http.Greeter;
 import org.apache.hello_world_soap_http.SOAPService;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
-public class CxfSoapMessageProviderTest extends ContextTestSupport {
+public class CxfSoapMessageProviderTest extends SpringTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        return SpringTestHelper.createSpringCamelContext(this, "org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
+    protected ClassPathXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/SoapMessageProviderContext.xml");
     }
 
     public void testSOAPMessageModeDocLit() throws Exception {
-
+        JaxwsTestHandler fromHandler = getMandatoryBean(JaxwsTestHandler.class, "fromEndpointJaxwsHandler");
+        fromHandler.reset();
+        
         QName serviceName =
             new QName("http://apache.org/hello_world_soap_http", "SOAPProviderService");
         QName portName =
@@ -64,6 +66,11 @@ public class CxfSoapMessageProviderTest extends ContextTestSupport {
         } catch (UndeclaredThrowableException ex) {
             throw (Exception)ex.getCause();
         }
+        
+        assertEquals("Can't get the right message count", fromHandler.getMessageCount(), 8);
+        assertEquals("Can't get the right fault count", fromHandler.getFaultCount(), 0);
+        assertEquals("Can't get the right headers count", fromHandler.getGetHeadersCount(), 0);
+        
     }
 
 
