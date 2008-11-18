@@ -39,10 +39,13 @@
     <bean id = "targetBean" class="org.apache.camel.component.cxf.SoapTargetBean" />
     <bean id = "parameterProcessor" class="org.apache.camel.component.cxf.ParameterProcessor"/>
 
-   	<cxf:cxfEndpoint id="soapMessageEndpoint"
-	        serviceClass="org.apache.camel.component.cxf.SoapMessageProvider"
-			address="http://localhost:9003/SoapContext/SoapProviderPort"
-   	/>
+	<cxf:cxfEndpoint id="soapMessageEndpoint"
+		serviceClass="org.apache.camel.component.cxf.SoapMessageProvider"
+		address="http://localhost:9003/SoapContext/SoapProviderPort">
+		<cxf:handlers>
+			<ref bean="fromEndpointJaxwsHandler" />
+		</cxf:handlers>
+	</cxf:cxfEndpoint>
 
 
    <camelContext id="test_context" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -52,5 +55,7 @@
             <to uri="bean:targetBean?methodName=invokeSoapMessage"/>
         </route>
    </camelContext>
+   
+   <bean id="fromEndpointJaxwsHandler" class="org.apache.camel.wsdl_first.JaxwsTestHandler"/>
 
 </beans>

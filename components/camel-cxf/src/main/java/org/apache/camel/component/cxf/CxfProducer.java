@@ -93,8 +93,8 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
        
-        return createClientFromClientFactoryBean(jsr181Enabled ? new JaxWsProxyFactoryBean(cfb) :
-            new ClientProxyFactoryBean(cfb));
+        return createClientFromClientFactoryBean(jsr181Enabled ? new JaxWsProxyFactoryBean(cfb)
+            : new ClientProxyFactoryBean(cfb));
     }
 
     // If cfb is null, we will try to find the right cfb to use.
