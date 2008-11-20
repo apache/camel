@@ -127,6 +127,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
         JmsConfiguration template = new JmsConfiguration(connectionFactory);
         template.setTransactionManager(transactionManager);
         template.setTransacted(true);
+        template.setTransactedInOut(true);
         return jmsComponent(template);
     }
 
@@ -388,7 +389,7 @@ public class JmsComponent extends DefaultComponent<JmsExchange> implements Appli
 
         // lets make sure we copy the configuration as each endpoint can
         // customize its own version
-        JmsConfiguration newConfiguration = getConfiguration().copy();
+        JmsConfiguration newConfiguration = getConfiguration().copy();        
         JmsEndpoint endpoint;
         if (pubSubDomain) {
             if (tempDestination) {

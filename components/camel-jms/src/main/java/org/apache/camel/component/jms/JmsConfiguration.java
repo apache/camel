@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
+import org.springframework.jms.connection.JmsResourceHolder;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.JmsTemplate102;
@@ -867,8 +868,8 @@ public class JmsConfiguration implements Cloneable {
 
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
-        container.setSessionTransacted(transacted);
-        if (transacted) {
+        container.setSessionTransacted(transacted && transactedInOut);
+        if (transacted && transactedInOut) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
             if (acknowledgementMode >= 0) {
@@ -917,9 +918,9 @@ public class JmsConfiguration implements Cloneable {
                 listenerContainer.setTaskExecutor(taskExecutor);
             }
             PlatformTransactionManager tm = getTransactionManager();
-            if (tm != null) {
+            if (tm != null && (transacted && transactedInOut)) {
                 listenerContainer.setTransactionManager(tm);
-            } else if (transacted) {
+            } else if (transacted && transactedInOut) {
                 throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
