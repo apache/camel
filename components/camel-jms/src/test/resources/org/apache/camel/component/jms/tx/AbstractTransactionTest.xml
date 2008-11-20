@@ -41,6 +41,7 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
+        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
@@ -48,6 +49,7 @@
         <property name="connectionFactory" ref="jmsConnectionFactory-1"/>
         <property name="transactionManager" ref="jmsTransactionManager-1"/>
         <property name="transacted" value="true"/>
+        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
