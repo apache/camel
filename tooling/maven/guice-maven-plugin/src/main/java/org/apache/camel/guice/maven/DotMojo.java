@@ -84,6 +84,14 @@ public class DotMojo extends AbstractMavenReport {
     protected boolean runCamel;
 
     /**
+     * Should we try run the DOT executable on the generated .DOT file to
+     * generate images
+     *
+     * @parameter expression="true"
+     */
+    protected boolean useDot;
+
+    /**
      * The main class to execute.
      *
      * @parameter expression="${camel.mainClass}"
@@ -91,14 +99,6 @@ public class DotMojo extends AbstractMavenReport {
      * @required
      */
     private String mainClass;
-
-    /**
-     * Should we try run the DOT executable on the generated .DOT file to
-     * generate images
-     *
-     * @parameter expression="true"
-     */
-    protected boolean useDot;
 
     /**
      * Reference to Maven 2 Project.
