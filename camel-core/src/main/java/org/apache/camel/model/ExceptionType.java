@@ -31,6 +31,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
@@ -92,13 +93,14 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
+     * @param context the camel context
      * @param parentPolicy the current redelivery policy
      * @return a newly created redelivery policy, or return the original policy if no customization is required
      * for this exception handler.
      */
-    public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
+    public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (redeliveryPolicy != null) {
-            return redeliveryPolicy.createRedeliveryPolicy(parentPolicy);
+            return redeliveryPolicy.createRedeliveryPolicy(context, parentPolicy);
         } else if (errorHandler != null) {
             // lets create a new error handler that has no retries
             RedeliveryPolicy answer = parentPolicy.copy();
