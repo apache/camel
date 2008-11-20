@@ -16,6 +16,8 @@
  */
 package org.apache.camel.scala.dsl 
 
+import org.apache.camel.model.dataformat.DataFormatType
+
 /**
  * Defines the 'keywords' in our Scala DSL
  */
@@ -31,6 +33,7 @@ trait DSL {
   def recipients(expression: Exchange => Any) : DSL
   def splitter(expression: Exchange => Any) : SSplitterType
   def otherwise : DSL
+  def marshal(format : DataFormatType) : DSL
   def multicast : SMulticastType
   def process(function: Exchange => Unit) : DSL
   def throttle(frequency: Frequency) : SThrottlerType
@@ -39,6 +42,7 @@ trait DSL {
   def resequence(expression: Exchange => Any) : SResequencerType
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
+  def unmarshal(format: DataFormatType) : DSL
   def aggregate(expression: Exchange => Any) : SAggregatorType
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
 
