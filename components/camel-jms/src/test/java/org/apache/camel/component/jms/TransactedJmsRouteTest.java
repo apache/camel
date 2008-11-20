@@ -146,8 +146,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
                 // inbound was not transacted.
                 JmsEndpoint endpoint = (JmsEndpoint)endpoint("activemq:queue:e");
                 endpoint.getConfiguration().setTransacted(false);
-                endpoint.getConfiguration().setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
-                from(endpoint).policy(requried).policy(rollback).to("activemq:queue:mock.a", "mock:b");
+                endpoint.getConfiguration().setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);                
+                // since the endpoint of activemq:queue:e is not managed by the TransactionManager, let's create a new transaction
+                from(endpoint).policy(requirenew).policy(rollback).to("activemq:queue:mock.a", "mock:b");
 
                 //
                 // Sets up 2 consumers on single topic, one being transacted the
