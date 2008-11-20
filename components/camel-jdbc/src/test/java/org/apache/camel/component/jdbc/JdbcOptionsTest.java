@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,9 +28,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-
-import java.util.List;
-import java.util.ArrayList;
 
 public class JdbcOptionsTest extends ContextTestSupport {
     private String driverClass = "org.hsqldb.jdbcDriver";

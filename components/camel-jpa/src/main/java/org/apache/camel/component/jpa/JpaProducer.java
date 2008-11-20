@@ -23,9 +23,8 @@ import javax.persistence.PersistenceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultProducer;
-
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
