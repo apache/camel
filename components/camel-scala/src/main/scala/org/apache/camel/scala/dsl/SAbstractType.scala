@@ -21,6 +21,8 @@ import org.apache.camel.model.FilterType
 import org.apache.camel.model.ChoiceType
 import org.apache.camel.model.IdempotentConsumerType
 
+import org.apache.camel.model.dataformat.DataFormatType
+
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 abstract class SAbstractType extends DSL {
@@ -74,6 +76,11 @@ abstract class SAbstractType extends DSL {
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
   def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerType(target.idempotentConsumer(expression, null))
+ 
+  def marshal(format: DataFormatType) = {
+    target.marshal(format)
+    this
+  }
   
   def multicast = new SMulticastType(target.multicast)
   
@@ -81,6 +88,7 @@ abstract class SAbstractType extends DSL {
     target.process(new ScalaProcessor(function))
     this
   }
+ 
   
   def throttle(frequency: Frequency) = new SThrottlerType(target.throttler(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
@@ -93,6 +101,11 @@ abstract class SAbstractType extends DSL {
   def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
   
   def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+  
+  def unmarshal(format: DataFormatType) = {
+    target.unmarshal(format)
+    this
+  }
   
   def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregator(expression))
 
