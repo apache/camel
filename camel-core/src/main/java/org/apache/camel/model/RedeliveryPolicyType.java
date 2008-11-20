@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
  * Represents an XML &lt;redeliveryPolicy/&gt; element
@@ -31,6 +33,8 @@ import org.apache.camel.processor.RedeliveryPolicy;
 @XmlRootElement(name = "redeliveryPolicy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RedeliveryPolicyType {
+    @XmlAttribute()
+    private String ref;
     @XmlAttribute
     private Integer maximumRedeliveries;
     @XmlAttribute
@@ -50,8 +54,13 @@ public class RedeliveryPolicyType {
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
 
-    public RedeliveryPolicy createRedeliveryPolicy(RedeliveryPolicy parentPolicy) {
-        RedeliveryPolicy answer =  parentPolicy.copy();
+    public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
+        if (ref != null) {
+            // lookup in registry if ref provided
+            return CamelContextHelper.mandatoryLookup(context, ref, RedeliveryPolicy.class);
+        }
+
+        RedeliveryPolicy answer = parentPolicy.copy();
 
         // copy across the properties - if they are set
         if (maximumRedeliveries != null) {
@@ -140,6 +149,11 @@ public class RedeliveryPolicyType {
         return this;
     }
 
+    public RedeliveryPolicyType ref(String ref) {
+        setRef(ref);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -199,20 +213,27 @@ public class RedeliveryPolicyType {
         this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
-    private void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
     }
 
-    private LoggingLevel getRetriesExhaustedLogLevel() {
+    public LoggingLevel getRetriesExhaustedLogLevel() {
         return retriesExhaustedLogLevel;
     } 
 
-    private void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
 
-    private LoggingLevel getRetryAttemptedLogLevel() {
+    public LoggingLevel getRetryAttemptedLogLevel() {
         return retryAttemptedLogLevel;
-    }     
-   
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
 }

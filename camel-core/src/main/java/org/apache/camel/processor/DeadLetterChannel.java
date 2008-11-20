@@ -124,7 +124,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // find the error handler to use (if any)
                 ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
                 if (exceptionPolicy != null) {
-                    data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(data.currentRedeliveryPolicy);
+                    data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
                     data.handledPredicate = exceptionPolicy.getHandledPolicy();
                     Processor processor = exceptionPolicy.getErrorHandler();
                     if (processor != null) {
