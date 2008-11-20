@@ -1059,7 +1059,7 @@
       		<dependency>
       			<groupId>org.apache.camel</groupId>
       			<artifactId>camel-buildtools</artifactId>
-      			<version>${project.version}</version>
+      			<version>1.5.0</version>
       		</dependency>
       	</dependencies>
       	<executions>
@@ -1149,25 +1149,9 @@
             </plugin>
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-pmd-plugin</artifactId>
             </plugin>
       -->
-
-
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>cobertura-maven-plugin</artifactId>
-        <version>2.2</version>
-        <configuration>
-          <formats>
-            <format>html</format>
-          </formats>
-        </configuration>
-      </plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -1351,30 +1335,47 @@
     <profile>
     	<id>nochecks</id>
     </profile>
-
     <profile>
-    	<id>sourcecheck</id>
-    	<!-- TODO enable this profile when the first buildtools jar is published
-    	<activation>
-    		<activeByDefault>true</activeByDefault>
-    	</activation-->
-    	<build>
-    		<plugins>
-    			<plugin>
-    				<groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-checkstyle-plugin</artifactId>
-    			</plugin>
-    			<plugin>
-    				<groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-compiler-plugin</artifactId>
-    			</plugin>
-    			<!--plugin>
-    				<groupId>org.apache.maven.plugins</groupId>
-    				<artifactId>maven-pmd-plugin</artifactId>
-    				</plugin-->
-    		</plugins>
-    	</build>
+      <id>sourcecheck</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+          </plugin>
+          <!--plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-pmd-plugin</artifactId>
+            </plugin-->
+        </plugins>
+      </build>
+      <reporting>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>cobertura-maven-plugin</artifactId>
+            <version>2.2</version>
+            <configuration>
+              <formats>
+                <format>html</format>
+              </formats>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-checkstyle-plugin</artifactId>
+          </plugin>
+        </plugins>
+      </reporting>
     </profile>
+
     <profile>
       <id>rat</id>
       <build>
