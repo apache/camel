@@ -1031,7 +1031,7 @@
       		<dependency>
       			<groupId>org.apache.camel</groupId>
       			<artifactId>camel-buildtools</artifactId>
-      			<version>${project.version}</version>
+      			<version>1.5.0</version>
       		</dependency>
       	</dependencies>
       	<executions>
