@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 public class ThroughPutLoggerTest extends TestCase {
     public void testLogStringDurationIsNotZero() throws Exception {
         ThroughputLogger underTest = new ThroughputLogger(10);
-        for (int i=0; i<25; i++) {
+        for (int i = 0; i < 25; i++) {
             underTest.process(null);
         }
         String message = (String) underTest.logMessage(null);

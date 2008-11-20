@@ -17,7 +17,6 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.Injector;
 
 /**
  * Registry for type converters.

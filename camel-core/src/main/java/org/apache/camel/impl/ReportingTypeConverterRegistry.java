@@ -20,8 +20,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
  * Registry for reporting type converters.

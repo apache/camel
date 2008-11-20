@@ -74,7 +74,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
             if (i == 10) {
                 // stop while sending, and then start again to pickup what is left in the queue
                 consumer.stop();
-                Thread.sleep(1000);
+                Thread.sleep(900);
                 consumer.start();
             }
             // use 1000 as timeout otherwise we might get null if the consumer hasn't been started again
