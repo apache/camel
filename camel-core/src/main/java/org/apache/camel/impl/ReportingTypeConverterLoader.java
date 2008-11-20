@@ -23,8 +23,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.TypeConverter;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 
 /**
