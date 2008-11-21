@@ -42,4 +42,11 @@
     <package>org.apache.camel.spring.example</package>
   </camelContext>
   <!-- END SNIPPET: example3 -->
+  
+  <!-- START SNIPPET: example4 -->
+  <camelContext id="camel4" xmlns="http://activemq.apache.org/camel/schema/spring" shouldStartContext="false">
+    <package>org.apache.camel.spring.example</package>
+  </camelContext>
+  <!-- END SNIPPET: example3 -->
+  
 </beans>
