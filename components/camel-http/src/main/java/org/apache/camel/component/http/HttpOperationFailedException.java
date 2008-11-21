@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.StatusLine;
@@ -24,6 +26,7 @@ public class HttpOperationFailedException extends CamelException {
     private final String redirectLocation;
     private final int statusCode;
     private final StatusLine statusLine;
+    private InputStream responseBody;
 
     public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location) {
         super("HTTP operation failed with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
@@ -56,4 +59,11 @@ public class HttpOperationFailedException extends CamelException {
         return statusCode;
     }
 
+    public InputStream getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(InputStream responseBody) {
+        this.responseBody = responseBody;
+    }
 }

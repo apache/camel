@@ -19,9 +19,6 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -42,6 +39,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
+
 /**
  * @version $Revision$
  */
@@ -98,18 +96,24 @@ public class HttpProducer extends DefaultProducer {
                 }
             } else {
                 HttpOperationFailedException exception = null;
-                if (responseCode < 400 && responseCode >= 300) {
+                if (responseCode >= 300 && responseCode < 400) {
                     String redirectLocation;
                     Header locationHeader = method.getResponseHeader("location");
                     if (locationHeader != null) {
                         redirectLocation = locationHeader.getValue();
                         exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation);
+                    } else {
+                        // no redirect location
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
                     }
                 } else {
+                    // internal server error (error code 500)
                     exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
                 }
 
                 if (exception != null) {
+                    // set also the response body as well
+                    exception.setResponseBody(extractResponseBody(method));
                     throw exception;
                 }
             }
@@ -117,14 +121,6 @@ public class HttpProducer extends DefaultProducer {
         } finally {
             method.releaseConnection();
         }
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
     }
 
     /**
@@ -138,12 +134,23 @@ public class HttpProducer extends DefaultProducer {
         return httpClient.executeMethod(method);
     }
 
+    /**
+     * Extracts the response from the method as a InputStream.
+     *
+     * @param method  the method that was executed
+     * @return  the response as a stream
+     * @throws IOException can be thrown
+     */
     protected static InputStream extractResponseBody(HttpMethod method) throws IOException {
         LoadingByteArrayOutputStream bos = null;
         InputStream is = null;
         try {
             bos = new LoadingByteArrayOutputStream();
             is = method.getResponseBodyAsStream();
+            // in case of no response stream
+            if (is == null) {
+                return null;
+            }
             IOUtils.copy(is, bos);
             bos.flush();
             return bos.createInputStream();
@@ -153,6 +160,12 @@ public class HttpProducer extends DefaultProducer {
         }
     }
 
+    /**
+     * Creates the HttpMethod to use to call the remote server, either its GET or POST.
+     *
+     * @param exchange  the exchange
+     * @return the created method as either GET or POST
+     */
     protected HttpMethod createMethod(Exchange exchange) {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
         String queryString = exchange.getIn().getHeader(QUERY, String.class);
@@ -179,7 +192,7 @@ public class HttpProducer extends DefaultProducer {
         if (uri == null) {
             uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         }
-        
+
         HttpMethod method = methodToUse.createMethod(uri);
 
         if (queryString != null) {
@@ -192,6 +205,12 @@ public class HttpProducer extends DefaultProducer {
         return method;
     }
 
+    /**
+     * Creates a holder object for the data to send to the remote server.
+     *
+     * @param exchange  the exchange with the IN message with data to send
+     * @return the data holder
+     */
     protected RequestEntity createRequestEntity(Exchange exchange) {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
@@ -214,5 +233,13 @@ public class HttpProducer extends DefaultProducer {
                 throw new RuntimeCamelException(e);
             }
         }
+    }
+
+    public HttpClient getHttpClient() {
+        return httpClient;
+    }
+
+    public void setHttpClient(HttpClient httpClient) {
+        this.httpClient = httpClient;
     }
 }
