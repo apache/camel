@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +16,9 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.Message;
+import javax.jms.MessageListener;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -25,10 +27,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.DefaultProducerTemplate;
 import org.apache.camel.impl.ProducerTemplateProcessor;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A JMS {@link MessageListener} which converts an incoming JMS message into a Camel message {@link Exchange} then
@@ -44,6 +44,13 @@ public class CamelMessageListener implements MessageListener, Processor {
     private final Processor processor;
     private JmsBinding binding = new JmsBinding();
     private ExchangePattern pattern = ExchangePattern.InOnly;
+    
+    public CamelMessageListener(CamelContext camelContext, Processor processor) {
+        this.camelContext = camelContext;
+        this.processor = processor;
+        ObjectHelper.notNull(processor, "processor");
+    }
+
 
     /**
      * Creates a new CamelMessageListener which will invoke a Camel endpoint
@@ -68,13 +75,7 @@ public class CamelMessageListener implements MessageListener, Processor {
     public static CamelMessageListener newInstance(CamelContext camelContext, ProducerTemplate producerTemplate) {
         return new CamelMessageListener(camelContext, new ProducerTemplateProcessor(producerTemplate));
     }
-
-    public CamelMessageListener(CamelContext camelContext, Processor processor) {
-        this.camelContext = camelContext;
-        this.processor = processor;
-        ObjectHelper.notNull(processor, "processor");
-    }
-
+   
     /**
      * Processes the incoming JMS message
      */
