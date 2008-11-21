@@ -41,7 +41,7 @@ public class Tracer implements InterceptStrategy {
     private Predicate<Exchange> traceFilter;
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
-    private boolean traceOutExchanges = false;
+    private boolean traceOutExchanges;
     
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled

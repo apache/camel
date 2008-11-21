@@ -20,8 +20,8 @@ import org.apache.commons.logging.Log;
 
 class CustomLog implements Log {
 
-    boolean loggedTrace = false;
-    boolean loggedFatal = false;
+    boolean loggedTrace;
+    boolean loggedFatal;
 
     public boolean isDebugEnabled() {
         return true;
