@@ -436,6 +436,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.errorHandlerRef = errorHandlerRef;
     }
 
+    public Boolean getShouldStartContext() {
+        return shouldStartContext;
+    }
+
+    public void setShouldStartContext(Boolean shouldStartContext) {
+        this.shouldStartContext = shouldStartContext;
+    }
 
     // Implementation methods
     // -------------------------------------------------------------------------
