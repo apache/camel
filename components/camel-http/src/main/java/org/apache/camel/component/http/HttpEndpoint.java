@@ -140,7 +140,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint<HttpExchange> {
 
     public HttpBinding getBinding() {
         if (binding == null) {
-            binding = new HttpBinding(getHeaderFilterStrategy());
+            binding = new DefaultHttpBinding(getHeaderFilterStrategy());
         }
         return binding;
     }
