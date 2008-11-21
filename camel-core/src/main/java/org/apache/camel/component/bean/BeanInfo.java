@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangeException;
 import org.apache.camel.Expression;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
@@ -147,7 +148,7 @@ public class BeanInfo {
 
         MethodInfo methodInfo = createMethodInfo(clazz, method);
 
-        // methods already registered should be prefered to use instead of super classes of existing methods
+        // methods already registered should be preferred to use instead of super classes of existing methods
         // we want to us the method from the sub class over super classes, so if we have already registered
         // the method then use it (we are traversing upwards: sub (child) -> super (farther) )
         MethodInfo existingMethodInfo = overridesExistingMethod(methodInfo);
@@ -204,7 +205,7 @@ public class BeanInfo {
                 }
             }
 
-            // sanme name, same parameters, then its overrides an existing class
+            // same name, same parameters, then its overrides an existing class
             return info;
         }
 
@@ -310,14 +311,14 @@ public class BeanInfo {
 
             List<MethodInfo> possibles = new ArrayList<MethodInfo>();
             for (MethodInfo methodInfo : operationList) {
-                // TODO: AOP proxies have additioan methods - consider having a static
+                // TODO: AOP proxies have additional methods - consider having a static
                 // method exclude list to skip all known AOP proxy methods
                 // TODO: This class could use some TRACE logging
 
                 // test for MEP pattern matching
                 boolean out = exchange.getPattern().isOutCapable();
                 if (out && methodInfo.isReturnTypeVoid()) {
-                    // skip this method as the MEP is Out so the method must return someting
+                    // skip this method as the MEP is Out so the method must return something
                     continue;
                 }
 
@@ -388,7 +389,7 @@ public class BeanInfo {
     /**
      * Creates an expression for the given parameter type if the parameter can
      * be mapped automatically or null if the parameter cannot be mapped due to
-     * unsufficient annotations or not fitting with the default type
+     * insufficient annotations or not fitting with the default type
      * conventions.
      */
     protected Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType,
@@ -439,6 +440,8 @@ public class BeanInfo {
             return ExpressionBuilder.headersExpression();
         } else if (annotation instanceof OutHeaders) {
             return ExpressionBuilder.outHeadersExpression();
+        } else if (annotation instanceof ExchangeException) {
+            return ExpressionBuilder.exchangeExceptionExpression();
         } else {
             LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
             if (languageAnnotation != null) {

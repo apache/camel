@@ -32,6 +32,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.processor.DeadLetterChannel;
 
 /**
  * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
@@ -136,6 +137,29 @@ public final class ExpressionBuilder {
         };
     }
 
+    /**
+     * Returns an expression for an exception set on the exchange
+     *
+     * @see Exchange#getException()
+     * @return an expression object which will return the exception set on the exchange
+     */
+    public static Expression exchangeExceptionExpression() {
+        return new Expression() {
+            public Object evaluate(Exchange exchange) {
+                Throwable exception = exchange.getException();
+                if (exception == null) {
+                    exception = exchange.getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+                }
+                return exception;
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeException";
+            }
+        };
+    }   
+    
     /**
      * Returns an expression for the property value with the given name
      *
