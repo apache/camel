@@ -22,10 +22,14 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.CamelServlet;
+import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.URISupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
@@ -68,20 +72,40 @@ public class JettyHttpComponent extends HttpComponent {
         }
     }
     
-    private static final Log LOGGER = LogFactory.getLog(JettyHttpComponent.class);
+    private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
     
-    private Server server;
-    private HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
-    private HttpClient httpClient;
-    private String sslKeyPassword;
-    private String sslPassword;
-    private String sslKeystore;
-    private SslSocketConnector sslSocketConnector;
+    protected Server server;
+    protected HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+    protected HttpClient httpClient;
+    protected String sslKeyPassword;
+    protected String sslPassword;
+    protected String sslKeystore;
+    protected SslSocketConnector sslSocketConnector;
 
     @Override
     protected Endpoint<HttpExchange> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        URI httpURL = uri.startsWith("jetty:") ? new URI(remaining) : new URI(uri);
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpURL, getHttpConnectionManager());
+        uri = uri.startsWith("jetty:") ? remaining : uri;
+
+        // http client can be configured from URI options
+        if (httpClient == null) {
+            httpClient = createHttpClient();
+        }
+        IntrospectionSupport.setProperties(httpClient, parameters, "httpClient.");
+
+        // lookup http binding in registry if provided
+        String ref = getAndRemoveParameter(parameters, "httpBindingRef", String.class);
+        if (ref != null) {
+            httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
+        }
+
+        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
+        URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
+        uri = httpUri.toString();
+
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, getHttpConnectionManager());
+        if (httpBinding != null) {
+            result.setBinding(httpBinding);
+        }
         setProperties(result, parameters);
         return result;
     }
@@ -93,7 +117,6 @@ public class JettyHttpComponent extends HttpComponent {
      */
     @Override
     public void connect(HttpConsumer consumer) throws Exception {
-
         // Make sure that there is a connector for the requested endpoint.
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
@@ -110,7 +133,7 @@ public class JettyHttpComponent extends HttpComponent {
                 connector.setPort(endpoint.getPort());
                 connector.setHost(endpoint.getHttpUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getHttpUri().getHost())) {
-                    LOGGER.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                    LOG.warn("You use localhost interface! It means that no external connections will be available. Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
                 getServer().addConnector(connector);
 

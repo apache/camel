@@ -35,9 +35,9 @@ public class HttpMessage extends DefaultMessage {
         setExchange(exchange);
         this.request = request;
 
-        // lets force a parse of the body and headers
-        getBody();
-        getHeaders();
+        // use binding to read the request allowing end users to use their
+        // implementation of the binding
+        getExchange().getEndpoint().getBinding().readRequest(request, this);
     }
 
     @Override

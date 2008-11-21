@@ -1,167 +1,97 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package org.apache.camel.component.http;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
+ * A plugable strategy for configuring the http binding so reading request and writing response
+ * can be customized using the Java Servlet API.
+ * <p/>
+ * This is used by the camel-jetty.
+ *
  * @version $Revision$
  */
-public class HttpBinding {
-
-    // This should be a set of lower-case strings
-    @Deprecated
-    public static final Set<String> DEFAULT_HEADERS_TO_IGNORE = new HashSet<String>(Arrays.asList(
-            "content-length", "content-type", HttpProducer.HTTP_RESPONSE_CODE.toLowerCase()));
-
-    private boolean useReaderForPayload;
-    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
-
-    public HttpBinding(HeaderFilterStrategy headerFilterStrategy) {
-        this.headerFilterStrategy = headerFilterStrategy;
-    }
+public interface HttpBinding {
 
     /**
-     * Writes the exchange to the servlet response
-     */
-    public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {
-        Message out = exchange.getOut();
-        if (out != null) {
-            // Set the status code in the response. Default is 200.
-            if (out.getHeader(HttpProducer.HTTP_RESPONSE_CODE) != null) {
-                int code = out.getHeader(HttpProducer.HTTP_RESPONSE_CODE, Integer.class);
-                response.setStatus(code);
-            }
-
-            // Write out the headers
-            for (String key : out.getHeaders().keySet()) {
-                String value = out.getHeader(key, String.class);
-                if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, value)) {
-                    response.setHeader(key, value);
-                }
-            }
-
-            // Write out the body.
-            if (out.getBody() != null) {
-
-                // Try to stream the body since that would be the most efficient
-                InputStream is = out.getBody(InputStream.class);
-                if (is != null) {
-                    ServletOutputStream os = null;
-                    try {
-                        os = response.getOutputStream();
-                        int c;
-                        while ((c = is.read()) >= 0) {
-                            os.write(c);
-                        }
-                        os.flush();
-                    } finally {
-                        os.close();
-                        is.close();
-                    }
-                } else {
-                    String data = out.getBody(String.class);
-                    if (data != null) {
-                        response.getWriter().print(data);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Parses the body from a HTTP message
-     */
-    public Object parseBody(HttpMessage httpMessage) throws IOException {
-        // lets assume the body is a reader
-        HttpServletRequest request = httpMessage.getRequest();
-        if (isUseReaderForPayload()) {
-            return request.getReader();
-        } else {
-            return request.getInputStream();
-        }
-    }
-
-    /*
-     * Exclude a set of headers from responses and new requests as all headers
-     * get propagated between exchanges by default
+     * Startegy to read the given request and bindings it to the given message.
      *
-     * @deprecated please use {@link HeaderPropagationStrategy} instead
+     * @param request  the request
+     * @param message  the message to populate with data from request
      */
-    public boolean shouldHeaderBePropagated(String headerName, String headerValue) {
-        if (headerValue == null) {
-            return false;
-        }
+    void readRequest(HttpServletRequest request, HttpMessage message);
 
-        return headerFilterStrategy != null
-            && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
-    }
-
-    /*
-     * Override the set of headers to ignore for responses and new requests.
-     * @param headersToIgnore should be a set of lower-case strings
+    /**
+     * Parses the body from a {@link org.apache.camel.component.http.HttpMessage}
      *
-     * @deprecated please use {@link HeaderPropagationStrategy} instead
+     * @return the parsed body returned as either a {@link java.io.InputStream} or a {@link java.io.Reader}
+     * depending on the {@link #setUseReaderForPayload(boolean)} property.
+     * @throws java.io.IOException can be thrown
      */
-    @Deprecated
-    public void setIgnoredHeaders(Set<String> headersToIgnore) {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                .setOutFilter(headersToIgnore);
-        }
-    }
+    Object parseBody(HttpMessage httpMessage) throws IOException;
 
     /**
-     * @deprecated please use {@link org.apache.camel.spi.HeaderFilterStrategy} instead
+     * Writes the exchange to the servlet response.
+     * <p/>
+     * Default implementation will delegate to the following methods depending on the status of the exchange
+     * <ul>
+     *   <li>doWriteResponse - processing returns a OUT message </li>
+     *   <li>doWriteFaultResponse - processing returns a fault message</li>
+     *   <li>doWriteResponse - processing returns an exception and status code 500</li>
+     * </ul>
+     *
+     * @param exchange the exchange
+     * @param response the http response
+     * @throws java.io.IOException can be thrown from http response
      */
-    @Deprecated
-    public Set<String> getIgnoredHeaders() {
-        if (headerFilterStrategy instanceof DefaultHeaderFilterStrategy) {
-            return ((DefaultHeaderFilterStrategy)headerFilterStrategy)
-                    .getOutFilter();
-        } else {
-            return null;
-        }
-
-    }
-
-    public boolean isUseReaderForPayload() {
-        return useReaderForPayload;
-    }
+    void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException;
 
     /**
-     * Should the {@link HttpServletRequest#getReader()} be exposed as the payload of input messages in the Camel
-     * {@link Message#getBody()} or not. If false then the {@link HttpServletRequest#getInputStream()} will be exposed.
+     * Strategy method that writes the response to the http response stream when an exception occuerd
+     *
+     * @param exception  the exception occured
+     * @param response   the http response
+     * @throws java.io.IOException can be thrown from http response
      */
-    public void setUseReaderForPayload(boolean useReaderForPayload) {
-        this.useReaderForPayload = useReaderForPayload;
-    }
+    void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException;
+
+    /**
+     * Strategy method that writes the response to the http response stream for a fault message
+     *
+     * @param message  the fault message
+     * @param response   the http response
+     * @throws java.io.IOException can be thrown from http response
+     */
+    void doWriteFaultResponse(Message message, HttpServletResponse response) throws IOException;
+
+    /**
+     * Strategy method that writes the response to the http response stream for an OUT message
+     *
+     * @param message  the OUT message
+     * @param response   the http response
+     * @throws java.io.IOException can be thrown from http response
+     */
+    void doWriteResponse(Message message, HttpServletResponse response) throws IOException;
+
+    boolean isUseReaderForPayload();
+
+    /**
+     * Should the {@link javax.servlet.http.HttpServletRequest#getReader()} be exposed as the payload of input messages in the Camel
+     * {@link org.apache.camel.Message#getBody()} or not. If false then the {@link javax.servlet.http.HttpServletRequest#getInputStream()} will be exposed.
+     */
+    void setUseReaderForPayload(boolean useReaderForPayload);
+
+    HeaderFilterStrategy getHeaderFilterStrategy();
+
+    /**
+     * Sets the header filter stratety to use.
+     * <p/>
+     * Will default use {@link org.apache.camel.component.http.HttpHeaderFilterStrategy}
+     */
+    void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy);
 
 }
