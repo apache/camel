@@ -39,9 +39,9 @@ public class TraceInterceptorWithOutBodyTraceTest extends TraceInterceptorTest {
                 // END SNIPPET: tracingOutExchanges
                 
                 from("direct:start").
-                  transform().body().
-                  to("mock:a").
-                  to("mock:b");
+                    transform().body().
+                    to("mock:a").
+                    to("mock:b");
             }
         };
     }

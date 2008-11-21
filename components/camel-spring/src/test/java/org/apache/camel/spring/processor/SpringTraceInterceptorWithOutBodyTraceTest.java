@@ -17,9 +17,11 @@
 
 package org.apache.camel.spring.processor;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.TraceInterceptorWithOutBodyTraceTest;
+
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringTraceInterceptorWithOutBodyTraceTest extends TraceInterceptorWithOutBodyTraceTest {
     protected CamelContext createCamelContext() throws Exception {

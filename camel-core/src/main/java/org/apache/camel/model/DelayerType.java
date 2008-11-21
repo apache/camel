@@ -83,8 +83,8 @@ public class DelayerType extends ExpressionNode {
     private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {
         ExpressionType expr = getExpression();
         if (expr != null) {
-            if (ObjectHelper.isNotNullAndNonEmpty(expr.getExpression()) || 
-                expr.getExpressionValue() != null) {
+            if (ObjectHelper.isNotNullAndNonEmpty(expr.getExpression()) 
+                || expr.getExpressionValue() != null) {
                 return expr.createExpression(routeContext);
             } 
         } 
