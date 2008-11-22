@@ -22,21 +22,22 @@ import org.apache.camel.CamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.httpclient.StatusLine;
 
-public class HttpOperationFailedException extends CamelException {
+public class HttpOperationFailedException extends CamelException {    
     private final String redirectLocation;
     private final int statusCode;
     private final StatusLine statusLine;
-    private InputStream responseBody;
+    private final InputStream responseBody;
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location) {
+    public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location, InputStream responseBody) {
         super("HTTP operation failed with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
         this.statusCode = statusCode;
         this.statusLine = statusLine;
         this.redirectLocation = location;
+        this.responseBody = responseBody;
     }
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine) {
-        this(statusCode, statusLine, null);
+    public HttpOperationFailedException(int statusCode, StatusLine statusLine, InputStream responseBody) {
+        this(statusCode, statusLine, null, responseBody);
     }
 
     public boolean isRedirectError() {
@@ -63,7 +64,5 @@ public class HttpOperationFailedException extends CamelException {
         return responseBody;
     }
 
-    public void setResponseBody(InputStream responseBody) {
-        this.responseBody = responseBody;
-    }
+   
 }
