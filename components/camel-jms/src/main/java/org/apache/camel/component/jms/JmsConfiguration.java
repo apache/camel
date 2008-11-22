@@ -299,6 +299,18 @@ public class JmsConfiguration implements Cloneable {
             jmsTemplate.setExplicitQosEnabled(true);
             jmsTemplate.setTimeToLive(requestTimeout);
             jmsTemplate.setSessionTransacted(isTransactedInOut());
+            if (isTransactedInOut()) {
+                jmsTemplate.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
+            } else {
+                if (acknowledgementMode >= 0) {
+                    jmsTemplate.setSessionAcknowledgeMode(acknowledgementMode);
+                } else if (acknowledgementModeName != null) {
+                    jmsTemplate.setSessionAcknowledgeModeName(acknowledgementModeName);
+                } else {
+                    // default to AUTO
+                    jmsTemplate.setSessionAcknowledgeMode(Session.AUTO_ACKNOWLEDGE);
+                }
+            }
         }
         return answer;
     }
