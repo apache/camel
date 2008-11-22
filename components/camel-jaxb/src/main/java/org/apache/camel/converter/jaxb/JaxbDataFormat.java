@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
@@ -39,6 +40,7 @@ public class JaxbDataFormat implements DataFormat {
     private JAXBContext context;
     private String contextPath;
     private boolean prettyPrint = true;
+    private boolean ignoreJAXBElement = true;
     private Marshaller marshaller;
     private Unmarshaller unmarshaller;
 
@@ -63,14 +65,26 @@ public class JaxbDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
-            return getUnmarshaller().unmarshal(stream);
+            Object answer = getUnmarshaller().unmarshal(stream);
+            if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
+                answer = ((JAXBElement)answer).getValue();
+            }
+            return answer;
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
-    }
+    }    
 
     // Properties
     // -------------------------------------------------------------------------
+    public boolean isIgnoreJAXBElement() {        
+        return ignoreJAXBElement;
+    }
+    
+    public void setIgnoreJAXBElement(boolean flag) {
+        ignoreJAXBElement = flag;
+    }
+    
     public JAXBContext getContext() throws JAXBException {
         if (context == null) {
             context = createContext();
