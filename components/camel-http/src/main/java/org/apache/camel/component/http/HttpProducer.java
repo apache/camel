@@ -96,24 +96,23 @@ public class HttpProducer extends DefaultProducer {
                 }
             } else {
                 HttpOperationFailedException exception = null;
+                InputStream is =  extractResponseBody(method);
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectLocation;
                     Header locationHeader = method.getResponseHeader("location");
                     if (locationHeader != null) {
                         redirectLocation = locationHeader.getValue();
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation);
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, is);
                     } else {
                         // no redirect location
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
+                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), is);
                     }
                 } else {
                     // internal server error (error code 500)
-                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine());
+                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), is);
                 }
 
-                if (exception != null) {
-                    // set also the response body as well
-                    exception.setResponseBody(extractResponseBody(method));
+                if (exception != null) {                    
                     throw exception;
                 }
             }
