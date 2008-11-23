@@ -53,8 +53,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
-    @XmlElement(name = "when", required = false)
-    private WhenType when;
+    @XmlElement(name = "onWhen", required = false)
+    private WhenType onWhen;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
@@ -82,7 +82,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Exception[" + getExceptionClasses() + (when != null ? " " + when : "") + " -> " + getOutputs() + "]";
+        return "Exception[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
     
     /**
@@ -145,15 +145,15 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return this;
     }
 
-    public ExceptionType when(Predicate predicate) {
-        setWhen(new WhenType(predicate));
+    public ExceptionType onWhen(Predicate predicate) {
+        setOnWhen(new WhenType(predicate));
         return this;
     }
 
-    public ExpressionClause<ExceptionType> when() {
-        when = new WhenType();
+    public ExpressionClause<ExceptionType> onWhen() {
+        onWhen = new WhenType();
         ExpressionClause<ExceptionType> clause = new ExpressionClause<ExceptionType>(this);
-        when.setExpression(clause);
+        onWhen.setExpression(clause);
         return clause;
     }
 
@@ -270,12 +270,12 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         this.handledPolicy = handledPolicy;
     }
 
-    public WhenType getWhen() {
-        return when;
+    public WhenType getOnWhen() {
+        return onWhen;
     }
 
-    public void setWhen(WhenType when) {
-        this.when = when;
+    public void setOnWhen(WhenType onWhen) {
+        this.onWhen = onWhen;
     }
 
     // Implementation methods

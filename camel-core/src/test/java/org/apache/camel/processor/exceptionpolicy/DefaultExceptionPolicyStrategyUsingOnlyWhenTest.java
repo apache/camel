@@ -70,7 +70,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0));
 
-                onException(MyUserException.class).when(header("user").isNotNull())
+                onException(MyUserException.class).onWhen(header("user").isNotNull())
                     .maximumRedeliveries(1)
                     .to(ERROR_USER_QUEUE);
 
