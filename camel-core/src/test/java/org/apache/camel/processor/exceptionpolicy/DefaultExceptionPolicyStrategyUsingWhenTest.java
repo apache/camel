@@ -16,70 +16,72 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import java.util.Map;
-
-import org.apache.camel.CamelException;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ExceptionType;
 
 /**
- * Unit test with a user plugged in exception policy to use instead of default.
+ * Unit test for the when expression on the exception type.
  */
-public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
+public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupport {
 
-    private static final String MESSAGE_INFO = "messageInfo";
     private static final String ERROR_QUEUE = "mock:error";
+    private static final String ERROR_USER_QUEUE = "mock:usererror";
 
-    public static class MyPolicyException extends Exception {
-    }
+    public static class MyUserException extends Exception {
 
-    // START SNIPPET e2
-    public static class MyPolicy implements ExceptionPolicyStrategy {
-
-        public ExceptionType getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices,
-                                                Exchange exchange,
-                                                Throwable exception) {
-            // This is just an example that always forces the exception type configured
-            // with MyPolicyException to win.
-            return exceptionPolicices.get(ExceptionPolicyKey.newInstance(MyPolicyException.class));
+        public MyUserException(String message) {
+            super(message);
         }
     }
-    // END SNIPPET e2
 
-    public void testCustomPolicy() throws Exception {
+    public void testNoWhen() throws Exception {
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
-        mock.expectedHeaderReceived(MESSAGE_INFO, "Damm my policy exception");
 
         try {
             template.sendBody("direct:a", "Hello Camel");
+            fail("Should have thrown an Exception");
         } catch (Exception e) {
             // expected
         }
 
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testWithWhen() throws Exception {
+        MockEndpoint mock = getMockEndpoint(ERROR_USER_QUEUE);
+        mock.expectedMessageCount(1);
+
+        try {
+            template.sendBodyAndHeader("direct:a", "Hello Camel", "user", "admin");
+            fail("Should have thrown an Exception");
+        } catch (Exception e) {
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET e1
             public void configure() throws Exception {
-                // configure the error handler to use my policy instead of the default from Camel
-                errorHandler(deadLetterChannel().exceptionPolicyStrategy(new MyPolicy()));
-
-                onException(MyPolicyException.class)
+                // here we define our onException to catch MyUserException when
+                // there is a header[user] on the exchange that is not null
+                onException(MyUserException.class).when(header("user").isNotNull())
                     .maximumRedeliveries(1)
-                    .setHeader(MESSAGE_INFO, constant("Damm my policy exception"))
-                    .to(ERROR_QUEUE);
+                    .to(ERROR_USER_QUEUE);
 
-                onException(CamelException.class)
-                    .maximumRedeliveries(3)
-                    .setHeader(MESSAGE_INFO, constant("Damm a Camel exception"))
+                // here we define onException to catch MyUserException as a kind
+                // of fallback when the above did not match.
+                // Noitce: The order how we have defined these onException is
+                // important as Camel will resolve in the same order as they
+                // have been defined
+                onException(MyUserException.class)
+                    .maximumRedeliveries(2)
                     .to(ERROR_QUEUE);
                 // END SNIPPET e1
 
@@ -87,7 +89,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);
                         if ("Hello Camel".equals(s)) {
-                            throw new CamelExchangeException("Forced for testing", exchange);
+                            throw new MyUserException("Forced for testing");
                         }
                         exchange.getOut().setBody("Hello World");
                     }

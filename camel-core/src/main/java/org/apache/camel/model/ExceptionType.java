@@ -33,6 +33,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -52,6 +53,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
+    @XmlElement(name = "when", required = false)
+    private WhenType when;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
@@ -79,7 +82,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Exception[" + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "Exception[" + getExceptionClasses() + (when != null ? " " + when : "") + " -> " + getOutputs() + "]";
     }
     
     /**
@@ -140,6 +143,18 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public ExceptionType handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
         return this;
+    }
+
+    public ExceptionType when(Predicate predicate) {
+        setWhen(new WhenType(predicate));
+        return this;
+    }
+
+    public ExpressionClause<ExceptionType> when() {
+        when = new WhenType();
+        ExpressionClause<ExceptionType> clause = new ExpressionClause<ExceptionType>(this);
+        when.setExpression(clause);
+        return clause;
     }
 
     public ExceptionType backOffMultiplier(double backOffMultiplier) {
@@ -253,6 +268,14 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     public void setHandledPolicy(Predicate handledPolicy) {
         this.handledPolicy = handledPolicy;
+    }
+
+    public WhenType getWhen() {
+        return when;
+    }
+
+    public void setWhen(WhenType when) {
+        this.when = when;
     }
 
     // Implementation methods
