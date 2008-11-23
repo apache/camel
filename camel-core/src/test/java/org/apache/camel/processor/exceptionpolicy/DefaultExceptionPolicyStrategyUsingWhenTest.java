@@ -71,7 +71,7 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
             public void configure() throws Exception {
                 // here we define our onException to catch MyUserException when
                 // there is a header[user] on the exchange that is not null
-                onException(MyUserException.class).when(header("user").isNotNull())
+                onException(MyUserException.class).onWhen(header("user").isNotNull())
                     .maximumRedeliveries(1)
                     .to(ERROR_USER_QUEUE);
 

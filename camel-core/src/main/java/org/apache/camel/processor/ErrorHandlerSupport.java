@@ -44,7 +44,7 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
         List<Class> list = exceptionType.getExceptionClasses();
 
         for (Class clazz : list) {
-            ExceptionPolicyKey key = new ExceptionPolicyKey(clazz, exceptionType.getWhen());
+            ExceptionPolicyKey key = new ExceptionPolicyKey(clazz, exceptionType.getOnWhen());
             exceptionPolicies.put(key, exceptionType);
         }
     }

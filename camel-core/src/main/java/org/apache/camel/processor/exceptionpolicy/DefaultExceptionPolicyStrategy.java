@@ -133,11 +133,11 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     protected boolean matchesWhen(ExceptionType type, Exchange exchange) {
-        if (type.getWhen() == null || type.getWhen().getExpression() == null) {
+        if (type.getOnWhen() == null || type.getOnWhen().getExpression() == null) {
             // if no predicate then it's always a match
             return true;
         }
-        return type.getWhen().getExpression().matches(exchange);
+        return type.getOnWhen().getExpression().matches(exchange);
     }
 
     private static int getInheritanceLevel(Class clazz) {
