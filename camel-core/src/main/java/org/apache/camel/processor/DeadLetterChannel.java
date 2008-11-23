@@ -63,7 +63,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
         Processor failureProcessor = deadLetter;
-        
     }
 
     public DeadLetterChannel(Processor output, Processor deadLetter) {

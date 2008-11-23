@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ExceptionType;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 
 /**
@@ -33,17 +34,18 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  * @version $Revision$
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
-    private Map<Class, ExceptionType> exceptionPolicies = new LinkedHashMap<Class, ExceptionType>();
+    private Map<ExceptionPolicyKey, ExceptionType> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, ExceptionType>();
     private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
-    public void addExceptionPolicy(ExceptionType exception) {
-        Processor processor = exception.getErrorHandler();
+    public void addExceptionPolicy(ExceptionType exceptionType) {
+        Processor processor = exceptionType.getErrorHandler();
         addChildService(processor);
 
-        List<Class> list = exception.getExceptionClasses();
+        List<Class> list = exceptionType.getExceptionClasses();
 
-        for (Class exceptionType : list) {
-            exceptionPolicies.put(exceptionType, exception);
+        for (Class clazz : list) {
+            ExceptionPolicyKey key = new ExceptionPolicyKey(clazz, exceptionType.getWhen());
+            exceptionPolicies.put(key, exceptionType);
         }
     }
 
