@@ -36,30 +36,30 @@ import org.apache.camel.model.ExceptionType;
 public class DefaultExceptionPolicyStrategyTest extends TestCase {
 
     private DefaultExceptionPolicyStrategy strategy;
-    private HashMap<Class, ExceptionType> policies;
+    private HashMap<ExceptionPolicyKey, ExceptionType> policies;
     private ExceptionType type1;
     private ExceptionType type2;
     private ExceptionType type3;
 
     private void setupPolicies() {
         strategy = new DefaultExceptionPolicyStrategy();
-        policies = new HashMap<Class, ExceptionType>();
+        policies = new HashMap<ExceptionPolicyKey, ExceptionType>();
         type1 = new ExceptionType(CamelExchangeException.class);
         type2 = new ExceptionType(Exception.class);
         type3 = new ExceptionType(IOException.class);
-        policies.put(CamelExchangeException.class, type1);
-        policies.put(Exception.class, type2);
-        policies.put(IOException.class, type3);
+        policies.put(ExceptionPolicyKey.newInstance(CamelExchangeException.class), type1);
+        policies.put(ExceptionPolicyKey.newInstance(Exception.class), type2);
+        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type3);
     }
 
     private void setupPoliciesNoTopLevelException() {
         // without the top level exception that can be used as fallback
         strategy = new DefaultExceptionPolicyStrategy();
-        policies = new HashMap<Class, ExceptionType>();
+        policies = new HashMap<ExceptionPolicyKey, ExceptionType>();
         type1 = new ExceptionType(CamelExchangeException.class);
         type3 = new ExceptionType(IOException.class);
-        policies.put(CamelExchangeException.class, type1);
-        policies.put(IOException.class, type3);
+        policies.put(ExceptionPolicyKey.newInstance(CamelExchangeException.class), type1);
+        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type3);
     }
 
     public void testDirectMatch1() {

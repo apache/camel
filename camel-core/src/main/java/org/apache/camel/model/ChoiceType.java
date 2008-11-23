@@ -88,7 +88,6 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         return this;
     }
 
-
     public ExpressionClause<ChoiceType> when() {
         WhenType when = new WhenType();
         getWhenClauses().add(when);
@@ -96,7 +95,6 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         when.setExpression(clause);
         return clause;
     }
-
 
     public ChoiceType otherwise() {
         OtherwiseType answer = new OtherwiseType();

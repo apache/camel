@@ -28,19 +28,27 @@ import org.apache.commons.logging.LogFactory;
  * The default strategy used in Camel to resolve the {@link org.apache.camel.model.ExceptionType} that should
  * handle the thrown exception.
  * <p/>
- * This strategy applies the following rules:
+ * <b>Selection strategy:</b>
+ * <br/>This strategy applies the following rules:
  * <ul>
- *   <li>The exception type must be configured with an Exception that is an instance of the thrown exception</li>
- *   <li>If the exception type has exactly the thrown exception then its selected</li>
- *   <li>Otherwise the type that has an exception that is super of the thrown exception is selected
- *       (recurring up the exception hierarchy)
- *  </ul>
+ *   <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
+ *  is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method. </li>
+ *   <li>If the exception type has exactly the thrown exception then its selected as its an exact match</li>
+ *   <li>Otherwise the type that has an exception that is the closests super of the thrown exception is selected
+ *       (recurring up the exception hierarchy)</li>
+ * </ul>
+ * <p/>
+ * <b>Fine grained matching:</b>
+ * <br/> If the {@link ExceptionType} has a when defined with an expression the type is also matches against
+ * the current exchange using the {@link #matchesWhen(org.apache.camel.model.ExceptionType, org.apache.camel.Exchange)}
+ * method. This can be used to for more fine grained matching, so you can e.g. define multiple sets of
+ * exception types with the same exception class(es) but have a predicate attached to select which to select at runtime.
  */
 public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultExceptionPolicyStrategy.class);
 
-    public ExceptionType getExceptionPolicy(Map<Class, ExceptionType> exceptionPolicices, Exchange exchange,
+    public ExceptionType getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
                                             Throwable exception) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
@@ -54,15 +62,22 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         int candidateDiff = Integer.MAX_VALUE;
 
         // loop through all the entries and find the best candidates to use
-        Set<Map.Entry<Class, ExceptionType>> entries = exceptionPolicices.entrySet();
-        for (Map.Entry<Class, ExceptionType> entry : entries) {
-            Class clazz = entry.getKey();
+        Set<Map.Entry<ExceptionPolicyKey, ExceptionType>> entries = exceptionPolicices.entrySet();
+        for (Map.Entry<ExceptionPolicyKey, ExceptionType> entry : entries) {
+            Class clazz = entry.getKey().getExceptionClass();
             ExceptionType type = entry.getValue();
 
-            // must be instance of check to ensure that the clazz is one type of the thrown exception
-            if (clazz.isInstance(exception)) {
+            if (filter(type, clazz, exception)) {
 
-                // exact match
+                // must match
+                if (!matchesWhen(type, exchange)) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("The type did not match when: " + type);
+                    }
+                    continue;
+                }
+
+                // exact match then break
                 if (clazz.equals(exception.getClass())) {
                     candidate = type;
                     break;
@@ -89,6 +104,40 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         }
 
         return candidate;
+    }
+
+    /**
+     * Strategy to filter the given type exception class with the thrown exception
+     *
+     * @param type  the exception type
+     * @param exceptionClass  the current exception class for testing
+     * @param exception  the thrown exception
+     * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it. 
+     */
+    protected boolean filter(ExceptionType type, Class exceptionClass, Throwable exception) {
+        // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
+        return exceptionClass.isInstance(exception);
+    }
+
+    /**
+     * Strategy method for matching the exception type with the current exchange.
+     * <p/>
+     * This default implementation will match as:
+     * <ul>
+     *   <li>Always true if no when predicate on the exception type
+     *   <li>Otherwise the when predicate is matches against the current exchange
+     * </ul>
+     *
+     * @param type  the exception type
+     * @param exchange  the current {@link Exchange}
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     */
+    protected boolean matchesWhen(ExceptionType type, Exchange exchange) {
+        if (type.getOnWhen() == null || type.getOnWhen().getExpression() == null) {
+            // if no predicate then it's always a match
+            return true;
+        }
+        return type.getOnWhen().getExpression().matches(exchange);
     }
 
     private static int getInheritanceLevel(Class clazz) {
