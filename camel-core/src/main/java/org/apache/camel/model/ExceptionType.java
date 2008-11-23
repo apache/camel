@@ -33,6 +33,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -52,6 +53,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
+    @XmlElement(name = "onWhen", required = false)
+    private WhenType onWhen;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
@@ -79,7 +82,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "Exception[" + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "Exception[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
     
     /**
@@ -140,6 +143,18 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public ExceptionType handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
         return this;
+    }
+
+    public ExceptionType onWhen(Predicate predicate) {
+        setOnWhen(new WhenType(predicate));
+        return this;
+    }
+
+    public ExpressionClause<ExceptionType> onWhen() {
+        onWhen = new WhenType();
+        ExpressionClause<ExceptionType> clause = new ExpressionClause<ExceptionType>(this);
+        onWhen.setExpression(clause);
+        return clause;
     }
 
     public ExceptionType backOffMultiplier(double backOffMultiplier) {
@@ -253,6 +268,14 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     public void setHandledPolicy(Predicate handledPolicy) {
         this.handledPolicy = handledPolicy;
+    }
+
+    public WhenType getOnWhen() {
+        return onWhen;
+    }
+
+    public void setOnWhen(WhenType onWhen) {
+        this.onWhen = onWhen;
     }
 
     // Implementation methods
