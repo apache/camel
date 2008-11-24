@@ -36,6 +36,8 @@ public class JaxbDataFormat extends DataFormatType {
     private String contextPath;
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
+    @XmlAttribute(required = false)
+    private Boolean ignoreJAXBElement;
 
     public JaxbDataFormat() {
         super("org.apache.camel.converter.jaxb.JaxbDataFormat");
@@ -61,13 +63,29 @@ public class JaxbDataFormat extends DataFormatType {
     public void setPrettyPrint(Boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
     }
-
+    
+    public Boolean getIgnoreJAXBElement() {
+        return ignoreJAXBElement;
+    }
+    
+    public void setIgnoreJAXBElement(Boolean ignoreJAXBElement) {
+        this.ignoreJAXBElement = ignoreJAXBElement;
+    }
+    
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
-        if (answer != null && answer.booleanValue()) {
+        if (answer != null && !answer.booleanValue()) {
+            setProperty(dataFormat, "prettyPrint", Boolean.FALSE);
+        } else { // the default value is true
             setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
         }
+        answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
+        if (answer != null && !answer.booleanValue()) {
+            setProperty(dataFormat, "ignoreJAXBElement", Boolean.FALSE);
+        } else { // the default value is true
+            setProperty(dataFormat, "ignoreJAXBElement", Boolean.TRUE);
+        } 
         setProperty(dataFormat, "contextPath", contextPath);
     }
 }
