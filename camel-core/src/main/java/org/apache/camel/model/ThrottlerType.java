@@ -78,6 +78,9 @@ public class ThrottlerType extends ProcessorType<ProcessorType> {
 
     /**
      * Sets the time period during which the maximum request count is valid for
+     *
+     * @param timePeriodMillis  period in millis
+     * @return the builder
      */
     public ThrottlerType timePeriodMillis(long timePeriodMillis) {
         this.timePeriodMillis = timePeriodMillis;

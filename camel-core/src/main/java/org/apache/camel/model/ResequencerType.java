@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -73,7 +72,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Configures the stream-based resequencing algorithm using the default
      * configuration.
      *
-     * @return <code>this</code> instance.
+     * @return the builder
      */
     public ResequencerType stream() {
         return stream(StreamResequencerConfig.getDefault());
@@ -83,7 +82,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Configures the batch-based resequencing algorithm using the default
      * configuration.
      *
-     * @return <code>this</code> instance.
+     * @return the builder
      */
     public ResequencerType batch() {
         return batch(BatchResequencerConfig.getDefault());
@@ -93,7 +92,8 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Configures the stream-based resequencing algorithm using the given
      * {@link StreamResequencerConfig}.
      *
-     * @return <code>this</code> instance.
+     * @param config  the config
+     * @return the builder
      */
     public ResequencerType stream(StreamResequencerConfig config) {
         this.streamConfig = config;
@@ -105,7 +105,8 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Configures the batch-based resequencing algorithm using the given
      * {@link BatchResequencerConfig}.
      *
-     * @return <code>this</code> instance.
+     * @param config  the config
+     * @return the builder
      */
     public ResequencerType batch(BatchResequencerConfig config) {
         this.batchConfig = config;
@@ -113,8 +114,70 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return this;
     }
 
+    /**
+     * Sets the expression to use for reordering
+     *
+     * @param expression  the expression
+     * @return the builder
+     */
     public ResequencerType expression(ExpressionType expression) {
         expressions.add(expression);
+        return this;
+    }
+
+    /**
+     * Sets the timeout
+     * @param timeout  timeout in millis
+     * @return the builder
+     */
+    public ResequencerType timeout(long timeout) {
+        if (batchConfig != null) {
+            batchConfig.setBatchTimeout(timeout);
+        } else {
+            streamConfig.setTimeout(timeout);
+        }
+        return this;
+    }
+
+    /**
+     * Sets the in batch size for number of exchanges received
+     * @param batchSize  the batch size
+     * @return the builder
+     */
+    public ResequencerType size(int batchSize) {
+        if (batchConfig == null) {
+            throw new IllegalStateException("size() only supported for batch resequencer");
+        }
+        batchConfig.setBatchSize(batchSize);
+        return this;
+    }
+
+    /**
+     * Sets the capacity for the stream resequencer
+     *
+     * @param capacity  the capacity
+     * @return the builder
+     */
+    public ResequencerType capacity(int capacity) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("capacity() only supported for stream resequencer");
+        }
+        streamConfig.setCapacity(capacity);
+        return this;
+
+    }
+
+    /**
+     * Sets the comparator to use for stream resequencer
+     *
+     * @param comparator  the comparator
+     * @return the builder
+     */
+    public ResequencerType comparator(ExpressionResultComparator comparator) {
+        if (streamConfig == null) {
+            throw new IllegalStateException("comparator() only supported for stream resequencer");
+        }
+        streamConfig.setComparator(comparator);
         return this;
     }
 
@@ -163,42 +226,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         // TODO: find out how to have these two within an <xsd:choice>
         stream(streamConfig);
     }
-    
-    public ResequencerType timeout(long timeout) {
-        if (batchConfig != null) {
-            batchConfig.setBatchTimeout(timeout);
-        } else {
-            streamConfig.setTimeout(timeout);
-        }
-        return this;
-    }
-    
-    public ResequencerType size(int batchSize) {
-        if (batchConfig == null) {
-            throw new IllegalStateException("size() only supported for batch resequencer");
-        }
-        batchConfig.setBatchSize(batchSize);
-        return this;
-    }
 
-    public ResequencerType capacity(int capacity) {
-        if (streamConfig == null) {
-            throw new IllegalStateException("capacity() only supported for stream resequencer");
-        }
-        streamConfig.setCapacity(capacity);
-        return this;
-        
-    }
-    
-    public ResequencerType comparator(ExpressionResultComparator comparator) {
-        if (streamConfig == null) {
-            throw new IllegalStateException("comparator() only supported for stream resequencer");
-        }
-        streamConfig.setComparator(comparator);
-        return this;
-        
-    }
-    
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         if (batchConfig != null) {
@@ -252,8 +280,9 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return resequencer;
         
     }
-    
+
     private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
+        // TODO: No used should it be removed?
         final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
         return new Route(routeContext.getEndpoint(), resequencer) {
             @Override
@@ -264,6 +293,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     }
     
     private Route<? extends Exchange> createStreamResequencerRoute(RouteContext routeContext) throws Exception {
+        // TODO: No used should it be removed?
         final StreamResequencer resequencer = createStreamResequencer(routeContext, streamConfig);
         return new Route(routeContext.getEndpoint(), resequencer) {
             @Override

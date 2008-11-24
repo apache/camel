@@ -118,7 +118,9 @@ public class SplitterType extends ExpressionNode {
     
     /**
      * Enables streaming. 
-     * Cfr. {@link SplitterType#setStreaming(boolean)} for more information
+     * See {@link SplitterType#setStreaming(boolean)} for more information
+     *
+     * @return the builder
      */
     public SplitterType streaming() {
         setStreaming(true);

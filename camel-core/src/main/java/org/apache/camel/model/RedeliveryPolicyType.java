@@ -99,56 +99,125 @@ public class RedeliveryPolicyType {
 
     // Fluent API
     //-------------------------------------------------------------------------
+    /**
+     * Sets the back off multiplier
+     *
+     * @param backOffMultiplier  the back off multiplier
+     * @return the builder
+     */
     public RedeliveryPolicyType backOffMultiplier(double backOffMultiplier) {
         setBackOffMultiplier(backOffMultiplier);
         return this;
     }
 
+    /**
+     * Sets the collision avoidance percentage
+     *
+     * @param collisionAvoidancePercent  the percentage
+     * @return the builder
+     */
     public RedeliveryPolicyType collisionAvoidancePercent(double collisionAvoidancePercent) {
         setCollisionAvoidanceFactor(collisionAvoidancePercent * 0.01d);
         return this;
     }
 
+    /**
+     * Sets the collision avoidance factor
+     *
+     * @param collisionAvoidanceFactor  the factor
+     * @return the builder
+     */
     public RedeliveryPolicyType collisionAvoidanceFactor(double collisionAvoidanceFactor) {
         setCollisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
 
+    /**
+     * Sets the fixed delay between redeliveries
+     *
+     * @param delay  delay in millis
+     * @return the builder
+     */
     public RedeliveryPolicyType delay(long delay) {
         setDelay(delay);
         return this;
     }
 
+    /**
+     * Sets the logging level to use when retries has exhausted
+     *
+     * @param retriesExhaustedLogLevel  the logging level
+     * @return the builder
+     */
     public RedeliveryPolicyType retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
     }    
     
+    /**
+     * Sets the logging level to use for logging retry attempts
+     *
+     * @param retryAttemptedLogLevel  the logging level
+     * @return the builder
+     */
     public RedeliveryPolicyType retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
         
+    /**
+     * Sets the maximum redeliveries
+     * <ul>
+     *   <li>5 = default value</li>
+     *   <li>0 = no redeliveries</li>
+     *   <li>-1 = redeliver forever</li>
+     * </ul>
+     *
+     * @param maximumRedeliveries  the value
+     * @return the builder
+     */
     public RedeliveryPolicyType maximumRedeliveries(int maximumRedeliveries) {
         setMaximumRedeliveries(maximumRedeliveries);
         return this;
     }
 
+    /**
+     * Turn on collision avoidance.
+     *
+     * @return the builder
+     */
     public RedeliveryPolicyType useCollisionAvoidance() {
         setUseCollisionAvoidance(Boolean.TRUE);
         return this;
     }
 
+    /**
+     * Turn on exponential backk off
+     *
+     * @return the builder
+     */
     public RedeliveryPolicyType useExponentialBackOff() {
         setUseExponentialBackOff(Boolean.TRUE);
         return this;
     }
 
+    /**
+     * Sets the maximum delay between redelivery
+     *
+     * @param maximumRedeliveryDelay  the delay in millis
+     * @return the builder
+     */
     public RedeliveryPolicyType maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         setMaximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
 
+    /**
+     * Use redelivery policy looked up in the registry
+     *
+     * @param ref  reference to the redelivery policy to lookup and use
+     * @return the builder
+     */
     public RedeliveryPolicyType ref(String ref) {
         setRef(ref);
         return this;

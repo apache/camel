@@ -130,26 +130,62 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Fluent API
     //-------------------------------------------------------------------------
+    /**
+     * Sets wether the exchange should be marked as handled or not.
+     *
+     * @param handled  handled or not
+     * @return the builder
+     */
     public ExceptionType handled(boolean handled) {
         ConstantLanguage constant = new ConstantLanguage();
         return handled(constant.createPredicate(Boolean.toString(handled)));
     }
     
+    /**
+     * Sets wether the exchange should be marked as handled or not.
+     *
+     * @param handled  predicate that determines true or false
+     * @return the builder
+     */
     public ExceptionType handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
     
+    /**
+     * Sets wether the exchange should be marked as handled or not.
+     *
+     * @param handled  expression that determines true or false
+     * @return the builder
+     */
     public ExceptionType handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
         return this;
     }
 
+    /**
+     * Sets an additional predicate that should be true before the onException is triggered.
+     * <p/>
+     * To be used for fine grained controlling wether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @param predicate  predicate that determines true or false
+     * @return the builder
+     */
     public ExceptionType onWhen(Predicate predicate) {
         setOnWhen(new WhenType(predicate));
         return this;
     }
 
+    /**
+     * Creates an expression to configure an additional predicate that should be true before the
+     * onException is triggered.
+     * <p/>
+     * To be used for fine grained controlling wether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @return the expression clause to configure
+     */
     public ExpressionClause<ExceptionType> onWhen() {
         onWhen = new WhenType();
         ExpressionClause<ExceptionType> clause = new ExpressionClause<ExceptionType>(this);
@@ -157,51 +193,114 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return clause;
     }
 
+    /**
+     * Sets the back off multiplier
+     *
+     * @param backOffMultiplier  the back off multiplier
+     * @return the builder
+     */
     public ExceptionType backOffMultiplier(double backOffMultiplier) {
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
 
+    /**
+     * Sets the collision avoidance factor
+     *
+     * @param collisionAvoidanceFactor  the factor
+     * @return the builder
+     */
     public ExceptionType collisionAvoidanceFactor(double collisionAvoidanceFactor) {
         getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
 
+    /**
+     * Sets the collision avoidance percentage
+     *
+     * @param collisionAvoidancePercent  the percentage
+     * @return the builder
+     */
     public ExceptionType collisionAvoidancePercent(short collisionAvoidancePercent) {
         getOrCreateRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
 
+    /**
+     * Sets the fixed delay between redeliveries
+     *
+     * @param delay  delay in millis
+     * @return the builder
+     */
     public ExceptionType delay(long delay) {
         getOrCreateRedeliveryPolicy().delay(delay);
         return this;
     }
-    
+
+    /**
+     * Sets the logging level to use when retries has exhausted
+     *
+     * @param retriesExhaustedLogLevel  the logging level
+     * @return the builder
+     */
     public ExceptionType retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         getOrCreateRedeliveryPolicy().retriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
     }
 
+    /**
+     * Sets the logging level to use for logging retry attempts
+     *
+     * @param retryAttemptedLogLevel  the logging level
+     * @return the builder
+     */
     public ExceptionType retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         getOrCreateRedeliveryPolicy().retryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
-    
+
+    /**
+     * Sets the maximum redeliveries
+     * <ul>
+     *   <li>5 = default value</li>
+     *   <li>0 = no redeliveries</li>
+     *   <li>-1 = redeliver forever</li>
+     * </ul>
+     *
+     * @param maximumRedeliveries  the value
+     * @return the builder
+     */
     public ExceptionType maximumRedeliveries(int maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
 
+    /**
+     * Turn on collision avoidance.
+     *
+     * @return the builder
+     */
     public ExceptionType useCollisionAvoidance() {
         getOrCreateRedeliveryPolicy().useCollisionAvoidance();
         return this;
     }
 
+    /**
+     * Turn on exponential backk off
+     *
+     * @return the builder
+     */
     public ExceptionType useExponentialBackOff() {
         getOrCreateRedeliveryPolicy().useExponentialBackOff();
         return this;
     }
 
+    /**
+     * Sets the maximum delay between redelivery
+     *
+     * @param maximumRedeliveryDelay  the delay in millis
+     * @return the builder
+     */
     public ExceptionType maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;

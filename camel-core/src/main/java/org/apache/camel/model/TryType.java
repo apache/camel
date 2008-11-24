@@ -75,6 +75,13 @@ public class TryType extends OutputType<TryType> {
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Handles the given exception
+     *
+     * @param exceptionType  the exception
+     * @return the try builder
+     */
     public TryType handle(Class<?> exceptionType) {
         popBlock();
         CatchType answer = new CatchType(exceptionType);
@@ -83,6 +90,11 @@ public class TryType extends OutputType<TryType> {
         return this;
     }
 
+    /**
+     * The finally block for a given handle
+     *
+     * @return  the try builder
+     */
     public TryType finallyBlock() {
         popBlock();
         FinallyType answer = new FinallyType();

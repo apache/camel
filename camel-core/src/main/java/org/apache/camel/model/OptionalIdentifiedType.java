@@ -81,22 +81,31 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
 
     // Fluent API
     // -------------------------------------------------------------------------
-    public T description(String text) {
-        if (description == null) {
-            description = new Description();
+
+    /**
+     * Sets the description of this node
+     *
+     * @param id  sets the id, use null to not set an id
+     * @param text  sets the text description, use null to not set a text
+     * @param lang  sets the language for the description, use null to not set a language
+     * @return the builder
+     */
+    public T description(String id, String text, String lang) {
+        if (id != null) {
+            setId(id);
         }
-        description.setText(text);
-        return (T) this;
-    }
-
-    public T description(String text, String lang) {
-        description(text);
-        description.setLang(lang);
-        return (T) this;
-    }
-
-    public T id(String id) {
-        setId(id);
+        if (text != null) {
+            if (description == null) {
+                description = new Description();
+            }
+            description.setText(text);
+        }
+        if (lang != null) {
+            if (description == null) {
+                description = new Description();
+            }
+            description.setLang(lang);
+        }
         return (T) this;
     }
 

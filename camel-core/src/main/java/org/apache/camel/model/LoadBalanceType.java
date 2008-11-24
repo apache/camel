@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.loadbalancer.LoadBalancerType;
@@ -136,26 +135,52 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     
     // Fluent API
     // -------------------------------------------------------------------------
+    /**
+     * Sets the load balancer to use
+     *
+     * @param loadBalancer  the load balancer
+     * @return the builder
+     */
     public LoadBalanceType setLoadBalancer(LoadBalancer loadBalancer) {
         loadBalancerType = new LoadBalancerType(loadBalancer);
         return this;
     }
 
+    /**
+     * Uses round robin load balancer
+     *
+     * @return the builder
+     */
     public LoadBalanceType roundRobin() {
         loadBalancerType = new LoadBalancerType(new RoundRobinLoadBalancer());
         return this;
     }
 
+    /**
+     * Uses random load balancer
+     * @return the builder
+     */
     public LoadBalanceType random() {
         loadBalancerType = new LoadBalancerType(new RandomLoadBalancer());
         return this;
     }
 
+    /**
+     * Uses sticky load balancer
+     *
+     * @param correlationExpression  the expression for correlation
+     * @return  the builder
+     */
     public LoadBalanceType sticky(Expression correlationExpression) {
         loadBalancerType = new LoadBalancerType(new StickyLoadBalancer(correlationExpression));
         return this;
     }
 
+    /**
+     * Uses topic load balancer
+     * 
+     * @return the builder
+     */
     public LoadBalanceType topic() {
         loadBalancerType = new LoadBalancerType(new TopicLoadBalancer());
         return this;

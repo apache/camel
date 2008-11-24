@@ -34,7 +34,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
@@ -102,6 +101,9 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     /**
      * Creates an input to the route
+     *
+     * @param uri  the from uri
+     * @return the builder
      */
     public RouteType from(String uri) {
         getInputs().add(new FromType(uri));
@@ -110,6 +112,9 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     /**
      * Creates an input to the route
+     *
+     * @param endpoint  the from endpoint
+     * @return the builder
      */
     public RouteType from(Endpoint endpoint) {
         getInputs().add(new FromType(endpoint));
@@ -118,9 +123,32 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     /**
      * Set the group name for this route
+     *
+     * @param name  the group name
+     * @return the builder
      */
     public RouteType group(String name) {
         setGroup(name);
+        return this;
+    }
+
+    /**
+     * Disable stream caching for this route
+     *
+     * @return the builder
+     */
+    public RouteType noStreamCaching() {
+        StreamCachingInterceptor.noStreamCaching(interceptors);
+        return this;
+    }
+
+    /**
+     * Enable stream caching for this route
+     *
+     * @return the builder
+     */
+    public RouteType streamCaching() {
+        addInterceptor(new StreamCachingInterceptor());
         return this;
     }
 
@@ -241,22 +269,6 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
             list.addAll(getInterceptors());
         }
 */
-    }
-
-    /**
-     * Disable stream caching for this Route.
-     */
-    public RouteType noStreamCaching() {
-        StreamCachingInterceptor.noStreamCaching(interceptors);
-        return this;
-    }
-
-    /**
-     * Enable stream caching for this Route.
-     */
-    public RouteType streamCaching() {
-        addInterceptor(new StreamCachingInterceptor());
-        return this;
     }
 
     @Override

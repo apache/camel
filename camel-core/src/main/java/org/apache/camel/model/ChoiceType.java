@@ -44,7 +44,6 @@ import org.apache.commons.logging.LogFactory;
 @XmlRootElement(name = "choice")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ChoiceType extends ProcessorType<ChoiceType> {
-    
     private static final transient Log LOG = LogFactory.getLog(ChoiceType.class);
     
     @XmlElementRef
@@ -76,18 +75,29 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         if (otherwise != null) {
             otherwiseProcessor = otherwise.createProcessor(routeContext);
         } else {
-            LOG.warn("No otherwise clause was specified for a choice block -- any unmatched exchanges will be dropped");
+            LOG.warn("No otherwise clause was specified for a choice block, any unmatched exchanges will be dropped");
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
 
     // Fluent API
     // -------------------------------------------------------------------------
+    /**
+     * Sets the predicate for the when node
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
     public ChoiceType when(Predicate predicate) {
         getWhenClauses().add(new WhenType(predicate));
         return this;
     }
 
+    /**
+     * Creates an expression for the when node
+     *
+     * @return expression to be used as builder to configure the when node
+     */
     public ExpressionClause<ChoiceType> when() {
         WhenType when = new WhenType();
         getWhenClauses().add(when);
@@ -96,6 +106,11 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         return clause;
     }
 
+    /**
+     * Sets the otherwise node
+     * 
+     * @return the builder
+     */
     public ChoiceType otherwise() {
         OtherwiseType answer = new OtherwiseType();
         setOtherwise(answer);

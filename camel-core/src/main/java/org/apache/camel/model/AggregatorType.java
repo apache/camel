@@ -37,7 +37,6 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
-import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
@@ -280,31 +279,68 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    /**
+     * Sets the in batch size for number of exchanges recieved
+     *
+     * @param batchSize  the batch size
+     * @return builder
+     */
     public AggregatorType batchSize(int batchSize) {
         setBatchSize(batchSize);
         return this;
     }
 
+    /**
+     * Sets the out batch size for number of exchanges sent
+     *
+     * @param batchSize  the batch size
+     * @return builder
+     */
     public AggregatorType outBatchSize(int batchSize) {
         setOutBatchSize(batchSize);
         return this;
     }
 
+    /**
+     * Sets the batch timeout
+     *
+     * @param batchTimeout  the timeout in millis
+     * @return the builder
+     */
     public AggregatorType batchTimeout(long batchTimeout) {
         setBatchTimeout(batchTimeout);
         return this;
     }
 
+    /**
+     * Sets the aggregate collection to use
+     *
+     * @param aggregationCollection  the aggregate collection to use
+     * @return the builder
+     */
     public AggregatorType aggregationCollection(AggregationCollection aggregationCollection) {
         setAggregationCollection(aggregationCollection);
         return this;
     }
 
+    /**
+     * Sets the aggegate strategy to use
+     *
+     * @param aggregationStrategy  the aggreage startegy to use
+     * @return the builder
+     */
     public AggregatorType aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
 
+    /**
+     * Sets the aggegate strategy to use
+     *
+     * @param strategyRef  reference to the strategy to lookup in the registry
+     * @return the builder
+     */
     public AggregatorType strategyRef(String strategyRef) {
         setStrategyRef(strategyRef);
         return this;
@@ -324,6 +360,8 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
 
     /**
      * Sets the predicate used to determine if the aggregation is completed
+     *
+     * @param predicate  the predicate
      */
     public AggregatorType completedPredicate(Predicate predicate) {
         checkNoCompletedPredicate();

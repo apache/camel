@@ -130,6 +130,8 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
 
     /**
      * Creates a new route
+     *
+     * @return the builder
      */
     public RouteType route() {
         RouteType route = createRoute();
@@ -138,6 +140,9 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
 
     /**
      * Creates a new route from the given URI input
+     *
+     * @param uri  the from uri
+     * @return the builder
      */
     public RouteType from(String uri) {
         RouteType route = createRoute();
@@ -147,6 +152,9 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
 
     /**
      * Creates a new route from the given endpoint
+     *
+     * @param endpoint  the from endpoint
+     * @return the builder
      */
     public RouteType from(Endpoint endpoint) {
         RouteType route = createRoute();
@@ -154,6 +162,12 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
         return route(route);
     }
 
+    /**
+     * Creates a new route using the given route
+     *
+     * @param route the route
+     * @return the builder
+     */
     public RouteType route(RouteType route) {
         // lets configure the route
         route.setCamelContext(getCamelContext());
@@ -175,23 +189,46 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
         return route;
     }
 
+    /**
+     * Adds an interceptor
+     *
+     * @param interceptor  the interceptor
+     * @return the builder
+     */
     public RoutesType intercept(DelegateProcessor interceptor) {
         getInterceptors().add(new InterceptorRef(interceptor));
         return this;
     }
 
+    /**
+     * Creates and adds an interceptor
+     *
+     * @return the interceptor builder to configure
+     */
     public InterceptType intercept() {
         InterceptType answer = new InterceptType();
         getIntercepts().add(answer);
         return answer;
     }
 
+    /**
+     * Creates and adds an interceptor that is attached with a predicate
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
     public ChoiceType intercept(Predicate predicate) {
         InterceptType answer = new InterceptType();
         getIntercepts().add(answer);
         return answer.when(predicate);
     }
 
+    /**
+     * Adds an on exception
+     * 
+     * @param exceptionType  the exception
+     * @return the builder
+     */
     public ExceptionType onException(Class exceptionType) {
         ExceptionType answer = new ExceptionType(exceptionType);
         getExceptions().add(answer);

@@ -1246,12 +1246,27 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return answer.when(predicate);
     }
 
+    /**
+     * Creates a policy.
+     * <p/>
+     * Policy can be used for transactional policies.
+     *
+     * @return the policy builder to configure
+     */
     public PolicyRef policies() {
         PolicyRef answer = new PolicyRef();
         addOutput(answer);
         return answer;
     }
 
+    /**
+     * Apply a {@link Policy}.
+     * <p/>
+     * Policy can be used for transactional policies.
+     *
+     * @param policy  the policy to apply
+     * @return the policy builder to configure
+     */
     public PolicyRef policy(Policy policy) {
         PolicyRef answer = new PolicyRef(policy);
         addOutput(answer);
