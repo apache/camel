@@ -16,8 +16,11 @@
  */
 package org.apache.camel.jaxb;
 
+import javax.xml.bind.JAXBElement;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,10 +47,14 @@ public class CamelJaxbTest extends ContextTestSupport {
         expected.setLastName("BAR");
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived(expected);
-
-        template.sendBody("direct:start", xml);
+        template.sendBody("direct:getJAXBElementValue", xml);
 
         resultEndpoint.assertIsSatisfied();
+        resultEndpoint.reset();
+        resultEndpoint.expectedMessageCount(1);        
+        template.sendBody("direct:getJAXBElement", xml);        
+        resultEndpoint.assertIsSatisfied();
+        assertTrue("We should get the JAXBElement here", resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement);
     }
 
     @Override
@@ -56,9 +63,13 @@ public class CamelJaxbTest extends ContextTestSupport {
 
             public void configure() throws Exception {
                 JaxbDataFormat dataFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
-                dataFormat.setIgnoreJAXBElement(true);
-                from("direct:start")
-                    .unmarshal(dataFormat)                        
+                dataFormat.setIgnoreJAXBElement(false);
+                from("direct:getJAXBElementValue")
+                    .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))                        
+                        .to("mock:result");
+                
+                from("direct:getJAXBElement")
+                    .unmarshal(dataFormat)
                         .to("mock:result");
             }
         };
