@@ -81,6 +81,41 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
 
     // Fluent API
     // -------------------------------------------------------------------------
+
+    /**
+     * Sets the description of this node
+     *
+     * @param id  sets the id, use null to not set an id
+     * @param text  sets the text description, use null to not set a text
+     * @param lang  sets the language for the description, use null to not set a language
+     * @return the builder
+     */
+    public T describe(String id, String text, String lang) {
+        if (id != null) {
+            setId(id);
+        }
+        if (text != null) {
+            if (description == null) {
+                description = new Description();
+            }
+            description.setText(text);
+        }
+        if (lang != null) {
+            if (description == null) {
+                description = new Description();
+            }
+            description.setLang(lang);
+        }
+        return (T) this;
+    }
+
+    /**
+     * Sets the description of this node
+     *
+     * @param text  the description
+     * @return the builder
+     * @deprecated will be removed in Camel 2.0
+     */
     public T description(String text) {
         if (description == null) {
             description = new Description();
@@ -89,12 +124,27 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
         return (T) this;
     }
 
+    /**
+     * Sets the description of this node
+     *
+     * @param text  the description
+     * @param lang  the language for the description
+     * @return the builder
+     * @deprecated will be removed in Camel 2.0
+     */
     public T description(String text, String lang) {
         description(text);
         description.setLang(lang);
         return (T) this;
     }
 
+    /**
+     * Sets the id of this node
+     *
+     * @param id the id
+     * @return the builder
+     * @deprecated will be removed in Camel 2.0
+     */
     public T id(String id) {
         setId(id);
         return (T) this;
