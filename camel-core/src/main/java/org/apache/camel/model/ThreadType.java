@@ -140,51 +140,111 @@ public class ThreadType extends ProcessorType<ProcessorType> {
             + " Instead set the errorHandler on the parent.");
     }
 
+    /**
+     * Sets the core size
+     *
+     * @param coreSize the core size
+     * @return the builder
+     */
     public ThreadType coreSize(int coreSize) {
         setCoreSize(coreSize);
         return this;
     }
 
+    /**
+     * Sets the deamon option
+     *
+     * @param daemon  deamon option
+     * @return the builder
+     */
     public ThreadType daemon(boolean daemon) {
         setDaemon(daemon);
         return this;
     }
 
+    /**
+     * Sets the keep alive time
+     *
+     * @param keepAliveTime keep alive time in millis
+     * @return the builder
+     */
     public ThreadType keepAliveTime(long keepAliveTime) {
         setKeepAliveTime(keepAliveTime);
         return this;
     }
 
+    /**
+     * Sets the max pool size
+     *
+     * @param maxSize  the max pool size
+     * @return the builder
+     */
     public ThreadType maxSize(int maxSize) {
         setMaxSize(maxSize);
         return this;
     }
 
+    /**
+     * Sets the thread pool name
+     *
+     * @param name  the name
+     * @return the builder
+     */
     public ThreadType name(String name) {
         setName(name);
         return this;
     }
 
+    /**
+     * Sets the thread pool priority
+     *
+     * @param priority  the priority
+     * @return the builder
+     */
     public ThreadType priority(int priority) {
         setPriority(priority);
         return this;
     }
 
+    /**
+     * Sets the thread pool stack size
+     *
+     * @param stackSize  the stack size
+     * @return the builder
+     */
     public ThreadType stackSize(long stackSize) {
         setStackSize(stackSize);
         return this;
     }
 
+    /**
+     * Sets the task queue
+     * 
+     * @param taskQueue  the task queue
+     * @return the builder
+     */
     public ThreadType taskQueue(BlockingQueue<Runnable> taskQueue) {
         setTaskQueue(taskQueue);
         return this;
     }
 
+    /**
+     * Sets the thread group
+     *
+     * @param threadGroup  the thread group
+     * @return the builder
+     */
     public ThreadType threadGroup(ThreadGroup threadGroup) {
         setThreadGroup(threadGroup);
         return this;
     }
 
+    /**
+     * Sets the execute to use
+     *
+     * @param executor  the executor
+     * @return the builder
+     */
     public ThreadType executor(ThreadPoolExecutor executor) {
         setExecutor(executor);
         return this;
