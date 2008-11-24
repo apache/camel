@@ -45,8 +45,16 @@
     </dependency>
     <dependency>
       <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>      
-    </dependency>    
+      <artifactId>xstream</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- xom is an optional dependency of xstream. Its also 
+               LGPL, so its really not ASF compatible. -->
+          <groupId>xom</groupId>
+          <artifactId>xom</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
     <dependency>
       <groupId>stax</groupId>
       <artifactId>stax-api</artifactId>
