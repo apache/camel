@@ -174,6 +174,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -187,6 +188,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -205,6 +207,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -221,6 +224,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -233,6 +237,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -245,6 +250,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -301,7 +307,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
+     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
      * @param messageIdExpression  expression to test of duplicate messages
@@ -316,7 +323,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer}
+     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
      * @param messageIdRepository the repository to use for duplicate chedck
@@ -330,6 +338,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -342,6 +351,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate which is applied and only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -355,6 +365,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -369,6 +380,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate language expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -381,6 +393,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance
      *
      * @return  the builder
@@ -393,6 +406,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
 
     /**
+     * <a href="http://activemq.apache.org/camel/content-based-router.html">Content Based Router EIP:</a>
      * Creates a choice of one or more predicates with an otherwise clause
      *
      * @return the builder for a choice expression
@@ -415,13 +429,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a dynamic <a
-     * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
-     * List</a> pattern.
+     * <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List EIP:</a>
+     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
      *
-     * @param recipients is the builder of the expression used in the
-     *                    {@link org.apache.camel.processor.RecipientList}
-     *                    to decide the destinations
+     * @param recipients expression to decide the destinations
      * @return the builder
      */
     public Type recipientList(Expression recipients) {
@@ -431,13 +442,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a dynamic <a
-     * href="http://activemq.apache.org/camel/recipient-list.html">Recipient
-     * List</a> pattern.
+     * <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List EIP:</a>
+     * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
      *
-     * @return the expression clause for the expression used in the
-     *                    {@link org.apache.camel.processor.RecipientList}
-     *                    to decide the destinations
+     * @return the expression clause to configure the expression to decide the destinations
      */
     public ExpressionClause<ProcessorType<Type>> recipientList() {
         RecipientListType answer = new RecipientListType();
@@ -448,14 +456,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a <a
-     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
-     * Slip</a> pattern.
+     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
+     * Creates a routing slip allowing you to route a message consecutively through a series of processing
+     * steps where the sequence of steps is not known at design time and can vary for each message.
      *
-     * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
-     * class will look in for the list of URIs to route the message to.
-     * @param uriDelimiter is the delimiter that will be used to split up
-     * the list of URIs in the routing slip.
+     * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
+     *                class will look in for the list of URIs to route the message to.
+     * @param uriDelimiter  is the delimiter that will be used to split up
+     *                      the list of URIs in the routing slip.
      * @return the buiider
      */
     public Type routingSlip(String header, String uriDelimiter) {
@@ -465,14 +473,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a <a
-     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
-     * Slip</a> pattern.
+     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
+     * Creates a routing slip allowing you to route a message consecutively through a series of processing
+     * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p>
+     * The list of URIs will be split based on the default delimiter {@link RoutingSlipType#DEFAULT_DELIMITER}
      *
-     * @param header is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
-     * class will look in for the list of URIs to route the message to. The list of URIs
-     * will be split based on the default delimiter
-     * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     * @param header  is the header that the {@link org.apache.camel.processor.RoutingSlip RoutingSlip}
+     *                class will look in for the list of URIs to route the message to.
      * @return the builder
      */
     public Type routingSlip(String header) {
@@ -482,12 +490,15 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a <a
-     * href="http://activemq.apache.org/camel/routing-slip.html">Routing
-     * Slip</a> pattern with the default header {@link RoutingSlipType#ROUTING_SLIP_HEADER}.
-     * The list of URIs in the header will be split based on the default delimiter
-     * {@link RoutingSlipType#DEFAULT_DELIMITER}.
+     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
+     * Creates a routing slip allowing you to route a message consecutively through a series of processing
+     * steps where the sequence of steps is not known at design time and can vary for each message.
+     * <p>
+     * The header will use the default header {@link RoutingSlipType#DEFAULT_DELIMITER}
+     * The list of URIs will be split based on the default delimiter {@link RoutingSlipType#DEFAULT_DELIMITER}
+     *
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public Type routingSlip() {
         RoutingSlipType answer = new RoutingSlipType();
@@ -496,31 +507,29 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
      * This splitter responds with the latest message returned from destination
      * endpoint.
      *
-     * @param recipients the expression on which to split
+     * @param expression  the expression on which to split the message
      * @return the builder
      */
-    public SplitterType splitter(Expression recipients) {
-        SplitterType answer = new SplitterType(recipients);
+    public SplitterType splitter(Expression expression) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         return answer;
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
      * This splitter responds with the latest message returned from destination
      * endpoint.
      *
-     * @return the expression clause for the expression on which to split
+     * @return the expression clause builder for the expression on which to split
      */
     public ExpressionClause<SplitterType> splitter() {
         SplitterType answer = new SplitterType();
@@ -529,31 +538,29 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param partsExpression the expression on which to split
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param expression  the expression on which to split
+     * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the builder
      */
-    public SplitterType splitter(Expression partsExpression, AggregationStrategy aggregationStrategy) {
-        SplitterType answer = new SplitterType(partsExpression);
+    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         return answer;
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the expression clause for the expression on which to split
      */
     public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy) {
@@ -564,39 +571,36 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
-     * @param recipients the expression on which to split
+     * @param expression the expression on which to split
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
-    public SplitterType splitter(Expression recipients, boolean parallelProcessing) {
-        SplitterType answer = new SplitterType(recipients);
+    public SplitterType splitter(Expression expression, boolean parallelProcessing) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
         return answer;
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
-     * @param recipients the expression on which to split
+     * @param expression the expression on which to split
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the builder
      */
-    public SplitterType splitter(Expression recipients, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
-        SplitterType answer = new SplitterType(recipients);
+    public SplitterType splitter(Expression expression, boolean parallelProcessing,
+                                 ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
         answer.setThreadPoolExecutor(threadPoolExecutor);
@@ -604,12 +608,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
@@ -622,12 +624,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
+     /**
+      * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+      * <p>
+      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
@@ -642,20 +643,19 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param partsExpression the expression on which to split
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param expression the expression on which to split
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
-    public SplitterType splitter(Expression partsExpression,
-            AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
-        SplitterType answer = new SplitterType(partsExpression);
+    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy,
+                                 boolean parallelProcessing) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         answer.setParallelProcessing(parallelProcessing);
@@ -663,21 +663,20 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param partsExpression the expression on which to split
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param expression the expression on which to split
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the builder
      */
-    public SplitterType splitter(Expression partsExpression,
-            AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
-        SplitterType answer = new SplitterType(partsExpression);
+    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy,
+                                 boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+        SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         answer.setParallelProcessing(parallelProcessing);
@@ -686,13 +685,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
      */
@@ -705,18 +703,18 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/splitter.html">Splitter</a>
-     * pattern where an expression is evaluated to iterate through each of the
-     * parts of a message and then each part is then send to some endpoint.
-     * Answer from the splitter is produced using given {@link AggregationStrategy}
-     * @param aggregationStrategy the strategy used to aggregate responses for
-     *          every part
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
+     *
+     * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+                                                   ThreadPoolExecutor threadPoolExecutor) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
@@ -726,11 +724,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }   
     
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
-     * pattern where a list of expressions are evaluated to be able to compare
-     * the message exchanges to reorder them. e.g. you may wish to sort by some
-     * headers
+     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * Creates a splitter allowing you to reorganise messages based on some comparator.
      *
      * @return the expression clause for the expressions on which to compare messages in order
      */
@@ -743,11 +738,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
-     * pattern where an expression is evaluated to be able to compare the
-     * message exchanges to reorder them. e.g. you may wish to sort by some
-     * header
+     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * Creates a splitter allowing you to reorganise messages based on some comparator.
      *
      * @param expression the expression on which to compare messages in order
      * @return the builder
@@ -757,13 +749,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
-     * pattern where a list of expressions are evaluated to be able to compare
-     * the message exchanges to reorder them. e.g. you may wish to sort by some
-     * headers
+     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * Creates a splitter allowing you to reorganise messages based on some comparator.
      *
-     * @param expressions the expressions on which to compare messages in order
+     * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
     public ResequencerType resequencer(List<Expression> expressions) {
@@ -773,13 +762,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
-     * pattern where a list of expressions are evaluated to be able to compare
-     * the message exchanges to reorder them. e.g. you may wish to sort by some
-     * headers
+     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * Creates a splitter allowing you to reorganise messages based on some comparator.
      *
-     * @param expressions the expressions on which to compare messages in order
+     * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
     public ResequencerType resequencer(Expression... expressions) {
@@ -789,21 +775,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an <a
-     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern where a batch of messages are processed (up to a maximum amount
-     * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of {@link AggregationStrategy}
-     * (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges.
-     * <p/>
-     * A good example of this is stock market data; you may be receiving 30,000
-     * messages/second and you may want to throttle it right down so that multiple
-     * messages for the same stock are combined (or just the latest message is used
-     * and older prices are discarded). Another idea is to combine line item messages
-     * together into a single invoice message.
+     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
-     * @return the builder
+     * @return the expression clause to be used as builder to configure the coorelation expression
      */
     public ExpressionClause<AggregatorType> aggregator() {
         if (!getOutputs().isEmpty()) {
@@ -815,22 +790,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an <a
-     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern where a batch of messages are processed (up to a maximum amount
-     * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of {@link AggregationStrategy}
-     * (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges.
-     * <p/>
-     * A good example of this is stock market data; you may be receiving 30,000
-     * messages/second and you may want to throttle it right down so that multiple
-     * messages for the same stock are combined (or just the latest message is used
-     * and older prices are discarded). Another idea is to combine line item messages
-     * together into a single invoice message.
+     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param aggregationStrategy the strategy used for the aggregation
-     * @return the builder
+     * @return the expression clause to be used as builder to configure the coorelation expression
      */
     public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
         if (!getOutputs().isEmpty()) {
@@ -843,11 +807,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an <a
-     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern using a custom aggregation collection implementation. The aggregation collection must
-     * be configured with the strategy and correlation expression that this aggregator should use.
-     * This avoids duplicating this configuration on both the collection and the aggregator itself.
+     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param aggregationCollection the collection used to perform the aggregation
      * @return the builder
@@ -863,19 +824,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an <a
-     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern where a batch of messages are processed (up to a maximum amount
-     * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of {@link AggregationStrategy}
-     * (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges.
-     * <p/>
-     * A good example of this is stock market data; you may be receiving 30,000
-     * messages/second and you may want to throttle it right down so that multiple
-     * messages for the same stock are combined (or just the latest message is used
-     * and older prices are discarded). Another idea is to combine line item messages
-     * together into a single invoice message.
+     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param correlationExpression the expression used to calculate the
      *                              correlation key. For a JMS message this could be the
@@ -893,19 +843,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates an <a
-     * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
-     * pattern where a batch of messages are processed (up to a maximum amount
-     * or until some timeout is reached) and messages for the same correlation
-     * key are combined together using some kind of {@link AggregationStrategy}
-     * (by default the latest message is used) to compress many message exchanges
-     * into a smaller number of exchanges.
-     * <p/>
-     * A good example of this is stock market data; you may be receiving 30,000
-     * messages/second and you may want to throttle it right down so that multiple
-     * messages for the same stock are combined (or just the latest message is used
-     * and older prices are discarded). Another idea is to combine line item messages
-     * together into a single invoice message.
+     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param correlationExpression the expression used to calculate the
      *                              correlation key. For a JMS message this could be the
@@ -924,13 +863,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
-     * where an expression is used to calculate the time which the message will
-     * be dispatched on
+     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
-     * @param processAtExpression an expression to calculate the time at which
-     *                            the messages should be processed
+     * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
+     *                             should be convertable to long as time in millis
      * @return the builder
      */
     public DelayerType delayer(Expression processAtExpression) {
@@ -938,16 +875,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
-     * where an expression is used to calculate the time which the message will
-     * be dispatched on
+     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
-     * @param processAtExpression an expression to calculate the time at which
-     *                            the messages should be processed
-     * @param delay               the delay in milliseconds which is added to the
-     *                            processAtExpression to determine the time the message
-     *                            should be processed
+     * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
+     *                             should be convertable to long as time in millis
+     * @param delay                the delay in milliseconds which is added to the processAtExpression
      * @return the builder
      */
     public DelayerType delayer(Expression processAtExpression, long delay) {
@@ -957,10 +890,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
-     * where an expression is used to calculate the time which the message will
-     * be dispatched on
+     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * Creates a delayer allowing you to delay the delivery of messages to some destination.
+     *
      * @return the expression clause to create the expression
      */
     public ExpressionClause<DelayerType> delayer() {
@@ -970,12 +902,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/delayer.html">Delayer</a> pattern
-     * where a fixed amount of milliseconds are used to delay processing of a
-     * message exchange
+     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
-     * @param delay the default delay in milliseconds
+     * @param delay  the default delay in millis
      * @return the builder
      */
     public DelayerType delayer(long delay) {
@@ -983,15 +913,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates the <a
-     * href="http://activemq.apache.org/camel/throttler.html">Throtler</a> pattern
-     * for throttling messages to ensure that a specific endpoint does not get overloaded,
-     * or we don't exceed an agreed SLA with some external service?
+     * <a href="http://activemq.apache.org/camel/throttler.html">Throttler EIP:</a>
+     * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
+     * or that we don't exceed an agreed SLA with some external service.
      * <p/>
      * Will default use a time period of 1 second, so setting the maximumRequestCount to eg 10
      * will default ensure at most 10 messages per second. 
      *
-     * @param maximumRequestCount the maximum messages 
+     * @param maximumRequestCount  the maximum messages 
      * @return the builder
      */
     public ThrottlerType throttler(long maximumRequestCount) {
@@ -1001,8 +930,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a expression which must evaluate to an integer that determines
-     * how many times the exchange should be sent down the rest of the route.
+     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * Creates a loop allowing to process the a message a number of times and possibly process them
+     * in a different way. Useful mostly for testing.
      *
      * @return the clause used to create the loop expression
      */
@@ -1013,8 +943,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a loop which must evaluate to an integer that determines
-     * how many times the exchange should be sent down the rest of the route.
+     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * Creates a loop allowing to process the a message a number of times and possibly process them
+     * in a different way. Useful mostly for testing.
      *
      * @param expression the loop expression
      * @return the builder
@@ -1027,8 +958,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Creates a loop which must evaluate to an integer that determines
-     * how many times the exchange should be sent down the rest of the route.
+     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * Creates a loop allowing to process the a message a number of times and possibly process them
+     * in a different way. Useful mostly for testing.
      *
      * @param count  the number of times
      * @return the builder
@@ -1223,7 +1155,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Catches an exception type.
+     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * for cathing certain exceptions and handling them.
      *
      * @param exceptionType  the exception to catch
      * @return the exception builder to configure
@@ -1284,10 +1217,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Installs the given error handler builder
+     * Installs the given <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a> builder.
      *
-     * @param errorHandlerBuilder the error handler to be used by default for
-     *                            all child routes
+     * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
     public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
@@ -1296,11 +1228,10 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Configures whether or not the error handler is inherited by every
-     * processing node (or just the top most one)
+     * Configures whether or not the <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * is inherited by every processing node (or just the top most one)
      *
-     * @param condition the flag as to whether error handlers should be
-     *                  inherited or not
+     * @param condition the flag as to whether error handlers should be inherited or not
      * @return the current builder
      */
     public Type inheritErrorHandler(boolean condition) {
@@ -1339,8 +1270,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean which is invoked which could be a final destination, or could
-     * be a transformation in a pipeline
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
      * @return the builder
@@ -1353,8 +1284,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean and method which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
@@ -1369,8 +1300,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean by type which is invoked which could be a final destination, or could
-     * be a transformation in a pipeline
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @return the builder
@@ -1383,8 +1314,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean type and method which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
@@ -1399,8 +1330,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean which is invoked which could be a final destination, or could
-     * be a transformation in a pipeline
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
      * @return the builder
@@ -1412,9 +1343,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a bean and method which is invoked which could be a final
-     * destination, or could be a transformation in a pipeline
-     * 
+     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
+     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
      * @param ref  reference to a bean to lookup in the registry
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
      * @return the builder
