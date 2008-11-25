@@ -1452,6 +1452,7 @@
 
     <profile>
         <id>release</id>
+        <!-- this profile will be hit when you do relase work for camel -->
         <build>
             <plugins>
                 <!-- We want to deploy the artifact to a staging location for perusal -->
