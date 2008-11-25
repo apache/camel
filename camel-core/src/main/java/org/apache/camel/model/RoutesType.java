@@ -226,11 +226,11 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
     /**
      * Adds an on exception
      * 
-     * @param exceptionType  the exception
+     * @param exception  the exception
      * @return the builder
      */
-    public ExceptionType onException(Class exceptionType) {
-        ExceptionType answer = new ExceptionType(exceptionType);
+    public ExceptionType onException(Class exception) {
+        ExceptionType answer = new ExceptionType(exception);
         getExceptions().add(answer);
         return answer;
     }

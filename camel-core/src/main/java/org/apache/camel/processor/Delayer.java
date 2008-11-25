@@ -87,8 +87,6 @@ public class Delayer extends DelayProcessorSupport {
     /**
      * A Strategy Method to allow derived implementations to decide the current
      * system time or some other default exchange property
-     * 
-     * @param exchange
      */
     protected long defaultProcessTime(Exchange exchange) {
         return currentSystemTime();

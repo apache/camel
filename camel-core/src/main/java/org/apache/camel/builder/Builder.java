@@ -36,6 +36,31 @@ public final class Builder {
     }
 
     /**
+     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanRef  reference to bean to lookup in the Registry
+     * @return the builder
+     */
+    public static ValueBuilder bean(String beanRef) {
+        Expression expression = ExpressionBuilder.beanExpression(beanRef);
+        return new ValueBuilder(expression);
+    }
+
+    /**
+     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanRef  reference to bean to lookup in the Registry
+     * @param method   name of method to invoke
+     * @return the builder
+     */
+    public static ValueBuilder bean(String beanRef, String method) {
+        Expression expression = ExpressionBuilder.beanExpression(beanRef, method);
+        return new ValueBuilder(expression);
+    }
+
+    /**
      * Returns a constant expression
      */
     public static ValueBuilder constant(Object value) {

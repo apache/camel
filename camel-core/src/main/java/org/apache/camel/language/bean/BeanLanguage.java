@@ -43,7 +43,7 @@ public class BeanLanguage implements Language {
     /**
      * Creates the expression based on the string syntax.
      *
-     * @param expression the string syntax
+     * @param expression the string syntax <tt>beanRef.methodName</tt> where methodName can be omitted
      * @return the expression
      */
     public static Expression bean(String expression) {

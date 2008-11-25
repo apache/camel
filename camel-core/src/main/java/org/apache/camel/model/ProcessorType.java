@@ -70,7 +70,6 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorType<Type extends ProcessorType> extends OptionalIdentifiedType<Type> implements Block {
-    public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
     private static final transient Log LOG = LogFactory.getLog(ProcessorType.class);
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag;
@@ -1243,10 +1242,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // -------------------------------------------------------------------------
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param processor  the custom processor
+     * @param processor  the custom {@link Processor}
      * @return the builder
      */
     public Type process(Processor processor) {
@@ -1256,10 +1256,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor reference to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param ref   reference to a processor to lookup in the registry
+     * @param ref   reference to a {@link Processor} to lookup in the registry
      * @return the builder
      */
     public Type processRef(String ref) {
@@ -1270,8 +1271,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
      * @return the builder
@@ -1284,8 +1285,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
@@ -1300,8 +1301,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @return the builder
@@ -1314,8 +1315,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
@@ -1330,8 +1331,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
      * @return the builder
@@ -1343,8 +1344,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Adds a <a href="http://activemq.apache.org/camel/bean-language.html">bean</a>
-     * which is invoked which could be a final destination, or could be a transformation in a pipeline
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
@@ -1357,6 +1358,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the IN message
      *
      * @return a expression builder clause to set the body
@@ -1369,6 +1371,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the IN message
      *
      * @param expression   the expression used to set the body
@@ -1381,6 +1384,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the OUT message
      *
      * @param expression   the expression used to set the body
@@ -1393,6 +1397,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the OUT message
      *
      * @return a expression builder clause to set the body
@@ -1564,6 +1569,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // -------------------------------------------------------------------------
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Unmarshals the in body using a {@link DataFormat} expression to define
      * the format of the input message and the output will be set on the out message body.
      *
@@ -1574,6 +1580,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1586,6 +1593,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1597,6 +1605,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.
@@ -1610,6 +1619,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Marshals the in body using a {@link DataFormat} expression to define
      * the format of the output which will be added to the out body.
      *
@@ -1620,6 +1630,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1632,6 +1643,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1643,6 +1655,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
+     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
      * Marshals the in body the specified {@link DataFormat}
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.
@@ -1859,7 +1872,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * behaviour
      */
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
-        // return new MulticastProcessor(list);
         return new Pipeline(list);
     }
 

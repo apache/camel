@@ -85,9 +85,6 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return "Exception[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
     
-    /**
-     * Catches an exception type.
-     */
     @Override
     public ExceptionType onException(Class exceptionType) {
         getExceptionClasses().add(exceptionType);
