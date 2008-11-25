@@ -1163,10 +1163,7 @@
     <profile>
       <id>setup.eclipse</id>
       <!--
-      <modules>
-          <module>distribution</module>
-          <module>tools/eclipse-plugin</module>
-      </modules>
+        set up the eclipse workspace and generate the .classpath and .project files for modules
       -->
       <properties>
         <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
@@ -1311,9 +1308,11 @@
     </profile>
     <profile>
     	<id>nochecks</id>
+        <!-- skip the checkstyle source code checking -->
     </profile>
     <profile>
       <id>sourcecheck</id>
+      <!-- endable the checkstyle source code checking -->
       <activation>
         <activeByDefault>true</activeByDefault>
       </activation>
@@ -1355,6 +1354,7 @@
 
     <profile>
       <id>rat</id>
+      <!-- The profile for Apache Release Audit Tool http://incubator.apache.org/rat/ -->
       <build>
         <plugins>
           <plugin>
@@ -1431,6 +1431,7 @@
 
     <profile>
       <id>integration</id>
+      <!--The profile for running the unit and integration test-->
       <build>
         <plugins>
           <plugin>
