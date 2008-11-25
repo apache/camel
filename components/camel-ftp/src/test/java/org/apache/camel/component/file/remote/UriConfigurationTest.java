@@ -106,4 +106,20 @@ public class UriConfigurationTest extends TestSupport {
         String file = endpoint.getConfiguration().getFile();
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
     }
+    
+    public void testSftpKnownHostsConfiguration() {
+        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false&knownHosts=/home/janstey/.ssh/known_hosts");
+        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
+        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+        RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
+        
+        assertEquals("sftp", config.getProtocol());
+        assertEquals("hostname", config.getHost());
+        assertEquals(1021, config.getPort());
+        assertEquals("user", config.getUsername());
+        assertEquals("secret", config.getPassword());
+        assertEquals(true, config.isBinary());
+        assertEquals(false, config.isDirectory());
+        assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHosts());
+    }
 }
