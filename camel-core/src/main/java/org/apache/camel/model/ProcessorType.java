@@ -72,7 +72,12 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorType<Type extends ProcessorType> extends OptionalIdentifiedType<Type> implements Block {
+
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public static final String DEFAULT_TRACE_CATEGORY = "org.apache.camel.TRACE";
+
     private static final transient Log LOG = LogFactory.getLog(ProcessorType.class);
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Boolean inheritErrorHandlerFlag;
