@@ -706,18 +706,24 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression beanExpression(final String bean) {
+    public static Expression beanExpression(final String expression) {
         return new Expression() {
             public Object evaluate(Exchange exchange) {
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
-                return BeanLanguage.bean(bean).evaluate(exchange);
+                return BeanLanguage.bean(expression).evaluate(exchange);
             }
 
             @Override
             public String toString() {
-                return "bean(" + bean + ")";
+                return "bean(" + expression + ")";
             }
         };
     }
+
+    public static Expression beanExpression(final String beanRef, final String methodName) {
+        String expression = methodName != null ? beanRef + "." + methodName : beanRef;
+        return beanExpression(expression);
+    }
+
 }

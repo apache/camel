@@ -108,8 +108,7 @@ public abstract class BuilderSupport {
     public <T> ValueBuilder faultBodyAs(Class<T> type) {
         return Builder.faultBodyAs(type);
     }
-
-
+                             
     /**
      * Returns a value builder for the given system property
      */
@@ -132,9 +131,34 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanRef  reference to bean to lookup in the Registry
+     * @return the builder
+     */
+    public ValueBuilder bean(String beanRef) {
+        return Builder.bean(beanRef, null);
+    }
+
+    /**
+     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * value builder
+     *
+     * @param beanRef  reference to bean to lookup in the Registry
+     * @param method   name of method to invoke
+     * @return the builder
+     */
+    public ValueBuilder bean(String beanRef, String method) {
+        return Builder.bean(beanRef, method);
+    }
+
+    /**
      * Resolves the given URI to an endpoint
      *
+     * @param uri  the uri to resolve
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return the endpoint
      */
     public Endpoint endpoint(String uri) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
@@ -148,7 +172,10 @@ public abstract class BuilderSupport {
     /**
      * Resolves the given URI to an endpoint of the specified type
      *
+     * @param uri  the uri to resolve
+     * @param type the excepted type of the endpoint
      * @throws NoSuchEndpointException if the endpoint URI could not be resolved
+     * @return the endpoint
      */
     public <T extends Endpoint> T endpoint(String uri, Class<T> type) throws NoSuchEndpointException {
         ObjectHelper.notNull(uri, "uri");
@@ -162,7 +189,9 @@ public abstract class BuilderSupport {
     /**
      * Resolves the list of URIs into a list of {@link Endpoint} instances
      *
+     * @param uris  list of endpoints to resolve
      * @throws NoSuchEndpointException if an endpoint URI could not be resolved
+     * @return list of endpoints
      */
     public List<Endpoint> endpoints(String... uris) throws NoSuchEndpointException {
         List<Endpoint> endpoints = new ArrayList<Endpoint>();
@@ -174,6 +203,9 @@ public abstract class BuilderSupport {
 
     /**
      * Helper method to create a list of {@link Endpoint} instances
+     *
+     * @param endpoints  endpoints
+     * @return list of the given endpoints
      */
     public List<Endpoint> endpoints(Endpoint... endpoints) {
         List<Endpoint> answer = new ArrayList<Endpoint>();
@@ -182,48 +214,83 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates a disabled error handler for removing the default error handler
+     * Creates a disabled <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * for removing the default error handler
+     *
+     * @return the builder
      */
     public NoErrorHandlerBuilder noErrorHandler() {
         return new NoErrorHandlerBuilder();
     }
 
     /**
-     * Creates an error handler which just logs errors
+     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * which just logs errors
+     *
+     * @return the builder
      */
     public LoggingErrorHandlerBuilder loggingErrorHandler() {
         return new LoggingErrorHandlerBuilder();
     }
 
     /**
-     * Creates an error handler which just logs errors
+     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * which just logs errors
+     *
+     * @return the builder
      */
     public LoggingErrorHandlerBuilder loggingErrorHandler(String log) {
         return loggingErrorHandler(LogFactory.getLog(log));
     }
 
     /**
-     * Creates an error handler which just logs errors
+     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * which just logs errors
+     *
+     * @return the builder
      */
     public LoggingErrorHandlerBuilder loggingErrorHandler(Log log) {
         return new LoggingErrorHandlerBuilder(log);
     }
 
     /**
-     * Creates an error handler which just logs errors
+     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * which just logs errors
+     *
+     * @return the builder
      */
     public LoggingErrorHandlerBuilder loggingErrorHandler(Log log, LoggingLevel level) {
         return new LoggingErrorHandlerBuilder(log, level);
     }
 
+    /**
+     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * is a error handler for handling messages that could not be delivered to it's intented destination.
+     *
+     * @return the builder
+     */
     public DeadLetterChannelBuilder deadLetterChannel() {
         return new DeadLetterChannelBuilder();
     }
 
+    /**
+     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * is a error handler for handling messages that could not be delivered to it's intented destination.
+     *
+     * @param deadLetterUri  uri to the dead letter endpoint storing dead messages
+     * @return the builder
+     */
     public DeadLetterChannelBuilder deadLetterChannel(String deadLetterUri) {
         return deadLetterChannel(endpoint(deadLetterUri));
     }
 
+    /**
+     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * is a error handler for handling messages that could not be delivered to it's intented destination.
+     *
+     * @param deadLetterEndpoint  dead letter endpoint storing dead messages
+     * @return the builder
+     */
     public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {
         return new DeadLetterChannelBuilder(new SendProcessor(deadLetterEndpoint));
     }

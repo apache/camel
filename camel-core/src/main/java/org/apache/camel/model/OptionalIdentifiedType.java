@@ -109,6 +109,9 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
         return (T) this;
     }
 
+    /**
+     * Gets the node id, creating one if not already set.
+     */
     public String idOrCreate() {
         if (id == null) {
             setId(createId());
@@ -120,7 +123,7 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     // -------------------------------------------------------------------------
 
     /**
-     * A helper method to create a new ID for this node
+     * A helper method to create a new id for this node
      */
     protected String createId() {
         String key = getShortName();

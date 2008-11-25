@@ -94,10 +94,9 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Installs the given error handler builder
+     * Installs the given <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a> builder
      *
-     * @param errorHandlerBuilder the error handler to be used by default for
-     *                all child routes
+     * @param errorHandlerBuilder  the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
     public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
@@ -106,14 +105,14 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Configures whether or not the error handler is inherited by every
-     * processing node (or just the top most one)
+     * Configures whether or not the <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * is inherited by every processing node (or just the top most one)
      *
-     * @param value the flag as to whether error handlers should be inherited or not
+     * @param inherit  whether error handlers should be inherited or not
      * @return the current builder
      */
-    public RouteBuilder inheritErrorHandler(boolean value) {
-        routeCollection.setInheritErrorHandlerFlag(value);
+    public RouteBuilder inheritErrorHandler(boolean inherit) {
+        routeCollection.setInheritErrorHandlerFlag(inherit);
         return this;
     }
 
@@ -149,19 +148,21 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds an exception handler route for the given exception type
+     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * for cathing certain exceptions and handling them.
      *
-     * @param exceptionType  the exception type
+     * @param exception exception to catch
      * @return the builder
      */
-    public ExceptionType onException(Class exceptionType) {
-        return routeCollection.onException(exceptionType);
+    public ExceptionType onException(Class exception) {
+        return routeCollection.onException(exception);
     }
 
     /**
-     * Adds an exception handler route for the given exception types
+     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * for cathing certain exceptions and handling them.
      *
-     * @param exceptions  list of exceptions types
+     * @param exceptions list of exceptions to catch
      * @return the builder
      */
     public ExceptionType onException(Class... exceptions) {
@@ -260,6 +261,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
         route.setGroup(getClass().getName());
     }
 
+    /**
+     * Adds a collection of routes to this context
+     *
+     * @throws Exception if the routes could not be created for whatever reason
+     */
     protected void addRoutes(Routes routes) throws Exception {
         getContext().addRoutes(routes);
     }
