@@ -23,8 +23,12 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
 
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
+    protected final transient Log log = LogFactory.getLog(getClass());
+    
     public SftpEndpoint(String uri, RemoteFileComponent remoteFileComponent, RemoteFileConfiguration configuration) {
         super(uri, remoteFileComponent, configuration);
     }
@@ -45,6 +49,12 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
 
     protected Session createSession() throws JSchException {
         final JSch jsch = new JSch();
+        String knownHostsFile = getConfiguration().getKnownHosts();
+        if (knownHostsFile != null && knownHostsFile.trim().length() > 0) {
+            log.debug("Using knownHosts: " + knownHostsFile);
+            jsch.setKnownHosts(knownHostsFile);
+        }
+      
         final Session session = jsch.getSession(getConfiguration().getUsername(), getConfiguration().getHost(), getConfiguration().getPort());
         session.setUserInfo(new UserInfo() {
             public String getPassphrase() {
@@ -61,10 +71,12 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
 
             public boolean promptPassphrase(String string) {
                 return true;
-            }
+            }           
 
             public boolean promptYesNo(String string) {
-                return true;
+                log.error(string);
+                // Return 'false' indicating modification of the hosts file is disabled.
+                return false;
             }
 
             public void showMessage(String string) {
