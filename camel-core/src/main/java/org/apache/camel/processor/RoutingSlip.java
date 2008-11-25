@@ -94,8 +94,12 @@ public class RoutingSlip extends ServiceSupport implements Processor {
 
     private void updateRoutingSlip(Exchange current) {
         Message message = getResultMessage(current);
-        // TODO: Why not use indexOf and substr to find first delimiter, to skip first elemeent
-        message.setHeader(header, removeFirstElement(recipients(message)));
+        String oldSlip = message.getHeader(header, String.class);
+        if (oldSlip != null) {
+            int delimiterIndex = oldSlip.indexOf(uriDelimiter);
+            String newSlip = delimiterIndex > 0 ? oldSlip.substring(delimiterIndex + 1) : "";
+            message.setHeader(header, newSlip);
+        }
     }
 
     /**
@@ -122,18 +126,6 @@ public class RoutingSlip extends ServiceSupport implements Processor {
             return headerValue.toString().split(uriDelimiter);
         }
         return new String[] {};
-    }
-
-    /**
-     * Return a string representation of the element list with the first element
-     * removed.
-     */
-    private String removeFirstElement(String[] elements) {
-        CollectionStringBuffer updatedElements = new CollectionStringBuffer(uriDelimiter);
-        for (int i = 1; i < elements.length; i++) {
-            updatedElements.append(elements[i]);
-        }
-        return updatedElements.toString();
     }
 
     /**
