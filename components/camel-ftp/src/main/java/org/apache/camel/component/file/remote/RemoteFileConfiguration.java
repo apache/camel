@@ -35,6 +35,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private FTPClientConfig ftpClientConfig;
     private Expression expression;
     private boolean passiveMode;
+    private String knownHosts;
 
     public RemoteFileConfiguration() {
     }
@@ -90,6 +91,14 @@ public class RemoteFileConfiguration implements Cloneable {
             file = file.substring(1);
         }
         this.file = file;
+    }
+
+    public String getKnownHosts() {
+        return knownHosts;
+    }
+
+    public void setKnownHosts(String knownHosts) {
+        this.knownHosts = knownHosts;
     }
 
     public String getHost() {
