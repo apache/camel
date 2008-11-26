@@ -282,7 +282,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     }
 
     private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
-        // TODO: No used should it be removed?
+        // TODO: Not used should it be removed?
         final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
         return new Route(routeContext.getEndpoint(), resequencer) {
             @Override
@@ -293,7 +293,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     }
     
     private Route<? extends Exchange> createStreamResequencerRoute(RouteContext routeContext) throws Exception {
-        // TODO: No used should it be removed?
+        // TODO: Not used should it be removed?
         final StreamResequencer resequencer = createStreamResequencer(routeContext, streamConfig);
         return new Route(routeContext.getEndpoint(), resequencer) {
             @Override

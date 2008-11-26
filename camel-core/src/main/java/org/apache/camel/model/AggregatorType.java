@@ -269,6 +269,14 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
         this.strategyRef = strategyRef;
     }
 
+    public String getCollectionRef() {
+        return collectionRef;
+    }
+
+    public void setCollectionRef(String collectionRef) {
+        this.collectionRef = collectionRef;
+    }
+
     public void setCompletedPredicate(ExpressionSubElementType completedPredicate) {
         this.completedPredicate = completedPredicate;
     }
@@ -332,6 +340,17 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
      */
     public AggregatorType aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+
+    /**
+     * Sets the aggegate collection to use
+     *
+     * @param collectionRef  reference to the aggregate collection to lookup in the registry
+     * @return the builder
+     */
+    public AggregatorType collectionRef(String collectionRef) {
+        setCollectionRef(collectionRef);
         return this;
     }
 

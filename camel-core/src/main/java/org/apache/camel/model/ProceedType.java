@@ -37,9 +37,7 @@ public class ProceedType extends OutputType<ProcessorType> {
         return "proceed";
     }
 
-    // TODO we should be just returning the outputs!
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        //return routeContext.createProceedProcessor();
         return createOutputsProcessor(routeContext);
     }
 }
