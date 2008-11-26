@@ -142,4 +142,12 @@ public final class Builder {
     public static ValueBuilder systemProperty(final String name, final String defaultValue) {
         return new ValueBuilder(ExpressionBuilder.systemProperty(name, defaultValue));
     }
+
+    /**
+     * Returns a predicate and value builder for the exception message on an exchange
+     */
+    public static ValueBuilder exceptionMessage() {
+        Expression expression = ExpressionBuilder.exchangeExceptionMessageExpression();
+        return new ValueBuilder(expression);
+    }
 }

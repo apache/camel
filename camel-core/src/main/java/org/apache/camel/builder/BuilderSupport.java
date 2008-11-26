@@ -154,6 +154,13 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a exception expression value builder
+     */
+    public ValueBuilder exceptionMessage() {
+        return Builder.exceptionMessage();
+    }
+
+    /**
      * Resolves the given URI to an endpoint
      *
      * @param uri  the uri to resolve

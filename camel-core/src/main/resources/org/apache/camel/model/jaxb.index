@@ -50,7 +50,6 @@ RouteType
 RouteBuilderRef
 RoutesType
 RoutingSlipType
-ServiceActivationType
 SetBodyType
 SetHeaderType
 SetOutHeaderType
