@@ -85,12 +85,6 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return "Exception[" + getExceptionClasses() + (onWhen != null ? " " + onWhen : "") + " -> " + getOutputs() + "]";
     }
     
-    @Override
-    public ExceptionType onException(Class exceptionType) {
-        getExceptionClasses().add(exceptionType);
-        return this;
-    }
-    
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
      * @param context the camel context
@@ -127,6 +121,13 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Fluent API
     //-------------------------------------------------------------------------
+
+    @Override
+    public ExceptionType onException(Class exceptionType) {
+        getExceptionClasses().add(exceptionType);
+        return this;
+    }
+
     /**
      * Sets wether the exchange should be marked as handled or not.
      *

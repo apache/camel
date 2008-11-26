@@ -83,7 +83,13 @@ public class IdempotentConsumerType extends ExpressionNode {
                                       childProcessor);
     }
 
-    public MessageIdRepository resolveMessageIdRepository(RouteContext routeContext) {
+    /**
+     * Strategy method to resolve the {@link org.apache.camel.processor.idempotent.MessageIdRepository} to use
+     *
+     * @param routeContext  route context
+     * @return the repository
+     */
+    protected MessageIdRepository resolveMessageIdRepository(RouteContext routeContext) {
         if (messageIdRepository == null) {
             messageIdRepository = routeContext.lookup(messageIdRepositoryRef, MessageIdRepository.class);
         }
