@@ -66,6 +66,12 @@ public class SimpleTest extends LanguageTestSupport {
         assertPredicate("header.madeUpHeader", false);
     }
 
+    public void testExceptionMessage() throws Exception {
+        exchange.setException(new IllegalArgumentException("Just testing"));
+        assertExpression("exception.message", "Just testing");
+        assertExpression("Hello ${exception.message} World", "Hello Just testing World");
+    }
+
     protected String getLanguageName() {
         return "simple";
     }

@@ -122,7 +122,7 @@ public final class ExpressionBuilder {
      * Returns an expression for the outbound message headers
      *
      * @see Message#getHeaders()
-     * @return an expression object which will return the inbound headers
+     * @return an expression object which will return the headers
      */
     public static Expression outHeadersExpression() {
         return new Expression() {
@@ -160,6 +160,29 @@ public final class ExpressionBuilder {
         };
     }   
     
+    /**
+     * Returns an expression for an exception message set on the exchange
+     *
+     * @see <tt>Exchange.getException().getMessage()</tt>
+     * @return an expression object which will return the exception message set on the exchange
+     */
+    public static Expression exchangeExceptionMessageExpression() {
+        return new Expression() {
+            public Object evaluate(Exchange exchange) {
+                Throwable exception = exchange.getException();
+                if (exception == null) {
+                    exception = exchange.getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+                }
+                return exception != null ? exception.getMessage() : null;
+            }
+
+            @Override
+            public String toString() {
+                return "exchangeExceptionMessage";
+            }
+        };
+    }
+
     /**
      * Returns an expression for the property value with the given name
      *
@@ -203,8 +226,7 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for a system property value with the given name
      *
-     * @param propertyName the name of the system property the expression will
-     *                return
+     * @param propertyName the name of the system property the expression will return
      * @return an expression object which will return the system property value
      */
     public static Expression systemPropertyExpression(final String propertyName) {
@@ -214,12 +236,11 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for a system property value with the given name
      *
-     * @param propertyName the name of the system property the expression will
-     *                return
+     * @param propertyName the name of the system property the expression will return
      * @return an expression object which will return the system property value
      */
     public static Expression systemPropertyExpression(final String propertyName,
-                                                                              final String defaultValue) {
+                                                      final String defaultValue) {
         return new Expression() {
             public Object evaluate(Exchange exchange) {
                 return System.getProperty(propertyName, defaultValue);
@@ -407,8 +428,7 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression which converts the given expression to the given
-     * type
+     * Returns an expression which converts the given expression to the given type
      */
     public static Expression convertTo(final Expression expression, final Class type) {
         return new Expression() {
@@ -429,7 +449,7 @@ public final class ExpressionBuilder {
      * given token
      */
     public static Expression tokenizeExpression(final Expression expression,
-                                                                        final String token) {
+                                                final String token) {
         return new Expression() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
@@ -449,8 +469,8 @@ public final class ExpressionBuilder {
      * Returns a tokenize expression which will tokenize the string with the
      * given regex
      */
-    public static Expression regexTokenize(final Expression expression, 
-            final String regexTokenizer) {
+    public static Expression regexTokenize(final Expression expression,
+                                           final String regexTokenizer) {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new Expression() {
             public Object evaluate(Exchange exchange) {
@@ -508,7 +528,7 @@ public final class ExpressionBuilder {
      * replaceAll to transform the String and return the result
      */
     public static Expression regexReplaceAll(final Expression expression,
-                                                                     final String regex, final String replacement) {
+                                             final String regex, final String replacement) {
         final Pattern pattern = Pattern.compile(regex);
         return new Expression() {
             public Object evaluate(Exchange exchange) {
@@ -531,8 +551,8 @@ public final class ExpressionBuilder {
      * replaceAll to transform the String and return the result
      */
     public static Expression regexReplaceAll(final Expression expression,
-            String regex, final Expression replacementExpression) {
-        
+                                             final String regex, final Expression replacementExpression) {
+
         final Pattern pattern = Pattern.compile(regex);
         return new Expression() {
             public Object evaluate(Exchange exchange) {

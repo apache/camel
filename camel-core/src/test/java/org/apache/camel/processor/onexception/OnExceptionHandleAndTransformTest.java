@@ -26,14 +26,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
 
-    public void testOnException() throws Exception {
-        Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("Sorry", out);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public void testOnExceptionTransformConstant() throws Exception {
+        context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
@@ -52,6 +46,63 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                     }
                 });
             }
-        };
+        });
+
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("Sorry", out);
     }
+
+    public void testOnExceptionTransformExceptionMessage() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
+
+                // START SNIPPET: e2
+                // we catch MyFunctionalException and want to mark it as handled (= no failure returned to client)
+                // but we want to return a fixed text response, so we transform OUT body and return the exception message
+                onException(MyFunctionalException.class)
+                        .handled(true)
+                        .transform(exceptionMessage());
+                // END SNIPPET: e2
+
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new MyFunctionalException("Sorry you can not do this again to me");
+                    }
+                });
+            }
+        });
+
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("Sorry you can not do this again to me", out);
+    }
+
+    public void testOnExceptionSimpleLangaugeExceptionMessage() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
+
+                // START SNIPPET: e3
+                // we catch MyFunctionalException and want to mark it as handled (= no failure returned to client)
+                // but we want to return a fixed text response, so we transform OUT body and return a nice message
+                // using the simple language where we want insert the exception message
+                onException(MyFunctionalException.class)
+                        .handled(true)
+                        .transform().simple("Error reported: ${exception.message} - can not process this message.");
+                // END SNIPPET: e3
+
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new MyFunctionalException("Out of order");
+                    }
+                });
+            }
+        });
+
+        Object out = template.requestBody("direct:start", "Hello World");
+        assertEquals("Error reported: Out of order - can not process this message.", out);
+    }
+
 }
