@@ -45,8 +45,6 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
     private Boolean inheritErrorHandlerFlag;
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
-    @XmlElementRef
-    private List<ServiceActivationType> activations = new ArrayList<ServiceActivationType>();
     @XmlTransient
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     @XmlTransient
