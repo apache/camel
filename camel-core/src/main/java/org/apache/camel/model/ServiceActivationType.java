@@ -29,8 +29,10 @@ import org.apache.camel.model.language.ExpressionType;
 
 /**
  * Represents an XML &lt;serviceActivation/&gt; element
- * 
+ *
+ * @deprecated will be removed in Camel 2.0 
  * @version $Revision$
+ *
  */
 @XmlRootElement(name = "serviceActivation")
 @XmlAccessorType(XmlAccessType.FIELD)

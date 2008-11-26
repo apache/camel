@@ -45,6 +45,7 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
     private Boolean inheritErrorHandlerFlag;
     @XmlElementRef
     private List<RouteType> routes = new ArrayList<RouteType>();
+    // @deprecated will be removed in Camel 2.0
     @XmlElementRef
     private List<ServiceActivationType> activations = new ArrayList<ServiceActivationType>();
     @XmlTransient
