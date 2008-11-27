@@ -55,8 +55,10 @@ public class HandleFaultProcessor extends DelegateProcessor implements AsyncProc
                             if (faultBody instanceof Throwable) {
                                 exchange.setException((Throwable)faultBody);
                             } else {
-                                exchange.setException(new CamelException("Message contains fault of type "
-                                    + faultBody.getClass().getName() + ":\n" + faultBody));
+                                if (exchange.getException() == null) {                                
+                                    exchange.setException(new CamelException("Message contains fault of type "
+                                        + faultBody.getClass().getName() + ":\n" + faultBody));
+                                }
                             }
                         }
                     }
@@ -79,8 +81,10 @@ public class HandleFaultProcessor extends DelegateProcessor implements AsyncProc
                 if (faultBody instanceof Throwable) {
                     exchange.setException((Throwable)faultBody);
                 } else {
-                    exchange.setException(new CamelException("Message contains fault of type "
-                        + faultBody.getClass().getName() + ":\n" + faultBody));
+                    if (exchange.getException() == null) {
+                        exchange.setException(new CamelException("Message contains fault of type "
+                            + faultBody.getClass().getName() + ":\n" + faultBody));
+                    }
                 }
             }
         }
