@@ -82,7 +82,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     }
     
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor) {
-        this(processors, aggregationStrategy, false, null, false);
+        this(processors, aggregationStrategy, parallelProcessing, executor, false);
     }
 
     public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor, boolean streaming) {
