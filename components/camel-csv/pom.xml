@@ -40,15 +40,9 @@
   <repositories>
     <!-- TODO we can remove this when the commons-csv release syncs to the main repo -->
     <repository>
-      <id>open.iona.m2</id>
-      <name>IONA Open Source Community Release Repository</name>
-      <url>http://repo.open.iona.com/maven2</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
+      <id>servicemix</id>
+      <name>Apache ServiceMix Repository</name>
+      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
     </repository>
   </repositories>
 
@@ -60,7 +54,7 @@
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-csv</artifactId>
-      <version>1.0.0-fuse</version>
+      <version>1.0-r706899</version>
     </dependency>
 
     <!-- testing -->
