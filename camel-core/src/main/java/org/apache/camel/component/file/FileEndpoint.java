@@ -59,13 +59,12 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private boolean append = true;
     private String moveNamePrefix;
     private String moveNamePostfix;
-    private String[] excludedNamePrefixes;
-    private String[] excludedNamePostfixes;
     private String excludedNamePrefix;
     private String excludedNamePostfix;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
     private Expression expression;
+    private String tempPrefix;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -217,14 +216,6 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         this.moveNamePrefix = moveNamePrefix;
     }
 
-    public String[] getExcludedNamePrefixes() {
-        return excludedNamePrefixes;
-    }
-
-    public String[] getExcludedNamePostfixes() {
-        return excludedNamePostfixes;
-    }
-
     public boolean isNoop() {
         return noop;
     }
@@ -302,6 +293,17 @@ public class FileEndpoint extends ScheduledPollEndpoint {
      */
     public void setExpression(String fileLanguageExpression) {
         this.expression = FileLanguage.file(fileLanguageExpression);
+    }
+
+    public String getTempPrefix() {
+        return tempPrefix;
+    }
+
+    /**
+     * Enables and uses temporary prefix when writing files, after write it will be renamed to the correct name.
+     */
+    public void setTempPrefix(String tempPrefix) {
+        this.tempPrefix = tempPrefix;
     }
 
     /**

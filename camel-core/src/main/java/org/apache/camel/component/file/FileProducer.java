@@ -25,10 +25,8 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.ExchangeHelper;
@@ -50,28 +48,57 @@ public class FileProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
-    /**
-     * @deprecated will be removed in Camel 2.0.
-     */
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
     public void process(Exchange exchange) throws Exception {
         FileExchange fileExchange = (FileExchange) endpoint.createExchange(exchange);
         process(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }
 
-    public void process(FileExchange exchange) throws Exception {
-        boolean fileSource = exchange.getIn().getBody() instanceof File;
-        File target = createFileName(exchange.getIn());
+    protected void process(FileExchange exchange) throws Exception {
+        File target = createFileName(exchange);
+
+        // should we write to a temporary name and then afterwards rename to real target
+        boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getTempPrefix());
+        File tempTarget = null;
+        if (writeAsTempAndRename) {
+            // compute temporary name reusing the camel renamer
+            tempTarget = new File(target.getParent(), endpoint.getTempPrefix() + target.getName());
+        }
+
+        // write the file
+        writeFile(exchange, tempTarget != null ? tempTarget : target);
+
+        // if we did write to a temporary name then rename it to the real name after we have written the file
+        if (tempTarget != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Renaming file: " + tempTarget + " to: " + target);
+            }
+            boolean renamed = tempTarget.renameTo(target);
+            if (!renamed) {
+                throw new IOException("Can not rename file from: " + tempTarget + " to: " + target);
+            }
+
+        }
+
+        // lets store the name we really used in the header, so end-users can retrieve it
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target.getAbsolutePath());
+    }
+
+    /**
+     * Writes the given exchanges to the target file.
+     *
+     * @param exchange  the current exchange
+     * @param target  the target file
+     * @throws Exception can be thrown if not possible to write
+     */
+    protected void writeFile(Exchange exchange, File target) throws Exception {
         buildDirectory(target);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("About to write to: " + target + " from exchange: " + exchange);
         }
 
+        boolean fileSource = exchange.getIn().getBody() instanceof File;
         if (fileSource) {
             File source = ExchangeHelper.getMandatoryInBody(exchange, File.class);
             writeFileByFile(source, target);
@@ -141,12 +168,18 @@ public class FileProducer extends DefaultProducer {
         return out;
     }
 
-    protected File createFileName(Message message) {
+    /**
+     * Creates the target filename to write.
+     *
+     * @param exchange  the current exchange
+     * @return the target file
+     */
+    protected File createFileName(Exchange exchange) {
         File answer;
 
         String name = null;
         if (!endpoint.isIgnoreFileNameHeader()) {
-            name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+            name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
         }
 
         // expression support
@@ -164,8 +197,8 @@ public class FileProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Filename evaluated as expression: " + expression);
             }
-            Object result = expression.evaluate(message.getExchange());
-            name = message.getExchange().getContext().getTypeConverter().convertTo(String.class, result);
+            Object result = expression.evaluate(exchange);
+            name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }
 
         File endpointFile = endpoint.getFile();
@@ -173,10 +206,10 @@ public class FileProducer extends DefaultProducer {
             if (name != null) {
                 answer = new File(endpointFile, name);
                 if (answer.isDirectory()) {
-                    answer = new File(answer, endpoint.getGeneratedFileName(message));
+                    answer = new File(answer, endpoint.getGeneratedFileName(exchange.getIn()));
                 }
             } else {
-                answer = new File(endpointFile, endpoint.getGeneratedFileName(message));
+                answer = new File(endpointFile, endpoint.getGeneratedFileName(exchange.getIn()));
             }
         } else {
             if (name == null) {
@@ -186,13 +219,10 @@ public class FileProducer extends DefaultProducer {
             }
         }
 
-        // lets store the name we really used in the header, so end-users can retrieve it
-        message.setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, answer.getAbsolutePath());
-
         return answer;
     }
 
-    private void buildDirectory(File file) {
+    private static void buildDirectory(File file) {
         String dirName = file.getAbsolutePath();
         int index = dirName.lastIndexOf(File.separatorChar);
         if (index > 0) {
