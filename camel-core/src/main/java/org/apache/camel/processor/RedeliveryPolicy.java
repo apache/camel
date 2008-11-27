@@ -16,9 +16,10 @@
  */
 package org.apache.camel.processor;
 
-import java.io.Serializable;
 import java.util.Random;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,10 +90,21 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     /**
      * Returns true if the policy decides that the message exchange should be
-     * redelivered
+     * redelivered.
+     *
+     * @param exchange  the current exchange
+     * @param redeliveryCounter  the current retry counter
+     * @param retryUntil  an optional predicate to determine if we should redeliver or not
+     * @return true to redeliver, false to stop
      */
-    public boolean shouldRedeliver(int redeliveryCounter) {
+    public boolean shouldRedeliver(Exchange exchange, int redeliveryCounter, Predicate retryUntil) {
+        // predicate is always used if provided
+        if (retryUntil != null) {
+            return retryUntil.matches(exchange);
+        }
+
         if (getMaximumRedeliveries() < 0) {
+            // retry forever if negative value
             return true;
         }
         // redeliver until we hit the max
