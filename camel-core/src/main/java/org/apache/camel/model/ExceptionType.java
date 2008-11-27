@@ -55,6 +55,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen", required = false)
     private WhenType onWhen;
+    @XmlElement(name = "retryUntil", required = false)
+    private ExpressionSubElementType retryUntil;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
@@ -67,6 +69,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private Processor errorHandler;
     @XmlTransient
     private Predicate handledPolicy;
+    @XmlTransient
+    private Predicate retryUntilPolicy;
 
     public ExceptionType() {
     }
@@ -106,6 +110,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         setHandledFromExpressionType(routeContext);
+        setRetryUntilFromExpressionType(routeContext);
         // lets attach a processor to an error handler
         errorHandler = routeContext.createProcessor(this);
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
@@ -189,6 +194,28 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         ExpressionClause<ExceptionType> clause = new ExpressionClause<ExceptionType>(this);
         onWhen.setExpression(clause);
         return clause;
+    }
+
+    /**
+     * Sets the retry until predicate.
+     *
+     * @param until predicate that determines when to stop retrying
+     * @return the builder
+     */
+    public ExceptionType retryUntil(Predicate until) {
+        setRetryUntilPolicy(until);
+        return this;
+    }
+
+    /**
+     * Sets the retry until expression.
+     *
+     * @param until expression that determines when to stop retrying
+     * @return the builder
+     */
+    public ExceptionType retryUntil(Expression until) {
+        setRetryUntilPolicy(toPredicate(until));
+        return this;
     }
 
     /**
@@ -356,12 +383,6 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public ExpressionSubElementType getHandled() {
         return handled;
     }    
-    
-    private void setHandledFromExpressionType(RouteContext routeContext) {
-        if (getHandled() != null && handledPolicy == null && routeContext != null) {  
-            handled(getHandled().createPredicate(routeContext));
-        }
-    }
 
     public void setHandledPolicy(Predicate handledPolicy) {
         this.handledPolicy = handledPolicy;
@@ -373,6 +394,22 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     public void setOnWhen(WhenType onWhen) {
         this.onWhen = onWhen;
+    }
+
+    public ExpressionSubElementType getRetryUntil() {
+        return retryUntil;
+    }
+
+    public void setRetryUntil(ExpressionSubElementType retryUntil) {
+        this.retryUntil = retryUntil;
+    }
+
+    public Predicate getRetryUntilPolicy() {
+        return retryUntilPolicy;
+    }
+
+    public void setRetryUntilPolicy(Predicate retryUntilPolicy) {
+        this.retryUntilPolicy = retryUntilPolicy;
     }
 
     // Implementation methods
@@ -393,4 +430,18 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         }
         return answer;
     }
+
+
+    private void setHandledFromExpressionType(RouteContext routeContext) {
+        if (getHandled() != null && handledPolicy == null && routeContext != null) {
+            handled(getHandled().createPredicate(routeContext));
+        }
+    }
+
+    private void setRetryUntilFromExpressionType(RouteContext routeContext) {
+        if (getRetryUntil() != null && retryUntilPolicy == null && routeContext != null) {
+            retryUntil(getRetryUntil().createPredicate(routeContext));
+        }
+    }
+
 }

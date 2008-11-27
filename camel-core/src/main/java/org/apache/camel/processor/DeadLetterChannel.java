@@ -61,6 +61,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         long redeliveryDelay;
         boolean sync = true;
         Predicate handledPredicate;
+        Predicate retryUntilPredicate;
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
@@ -91,11 +92,18 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         return "DeadLetterChannel[" + output + ", " + deadLetter + "]";
     }
 
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         return process(exchange, callback, new RedeliveryData());
     }
 
-    public boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+    /**
+     * Processes the exchange using decorated with this dead letter channel.
+     */
+    protected boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
             // we can't keep retrying if the route is being shutdown.
@@ -127,18 +135,21 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 if (exceptionPolicy != null) {
                     data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
                     data.handledPredicate = exceptionPolicy.getHandledPolicy();
+                    data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
                     Processor processor = exceptionPolicy.getErrorHandler();
                     if (processor != null) {
                         data.failureProcessor = processor;
                     }                    
                 }
                 
-                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, data, e);
+                logFailedDelivery(true, exchange, "Failed delivery for exchangeId: " + exchange.getExchangeId()
+                        + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, data, e);
                 data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
             }
 
-            // should we redeliver or not?
-            if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+            // compute if we should redeliver or not
+            boolean shouldRedeliver = shouldRedeliver(exchange, data);
+            if (!shouldRedeliver) {
                 // we did not success with the redelivery so now we let the failure processor handle it
                 setFailureHandled(exchange);
                 // must decrement the redelivery counter as we didn't process the redelivery but is
@@ -155,11 +166,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
                 // The line below shouldn't be needed, it is invoked by the AsyncCallback above
                 //restoreExceptionOnExchange(exchange, data.handledPredicate);
-                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor, data, null);
+                logFailedDelivery(false, exchange, "Failed delivery for exchangeId: " + exchange.getExchangeId()
+                        + ". Handled by the failure processor: " + data.failureProcessor, data, null);
                 return sync;
             }
 
-            // should we redeliver
+            // if we are redelivering then sleep before trying again
             if (data.redeliveryCounter > 0) {
                 // okay we will give it another go so clear the exception so we can try again
                 if (exchange.getException() != null) {
@@ -201,52 +213,19 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     }
 
-    private void logFailedDelivery(String message, RedeliveryData data, Throwable e) {
-        LoggingLevel newLogLevel = null;
-        if (data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
-            newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
-        } else {
-            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
-        }
-        if (e != null) {
-            logger.log(message, e, newLogLevel);
-        } else {
-            logger.log(message, newLogLevel);
-        }
-    }
+    // Properties
+    // -------------------------------------------------------------------------
 
     public static boolean isFailureHandled(Exchange exchange) {
-        return exchange.getProperty(FAILURE_HANDLED_PROPERTY) != null 
+        return exchange.getProperty(FAILURE_HANDLED_PROPERTY) != null
             || exchange.getIn().getHeader(CAUGHT_EXCEPTION_HEADER) != null;
     }
 
     public static void setFailureHandled(Exchange exchange) {
         exchange.setProperty(FAILURE_HANDLED_PROPERTY, exchange.getException());
-        exchange.getIn().setHeader(CAUGHT_EXCEPTION_HEADER, exchange.getException());        
+        exchange.getIn().setHeader(CAUGHT_EXCEPTION_HEADER, exchange.getException());
         exchange.setException(null);
     }
-
-    protected static void restoreExceptionOnExchange(Exchange exchange, Predicate handledPredicate) {
-        if (handledPredicate == null || !handledPredicate.matches(exchange)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
-            }
-            // exception not handled, put exception back in the exchange
-            exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
-        } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
-            }
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED_PROPERTY, Boolean.TRUE);
-        }
-    }
-
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    // Properties
-    // -------------------------------------------------------------------------
 
     /**
      * Returns the output processor
@@ -287,7 +266,41 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
 
     // Implementation methods
+
     // -------------------------------------------------------------------------
+
+    protected static void restoreExceptionOnExchange(Exchange exchange, Predicate handledPredicate) {
+        if (handledPredicate == null || !handledPredicate.matches(exchange)) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
+            }
+            // exception not handled, put exception back in the exchange
+            exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
+            }
+            exchange.setProperty(Exchange.EXCEPTION_HANDLED_PROPERTY, Boolean.TRUE);
+        }
+    }
+
+    private void logFailedDelivery(boolean shouldRedeliver, Exchange exchange, String message, RedeliveryData data, Throwable e) {
+        LoggingLevel newLogLevel;
+        if (shouldRedeliver) {
+            newLogLevel = data.currentRedeliveryPolicy.getRetryAttemptedLogLevel();
+        } else {
+            newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
+        }
+        if (e != null) {
+            logger.log(message, e, newLogLevel);
+        } else {
+            logger.log(message, newLogLevel);
+        }
+    }
+
+    private boolean shouldRedeliver(Exchange exchange, RedeliveryData data) {
+        return data.currentRedeliveryPolicy.shouldRedeliver(exchange, data.redeliveryCounter, data.retryUntilPredicate);
+    }
 
     /**
      * Increments the redelivery counter and adds the redelivered flag if the
