@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.util.ObjectHelper;
@@ -57,7 +56,7 @@ public class FileConsumer extends ScheduledPollConsumer {
     private boolean exclusiveReadLock = true;
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
-        super((DefaultEndpoint)endpoint, processor);
+        super(endpoint, processor);
         this.endpoint = endpoint;
     }
 
@@ -349,25 +348,9 @@ public class FileConsumer extends ScheduledPollConsumer {
                 return false;
             }
         }
-        String[] prefixes = endpoint.getExcludedNamePrefixes();
-        if (prefixes != null) {
-            for (String prefix : prefixes) {
-                if (name.startsWith(prefix)) {
-                    return false;
-                }
-            }
-        }
         if (endpoint.getExcludedNamePostfix() != null) {
             if (name.endsWith(endpoint.getExcludedNamePostfix())) {
                 return false;
-            }
-        }
-        String[] postfixes = endpoint.getExcludedNamePostfixes();
-        if (postfixes != null) {
-            for (String postfix : postfixes) {
-                if (name.endsWith(postfix)) {
-                    return false;
-                }
             }
         }
 
