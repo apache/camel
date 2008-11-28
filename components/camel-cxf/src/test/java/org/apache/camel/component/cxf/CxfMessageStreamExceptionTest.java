@@ -26,16 +26,19 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+             // START SNIPPET: MessageStreamFault
                 from(routerEndpointURI).process(new Processor() {
 
                     public void process(Exchange exchange) throws Exception {
                         Message out = exchange.getOut();
+                        // Set the message body with the 
                         out.setBody(this.getClass().getResourceAsStream("SoapFaultMessage.xml"));
-                        // set the response code here
+                        // Set the response code here
                         out.setHeader(org.apache.cxf.message.Message.RESPONSE_CODE, new Integer(500));
                     }
 
                 });
+             // END SNIPPET: MessageStreamFault
             }
         };
     }

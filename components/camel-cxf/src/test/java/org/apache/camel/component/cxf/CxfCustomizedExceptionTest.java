@@ -55,6 +55,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
 
     private Bus bus;
 
+    // START SNIPPET: FaultDefine
     static {
         SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
         Element detail = SOAP_FAULT.getOrCreateDetail();
@@ -62,6 +63,7 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
         Text tn = doc.createTextNode(DETAIL_TEXT);
         detail.appendChild(tn);
     }
+    // END SNIPPET: FaultDefine
 
     @Override
     protected void setUp() throws Exception {
@@ -78,14 +80,17 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
         //bus.shutdown(true);
         BusFactory.setDefaultBus(null);
     }
-
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: ThrowFault
                 from(routerEndpointURI).throwFault(SOAP_FAULT);
+                // END SNIPPET: ThrowFault
             }
         };
     }
+    
 
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
