@@ -54,16 +54,16 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
     private static final SoapFault SOAP_FAULT;
 
     private Bus bus;
-
-    // START SNIPPET: FaultDefine
+   
     static {
+        // START SNIPPET: FaultDefine
         SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
         Element detail = SOAP_FAULT.getOrCreateDetail();
         Document doc = detail.getOwnerDocument();
         Text tn = doc.createTextNode(DETAIL_TEXT);
         detail.appendChild(tn);
-    }
-    // END SNIPPET: FaultDefine
+        // END SNIPPET: FaultDefine
+    }    
 
     @Override
     protected void setUp() throws Exception {
