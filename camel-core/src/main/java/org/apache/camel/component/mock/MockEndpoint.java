@@ -242,7 +242,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
         if (expectedMinimumCount >= 0) {
             int receivedCounter = getReceivedCounter();
-            assertTrue("Received message count " + receivedCounter + ", expected at least " + expectedCount, expectedCount <= receivedCounter);
+            assertTrue("Received message count " + receivedCounter + ", expected at least " + expectedMinimumCount, expectedMinimumCount <= receivedCounter);
         }
 
         for (Runnable test : tests) {
