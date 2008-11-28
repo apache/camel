@@ -194,7 +194,7 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     // -------------------------------------------------------------------------
 
     /**
-     * A stategy method to allow derived classes to deal with the newly created
+     * A strategy method to allow derived classes to deal with the newly created
      * predicate in different ways
      */
     protected Predicate<E> onNewPredicate(Predicate<E> predicate) {
