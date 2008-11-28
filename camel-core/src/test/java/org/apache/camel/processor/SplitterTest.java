@@ -183,10 +183,10 @@ public class SplitterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:seqential").splitter(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
-                from("direct:parallel").splitter(body().tokenize(","), new MyAggregationStrategy(), true).to("mock:result");
-                from("direct:streaming").splitter(body().tokenize(",")).streaming().to("mock:result");
-                from("direct:parallel-streaming").splitter(body().tokenize(","), new MyAggregationStrategy(), true).streaming().to("mock:result");
+                from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
+                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy(), true).to("mock:result");
+                from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
+                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy(), true).streaming().to("mock:result");
             }
         };
     }

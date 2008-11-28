@@ -109,9 +109,9 @@ public class NeilSplitterTest extends ContextTestSupport {
                     }
                 };
 
-                from("direct:custom").splitter(catFightCats).to("mock:result");
+                from("direct:custom").split(catFightCats).to("mock:result");
 
-                from("direct:xpath").splitter(xpath("/a/b")).to("mock:result");
+                from("direct:xpath").split(xpath("/a/b")).to("mock:result");
             }
         };
     }

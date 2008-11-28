@@ -42,7 +42,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:in").to("log:hello?groupSize=2").delayer(100).to("mock:result");
+                from("seda:in").to("log:hello?groupSize=2").delay(100).to("mock:result");
             }
         };
     }

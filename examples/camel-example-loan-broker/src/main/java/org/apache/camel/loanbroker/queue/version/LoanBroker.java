@@ -86,7 +86,7 @@ public class LoanBroker extends RouteBuilder {
         // Now we aggregating the response message by using the Constants.PROPERTY_SSN header
         // The aggregation will completed when all the three bank responses are received
         from("jms:queue:bankReplyQueue")
-            .aggregator(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
+            .aggregate(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completedPredicate(header(Exchange.AGGREGATED_COUNT).isEqualTo(3))
 
         // Here we do some translation and put the message back to loanReplyQueue

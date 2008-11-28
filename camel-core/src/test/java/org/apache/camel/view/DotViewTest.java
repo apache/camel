@@ -82,7 +82,7 @@ public class DotViewTest extends ContextTestSupport {
     static class ComplexRoute extends RouteBuilder {
         public void configure() throws Exception {
             from("file:target/xyz?noop=true").filter(header("foo").isEqualTo("bar"))
-                .recipientList(header("bar")).splitter(XPathBuilder.xpath("/invoice/lineItems")).throttler(3)
+                .recipientList(header("bar")).split(XPathBuilder.xpath("/invoice/lineItems")).throttle(3)
                 .to("mock:result");
         }
     }

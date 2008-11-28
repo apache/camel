@@ -44,7 +44,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttler(3).timePeriodMillis(30000).to("mock:result");
+                from("seda:a").throttle(3).timePeriodMillis(30000).to("mock:result");
                 // END SNIPPET: ex
             }
         };
