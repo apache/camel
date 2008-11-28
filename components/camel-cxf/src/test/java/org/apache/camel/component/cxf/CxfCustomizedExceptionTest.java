@@ -16,6 +16,17 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Text;
@@ -25,6 +36,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.soap.SoapFault;
@@ -100,6 +112,31 @@ public class CxfCustomizedExceptionTest extends ContextTestSupport {
             assertEquals("Expect to get right fault-code", "{http://schemas.xmlsoap.org/soap/envelope/}Client", ((SoapFault)e).getFaultCode().toString());
         }
 
+    }
+    
+    public void testInvokingServiceFromHTTPURL() throws Exception {
+        URL url = new URL(ROUTER_ADDRESS);
+        URLConnection urlConnection = url.openConnection();
+        urlConnection.setDoInput(true);
+        urlConnection.setDoOutput(true);
+        urlConnection.setUseCaches(false);
+        urlConnection.setRequestProperty("Content-Type", "application/xml");
+
+        // Send POST data
+        OutputStream out = urlConnection.getOutputStream();
+        // copy the message out
+        InputStream is = this.getClass().getResourceAsStream("SimpleSoapRequest.xml");
+        IOUtils.copy(is, out);
+        out.flush();
+        is.close();
+        // check the response code        
+        try {          
+            urlConnection.getInputStream(); 
+            fail("We except an IOException here");
+        } catch (IOException exception) {
+            assertTrue(exception.getMessage().contains("500"));
+        }
+            
     }
 
 

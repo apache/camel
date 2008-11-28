@@ -66,7 +66,8 @@ public final class CxfHeaderHelper {
                 if (CamelTransportConstants.CONTENT_TYPE.equals(entry.getKey())) {
                     message.put(Message.CONTENT_TYPE, entry.getValue());
                 } else if (Client.REQUEST_CONTEXT.equals(entry.getKey())
-                            || Client.RESPONSE_CONTEXT.equals(entry.getKey())) {
+                            || Client.RESPONSE_CONTEXT.equals(entry.getKey())
+                            || Message.RESPONSE_CODE.equals(entry.getKey())) {
                     message.put(entry.getKey(), entry.getValue());
                 } else {
                     List<String> listValue = new ArrayList<String>();
