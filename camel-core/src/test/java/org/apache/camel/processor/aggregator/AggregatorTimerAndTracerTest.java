@@ -41,10 +41,10 @@ public class AggregatorTimerAndTracerTest extends ContextTestSupport {
 
                 from("timer://kickoff?period=9999910000").
                     setHeader("id").constant("foo").setBody().constant("a b c").
-                    splitter(body().tokenize(" ")).to("seda:splitted");
+                    split(body().tokenize(" ")).to("seda:splitted");
 
                 from("seda:splitted").
-                    aggregator(header("id")).
+                    aggregate(header("id")).
                     to("mock:result");
             }
         };

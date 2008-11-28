@@ -63,7 +63,7 @@ public class CustomAggregationCollectionTest extends ContextTestSupport {
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")
                     // use our own collection for aggregation
-                    .aggregator(new MyReverseAggregationCollection())
+                    .aggregate(new MyReverseAggregationCollection())
                     // wait for 0.5 seconds to aggregate
                     .batchTimeout(500L)
                     .to("mock:result");

@@ -55,10 +55,10 @@ public class DelayerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
+                from("seda:a").delay(header("JMSTimestamp"), 3000).to("mock:result");
                 // END SNIPPET: ex
                 // START SNIPPET: ex2
-                from("seda:b").delayer(3000).to("mock:result");
+                from("seda:b").delay(3000).to("mock:result");
                 // END SNIPPET: ex2
             }
         };

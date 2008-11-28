@@ -257,7 +257,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
      * @param delay  delay in millis
      * @return the builder
      */
-    public ExceptionType delay(long delay) {
+    public ExceptionType setDelay(long delay) {
         getOrCreateRedeliveryPolicy().delay(delay);
         return this;
     }

@@ -89,18 +89,18 @@ public class AggregatorTest extends ContextTestSupport {
 
                 // START SNIPPET: ex
                 // in this route we aggregate all from direct:state based on the header id cheese
-                from("direct:start").aggregator(header("cheese")).to("mock:result");
+                from("direct:start").aggregate(header("cheese")).to("mock:result");
 
                 // because of a bug in Camel (CAMEL-393) we can not have other types between from and aggregator
                 // so we must do it as here with two routes. In the fist line we set the header visited to true
                 // and link it to the 2nd route by sending it to direct:temp...
                 from("seda:header").setHeader("visited", constant(true)).to("direct:temp");
                 // and here we consume from direct:temp to continue from above and aggregate
-                from("direct:temp").aggregator(header("cheese")).to("mock:result");
+                from("direct:temp").aggregate(header("cheese")).to("mock:result");
 
-                // in this sample we aggreagte using our own startegy with a completion predicate
+                // in this sample we aggregate using our own startegy with a completion predicate
                 // stating that the aggregated header is equal to 5.
-                from("direct:predicate").aggregator(header("cheese"), new MyAggregationStrategy()).
+                from("direct:predicate").aggregate(header("cheese"), new MyAggregationStrategy()).
                     completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
                 // END SNIPPET: ex
             }

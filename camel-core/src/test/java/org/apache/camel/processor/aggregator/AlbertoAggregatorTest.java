@@ -159,7 +159,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
 
                 from("direct:start")
                         // Separate people
-                        .splitter(bodyAs(String.class).tokenize(",")).process(
+                        .split(bodyAs(String.class).tokenize(",")).process(
 
                             // Split the name, erase the surname and put it in a
                             // header
@@ -178,13 +178,13 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         .to("direct:joinSurnames");
 
                 from("direct:joinSurnames")
-                        .aggregator(header(SURNAME_HEADER),
+                        .aggregate(header(SURNAME_HEADER),
                                 surnameAggregator).setHeader(TYPE_HEADER,
                         constant(BROTHERS_TYPE)).to("direct:joinBrothers");
 
                 // Join all brothers lists and remove surname and type headers
                 AggregatorType agg =
-                        from("direct:joinBrothers").aggregator(header(TYPE_HEADER),
+                        from("direct:joinBrothers").aggregate(header(TYPE_HEADER),
                                 brothersAggregator);
 
                 agg.setBatchTimeout(2000L);

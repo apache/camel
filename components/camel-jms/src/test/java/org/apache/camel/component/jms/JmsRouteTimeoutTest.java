@@ -61,7 +61,7 @@ public class JmsRouteTimeoutTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("activemq:queue:slow").delayer(3000).transform(constant("Bye World"));
+                from("activemq:queue:slow").delay(3000).transform(constant("Bye World"));
             }
         };
     }

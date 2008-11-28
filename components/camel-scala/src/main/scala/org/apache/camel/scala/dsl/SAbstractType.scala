@@ -54,7 +54,7 @@ abstract class SAbstractType extends DSL {
   def attempt : STryType = new STryType(target.tryBlock)
   
   def splitter(expression: Exchange => Any) = 
-    new SSplitterType(target.splitter(expression))
+    new SSplitterType(target.split(expression))
     
   def recipients(expression: Exchange => Any) = 
     new SProcessorType(target.recipientList(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
@@ -90,13 +90,13 @@ abstract class SAbstractType extends DSL {
   }
  
   
-  def throttle(frequency: Frequency) = new SThrottlerType(target.throttler(frequency.count).timePeriodMillis(frequency.period.milliseconds))
+  def throttle(frequency: Frequency) = new SThrottlerType(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
   def loadbalance = new SLoadBalanceType(target.loadBalance)
   
-  def delay(period: Period) = new SDelayerType(target.delayer(period.milliseconds))
+  def delay(period: Period) = new SDelayerType(target.delay(period.milliseconds))
   
-  def resequence(expression: Exchange => Any) = new SResequencerType(target.resequencer(expression))
+  def resequence(expression: Exchange => Any) = new SResequencerType(target.resequence(expression))
   
   def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
   
@@ -107,6 +107,6 @@ abstract class SAbstractType extends DSL {
     this
   }
   
-  def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregator(expression))
+  def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregate(expression))
 
 }

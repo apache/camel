@@ -381,7 +381,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: splitter
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").splitter(body(String.class).tokenize("\n")).to("seda:b");
+                from("seda:a").split(body(String.class).tokenize("\n")).to("seda:b");
             }
         };
         // END SNIPPET: splitter

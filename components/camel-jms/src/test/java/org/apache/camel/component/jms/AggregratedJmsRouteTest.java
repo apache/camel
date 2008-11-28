@@ -85,7 +85,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(timeOutEndpointUri).to("jms:queue:test.b");
-                from("jms:queue:test.b").aggregator(header("cheese"), new AggregationStrategy() {
+                from("jms:queue:test.b").aggregate(header("cheese"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         try {
                             Thread.sleep(2 * BatchProcessor.DEFAULT_BATCH_TIMEOUT);
@@ -101,7 +101,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
                 from("jms:queue:point1").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point2").process(new MyProcessor()).to("jms:queue:reply");
                 from("jms:queue:point3").process(new MyProcessor()).to("jms:queue:reply");
-                from("jms:queue:reply").aggregator(header("cheese"), new AggregationStrategy() {
+                from("jms:queue:reply").aggregate(header("cheese"), new AggregationStrategy() {
                     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
                         Exchange copy = newExchange.copy();
                         LOG.info("try to aggregating the message ");

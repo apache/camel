@@ -515,7 +515,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression  the expression on which to split the message
      * @return the builder
      */
-    public SplitterType splitter(Expression expression) {
+    public SplitterType split(Expression expression) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         return answer;
@@ -530,7 +530,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @return the expression clause builder for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter() {
+    public ExpressionClause<SplitterType> split() {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
@@ -546,7 +546,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the builder
      */
-    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy) {
+    public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
@@ -562,7 +562,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy) {
+    public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
@@ -579,7 +579,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
-    public SplitterType splitter(Expression expression, boolean parallelProcessing) {
+    public SplitterType split(Expression expression, boolean parallelProcessing) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
@@ -597,7 +597,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the builder
      */
-    public SplitterType splitter(Expression expression, boolean parallelProcessing,
+    public SplitterType split(Expression expression, boolean parallelProcessing,
                                  ThreadPoolExecutor threadPoolExecutor) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
@@ -615,7 +615,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(boolean parallelProcessing) {
+    public ExpressionClause<SplitterType> split(boolean parallelProcessing) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
@@ -633,7 +633,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+    public ExpressionClause<SplitterType> split(boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
@@ -652,7 +652,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
      */
-    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy,
+    public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy,
                                  boolean parallelProcessing) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
@@ -673,7 +673,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the builder
      */
-    public SplitterType splitter(Expression expression, AggregationStrategy aggregationStrategy,
+    public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy,
                                  boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
@@ -693,7 +693,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
+    public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
@@ -712,7 +712,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> splitter(AggregationStrategy aggregationStrategy, boolean parallelProcessing,
+    public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                                                    ThreadPoolExecutor threadPoolExecutor) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
@@ -724,11 +724,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     
     /**
      * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
-     * Creates a splitter allowing you to reorganise messages based on some comparator.
+     * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @return the expression clause for the expressions on which to compare messages in order
      */
-    public ExpressionClause<ResequencerType> resequencer() {
+    public ExpressionClause<ResequencerType> resequence() {
         ResequencerType answer = new ResequencerType();
         addOutput(answer);
         ExpressionClause<ResequencerType> clause = new ExpressionClause<ResequencerType>(answer);
@@ -738,23 +738,23 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
-     * Creates a splitter allowing you to reorganise messages based on some comparator.
+     * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @param expression the expression on which to compare messages in order
      * @return the builder
      */
-    public ResequencerType resequencer(Expression expression) {
-        return resequencer(Collections.<Expression>singletonList(expression));
+    public ResequencerType resequence(Expression expression) {
+        return resequence(Collections.<Expression>singletonList(expression));
     }
 
     /**
      * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
-     * Creates a splitter allowing you to reorganise messages based on some comparator.
+     * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequencerType resequencer(List<Expression> expressions) {
+    public ResequencerType resequence(List<Expression> expressions) {
         ResequencerType answer = new ResequencerType(expressions);
         addOutput(answer);
         return answer;
@@ -770,16 +770,16 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public ResequencerType resequencer(Expression... expressions) {
         List<Expression> list = new ArrayList<Expression>();
         list.addAll(Arrays.asList(expressions));
-        return resequencer(list);
+        return resequence(list);
     }
 
     /**
      * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
-     * @return the expression clause to be used as builder to configure the coorelation expression
+     * @return the expression clause to be used as builder to configure the correlation expression
      */
-    public ExpressionClause<AggregatorType> aggregator() {
+    public ExpressionClause<AggregatorType> aggregate() {
         if (!getOutputs().isEmpty()) {
             throw new IllegalArgumentException("Aggregator must be the only output added to the route: " + this);
         }
@@ -793,9 +793,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param aggregationStrategy the strategy used for the aggregation
-     * @return the expression clause to be used as builder to configure the coorelation expression
+     * @return the expression clause to be used as builder to configure the correlation expression
      */
-    public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
+    public ExpressionClause<AggregatorType> aggregate(AggregationStrategy aggregationStrategy) {
         if (!getOutputs().isEmpty()) {
             throw new IllegalArgumentException("Aggregator must be the only output added to the route: " + this);
         }
@@ -812,7 +812,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationCollection the collection used to perform the aggregation
      * @return the builder
      */
-    public AggregatorType aggregator(AggregationCollection aggregationCollection) {
+    public AggregatorType aggregate(AggregationCollection aggregationCollection) {
         if (!getOutputs().isEmpty()) {
             throw new IllegalArgumentException("Aggregator must be the only output added to the route: " + this);
         }
@@ -832,7 +832,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                              <code>header("JMSCorrelationID")</code>
      * @return the builder
      */
-    public AggregatorType aggregator(Expression correlationExpression) {
+    public AggregatorType aggregate(Expression correlationExpression) {
         if (!getOutputs().isEmpty()) {
             throw new IllegalArgumentException("Aggregator must be the only output added to the route: " + this);
         }
@@ -852,7 +852,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy the strategy used for the aggregation
      * @return the builder
      */
-    public AggregatorType aggregator(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+    public AggregatorType aggregate(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         if (!getOutputs().isEmpty()) {
             throw new IllegalArgumentException("Aggregator must be the only output added to the route: " + this);
         }
@@ -869,8 +869,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                             should be convertable to long as time in millis
      * @return the builder
      */
-    public DelayerType delayer(Expression processAtExpression) {
-        return delayer(processAtExpression, 0L);
+    public DelayerType delay(Expression processAtExpression) {
+        return delay(processAtExpression, 0L);
     }
 
     /**
@@ -882,7 +882,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param delay                the delay in milliseconds which is added to the processAtExpression
      * @return the builder
      */
-    public DelayerType delayer(Expression processAtExpression, long delay) {
+    public DelayerType delay(Expression processAtExpression, long delay) {
         DelayerType answer = new DelayerType(processAtExpression, delay);
         addOutput(answer);
         return answer;
@@ -894,7 +894,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @return the expression clause to create the expression
      */
-    public ExpressionClause<DelayerType> delayer() {
+    public ExpressionClause<DelayerType> delay() {
         DelayerType answer = new DelayerType();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
@@ -907,8 +907,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param delay  the default delay in millis
      * @return the builder
      */
-    public DelayerType delayer(long delay) {
-        return delayer(null, delay);
+    public DelayerType delay(long delay) {
+        return delay(null, delay);
     }
 
     /**
@@ -922,7 +922,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param maximumRequestCount  the maximum messages 
      * @return the builder
      */
-    public ThrottlerType throttler(long maximumRequestCount) {
+    public ThrottlerType throttle(long maximumRequestCount) {
         ThrottlerType answer = new ThrottlerType(maximumRequestCount);
         addOutput(answer);
         return answer;
