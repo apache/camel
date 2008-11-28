@@ -194,7 +194,7 @@ public class ValueBuilder implements Expression {
     // -------------------------------------------------------------------------
 
     /**
-     * A stategy method to allow derived classes to deal with the newly created
+     * A strategy method to allow derived classes to deal with the newly created
      * predicate in different ways
      */
     protected Predicate onNewPredicate(Predicate predicate) {
