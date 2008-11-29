@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPClient;
 
 public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
@@ -48,16 +50,16 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
             }
 
-            process((RemoteFileExchange)endpoint.createExchange(exchange));
+            process((RemoteFileExchange) endpoint.createExchange(exchange));
         } catch (Exception e) {
             loggedIn = false;
             if (isStopping() || isStopped()) {
                 // if we are stopping then ignore any exception during a poll
                 log.warn("Producer is stopping. Ignoring caught exception: "
-                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                        + e.getClass().getCanonicalName() + " message: " + e.getMessage());
             } else {
                 log.warn("Exception occured during processing: "
-                         + e.getClass().getCanonicalName() + " message: " + e.getMessage());
+                        + e.getClass().getCanonicalName() + " message: " + e.getMessage());
                 disconnect();
                 // Rethrow to signify that we didn't poll
                 throw e;
@@ -88,10 +90,39 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
+        String target = createFileName(exchange);
+
+        // should we write to a temporary name and then afterwards rename to real target
+        boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getConfiguration().getTempPrefix());
+        String tempTarget = null;
+        if (writeAsTempAndRename) {
+            // compute temporary name with the temp prefix
+            tempTarget = createTempFileName(target);
+        }
+
+        // upload the file
+        writeFile(exchange, tempTarget != null ? tempTarget : target);
+
+        // if we did write to a temporary name then rename it to the real name after we have written the file
+        if (tempTarget != null) {
+            if (log.isTraceEnabled()) {
+                log.trace("Renaming file: " + tempTarget + " to: " + target);
+            }
+            boolean renamed = client.rename(tempTarget, target);
+            if (!renamed) {
+                String msg = "Can not rename file from: " + tempTarget + " to: " + target;
+                throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), msg);
+            }
+        }
+
+        // lets store the name we really used in the header, so end-users can retrieve it
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
+    }
+
+    protected void writeFile(Exchange exchange, String fileName) throws FtpOperationFailedException, IOException {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
-            String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-
+            // build directory
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
@@ -100,17 +131,22 @@ public class FtpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 }
             }
 
+            // upload
+            if (log.isTraceEnabled()) {
+                log.trace("About to send: " + fileName + " to: " + remoteServer() + " from exchange: " + exchange);
+            }
+
             boolean success = client.storeFile(fileName, payload);
             if (!success) {
                 String message = "Error sending file: " + fileName + " to: " + remoteServer();
                 throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
             }
 
-            log.info("Sent: " + fileName + " to: " + remoteServer());
-        } finally {
-            if (payload != null) {
-                payload.close();
+            if (log.isDebugEnabled()) {
+                log.debug("Sent: " + fileName + " to: " + remoteServer());
             }
+        } finally {
+            ObjectHelper.close(payload, "Closing payload", log);
         }
     }
 
