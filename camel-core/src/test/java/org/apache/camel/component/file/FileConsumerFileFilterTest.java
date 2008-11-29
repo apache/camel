@@ -16,43 +16,54 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+import java.io.FileFilter;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
- * Unit test that file consumer will skip any files starting with a dot
+ * Unit test for  the file filter option
  */
-public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
+public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/dotfiles/";
+    private String fileUrl = "file://target/filefilter/?fileFilterRef=myFilter";
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myFilter", new MyFileFilter());
+        return jndi;
+    }
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/dotfiles");
+        deleteDirectory("target/filefilter");
     }
 
-    public void testSkipDotFiles() throws Exception {
+    public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/dotfiles/", "This is a dot file",
-            FileComponent.HEADER_FILE_NAME, ".skipme");
+        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+            FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(2000);
         mock.assertIsSatisfied();
     }
 
-    public void testSkipDotFilesWithARegularFile() throws Exception {
+    public void testFilterFilesWithARegularFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/dotfiles/", "This is a dot file",
-            FileComponent.HEADER_FILE_NAME, ".skipme");
+        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+            FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/dotfiles/", "Hello World",
+        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
             FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
@@ -66,4 +77,9 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         };
     }
 
+    public class MyFileFilter implements FileFilter {
+        public boolean accept(File pathname) {
+            return !pathname.getName().startsWith("skip");
+        }
+    }
 }

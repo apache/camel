@@ -23,6 +23,7 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
@@ -53,9 +54,12 @@ public class FileConsumer extends ScheduledPollConsumer {
     protected synchronized void poll() throws Exception {
         // gather list of files to process
         List<File> files = new ArrayList<File>();
-        filesToPoll(endpoint.getFile(), true, files);
+        scanFilesToPoll(endpoint.getFile(), true, files);
 
-        // TODO allow reordering of files CAMEL-1112
+        // resort files if provided
+        if (endpoint.getSorter() != null) {
+            Collections.sort(files, endpoint.getSorter());
+        }
 
         // consume files one by one
         int total = files.size();
@@ -72,7 +76,7 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @param processDir  recursive
      * @param fileList  current list of files gathered
      */
-    protected void filesToPoll(File fileOrDirectory, boolean processDir, List<File> fileList) {
+    protected void scanFilesToPoll(File fileOrDirectory, boolean processDir, List<File> fileList) {
         if (fileOrDirectory == null || !fileOrDirectory.exists()) {
             // not a file so skip it
             return;
@@ -88,7 +92,7 @@ public class FileConsumer extends ScheduledPollConsumer {
             File[] files = fileOrDirectory.listFiles();
             for (File file : files) {
                 // recursive add the files
-                filesToPoll(file, isRecursive(), fileList);
+                scanFilesToPoll(file, isRecursive(), fileList);
             }
         } else {
             if (LOG.isTraceEnabled()) {
@@ -230,14 +234,14 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @param file  the file
      * @return true to include the file, false to skip it
      */
-    protected boolean isValidFile(File file) {
+    protected boolean validateFile(File file) {
         // NOTE: contains will add if we had a miss
         if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getName())) {
             // skip as we have already processed it
             return false;
         }
 
-        return isMatched(file);
+        return matchFile(file);
     }
 
     /**
@@ -252,7 +256,7 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @param file  the file
      * @return true if the file is matche, false if not
      */
-    protected boolean isMatched(File file) {
+    protected boolean matchFile(File file) {
         String name = file.getName();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
@@ -267,6 +271,12 @@ public class FileConsumer extends ScheduledPollConsumer {
         // directories so far is always regarded as matched (matching on the name is only for files)
         if (file.isDirectory()) {
             return true;
+        }
+
+        if (endpoint.getFilter() != null) {
+            if (!endpoint.getFilter().accept(file)) {
+                return false;
+            }
         }
 
         if (regexPattern != null && regexPattern.length() > 0) {
@@ -290,7 +300,7 @@ public class FileConsumer extends ScheduledPollConsumer {
     }
 
     private void addFile(File file, List<File> fileList) {
-        if (isValidFile(file)) {
+        if (validateFile(file)) {
             fileList.add(file);
         }
     }
