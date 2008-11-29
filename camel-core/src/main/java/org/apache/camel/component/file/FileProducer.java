@@ -61,7 +61,7 @@ public class FileProducer extends DefaultProducer {
         boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getTempPrefix());
         File tempTarget = null;
         if (writeAsTempAndRename) {
-            // compute temporary name reusing the camel renamer
+            // compute temporary name with the temp prefix
             tempTarget = new File(target.getParent(), endpoint.getTempPrefix() + target.getName());
         }
 

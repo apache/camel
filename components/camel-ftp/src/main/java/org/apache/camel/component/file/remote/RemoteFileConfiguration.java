@@ -36,6 +36,7 @@ public class RemoteFileConfiguration implements Cloneable {
     private Expression expression;
     private boolean passiveMode;
     private String knownHosts;
+    private String tempPrefix;
 
     public RemoteFileConfiguration() {
     }
@@ -195,4 +196,16 @@ public class RemoteFileConfiguration implements Cloneable {
     public void setPassiveMode(boolean passiveMode) {
         this.passiveMode = passiveMode;
     }
+
+    public String getTempPrefix() {
+        return tempPrefix;
+    }
+
+    /**
+     * Enables and uses temporary prefix when writing files, after write it will be renamed to the correct name.
+     */
+    public void setTempPrefix(String tempPrefix) {
+        this.tempPrefix = tempPrefix;
+    }
+    
 }

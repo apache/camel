@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
-
+import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.util.ObjectHelper;
 
 public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     private SftpEndpoint endpoint;
@@ -86,11 +89,36 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
     }
 
     public void process(RemoteFileExchange exchange) throws Exception {
+        String target = createFileName(exchange);
+
+        // should we write to a temporary name and then afterwards rename to real target
+        boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getConfiguration().getTempPrefix());
+        String tempTarget = null;
+        if (writeAsTempAndRename) {
+            // compute temporary name with the temp prefix
+            tempTarget = createTempFileName(target);
+        }
+
+        // upload the file
+        writeFile(exchange, tempTarget != null ? tempTarget : target);
+
+        // if we did write to a temporary name then rename it to the real name after we have written the file
+        if (tempTarget != null) {
+            if (log.isTraceEnabled()) {
+                log.trace("Renaming file: " + tempTarget + " to: " + target);
+            }
+            channel.rename(tempTarget, target);
+        }
+
+        // lets store the name we really used in the header, so end-users can retrieve it
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
+
+    }
+
+    protected void writeFile(Exchange exchange, String fileName) throws SftpException, IOException {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
-            String remoteServer = endpoint.getConfiguration().remoteServerInformation();
-            String fileName = createFileName(exchange.getIn(), endpoint.getConfiguration());
-
+            // build directory
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
@@ -100,13 +128,18 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
                 }
             }
 
+            // upload
+            if (log.isTraceEnabled()) {
+                log.trace("About to send: " + fileName + " to: " + remoteServer() + " from exchange: " + exchange);
+            }
+
             channel.put(payload, fileName);
 
-            log.info("Sent: " + fileName + " to: " + remoteServer);
-        } finally {
-            if (payload != null) {
-                payload.close();
+            if (log.isDebugEnabled()) {
+                log.debug("Sent: " + fileName + " to: " + remoteServer());
             }
+        } finally {
+            ObjectHelper.close(payload, "Closing payload", log);
         }
     }
 

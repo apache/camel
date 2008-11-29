@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.FileLanguage;
@@ -33,10 +33,10 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
         this.endpoint = endpoint;
     }
 
-    protected String createFileName(Message message, RemoteFileConfiguration fileConfig) {
+    protected String createFileName(Exchange exchange) {
         String answer;
 
-        String name = message.getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
 
         // expression support
         Expression expression = endpoint.getConfiguration().getExpression();
@@ -53,27 +53,36 @@ public abstract class RemoteFileProducer<T extends RemoteFileExchange> extends D
             if (log.isDebugEnabled()) {
                 log.debug("Filename evaluated as expression: " + expression);
             }
-            Object result = expression.evaluate(message.getExchange());
-            name = message.getExchange().getContext().getTypeConverter().convertTo(String.class, result);
+            Object result = expression.evaluate(exchange);
+            name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }        
 
-        String endpointFile = fileConfig.getFile();
-        if (fileConfig.isDirectory()) {
+        String endpointFile = endpoint.getConfiguration().getFile();
+        if (endpoint.getConfiguration().isDirectory()) {
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
             if (endpointFile.length() > 0) {
                 baseDir = endpointFile + (endpointFile.endsWith("/") ? "" : "/");
             }
-            String fileName = (name != null) ? name : endpoint.getGeneratedFileName(message); 
+            String fileName = (name != null) ? name : endpoint.getGeneratedFileName(exchange.getIn()); 
             answer = baseDir + fileName;
         } else {
             answer = endpointFile;
         }
 
-        // lets store the name we really used in the header, so end-users can retrieve it
-        message.setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, answer);
-
         return answer;
+    }
+
+    protected String createTempFileName(String fileName) {
+        int path = fileName.lastIndexOf("/");
+        if (path == -1) {
+            // no path
+            return endpoint.getConfiguration().getTempPrefix() + fileName;
+        } else {
+            StringBuilder sb = new StringBuilder(fileName);
+            sb.insert(path + 1, endpoint.getConfiguration().getTempPrefix());
+            return sb.toString();
+        }
     }
 
     protected String remoteServer() {
