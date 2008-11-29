@@ -37,6 +37,8 @@ public class RemoteFileConfiguration implements Cloneable {
     private boolean passiveMode;
     private String knownHosts;
     private String tempPrefix;
+    private String privateKeyFile;
+    private String privateKeyFilePassphrase;
 
     public RemoteFileConfiguration() {
     }
@@ -206,6 +208,22 @@ public class RemoteFileConfiguration implements Cloneable {
      */
     public void setTempPrefix(String tempPrefix) {
         this.tempPrefix = tempPrefix;
+    }
+
+    public String getPrivateKeyFile() {
+        return privateKeyFile;
+    }
+
+    public void setPrivateKeyFile(String privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
+    }
+
+    public String getPrivateKeyFilePassphrase() {
+        return privateKeyFilePassphrase;
+    }
+
+    public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
+        this.privateKeyFilePassphrase = privateKeyFilePassphrase;
     }
     
 }
