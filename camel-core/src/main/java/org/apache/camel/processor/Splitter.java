@@ -52,8 +52,7 @@ public class Splitter extends MulticastProcessor implements Processor {
         this(expression, destination, aggregationStrategy, false, null, false);
     }
 
-    public Splitter(Expression expression, Processor destination,
-            AggregationStrategy aggregationStrategy,
+    public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
             boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor, boolean streaming) {
         super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor, streaming);
 
@@ -131,5 +130,9 @@ public class Splitter extends MulticastProcessor implements Processor {
         if (allPairs instanceof Collection) {
             exchange.getIn().setHeader(SPLIT_SIZE, ((Collection) allPairs).size());
         }
+    }
+
+    public Expression getExpression() {
+        return expression;
     }
 }
