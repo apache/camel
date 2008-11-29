@@ -17,12 +17,12 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.FileFilter;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Comparator;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;

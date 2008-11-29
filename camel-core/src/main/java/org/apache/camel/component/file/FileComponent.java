@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileFilter;
+import java.util.Comparator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -79,8 +80,13 @@ public class FileComponent extends DefaultComponent {
             result.setFilter(filter);
         }
 
-        // TODO: CAMEL-1112 sorter and having out-of-box sorters for by name, by filestamp, etc.
-        // TODO: maybe even a reverse order
+        ref = getAndRemoveParameter(parameters, "sorterRef", String.class);
+        if (ref != null) {
+            Comparator<File> sorter = mandatoryLookup(ref, Comparator.class);
+            result.setSorter(sorter);
+        }
+
+        // TODO: CAMEL-1112 having out-of-box sorters for by name, by filestamp, etc., maybe even a reverse order
 
         setProperties(result, parameters);
         return result;
