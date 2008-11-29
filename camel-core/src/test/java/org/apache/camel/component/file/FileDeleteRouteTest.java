@@ -24,6 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class FileDeleteRouteTest extends FileRouteTest {
+
     @Override
     protected void setUp() throws Exception {
         targetdir = "target/test-delete-inbox";
@@ -33,17 +34,19 @@ public class FileDeleteRouteTest extends FileRouteTest {
 
     @Override
     public void testFileRoute() throws Exception {
+        deleteDirectory("target/test-delete-inbox");
+        
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(expectedBody);
-        result.setResultWaitTime(5000);
 
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
-        Thread.sleep(4000);
-
         result.assertIsSatisfied();
+
+        Thread.sleep(100);
 
         for (String lockName : recorder.getLocks()) {
             File lock = new File(lockName);
+            lock = lock.getAbsoluteFile();
             assertFalse(lock.exists());
         }
     }

@@ -21,7 +21,8 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
@@ -40,17 +41,6 @@ public class FileConsumer extends ScheduledPollConsumer {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
 
     private FileEndpoint endpoint;
-    private ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
-    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
-    private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>();
-
-    // the options below is @deprecated and will be removed in Camel 2.0
-    private long lastPollTime;
-    private int unchangedDelay;
-    private boolean unchangedSize;
-    private boolean generateEmptyExchangeWhenIdle;
-    private boolean alwaysConsume;
-
     private boolean recursive;
     private String regexPattern = "";
     private boolean exclusiveReadLock = true;
@@ -61,80 +51,68 @@ public class FileConsumer extends ScheduledPollConsumer {
     }
 
     protected synchronized void poll() throws Exception {
-        // should be true the first time as its the top directory
-        int rc = pollFileOrDirectory(endpoint.getFile(), true);
+        // gather list of files to process
+        List<File> files = new ArrayList<File>();
+        filesToPoll(endpoint.getFile(), true, files);
 
-        // if no files consumes and using generateEmptyExchangeWhenIdle option then process an empty exchange 
-        if (rc == 0 && generateEmptyExchangeWhenIdle) {
-            final FileExchange exchange = endpoint.createExchange((File)null);
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                public void done(boolean sync) {
-                }
-            });
+        // TODO allow reordering of files CAMEL-1112
+
+        // consume files one by one
+        int total = files.size();
+        for (int index = 0; index < files.size(); index++) {
+            File file = files.get(index);
+            processFile(file, total, index);
         }
-
-        lastPollTime = System.currentTimeMillis();
     }
 
     /**
-     * Pools the given file or directory for files to process.
+     * Scans the given file or directory for files to process.
      *
-     * @param fileOrDirectory  file or directory
+     * @param fileOrDirectory  current file or directory when doing recursion
      * @param processDir  recursive
-     * @return the number of files processed or being processed async.
+     * @param fileList  current list of files gathered
      */
-    protected int pollFileOrDirectory(File fileOrDirectory, boolean processDir) {
+    protected void filesToPoll(File fileOrDirectory, boolean processDir, List<File> fileList) {
+        if (fileOrDirectory == null || !fileOrDirectory.exists()) {
+            // not a file so skip it
+            return;
+        }
+
         if (!fileOrDirectory.isDirectory()) {
-            // process the file
-            return pollFile(fileOrDirectory);
+            addFile(fileOrDirectory, fileList);
         } else if (processDir) {
             // directory that can be recursive
-            int rc = 0;
-            if (isValidFile(fileOrDirectory)) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Polling directory " + fileOrDirectory);
-                }
-                File[] files = fileOrDirectory.listFiles();
-                for (File file : files) {
-                    rc += pollFileOrDirectory(file, isRecursive()); // self-recursion
-                }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Polling directory " + fileOrDirectory);
             }
-            return rc;
+            File[] files = fileOrDirectory.listFiles();
+            for (File file : files) {
+                // recursive add the files
+                filesToPoll(file, isRecursive(), fileList);
+            }
         } else {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Skipping directory " + fileOrDirectory);
             }
-            return 0;
         }
     }
 
     /**
-     * Polls the given file
+     * Processes the given file
      *
      * @param file  the file
-     * @return returns 1 if the file was processed, 0 otherwise.
+     * @param total  total number of files in this batch
+     * @param index  current index out of total in this batch                                      
      */
-    protected int pollFile(final File file) {
+    protected void processFile(final File file, int total, int index) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling file: " + file);
-        }
-
-        if (!file.exists()) {
-            return 0;
-        }
-        if (!isValidFile(file)) {
-            return 0;
-        }
-        // we only care about file modified times if we are not deleting/moving files
-        if (!endpoint.isNoop()) {
-            if (filesBeingProcessed.contains(file)) {
-                return 1;
-            }
-            filesBeingProcessed.put(file, file);
+            LOG.trace("Processing file: " + file);
         }
 
         final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
         final FileExchange exchange = endpoint.createExchange(file);
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
 
         endpoint.configureMessage(file, exchange.getIn());
         try {
@@ -173,21 +151,16 @@ public class FileConsumer extends ScheduledPollConsumer {
                             if (!committed) {
                                 processStrategyRollback(processStrategy, exchange, file);
                             }
-                            filesBeingProcessed.remove(file);
                         }
                     }
                 });
 
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " can not process file: " + file);
-                }
+                LOG.warn(endpoint + " can not process file: " + file);
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             handleException(e);
         }
-
-        return 1;
     }
 
     /**
@@ -252,74 +225,33 @@ public class FileConsumer extends ScheduledPollConsumer {
         processStrategy.rollback(endpoint, exchange, file);
     }
 
+    /**
+     * Strategy for validating if the given file should be included or not
+     * @param file  the file
+     * @return true to include the file, false to skip it
+     */
     protected boolean isValidFile(File file) {
-        boolean result = false;
-        if (file != null && file.exists()) {
-            // TODO: maybe use a configurable strategy instead of the hardcoded one based on last file change
-            if (isMatched(file) && (alwaysConsume || isChanged(file))) {
-                result = true;
-            }
-        }
-        return result;
-    }
-
-    protected boolean isChanged(File file) {
-        if (file == null) {
-            // Sanity check
+        // NOTE: contains will add if we had a miss
+        if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getName())) {
+            // skip as we have already processed it
             return false;
-        } else if (file.isDirectory()) {
-            // Allow recursive polling to descend into this directory
-            return true;
-        } else {
-            // @deprecated will be removed on Camel 2.0
-            // the code below is kinda hard to maintain. We should strive to remove
-            // this stuff in Camel 2.0 to keep this component simple and no surprises for end-users
-            // this stuff is not persistent so restarting Camel will reset the state
-            boolean lastModifiedCheck = false;
-            long modifiedDuration = 0;
-            if (getUnchangedDelay() > 0) {
-                modifiedDuration = System.currentTimeMillis() - file.lastModified();
-                lastModifiedCheck = modifiedDuration >= getUnchangedDelay();
-            }
-
-            long fileModified = file.lastModified();
-            Long previousModified = noopMap.get(file);
-            noopMap.put(file, fileModified);
-            if (previousModified == null || fileModified > previousModified) {
-                lastModifiedCheck = true;
-            }
-
-            boolean sizeCheck = false;
-            long sizeDifference = 0;
-            if (isUnchangedSize()) {
-                Long value = fileSizes.get(file);
-                if (value == null) {
-                    sizeCheck = true;
-                } else {
-                    sizeCheck = file.length() != value;
-                }
-            }
-
-            boolean answer = lastModifiedCheck || sizeCheck;
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("file:" + file + " isChanged:" + answer + " " + "sizeCheck:" + sizeCheck + "("
-                          + sizeDifference + ") " + "lastModifiedCheck:" + lastModifiedCheck + "("
-                          + modifiedDuration + ")");
-            }
-
-            if (isUnchangedSize()) {
-                if (answer) {
-                    fileSizes.put(file, file.length());
-                } else {
-                    fileSizes.remove(file);
-                }
-            }
-
-            return answer;
         }
+
+        return isMatched(file);
     }
 
+    /**
+     * Strategy to perform file matching based on endpoint configuration.
+     * <p/>
+     * Will always return false for certain files:
+     * <ul>
+     *    <li>Starting with a dot</li>
+     *    <li>lock files</li>
+     * </ul>
+     *
+     * @param file  the file
+     * @return true if the file is matche, false if not
+     */
     protected boolean isMatched(File file) {
         String name = file.getName();
 
@@ -357,6 +289,12 @@ public class FileConsumer extends ScheduledPollConsumer {
         return true;
     }
 
+    private void addFile(File file, List<File> fileList) {
+        if (isValidFile(file)) {
+            fileList.add(file);
+        }
+    }
+
     public boolean isRecursive() {
         return this.recursive;
     }
@@ -373,39 +311,6 @@ public class FileConsumer extends ScheduledPollConsumer {
         this.regexPattern = regexPattern;
     }
 
-    public boolean isGenerateEmptyExchangeWhenIdle() {
-        return generateEmptyExchangeWhenIdle;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public void setGenerateEmptyExchangeWhenIdle(boolean generateEmptyExchangeWhenIdle) {
-        this.generateEmptyExchangeWhenIdle = generateEmptyExchangeWhenIdle;
-    }
-
-    public int getUnchangedDelay() {
-        return unchangedDelay;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public void setUnchangedDelay(int unchangedDelay) {
-        this.unchangedDelay = unchangedDelay;
-    }
-
-    public boolean isUnchangedSize() {
-        return unchangedSize;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0
-     */
-    public void setUnchangedSize(boolean unchangedSize) {
-        this.unchangedSize = unchangedSize;
-    }
-
     public boolean isExclusiveReadLock() {
         return exclusiveReadLock;
     }
@@ -414,25 +319,4 @@ public class FileConsumer extends ScheduledPollConsumer {
         this.exclusiveReadLock = exclusiveReadLock;
     }
 
-    public boolean isAlwaysConsume() {
-        return alwaysConsume;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0 (not needed when we get rid of last polltimestamp)
-     */
-    public void setAlwaysConsume(boolean alwaysConsume) {
-        this.alwaysConsume = alwaysConsume;
-    }
-
-    public boolean isTimestamp() {
-        return !alwaysConsume;
-    }
-
-    /**
-     * @deprecated will be removed in Camel 2.0 (not needed when we get rid of last polltimestamp)
-     */
-    public void setTimestamp(boolean timestamp) {
-        this.alwaysConsume = !timestamp;
-    }
 }
