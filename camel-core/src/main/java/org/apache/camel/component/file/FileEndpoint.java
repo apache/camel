@@ -18,9 +18,11 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.FileFilter;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Comparator;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -70,6 +72,8 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private String tempPrefix;
     private boolean idempotent;
     private MessageIdRepository idempotentRepository;
+    private FileFilter filter;
+    private Comparator<File> sorter;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -332,6 +336,22 @@ public class FileEndpoint extends ScheduledPollEndpoint {
 
     public void setIdempotentRepository(MessageIdRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
+    }
+
+    public FileFilter getFilter() {
+        return filter;
+    }
+
+    public void setFilter(FileFilter filter) {
+        this.filter = filter;
+    }
+
+    public Comparator<File> getSorter() {
+        return sorter;
+    }
+
+    public void setSorter(Comparator<File> sorter) {
+        this.sorter = sorter;
     }
 
     /**

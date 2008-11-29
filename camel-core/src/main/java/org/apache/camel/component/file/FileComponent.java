@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -70,6 +71,16 @@ public class FileComponent extends DefaultComponent {
             MessageIdRepository repository = mandatoryLookup(ref, MessageIdRepository.class);
             result.setIdempotentRepository(repository);
         }
+
+        // lookup file filter in registry if provided
+        ref = getAndRemoveParameter(parameters, "fileFilterRef", String.class);
+        if (ref != null) {
+            FileFilter filter = mandatoryLookup(ref, FileFilter.class);
+            result.setFilter(filter);
+        }
+
+        // TODO: CAMEL-1112 sorter and having out-of-box sorters for by name, by filestamp, etc.
+        // TODO: maybe even a reverse order
 
         setProperties(result, parameters);
         return result;
