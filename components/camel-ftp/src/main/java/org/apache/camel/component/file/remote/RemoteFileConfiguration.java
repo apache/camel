@@ -36,6 +36,8 @@ public class RemoteFileConfiguration implements Cloneable {
     private Expression expression;
     private boolean passiveMode;
     private String knownHosts;
+    private String privateKeyFile;
+    private String privateKeyFilePassphrase;
 
     public RemoteFileConfiguration() {
     }
@@ -195,4 +197,21 @@ public class RemoteFileConfiguration implements Cloneable {
     public void setPassiveMode(boolean passiveMode) {
         this.passiveMode = passiveMode;
     }
+
+    public String getPrivateKeyFile() {
+        return privateKeyFile;
+    }
+
+    public void setPrivateKeyFile(String privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
+    }
+
+    public String getPrivateKeyFilePassphrase() {
+        return privateKeyFilePassphrase;
+    }
+
+    public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
+        this.privateKeyFilePassphrase = privateKeyFilePassphrase;
+    }
+    
 }
