@@ -31,6 +31,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
+import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
@@ -49,6 +51,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private static final transient Log LOG = LogFactory.getLog(FileEndpoint.class);
     private static final transient String DEFAULT_STRATEGYFACTORY_CLASS =
         "org.apache.camel.component.file.strategy.FileProcessStrategyFactory";
+    private static final transient int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
     private File file;
     private FileProcessStrategy fileProcessStrategy;
@@ -65,6 +68,8 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private boolean ignoreFileNameHeader;
     private Expression expression;
     private String tempPrefix;
+    private boolean idempotent;
+    private MessageIdRepository idempotentRepository;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -89,6 +94,13 @@ public class FileEndpoint extends ScheduledPollEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer result = new FileConsumer(this, processor);
+
+        // if idempotent and no repository set then create a default one
+        if (isIdempotent() && idempotentRepository == null) {
+            LOG.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            idempotentRepository = MemoryMessageIdRepository.memoryMessageIdRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+        }
+
         configureConsumer(result);
         return result;
     }
@@ -304,6 +316,22 @@ public class FileEndpoint extends ScheduledPollEndpoint {
      */
     public void setTempPrefix(String tempPrefix) {
         this.tempPrefix = tempPrefix;
+    }
+
+    public boolean isIdempotent() {
+        return idempotent;
+    }
+
+    public void setIdempotent(boolean idempotent) {
+        this.idempotent = idempotent;
+    }
+
+    public MessageIdRepository getIdempotentRepository() {
+        return idempotentRepository;
+    }
+
+    public void setIdempotentRepository(MessageIdRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
     }
 
     /**

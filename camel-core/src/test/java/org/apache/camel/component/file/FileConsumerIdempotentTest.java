@@ -23,28 +23,27 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for the alwaysConsume=true option.
+ * Unit test for the idempotent=true option.
  */
-public class FileAlwaysConsumeTest extends ContextTestSupport {
+public class FileConsumerIdempotentTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/alwaysconsume");
-        template.sendBodyAndHeader("file://target/alwaysconsume/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        deleteDirectory("target/idempotent");
+        template.sendBodyAndHeader("file://target/idempotent/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/alwaysconsume/?consumer.alwaysConsume=true&moveNamePrefix=done/").to("mock:result");
+                from("file://target/idempotent/?idempotent=true&moveNamePrefix=done/").to("mock:result");
             }
         };
-
     }
 
-    public void testAlwaysConsume() throws Exception {
+    public void testIdempotent() throws Exception {
         // consume the file the first time
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
@@ -56,16 +55,16 @@ public class FileAlwaysConsumeTest extends ContextTestSupport {
 
         // reset mock and set new expectations
         mock.reset();
-        mock.expectedBodiesReceived("Hello World");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(0);
 
         // move file back
-        File file = new File("target/alwaysconsume/done/report.txt");
-        File renamed = new File("target/alwaysconsume/report.txt");
+        File file = new File("target/idempotent/done/report.txt");
+        File renamed = new File("target/idempotent/report.txt");
         file = file.getAbsoluteFile();
         file.renameTo(renamed.getAbsoluteFile());
 
-        // should consume the file again
+        // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
+        Thread.sleep(2000);
         assertMockEndpointsSatisfied();
     }
 

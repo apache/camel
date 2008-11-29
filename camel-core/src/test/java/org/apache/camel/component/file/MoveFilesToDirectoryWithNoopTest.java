@@ -23,6 +23,6 @@ public class MoveFilesToDirectoryWithNoopTest extends MoveFilesToDirectoryTest {
 
     @Override
     protected String getOutputEndpointUri() {
-        return super.getOutputEndpointUri() + "?noop=true";
+        return super.getOutputEndpointUri() + "?noop=true&idempotent=true";
     }
 }

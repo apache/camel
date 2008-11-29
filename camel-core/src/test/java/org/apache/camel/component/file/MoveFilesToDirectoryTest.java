@@ -41,13 +41,13 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
         result.setResultWaitTime(5000);
 
         // now lets wait a bit and move that file
-        Thread.sleep(5000);
+        Thread.sleep(2000);
 
         // lets delete the output directory
         deleteDirectory(outputDirectory);
 
         // now lets wait a bit for it to be polled
-        Thread.sleep(5000);
+        Thread.sleep(2000);
 
         File file = new File(inputDirectory + "/" + fileName);
 
@@ -66,7 +66,7 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
         assertFileExists(newFile);
 
         // now lets wait for multiple polls to check we only process it once
-        Thread.sleep(5000);
+        Thread.sleep(3000);
 
         assertMockEndpointsSatisfied();
     }

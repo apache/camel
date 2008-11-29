@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.processor.idempotent.MessageIdRepository;
 
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
@@ -42,6 +43,16 @@ public class FileComponent extends DefaultComponent {
      */
     public static final String HEADER_FILE_NAME_PRODUCED = "org.apache.camel.file.name.produced";
 
+    /**
+     * Header key holding the value: current index of total in the batch being consumed
+     */
+    public static final String HEADER_FILE_BATCH_INDEX = "org.apache.camel.file.index";
+
+    /**
+     * Header key holding the value: total in the batch being consumed
+     */
+    public static final String HEADER_FILE_BATCH_TOTAL = "org.apache.camel.file.total";
+
     public FileComponent() {
     }
 
@@ -52,6 +63,14 @@ public class FileComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
         FileEndpoint result = new FileEndpoint(file, uri, this);
+
+        // lookup idempotent repository in registry if provided
+        String ref = getAndRemoveParameter(parameters, "idempotentRepositoryRef", String.class);
+        if (ref != null) {
+            MessageIdRepository repository = mandatoryLookup(ref, MessageIdRepository.class);
+            result.setIdempotentRepository(repository);
+        }
+
         setProperties(result, parameters);
         return result;
     }
