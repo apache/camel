@@ -19,12 +19,33 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
  * Unit test for file producer option tempPrefix
  */
 public class FileProduceTempPrefixTest extends ContextTestSupport {
+
+    private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
+
+    public void testCreateTempFileName() throws Exception {
+        Endpoint endpoint = context.getEndpoint(fileUrl);
+        FileProducer producer = (FileProducer) endpoint.createProducer();
+
+        File fileName = new File("target/tempandrename/claus.txt");
+        File tempFileName = producer.createTempFileName(fileName);
+        assertEquals("target" + File.separatorChar + "tempandrename" + File.separatorChar + "inprogress.claus.txt", tempFileName.getPath());
+    }
+
+    public void testNoPathCreateTempFileName() throws Exception {
+        Endpoint endpoint = context.getEndpoint(fileUrl);
+        FileProducer producer = (FileProducer) endpoint.createProducer();
+
+        File fileName = new File("claus.txt");
+        File tempFileName = producer.createTempFileName(fileName);
+        assertEquals("inprogress.claus.txt", tempFileName.getPath());
+    }
 
     public void testTempPrefix() throws Exception {
         deleteDirectory("target/tempandrename");
@@ -42,7 +63,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("file://target/tempandrename/?tempPrefix=inprogress.");
+                from("direct:a").to(fileUrl);
             }
         };
     }

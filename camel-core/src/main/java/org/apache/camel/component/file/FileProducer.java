@@ -61,8 +61,7 @@ public class FileProducer extends DefaultProducer {
         boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getTempPrefix());
         File tempTarget = null;
         if (writeAsTempAndRename) {
-            // compute temporary name with the temp prefix
-            tempTarget = new File(target.getParent(), endpoint.getTempPrefix() + target.getName());
+            tempTarget = createTempFileName(target);
         }
 
         // write the file
@@ -220,6 +219,12 @@ public class FileProducer extends DefaultProducer {
         }
 
         return answer;
+    }
+
+    protected File createTempFileName(File target) {
+        File tempTarget;
+        tempTarget = new File(target.getParent(), endpoint.getTempPrefix() + target.getName());
+        return tempTarget;
     }
 
     private static void buildDirectory(File file) {
