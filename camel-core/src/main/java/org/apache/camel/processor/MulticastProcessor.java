@@ -259,7 +259,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
      * this means the {@link org.apache.camel.processor.aggregate.AggregationStrategy} has to take care of handling out-of-order arrival of exchanges</li>
      * </ul>
      */
-    protected boolean isStreaming() {
+    public boolean isStreaming() {
         return streaming;
     }
 
@@ -272,5 +272,13 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
+    }
+
+    public ThreadPoolExecutor getExecutor() {
+        return executor;
+    }
+
+    public boolean isParallelProcessing() {
+        return isParallelProcessing;
     }
 }
