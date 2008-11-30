@@ -109,12 +109,17 @@ public class FileComponent extends DefaultComponent {
         }
 
         String group = it.next();
+
         boolean reverse = group.startsWith("reverse:");
         String reminder = reverse ? ifStartsWithReturnRemainder("reverse:", group) : group;
+
+        boolean ignoreCase = reminder.startsWith("ignoreCase:");
+        reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
+
         ObjectHelper.notNull(reminder, "sortBy option does not contain the expression");
 
         // recursive add nested sorters
-        return DefaultFileSorter.sortByFileLanguage(reminder, reverse, createSortByComparator(it));
+        return DefaultFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
     }
 
 }

@@ -97,7 +97,7 @@ public final class DefaultFileSorter {
      * @return the comparator
      */
     public static Comparator<FileExchange> sortByFileLanguage(final String expression, final boolean reverse) {
-        return sortByFileLanguage(expression, reverse, null);
+        return sortByFileLanguage(expression, reverse, false, null);
     }
 
     /**
@@ -105,17 +105,31 @@ public final class DefaultFileSorter {
      *
      * @param expression  the file language expression
      * @param reverse  true to reverse order
+     * @param ignoreCase  ignore case if comparing strings
+     * @return the comparator
+     */
+    public static Comparator<FileExchange> sortByFileLanguage(final String expression, final boolean reverse,
+                                                              final boolean ignoreCase) {
+        return sortByFileLanguage(expression, reverse, ignoreCase, null);
+    }
+
+    /**
+     * Returns a new sory by file language expression
+     *
+     * @param expression  the file language expression
+     * @param reverse  true to reverse order
+     * @param ignoreCase  ignore case if comparing strings
      * @param nested  nested comparator for sub group sorting, can be null
      * @return the comparator
      */
     public static Comparator<FileExchange> sortByFileLanguage(final String expression, final boolean reverse,
-                                                              final Comparator<FileExchange> nested) {
+                                                              final boolean ignoreCase, final Comparator<FileExchange> nested) {
         return new Comparator<FileExchange>() {
             public int compare(FileExchange o1, FileExchange o2) {
                 final Expression exp = FileLanguage.file(expression);
                 Object result1 = exp.evaluate(o1);
                 Object result2 = exp.evaluate(o2);
-                int answer = ObjectHelper.compare(result1, result2);
+                int answer = ObjectHelper.compare(result1, result2, ignoreCase);
                 // if equal then sub sort by nested comparator
                 if (answer == 0 && nested != null) {
                     answer = nested.compare(o1, o2);
