@@ -56,16 +56,32 @@ public class FileConsumer extends ScheduledPollConsumer {
         List<File> files = new ArrayList<File>();
         scanFilesToPoll(endpoint.getFile(), true, files);
 
-        // resort files if provided
-        if (endpoint.getSorter() != null) {
-            Collections.sort(files, endpoint.getSorter());
+        // sort files using file comparator if provided
+        if (endpoint.getFileSorter() != null) {
+            Collections.sort(files, endpoint.getFileSorter());
+        }
+
+        // sort using build in sorters that is expression based
+        // first we need to convert to FileExchange objects so we can sort using expressions
+        List<FileExchange> exchanges = new ArrayList<FileExchange>(files.size());
+        for (File file : files) {
+            FileExchange exchange = endpoint.createExchange(file);
+            endpoint.configureMessage(file, exchange.getIn());
+            exchanges.add(exchange);
+        }
+        // sort files using exchange comparator if provided
+        if (endpoint.getExchangeSorter() != null) {
+            Collections.sort(exchanges, endpoint.getExchangeSorter());
         }
 
         // consume files one by one
-        int total = files.size();
-        for (int index = 0; index < files.size(); index++) {
-            File file = files.get(index);
-            processFile(file, total, index);
+        int total = exchanges.size();
+        for (int index = 0; index < total; index++) {
+            FileExchange exchange = exchanges.get(index);
+            // add current index and total as headers
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
+            processExchange(exchange);
         }
     }
 
@@ -104,22 +120,18 @@ public class FileConsumer extends ScheduledPollConsumer {
     /**
      * Processes the given file
      *
-     * @param file  the file
-     * @param total  total number of files in this batch
-     * @param index  current index out of total in this batch                                      
+     * @param exchange  the file exchange
      */
-    protected void processFile(final File file, int total, int index) {
+    protected void processExchange(final FileExchange exchange) {
+        final File file = exchange.getFile();
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Processing file: " + file);
         }
 
-        final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
-        final FileExchange exchange = endpoint.createExchange(file);
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
-
-        endpoint.configureMessage(file, exchange.getIn());
         try {
+            final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
+
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
             if (exclusiveReadLock) {
                 acquireExclusiveReadLock(file);

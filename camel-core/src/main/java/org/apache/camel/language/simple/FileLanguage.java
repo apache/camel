@@ -17,7 +17,6 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
-import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.util.ObjectHelper;
 
@@ -28,11 +27,13 @@ import org.apache.camel.util.ObjectHelper;
  * <ul>
  * <li><tt>file:name</tt> to access the file name</li>
  * <li><tt>file:name.noext</tt> to access the file name with no extension</li>
+ * <li><tt>file:name.ext</tt> to access the file name extension</li>
  * <li><tt>file:parent</tt> to access the parent file name</li>
  * <li><tt>file:path</tt> to access the file path name</li>
  * <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
  * <li><tt>file:canonical.path</tt> to access the canonical path name</li>
  * <li><tt>file:length</tt> to access the file length as a Long type</li>
+ * <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
  * <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
  *     All the commands from {@link SimpleLanguage} is also avaiable.
@@ -57,6 +58,8 @@ public class FileLanguage extends AbstractSimpleLanguage {
         if (remainder != null) {
             if (ObjectHelper.equal(remainder, "name")) {
                 return FileExpressionBuilder.fileNameExpression();
+            } else if (ObjectHelper.equal(remainder, "name.ext")) {
+                return FileExpressionBuilder.fileNameExtensionExpression();
             } else if (ObjectHelper.equal(remainder, "name.noext")) {
                 return FileExpressionBuilder.fileNameNoExtensionExpression();
             } else if (ObjectHelper.equal(remainder, "parent")) {
@@ -69,6 +72,8 @@ public class FileLanguage extends AbstractSimpleLanguage {
                 return FileExpressionBuilder.fileCanoicalPathExpression();
             } else if (ObjectHelper.equal(remainder, "length")) {
                 return FileExpressionBuilder.fileSizeExpression();
+            } else if (ObjectHelper.equal(remainder, "modified")) {
+                return FileExpressionBuilder.fileLastModifiedExpression();
             }
         }
 

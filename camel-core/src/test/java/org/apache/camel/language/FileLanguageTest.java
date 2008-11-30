@@ -28,6 +28,7 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.language.simple.FileLanguage;
 
 /**
  * Unit test for File Language.
@@ -58,12 +59,17 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public void testFile() throws Exception {
         assertExpression("${file:name}", file.getName());
+        assertExpression("${file:name.ext}", "txt");
         assertExpression("${file:name.noext}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
         assertExpression("${file:absolute.path}", file.getAbsolutePath());
         assertExpression("${file:canonical.path}", file.getCanonicalPath());
         assertExpression("${file:length}", file.length());
+
+        // modified is a Date object
+        Date modified = (Date) FileLanguage.file("file:modified").evaluate(exchange);
+        assertEquals(new Date(file.lastModified()), modified);
     }
 
     public void testDate() throws Exception {

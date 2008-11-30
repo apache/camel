@@ -25,7 +25,6 @@ import java.util.concurrent.ThreadFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Registry;
@@ -288,4 +287,23 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         return convertTo(type, value);
     }
 
+    /**
+     * Returns the reminder of the text if it starts with the prefix.
+     * <p/>
+     * Is useable for string parameters that contains commands.
+     * 
+     * @param prefix  the prefix
+     * @param text  the text
+     * @return the reminder, or null if no reminder
+     */
+    protected String ifStartsWithReturnRemainder(String prefix, String text) {
+        if (text.startsWith(prefix)) {
+            String remainder = text.substring(prefix.length());
+            if (remainder.length() > 0) {
+                return remainder;
+            }
+        }
+        return null;
+    }
+    
 }

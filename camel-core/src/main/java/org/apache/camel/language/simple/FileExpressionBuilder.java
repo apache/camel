@@ -71,6 +71,24 @@ public final class FileExpressionBuilder {
         };
     }
 
+    public static Expression fileNameExtensionExpression() {
+        return new Expression() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader("CamelFileName", String.class);
+                if (name != null) {
+                    return name.substring(name.lastIndexOf('.') + 1);
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "file:name.ext";
+            }
+        };
+    }
+
     public static Expression fileParentExpression() {
         return new Expression() {
             public Object evaluate(Exchange exchange) {
@@ -135,6 +153,20 @@ public final class FileExpressionBuilder {
             }
         };
     }
+
+    public static Expression fileLastModifiedExpression() {
+        return new Expression() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileLastModified", Date.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:modified";
+            }
+        };
+    }
+
 
     public static Expression dateExpression(final String command, final String pattern) {
         return new Expression() {
