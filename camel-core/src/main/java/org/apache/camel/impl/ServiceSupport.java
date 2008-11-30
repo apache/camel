@@ -36,6 +36,7 @@ public abstract class ServiceSupport implements Service {
     private AtomicBoolean stopping = new AtomicBoolean(false);
     private AtomicBoolean stopped = new AtomicBoolean(false);
     private Collection childServices;
+    private String version;
 
     public void start() throws Exception {
         if (started.compareAndSet(false, true)) {
@@ -132,5 +133,26 @@ public abstract class ServiceSupport implements Service {
         } else {
             return false;
         }
+    }
+    
+    protected synchronized String getVersion() {
+        if (version != null) {
+            return version;
+        }
+        
+        Package aPackage = Package.getPackage("org.apache.camel");
+        if (aPackage != null) {
+            version = aPackage.getImplementationVersion();
+            if (version == null) {
+                version = aPackage.getSpecificationVersion();
+                if (version == null) {
+                    version = "";
+                }
+            }
+        } else {
+            version = "";
+        }
+        
+        return version;
     }
 }
