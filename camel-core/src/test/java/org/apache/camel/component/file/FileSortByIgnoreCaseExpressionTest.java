@@ -25,30 +25,43 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?noop=true";
+    private String fileUrl = "file://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filesorter");
+    }
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+    private void prepareFolder(String folder) {
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "report-3.dat");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
             FileComponent.HEADER_FILE_NAME, "REPORT-2.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "Report-1.xml");
     }
 
     public void testSortFiles() throws Exception {
+        prepareFolder("a");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello London", "Hello Copenhagen", "Hello Paris");
 
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSortFilesNoCase() throws Exception {
+        prepareFolder("b");
         MockEndpoint nocase = getMockEndpoint("mock:nocase");
         nocase.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSortFilesNoCaseReverse() throws Exception {
+        prepareFolder("c");
         MockEndpoint nocasereverse = getMockEndpoint("mock:nocasereverse");
         nocasereverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
@@ -58,11 +71,11 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl + "&sortBy=file:name").to("mock:result");
+                from(fileUrl + "a/?sortBy=file:name").to("mock:result");
 
-                from(fileUrl + "&sortBy=ignoreCase:file:name").to("mock:nocase");
+                from(fileUrl + "b/?sortBy=ignoreCase:file:name").to("mock:nocase");
 
-                from(fileUrl + "&sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
+                from(fileUrl + "c/?sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
             }
         };
     }

@@ -25,30 +25,38 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?noop=true";
+    private String fileUrl = "file://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filesorter");
+    }
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+    private void prepareFolder(String folder) {
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Dublin",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Dublin",
             FileComponent.HEADER_FILE_NAME, "dublin.txt");
     }
 
     public void testSortNestedFiles() throws Exception {
+        prepareFolder("a");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Dublin", "Hello London", "Hello Paris", "Hello Copenhagen");
 
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSortNestedFilesReverse() throws Exception {
+        prepareFolder("b");
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Dublin", "Hello Copenhagen");
 
@@ -58,9 +66,9 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl + "&sortBy=file:name.ext;file:name").to("mock:result");
+                from(fileUrl + "a/?sortBy=file:name.ext;file:name").to("mock:result");
 
-                from(fileUrl + "&sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
+                from(fileUrl + "b/?sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
             }
         };
     }
