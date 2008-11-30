@@ -107,6 +107,18 @@ public final class ObjectHelper {
      * handling nulls and objects which do not handle sorting gracefully
      */
     public static int compare(Object a, Object b) {
+        return compare(a, b, false);
+    }
+
+    /**
+     * A helper method for performing an ordered comparison on the objects
+     * handling nulls and objects which do not handle sorting gracefully
+     *
+     * @param a  the first object
+     * @param b  the second object
+     * @param ignoreCase  ignore case for string comparison
+     */
+    public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;
         }
@@ -115,6 +127,9 @@ public final class ObjectHelper {
         }
         if (b == null) {
             return 1;
+        }
+        if (ignoreCase && a instanceof String && b instanceof String) {
+            return ((String) a).compareToIgnoreCase((String) b);
         }
         if (a instanceof Comparable) {
             Comparable comparable = (Comparable)a;
