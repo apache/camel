@@ -34,61 +34,80 @@ public final class DefaultFileSorter {
     }
 
     /**
-     * Returns a new sory by name
+     * Returns a new sort by name
      */
-    public static Comparator<File> sortByName() {
+    public static Comparator<File> sortByName(final boolean reverse) {
         return new Comparator<File>() {
             public int compare(File o1, File o2) {
-                return o1.getName().compareTo(o2.getName());
+                int answer = o1.getName().compareTo(o2.getName());
+                return reverse ? -1 * answer : answer;
             }
         };
     }
 
     /**
-     * Returns a new sory by path name
+     * Returns a new sort by path name
      */
-    public static Comparator<File> sortByPathName() {
+    public static Comparator<File> sortByPathName(final boolean reverse) {
         return new Comparator<File>() {
             public int compare(File o1, File o2) {
-                return o1.getPath().compareTo(o2.getPath());
+                int answer = o1.getPath().compareTo(o2.getPath());
+                return reverse ? -1 * answer : answer;
             }
         };
     }
 
     /**
-     * Returns a new sory by last modified (newest first)
+     * Returns a new sort by last modified (newest first)
      */
-    public static Comparator<File> sortByLastModified() {
+    public static Comparator<File> sortByLastModified(final boolean reverse) {
         return new Comparator<File>() {
             public int compare(File o1, File o2) {
                 long delta = o1.lastModified() - o2.lastModified();
                 if (delta == 0) {
                     return 0;
                 }
-                return delta > 0 ? 1 : -1;
+                int answer = delta > 0 ? 1 : -1;
+                return reverse ? -1 * answer : answer;
             }
         };
     }
 
     /**
-     * Returns a new sory by file size (smallest first)
+     * Returns a new sort by file size (smallest first)
      */
-    public static Comparator<File> sortBySize() {
+    public static Comparator<File> sortBySize(final boolean reverse) {
         return new Comparator<File>() {
             public int compare(File o1, File o2) {
                 long delta = o1.length() - o2.length();
                 if (delta == 0) {
                     return 0;
                 } 
-                return delta > 0 ? 1 : -1;
+                int answer = delta > 0 ? 1 : -1;
+                return reverse ? -1 * answer : answer;
             }
         };
     }
 
+    /**
+     * Returns a new sory by file language expression
+     *
+     * @param expression  the file language expression
+     * @param reverse  true to reverse order
+     * @return the comparator
+     */
     public static Comparator<FileExchange> sortByFileLanguage(final String expression, final boolean reverse) {
         return sortByFileLanguage(expression, reverse, null);
     }
 
+    /**
+     * Returns a new sory by file language expression
+     *
+     * @param expression  the file language expression
+     * @param reverse  true to reverse order
+     * @param nested  nested comparator for sub group sorting, can be null
+     * @return the comparator
+     */
     public static Comparator<FileExchange> sortByFileLanguage(final String expression, final boolean reverse,
                                                               final Comparator<FileExchange> nested) {
         return new Comparator<FileExchange>() {

@@ -77,9 +77,13 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         };
     }
 
+    // START SNIPPET: e1
     public class MyFileFilter implements FileFilter {
         public boolean accept(File pathname) {
+            // we dont accept any files starting with skip in the name
             return !pathname.getName().startsWith("skip");
         }
     }
+    // END SNIPPET: e1
+
 }
