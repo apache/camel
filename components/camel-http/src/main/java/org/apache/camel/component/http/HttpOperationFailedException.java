@@ -27,20 +27,20 @@ public class HttpOperationFailedException extends CamelException {
     private final String redirectLocation;
     private final int statusCode;
     private final StatusLine statusLine;
-    private final Header[] headers;
+    private final Header[] responseHeaders;
     private final InputStream responseBody;
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location, Header[] headers, InputStream responseBody) {
+    public HttpOperationFailedException(int statusCode, StatusLine statusLine, String location, Header[] responseHeaders, InputStream responseBody) {
         super("HTTP operation failed with statusCode: " + statusCode + ", status: " + statusLine + (location != null ? ", redirectLocation: " + location : ""));
         this.statusCode = statusCode;
         this.statusLine = statusLine;
         this.redirectLocation = location;
-        this.headers = headers;
+        this.responseHeaders = responseHeaders;
         this.responseBody = responseBody;
     }
 
-    public HttpOperationFailedException(int statusCode, StatusLine statusLine, Header[] headers, InputStream responseBody) {
-        this(statusCode, statusLine, null, headers, responseBody);
+    public HttpOperationFailedException(int statusCode, StatusLine statusLine, Header[] responseHeaders, InputStream responseBody) {
+        this(statusCode, statusLine, null, responseHeaders, responseBody);
     }
 
     public boolean isRedirectError() {
@@ -63,12 +63,12 @@ public class HttpOperationFailedException extends CamelException {
         return statusCode;
     }
 
-    public Header[] getHeaders() {
-        return headers;
+    public Header[] getResponseHeaders() {
+        return responseHeaders;
     }
 
     public InputStream getResponseBody() {
         return responseBody;
     }
-   
+
 }
