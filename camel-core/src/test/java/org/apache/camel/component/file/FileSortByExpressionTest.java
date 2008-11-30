@@ -25,27 +25,35 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSortByExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?noop=true";
+    private String fileUrl = "file://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filesorter");
+    }
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+    private void prepareFolder(String folder) {
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.dat");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
     }
 
     public void testSortFiles() throws Exception {
+        prepareFolder("a");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSortFilesReverse() throws Exception {
+        prepareFolder("b");
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
@@ -55,9 +63,9 @@ public class FileSortByExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl + "&sortBy=file:name.ext").to("mock:result");
+                from(fileUrl + "a/?sortBy=file:name.ext").to("mock:result");
 
-                from(fileUrl + "&sortBy=reverse:file:name.ext").to("mock:reverse");
+                from(fileUrl + "b/?sortBy=reverse:file:name.ext").to("mock:reverse");
             }
         };
     }
