@@ -19,12 +19,14 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
@@ -80,15 +82,39 @@ public class FileComponent extends DefaultComponent {
             result.setFilter(filter);
         }
 
+        // lookup sorter in registry if provided
         ref = getAndRemoveParameter(parameters, "sorterRef", String.class);
         if (ref != null) {
             Comparator<File> sorter = mandatoryLookup(ref, Comparator.class);
-            result.setSorter(sorter);
+            result.setFileSorter(sorter);
         }
 
-        // TODO: CAMEL-1112 having out-of-box sorters for by name, by filestamp, etc., maybe even a reverse order
+        // sort by using file language 
+        String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
+        if (sortBy != null) {
+            // we support nested sort groups so they should be chained
+            String[] groups = sortBy.split(";");
+            Iterator<String> it = ObjectHelper.createIterator(groups);
+            Comparator<FileExchange> comparator = createSortByComparator(it);
+            result.setExchangeSorter(comparator);
+        }
 
         setProperties(result, parameters);
         return result;
     }
+
+    private Comparator<FileExchange> createSortByComparator(Iterator<String> it) {
+        if (!it.hasNext()) {
+            return null;
+        }
+
+        String group = it.next();
+        boolean reverse = group.startsWith("reverse:");
+        String reminder = reverse ? ifStartsWithReturnRemainder("reverse:", group) : group;
+        ObjectHelper.notNull(reminder, "sortBy option does not contain the expression");
+
+        // recursive add nested sorters
+        return DefaultFileSorter.sortByFileLanguage(reminder, reverse, createSortByComparator(it));
+    }
+
 }

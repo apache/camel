@@ -16,27 +16,16 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.util.Comparator;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 
 /**
- * Unit test for  the file sorter ref option
+ * Unit test for  the file sort by expression
  */
-public class FileSorterRefTest extends ContextTestSupport {
+public class FileSortByExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorterRef=mySorter";
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyFileSorter());
-        return jndi;
-    }
+    private String fileUrl = "file://target/filesorter/?noop=true";
 
     @Override
     protected void setUp() throws Exception {
@@ -44,35 +33,33 @@ public class FileSorterRefTest extends ContextTestSupport {
         deleteDirectory("target/filesorter");
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
-            FileComponent.HEADER_FILE_NAME, "paris.txt");
+            FileComponent.HEADER_FILE_NAME, "paris.dat");
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
-            FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+            FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
     }
 
     public void testSortFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
+        mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
+
+        MockEndpoint reverse = getMockEndpoint("mock:reverse");
+        reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
+
         assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl).to("mock:result");
+                from(fileUrl + "&sortBy=file:name.ext").to("mock:result");
+
+                from(fileUrl + "&sortBy=reverse:file:name.ext").to("mock:reverse");
             }
         };
     }
-
-    // START SNIPPET: e1
-    public class MyFileSorter implements Comparator<File> {
-        public int compare(File o1, File o2) {
-            return o1.getName().compareTo(o2.getName());
-        }
-    }
-    // END SNIPPET: e1
 
 }
