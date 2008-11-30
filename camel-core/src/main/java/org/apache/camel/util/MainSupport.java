@@ -287,21 +287,6 @@ public abstract class MainSupport extends ServiceSupport {
         }
     }
 
-    protected String getVersion() {
-        Package aPackage = Package.getPackage("org.apache.camel");
-        if (aPackage != null) {
-            String version = aPackage.getImplementationVersion();
-            if (version == null) {
-                version = aPackage.getSpecificationVersion();
-                if (version == null) {
-                    version = "";
-                }
-            }
-            return version;
-        }
-        return "";
-    }
-
     /**
      * Parses the command line arguments then runs the program
      */

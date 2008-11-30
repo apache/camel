@@ -600,6 +600,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // -----------------------------------------------------------------------
 
     protected void doStart() throws Exception {
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
+
         if (getTrace()) {
             // only add a new tracer if not already configued
             if (Tracer.getTracer(this) == null) {
@@ -630,6 +632,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         startRouteDefinitions(routeDefinitions);
         startRoutes(routes);
+        
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
