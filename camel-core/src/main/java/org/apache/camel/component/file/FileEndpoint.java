@@ -33,8 +33,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
-import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
@@ -71,7 +71,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private Expression expression;
     private String tempPrefix;
     private boolean idempotent;
-    private MessageIdRepository idempotentRepository;
+    private IdempotentRepository idempotentRepository;
     private FileFilter filter;
     private Comparator<File> fileSorter;
     private Comparator<FileExchange> exchangeSorter;
@@ -103,7 +103,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         // if idempotent and no repository set then create a default one
         if (isIdempotent() && idempotentRepository == null) {
             LOG.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
-            idempotentRepository = MemoryMessageIdRepository.memoryMessageIdRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
         configureConsumer(result);
@@ -331,11 +331,11 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         this.idempotent = idempotent;
     }
 
-    public MessageIdRepository getIdempotentRepository() {
+    public IdempotentRepository getIdempotentRepository() {
         return idempotentRepository;
     }
 
-    public void setIdempotentRepository(MessageIdRepository idempotentRepository) {
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
         this.idempotentRepository = idempotentRepository;
     }
 

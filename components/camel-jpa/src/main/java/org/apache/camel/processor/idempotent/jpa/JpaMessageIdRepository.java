@@ -17,12 +17,10 @@
 package org.apache.camel.processor.idempotent.jpa;
 
 import java.util.List;
-
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 
-import org.apache.camel.processor.idempotent.MessageIdRepository;
-
+import org.apache.camel.spi.IdempotentRepository;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
@@ -33,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * @version $Revision$
  */
-public class JpaMessageIdRepository implements MessageIdRepository {
+public class JpaMessageIdRepository implements IdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
     private JpaTemplate jpaTemplate;
     private String processorName;
@@ -65,11 +63,10 @@ public class JpaMessageIdRepository implements MessageIdRepository {
         return transactionTemplate;
     }
 
-    public boolean contains(final String messageId) {
+    public boolean add(final String messageId) {
         // Run this in single transaction.
         Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
             public Object doInTransaction(TransactionStatus arg0) {
-
                 List list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
                 if (list.isEmpty()) {
                     MessageProcessed processed = new MessageProcessed();
@@ -77,6 +74,21 @@ public class JpaMessageIdRepository implements MessageIdRepository {
                     processed.setMessageId(messageId);
                     jpaTemplate.persist(processed);
                     jpaTemplate.flush();
+                    return Boolean.TRUE;
+                } else {
+                    return Boolean.FALSE;
+                }
+            }
+        });
+        return rc.booleanValue();
+    }
+
+    public boolean contains(final String messageId) {
+        // Run this in single transaction.
+        Boolean rc = (Boolean)transactionTemplate.execute(new TransactionCallback() {
+            public Object doInTransaction(TransactionStatus arg0) {
+                List list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
+                if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
                     return Boolean.TRUE;
@@ -85,4 +97,5 @@ public class JpaMessageIdRepository implements MessageIdRepository {
         });
         return rc.booleanValue();
     }
+
 }

@@ -38,9 +38,7 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.idempotent.MemoryMessageIdRepository;
-
-import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
  * @version $Revision$
@@ -412,7 +410,7 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: idempotent
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").idempotentConsumer(header("myMessageId"), memoryMessageIdRepository(200))
+                from("seda:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                     .to("seda:b");
             }
         };
@@ -441,7 +439,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer
                 .getMessageIdExpression().toString());
 
-            assertIsInstanceOf(MemoryMessageIdRepository.class, idempotentConsumer.getMessageIdRepository());
+            assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
 
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
                                                              unwrapErrorHandler(idempotentConsumer

@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.ExpressionHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -36,18 +37,18 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
     private Expression messageIdExpression;
     private Processor nextProcessor;
-    private MessageIdRepository messageIdRepository;
+    private IdempotentRepository idempotentRepository;
 
     public IdempotentConsumer(Expression messageIdExpression, 
-            MessageIdRepository messageIdRepository, Processor nextProcessor) {
+            IdempotentRepository idempotentRepository, Processor nextProcessor) {
         this.messageIdExpression = messageIdExpression;
-        this.messageIdRepository = messageIdRepository;
+        this.idempotentRepository = idempotentRepository;
         this.nextProcessor = nextProcessor;
     }
 
     @Override
     public String toString() {
-        return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + messageIdRepository
+        return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + idempotentRepository
                + ", processor=" + nextProcessor + "]";
     }
 
@@ -56,7 +57,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
         }
-        if (!messageIdRepository.contains(messageId)) {
+        if (idempotentRepository.add(messageId)) {
             nextProcessor.process(exchange);
         } else {
             onDuplicateMessage(exchange, messageId);
@@ -69,8 +70,8 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
         return messageIdExpression;
     }
 
-    public MessageIdRepository getMessageIdRepository() {
-        return messageIdRepository;
+    public IdempotentRepository getIdempotentRepository() {
+        return idempotentRepository;
     }
 
     public Processor getNextProcessor() {

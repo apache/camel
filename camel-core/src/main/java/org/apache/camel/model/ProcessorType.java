@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -54,9 +53,9 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
@@ -311,12 +310,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * to avoid duplicate messages
      *
      * @param messageIdExpression  expression to test of duplicate messages
-     * @param messageIdRepository  the repository to use for duplicate chedck
+     * @param idempotentRepository  the repository to use for duplicate chedck
      * @return the builder
      */
     public IdempotentConsumerType idempotentConsumer(Expression messageIdExpression,
-            MessageIdRepository messageIdRepository) {
-        IdempotentConsumerType answer = new IdempotentConsumerType(messageIdExpression, messageIdRepository);
+            IdempotentRepository idempotentRepository) {
+        IdempotentConsumerType answer = new IdempotentConsumerType(messageIdExpression, idempotentRepository);
         addOutput(answer);
         return answer;
     }
@@ -326,12 +325,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
-     * @param messageIdRepository the repository to use for duplicate chedck
+     * @param idempotentRepository the repository to use for duplicate chedck
      * @return the builder used to create the expression
      */
-    public ExpressionClause<IdempotentConsumerType> idempotentConsumer(MessageIdRepository messageIdRepository) {
+    public ExpressionClause<IdempotentConsumerType> idempotentConsumer(IdempotentRepository idempotentRepository) {
         IdempotentConsumerType answer = new IdempotentConsumerType();
-        answer.setMessageIdRepository(messageIdRepository);
+        answer.setMessageIdRepository(idempotentRepository);
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
