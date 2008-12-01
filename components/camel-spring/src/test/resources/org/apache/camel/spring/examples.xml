@@ -155,13 +155,13 @@
 
     <route>
       <from uri="seda:a"/>
-      <splitter>
+      <split>
         <recipients>
           <bodyAs class="java.lang.String"/>
           <tokenize token="
 "/>
         </recipients>
-      </splitter>
+      </split>
       <to uri="seda:b"/>
     </route>
 

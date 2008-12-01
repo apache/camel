@@ -35,11 +35,11 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;splitter/&gt; element
+ * Represents an XML &lt;split/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "splitter")
+@XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SplitterType extends ExpressionNode {
     @XmlTransient

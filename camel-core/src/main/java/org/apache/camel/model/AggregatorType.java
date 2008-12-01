@@ -43,11 +43,11 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;aggregator/&gt; element
+ * Represents an XML &lt;aggregate/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "aggregator")
+@XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregatorType extends ProcessorType<ProcessorType> {
     @XmlElement(name = "correlationExpression", required = false)

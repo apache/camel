@@ -60,7 +60,7 @@
 
     <route>
        <from uri="direct:aggregater"/>
-       <aggregator strategyRef="bodyInAggregatorStrategy">
+       <aggregate strategyRef="bodyInAggregatorStrategy">
         <correlationExpression>
           <simple>header.cheese</simple>
         </correlationExpression>
@@ -68,7 +68,7 @@
         <completedPredicate>
           <method bean="bodyInAggregatorStrategy" method="isCompleted"/>
         </completedPredicate>
-      </aggregator>
+      </aggregate>
     </route>
   </camelContext>
 

@@ -27,9 +27,9 @@
     xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="seda:a" />
-      <throttler maximumRequestsPerPeriod="3" timePeriodMillis="30000">
+      <throttle maximumRequestsPerPeriod="3" timePeriodMillis="30000">
         <to uri="mock:result" />
-      </throttler>
+      </throttle>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

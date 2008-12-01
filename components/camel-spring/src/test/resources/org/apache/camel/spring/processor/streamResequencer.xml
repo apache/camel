@@ -26,11 +26,11 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <resequencer>
+      <resequence>
         <simple>in.header.seqnum</simple>
         <to uri="mock:result" />
         <stream-config />
-      </resequencer>
+      </resequence>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

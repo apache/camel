@@ -18,13 +18,13 @@
 <routes id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
     	<from uri="direct:start" />
-    	<resequencer>
+    	<resequence>
     		<simple>body</simple>
     		<to uri="mock:result" />
     	    <!-- 
-    	        batch-config can be ommitted for default resequencer settings
+    	        batch-config can be ommitted for default resequence settings
     	    -->
     	    <batch-config batchTimeout="2000" batchSize="500"/>
-    	</resequencer>
+    	</resequence>
     </route>
 </routes>

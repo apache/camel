@@ -26,10 +26,10 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:parallel-custom-pool"/>
-      <splitter threadPoolExecutorRef="threadPoolExecutor"> 
+      <split threadPoolExecutorRef="threadPoolExecutor"> 
         <xpath>/invoice/lineItems</xpath>
         <to uri="mock:result"/>
-      </splitter>
+      </split>
     </route>
   </camelContext>
 
