@@ -18,15 +18,12 @@ package org.apache.camel.impl;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.util.zip.Deflater;
-import java.util.zip.Inflater;
-
-import javax.xml.bind.annotation.XmlAttribute;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 
@@ -43,47 +40,43 @@ public class ZipDataFormat implements DataFormat {
         this.compressionLevel = compressionLevel;
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream)
+    public void marshal(Exchange exchange, Object body, OutputStream stream)
         throws Exception {
-        
-        // Retrieve the message body as byte array 
-        byte[] input = (byte[]) exchange.getIn().getBody(byte[].class);
-        
-        // Create a Message Deflater
-        Deflater deflater = new Deflater(compressionLevel);
-        deflater.setInput(input);
-        deflater.finish();        
+        InputStream is;
+        if (body instanceof InputStream) {
+            is = (InputStream)body;
+        }
+        is = exchange.getIn().getBody(InputStream.class);
+        if (is == null) {
+            throw new IllegalArgumentException("Can't get the inputstream for ZipDataFormat mashalling");
+        }
+       
+        DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
         
         // Compress the data
-        byte[] output = new byte[INITIALBYTEARRAYSIZE];
-        while (!deflater.finished()) {
-            int count = deflater.deflate(output);
-            stream.write(output, 0, count);
-        }
+        IOConverter.copy(is, zipOutput);
+        zipOutput.close();
 
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream)
         throws Exception {
-
-        // Retrieve the message body as byte array 
-        byte[] input = (byte[]) exchange.getIn().getBody(byte[].class);
         
-        // Create a Message Inflater        
-        Inflater inflater = new Inflater();
-        inflater.setInput(input);
-
+        InputStream is = stream;
+        if (is == null) {           
+            exchange.getIn().getBody(InputStream.class);
+        }
+        if (is == null) {
+            throw new IllegalArgumentException("Can't get the inputStream for ZipDataFormat unmashalling");
+        }
+        
+        InflaterInputStream unzipInput = new InflaterInputStream(is);
+        
         // Create an expandable byte array to hold the inflated data
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(input.length);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         
-        // Inflate the compressed data
-        byte[] buf = new byte[INITIALBYTEARRAYSIZE];
-        while (!inflater.finished()) {
-            int count = inflater.inflate(buf);
-            bos.write(buf, 0, count);
-        }    
+        IOConverter.copy(unzipInput, bos);        
 
-        // Return the inflated data
         return bos.toByteArray();
     }
 

@@ -120,13 +120,23 @@ public final class IOConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(String text) {
+    public static InputStream toInputStream(String text, Exchange exchange) {
+        if (exchange != null) {
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName != null) {
+                try {
+                    return toInputStream(text.getBytes(charsetName));
+                } catch (UnsupportedEncodingException e) {
+                    LOG.warn("Can't convert the String into the bytes with the charset " + charsetName, e);
+                }
+            }
+        }
         return toInputStream(text.getBytes());
     }
 
     @Converter
-    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
-        return toInputStream(toString(buffer));
+    public static InputStream toInputStream(BufferedReader buffer, Exchange exchange) throws IOException {
+        return toInputStream(toString(buffer), exchange);
     }
 
     @Converter
@@ -270,14 +280,14 @@ public final class IOConverter {
         return bos.toByteArray();
     }
 
-    protected static void copy(InputStream stream, ByteArrayOutputStream bos) throws IOException {
+    public static void copy(InputStream stream, OutputStream os) throws IOException {
         byte[] data = new byte[4096];
-        int read = stream.read(data);
-        while (read != -1) {
-            bos.write(data, 0, read);
+        int read = stream.read(data);        
+        while (read != -1) {            
+            os.write(data, 0, read);
             read = stream.read(data);
         }
-        bos.flush();
+        os.flush();
     }
 
     protected static String toString(Source source, Properties props) throws TransformerException, IOException {
