@@ -27,11 +27,11 @@
     <route>
       <from uri="file://src/test/data/delim?noop=true"/>
       <unmarshal ref="delimitedFormat"/>
-      <splitter>
+      <split>
         <simple>in.body</simple>
         <convertBodyTo type="java.util.Map"/>
         <to uri="mock:results"/>
-      </splitter>
+      </split>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
