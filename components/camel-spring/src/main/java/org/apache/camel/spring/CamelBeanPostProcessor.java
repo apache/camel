@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
@@ -44,13 +45,13 @@ import org.springframework.context.ApplicationContextAware;
  * features in Camel such as the <a href="http://activemq.apache.org/camel/bean-injection.html">Bean Injection</a> of objects like
  * {@link Endpoint} and
  * {@link org.apache.camel.ProducerTemplate} together with support for
- * <a href="http://activemq.apache.org/camel/pojo-consuming.html">POJO Consuming</a> via the 
+ * <a href="http://activemq.apache.org/camel/pojo-consuming.html">POJO Consuming</a> via the
  * {@link org.apache.camel.Consume} and {@link org.apache.camel.MessageDriven} annotations along with
  * <a href="http://activemq.apache.org/camel/pojo-producing.html">POJO Producing</a> via the
  * {@link org.apache.camel.Produce} annotation along with other annotations such as
  * {@link org.apache.camel.RecipientList} for creating <a href="http://activemq.apache.org/camel/recipientlist-annotation.html">a Recipient List router via annotations</a>.
  * <p>
- * If you use the &lt;camelContext&gt; element in your <a href="http://activemq.apache.org/camel/spring.html">Spring XML</a> 
+ * If you use the &lt;camelContext&gt; element in your <a href="http://activemq.apache.org/camel/spring.html">Spring XML</a>
  * then one of these bean post processors is implicity installed and configured for you. So you should never have to
  * explicitly create or configure one of these instances.
  *
@@ -61,7 +62,7 @@ import org.springframework.context.ApplicationContextAware;
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
     private static final transient Log LOG = LogFactory.getLog(CamelBeanPostProcessor.class);
     @XmlTransient
-    private SpringCamelContext camelContext;
+    private CamelContext camelContext;
     @XmlTransient
     private ApplicationContext applicationContext;
     @XmlTransient
@@ -95,11 +96,11 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
         this.applicationContext = applicationContext;
     }
 
-    public SpringCamelContext getCamelContext() {
+    public CamelContext getCamelContext() {
         return camelContext;
     }
 
-    public void setCamelContext(SpringCamelContext camelContext) {
+    public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         postProcessor = new CamelPostProcessorHelper(camelContext) {
             @Override
