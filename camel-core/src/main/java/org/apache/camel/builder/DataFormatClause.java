@@ -16,6 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.zip.Deflater;
+
+import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
@@ -28,6 +31,7 @@ import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
+import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.spi.DataFormat;
 
 /**
@@ -175,4 +179,13 @@ public class DataFormatClause<T extends ProcessorType> {
         }
     }
 
+    public T zip() {
+        ZipDataFormat zdf = new ZipDataFormat(Deflater.DEFAULT_COMPRESSION);
+        return dataFormat(zdf);
+    }
+
+    public T zip(int compressionLevel) {
+        ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
+        return dataFormat(zdf);
+    }
 }

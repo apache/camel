@@ -26,3 +26,4 @@ SerializationDataFormat
 StringDataFormat
 XMLBeansDataFormat
 XStreamDataFormat
+ZipDataFormat
