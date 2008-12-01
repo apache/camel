@@ -34,22 +34,22 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version 
  */
-public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
+public class DirectEndpoint extends DefaultEndpoint {
     private static final Log LOG = LogFactory.getLog(DirectEndpoint.class);
 
-    private final CopyOnWriteArrayList<DefaultConsumer<E>> consumers = new CopyOnWriteArrayList<DefaultConsumer<E>>();
+    private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
     boolean allowMultipleConsumers = true;
 
-    public DirectEndpoint(String uri, DirectComponent<E> component) {
+    public DirectEndpoint(String uri, DirectComponent component) {
         super(uri, component);
     }
 
     public Producer createProducer() throws Exception {
-        return new DirectProducer<E>(this);
+        return new DirectProducer(this);
     }
 
-    public Consumer<E> createConsumer(Processor processor) throws Exception {
-        return new DefaultConsumer<E>(this, processor) {
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new DefaultConsumer(this, processor) {
             @Override
             public void start() throws Exception {
                 if (!allowMultipleConsumers && !consumers.isEmpty()) {
@@ -80,7 +80,7 @@ public class DirectEndpoint<E extends Exchange> extends DefaultEndpoint<E> {
         return true;
     }
 
-    public List<DefaultConsumer<E>> getConsumers() {
+    public List<DefaultConsumer> getConsumers() {
         return consumers;
     }
 }
