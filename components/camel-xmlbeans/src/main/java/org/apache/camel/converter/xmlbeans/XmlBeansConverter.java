@@ -31,6 +31,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -69,8 +70,8 @@ public class XmlBeansConverter {
     }
 
     @Converter
-    public static XmlObject toXmlObject(String value) throws IOException, XmlException {
-        return toXmlObject(IOConverter.toInputStream(value));
+    public static XmlObject toXmlObject(String value, Exchange exchange) throws IOException, XmlException {
+        return toXmlObject(IOConverter.toInputStream(value, exchange));
     }
 
     @Converter
