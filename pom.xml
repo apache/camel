@@ -1335,15 +1335,8 @@
       </build>
     </profile>
     <profile>
-    	<id>nochecks</id>
-        <!-- skip the checkstyle source code checking -->
-    </profile>
-    <profile>
-      <id>sourcecheck</id>
       <!-- endable the checkstyle source code checking -->
-      <activation>
-        <activeByDefault>true</activeByDefault>
-      </activation>
+      <id>sourcecheck</id>
       <build>
         <plugins>
           <plugin>
