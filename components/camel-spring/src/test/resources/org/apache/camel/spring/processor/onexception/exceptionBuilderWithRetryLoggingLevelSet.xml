@@ -54,7 +54,7 @@
             <onException>
                 <exception>java.io.IOException</exception>
                 <redeliveryPolicy 
-                    delay="1000"
+                    redeliveryDelay="1000"
                     maximumRedeliveries="3"
                     maximumRedeliveryDelay="10000"
                     backOffMultiplier="1.0"

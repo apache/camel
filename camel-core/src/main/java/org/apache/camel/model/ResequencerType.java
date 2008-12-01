@@ -37,11 +37,11 @@ import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;resequencer/&gt; element
+ * Represents an XML &lt;resequence/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "resequencer")
+@XmlRootElement(name = "resequence")
 public class ResequencerType extends ProcessorType<ProcessorType> {
     @XmlElementRef
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();

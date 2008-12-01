@@ -26,12 +26,12 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <aggregator>
+      <aggregate>
         <correlationExpression>
           <simple>header.cheese</simple>
         </correlationExpression>
         <to uri="mock:result"/>
-      </aggregator>
+      </aggregate>
     </route>
 
     <route>
@@ -42,17 +42,17 @@
 
     <route>
       <from uri="direct:temp"/>
-      <aggregator>
+      <aggregate>
         <correlationExpression>      
           <simple>header.cheese</simple>
         </correlationExpression>
         <to uri="mock:result"/>
-      </aggregator>
+      </aggregate>
     </route>
 
     <route>
       <from uri="direct:predicate"/>
-      <aggregator strategyRef="myAggregatorStrategy">
+      <aggregate strategyRef="myAggregatorStrategy">
         <correlationExpression>
           <simple>header.cheese</simple>
         </correlationExpression>
@@ -60,7 +60,7 @@
         <completedPredicate>
           <method bean="myAggregatorStrategy" method="isCompleted"/>
         </completedPredicate>
-      </aggregator>
+      </aggregate>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

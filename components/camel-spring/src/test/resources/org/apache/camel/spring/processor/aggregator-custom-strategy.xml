@@ -26,12 +26,12 @@
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <aggregator strategyRef="aggregatorStrategy">
+      <aggregate strategyRef="aggregatorStrategy">
         <correlationExpression>
           <simple>header.cheese</simple>
         </correlationExpression>
         <to uri="mock:result"/>
-      </aggregator>
+      </aggregate>
     </route>
   </camelContext>
 

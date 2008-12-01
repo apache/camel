@@ -30,18 +30,18 @@
     xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="seda:a"/>
-      <delayer>      
+      <delay>      
         <simple>header.JMSTimestamp</simple>
-        <delay>3000</delay>
-      </delayer>
+        <delayTime>3000</delayTime>
+      </delay>
       <to uri="mock:result"/>
     </route>
     <route>
       <from uri="seda:b"/>
-      <delayer>
+      <delay>
         <expression/>
-        <delay>3000</delay>
-      </delayer>
+        <delayTime>3000</delayTime>
+      </delay>
       <to uri="mock:result"/>
     </route>
   </camelContext>

@@ -55,10 +55,10 @@
     </route>
     <route>
       <from uri="direct:c.start"/>
-      <resequencer>
+      <resequence>
         <simple>body</simple>
         <to uri="mock:c.end"/>
-      </resequencer>
+      </resequence>
     </route>
   </camelContext>
 

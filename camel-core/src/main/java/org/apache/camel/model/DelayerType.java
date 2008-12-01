@@ -29,15 +29,15 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;delayer/&gt; element
+ * Represents an XML &lt;delay/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "delayer")
+@XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayerType extends ExpressionNode {
     @XmlElement
-    private Long delay = 0L;
+    private Long delayTime = 0L;
 
     public DelayerType() {
     }
@@ -52,7 +52,7 @@ public class DelayerType extends ExpressionNode {
 
     public DelayerType(Expression processAtExpression, long delay) {
         super(processAtExpression);
-        this.delay = delay;
+        this.delayTime = delay;
     }
 
     @Override
@@ -65,19 +65,19 @@ public class DelayerType extends ExpressionNode {
         return "delayer";
     }
 
-    public Long getDelay() {
-        return delay;
+    public Long getDelayTime() {
+        return delayTime;
     }
 
-    public void setDelay(Long delay) {
-        this.delay = delay;
+    public void setDelayTime(Long delay) {
+        this.delayTime = delay;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         Expression processAtExpression = createAbsoluteTimeDelayExpression(routeContext);
-        return new Delayer(childProcessor, processAtExpression, delay);
+        return new Delayer(childProcessor, processAtExpression, delayTime);
     }
 
     private Expression createAbsoluteTimeDelayExpression(RouteContext routeContext) {

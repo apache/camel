@@ -30,11 +30,11 @@ import org.apache.camel.processor.Throttler;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;throttler/&gt; element
+ * Represents an XML &lt;throttle/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "throttler")
+@XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ThrottlerType extends ProcessorType<ProcessorType> {
     @XmlAttribute

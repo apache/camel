@@ -18,9 +18,9 @@
   <routes id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="seda:a"/>
-      <splitter>
+      <split>
         <xpath>/foo/bar</xpath>
         <to uri="seda:b"/>
-      </splitter>
+      </split>
     </route>
   </routes>
