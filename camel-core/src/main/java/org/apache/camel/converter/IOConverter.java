@@ -120,6 +120,11 @@ public final class IOConverter {
     }
 
     @Converter
+    public static InputStream toInputStream(String text) {
+        return toInputStream(text, null);
+    }
+    
+    @Converter
     public static InputStream toInputStream(String text, Exchange exchange) {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
