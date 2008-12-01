@@ -99,6 +99,12 @@ public class FileEndpoint extends ScheduledPollEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer result = new FileConsumer(this, processor);
+        
+        // if noop=true then idempotent should also be configured
+        if (isNoop() && !isIdempotent()) {
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            setIdempotent(true);
+        }
 
         // if idempotent and no repository set then create a default one
         if (isIdempotent() && idempotentRepository == null) {
