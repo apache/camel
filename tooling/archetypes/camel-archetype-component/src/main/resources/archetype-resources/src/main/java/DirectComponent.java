@@ -28,10 +28,10 @@ import java.util.Map;
  *
  * @version
  */
-public class DirectComponent<E extends Exchange> extends DefaultComponent<E> {
+public class DirectComponent extends DefaultComponent {
 
-    protected Endpoint<E> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        Endpoint<E> endpoint = new DirectEndpoint<E>(uri, this);
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        Endpoint endpoint = new DirectEndpoint(uri, this);
         setProperties(endpoint, parameters);
         return endpoint;
     }

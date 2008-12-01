@@ -29,11 +29,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $
  */
-public class DirectProducer<E extends Exchange> extends DefaultProducer implements AsyncProcessor {
+public class DirectProducer extends DefaultProducer implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(DirectProducer.class);
-    private DirectEndpoint<E> endpoint;
+    private DirectEndpoint endpoint;
 
-    public DirectProducer(DirectEndpoint<E> endpoint) {
+    public DirectProducer(DirectEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -43,7 +43,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
             LOG.warn("No getConsumers() available on " + this + " for " + exchange);
         }
         else {
-            for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
+            for (DefaultConsumer consumer : endpoint.getConsumers()) {
                 consumer.getProcessor().process(exchange);
             }
         }
@@ -58,7 +58,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
             if (size > 1) {
                 // Too hard to do multiple async.. do it sync
                 try {
-                    for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
+                    for (DefaultConsumer consumer : endpoint.getConsumers()) {
                         consumer.getProcessor().process(exchange);
                     }
                 }
@@ -67,7 +67,7 @@ public class DirectProducer<E extends Exchange> extends DefaultProducer implemen
                 }
             }
             else {
-                for (DefaultConsumer<E> consumer : endpoint.getConsumers()) {
+                for (DefaultConsumer consumer : endpoint.getConsumers()) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(consumer.getProcessor());
                     return processor.process(exchange, callback);
                 }
