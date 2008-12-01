@@ -77,11 +77,13 @@
     <module>camel-script</module>
     <module>camel-spring</module>
     <module>camel-spring-integration</module>
+    <module>camel-spring-javaconfig</module>
     <module>camel-sql</module>
     <module>camel-stringtemplate</module>
     <module>camel-stream</module>
     <!--<module>camel-supercsv</module>-->
     <module>camel-swing</module>
+    <module>camel-test</module>
     <module>camel-uface</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
