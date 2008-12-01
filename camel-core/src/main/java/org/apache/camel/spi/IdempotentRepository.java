@@ -14,22 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.idempotent;
+package org.apache.camel.spi;
 
 /**
  * Access to a repository of Message IDs to implement the
  * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent Consumer</a> pattern.
+ * <p/>
+ * The <tt>add</tt> and <tt>contains</tt> methods is operating according to the {@link java.util.Set} contract.
  *
  * @version $Revision$
  */
-public interface MessageIdRepository {
+public interface IdempotentRepository<E> {
 
     /**
-     * Returns true if this messageId has been processed before
-     * otherwise this messageId is added to the repository and false is returned.
+     * Adds the key to the repository.
      *
-     * @param messageId the String ID of the message
-     * @return true if the message has been processed succesfully before otherwise false
+     * @param key the key of the message for duplicate test
+     * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
      */
-    boolean contains(String messageId);
+    boolean add(E key);
+
+    /**
+     * Returns <tt>true</tt> if this repository contains the specified element.
+     *
+     * @param key the key of the message
+     * @return <tt>true</tt> if this repository contains the specified element
+     */
+    boolean contains(E key);
 }

@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -71,7 +71,7 @@ public class FileComponent extends DefaultComponent {
         // lookup idempotent repository in registry if provided
         String ref = getAndRemoveParameter(parameters, "idempotentRepositoryRef", String.class);
         if (ref != null) {
-            MessageIdRepository repository = mandatoryLookup(ref, MessageIdRepository.class);
+            IdempotentRepository repository = mandatoryLookup(ref, IdempotentRepository.class);
             result.setIdempotentRepository(repository);
         }
 

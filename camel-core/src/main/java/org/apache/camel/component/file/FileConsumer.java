@@ -247,8 +247,7 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @return true to include the file, false to skip it
      */
     protected boolean validateFile(File file) {
-        // NOTE: contains will add if we had a miss
-        if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getName())) {
+        if (endpoint.isIdempotent() && !endpoint.getIdempotentRepository().add(file.getName())) {
             // skip as we have already processed it
             return false;
         }

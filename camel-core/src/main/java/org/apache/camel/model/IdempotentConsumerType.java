@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -39,14 +39,14 @@ public class IdempotentConsumerType extends ExpressionNode {
     @XmlAttribute
     private String messageIdRepositoryRef;
     @XmlTransient
-    private MessageIdRepository messageIdRepository;
+    private IdempotentRepository idempotentRepository;
 
     public IdempotentConsumerType() {
     }
 
-    public IdempotentConsumerType(Expression messageIdExpression, MessageIdRepository messageIdRepository) {
+    public IdempotentConsumerType(Expression messageIdExpression, IdempotentRepository idempotentRepository) {
         super(messageIdExpression);
-        this.messageIdRepository = messageIdRepository;
+        this.idempotentRepository = idempotentRepository;
     }
 
     @Override
@@ -67,32 +67,32 @@ public class IdempotentConsumerType extends ExpressionNode {
         this.messageIdRepositoryRef = messageIdRepositoryRef;
     }
 
-    public MessageIdRepository getMessageIdRepository() {
-        return messageIdRepository;
+    public IdempotentRepository getMessageIdRepository() {
+        return idempotentRepository;
     }
 
-    public void setMessageIdRepository(MessageIdRepository messageIdRepository) {
-        this.messageIdRepository = messageIdRepository;
+    public void setMessageIdRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        MessageIdRepository messageIdRepository = resolveMessageIdRepository(routeContext);
-        return new IdempotentConsumer(getExpression().createExpression(routeContext), messageIdRepository,
+        IdempotentRepository idempotentRepository = resolveMessageIdRepository(routeContext);
+        return new IdempotentConsumer(getExpression().createExpression(routeContext), idempotentRepository,
                                       childProcessor);
     }
 
     /**
-     * Strategy method to resolve the {@link org.apache.camel.processor.idempotent.MessageIdRepository} to use
+     * Strategy method to resolve the {@link org.apache.camel.spi.IdempotentRepository} to use
      *
      * @param routeContext  route context
      * @return the repository
      */
-    protected MessageIdRepository resolveMessageIdRepository(RouteContext routeContext) {
-        if (messageIdRepository == null) {
-            messageIdRepository = routeContext.lookup(messageIdRepositoryRef, MessageIdRepository.class);
+    protected IdempotentRepository resolveMessageIdRepository(RouteContext routeContext) {
+        if (idempotentRepository == null) {
+            idempotentRepository = routeContext.lookup(messageIdRepositoryRef, IdempotentRepository.class);
         }
-        return messageIdRepository;
+        return idempotentRepository;
     }
 }

@@ -22,7 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.processor.idempotent.MessageIdRepository;
+import org.apache.camel.spi.IdempotentRepository;
 
 /**
  * Unit test for the idempotentRepositoryRef option.
@@ -81,14 +81,18 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         assertTrue("MyIdempotentRepository should have been invoked", invoked);
     }
 
-    public class MyIdempotentRepository implements MessageIdRepository {
+    public class MyIdempotentRepository implements IdempotentRepository<String> {
 
-        public boolean contains(String messageId) {
-            // will return false 1st time, and true 2nd time
+        public boolean add(String messageId) {
+            // will return true 1st time, and false 2nd time
             boolean result = invoked;
             invoked = true;
             assertEquals("report.txt", messageId);
-            return result;
+            return !result;
+        }
+
+        public boolean contains(String key) {
+            return false;
         }
     }
     

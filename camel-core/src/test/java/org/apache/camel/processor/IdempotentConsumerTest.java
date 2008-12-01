@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.memoryMessageIdRepository;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
  * @version $Revision$
@@ -69,7 +69,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").idempotentConsumer(
-                        header("messageId"), memoryMessageIdRepository(200)
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
                 ).to("mock:result");
             }
         };
