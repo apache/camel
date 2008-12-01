@@ -27,11 +27,11 @@
     <route>
       <from uri="file://src/test/data/fixed?noop=true"/>
       <unmarshal ref="fixedFormat"/>
-      <splitter>
+      <split>
         <simple>in.body</simple>
         <convertBodyTo type="java.util.Map"/>
         <to uri="mock:results"/>
-      </splitter>
+      </split>
     </route>
   </camelContext>
 
