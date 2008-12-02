@@ -29,7 +29,23 @@ import org.apache.camel.impl.DefaultComponent;
 public class RefComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        String name = uri.substring("ref:".length());
+        // lets remove the scheme from the URI
+        int index = uri.indexOf(":");
+        String name = uri;
+        if (index >= 0) {
+            name = uri.substring(index + 1);
+        }
+        return lookupEndpoint(name, parameters);
+    }
+
+    /**
+     * Looks up an endpoint for a given name.
+     *
+     * Derived classes could use this name as a logical name and look it up on some registry.
+     *
+     * The default implementation will look up the name in the registry of the {@link #getCamelContext()} property
+     */
+    protected Endpoint lookupEndpoint(String name, Map parameters) {
         return getCamelContext().getRegistry().lookup(name, Endpoint.class);
     }
 }
