@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.feed.FeedComponent;
-import org.apache.camel.component.feed.FeedConsumer;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.component.feed.FeedPollingConsumer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -68,12 +68,12 @@ public class AtomEndpoint extends FeedEndpoint {
     }
 
     @Override
-    protected FeedConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
+    protected FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
         return new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);
     }  
     
     @Override
-    protected FeedConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
+    protected FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
         return new AtomPollingConsumer(this, processor); 
     }
 }

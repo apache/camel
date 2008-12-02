@@ -17,54 +17,43 @@
 package org.apache.camel.component.rss;
 
 import java.util.Date;
-import java.util.List;
 
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.feed.EntryFilter;
+import org.apache.camel.component.feed.FeedEntryPollingConsumer;
+
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
  *
  */
-public class RssEntryPollingConsumer extends RssPollingConsumer {
-    private int entryIndex;
-    private List<SyndEntry> list;
-
-    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-    }
+public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 
     public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
-        this(endpoint, processor);
+        super(endpoint, processor, filter, lastUpdate);
     }
-
-    public void poll() throws Exception {
-        SyndFeed feed = createFeed();
-        populateList(feed);        
-
-        while (hasNextEntry()) {
-            SyndEntry entry = list.get(entryIndex--);
-            Exchange exchange = endpoint.createExchange(feed, entry);
-            getProcessor().process(exchange);
-            // return and wait for the next poll to continue from last time (this consumer is stateful)
-            return;
-        }
-        
-        list = null;
-    }
-
-    private void populateList(SyndFeed feed) {
+    
+    @Override
+    protected void populateList(Object feed) throws Exception {
         if (list == null) {
-            list = feed.getEntries();
+            list = ((SyndFeed)feed).getEntries();
             entryIndex = list.size() - 1;
         }
     }
 
-    private boolean hasNextEntry() {
-        return entryIndex >= 0;
+    @Override
+    protected Object createFeed() throws Exception {
+        return RssUtils.createFeed(endpoint.getFeedUri());
     }
 
+    @Override
+    protected void resetList() {
+        list = null;    
+    }
+    
+    protected EntryFilter createEntryFilter(Date lastUpdate) {
+        return new UpdatedDateFilter(lastUpdate);
+    }    
 }

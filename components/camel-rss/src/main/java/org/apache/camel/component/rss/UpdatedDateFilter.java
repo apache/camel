@@ -14,13 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.component.rss;
 
 import java.util.Date;
 
-import org.apache.abdera.model.Document;
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
+import com.sun.syndication.feed.synd.SyndEntry;
+
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.commons.logging.Log;
@@ -30,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * Filters out all entries which occur before the last time of the entry we saw (assuming
  * entries arrive sorted in order).
  *
- * @version $Revision$
+ * @version $Revision: 656106 $
  */
 public class UpdatedDateFilter implements EntryFilter {
 
@@ -42,7 +41,7 @@ public class UpdatedDateFilter implements EntryFilter {
     }
 
     public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {        
-        Date updated = ((Entry)entry).getUpdated();
+        Date updated = ((SyndEntry)entry).getUpdatedDate();
         if (updated == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No updated time for entry so assuming its valid: entry=[" + entry + "]");

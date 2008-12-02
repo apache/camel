@@ -26,49 +26,21 @@ import org.apache.abdera.model.Feed;
 import org.apache.abdera.parser.ParseException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.feed.EntryFilter;
+import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 
 /**
  * Consumer to poll atom feeds and return each entry from the feed step by step.
  *
  * @version $Revision$
  */
-public class AtomEntryPollingConsumer extends AtomPollingConsumer {
+public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> document;
-    private int entryIndex;
-    private EntryFilter entryFilter;
-    private List<Entry> list;
 
-    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter,
-                                    Date lastUpdate) {
-        super(endpoint, processor);
-        if (filter) {
-            entryFilter = new UpdatedDateFilter(lastUpdate);
-        }
-    }
-
-    public void poll() throws Exception {
-        getDocument();
-        Feed feed = document.getRoot();
-
-        while (hasNextEntry()) {
-            Entry entry = list.get(entryIndex--);
-
-            boolean valid = true;
-            if (entryFilter != null) {
-                valid = entryFilter.isValidEntry((AtomEndpoint)endpoint, document, entry);
-            }
-            if (valid) {
-                Exchange exchange = endpoint.createExchange(feed, entry);
-                getProcessor().process(exchange);
-                // return and wait for the next poll to continue from last time (this consumer is stateful)
-                return;
-            }
-        }
-
-        // reset document to be able to poll again
-        document = null;
-    }
-
+    public AtomEntryPollingConsumer(AtomEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
+        super(endpoint, processor, filter, lastUpdate);
+    }   
+    
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
             document = AtomUtils.parseDocument(endpoint.getFeedUri());
@@ -78,8 +50,23 @@ public class AtomEntryPollingConsumer extends AtomPollingConsumer {
         return document;
     }
 
-    private boolean hasNextEntry() {
-        return entryIndex >= 0;
+    @Override
+    protected void populateList(Object feed) throws ParseException, IOException {
+        // list is populated already in the createFeed method
     }
 
+    @Override
+    protected Object createFeed() throws IOException {
+        return getDocument().getRoot();
+    }
+
+    @Override
+    protected void resetList() {
+        document = null;    
+    }
+    
+    @Override
+    protected EntryFilter createEntryFilter(Date lastUpdate) {
+        return new UpdatedDateFilter(lastUpdate);
+    }
 }

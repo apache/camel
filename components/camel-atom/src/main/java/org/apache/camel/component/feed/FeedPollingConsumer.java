@@ -14,36 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rss;
+package org.apache.camel.component.feed;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.FeedException;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.component.feed.FeedConsumer;
-import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
- * Base class for consuming RSS feeds.
+ * Base class for consuming feeds.
  */
-public abstract class RssConsumerSupport extends FeedConsumer {
+public abstract class FeedPollingConsumer extends ScheduledPollConsumer {
+    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
+    protected final FeedEndpoint endpoint;
 
-    public RssConsumerSupport(FeedEndpoint endpoint, Processor processor) {
+    public FeedPollingConsumer(FeedEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        this.endpoint = endpoint;
     }
 
-    protected SyndFeed createFeed() throws IOException, MalformedURLException, FeedException {
-        InputStream in = new URL(endpoint.getFeedUri()).openStream();
-        SyndFeedInput input = new SyndFeedInput();
-        SyndFeed feed = input.build(new XmlReader(in));
-        return feed;
+    protected void poll() throws Exception {
+        Exchange exchange = endpoint.createExchange(createFeed());
+        getProcessor().process(exchange);
     }
+
+    protected abstract Object createFeed() throws Exception;
+
 }
