@@ -16,11 +16,10 @@
  */
 package org.apache.camel.component.rss;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultComponent;
-
 import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
  * An <a href="http://activemq.apache.org/camel/rss.html">RSS Component</a>.

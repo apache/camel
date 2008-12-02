@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.rss;
 
-import java.io.InputStream;
-import java.net.URL;
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.apache.camel.impl.ScheduledPollConsumer;
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-import com.sun.syndication.io.SyndFeedInput;
-import com.sun.syndication.io.XmlReader;
 
 /**
  * An <a href="http://activemq.apache.org/camel/rss.html">RSS Endpoint</a>.
