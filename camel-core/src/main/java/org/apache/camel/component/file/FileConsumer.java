@@ -100,14 +100,15 @@ public class FileConsumer extends ScheduledPollConsumer {
 
         if (!fileOrDirectory.isDirectory()) {
             addFile(fileOrDirectory, fileList);
-        } else if (processDir) {
+        // must test matching for directories as well as we want to skip directories starting with a dot etc.
+        } else if (processDir && matchFile(fileOrDirectory)) {
             // directory that can be recursive
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Polling directory " + fileOrDirectory);
             }
             File[] files = fileOrDirectory.listFiles();
             for (File file : files) {
-                // recursive add the files
+                // recursive scan and add the files
                 scanFilesToPoll(file, isRecursive(), fileList);
             }
         } else {
@@ -218,7 +219,8 @@ public class FileConsumer extends ScheduledPollConsumer {
                                          File file, boolean failureHandled) {
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Committing file strategy: " + processStrategy + " for file: " + file + (failureHandled ? " that was handled by the failure processor." : ""));
+                LOG.debug("Committing file strategy: " + processStrategy + " for file: "
+                        + file + (failureHandled ? " that was handled by the failure processor." : ""));
             }
             processStrategy.commit(endpoint, exchange, file);
         } catch (Exception e) {
@@ -247,22 +249,26 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @return true to include the file, false to skip it
      */
     protected boolean validateFile(File file) {
-        if (endpoint.isIdempotent() && !endpoint.getIdempotentRepository().add(file.getName())) {
+        if (!matchFile(file)) {
+            return false;
+        } else  if (endpoint.isIdempotent() && !endpoint.getIdempotentRepository().add(file.getName())) {
             // skip as we have already processed it
             return false;
         }
 
-        return matchFile(file);
+        // file matched
+        return true;
     }
 
     /**
      * Strategy to perform file matching based on endpoint configuration.
      * <p/>
-     * Will always return false for certain files:
+     * Will always return <tt>false</tt> for certain files/folders:
      * <ul>
      *    <li>Starting with a dot</li>
      *    <li>lock files</li>
      * </ul>
+     * And then <tt>true</tt> for directories.
      *
      * @param file  the file
      * @return true if the file is matche, false if not
