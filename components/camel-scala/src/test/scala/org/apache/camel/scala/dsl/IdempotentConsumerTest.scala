@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl;
  
 import scala.dsl.builder.RouteBuilder
-import org.apache.camel.processor.idempotent.MemoryMessageIdRepository._;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository._;
 
 /**
  * Test for an idempotent consumer

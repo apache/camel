@@ -17,7 +17,7 @@
 package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.IdempotentConsumerType
-import org.apache.camel.processor.idempotent.MemoryMessageIdRepository
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
@@ -28,7 +28,7 @@ class SIdempotentConsumerType(val target: IdempotentConsumerType)(implicit val b
   val unwrap = target
   
   def memory(size: Int) = { 
-    target.setMessageIdRepository(MemoryMessageIdRepository.memoryMessageIdRepository(size))
+    target.setMessageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(size))
     this
   }
    
