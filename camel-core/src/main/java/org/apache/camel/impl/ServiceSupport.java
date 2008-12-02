@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Service;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -136,11 +137,11 @@ public abstract class ServiceSupport implements Service {
     }
     
     protected synchronized String getVersion() {
-        if (version != null) {
+        if (ObjectHelper.isNotNullAndNonEmpty(version)) {
             return version;
         }
         
-        Package aPackage = Package.getPackage("org.apache.camel");
+        Package aPackage = getClass().getPackage();
         if (aPackage != null) {
             version = aPackage.getImplementationVersion();
             if (version == null) {
