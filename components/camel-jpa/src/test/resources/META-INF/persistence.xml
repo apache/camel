@@ -57,6 +57,7 @@
     </properties>
   </persistence-unit>
 
+    <!-- START SNIPPET: e1 -->
   <persistence-unit name="idempotentDb" transaction-type="RESOURCE_LOCAL">
     <class>org.apache.camel.processor.idempotent.jpa.MessageProcessed</class>
 
@@ -67,4 +68,5 @@
       <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>
     </properties>
   </persistence-unit>
+    <!-- END SNIPPET: e1 -->
 </persistence>
