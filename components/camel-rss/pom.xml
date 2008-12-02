@@ -22,6 +22,16 @@
       <artifactId>camel-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-atom</artifactId>
+      <exclusions>
+        <exclusion>
+          <groupId>org.apache.abdera</groupId>
+          <artifactId>abdera-extensions-main</artifactId>
+        </exclusion>
+      </exclusions>      
+    </dependency>
+    <dependency>
       <groupId>rome</groupId>
       <artifactId>rome</artifactId>
       <version>0.9</version>

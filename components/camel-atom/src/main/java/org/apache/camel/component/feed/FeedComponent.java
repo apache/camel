@@ -14,21 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.component.feed;
 
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import java.util.Map;
+
+import org.apache.camel.Endpoint;
+import org.apache.camel.impl.DefaultComponent;
 
 /**
- * Base class for consuming Atom feeds.
+ * A base class for feed (atom, RSS) components.
  */
-public abstract class AtomConsumerSupport extends ScheduledPollConsumer {
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    protected final AtomEndpoint endpoint;
+public abstract class FeedComponent extends DefaultComponent {
 
-    public AtomConsumerSupport(AtomEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        this.endpoint = endpoint;
-    }
+    protected abstract FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception;
 
 }

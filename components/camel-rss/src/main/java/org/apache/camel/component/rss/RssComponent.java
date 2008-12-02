@@ -19,6 +19,8 @@ package org.apache.camel.component.rss;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.component.feed.FeedComponent;
+import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
@@ -27,9 +29,9 @@ import org.apache.camel.impl.DefaultComponent;
  * Camel uses <a href="https://rome.dev.java.net/">ROME</a> as the RSS implementation.  
  *
  */
-public class RssComponent extends DefaultComponent {
+public class RssComponent extends FeedComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new RssEndpoint(uri, this, remaining);        
     }
 }

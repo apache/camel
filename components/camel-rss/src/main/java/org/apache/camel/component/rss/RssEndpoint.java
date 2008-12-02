@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.rss;
 
+import java.util.Date;
+
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
 
@@ -23,75 +25,56 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.atom.AtomEntryPollingConsumer;
+import org.apache.camel.component.atom.AtomPollingConsumer;
+import org.apache.camel.component.feed.FeedComponent;
+import org.apache.camel.component.feed.FeedConsumer;
+import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 
 /**
  * An <a href="http://activemq.apache.org/camel/rss.html">RSS Endpoint</a>.
  * 
  */
-public class RssEndpoint extends DefaultPollingEndpoint {
+public class RssEndpoint extends FeedEndpoint {
     /**
      * Header key for the {@link com.sun.syndication.feed.synd.SyndFeed} object is stored on the in message on the exchange.
      */
-    public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed";
-    private String rssUri;   
-    private boolean splitEntries = true;    
+    public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed";   
 
-    public RssEndpoint(String uri, RssComponent component, String rssUri) {
-        super(uri, component);
-        this.setRssUri(rssUri);
+    public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
+        super(endpointUri, component, feedUri);
     }
 
-    public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("RssProducer is not implemented");
+    public RssEndpoint(String endpointUri, String feedUri) {
+        super(endpointUri, feedUri);
+    }
+
+    public RssEndpoint(String endpointUri) {
+        super(endpointUri);
+    }      
+    
+    @Override
+    public Exchange createExchange(Object feed) {
+        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
+        exchange.getIn().setBody(((SyndFeed)feed).getEntries());
+        return exchange;
+    }
+
+    @Override
+    public Exchange createExchange(Object feed, Object entry) {
+        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
+        exchange.getIn().setBody(entry);
+        return exchange;
+    }
+
+    @Override
+    protected FeedConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
+        return new RssEntryPollingConsumer(this, processor, filter, lastUpdate);
     }  
     
-    public Consumer createConsumer(Processor processor) throws Exception {
-        RssConsumerSupport answer;
-        if (isSplitEntries()) {
-            answer = new RssEntryPollingConsumer(this, processor);
-        } else {
-            answer = new RssPollingConsumer(this, processor);
-        }
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(RssConsumerSupport.DEFAULT_CONSUMER_DELAY);
-        configureConsumer(answer);
-        return answer;
+    @Override
+    protected FeedConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
+        return new RssPollingConsumer(this, processor); 
     }
-
-    public Exchange createExchange(SyndFeed feed) {
-        Exchange exchange = createExchange();
-        exchange.getIn().setBody(feed.getEntries());
-        exchange.getIn().setHeader(HEADER_RSS_FEED, feed);
-        return exchange;
-    }    
-
-    public Exchange createExchange(SyndFeed feed, SyndEntry entry) {
-        Exchange exchange = createExchange();
-        exchange.getIn().setBody(entry);
-        exchange.getIn().setHeader(HEADER_RSS_FEED, feed);
-        return exchange;
-    }
-    
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public void setRssUri(String rssUri) {
-        this.rssUri = rssUri;
-    }
-
-    public String getRssUri() {
-        return rssUri;
-    }
-
-    public void setSplitEntries(boolean splitEntries) {
-        this.splitEntries = splitEntries;
-    }
-
-    public boolean isSplitEntries() {
-        return splitEntries;
-    }   
-    
 }

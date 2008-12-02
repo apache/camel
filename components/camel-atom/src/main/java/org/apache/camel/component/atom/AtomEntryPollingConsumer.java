@@ -55,7 +55,7 @@ public class AtomEntryPollingConsumer extends AtomPollingConsumer {
 
             boolean valid = true;
             if (entryFilter != null) {
-                valid = entryFilter.isValidEntry(endpoint, document, entry);
+                valid = entryFilter.isValidEntry((AtomEndpoint)endpoint, document, entry);
             }
             if (valid) {
                 Exchange exchange = endpoint.createExchange(feed, entry);
@@ -71,7 +71,7 @@ public class AtomEntryPollingConsumer extends AtomPollingConsumer {
 
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
-            document = AtomUtils.parseDocument(endpoint.getAtomUri());
+            document = AtomUtils.parseDocument(endpoint.getFeedUri());
             list = document.getRoot().getEntries();
             entryIndex = list.size() - 1;
         }

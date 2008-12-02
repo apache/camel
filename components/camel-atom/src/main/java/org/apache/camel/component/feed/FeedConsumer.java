@@ -14,27 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.atom;
+package org.apache.camel.component.feed;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.component.feed.FeedComponent;
-import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
- * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.
- * <p/>
- * Camel uses Apache Abdera as the Atom implementation. 
- *
- * @version $Revision$
+ * Base class for consuming feeds.
  */
-public class AtomComponent extends FeedComponent {
+public abstract class FeedConsumer extends ScheduledPollConsumer {
+    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
+    protected final FeedEndpoint endpoint;
 
-    @Override
-    protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new AtomEndpoint(uri, this, remaining);
+    public FeedConsumer(FeedEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
     }
 
 }

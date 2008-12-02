@@ -27,22 +27,21 @@ import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.feed.FeedConsumer;
+import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
  * Base class for consuming RSS feeds.
  */
-public abstract class RssConsumerSupport extends ScheduledPollConsumer {
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    protected final RssEndpoint endpoint;
+public abstract class RssConsumerSupport extends FeedConsumer {
 
-    public RssConsumerSupport(RssEndpoint endpoint, Processor processor) {
+    public RssConsumerSupport(FeedEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
     }
 
     protected SyndFeed createFeed() throws IOException, MalformedURLException, FeedException {
-        InputStream in = new URL(endpoint.getRssUri()).openStream();
+        InputStream in = new URL(endpoint.getFeedUri()).openStream();
         SyndFeedInput input = new SyndFeedInput();
         SyndFeed feed = input.build(new XmlReader(in));
         return feed;
