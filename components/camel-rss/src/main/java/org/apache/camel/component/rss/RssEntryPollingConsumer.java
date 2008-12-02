@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.rss;
 
+import java.util.List;
+
 import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

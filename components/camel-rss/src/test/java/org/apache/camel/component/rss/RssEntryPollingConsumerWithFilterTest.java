@@ -16,20 +16,17 @@
  */
 package org.apache.camel.component.rss;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.TimeZone;
 
 import javax.naming.Context;
 
+import com.sun.syndication.feed.synd.SyndEntry;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
