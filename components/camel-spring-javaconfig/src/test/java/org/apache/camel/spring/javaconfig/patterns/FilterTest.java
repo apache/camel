@@ -28,6 +28,7 @@ import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
+import org.springframework.test.annotation.DirtiesContext;
 
 /**
  * @version $Revision: 1.1 $
@@ -41,6 +42,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
+    @DirtiesContext
     public void testSendMatchingMessage() throws Exception {
         String expectedBody = "<matched/>";
 
@@ -51,6 +53,7 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @DirtiesContext
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 

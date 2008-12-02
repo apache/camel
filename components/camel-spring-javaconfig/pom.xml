@@ -95,11 +95,10 @@
         <configuration>
           <excludes>
             <!-- TODO FixMe -->
-            <exclude>**/FilterTest.*</exclude>
+            <!--<exclude>**/FilterTest.*</exclude>-->
           </excludes>
         </configuration>
       </plugin>
-
     </plugins>
   </build>
 </project>
