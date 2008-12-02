@@ -44,7 +44,7 @@ public abstract class CamelConfiguration    {
             @Override
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
                 try {
-                    SpringCamelContext context = getCamelContext();
+                    SpringCamelContext context = (SpringCamelContext) getCamelContext();
                     if (context == null) {
                         // we have not yet injected the context so lets set it
                         setCamelContext(camelContext());
