@@ -138,6 +138,11 @@ public final class IOConverter {
         }
         return toInputStream(text.getBytes());
     }
+    
+    @Converter
+    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
+        return toInputStream(toString(buffer), null);
+    }
 
     @Converter
     public static InputStream toInputStream(BufferedReader buffer, Exchange exchange) throws IOException {
