@@ -15,41 +15,38 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.javaconfig.examples;
+package org.apache.camel.spring.javaconfig.patterns;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @version $Revision: 1.1 $
  */
-@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.examples.FilterConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.patterns.FilterTest$ContextConfig", loader = JavaConfigContextLoader.class)
 public class FilterTest extends AbstractJUnit38SpringContextTests {
-
-    @Autowired
-    protected CamelContext camelContext;
-
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
+    @Produce(uri = "direct:start")
+    protected ProducerTemplate template;
+
     public void testSendMatchingMessage() throws Exception {
-        assertNotNull("No injection for camelContext", camelContext);
-        assertNotNull("No Camel injection for template", template);
-        assertNotNull("No Camel injection for resultEndpoint", resultEndpoint);
+        String expectedBody = "<matched/>";
 
-        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -57,10 +54,22 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
+        template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
 
         resultEndpoint.assertIsSatisfied();
     }
 
+
+    @Configuration
+    public static class ContextConfig extends SingleRouteCamelConfiguration {
+        @Bean
+        public RouteBuilder route() {
+            return new RouteBuilder() {
+                public void configure() {
+                    from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result");
+                }
+            };
+        }
+    }
 
 }
