@@ -17,6 +17,8 @@
 package org.apache.camel.test.patterns;
 
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.test.CamelTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,10 +31,15 @@ public class FilterTest extends CamelTestSupport {
     @EndpointInject(uri="mock:result")
     protected MockEndpoint resultEndpoint;
 
-    public void testSendMatchingMessage() throws Exception {
-        resultEndpoint.expectedMessageCount(1);
+    @Produce(uri="direct:start")
+    protected ProducerTemplate template;
 
-        template.sendBodyAndHeader("direct:start", "<matched/>", "foo", "bar");
+    public void testSendMatchingMessage() throws Exception {
+        String expectedBody = "<matched/>";
+
+        resultEndpoint.expectedBodiesReceived(expectedBody);
+
+        template.sendBodyAndHeader(expectedBody, "foo", "bar");
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -40,7 +47,7 @@ public class FilterTest extends CamelTestSupport {
     public void testSendNotMatchingMessage() throws Exception {
         resultEndpoint.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("direct:start", "<notMatched/>", "foo", "notMatchedHeaderValue");
+        template.sendBodyAndHeader("<notMatched/>", "foo", "notMatchedHeaderValue");
 
         resultEndpoint.assertIsSatisfied();
     }
