@@ -41,6 +41,6 @@ class SDelayerType(val target: DelayerType)(implicit val builder: RouteBuilder) 
   }
   def minutes = min
   
-  def valueInMs : Long = target.getDelay().asInstanceOf[Long]
-  def valueInMs_=(period: Long) = target.setDelay(period)
+  def valueInMs : Long = target.getDelayTime().asInstanceOf[Long]
+  def valueInMs_=(period: Long) = target.setDelayTime(period)
 }
