@@ -16,19 +16,23 @@
  */
 package org.apache.camel.component.feed;
 
-import org.apache.camel.Processor;
-import org.apache.camel.impl.ScheduledPollConsumer;
 
 /**
- * Base class for consuming feeds.
+ * Filter used by the {@link org.apache.camel.component.feed.FeedEntryPollingConsumer} to filter entries
+ * from the feed.
+ *
+ * @version $Revision: 656106 $
  */
-public abstract class FeedConsumer extends ScheduledPollConsumer {
-    public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    protected final FeedEndpoint endpoint;
+public interface EntryFilter {
 
-    public FeedConsumer(FeedEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-        this.endpoint = endpoint;
-    }
+    /**
+     * Tests to be used as filtering the feed for only entries of interest, such as only new entries, etc.
+     *
+     * @param endpoint  the endpoint
+     * @param feed      the feed
+     * @param entry     the given entry to filter
+     * @return  <tt>true</tt> to include the entry, <ff>false</tt> to skip it
+     */
+    boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry);
 
 }

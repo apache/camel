@@ -18,8 +18,6 @@ package org.apache.camel.component.feed;
 
 import java.util.Date;
 
-import org.apache.abdera.model.Entry;
-import org.apache.abdera.model.Feed;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -64,7 +62,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        FeedConsumer answer;
+        FeedPollingConsumer answer;
         if (isSplitEntries()) {
             answer = createEntryPollingConsumer(this, processor, filter, lastUpdate);
         } else {
@@ -73,14 +71,14 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
         
         // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
         // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(FeedConsumer.DEFAULT_CONSUMER_DELAY);
+        answer.setDelay(FeedPollingConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
     }
 
-    protected abstract FeedConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor);
+    protected abstract FeedPollingConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor);
 
-    protected abstract FeedConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate);
+    protected abstract FeedPollingConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate);
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
         Exchange exchange = createExchange();

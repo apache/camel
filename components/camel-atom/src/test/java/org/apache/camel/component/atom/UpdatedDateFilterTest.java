@@ -26,6 +26,7 @@ import junit.framework.TestCase;
 import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
+import org.apache.camel.component.feed.EntryFilter;
 
 /**
  * Unit test for UpdatedDateFilter

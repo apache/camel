@@ -16,24 +16,26 @@
  */
 package org.apache.camel.component.rss;
 
+import java.io.IOException;
+
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.feed.FeedPollingConsumer;
 
 /**
  * Consumer to poll RSS feeds and return the full feed.
  */
-public class RssPollingConsumer extends RssConsumerSupport {
+public class RssPollingConsumer extends FeedPollingConsumer {
 
     public RssPollingConsumer(RssEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
-    protected void poll() throws Exception {
-        SyndFeed feed = createFeed();
-        Exchange exchange = endpoint.createExchange(feed);
-        getProcessor().process(exchange);        
+    @Override
+    protected Object createFeed() throws Exception {
+        return RssUtils.createFeed(endpoint.getFeedUri());
     }
 
 }
