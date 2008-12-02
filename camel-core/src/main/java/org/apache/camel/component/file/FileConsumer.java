@@ -250,8 +250,14 @@ public class FileConsumer extends ScheduledPollConsumer {
      */
     protected boolean validateFile(File file) {
         if (!matchFile(file)) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("File did not match. Will skip this file: " + file);
+            }
             return false;
         } else  if (endpoint.isIdempotent() && !endpoint.getIdempotentRepository().add(file.getName())) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
+            }
             // skip as we have already processed it
             return false;
         }
