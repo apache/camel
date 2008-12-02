@@ -18,6 +18,7 @@
 package org.apache.camel.spring.javaconfig;
 
 import org.apache.camel.Routes;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
@@ -25,6 +26,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
+import org.springframework.config.java.support.ConfigurationSupport;
 
 import java.util.List;
 
@@ -36,11 +38,18 @@ import java.util.List;
  * @version $Revision: 1.1 $
  */
 @Configuration
-public abstract class CamelConfiguration    {
+public abstract class CamelConfiguration extends ConfigurationSupport {
 
     @Bean
     public CamelBeanPostProcessor camelBeanPostProcessor() throws Exception {
-        return new CamelBeanPostProcessor(){
+        CamelBeanPostProcessor answer = new CamelBeanPostProcessor();
+
+        CamelContext camelContext = getBean(CamelContext.class);
+        // lets lookup a bean
+        answer.setCamelContext((SpringCamelContext) camelContext);
+        return answer;
+/*
+        {
             @Override
             public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
                 try {
@@ -57,13 +66,14 @@ public abstract class CamelConfiguration    {
                 }
             }
         };
+*/
     }
 
     /**
      * Returns the CamelContext
      */
     @Bean
-    public SpringCamelContext camelContext() throws Exception {
+    public CamelContext camelContext() throws Exception {
         SpringCamelContext camelContext = new SpringCamelContext();
         List<RouteBuilder> routes = routes();
         for (Routes route : routes) {
@@ -76,7 +86,7 @@ public abstract class CamelConfiguration    {
     /**
      * Returns the list of routes to use in this configuration
      */
-    @Bean
+    //@Bean
     public abstract List<RouteBuilder> routes();
 
 }

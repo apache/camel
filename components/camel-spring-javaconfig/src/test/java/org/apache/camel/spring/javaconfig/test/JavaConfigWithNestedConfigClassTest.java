@@ -17,19 +17,21 @@
  */
 package org.apache.camel.spring.javaconfig.test;
 
-import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.config.java.test.JavaConfigContextLoader;
+import org.springframework.config.java.annotation.Bean;
+import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.plugin.context.AnnotationDrivenConfig;
+import org.springframework.config.java.test.JavaConfigContextLoader;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
  * @version $Revision: 1.1 $
  */
-@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.test.MyConfig", loader = JavaConfigContextLoader.class)
+@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.test.JavaConfigWithNestedConfigClassTest$ContextConfig", loader = JavaConfigContextLoader.class)
 @AnnotationDrivenConfig
 @Component
-public class JavaConfigWithPostProcessorTest extends AbstractJUnit38SpringContextTests implements Cheese {
+public class JavaConfigWithNestedConfigClassTest extends AbstractJUnit38SpringContextTests implements Cheese {
     private boolean doCheeseCalled;
 
     public void testPostProcessorInjectsMe() throws Exception {
@@ -41,4 +43,13 @@ public class JavaConfigWithPostProcessorTest extends AbstractJUnit38SpringContex
         System.out.println("doCheese called!");
         doCheeseCalled = true;
     }
+
+    @Configuration
+    public static class ContextConfig {
+        @Bean
+        public MyPostProcessor myPostProcessor() {
+            return new MyPostProcessor();
+        }
+    }
+
 }
