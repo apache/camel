@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rss;
 
+import java.util.Date;
 import java.util.List;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -34,6 +35,10 @@ public class RssEntryPollingConsumer extends RssPollingConsumer {
 
     public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    public RssEntryPollingConsumer(RssEndpoint endpoint, Processor processor, boolean filter, Date lastUpdate) {
+        this(endpoint, processor);
     }
 
     public void poll() throws Exception {

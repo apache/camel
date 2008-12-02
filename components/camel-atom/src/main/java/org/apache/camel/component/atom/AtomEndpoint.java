@@ -24,6 +24,9 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.feed.FeedComponent;
+import org.apache.camel.component.feed.FeedConsumer;
+import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -32,132 +35,45 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class AtomEndpoint extends DefaultPollingEndpoint {
-
+public class AtomEndpoint extends FeedEndpoint {
     /**
      * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
      */
     public static final String HEADER_ATOM_FEED = "org.apache.camel.component.atom.feed";
-
-    private String atomUri;
-    private boolean splitEntries = true;
-    private Date lastUpdate;
-    private boolean filter = true;
-
-    public AtomEndpoint(String endpointUri, AtomComponent component, String atomUri) {
-        super(endpointUri, component);
-        this.atomUri = atomUri;
-
-        ObjectHelper.notNull(atomUri, "atomUri property");
+    
+    public AtomEndpoint(String endpointUri, FeedComponent component, String feedUri) {
+        super(endpointUri, component, feedUri);
     }
 
-    public AtomEndpoint(String endpointUri, String atomUri) {
-        this(endpointUri);
-        this.atomUri = atomUri;
-
-        ObjectHelper.notNull(atomUri, "atomUri property");
+    public AtomEndpoint(String endpointUri, String feedUri) {
+        super(endpointUri, feedUri);
     }
 
     public AtomEndpoint(String endpointUri) {
         super(endpointUri);
-    }
+    }   
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("AtomProducer is not implemented");
-    }
-
-    public Consumer createConsumer(Processor processor) throws Exception {
-        AtomConsumerSupport answer;
-        if (isSplitEntries()) {
-            answer = new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);
-        } else {
-            answer = new AtomPollingConsumer(this, processor);
-        }
-        // ScheduledPollConsumer default delay is 500 millis and that is too often for polling a feed,
-        // so we override with a new default value. End user can override this value by providing a consumer.delay parameter
-        answer.setDelay(AtomConsumerSupport.DEFAULT_CONSUMER_DELAY);
-        configureConsumer(answer);
-        return answer;
-    }
-
-    /**
-     * Creates an Exchange with the entries as the in body.
-     *
-     * @param feed   the atom feed
-     * @return the created exchange
-     */
-    public Exchange createExchange(Feed feed) {
-        Exchange exchange = createExchange();
-        exchange.getIn().setBody(feed.getEntries());
-        exchange.getIn().setHeader(HEADER_ATOM_FEED, feed);
+    @Override
+    public Exchange createExchange(Object feed) {
+        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_ATOM_FEED);
+        exchange.getIn().setBody(((Feed)feed).getEntries());
         return exchange;
     }
 
-    /**
-     * Creates an Exchange with the given entry as the in body.
-     *
-     * @param feed   the atom feed
-     * @param entry  the entry as the in body
-     * @return the created exchange
-     */
-    public Exchange createExchange(Feed feed, Entry entry) {
-        Exchange exchange = createExchange();
+    @Override
+    public Exchange createExchange(Object feed, Object entry) {
+        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_ATOM_FEED);
         exchange.getIn().setBody(entry);
-        exchange.getIn().setHeader(HEADER_ATOM_FEED, feed);
         return exchange;
     }
 
-    // Properties
-    //-------------------------------------------------------------------------
-
-    public String getAtomUri() {
-        return atomUri;
+    @Override
+    protected FeedConsumer createEntryPollingConsumer(FeedEndpoint feedEndpoint, Processor processor, boolean filter, Date lastUpdate) {
+        return new AtomEntryPollingConsumer(this, processor, filter, lastUpdate);
+    }  
+    
+    @Override
+    protected FeedConsumer createPollingConsumer(FeedEndpoint feedEndpoint, Processor processor) {
+        return new AtomPollingConsumer(this, processor); 
     }
-
-    public void setAtomUri(String atomUri) {
-        this.atomUri = atomUri;
-    }
-
-    public boolean isSplitEntries() {
-        return splitEntries;
-    }
-
-    /**
-     * Sets whether or not entries should be sent individually or whether the entire
-     * feed should be sent as a single message
-     */
-    public void setSplitEntries(boolean splitEntries) {
-        this.splitEntries = splitEntries;
-    }
-
-    public Date getLastUpdate() {
-        return lastUpdate;
-    }
-
-    /**
-     * Sets the timestamp to be used for filtering entries from the atom feeds.
-     * This options is only in conjunction with the splitEntries.
-     */
-    public void setLastUpdate(Date lastUpdate) {
-        this.lastUpdate = lastUpdate;
-    }
-
-    public boolean isFilter() {
-        return filter;
-    }
-
-    /**
-     * Sets wether to use filtering or not of the entries.
-     */
-    public void setFilter(boolean filter) {
-        this.filter = filter;
-    }
-
-    // Implementation methods
-    //-------------------------------------------------------------------------
-
 }

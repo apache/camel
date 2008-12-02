@@ -59,8 +59,8 @@ public class AtomPollingConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("atom:file:src/test/data/feed.atom?splitEntries=false").to("mock:result");
 
-                // this is a bit weird syntax that normally is not used using the atomUri parameter
-                from("atom:?atomUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
+                // this is a bit weird syntax that normally is not used using the feedUri parameter
+                from("atom:?feedUri=file:src/test/data/feed.atom&splitEntries=false").to("mock:result2");
             }
         };
     }

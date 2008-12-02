@@ -20,20 +20,21 @@ import org.apache.abdera.model.Document;
 import org.apache.abdera.model.Feed;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.component.feed.FeedConsumer;
 
 /**
  * Consumer to poll atom feeds and return the full feed.
  *
  * @version $Revision$
  */
-public class AtomPollingConsumer extends AtomConsumerSupport {
+public class AtomPollingConsumer extends FeedConsumer {
 
     public AtomPollingConsumer(AtomEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
     protected void poll() throws Exception {
-        Document<Feed> document = AtomUtils.parseDocument(endpoint.getAtomUri());
+        Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
         Feed feed = document.getRoot();
         Exchange exchange = endpoint.createExchange(feed);
         getProcessor().process(exchange);
