@@ -59,6 +59,7 @@
     <jaxb-api-version>2.1</jaxb-api-version>
     <stax-api-version>1.0.1</stax-api-version>
     <log4j-version>1.2.14</log4j-version>
+    <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <commons-io-version>1.3.2</commons-io-version>
     <commons-logging-version>1.1.1</commons-logging-version>
     <commons-logging-api-version>1.1</commons-logging-api-version>

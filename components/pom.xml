@@ -37,6 +37,7 @@
     <module>camel-amqp</module>
     <module>camel-atom</module>
     <module>camel-bam</module>
+    <module>camel-cometd</module>
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-flatpack</module>
