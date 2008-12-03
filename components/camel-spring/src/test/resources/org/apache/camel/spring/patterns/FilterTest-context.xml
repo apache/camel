@@ -25,9 +25,6 @@
     ">
 
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-    <!-- Java version
-    from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result");
-    -->
     <route>
       <from uri="direct:start"/>
       <filter>
@@ -35,7 +32,6 @@
         <to uri="mock:result"/>
       </filter>
     </route>
-
   </camelContext>
 
 </beans>
