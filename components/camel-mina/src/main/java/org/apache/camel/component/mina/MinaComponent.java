@@ -44,7 +44,7 @@ import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
-import org.apache.mina.filter.codec.textline.TextLineCodecFactory;
+import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
 import org.apache.mina.transport.socket.nio.DatagramAcceptorConfig;
 import org.apache.mina.transport.socket.nio.DatagramConnector;
@@ -68,6 +68,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     private static final long DEFAULT_CONNECT_TIMEOUT = 30000;
     private boolean sync = true;
     private boolean textline;
+    private TextLineDelimiter textlineDelimiter;
     private String codec;
     private String encoding;
     private long timeout;
@@ -163,10 +164,11 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         if (codecFactory == null) {
             if (textline) {
                 Charset charset = getEncodingParameter(type, encoding);
-                codecFactory = new TextLineCodecFactory(charset);
+                LineDelimiter delimiter = getLineDelimiterParameter();
+                codecFactory = new TextLineCodecFactory(charset, delimiter);
                 if (LOG.isDebugEnabled()) {
                     LOG.debug(type + ": Using TextLineCodecFactory: " + codecFactory + " using encoding: "
-                              + encoding);
+                              + charset + " and line delimiter: " + textlineDelimiter + "(" + delimiter + ")");
                 }
             } else {
                 codecFactory = new ObjectSerializationCodecFactory();
@@ -281,7 +283,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
             encoder = charset.newEncoder();
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + encoding);
+                LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + charset);
             }
         }
 
@@ -318,6 +320,25 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         config.getFilterChain().addLast("codec", new ProtocolCodecFilter(codecFactory));
     }
 
+    private LineDelimiter getLineDelimiterParameter() {
+        if (textlineDelimiter == null) {
+            return LineDelimiter.AUTO;
+        }
+
+        switch (textlineDelimiter) {
+        case AUTO:
+            return LineDelimiter.AUTO;
+        case UNIX:
+            return LineDelimiter.UNIX;
+        case WINDOWS:
+            return LineDelimiter.WINDOWS;
+        case MAC:
+            return LineDelimiter.MAC;
+        default:
+            throw new IllegalArgumentException("Unknown textline delimiter: " + textlineDelimiter);
+        }
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -335,6 +356,14 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
     public void setTextline(boolean textline) {
         this.textline = textline;
+    }
+
+    public TextLineDelimiter getTextlineDelimiter() {
+        return textlineDelimiter;
+    }
+
+    public void setTextlineDelimiter(TextLineDelimiter textlineDelimiter) {
+        this.textlineDelimiter = textlineDelimiter;
     }
 
     public String getCodec() {
@@ -384,4 +413,5 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
     public void setMinaLogger(boolean minaLogger) {
         this.minaLogger = minaLogger;
     }
+
 }
