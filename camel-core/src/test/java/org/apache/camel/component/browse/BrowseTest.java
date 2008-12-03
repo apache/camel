@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.list;
+package org.apache.camel.component.browse;
 
 import java.util.List;
 
@@ -29,15 +29,15 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision$
  */
-public class ListTest extends ContextTestSupport {
-    private static final transient Log LOG = LogFactory.getLog(ListTest.class);
+public class BrowseTest extends ContextTestSupport {
+    private static final transient Log LOG = LogFactory.getLog(BrowseTest.class);
 
     protected Object body1 = "one";
     protected Object body2 = "two";
 
     public void testListEndpoints() throws Exception {
-        template.sendBody("list:foo", body1);
-        template.sendBody("list:foo", body2);
+        template.sendBody("browse:foo", body1);
+        template.sendBody("browse:foo", body2);
 
         List<BrowsableEndpoint> list = CamelContextHelper.getSingletonEndpoints(context, BrowsableEndpoint.class);
         assertEquals("number of endpoints", 2, list.size());
@@ -60,7 +60,7 @@ public class ListTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("list:foo").to("list:bar");
+                from("browse:foo").to("browse:bar");
             }
         };
     }

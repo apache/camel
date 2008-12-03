@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.list;
+package org.apache.camel.component.browse;
 
 import java.util.Map;
 
@@ -22,13 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * The <a href="http://activemq.apache.org/camel/list.html">List</a> component.
+ * The <a href="http://activemq.apache.org/camel/browse.html">browse</a> component.
  *
  * @version $Revision$
  */
-public class ListComponent extends DefaultComponent {
+public class BrowseComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new ListEndpoint(uri, this);
+        return new BrowseEndpoint(uri, this);
     }
 }

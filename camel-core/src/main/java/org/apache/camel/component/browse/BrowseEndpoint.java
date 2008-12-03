@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.list;
+package org.apache.camel.component.browse;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -40,21 +40,21 @@ import org.apache.camel.spi.BrowsableEndpoint;
  *
  * @version $Revision$
  */
-public class ListEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
+public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
     private List<Exchange> exchanges;
     private TopicLoadBalancer loadBalancer = new TopicLoadBalancer();
     // TODO: firing of property changes not implemented
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    public ListEndpoint(String uri, CamelContext camelContext) {
+    public BrowseEndpoint(String uri, CamelContext camelContext) {
         super(uri, camelContext);
     }
 
-    public ListEndpoint(String uri, Component component) {
+    public BrowseEndpoint(String uri, Component component) {
         super(uri, component);
     }
 
-    public ListEndpoint(String endpointUri) {
+    public BrowseEndpoint(String endpointUri) {
         super(endpointUri);
     }
 
