@@ -24,8 +24,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 630568 $
+ * Tests filtering using Camel Test
+  * @version $Revision: 630568 $
  */
+// START SNIPPET: example
 public class FilterTest extends CamelTestSupport {
 
     @EndpointInject(uri="mock:result")
@@ -52,7 +54,7 @@ public class FilterTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
-
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -61,3 +63,4 @@ public class FilterTest extends CamelTestSupport {
         };
     }
 }
+// END SNIPPET: example
