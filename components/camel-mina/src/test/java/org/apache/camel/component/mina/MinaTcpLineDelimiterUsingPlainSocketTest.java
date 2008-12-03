@@ -32,11 +32,12 @@ import org.apache.camel.builder.RouteBuilder;
  *
  * @version $Revision$
  */
-public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
+public class MinaTcpLineDelimiterUsingPlainSocketTest extends ContextTestSupport {
 
-    private static final int PORT = 6333;
+    private static final int PORT = 6334;
     // use parameter sync=true to force InOut pattern of the MinaExchange
-    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&sync=true";
+    // use MAC textline delimiter
+    protected String uri = "mina:tcp://localhost:" + PORT + "?textline=true&textlineDelimiter=MAC&sync=true";
 
     public void testSendAndReceiveOnce() throws Exception {
         String response = sendAndReceive("World");
@@ -85,8 +86,8 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
         InputStream is = null;
         try {
             os = soc.getOutputStream();
-            // must append newline at the end to flag end of textline to Camel-Mina
-            os.write((input + "\n").getBytes());
+            // must append MAC newline at the end to flag end of textline to Camel-Mina
+            os.write((input + "\r").getBytes());
 
             is = soc.getInputStream();
             int len = is.read(buf);
@@ -108,8 +109,8 @@ public class MinaTcpWithInOutUsingPlainSocketTest extends ContextTestSupport {
         StringBuffer sb = new StringBuffer();
         for (byte b : buf) {
             char ch = (char) b;
-            if (ch == '\n' || ch == 0) {
-                // newline denotes end of text (added in the end in the processor below)
+            if (ch == '\r' || ch == 0) {
+                // use MAC delimiter denotes end of text (added in the end in the processor below)
                 break;
             } else {
                 sb.append(ch);
