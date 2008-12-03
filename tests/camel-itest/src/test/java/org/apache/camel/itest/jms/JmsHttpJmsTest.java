@@ -50,9 +50,9 @@ public class JmsHttpJmsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:9000/myservice").to("jms:out");
+                from("jms:in").to("http://localhost:9600/myservice").to("jms:out");
 
-                from("jetty:http://localhost:9000/myservice").transform().constant("Bye World");
+                from("jetty:http://localhost:9600/myservice").transform().constant("Bye World");
             }
         };
     }
