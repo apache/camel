@@ -48,7 +48,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         asserFiles("paris.txt");
     }
@@ -64,7 +64,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         asserFiles("london.txt");
     }
@@ -80,7 +80,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
-        Thread.sleep(500);
+        Thread.sleep(100);
 
         asserFiles("madrid.txt");
     }

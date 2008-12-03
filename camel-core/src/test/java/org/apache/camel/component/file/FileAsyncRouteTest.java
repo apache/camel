@@ -70,7 +70,7 @@ public class FileAsyncRouteTest extends ContextTestSupport {
         // Release the async processing thread so that the exchange completes
         // and the file gets deleted.
         processingLatch.countDown();
-        Thread.sleep(500);
+        Thread.sleep(100);
         assertFalse("File should not exist", file.getAbsoluteFile().exists());
 
         result.assertIsSatisfied();

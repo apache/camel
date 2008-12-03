@@ -52,8 +52,6 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("direct:a", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
-        Thread.sleep(250);
-
         File file = new File("target/tempandrename/hello.txt");
         // use absolute file to let unittest pass on all platforms
         file = file.getAbsoluteFile();

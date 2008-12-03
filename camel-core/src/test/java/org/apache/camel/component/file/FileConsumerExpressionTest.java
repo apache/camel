@@ -50,7 +50,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/filelanguage/" + id + ".bak");
@@ -66,7 +66,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         String id = mock.getExchanges().get(0).getIn().getMessageId();
         File file = new File("target/filelanguage/backup-" + id + "-report2.bak");
@@ -82,7 +82,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         File file = new File("target/filelanguage/backup/123.txt");
         file = file.getAbsoluteFile();
@@ -97,7 +97,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         File file = new File("target/backup/report4.txt.bak");
         file = file.getAbsoluteFile();
@@ -113,7 +113,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
-        Thread.sleep(1000);
+        Thread.sleep(100);
 
         File file = new File("target/filelanguage/123");
         file = file.getAbsoluteFile();

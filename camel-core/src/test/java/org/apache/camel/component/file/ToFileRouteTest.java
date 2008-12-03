@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -31,10 +32,12 @@ public class ToFileRouteTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     public void testToFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         template.sendBody("seda:reports", "This is a great report");
 
-        // give time for the file to be written before assertions
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
 
         // assert the file exists
         File file = new File("target/test-reports/report.txt");
@@ -54,7 +57,7 @@ public class ToFileRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // the reports from the seda queue is processed by our processor
                 // before they are written to files in the target/reports directory
-                from("seda:reports").processRef("processReport").to("file://target/test-reports");
+                from("seda:reports").processRef("processReport").to("file://target/test-reports", "mock:result");
             }
         };
     }

@@ -17,11 +17,11 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.jndi.JndiContext;
 
@@ -31,10 +31,12 @@ import org.apache.camel.util.jndi.JndiContext;
 public class BeanToFileTest extends ContextTestSupport {
 
     public void testBeanToFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         template.sendBody("direct:in", "World");
 
-        // give Camel time to create the file
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
 
         File file = new File("target/BeanToFileTest.txt");
         file = file.getAbsoluteFile();
@@ -53,7 +55,7 @@ public class BeanToFileTest extends ContextTestSupport {
                 from("direct:in").
                     to("bean:myBean").
                     setHeader(FileComponent.HEADER_FILE_NAME, constant("BeanToFileTest.txt")).
-                    to("file://target/?append=false");
+                    to("file://target/?append=false", "mock:result");
             }
         };
     }
