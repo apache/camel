@@ -20,11 +20,10 @@ import java.net.SocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Producer;
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -104,7 +103,7 @@ public class MinaProducer extends DefaultProducer {
             // did we get a response
             ResponseHandler handler = (ResponseHandler) session.getHandler();
             if (handler.getCause() != null) {
-                throw new CamelException("Response Handler had an exception", handler.getCause());
+                throw new CamelExchangeException("Response Handler had an exception", exchange, handler.getCause());
             } else if (!handler.isMessageRecieved()) {
                 // no message received
                 throw new CamelExchangeException("No response received from remote server: " + endpoint.getEndpointUri(), exchange);
