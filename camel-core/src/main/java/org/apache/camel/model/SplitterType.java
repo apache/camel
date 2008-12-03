@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -47,7 +48,7 @@ public class SplitterType extends ExpressionNode {
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
     @XmlTransient
-    private ThreadPoolExecutor threadPoolExecutor;
+    private Executor executor;
     @XmlAttribute(required = false)
     private String threadPoolExecutorRef;
     @XmlAttribute(required = false)
@@ -80,9 +81,9 @@ public class SplitterType extends ExpressionNode {
         if (aggregationStrategy == null) {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        threadPoolExecutor = createThreadPoolExecutor(routeContext);
+        executor = createThreadPoolExecutor(routeContext);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
-                isParallelProcessing(), threadPoolExecutor, streaming);
+                isParallelProcessing(), executor, streaming);
     }
     
     public AggregationStrategy getAggregationStrategy() {
@@ -127,23 +128,23 @@ public class SplitterType extends ExpressionNode {
         return this;
     }
 
-    private ThreadPoolExecutor createThreadPoolExecutor(RouteContext routeContext) {
-        ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
-        if (threadPoolExecutor == null && threadPoolExecutorRef != null) {
-            threadPoolExecutor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
+    private Executor createThreadPoolExecutor(RouteContext routeContext) {
+        Executor executor = getExecutor();
+        if (executor == null && threadPoolExecutorRef != null) {
+            executor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
         }
-        if (threadPoolExecutor == null) {
+        if (executor == null) {
             // fall back and use default
-            threadPoolExecutor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
+            executor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         }
-        return threadPoolExecutor;
+        return executor;
     }    
    
-    public ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
+    public Executor getExecutor() {
+        return executor;
     }
 
-    public void setThreadPoolExecutor(ThreadPoolExecutor threadPoolExecutor) {
-        this.threadPoolExecutor = threadPoolExecutor;
+    public void setExecutor(Executor executor) {
+        this.executor = executor;
     }
 }

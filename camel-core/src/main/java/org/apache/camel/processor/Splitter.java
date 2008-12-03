@@ -22,7 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -53,8 +53,8 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-            boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor, boolean streaming) {
-        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, threadPoolExecutor, streaming);
+            boolean parallelProcessing, Executor executor, boolean streaming) {
+        super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, executor, streaming);
 
         this.expression = expression;
         notNull(expression, "expression");

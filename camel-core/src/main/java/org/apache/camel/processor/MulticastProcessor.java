@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -69,7 +70,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
     private Collection<Processor> processors;
     private AggregationStrategy aggregationStrategy;
     private boolean isParallelProcessing;
-    private ThreadPoolExecutor executor;
+    private Executor executor;
     private final boolean streaming;
     private final AtomicBoolean shutdown = new AtomicBoolean(true);
 
@@ -81,11 +82,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         this(processors, aggregationStrategy, false, null);
     }
     
-    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor) {
+    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, Executor executor) {
         this(processors, aggregationStrategy, parallelProcessing, executor, false);
     }
 
-    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, ThreadPoolExecutor executor, boolean streaming) {
+    public MulticastProcessor(Collection<Processor> processors, AggregationStrategy aggregationStrategy, boolean parallelProcessing, Executor executor, boolean streaming) {
         notNull(processors, "processors");
         this.processors = processors;
         this.aggregationStrategy = aggregationStrategy;
@@ -228,17 +229,17 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
     protected void doStop() throws Exception {
         shutdown.set(true);
-        if (executor != null) {
-            executor.shutdown();
-            executor.awaitTermination(0, TimeUnit.SECONDS);
+        if (executor != null && executor instanceof ThreadPoolExecutor) {
+            ((ThreadPoolExecutor)executor).shutdown();
+            ((ThreadPoolExecutor)executor).awaitTermination(0, TimeUnit.SECONDS);
         }
         ServiceHelper.stopServices(processors);
     }
 
     protected void doStart() throws Exception {
         shutdown.set(false);
-        if (executor != null) {
-            executor.setRejectedExecutionHandler(new RejectedExecutionHandler() {
+        if (executor != null && executor instanceof ThreadPoolExecutor) {
+            ((ThreadPoolExecutor)executor).setRejectedExecutionHandler(new RejectedExecutionHandler() {
                 public void rejectedExecution(Runnable runnable, ThreadPoolExecutor executor) {
                     ProcessCall call = (ProcessCall)runnable;
                     call.exchange.setException(new RejectedExecutionException());
@@ -274,7 +275,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
         return aggregationStrategy;
     }
 
-    public ThreadPoolExecutor getExecutor() {
+    public Executor getExecutor() {
         return executor;
     }
 

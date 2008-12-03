@@ -24,7 +24,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executor;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -298,7 +299,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return a ThreadType builder that can be used to further configure the
      *         the thread pool.
      */
-    public ProcessorType<Type> thread(ThreadPoolExecutor executor) {
+    public ProcessorType<Type> thread(Executor executor) {
         ThreadType answer = new ThreadType(executor);
         addOutput(answer);
         return this;
@@ -593,15 +594,15 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @param expression the expression on which to split
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
-     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @param executor override the default {@link Executor}
      * @return the builder
      */
     public SplitterType split(Expression expression, boolean parallelProcessing,
-                                 ThreadPoolExecutor threadPoolExecutor) {
+                                 Executor executor) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
-        answer.setThreadPoolExecutor(threadPoolExecutor);
+        answer.setExecutor(executor);
         return answer;
     }    
     
@@ -629,14 +630,14 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
       * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
-     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @param executor override the default {@link Executor}
      * @return the expression clause for the expression on which to split
      */
-    public ExpressionClause<SplitterType> split(boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+    public ExpressionClause<SplitterType> split(boolean parallelProcessing, Executor executor) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setParallelProcessing(parallelProcessing);
-        answer.setThreadPoolExecutor(threadPoolExecutor);
+        answer.setExecutor(executor);
         return ExpressionClause.createAndSetExpression(answer);
     }    
     
@@ -669,16 +670,16 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression the expression on which to split
      * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
-     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @param executor override the default {@link Executor}
      * @return the builder
      */
     public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy,
-                                 boolean parallelProcessing, ThreadPoolExecutor threadPoolExecutor) {
+                                 boolean parallelProcessing, Executor executor) {
         SplitterType answer = new SplitterType(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         answer.setParallelProcessing(parallelProcessing);
-        answer.setThreadPoolExecutor(threadPoolExecutor);        
+        answer.setExecutor(executor);
         return answer;
     }    
     
@@ -708,16 +709,16 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
-     * @param threadPoolExecutor override the default {@link ThreadPoolExecutor} 
+     * @param executor override the default {@link Executor}
      * @return the expression clause for the expression on which to split
      */
     public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy, boolean parallelProcessing,
-                                                   ThreadPoolExecutor threadPoolExecutor) {
+                                                   Executor executor) {
         SplitterType answer = new SplitterType();
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         answer.setParallelProcessing(parallelProcessing);
-        answer.setThreadPoolExecutor(threadPoolExecutor);           
+        answer.setExecutor(executor);
         return ExpressionClause.createAndSetExpression(answer);
     }   
     

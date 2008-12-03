@@ -88,7 +88,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                                                + " being less than: " + failUntilAttempt);
                 }
             }
-
+            // START SNIPPET: AsyncProcessor
             public boolean process(Exchange exchange, AsyncCallback callback) {                
                 Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
                                                              Integer.class);
@@ -105,6 +105,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                 callback.done(false);
                 return false;
             }
+            // END SNIPPET: AsyncProcessor
         };
 
         return new RouteBuilder() {
