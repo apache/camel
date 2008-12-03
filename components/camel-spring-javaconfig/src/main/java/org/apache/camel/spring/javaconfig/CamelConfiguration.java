@@ -46,27 +46,8 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
 
         CamelContext camelContext = getBean(CamelContext.class);
         // lets lookup a bean
-        answer.setCamelContext((SpringCamelContext) camelContext);
+        answer.setCamelContext(camelContext);
         return answer;
-/*
-        {
-            @Override
-            public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
-                try {
-                    SpringCamelContext context = (SpringCamelContext) getCamelContext();
-                    if (context == null) {
-                        // we have not yet injected the context so lets set it
-                        setCamelContext(camelContext());
-                    }
-                    return super.postProcessAfterInitialization(bean, beanName);
-                } catch (BeansException e) {
-                    throw e;
-                } catch (Exception e) {
-                    throw new BeanInitializationException(e.getMessage(), e);
-                }
-            }
-        };
-*/
     }
 
     /**
@@ -86,7 +67,6 @@ public abstract class CamelConfiguration extends ConfigurationSupport {
     /**
      * Returns the list of routes to use in this configuration
      */
-    //@Bean
     public abstract List<RouteBuilder> routes();
 
 }
