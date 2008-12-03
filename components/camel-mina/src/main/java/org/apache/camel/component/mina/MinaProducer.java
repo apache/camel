@@ -24,6 +24,7 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.Producer;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
@@ -50,7 +51,6 @@ public class MinaProducer extends DefaultProducer {
     private IoConnector connector;
     private boolean sync;
 
-    @SuppressWarnings({"unchecked"})
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
@@ -82,7 +82,11 @@ public class MinaProducer extends DefaultProducer {
         if (sync) {
             // only initialize latch if we should get a response
             latch = new CountDownLatch(1);
+            // reset handler if we expect a response
+            ResponseHandler handler = (ResponseHandler) session.getHandler();
+            handler.reset();
         }
+
         // write the body
         if (LOG.isDebugEnabled()) {
             LOG.debug("Writing body: " + body);
@@ -101,6 +105,9 @@ public class MinaProducer extends DefaultProducer {
             ResponseHandler handler = (ResponseHandler) session.getHandler();
             if (handler.getCause() != null) {
                 throw new CamelException("Response Handler had an exception", handler.getCause());
+            } else if (!handler.isMessageRecieved()) {
+                // no message received
+                throw new CamelExchangeException("No response received from remote server: " + endpoint.getEndpointUri(), exchange);
             } else {
                 // set the result on either IN or OUT on the original exchange depending on its pattern
                 if (ExchangeHelper.isOutCapable(exchange)) {
@@ -165,9 +172,16 @@ public class MinaProducer extends DefaultProducer {
         private MinaEndpoint endpoint;
         private Object message;
         private Throwable cause;
+        private boolean messageRecieved;
 
         private ResponseHandler(MinaEndpoint endpoint) {
             this.endpoint = endpoint;
+        }
+
+        public void reset() {
+            this.message = null;
+            this.cause = null;
+            this.messageRecieved = false;
         }
 
         @Override
@@ -175,8 +189,9 @@ public class MinaProducer extends DefaultProducer {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Message received: " + message);
             }
-            cause = null;
             this.message = message;
+            messageRecieved = true;
+            cause = null;
             countDown();
         }
 
@@ -205,6 +220,7 @@ public class MinaProducer extends DefaultProducer {
             LOG.error("Exception on receiving message from address: " + this.endpoint.getAddress()
                     + " using connector: " + this.endpoint.getConnector(), cause);
             this.message = null;
+            this.messageRecieved = false;
             this.cause = cause;
             if (ioSession != null) {
                 ioSession.close();
@@ -217,6 +233,10 @@ public class MinaProducer extends DefaultProducer {
 
         public Object getMessage() {
             return this.message;
+        }
+
+        public boolean isMessageRecieved() {
+            return messageRecieved;
         }
     }
 

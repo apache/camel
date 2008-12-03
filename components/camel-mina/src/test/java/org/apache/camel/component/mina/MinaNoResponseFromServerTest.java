@@ -17,7 +17,8 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -30,29 +31,25 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 /**
- * Unit test with custom codec.
+ * Unit test to test what happens if remote server closes session but doesn't reply
  */
-public class MinaCustomCodecTest extends ContextTestSupport {
+public class MinaNoResponseFromServerTest extends ContextTestSupport {
 
     private String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
 
-    public void testMyCodec() throws Exception {
+    public void testNoResponse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Bye World");
+        mock.expectedMessageCount(0);
 
-        template.requestBody(uri, "Hello World");
+        try {
+            template.requestBody(uri, "Hello World");
+            fail("Should throw a CamelExchangeException");
+        } catch (RuntimeCamelException e) {
+            assertIsInstanceOf(CamelExchangeException.class, e.getCause());
+            assertTrue(e.getCause().getMessage().startsWith("No response received from remote server"));
+        }
 
         mock.assertIsSatisfied();
-    }
-
-    public void testBadConfiguration() throws Exception {
-        try {
-            template.sendBody("mina:tcp://localhost:11300?sync=true&codec=XXX", "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
     }
 
     protected JndiRegistry createRegistry() throws Exception {
@@ -75,11 +72,8 @@ public class MinaCustomCodecTest extends ContextTestSupport {
             return new ProtocolEncoder() {
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
                     throws Exception {
-                    ByteBuffer bb = ByteBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
-                    bb.put(s.getBytes());
-                    bb.flip();
-                    out.write(bb);
+                    // close session instead of returning a reply
+                    ioSession.close();
                 }
 
                 public void dispose(IoSession ioSession) throws Exception {
@@ -93,8 +87,8 @@ public class MinaCustomCodecTest extends ContextTestSupport {
             return new ProtocolDecoder() {
                 public void decode(IoSession ioSession, ByteBuffer in,
                                    ProtocolDecoderOutput out) throws Exception {
-                    in.acquire();
-                    out.write(in);
+                    // close session instead of returning a reply
+                    ioSession.close();
                 }
 
                 public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput)
