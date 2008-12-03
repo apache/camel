@@ -33,7 +33,7 @@ import java.util.Collections;
  * @version $Revision: 1.1 $
  */
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
-    //@Bean
+    @Bean
     public List<RouteBuilder> routes() {
         return Collections.singletonList(route());
     }
@@ -42,6 +42,5 @@ public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
      * Creates the single {@link RouteBuilder} to use in this confguration
      * @return
      */
-    //@Bean
     public abstract RouteBuilder route();
 }
