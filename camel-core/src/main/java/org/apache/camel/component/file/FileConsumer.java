@@ -27,6 +27,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.util.LRUCache;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -41,8 +42,8 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
 
     private FileEndpoint endpoint;
     private ConcurrentHashMap<File, File> filesBeingProcessed = new ConcurrentHashMap<File, File>();
-    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>();
-    private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>();
+    private ConcurrentHashMap<File, Long> fileSizes = new ConcurrentHashMap<File, Long>(new LRUCache(1000));
+    private ConcurrentHashMap<File, Long> noopMap = new ConcurrentHashMap<File, Long>(new LRUCache(1000));
 
     // the options below is @deprecated and will be removed in Camel 2.0
     private long lastPollTime;
