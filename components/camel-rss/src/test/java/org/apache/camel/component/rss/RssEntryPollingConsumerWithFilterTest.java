@@ -23,7 +23,10 @@ import java.util.TimeZone;
 
 import javax.naming.Context;
 
+import junit.framework.Assert;
+
 import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -56,7 +59,7 @@ public class RssEntryPollingConsumerWithFilterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=500").
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
                     filter().method("myBean", "isAfterDate").to("mock:result");
             }
         };
@@ -70,7 +73,9 @@ public class RssEntryPollingConsumerWithFilterTest extends ContextTestSupport {
         }
 
         public boolean isAfterDate(Exchange ex) {
-            SyndEntry entry = ex.getIn().getBody(SyndEntry.class);
+            SyndFeed feed = ex.getIn().getBody(SyndFeed.class);
+            Assert.assertTrue(feed.getEntries().size() == 1);
+            SyndEntry entry = (SyndEntry) feed.getEntries().get(0);
             return entry.getPublishedDate().after(time);     
         }
     }

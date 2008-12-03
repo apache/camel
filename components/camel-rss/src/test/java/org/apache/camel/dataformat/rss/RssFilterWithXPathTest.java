@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rss;
+package org.apache.camel.dataformat.rss;
 
 import java.util.List;
 
@@ -25,31 +25,23 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.rss.RssEndpoint;
+import org.apache.camel.component.rss.RssUtils;
 
-public class RssPollingConsumerTest extends ContextTestSupport {
+public class RssFilterWithXPathTest extends ContextTestSupport {
 
-    public void testGrabbingListOfEntries() throws Exception {
+    public void testMarshalToXmlThenFilter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(6);
         mock.assertIsSatisfied();
-
-        Exchange exchange = mock.getExchanges().get(0);
-        Message in = exchange.getIn();
-        assertNotNull(in);
-        assertTrue(in.getBody() instanceof SyndFeed);
-        assertTrue(in.getHeader(RssEndpoint.HEADER_RSS_FEED) instanceof SyndFeed);
-
-        SyndFeed feed = in.getHeader(RssEndpoint.HEADER_RSS_FEED, SyndFeed.class);
-        assertTrue(feed.getAuthor().contains("Jonathan Anstey"));
-
-        SyndFeed body = in.getBody(SyndFeed.class);
-        assertEquals(10, body.getEntries().size());
     }
-
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=100").to("mock:result");
+                // only entries with Camel in the title will get through the filter
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").marshal().rss().
+                    filter().xpath("//item/title[contains(.,'Camel')]").to("mock:result");
             }
         };
     }

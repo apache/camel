@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rss;
 
+import java.util.Arrays;
 import java.util.Date;
 
 import com.sun.syndication.feed.synd.SyndEntry;
@@ -28,7 +29,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
+import org.apache.camel.dataformat.rss.RssDataFormat;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * An <a href="http://activemq.apache.org/camel/rss.html">RSS Endpoint</a>.
@@ -38,7 +42,8 @@ public class RssEndpoint extends FeedEndpoint {
     /**
      * Header key for the {@link com.sun.syndication.feed.synd.SyndFeed} object is stored on the in message on the exchange.
      */
-    public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed";   
+    public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed"; 
+    protected static final transient Log LOG = LogFactory.getLog(RssEndpoint.class);    
 
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
@@ -55,14 +60,22 @@ public class RssEndpoint extends FeedEndpoint {
     @Override
     public Exchange createExchange(Object feed) {
         Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
-        exchange.getIn().setBody(((SyndFeed)feed).getEntries());
+        exchange.getIn().setBody(feed);
         return exchange;
     }
 
     @Override
     public Exchange createExchange(Object feed, Object entry) {
         Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
-        exchange.getIn().setBody(entry);
+        SyndFeed newFeed;
+        try {
+            newFeed = (SyndFeed)((SyndFeed) feed).clone();
+            newFeed.setEntries(Arrays.asList(new Object[] {entry}));
+        } catch (CloneNotSupportedException e) {
+            LOG.debug("Could not create a new feed.", e);
+            newFeed = null;
+        }        
+        exchange.getIn().setBody(newFeed);
         return exchange;
     }
 
