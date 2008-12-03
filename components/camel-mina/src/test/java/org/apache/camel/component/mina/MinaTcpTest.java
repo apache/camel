@@ -22,7 +22,7 @@ package org.apache.camel.component.mina;
 public class MinaTcpTest extends MinaVmTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "mina:tcp://localhost:6123";
+        uri = "mina:tcp://localhost:6123?sync=false";
         super.setUp();
     }
 }

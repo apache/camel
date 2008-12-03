@@ -22,7 +22,7 @@ package org.apache.camel.component.mina;
 public class MinaTcpTextlineProtocolTest extends MinaVmTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "mina:tcp://localhost:6124?textline=true";
+        uri = "mina:tcp://localhost:6124?textline=true&sync=false";
         super.setUp();
     }
 }

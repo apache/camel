@@ -35,12 +35,11 @@ import static org.easymock.classextension.EasyMock.verify;
  */
 public class MinaProducerShutdownMockTest extends ContextTestSupport {
 
-    private static final String URI = "mina:tcp://localhost:6321?textline=true";
+    private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
 
     public void testProducerShutdownTestingWithMock() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
-
 
         // create our mock and record expected behavior = that worker timeout should be set to 0
         SocketConnector mockConnector = createMock(SocketConnector.class);

@@ -22,7 +22,7 @@ package org.apache.camel.component.mina;
 public class MinaTcpTextlineDelimiterTest extends MinaVmTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "mina:tcp://localhost:6124?textline=true&textlineDelimiter=UNIX";
+        uri = "mina:tcp://localhost:6124?sync=false&textline=true&textlineDelimiter=UNIX";
         super.setUp();
     }
 }

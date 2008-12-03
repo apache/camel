@@ -33,7 +33,7 @@ public class MinaConsumerTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBody("mina:tcp://localhost:6200?textline=true", "Hello World");
+        template.sendBody("mina:tcp://localhost:6200?textline=true&sync=false", "Hello World");
 
         assertMockEndpointsSatisifed();
         // END SNIPPET: e2
