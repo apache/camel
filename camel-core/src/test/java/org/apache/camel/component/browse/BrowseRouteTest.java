@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.list;
+package org.apache.camel.component.browse;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +24,9 @@ import org.apache.camel.spi.BrowsableEndpoint;
 /**
  * @version $Revision$
  */
-public class ListRouteTest extends ContextTestSupport {
+public class BrowseRouteTest extends ContextTestSupport {
 
-    public void testListRoute() throws Exception {
+    public void testBrowseRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World", "Bye World");
 
@@ -35,7 +35,7 @@ public class ListRouteTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        BrowsableEndpoint list = context.getEndpoint("list:foo", BrowsableEndpoint.class);
+        BrowsableEndpoint list = context.getEndpoint("browse:foo", BrowsableEndpoint.class);
 
         mock.getExchanges().get(0).equals(list.getExchanges().get(0));
         mock.getExchanges().get(1).equals(list.getExchanges().get(1));
@@ -45,7 +45,7 @@ public class ListRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start").to("list:foo").to("mock:result");
+                from("direct:start").to("browse:foo").to("mock:result");
             }
         };
     }
