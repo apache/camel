@@ -58,7 +58,9 @@ public class RssDataFormatTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=100").marshal().rss().to("mock:marshal");
+                // END SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=100").marshal().rss().unmarshal().rss().to("mock:unmarshal");
             }
         };
