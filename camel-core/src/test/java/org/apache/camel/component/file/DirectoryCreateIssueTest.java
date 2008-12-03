@@ -18,63 +18,51 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @author Albert Moraal
  * @version $Revision$
  */
-public class DirectoryCreateIssueTest extends TestSupport {
-    private CamelContext context;
-    private ProducerTemplate template;
+public class DirectoryCreateIssueTest extends ContextTestSupport {
+
+    private final int numFiles = 10;
+    private final String path = "target/a/b/c/d/e/f/g/h";
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        context = new DefaultCamelContext();
-        context.start();
-        template = context.createProducerTemplate();
+        deleteDirectory("target/a");
     }
 
     @Override
-    protected void tearDown() throws Exception {
-        context.stop();
-        super.tearDown();
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                String[] destinations = new String[numFiles];
+                for (int i = 0; i < numFiles; i++) {
+                    destinations[i] = "seda:file" + i;
+
+                    from("seda:file" + i)
+                            .setHeader(FileComponent.HEADER_FILE_NAME,
+                                    constant("file" + i + ".txt"))
+                            .to("file://" + path + "/?append=false&noop=true", "mock:result");
+                }
+
+                from("seda:testFileCreatedAsDir")
+                        .to(destinations);
+            }
+        };
     }
 
     public void testFileCreatedAsDir() throws Exception {
-        log.debug("testFileCreatedAsDir");
-        final String path = "target/a/b/c/d/e/f/g/h";
-        final int numFiles = 10;
-
-        context.addRoutes(
-            new RouteBuilder() {
-                @Override
-                public void configure() {
-                    String[] destinations = new String[numFiles];
-                    for (int i = 0; i < numFiles; i++) {
-                        destinations[i] = "seda:file" + i;
-
-                        from("seda:file" + i)
-                            .setHeader(FileComponent.HEADER_FILE_NAME,
-                                constant("file" + i + ".txt"))
-                            .to("file://" + path + "/?append=false&noop=true");
-                    }
-
-                    from("seda:testFileCreatedAsDir")
-                        .to(destinations);
-                }
-            }
-        );
-
-        deleteDirectory(new File("a"));
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(numFiles);
 
         template.send("seda:testFileCreatedAsDir", new Processor() {
             public void process(Exchange exchange) {
@@ -83,8 +71,7 @@ public class DirectoryCreateIssueTest extends TestSupport {
             }
         });
 
-        // must sleep for some time to make sure runs on all platforms
-        Thread.sleep(8 * 1000);
+        assertMockEndpointsSatisfied();
 
         for (int i = 0; i < numFiles; i++) {
             assertTrue((new File(path + "/file" + i + ".txt")).isFile());

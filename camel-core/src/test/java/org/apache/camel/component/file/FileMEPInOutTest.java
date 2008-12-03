@@ -37,14 +37,11 @@ public class FileMEPInOutTest extends ContextTestSupport {
         template.requestBodyAndHeader("direct:in", "Hello World", FileComponent.HEADER_FILE_NAME,
             "FileMEPInOutTest.txt");
 
-        // give Camel time to create the file
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
 
         File file = new File("target/FileMEPInOutTest.txt");
         file = file.getAbsoluteFile();
         assertEquals("Hello World", IOConverter.toString(file));
-
-        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -69,7 +69,6 @@ public class FileExchangeTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         file = new File(FileExchangeTest.class.getResource("FileExchangeTest.class").getFile());
     }
 }

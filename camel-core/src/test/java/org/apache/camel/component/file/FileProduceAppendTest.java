@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
 /**
@@ -28,22 +29,26 @@ import org.apache.camel.converter.IOConverter;
 public class FileProduceAppendTest extends ContextTestSupport {
 
     public void testAppendText() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         template.sendBody("direct:start", " World");
 
-        // give time to write to file
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
 
         String body = IOConverter.toString(new File("target/test-file-append/hello.txt").getAbsoluteFile());
         assertEquals("Hello World", body);
     }
 
     public void testAppendFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         // create a file with some content we want to append to the existing file
         File in = new File("target/test-file-append/world.txt").getAbsoluteFile();
         template.sendBody("direct:start", in);
 
-        // give time to write to file
-        Thread.sleep(1000);
+        assertMockEndpointsSatisfied();
 
         String body = IOConverter.toString(new File("target/test-file-append/hello.txt").getAbsoluteFile());
         assertEquals("Hello World", body);
@@ -55,8 +60,6 @@ public class FileProduceAppendTest extends ContextTestSupport {
         deleteDirectory("target/test-file-append");
         template.sendBodyAndHeader("file://target/test-file-append", "Hello", FileComponent.HEADER_FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/test-file-append", " World", FileComponent.HEADER_FILE_NAME, "world.txt");
-        // give time to write files
-        Thread.sleep(1000);
     }
 
     @Override
@@ -65,7 +68,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start")
                     .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
-                    .to("file://target/test-file-append?append=true");
+                    .to("file://target/test-file-append?append=true", "mock:result");
             }
         };
     }

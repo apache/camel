@@ -47,14 +47,12 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
             FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
 
-        Thread.sleep(500);
         assertFileExists("target/filelanguage/123.bak");
     }
 
     public void testProduceBeanByExpression() throws Exception {
         template.sendBody("file://target/filelanguage?expression=${bean:myguidgenerator}.bak", "Hello World");
 
-        Thread.sleep(500);
         assertFileExists("target/filelanguage/123.bak");
     }
 
@@ -62,7 +60,6 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
             FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");
     }
@@ -70,7 +67,6 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     public void testProducerDateByExpression() throws Exception {
         template.sendBody("file://target/filelanguage?expression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");
     }
@@ -79,7 +75,6 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody("file://target/filelanguage?expression=" + expression, "Hello World");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/filelanguageinbox/myfile-123-" + date + ".txt");
     }
@@ -88,7 +83,6 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/filelanguage?expression=myfile-${in.header.foo}.txt",
             "Hello World", "foo", "abc");
 
-        Thread.sleep(500);
         assertFileExists("target/filelanguage/myfile-abc.txt");
     }
 
@@ -100,7 +94,6 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         template.sendBodyAndHeader("file://target/filelanguage?expression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
             "Hello World", "birthday", date);
 
-        Thread.sleep(500);
         assertFileExists("target/filelanguage/mybirthday-19740420.txt");
     }
 
