@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -76,7 +78,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        final Processor processor = new Processor() {
+        final Processor processor = new AsyncProcessor() {
             public void process(Exchange exchange) {
                 Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
                                                              Integer.class);
@@ -86,13 +88,30 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                                                + " being less than: " + failUntilAttempt);
                 }
             }
+
+            public boolean process(Exchange exchange, AsyncCallback callback) {                
+                Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
+                                                             Integer.class);
+                int attempt = (counter == null) ? 1 : counter + 1;
+                if (attempt > 1) {
+                    assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(), "Timer-0");
+                }
+                
+                if (attempt < failUntilAttempt) {
+                    // we can't throw the exception here , or the callback will not be invoked.
+                    exchange.setException(new RuntimeException("Failed to process due to attempt: " + attempt
+                                               + " being less than: " + failUntilAttempt));
+                }
+                callback.done(false);
+                return false;
+            }
         };
 
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").errorHandler(
                     deadLetterChannel("mock:failed").maximumRedeliveries(2)
-                        .delay(1)
+                        .delay(1000)
                         .loggingLevel(LoggingLevel.DEBUG)
 
                 ).process(processor).to("mock:success");
