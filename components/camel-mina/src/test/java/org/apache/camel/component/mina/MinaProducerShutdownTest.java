@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultCamelContext;
  */
 public class MinaProducerShutdownTest {
 
-    private static final String URI = "mina:tcp://localhost:6321?textline=true";
+    private static final String URI = "mina:tcp://localhost:6321?textline=true&sync=false";
     private long start;
 
     private CamelContext context;
