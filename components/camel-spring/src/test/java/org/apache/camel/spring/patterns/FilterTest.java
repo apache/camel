@@ -25,10 +25,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 /**
- * Test case using Spring Test with XML Config
- *
+ * Tests filtering using Spring Test and XML Config
+  *
  * @version $Revision: 630568 $
  */
+// START SNIPPET: example
 @ContextConfiguration
 public class FilterTest extends AbstractJUnit38SpringContextTests {
 
@@ -58,3 +59,4 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
         resultEndpoint.assertIsSatisfied();
     }
 }
+// END SNIPPET: example

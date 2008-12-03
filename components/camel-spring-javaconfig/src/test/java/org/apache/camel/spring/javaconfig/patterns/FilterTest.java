@@ -31,9 +31,14 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
 import org.springframework.test.annotation.DirtiesContext;
 
 /**
+ * Tests filtering using Spring Test and Java Config
+ * 
  * @version $Revision: 1.1 $
  */
-@ContextConfiguration(locations = "org.apache.camel.spring.javaconfig.patterns.FilterTest$ContextConfig", loader = JavaConfigContextLoader.class)
+// START SNIPPET: example
+@ContextConfiguration(
+        locations = "org.apache.camel.spring.javaconfig.patterns.FilterTest$ContextConfig",
+        loader = JavaConfigContextLoader.class)
 public class FilterTest extends AbstractJUnit38SpringContextTests {
 
     @EndpointInject(uri = "mock:result")
@@ -62,7 +67,6 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
         resultEndpoint.assertIsSatisfied();
     }
 
-
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
         @Bean
@@ -74,5 +78,6 @@ public class FilterTest extends AbstractJUnit38SpringContextTests {
             };
         }
     }
-
 }
+// END SNIPPET: example
+
