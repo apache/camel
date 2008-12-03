@@ -19,7 +19,7 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -63,7 +63,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     @XmlTransient
     private ThreadGroup threadGroup;
     @XmlTransient
-    private ThreadPoolExecutor executor;
+    private Executor executor;
 
     public ThreadType() {
     }
@@ -73,7 +73,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         this.maxSize = coreSize;
     }
 
-    public ThreadType(ThreadPoolExecutor executor) {
+    public ThreadType(Executor executor) {
         this.executor = executor;
     }
 
@@ -245,7 +245,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
      * @param executor  the executor
      * @return the builder
      */
-    public ThreadType executor(ThreadPoolExecutor executor) {
+    public ThreadType executor(Executor executor) {
         setExecutor(executor);
         return this;
     }
@@ -292,11 +292,11 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         this.threadGroup = threadGroup;
     }
 
-    public ThreadPoolExecutor getExecutor() {
+    public Executor getExecutor() {
         return executor;
     }
 
-    public void setExecutor(ThreadPoolExecutor executor) {
+    public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 }

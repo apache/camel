@@ -32,7 +32,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected ThreadPoolExecutor customThreadPoolExecutor = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
 
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = getSplitter().getThreadPoolExecutor();
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutor();
         // this should be sufficient as core pool size is the only thing I changed from the default
         assertTrue(threadPoolExecutor.getCorePoolSize() == customThreadPoolExecutor.getCorePoolSize());
         assertTrue(threadPoolExecutor.getMaximumPoolSize() == customThreadPoolExecutor.getMaximumPoolSize());

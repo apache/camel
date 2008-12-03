@@ -17,7 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.Executor;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -49,7 +49,7 @@ public class MulticastType extends OutputType<ProcessorType> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
-    private ThreadPoolExecutor threadPoolExecutor;
+    private Executor executor;
 
     @Override
     public String toString() {
@@ -74,9 +74,9 @@ public class MulticastType extends OutputType<ProcessorType> {
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
         if (threadPoolRef != null) {
-            threadPoolExecutor = routeContext.lookup(threadPoolRef, ThreadPoolExecutor.class);
+            executor = routeContext.lookup(threadPoolRef, Executor.class);
         }
-        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), threadPoolExecutor);
+        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executor);
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -97,12 +97,12 @@ public class MulticastType extends OutputType<ProcessorType> {
         return this;
     }
 
-    public ThreadPoolExecutor getThreadPoolExecutor() {
-        return threadPoolExecutor;
+    public Executor getExecutor() {
+        return executor;
     }
 
-    public MulticastType setThreadPoolExecutor(ThreadPoolExecutor executor) {
-        this.threadPoolExecutor = executor;
+    public MulticastType setThreadPoolExecutor(Executor executor) {
+        this.executor = executor;
         return this;
     }
 

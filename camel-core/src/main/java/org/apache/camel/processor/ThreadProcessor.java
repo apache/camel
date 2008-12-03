@@ -18,10 +18,11 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.AsyncCallback;
@@ -37,7 +38,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
  */
 public class ThreadProcessor implements AsyncProcessor, Service {
 
-    private ThreadPoolExecutor executor;
+    private Executor executor;
     private long stackSize;
     private ThreadGroup threadGroup;
     private int priority = Thread.NORM_PRIORITY;
@@ -100,8 +101,10 @@ public class ThreadProcessor implements AsyncProcessor, Service {
 
     public void stop() throws Exception {
         shutdown.set(true);
-        executor.shutdown();
-        executor.awaitTermination(0, TimeUnit.SECONDS);
+        if (executor instanceof ThreadPoolExecutor) {
+            ((ThreadPoolExecutor)executor).shutdown();
+            ((ThreadPoolExecutor)executor).awaitTermination(0, TimeUnit.SECONDS);
+        }
     }
 
     public long getStackSize() {
@@ -179,7 +182,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
         this.taskQueue = taskQueue;
     }
 
-    public ThreadPoolExecutor getExecutor() {
+    public Executor getExecutor() {
         if (executor == null) {
             executor = new ThreadPoolExecutor(getCoreSize(), getMaxSize(), getKeepAliveTime(), TimeUnit.MILLISECONDS, getTaskQueue(), new ThreadFactory() {
                 public Thread newThread(Runnable runnable) {
@@ -198,7 +201,7 @@ public class ThreadProcessor implements AsyncProcessor, Service {
         return executor;
     }
 
-    public void setExecutor(ThreadPoolExecutor executor) {
+    public void setExecutor(Executor executor) {
         this.executor = executor;
     }
 
