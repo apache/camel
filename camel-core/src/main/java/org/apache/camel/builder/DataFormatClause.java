@@ -27,6 +27,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
+import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
@@ -124,6 +125,13 @@ public class DataFormatClause<T extends ProcessorType> {
         return dataFormat(new JaxbDataFormat(prettyPrint));
     }
 
+    /**
+     * Uses the RSS data format
+     */
+    public T rss() {
+        return dataFormat(new RssDataFormat());
+    }    
+    
     /**
      * Uses the Java Serialization data format
      */

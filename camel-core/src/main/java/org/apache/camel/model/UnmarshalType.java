@@ -30,6 +30,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.dataformat.FlatpackDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
+import org.apache.camel.model.dataformat.RssDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
@@ -57,6 +58,7 @@ public class UnmarshalType extends OutputType<ProcessorType> {
     @XmlElement(required = false, name = "flatpack", type = FlatpackDataFormat.class),
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
+    @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),

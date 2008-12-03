@@ -22,6 +22,7 @@ DataFormatType
 DataFormatsType
 JaxbDataFormat
 JsonDataFormat
+RssDataFormat
 SerializationDataFormat
 StringDataFormat
 XMLBeansDataFormat
