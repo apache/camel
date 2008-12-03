@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -50,6 +52,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
     private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName() + ".FAILURE_HANDLED";
     
+    private static Timer timer = new Timer();
     private Processor output;
     private Processor deadLetter;
     private AsyncProcessor outputAsync;
@@ -65,6 +68,40 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
         Processor failureProcessor = deadLetter;
+    }
+    
+    private class RedeliverTimerTask extends TimerTask {
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+        private final RedeliveryData data;
+        
+        public RedeliverTimerTask(Exchange exchange, AsyncCallback callback, RedeliveryData data) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.data = data;
+        }
+
+        @Override
+        public void run() {
+            //only handle the real AsyncProcess the exchange 
+            outputAsync.process(exchange, new AsyncCallback() {
+                public void done(boolean sync) {
+                    // Only handle the async case...
+                    if (sync) {
+                        return;
+                    }
+                    data.sync = false;
+                    // only process if the exchange hasn't failed
+                    // and it has not been handled by the error processor
+                    if (exchange.getException() != null && !isFailureHandled(exchange)) {
+                        // if we are redelivering then sleep before trying again
+                        asyncProcess(exchange, callback, data);
+                    } else {
+                        callback.done(sync);
+                    }
+                }
+            });                
+        } 
     }
 
     public DeadLetterChannel(Processor output, Processor deadLetter) {
@@ -118,45 +155,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             // did previous processing caused an exception?
             if (exchange.getException() != null) {
-                Throwable e = exchange.getException();
-                // set the original caused exception
-                exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, e);
-
-                // find the error handler to use (if any)
-                ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
-                if (exceptionPolicy != null) {
-                    data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
-                    data.handledPredicate = exceptionPolicy.getHandledPolicy();
-                    Processor processor = exceptionPolicy.getErrorHandler();
-                    if (processor != null) {
-                        data.failureProcessor = processor;
-                    }                    
-                }
-                
-                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, data, e);
-                data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+                handleException(exchange, data);
             }
 
             // should we redeliver or not?
             if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
-                // we did not success with the redelivery so now we let the failure processor handle it
-                setFailureHandled(exchange);
-                // must decrement the redelivery counter as we didn't process the redelivery but is
-                // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
-                decrementRedeliveryCounter(exchange);
-
-                AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
-                boolean sync = afp.process(exchange, new AsyncCallback() {
-                    public void done(boolean sync) {
-                        restoreExceptionOnExchange(exchange, data.handledPredicate);
-                        callback.done(data.sync);
-                    }
-                });
-
-                // The line below shouldn't be needed, it is invoked by the AsyncCallback above
-                //restoreExceptionOnExchange(exchange, data.handledPredicate);
-                logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor, data, null);
-                return sync;
+                return deliverToFaultProcessor(exchange, callback, data);
             }
 
             // should we redeliver
@@ -180,8 +184,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     data.sync = false;
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
-                    if (exchange.getException() != null && !isFailureHandled(exchange)) {
-                        process(exchange, callback, data);
+                    if (exchange.getException() != null && !isFailureHandled(exchange)) {                        
+                        //TODO Call the Timer for the asyncProcessor
+                        asyncProcess(exchange, callback, data);
                     } else {
                         callback.done(sync);
                     }
@@ -213,6 +218,91 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         } else {
             logger.log(message, newLogLevel);
         }
+    }
+
+    protected void asyncProcess(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+        // set the timer here
+        if (!isRunAllowed()) {
+            if (exchange.getException() == null) {
+                exchange.setException(new RejectedExecutionException());
+            }
+            callback.done(data.sync);
+            return;
+        }
+
+        // if the exchange is transacted then let the underlying system handle the redelivery etc.
+        // this DeadLetterChannel is only for non transacted exchanges
+        if (exchange.isTransacted() && exchange.getException() != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("This is a transacted exchange, bypassing this DeadLetterChannel: " + this + " for exchange: " + exchange);
+            }
+            return;
+        }
+        
+        // did previous processing caused an exception?
+        if (exchange.getException() != null) {
+            handleException(exchange, data);
+        }        
+        
+        if (!data.currentRedeliveryPolicy.shouldRedeliver(data.redeliveryCounter)) {
+            deliverToFaultProcessor(exchange, callback, data);
+            return;
+        }
+        
+        // process the next try
+        // if we are redelivering then sleep before trying again
+        if (data.redeliveryCounter > 0) {
+            // okay we will give it another go so clear the exception so we can try again
+            if (exchange.getException() != null) {
+                exchange.setException(null);
+            }
+            // wait until we should redeliver
+            data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
+            timer.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
+        }        
+    }
+    
+    private void handleException(Exchange exchange, RedeliveryData data) {
+        Throwable e = exchange.getException();
+        // set the original caused exception
+        exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, e);
+
+        // find the error handler to use (if any)
+        ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
+        if (exceptionPolicy != null) {
+            data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
+            data.handledPredicate = exceptionPolicy.getHandledPolicy();
+            Processor processor = exceptionPolicy.getErrorHandler();
+            if (processor != null) {
+                data.failureProcessor = processor;
+            }                    
+        }
+        
+        logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". On delivery attempt: " + data.redeliveryCounter + " caught: " + e, data, e);
+        data.redeliveryCounter = incrementRedeliveryCounter(exchange, e);
+        
+    }
+    
+    private boolean deliverToFaultProcessor(final Exchange exchange, final AsyncCallback callback,
+                                            final RedeliveryData data) {
+        // we did not success with the redelivery so now we let the failure processor handle it
+        setFailureHandled(exchange);
+        // must decrement the redelivery counter as we didn't process the redelivery but is
+        // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
+        decrementRedeliveryCounter(exchange);
+
+        AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
+        boolean sync = afp.process(exchange, new AsyncCallback() {
+            public void done(boolean sync) {
+                restoreExceptionOnExchange(exchange, data.handledPredicate);
+                callback.done(data.sync);
+            }
+        });
+
+        // The line below shouldn't be needed, it is invoked by the AsyncCallback above
+        //restoreExceptionOnExchange(exchange, data.handledPredicate);
+        logFailedDelivery("Failed delivery for exchangeId: " + exchange.getExchangeId() + ". Handled by the failure processor: " + data.failureProcessor, data, null);
+        return sync;
     }
 
     public static boolean isFailureHandled(Exchange exchange) {
@@ -331,5 +421,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(deadLetter, output);
-    }
+    }    
+    
 }
