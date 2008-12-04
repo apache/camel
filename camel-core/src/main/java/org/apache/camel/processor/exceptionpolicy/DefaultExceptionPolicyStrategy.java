@@ -16,6 +16,10 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,11 +35,13 @@ import org.apache.commons.logging.LogFactory;
  * <b>Selection strategy:</b>
  * <br/>This strategy applies the following rules:
  * <ul>
- *   <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
- *  is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method. </li>
- *   <li>If the exception type has exactly the thrown exception then its selected as its an exact match</li>
- *   <li>Otherwise the type that has an exception that is the closests super of the thrown exception is selected
- *       (recurring up the exception hierarchy)</li>
+ * <li>Will walk the exception hieracy from bottom upwards till the thrown exception, meaning that the most outer caused
+ * by is selected first, ending with the thrown exception itself</li>
+ * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
+ * is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method. </li>
+ * <li>If the exception type has exactly the thrown exception then its selected as its an exact match</li>
+ * <li>Otherwise the type that has an exception that is the closests super of the thrown exception is selected
+ * (recurring up the exception hierarchy)</li>
  * </ul>
  * <p/>
  * <b>Fine grained matching:</b>
@@ -50,6 +56,22 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     public ExceptionType getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
                                             Throwable exception) {
+
+        // recursive up the tree using the iterator
+        Iterator<Throwable> it = new ExceptionIterator(exception);
+        while (it.hasNext()) {
+            ExceptionType type = doGetExceptionPolicy(exceptionPolicices, exchange, it.next());
+            if (type != null) {
+                return type;
+            }
+        }
+
+        // no type found
+        return null;
+    }
+
+    private ExceptionType doGetExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
+                                               Throwable exception) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
         }
@@ -109,10 +131,10 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     /**
      * Strategy to filter the given type exception class with the thrown exception
      *
-     * @param type  the exception type
-     * @param exceptionClass  the current exception class for testing
-     * @param exception  the thrown exception
-     * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it. 
+     * @param type           the exception type
+     * @param exceptionClass the current exception class for testing
+     * @param exception      the thrown exception
+     * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
      */
     protected boolean filter(ExceptionType type, Class exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
@@ -124,12 +146,12 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * <p/>
      * This default implementation will match as:
      * <ul>
-     *   <li>Always true if no when predicate on the exception type
-     *   <li>Otherwise the when predicate is matches against the current exchange
+     * <li>Always true if no when predicate on the exception type
+     * <li>Otherwise the when predicate is matches against the current exchange
      * </ul>
      *
-     * @param type  the exception type
-     * @param exchange  the current {@link Exchange}
+     * @param type     the exception type
+     * @param exchange the current {@link Exchange}
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
     protected boolean matchesWhen(ExceptionType type, Exchange exchange) {
@@ -146,5 +168,41 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         }
         return 1 + getInheritanceLevel(clazz.getSuperclass());
     }
+
+    /**
+     * Iterator that walks the exception hieracy in the order we should match.
+     * <p/>
+     * Will default walk from bottom upwards to the root exception
+     */
+    protected class ExceptionIterator implements Iterator<Throwable> {
+        private List<Throwable> tree = new ArrayList<Throwable>();
+        private Iterator<Throwable> it;
+
+        public ExceptionIterator(Throwable exception) {
+            Throwable current = exception;
+            // spool to the bottom of the caused by tree
+            while (current != null) {
+                tree.add(current);
+                current = current.getCause();
+            }
+
+            // reverse tree so we go from bottom to top
+            Collections.reverse(tree);
+            it = tree.iterator();
+        }
+
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        public Throwable next() {
+            return it.next();
+        }
+
+        public void remove() {
+            it.remove();
+        }
+    }
+
 
 }
