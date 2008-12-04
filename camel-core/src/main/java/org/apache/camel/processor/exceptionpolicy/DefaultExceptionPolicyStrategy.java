@@ -16,12 +16,12 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.Iterator;
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.ExceptionType;
@@ -58,9 +58,9 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                                             Throwable exception) {
 
         // recursive up the tree using the iterator
-        Iterator<Throwable> it = new ExceptionIterator(exception);
+        Iterator<Throwable> it = createExceptionIterator(exception); 
         while (it.hasNext()) {
-            ExceptionType type = doGetExceptionPolicy(exceptionPolicices, exchange, it.next());
+            ExceptionType type = findMatchedExceptionPolicy(exceptionPolicices, exchange, it.next());
             if (type != null) {
                 return type;
             }
@@ -70,7 +70,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         return null;
     }
 
-    private ExceptionType doGetExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
+
+    private ExceptionType findMatchedExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
                                                Throwable exception) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
@@ -162,6 +163,20 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         return type.getOnWhen().getExpression().matches(exchange);
     }
 
+    /**
+     * Strategy method creating the iterator to walk the exception in the order Camel should use
+     * for find the {@link ExceptionType} should be used.
+     * <p/>
+     * The default iterator will walk from the bottom upwards
+     * (the last caused by going upwards to the exception)
+     *
+     * @param exception  the exception
+     * @return the iterator
+     */
+    protected Iterator<Throwable> createExceptionIterator(Throwable exception) {
+        return new ExceptionIterator(exception);
+    }
+
     private static int getInheritanceLevel(Class clazz) {
         if (clazz == null || "java.lang.Object".equals(clazz.getName())) {
             return 0;
@@ -169,12 +184,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         return 1 + getInheritanceLevel(clazz.getSuperclass());
     }
 
-    /**
-     * Iterator that walks the exception hieracy in the order we should match.
-     * <p/>
-     * Will default walk from bottom upwards to the root exception
-     */
-    protected class ExceptionIterator implements Iterator<Throwable> {
+    private class ExceptionIterator implements Iterator<Throwable> {
         private List<Throwable> tree = new ArrayList<Throwable>();
         private Iterator<Throwable> it;
 
@@ -203,6 +213,5 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             it.remove();
         }
     }
-
 
 }
