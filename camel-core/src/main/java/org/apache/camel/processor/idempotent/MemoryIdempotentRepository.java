@@ -18,7 +18,6 @@ package org.apache.camel.processor.idempotent;
 
 import java.util.Map;
 
-import org.apache.camel.Service;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.LRUCache;
 
@@ -32,7 +31,7 @@ import org.apache.camel.util.LRUCache;
  */
 public class MemoryIdempotentRepository implements IdempotentRepository<String> {
 
-    private final Map<String, Object> cache;
+    private Map<String, Object> cache;
 
     public MemoryIdempotentRepository(Map<String, Object> set) {
         this.cache = set;
@@ -60,7 +59,9 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
      * use to store the processed message ids.
      * <p/>
      * Care should be taken to use a suitable underlying {@link Map} to avoid this class being a
-     * memory leak. 
+     * memory leak.
+     *
+     * @param cache  the cache
      */
     public static IdempotentRepository memoryIdempotentRepository(Map<String, Object> cache) {
         return new MemoryIdempotentRepository(cache);
@@ -81,5 +82,13 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
         synchronized (cache) {
             return cache.containsKey(key);
         }
+    }
+
+    public Map<String, Object> getCache() {
+        return cache;
+    }
+
+    public void setCache(Map<String, Object> cache) {
+        this.cache = cache;
     }
 }
