@@ -31,8 +31,7 @@
        http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
  <!-- END SNIPPET: header -->
-   	<message-bus/>
-
+  
     <outbound-channel-adapter id="channelA" ref="camelTargetA"/>
    	<outbound-channel-adapter id="channelB" ref="camelTargetB"/>
     <channel id="channelC"/>
