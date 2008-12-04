@@ -34,6 +34,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     protected boolean splitEntries = true;
     protected Date lastUpdate;
     protected boolean filter = true;
+    private boolean feedHeader = true;
 
     public FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component);
@@ -82,7 +83,9 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
 
     protected Exchange createExchangeWithFeedHeader(Object feed, String header) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(header, feed);
+        if (isFeedHeader()) {
+            exchange.getIn().setHeader(header, feed);
+        }
         return exchange;
     }    
     
@@ -147,6 +150,17 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
      */
     public void setFilter(boolean filter) {
         this.filter = filter;
+    }
+
+    /**
+     * Sets whether to add the feed object as a header
+     */
+    public void setFeedHeader(boolean feedHeader) {
+        this.feedHeader = feedHeader;
+    }
+
+    public boolean isFeedHeader() {
+        return feedHeader;
     }
 
     // Implementation methods
