@@ -26,9 +26,7 @@
 			http://activemq.apache.org/camel/schema/spring
 			http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
     <!-- START SNIPPET: example -->
-	<message-bus/>
-
-    <channel id="outputChannel"/>
+	<channel id="outputChannel"/>
 
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
       <route>

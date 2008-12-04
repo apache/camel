@@ -31,8 +31,6 @@
        http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-   	<message-bus/>
-
    	<channel id="channelA"/>
    	<channel id="channelB"/>
    	<channel id="channelC"/>
