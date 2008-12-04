@@ -73,6 +73,7 @@
     <module>camel-rest</module>
     <module>camel-rmi</module>
     <!--<module>camel-ruby</module>-->
+    <module>camel-rss</module>
     <module>camel-saxon</module>
     <module>camel-scala</module>
     <module>camel-script</module>
