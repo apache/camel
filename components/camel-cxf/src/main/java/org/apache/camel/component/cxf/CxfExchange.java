@@ -58,7 +58,7 @@ public class CxfExchange extends DefaultExchange {
     
     public CxfExchange(CxfExchange exchange) {
         super(exchange);
-        this.exchange = exchange.exchange;      
+        this.exchange = exchange.getExchange();      
     }
 
     public CxfExchange(CamelContext context, ExchangePattern pattern, Message inMessage) {
