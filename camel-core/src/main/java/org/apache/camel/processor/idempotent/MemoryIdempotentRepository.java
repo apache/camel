@@ -33,6 +33,10 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
 
     private Map<String, Object> cache;
 
+    public MemoryIdempotentRepository() {
+        this.cache = new LRUCache<String, Object>(1000);
+    }
+
     public MemoryIdempotentRepository(Map<String, Object> set) {
         this.cache = set;
     }
@@ -42,7 +46,7 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
      * with a default of 1000 entries in the cache.
      */
     public static IdempotentRepository memoryIdempotentRepository() {
-        return memoryIdempotentRepository(1000);
+        return new MemoryIdempotentRepository();
     }
 
     /**

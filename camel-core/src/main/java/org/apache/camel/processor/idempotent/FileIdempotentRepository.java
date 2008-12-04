@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.LRUCache;
@@ -40,34 +41,53 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
     private static final transient Log LOG = LogFactory.getLog(FileIdempotentRepository.class);
     private static final String STORE_DELIMITER = "\n";
     private Map<String, Object> cache;
-    private File store;
-    private long maxStoreSize = 1024 * 1000L; // 1mb store file
+    private File fileStore;
+    private long maxFileStoreSize = 1024 * 1000L; // 1mb store file
+    private AtomicBoolean init = new AtomicBoolean();
 
-    public FileIdempotentRepository(final File store, final Map<String, Object> set) {
-        this.store = store;
+    public FileIdempotentRepository() {
+        // default use a 1st level cache 
+        this.cache = new LRUCache<String, Object>(1000);
+    }
+
+    public FileIdempotentRepository(File fileStore, Map<String, Object> set) {
+        this.fileStore = fileStore;
         this.cache = set;
-        loadStore();
     }
 
     /**
      * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
      * as 1st level cache with a default of 1000 entries in the cache.
      *
-     * @param store  the file store
+     * @param fileStore  the file store
      */
-    public static IdempotentRepository fileIdempotentRepository(File store) {
-        return fileIdempotentRepository(store, 1000);
+    public static IdempotentRepository fileIdempotentRepository(File fileStore) {
+        return fileIdempotentRepository(fileStore, 1000);
     }
 
     /**
      * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
      * as 1st level cache.
      *
-     * @param store  the file store
+     * @param fileStore  the file store
      * @param cacheSize  the cache size
      */
-    public static IdempotentRepository fileIdempotentRepository(File store, int cacheSize) {
-        return fileIdempotentRepository(store, new LRUCache<String, Object>(cacheSize));
+    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
+        return fileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
+    }
+
+    /**
+     * Creates a new file based repository using a {@link org.apache.camel.util.LRUCache}
+     * as 1st level cache.
+     *
+     * @param fileStore  the file store
+     * @param cacheSize  the cache size
+     * @param maxFileStoreSize  the max size in bytes for the filestore file 
+     */
+    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
+        FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
+        repository.setMaxFileStoreSize(maxFileStoreSize);
+        return repository;
     }
 
     /**
@@ -86,11 +106,16 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
 
     public boolean add(String messageId) {
         synchronized (cache) {
+            // init store if not loaded before
+            if (init.compareAndSet(false, true)) {
+                loadStore();
+            }
+
             if (cache.containsKey(messageId)) {
                 return false;
             } else {
                 cache.put(messageId, messageId);
-                if (store.length() < maxStoreSize) {
+                if (fileStore.length() < maxFileStoreSize) {
                     // just append to store
                     appendToStore(messageId);
                 } else {
@@ -105,16 +130,20 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
 
     public boolean contains(String key) {
         synchronized (cache) {
+            // init store if not loaded before
+            if (init.compareAndSet(false, true)) {
+                loadStore();
+            }
             return cache.containsKey(key);
         }
     }
 
-    public File getStore() {
-        return store;
+    public File getFileStore() {
+        return fileStore;
     }
 
-    public void setStore(File store) {
-        this.store = store;
+    public void setFileStore(File fileStore) {
+        this.fileStore = fileStore;
     }
 
     public Map<String, Object> getCache() {
@@ -125,8 +154,8 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         this.cache = cache;
     }
 
-    public long getMaxStoreSize() {
-        return maxStoreSize;
+    public long getMaxFileStoreSize() {
+        return maxFileStoreSize;
     }
 
     /**
@@ -134,8 +163,18 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      * <p/>
      * The default is 1mb.
      */
-    public void setMaxStoreSize(long maxStoreSize) {
-        this.maxStoreSize = maxStoreSize;
+    public void setMaxFileStoreSize(long maxFileStoreSize) {
+        this.maxFileStoreSize = maxFileStoreSize;
+    }
+
+    /**
+     * Sets the cache size
+     */
+    public void setCacheSize(int size) {
+        if (cache != null) {
+            cache.clear();
+        }
+        cache = new LRUCache<String, Object>(size);
     }
 
     /**
@@ -145,11 +184,16 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      */
     protected void appendToStore(final String messageId) {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Appending " + messageId + " to idempotent filestore: " + store);
+            LOG.debug("Appending " + messageId + " to idempotent filestore: " + fileStore);
         }
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(store, true);
+            // create store if missing
+            if (!fileStore.exists()) {
+                fileStore.createNewFile();
+            }
+            // append to store
+            fos = new FileOutputStream(fileStore, true);
             fos.write(messageId.getBytes());
             fos.write(STORE_DELIMITER.getBytes());
         } catch (IOException e) {
@@ -165,11 +209,11 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      */
     protected void trunkStore() {
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Trunking idempotent filestore: " + store);
+            LOG.debug("Trunking idempotent filestore: " + fileStore);
         }
         FileOutputStream fos = null;
         try {
-            fos = new FileOutputStream(store);
+            fos = new FileOutputStream(fileStore);
             for (String key : cache.keySet()) {
                 fos.write(key.getBytes());
                 fos.write(STORE_DELIMITER.getBytes());
@@ -186,17 +230,17 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      */
     protected void loadStore() {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Loading to 1st level cache from idempotent filestore: " + store);
+            LOG.trace("Loading to 1st level cache from idempotent filestore: " + fileStore);
         }
 
-        if (!store.exists()) {
+        if (!fileStore.exists()) {
             return;
         }
 
         cache.clear();
         Scanner scanner = null;
         try {
-            scanner = new Scanner(store);
+            scanner = new Scanner(fileStore);
             scanner.useDelimiter(STORE_DELIMITER);
             while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
@@ -211,7 +255,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Loaded " + cache.size() + " to the 1st level cache from idempotent filestore: " + store);
+            LOG.debug("Loaded " + cache.size() + " to the 1st level cache from idempotent filestore: " + fileStore);
         }
     }
 
