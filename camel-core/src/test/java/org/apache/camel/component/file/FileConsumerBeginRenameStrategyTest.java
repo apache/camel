@@ -20,49 +20,39 @@ import java.io.File;
 import java.io.FileWriter;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 
 /**
- * Unit test for the FileRenameStrategy
+ * Unit test for the FileRenameStrategy using preMove options
  */
-public class FileProducerRenameStrategyTest extends ContextTestSupport {
-
-    @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
-    }
+public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
 
     public void testRenameSuccess() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/inprogress");
         deleteDirectory("target/reports");
 
         MockEndpoint mock = getMockEndpoint("mock:report");
+        mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
+        Thread.sleep(100);
+
         mock.assertIsSatisfied();
-
-        // sleep to let the file consumer do its renaming
-        Thread.sleep(500);
-
-        // content of file should be Hello Paris
-        String content = IOConverter.toString(new File("./target/done/paris.txt"));
-        assertEquals("The file should have been renamed", "Hello Paris", content);
     }
 
     public void testRenameFileExists() throws Exception {
-        deleteDirectory("target/done");
+        deleteDirectory("target/inprogress");
         deleteDirectory("target/reports");
 
-        // create a file in done to let there be a duplicate file
-        File file = new File("target/done");
+        // create a file in inprogress to let there be a duplicate file
+        File file = new File("target/inprogress");
         file.mkdirs();
-        FileWriter fw = new FileWriter("./target/done/london.txt");
+        FileWriter fw = new FileWriter("./target/inprogress/london.txt");
         fw.write("I was there once in London");
         fw.flush();
         fw.close();
@@ -72,21 +62,25 @@ public class FileProducerRenameStrategyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
 
+        Thread.sleep(100);
+
         mock.assertIsSatisfied();
-
-        // sleep to let the file consumer do its renaming
-        Thread.sleep(500);
-
-        // content of file should be Hello London
-        String content = IOConverter.toString(new File("./target/done/london.txt"));
-        assertEquals("The file should have been renamed replacing any existing files", "Hello London", content);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?moveNamePrefix=../done/&consumer.delay=5000").to("mock:report");
+                from("file://target/reports?preMoveNamePrefix=../inprogress/&consumer.delay=5000")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                FileExchange fe = (FileExchange) exchange;
+                                assertEquals("The file should have been move to inprogress", 
+                                        "inprogress", fe.getFile().getParentFile().getName());
+                            }
+                        })
+                        .to("mock:report");
             }
         };
     }
+
 }

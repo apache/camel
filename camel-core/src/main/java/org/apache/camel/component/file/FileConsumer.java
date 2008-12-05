@@ -112,47 +112,49 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
     /**
      * Polls the given file
      *
-     * @param file  the file
+     * @param target  the file
      * @return returns 1 if the file was processed, 0 otherwise.
      */
-    protected int pollFile(final File file) {
+    protected int pollFile(final File target) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Polling file: " + file);
+            LOG.trace("Polling file: " + target);
         }
 
-        if (!file.exists()) {
+        if (!target.exists()) {
             return 0;
         }
-        if (!isValidFile(file)) {
+        if (!isValidFile(target)) {
             return 0;
         }
         // we only care about file modified times if we are not deleting/moving files
         if (!endpoint.isNoop()) {
-            if (filesBeingProcessed.contains(file)) {
+            if (filesBeingProcessed.contains(target)) {
                 return 1;
             }
-            filesBeingProcessed.put(file, file);
+            filesBeingProcessed.put(target, target);
         }
 
         final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
-        final FileExchange exchange = endpoint.createExchange(file);
+        final FileExchange exchange = endpoint.createExchange(target);
 
-        endpoint.configureMessage(file, exchange.getIn());
+        endpoint.configureMessage(target, exchange.getIn());
         try {
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
             if (exclusiveReadLock) {
-                acquireExclusiveReadLock(file);
+                acquireExclusiveReadLock(target);
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("About to process file: " + file + " using exchange: " + exchange);
+                LOG.debug("About to process file: " + target + " using exchange: " + exchange);
             }
-            if (processStrategy.begin(endpoint, exchange, file)) {
+            if (processStrategy.begin(endpoint, exchange, target)) {
 
                 // Use the async processor interface so that processing of
                 // the exchange can happen asynchronously
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
+                        // must use file from exchange as it can be updated due the preMoveNamePrefix/preMoveNamePostfix options
+                        final File file = exchange.getFile();
                         boolean failed = exchange.isFailed();
                         boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
@@ -180,9 +182,7 @@ public class FileConsumer extends ScheduledPollConsumer<FileExchange> {
                 });
 
             } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(endpoint + " can not process file: " + file);
-                }
+                LOG.warn(endpoint + " can not process file: " + target);
             }
         } catch (Throwable e) {
             handleException(e);
