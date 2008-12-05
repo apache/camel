@@ -69,7 +69,7 @@ public interface AggregationCollection extends Collection<Exchange> {
     int size();
 
     /**
-     * Clears this colleciton
+     * Clears this collection
      */
     void clear();
 

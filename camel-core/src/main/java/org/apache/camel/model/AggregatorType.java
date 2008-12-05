@@ -289,7 +289,7 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
     //-------------------------------------------------------------------------
 
     /**
-     * Sets the in batch size for number of exchanges recieved
+     * Sets the in batch size for number of exchanges received
      *
      * @param batchSize  the batch size
      * @return builder

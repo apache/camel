@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,26 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.component.rss;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
+import com.sun.syndication.feed.synd.SyndEntry;
 
-public class RssEntryPollingConsumerTest extends ContextTestSupport {
+import java.util.Comparator;
 
-    public void testListOfEntriesIsSplitIntoPieces() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(10);
-        mock.assertIsSatisfied();
+public class PublishedDateComparator implements Comparator {
+
+    public int compare(Object o1, Object o2) {
+        SyndEntry s1 = (SyndEntry) o1;
+        SyndEntry s2 = (SyndEntry) o2;
+        return s2.getPublishedDate().compareTo(s1.getPublishedDate());
     }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=100").to("mock:result");
-            }
-        };
-    }
-
+    
 }

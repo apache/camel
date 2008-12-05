@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.rss;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
+import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 
 
@@ -39,8 +42,15 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     protected void populateList(Object feed) throws Exception {
         if (list == null) {
             list = ((SyndFeed)feed).getEntries();
+            if (endpoint.isSortEntries()) {
+                sortEntries();
+            }
             entryIndex = list.size() - 1;
         }
+    }
+
+    protected void sortEntries() {
+        Collections.sort(list, new PublishedDateComparator());
     }
 
     @Override
@@ -55,5 +65,5 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);
-    }    
+    }
 }

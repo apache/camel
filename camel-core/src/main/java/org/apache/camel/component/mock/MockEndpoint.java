@@ -270,6 +270,21 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
+     * Validates that the assertions fail on this endpoint
+
+     * @param timeoutForEmptyEndpoints the timeout in milliseconds that we
+     *        should wait for the test to be true
+     */
+    public void assertIsNotSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
+        try {
+            assertIsSatisfied(timeoutForEmptyEndpoints);
+            fail("Expected assertion failure!");
+        } catch (AssertionError e) {
+            LOG.info("Caught expected failure: " + e);
+        }
+    }    
+    
+    /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint
      *
