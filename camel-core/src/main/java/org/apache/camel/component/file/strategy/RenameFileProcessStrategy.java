@@ -31,7 +31,8 @@ import org.apache.commons.logging.LogFactory;
  */
 public class RenameFileProcessStrategy extends FileProcessStrategySupport {
     private static final transient Log LOG = LogFactory.getLog(RenameFileProcessStrategy.class);
-    private FileRenamer renamer;
+    private FileRenamer beginRenamer;
+    private FileRenamer commitRenamer;
 
     public RenameFileProcessStrategy() {
         this(true);
@@ -42,42 +43,85 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
     }
 
     public RenameFileProcessStrategy(boolean lock, String namePrefix, String namePostfix) {
-        this(lock, new DefaultFileRenamer(namePrefix, namePostfix));
+        this(lock, new DefaultFileRenamer(namePrefix, namePostfix), null);
     }
 
-    public RenameFileProcessStrategy(boolean lock, FileRenamer renamer) {
+    public RenameFileProcessStrategy(boolean lock, String namePrefix, String namePostfix, String preNamePrefix, String preNamePostfix) {
+        this(lock, new DefaultFileRenamer(namePrefix, namePostfix), new DefaultFileRenamer(preNamePrefix, preNamePostfix));
+    }
+
+    public RenameFileProcessStrategy(boolean lock, FileRenamer commitRenamer, FileRenamer beginRenamer) {
         super(lock);
-        this.renamer = renamer;
+        this.commitRenamer = commitRenamer;
+        this.beginRenamer = beginRenamer;
+    }
+
+    @Override
+    public boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
+        boolean answer = super.begin(endpoint, exchange, file);
+
+        if (beginRenamer != null) {
+            File newName = beginRenamer.renameFile(exchange, file);
+            // deleting any existing files before renaming
+            File to = renameFile(file, newName);
+            exchange.setFile(to);
+        }
+
+        return answer;
     }
 
     @Override
     public void commit(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
-        File newName = renamer.renameFile(exchange, file);
-        // deleting any existing files before renaming
-        if (newName.exists()) {
-            newName.delete();
-        }
-
-        // make parent folder if missing
-        newName.getParentFile().mkdirs();
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Renaming file: " + file + " to: " + newName);
-        }
-        boolean renamed = file.renameTo(newName);
-        if (!renamed) {
-            throw new IOException("Can not rename file from: " + file + " to: " + newName);
-        }
+        File newName = commitRenamer.renameFile(exchange, file);
+        renameFile(file, newName);
 
         // must commit to release the lock
         super.commit(endpoint, exchange, file);
     }
 
-    public FileRenamer getRenamer() {
-        return renamer;
+    private static File renameFile(File from, File to) throws IOException {
+        // deleting any existing files before renaming
+        if (to.exists()) {
+            to.delete();
+        }
+
+        // make parent folder if missing
+        File parent = to.getParentFile();
+        if (!parent.exists()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Creating directory: " + parent);
+            }
+            boolean mkdir = parent.mkdirs();
+            if (!mkdir) {
+                throw new IOException("Can not create directory: " + parent);
+            }
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Renaming file: " + from + " to: " + to);
+        }
+        boolean renamed = from.renameTo(to);
+        if (!renamed) {
+            throw new IOException("Can not rename file from: " + from + " to: " + to);
+        }
+
+        return to;
     }
 
-    public void setRenamer(FileRenamer renamer) {
-        this.renamer = renamer;
+    public FileRenamer getBeginRenamer() {
+        return beginRenamer;
     }
+
+    public void setBeginRenamer(FileRenamer beginRenamer) {
+        this.beginRenamer = beginRenamer;
+    }
+
+    public FileRenamer getCommitRenamer() {
+        return commitRenamer;
+    }
+
+    public void setCommitRenamer(FileRenamer commitRenamer) {
+        this.commitRenamer = commitRenamer;
+    }
+
 }
