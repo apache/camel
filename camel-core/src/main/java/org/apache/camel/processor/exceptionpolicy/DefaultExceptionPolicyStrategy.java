@@ -36,11 +36,13 @@ import org.apache.commons.logging.LogFactory;
  * <br/>This strategy applies the following rules:
  * <ul>
  * <li>Will walk the exception hieracy from bottom upwards till the thrown exception, meaning that the most outer caused
- * by is selected first, ending with the thrown exception itself</li>
+ * by is selected first, ending with the thrown exception itself. The method {@link #createExceptionIterator(Throwable)}
+ * provides the Iterator used for the walking.</li>
  * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
- * is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method. </li>
- * <li>If the exception type has exactly the thrown exception then its selected as its an exact match</li>
- * <li>Otherwise the type that has an exception that is the closests super of the thrown exception is selected
+ * is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method.
+ * By default the filter uses <tt>instanceof</tt> test.</li>
+ * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
+ * <li>Otherwise the type that has an exception that is the closets super of the thrown exception is selected
  * (recurring up the exception hierarchy)</li>
  * </ul>
  * <p/>
