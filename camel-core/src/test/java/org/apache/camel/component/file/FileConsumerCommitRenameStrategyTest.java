@@ -25,9 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
 /**
- * Unit test for the FileRenameStrategy
+ * Unit test for the FileRenameStrategy using move options
  */
-public class FileProducerRenameStrategyTest extends ContextTestSupport {
+public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {

@@ -124,10 +124,10 @@ public class FileConsumer extends ScheduledPollConsumer {
      * @param exchange  the file exchange
      */
     protected void processExchange(final FileExchange exchange) {
-        final File file = exchange.getFile();
+        final File target = exchange.getFile();
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing file: " + file);
+            LOG.trace("Processing file: " + target);
         }
 
         try {
@@ -135,18 +135,20 @@ public class FileConsumer extends ScheduledPollConsumer {
 
             // is we use excluse read then acquire the exclusive read (waiting until we got it)
             if (exclusiveReadLock) {
-                acquireExclusiveReadLock(file);
+                acquireExclusiveReadLock(target);
             }
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("About to process file: " + file + " using exchange: " + exchange);
+                LOG.debug("About to process file: " + target + " using exchange: " + exchange);
             }
-            if (processStrategy.begin(endpoint, exchange, file)) {
+            if (processStrategy.begin(endpoint, exchange, target)) {
 
                 // Use the async processor interface so that processing of
                 // the exchange can happen asynchronously
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
+                        // must use file from exchange as it can be updated due the preMoveNamePrefix/preMoveNamePostfix options
+                        final File file = exchange.getFile();
                         boolean failed = exchange.isFailed();
                         boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
@@ -173,7 +175,7 @@ public class FileConsumer extends ScheduledPollConsumer {
                 });
 
             } else {
-                LOG.warn(endpoint + " can not process file: " + file);
+                LOG.warn(endpoint + " can not process file: " + target);
             }
         } catch (Exception e) {
             handleException(e);
