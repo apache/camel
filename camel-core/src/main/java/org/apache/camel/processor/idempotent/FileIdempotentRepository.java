@@ -61,7 +61,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      *
      * @param fileStore  the file store
      */
-    public static IdempotentRepository fileIdempotentRepository(File fileStore) {
+    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore) {
         return fileIdempotentRepository(fileStore, 1000);
     }
 
@@ -72,7 +72,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      * @param fileStore  the file store
      * @param cacheSize  the cache size
      */
-    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize) {
+    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize) {
         return fileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
     }
 
@@ -84,7 +84,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      * @param cacheSize  the cache size
      * @param maxFileStoreSize  the max size in bytes for the filestore file 
      */
-    public static IdempotentRepository fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
+    public static IdempotentRepository<String> fileIdempotentRepository(File fileStore, int cacheSize, long maxFileStoreSize) {
         FileIdempotentRepository repository = new FileIdempotentRepository(fileStore, new LRUCache<String, Object>(cacheSize));
         repository.setMaxFileStoreSize(maxFileStoreSize);
         return repository;
@@ -100,7 +100,7 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      * @param store  the file store
      * @param cache  the cache to use as 1st level cache
      */
-    public static IdempotentRepository fileIdempotentRepository(File store, Map<String, Object> cache) {
+    public static IdempotentRepository<String> fileIdempotentRepository(File store, Map<String, Object> cache) {
         return new FileIdempotentRepository(store, cache);
     }
 
@@ -208,8 +208,8 @@ public class FileIdempotentRepository implements IdempotentRepository<String> {
      * to the file store.
      */
     protected void trunkStore() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Trunking idempotent filestore: " + fileStore);
+        if (LOG.isInfoEnabled()) {
+            LOG.info("Trunking idempotent filestore: " + fileStore);
         }
         FileOutputStream fos = null;
         try {

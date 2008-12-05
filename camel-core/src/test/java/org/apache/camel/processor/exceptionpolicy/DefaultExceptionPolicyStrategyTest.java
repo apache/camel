@@ -19,14 +19,15 @@ package org.apache.camel.processor.exceptionpolicy;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ConnectException;
+import java.net.MalformedURLException;
 import java.net.SocketException;
 import java.util.HashMap;
 
 import junit.framework.TestCase;
-
 import org.apache.camel.AlreadyStoppedException;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ExchangeTimedOutException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ValidationException;
 import org.apache.camel.model.ExceptionType;
 
@@ -60,6 +61,17 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         type3 = new ExceptionType(IOException.class);
         policies.put(ExceptionPolicyKey.newInstance(CamelExchangeException.class), type1);
         policies.put(ExceptionPolicyKey.newInstance(IOException.class), type3);
+    }
+
+    private void setupPoliciesCausedBy() {
+        strategy = new DefaultExceptionPolicyStrategy();
+        policies = new HashMap<ExceptionPolicyKey, ExceptionType>();
+        type1 = new ExceptionType(FileNotFoundException.class);
+        type2 = new ExceptionType(ConnectException.class);
+        type3 = new ExceptionType(IOException.class);
+        policies.put(ExceptionPolicyKey.newInstance(FileNotFoundException.class), type1);
+        policies.put(ExceptionPolicyKey.newInstance(IOException.class), type2);
+        policies.put(ExceptionPolicyKey.newInstance(ConnectException.class), type3);
     }
 
     public void testDirectMatch1() {
@@ -123,6 +135,42 @@ public class DefaultExceptionPolicyStrategyTest extends TestCase {
         setupPoliciesNoTopLevelException();
         ExceptionType result = strategy.getExceptionPolicy(policies, null, new AlreadyStoppedException());
         assertNull("Should not find an exception policy to use", result);
+    }
+
+    public void testCausedBy() {
+        setupPoliciesCausedBy();
+
+        IOException ioe = new IOException("Damm");
+        ioe.initCause(new FileNotFoundException("Somefile not found"));
+        ExceptionType result = strategy.getExceptionPolicy(policies, null, ioe);
+        assertEquals(type1, result);
+    }
+
+    public void testCausedByWrapped() {
+        setupPoliciesCausedBy();
+
+        IOException ioe = new IOException("Damm");
+        ioe.initCause(new FileNotFoundException("Somefile not found"));
+        ExceptionType result = strategy.getExceptionPolicy(policies, null, new RuntimeCamelException(ioe));
+        assertEquals(type1, result);
+    }
+
+    public void testCausedByNotConnected() {
+        setupPoliciesCausedBy();
+
+        IOException ioe = new IOException("Damm");
+        ioe.initCause(new ConnectException("Not connected"));
+        ExceptionType result = strategy.getExceptionPolicy(policies, null, ioe);
+        assertEquals(type3, result);
+    }
+
+    public void testCausedByOtherIO() {
+        setupPoliciesCausedBy();
+
+        IOException ioe = new IOException("Damm");
+        ioe.initCause(new MalformedURLException("Bad url"));
+        ExceptionType result = strategy.getExceptionPolicy(policies, null, ioe);
+        assertEquals(type2, result);
     }
 
 }
