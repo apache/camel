@@ -30,7 +30,7 @@ import org.mortbay.cometd.AbstractBayeux;
 /**
  * A Producer to send messages using Cometd and Bayeux protocol.
  * 
- * @version $Revision: 712626 $
+ * @version $Revision$
  */
 public class CometdProducer extends DefaultProducer implements CometdProducerConsumer {
 
