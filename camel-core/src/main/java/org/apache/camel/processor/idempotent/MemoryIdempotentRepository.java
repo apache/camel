@@ -45,7 +45,7 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
      * Creates a new memory based repository using a {@link LRUCache}
      * with a default of 1000 entries in the cache.
      */
-    public static IdempotentRepository memoryIdempotentRepository() {
+    public static IdempotentRepository<String> memoryIdempotentRepository() {
         return new MemoryIdempotentRepository();
     }
 
@@ -54,7 +54,7 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
      *
      * @param cacheSize  the cache size
      */
-    public static IdempotentRepository memoryIdempotentRepository(int cacheSize) {
+    public static IdempotentRepository<String> memoryIdempotentRepository(int cacheSize) {
         return memoryIdempotentRepository(new LRUCache<String, Object>(cacheSize));
     }
 
@@ -67,7 +67,7 @@ public class MemoryIdempotentRepository implements IdempotentRepository<String> 
      *
      * @param cache  the cache
      */
-    public static IdempotentRepository memoryIdempotentRepository(Map<String, Object> cache) {
+    public static IdempotentRepository<String> memoryIdempotentRepository(Map<String, Object> cache) {
         return new MemoryIdempotentRepository(cache);
     }
 
