@@ -44,7 +44,7 @@ public class RssEndpoint extends FeedEndpoint {
      */
     public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed"; 
     protected static final transient Log LOG = LogFactory.getLog(RssEndpoint.class);    
-
+        
     public RssEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
     }
