@@ -60,11 +60,14 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     private String moveNamePostfix;
     private String[] excludedNamePrefixes;
     private String[] excludedNamePostfixes;
+    private String preMoveNamePrefix;
+    private String preMoveNamePostfix;
     private String excludedNamePrefix;
     private String excludedNamePostfix;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
     private Expression expression;
+    private Expression preMoveExpression;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -90,6 +93,11 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
 
     public Consumer<FileExchange> createConsumer(Processor processor) throws Exception {
         Consumer<FileExchange> result = new FileConsumer(this, processor);
+
+        if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
+            throw new IllegalArgumentException("You cannot set delet and a moveNamePrefix, moveNamePostfix or expression option");
+        }
+        
         configureConsumer(result);
         return result;
     }
@@ -245,6 +253,31 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.excludedNamePostfixes = excludedNamePostfixes;
     }
 
+    public String getPreMoveNamePrefix() {
+        return preMoveNamePrefix;
+    }
+
+    public void setPreMoveNamePrefix(String preMoveNamePrefix) {
+        this.preMoveNamePrefix = preMoveNamePrefix;
+    }
+
+    /**
+     * Sets the name prefix appended to pre moved files. For example to move
+     * files before processing into a inprogress directory called <tt>.inprogress</tt> set this value to
+     * <tt>.inprogress/</tt>
+     */
+    public String getPreMoveNamePostfix() {
+        return preMoveNamePostfix;
+    }
+
+    /**
+     * Sets the name postfix appended to pre moved files. For example to rename
+     * files before processing from <tt>*</tt> to <tt>*.inprogress</tt> set this value to <tt>.inprogress</tt>
+     */
+    public void setPreMoveNamePostfix(String preMoveNamePostfix) {
+        this.preMoveNamePostfix = preMoveNamePostfix;
+    }
+
     public boolean isNoop() {
         return noop;
     }
@@ -324,6 +357,21 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         this.expression = FileLanguage.file(fileLanguageExpression);
     }
 
+    public Expression getPreMoveExpression() {
+        return preMoveExpression;
+    }
+
+    public void setPreMoveExpression(Expression expression) {
+        this.preMoveExpression = expression;
+    }
+
+    /**
+     * Sets the pre move expression based on {@link FileLanguage}
+     */
+    public void setPreMoveExpression(String fileLanguageExpression) {
+        this.preMoveExpression = FileLanguage.file(fileLanguageExpression);
+    }
+
     /**
      * A strategy method to lazily create the file strategy
      */
@@ -376,8 +424,17 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
         if (moveNamePostfix != null) {
             params.put("moveNamePostfix", moveNamePostfix);
         }
+        if (preMoveNamePrefix != null) {
+            params.put("preMoveNamePrefix", preMoveNamePrefix);
+        }
+        if (preMoveNamePostfix != null) {
+            params.put("preMoveNamePostfix", preMoveNamePostfix);
+        }
         if (expression != null) {
             params.put("expression", expression);
+        }
+        if (preMoveExpression != null) {
+            params.put("preMoveExpression", preMoveExpression);
         }
 
         return params;
