@@ -39,6 +39,9 @@ public final class CollectionHelper {
 
     /**
      * Returns the size of the collection if it can be determined to be a collection
+     *
+     * @param value the collection
+     * @return the size, or <tt>null</tt> if not a collection
      */
     public static Integer size(Object value) {
         if (value != null) {
@@ -71,7 +74,6 @@ public final class CollectionHelper {
      * @param value the value to put in the map
      */
     public static void appendValue(Map map, Object key, Object value) {
-
         Object oldValue = map.get(key);
         if (oldValue != null) {
             List list;
@@ -85,5 +87,24 @@ public final class CollectionHelper {
         } else {
             map.put(key, value);
         }
+    }
+
+    /**
+     * Filters the given list to skip instanceof filter objects.
+     * 
+     * @param list  the list
+     * @param filters  objects to skip
+     * @return a new list without the filtered objects
+     */
+    public static List filterList(List list, Object... filters) {
+        List answer = new ArrayList();
+        for (Object o : list) {
+            for (Object filter : filters) {
+                if (!o.getClass().isInstance(filter)) {
+                    answer.add(o);
+                }
+            }
+        }
+        return answer;
     }
 }
