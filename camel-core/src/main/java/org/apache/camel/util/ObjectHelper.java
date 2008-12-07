@@ -158,6 +158,12 @@ public final class ObjectHelper {
         }
     }
 
+    public static void notEmpty(String value, String name) {
+        if (isNullOrBlank(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty");
+        }
+    }
+
     public static String[] splitOnCharacter(String value, String needle, int count) {
         String rc[] = new String[count];
         rc[0] = value;

@@ -27,6 +27,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;setHeader/&gt; element
@@ -34,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "setHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetHeaderType extends ExpressionNode {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String headerName;
     
     public SetHeaderType() {
@@ -67,6 +68,7 @@ public class SetHeaderType extends ExpressionNode {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        ObjectHelper.notEmpty(headerName, "headerName");
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setHeader(getHeaderName(), expr);
     }
