@@ -76,8 +76,8 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private boolean idempotent;
     private IdempotentRepository idempotentRepository;
     private FileFilter filter;
-    private Comparator<File> fileSorter;
-    private Comparator<FileExchange> exchangeSorter;
+    private Comparator<File> sorter;
+    private Comparator<FileExchange> sortBy;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -400,28 +400,28 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         this.filter = filter;
     }
 
-    public Comparator<File> getFileSorter() {
-        return fileSorter;
+    public Comparator<File> getSorter() {
+        return sorter;
     }
 
-    public void setFileSorter(Comparator<File> fileSorter) {
-        this.fileSorter = fileSorter;
+    public void setSorter(Comparator<File> sorter) {
+        this.sorter = sorter;
     }
 
-    public Comparator<FileExchange> getExchangeSorter() {
-        return exchangeSorter;
+    public Comparator<FileExchange> getSortBy() {
+        return sortBy;
     }
 
-    public void setExchangeSorter(Comparator<FileExchange> exchangeSorter) {
-        this.exchangeSorter = exchangeSorter;
+    public void setSortBy(Comparator<FileExchange> sortBy) {
+        this.sortBy = sortBy;
     }
 
-    public void setExchangeSorter(String expression) {
-        setExchangeSorter(expression, false);
+    public void setSortBy(String expression) {
+        setSortBy(expression, false);
     }
 
-    public void setExchangeSorter(String expression, boolean reverse) {
-        setExchangeSorter(DefaultFileSorter.sortByFileLanguage(expression, reverse));
+    public void setSortBy(String expression, boolean reverse) {
+        setSortBy(DefaultFileSorter.sortByFileLanguage(expression, reverse));
     }
 
     /**
