@@ -67,7 +67,11 @@ public class RssEntrySortTest extends ContextTestSupport {
         public Date getPubDate(@Body Object body) {
             SyndFeed feed = (SyndFeed) body;
             SyndEntry syndEntry = (SyndEntry) feed.getEntries().get(0);
-            return syndEntry.getPublishedDate();            
+            Date date = syndEntry.getUpdatedDate();
+            if (date == null) {
+                date = syndEntry.getPublishedDate();
+            }                    
+            return date;            
         }
     }
 }
