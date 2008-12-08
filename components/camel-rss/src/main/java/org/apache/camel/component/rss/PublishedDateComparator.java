@@ -21,11 +21,9 @@ import com.sun.syndication.feed.synd.SyndEntry;
 
 import java.util.Comparator;
 
-public class PublishedDateComparator implements Comparator {
+public class PublishedDateComparator implements Comparator<SyndEntry> {
 
-    public int compare(Object o1, Object o2) {
-        SyndEntry s1 = (SyndEntry) o1;
-        SyndEntry s2 = (SyndEntry) o2;
+    public int compare(SyndEntry s1, SyndEntry s2) {
         return s2.getPublishedDate().compareTo(s1.getPublishedDate());
     }
     
