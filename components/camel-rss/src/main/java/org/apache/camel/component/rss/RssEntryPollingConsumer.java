@@ -50,7 +50,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
     }
 
     protected void sortEntries() {
-        Collections.sort(list, new PublishedDateComparator());
+        Collections.sort(list, new RssDateComparator());
     }
 
     @Override

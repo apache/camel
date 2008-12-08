@@ -20,11 +20,19 @@ package org.apache.camel.component.rss;
 import com.sun.syndication.feed.synd.SyndEntry;
 
 import java.util.Comparator;
+import java.util.Date;
 
-public class PublishedDateComparator implements Comparator<SyndEntry> {
+public class RssDateComparator implements Comparator<SyndEntry> {
 
     public int compare(SyndEntry s1, SyndEntry s2) {
-        return s2.getPublishedDate().compareTo(s1.getPublishedDate());
+        return getUpdatedDate(s2).compareTo(getUpdatedDate(s1));
     }
-    
+
+    private Date getUpdatedDate(SyndEntry entry) {
+        Date date = entry.getUpdatedDate();
+        if (date == null) {
+            date = entry.getPublishedDate();
+        }        
+        return date;
+    }    
 }
