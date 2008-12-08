@@ -26,7 +26,7 @@ public class NoTypeConversionAvailableException extends RuntimeCamelException {
     private final Class type;
 
     public NoTypeConversionAvailableException(Object value, Class type) {
-        super("No type converter available to convert from type: " + (value != null ? value.getClass() : null)
+        super("No type converter available to convert from type: " + (value != null ? value.getClass().getCanonicalName() : null)
               + " to the required type: " + type.getCanonicalName() + " with value " + value);
         this.value = value;
         this.type = type;
