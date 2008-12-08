@@ -62,6 +62,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
+                /*
                 // we do special error handling for when OrderFailedException is thrown
                 onException(OrderFailedException.class)
                     // we mark the exchange as handled so the caller doesn't receive the
@@ -71,7 +72,7 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
                     // response using java code
                     .bean(OrderService.class, "orderFailed")
                     // and since this is an unit test we use mocks for testing
-                    .to("mock:error");
+                    .to("mock:error");*/
 
                 // this is just the generic error handler where we set the destination
                 // and the number of redeliveries we want to try
@@ -79,6 +80,8 @@ public class DeadLetterChannelHandledExampleTest extends ContextTestSupport {
 
                 // this is our route where we handle orders
                 from("direct:start")
+                    .onException(OrderFailedException.class).handled(true)
+                    .bean(OrderService.class, "orderFailed").to("mock:error").end()
                     // this bean is our order service
                     .bean(OrderService.class, "handleOrder")
                     // this is the destination if the order is OK

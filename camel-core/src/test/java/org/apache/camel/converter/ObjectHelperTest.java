@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * @version $Revision: 640438 $
+ * @version $Revision$
  */
 public class ObjectHelperTest extends TestCase {
     public void testArrayAsIterator() throws Exception {
