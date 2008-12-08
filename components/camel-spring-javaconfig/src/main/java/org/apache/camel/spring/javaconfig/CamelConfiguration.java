@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,25 +16,23 @@
  */
 package org.apache.camel.spring.javaconfig;
 
-import org.apache.camel.Routes;
+import java.util.List;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.Routes;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanInitializationException;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 import org.springframework.config.java.support.ConfigurationSupport;
-
-import java.util.List;
 
 /**
  * A useful base class for writing
  * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
  * configurations for working with Camel
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @Configuration
 public abstract class CamelConfiguration extends ConfigurationSupport {

@@ -35,7 +35,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     protected Date lastUpdate;
     protected boolean filter = true;
     private boolean feedHeader = true;
-    private boolean sortEntries = false;
+    private boolean sortEntries;
 
     public FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component);
@@ -172,7 +172,7 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     public boolean isSortEntries() {
-        return sortEntries ;
+        return sortEntries;
     }      
     
     // Implementation methods

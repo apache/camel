@@ -20,6 +20,15 @@ import java.io.File;
 import java.util.List;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
@@ -28,22 +37,13 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.Message;
-import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Route;
-import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * A bunch of useful testing methods
  *
- * @version $Revision: 712937 $
+ * @version $Revision$
  */
 public abstract class TestSupport extends TestCase {
 

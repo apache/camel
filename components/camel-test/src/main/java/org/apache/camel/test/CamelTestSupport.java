@@ -16,6 +16,15 @@
  */
 package org.apache.camel.test;
 
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -25,28 +34,20 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
-import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.CamelContextHelper;
-
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.io.InputStream;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
  * along with a {@link org.apache.camel.ProducerTemplate} for use in the test case
  *
- * @version $Revision: 712844 $
+ * @version $Revision$
  */
 public abstract class CamelTestSupport extends TestSupport {
     protected CamelContext context;

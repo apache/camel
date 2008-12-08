@@ -28,7 +28,7 @@ import org.mortbay.cometd.AbstractBayeux;
 import org.mortbay.cometd.BayeuxService;
 
 /**
- * A Consumer for receving messages using Cometd and Bayeux protocol.
+ * A Consumer for receiving messages using Cometd and Bayeux protocol.
  * 
  * @version $Revision$
  */
