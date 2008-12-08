@@ -19,18 +19,26 @@ package org.apache.camel.component.jms;
 import javax.jms.Message;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
+import javax.jms.ConnectionFactory;
+import javax.jms.ExceptionListener;
+import javax.jms.Destination;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
+import org.apache.camel.Component;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
+import org.springframework.jms.support.destination.DestinationResolver;
+import org.springframework.jms.support.converter.MessageConverter;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * A <a href="http://activemq.apache.org/jms.html">JMS Endpoint</a>
@@ -40,35 +48,40 @@ import org.springframework.jms.listener.AbstractMessageListenerContainer;
 public class JmsEndpoint extends DefaultEndpoint {
     private final boolean pubSubDomain;
     private JmsBinding binding;
-    private String destination;
+    private String destinationName;
+    private Destination destination;
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
 
-    public JmsEndpoint(String uri, JmsComponent component, String destination, boolean pubSubDomain, JmsConfiguration configuration) {
+    public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        this.destination = destination;
+        this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
     }
 
-    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destination, boolean pubSubDomain) {
+    public JmsEndpoint(String endpointUri, JmsBinding binding, JmsConfiguration configuration, String destinationName, boolean pubSubDomain) {
         super(endpointUri);
         this.binding = binding;
         this.configuration = configuration;
-        this.destination = destination;
+        this.destinationName = destinationName;
         this.pubSubDomain = pubSubDomain;
     }
 
-    public JmsEndpoint(String endpointUri, String destination, boolean pubSubDomain) {
-        this(endpointUri, new JmsBinding(), new JmsConfiguration(), destination, pubSubDomain);
+    public JmsEndpoint(String endpointUri, String destinationName, boolean pubSubDomain) {
+        this(endpointUri, new JmsBinding(), new JmsConfiguration(), destinationName, pubSubDomain);
     }
 
     /**
      * Creates a pub-sub endpoint with the given destination
      */
-    public JmsEndpoint(String endpointUri, String destination) {
-        this(endpointUri, destination, true);
+    public JmsEndpoint(String endpointUri, String destinationName) {
+        this(endpointUri, destinationName, true);
+    }
+
+    public JmsEndpoint() {
+        this(null, null);
     }
 
     public JmsProducer createProducer() throws Exception {
@@ -83,11 +96,28 @@ public class JmsEndpoint extends DefaultEndpoint {
         if (template instanceof JmsTemplate) {
             JmsTemplate jmsTemplate = (JmsTemplate) template;
             jmsTemplate.setPubSubDomain(pubSubDomain);
-            jmsTemplate.setDefaultDestinationName(destination);
+            if (destinationName != null) {
+                jmsTemplate.setDefaultDestinationName(destinationName);
+            }
+            else if (destination != null) {
+                jmsTemplate.setDefaultDestination(destination);
+            }
+            /*
+            else {
+                DestinationResolver resolver = getDestinationResolver();
+                if (resolver != null) {
+                    jmsTemplate.setDestinationResolver(resolver);
+                }
+                else {
+                    throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
+                }
+            }
+            */
         }
         answer.setInOnlyTemplate(template);
         return answer;
     }
+
 
     public JmsConsumer createConsumer(Processor processor) throws Exception {
         AbstractMessageListenerContainer listenerContainer = configuration.createMessageListenerContainer(this);
@@ -103,7 +133,18 @@ public class JmsEndpoint extends DefaultEndpoint {
      * @throws Exception if the consumer cannot be created
      */
     public JmsConsumer createConsumer(Processor processor, AbstractMessageListenerContainer listenerContainer) throws Exception {
-        listenerContainer.setDestinationName(destination);
+        if (destinationName != null) {
+            listenerContainer.setDestinationName(destinationName);
+        } else if (destination != null) {
+            listenerContainer.setDestination(destination);
+        } else {
+            DestinationResolver resolver = getDestinationResolver();
+            if (resolver != null) {
+                listenerContainer.setDestinationResolver(resolver);
+            } else {
+                throw new IllegalArgumentException("Neither destination, destinationName or destinationResolver are specified on this endpoint!");
+            }
+        }
         listenerContainer.setPubSubDomain(pubSubDomain);
         return new JmsConsumer(this, processor, listenerContainer);
     }
@@ -127,14 +168,14 @@ public class JmsEndpoint extends DefaultEndpoint {
      * Factory method for creating a new template for InOnly message exchanges
      */
     public JmsOperations createInOnlyTemplate() {
-        return configuration.createInOnlyTemplate(this, pubSubDomain, destination);
+        return configuration.createInOnlyTemplate(this, pubSubDomain, destinationName);
     }
 
     /**
      * Factory method for creating a new template for InOut message exchanges
      */
     public JmsOperations createInOutTemplate() {
-        return configuration.createInOutTemplate(this, pubSubDomain, destination, configuration.getRequestTimeout());
+        return configuration.createInOutTemplate(this, pubSubDomain, destinationName, configuration.getRequestTimeout());
     }
 
     // Properties
@@ -156,12 +197,31 @@ public class JmsEndpoint extends DefaultEndpoint {
         this.binding = binding;
     }
 
-    public String getDestination() {
+    public String getDestinationName() {
+        return destinationName;
+    }
+
+    public void setDestinationName(String destinationName) {
+        this.destinationName = destinationName;
+    }
+
+    public Destination getDestination() {
         return destination;
+    }
+
+    /**
+     * Allows a specific JMS Destination object to be used as the destination
+     */
+    public void setDestination(Destination destination) {
+        this.destination = destination;
     }
 
     public JmsConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public void setConfiguration(JmsConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public String getSelector() {
@@ -226,6 +286,7 @@ public class JmsEndpoint extends DefaultEndpoint {
         return metadata;
     }
 
+
     /**
      * Returns the {@link JmsOperations} used for metadata operations such as creating temporary destinations
      */
@@ -254,4 +315,434 @@ public class JmsEndpoint extends DefaultEndpoint {
         }
     }
 
+    // Delegated properties from the configuration
+    //-------------------------------------------------------------------------
+    public int getAcknowledgementMode() {
+        return getConfiguration().getAcknowledgementMode();
+    }
+
+    public String getAcknowledgementModeName() {
+        return getConfiguration().getAcknowledgementModeName();
+    }
+
+    public int getCacheLevel() {
+        return getConfiguration().getCacheLevel();
+    }
+
+    public String getCacheLevelName() {
+        return getConfiguration().getCacheLevelName();
+    }
+
+    public String getClientId() {
+        return getConfiguration().getClientId();
+    }
+
+    public int getConcurrentConsumers() {
+        return getConfiguration().getConcurrentConsumers();
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return getConfiguration().getConnectionFactory();
+    }
+
+    public ConsumerType getConsumerType() {
+        return getConfiguration().getConsumerType();
+    }
+
+    public DestinationResolver getDestinationResolver() {
+        return getConfiguration().getDestinationResolver();
+    }
+
+    public String getDurableSubscriptionName() {
+        return getConfiguration().getDurableSubscriptionName();
+    }
+
+    public ExceptionListener getExceptionListener() {
+        return getConfiguration().getExceptionListener();
+    }
+
+    public int getIdleTaskExecutionLimit() {
+        return getConfiguration().getIdleTaskExecutionLimit();
+    }
+
+    public JmsOperations getJmsOperations() {
+        return getConfiguration().getJmsOperations();
+    }
+
+    public ConnectionFactory getListenerConnectionFactory() {
+        return getConfiguration().getListenerConnectionFactory();
+    }
+
+    public int getMaxConcurrentConsumers() {
+        return getConfiguration().getMaxConcurrentConsumers();
+    }
+
+    public int getMaxMessagesPerTask() {
+        return getConfiguration().getMaxMessagesPerTask();
+    }
+
+    public MessageConverter getMessageConverter() {
+        return getConfiguration().getMessageConverter();
+    }
+
+    public JmsOperations getMetadataJmsOperations(JmsEndpoint endpoint) {
+        return getConfiguration().getMetadataJmsOperations(endpoint);
+    }
+
+    public int getPriority() {
+        return getConfiguration().getPriority();
+    }
+
+    public long getReceiveTimeout() {
+        return getConfiguration().getReceiveTimeout();
+    }
+
+    public long getRecoveryInterval() {
+        return getConfiguration().getRecoveryInterval();
+    }
+
+    public String getReplyTo() {
+        return getConfiguration().getReplyTo();
+    }
+
+    public String getReplyToDestinationSelectorName() {
+        return getConfiguration().getReplyToDestinationSelectorName();
+    }
+
+    public String getReplyToTempDestinationAffinity() {
+        return getConfiguration().getReplyToTempDestinationAffinity();
+    }
+
+    public long getRequestMapPurgePollTimeMillis() {
+        return getConfiguration().getRequestMapPurgePollTimeMillis();
+    }
+
+    public long getRequestTimeout() {
+        return getConfiguration().getRequestTimeout();
+    }
+
+    public TaskExecutor getTaskExecutor() {
+        return getConfiguration().getTaskExecutor();
+    }
+
+    public ConnectionFactory getTemplateConnectionFactory() {
+        return getConfiguration().getTemplateConnectionFactory();
+    }
+
+    public long getTimeToLive() {
+        return getConfiguration().getTimeToLive();
+    }
+
+    public PlatformTransactionManager getTransactionManager() {
+        return getConfiguration().getTransactionManager();
+    }
+
+    public String getTransactionName() {
+        return getConfiguration().getTransactionName();
+    }
+
+    public int getTransactionTimeout() {
+        return getConfiguration().getTransactionTimeout();
+    }
+
+    public boolean isAcceptMessagesWhileStopping() {
+        return getConfiguration().isAcceptMessagesWhileStopping();
+    }
+
+    public boolean isAlwaysCopyMessage() {
+        return getConfiguration().isAlwaysCopyMessage();
+    }
+
+    public boolean isAutoStartup() {
+        return getConfiguration().isAutoStartup();
+    }
+
+    public boolean isDeliveryPersistent() {
+        return getConfiguration().isDeliveryPersistent();
+    }
+
+    public boolean isDisableReplyTo() {
+        return getConfiguration().isDisableReplyTo();
+    }
+
+    public boolean isEagerLoadingOfProperties() {
+        return getConfiguration().isEagerLoadingOfProperties();
+    }
+
+    public boolean isExplicitQosEnabled() {
+        return getConfiguration().isExplicitQosEnabled();
+    }
+
+    public boolean isExposeListenerSession() {
+        return getConfiguration().isExposeListenerSession();
+    }
+
+    public boolean isMessageIdEnabled() {
+        return getConfiguration().isMessageIdEnabled();
+    }
+
+    public boolean isMessageTimestampEnabled() {
+        return getConfiguration().isMessageTimestampEnabled();
+    }
+
+    public boolean isPreserveMessageQos() {
+        return getConfiguration().isPreserveMessageQos();
+    }
+
+    public boolean isPubSubNoLocal() {
+        return getConfiguration().isPubSubNoLocal();
+    }
+
+    public boolean isReplyToDeliveryPersistent() {
+        return getConfiguration().isReplyToDeliveryPersistent();
+    }
+
+    public boolean isSubscriptionDurable() {
+        return getConfiguration().isSubscriptionDurable();
+    }
+
+    public boolean isTransacted() {
+        return getConfiguration().isTransacted();
+    }
+
+    public boolean isTransactedInOut() {
+        return getConfiguration().isTransactedInOut();
+    }
+
+    public boolean isUseMessageIDAsCorrelationID() {
+        return getConfiguration().isUseMessageIDAsCorrelationID();
+    }
+
+    public boolean isUseVersion102() {
+        return getConfiguration().isUseVersion102();
+    }
+
+    public void setAcceptMessagesWhileStopping(boolean acceptMessagesWhileStopping) {
+        getConfiguration().setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
+    }
+
+    public void setAcknowledgementMode(int consumerAcknowledgementMode) {
+        getConfiguration().setAcknowledgementMode(consumerAcknowledgementMode);
+    }
+
+    public void setAcknowledgementModeName(String consumerAcknowledgementMode) {
+        getConfiguration().setAcknowledgementModeName(consumerAcknowledgementMode);
+    }
+
+    public void setAlwaysCopyMessage(boolean alwaysCopyMessage) {
+        getConfiguration().setAlwaysCopyMessage(alwaysCopyMessage);
+    }
+
+    public void setAutoStartup(boolean autoStartup) {
+        getConfiguration().setAutoStartup(autoStartup);
+    }
+
+    public void setCacheLevel(int cacheLevel) {
+        getConfiguration().setCacheLevel(cacheLevel);
+    }
+
+    public void setCacheLevelName(String cacheName) {
+        getConfiguration().setCacheLevelName(cacheName);
+    }
+
+    public void setClientId(String consumerClientId) {
+        getConfiguration().setClientId(consumerClientId);
+    }
+
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        getConfiguration().setConcurrentConsumers(concurrentConsumers);
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        getConfiguration().setConnectionFactory(connectionFactory);
+    }
+
+    public void setConsumerType(ConsumerType consumerType) {
+        getConfiguration().setConsumerType(consumerType);
+    }
+
+    public void setDeliveryPersistent(boolean deliveryPersistent) {
+        getConfiguration().setDeliveryPersistent(deliveryPersistent);
+    }
+
+    public void setDestinationResolver(DestinationResolver destinationResolver) {
+        getConfiguration().setDestinationResolver(destinationResolver);
+    }
+
+
+    public void setDisableReplyTo(boolean disableReplyTo) {
+        getConfiguration().setDisableReplyTo(disableReplyTo);
+    }
+
+    public void setDurableSubscriptionName(String durableSubscriptionName) {
+        getConfiguration().setDurableSubscriptionName(durableSubscriptionName);
+    }
+
+    public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
+        getConfiguration().setEagerLoadingOfProperties(eagerLoadingOfProperties);
+    }
+
+    public void setExceptionListener(ExceptionListener exceptionListener) {
+        getConfiguration().setExceptionListener(exceptionListener);
+    }
+
+    public void setExplicitQosEnabled(boolean explicitQosEnabled) {
+        getConfiguration().setExplicitQosEnabled(explicitQosEnabled);
+    }
+
+    public void setExposeListenerSession(boolean exposeListenerSession) {
+        getConfiguration().setExposeListenerSession(exposeListenerSession);
+    }
+
+    public void setIdleTaskExecutionLimit(int idleTaskExecutionLimit) {
+        getConfiguration().setIdleTaskExecutionLimit(idleTaskExecutionLimit);
+    }
+
+    public void setJmsOperations(JmsOperations jmsOperations) {
+        getConfiguration().setJmsOperations(jmsOperations);
+    }
+
+    public void setListenerConnectionFactory(ConnectionFactory listenerConnectionFactory) {
+        getConfiguration().setListenerConnectionFactory(listenerConnectionFactory);
+    }
+
+    public void setMaxConcurrentConsumers(int maxConcurrentConsumers) {
+        getConfiguration().setMaxConcurrentConsumers(maxConcurrentConsumers);
+    }
+
+    public void setMaxMessagesPerTask(int maxMessagesPerTask) {
+        getConfiguration().setMaxMessagesPerTask(maxMessagesPerTask);
+    }
+
+    public void setMessageConverter(MessageConverter messageConverter) {
+        getConfiguration().setMessageConverter(messageConverter);
+    }
+
+    public void setMessageIdEnabled(boolean messageIdEnabled) {
+        getConfiguration().setMessageIdEnabled(messageIdEnabled);
+    }
+
+    public void setMessageTimestampEnabled(boolean messageTimestampEnabled) {
+        getConfiguration().setMessageTimestampEnabled(messageTimestampEnabled);
+    }
+
+    public void setMetadataJmsOperations(JmsOperations metadataJmsOperations) {
+        getConfiguration().setMetadataJmsOperations(metadataJmsOperations);
+    }
+
+    public void setPreserveMessageQos(boolean preserveMessageQos) {
+        getConfiguration().setPreserveMessageQos(preserveMessageQos);
+    }
+
+    public void setPriority(int priority) {
+        getConfiguration().setPriority(priority);
+    }
+
+    public void setProviderMetadata(JmsProviderMetadata providerMetadata) {
+        getConfiguration().setProviderMetadata(providerMetadata);
+    }
+
+    public void setPubSubNoLocal(boolean pubSubNoLocal) {
+        getConfiguration().setPubSubNoLocal(pubSubNoLocal);
+    }
+
+    public void setReceiveTimeout(long receiveTimeout) {
+        getConfiguration().setReceiveTimeout(receiveTimeout);
+    }
+
+    public void setRecoveryInterval(long recoveryInterval) {
+        getConfiguration().setRecoveryInterval(recoveryInterval);
+    }
+
+    public void setReplyTo(String replyToDestination) {
+        getConfiguration().setReplyTo(replyToDestination);
+    }
+
+    public void setReplyToDeliveryPersistent(boolean replyToDeliveryPersistent) {
+        getConfiguration().setReplyToDeliveryPersistent(replyToDeliveryPersistent);
+    }
+
+    public void setReplyToDestinationSelectorName(String replyToDestinationSelectorName) {
+        getConfiguration().setReplyToDestinationSelectorName(replyToDestinationSelectorName);
+    }
+
+    public void setReplyToTempDestinationAffinity(String replyToTempDestinationAffinity) {
+        getConfiguration().setReplyToTempDestinationAffinity(replyToTempDestinationAffinity);
+    }
+
+    public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
+        getConfiguration().setRequestMapPurgePollTimeMillis(requestMapPurgePollTimeMillis);
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        getConfiguration().setRequestTimeout(requestTimeout);
+    }
+
+    public void setSubscriptionDurable(boolean subscriptionDurable) {
+        getConfiguration().setSubscriptionDurable(subscriptionDurable);
+    }
+
+    public void setTaskExecutor(TaskExecutor taskExecutor) {
+        getConfiguration().setTaskExecutor(taskExecutor);
+    }
+
+    public void setTemplateConnectionFactory(ConnectionFactory templateConnectionFactory) {
+        getConfiguration().setTemplateConnectionFactory(templateConnectionFactory);
+    }
+
+    public void setTimeToLive(long timeToLive) {
+        getConfiguration().setTimeToLive(timeToLive);
+    }
+
+    public void setTransacted(boolean consumerTransacted) {
+        getConfiguration().setTransacted(consumerTransacted);
+    }
+
+    public void setTransactedInOut(boolean transactedInOut) {
+        getConfiguration().setTransactedInOut(transactedInOut);
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        getConfiguration().setTransactionManager(transactionManager);
+    }
+
+    public void setTransactionName(String transactionName) {
+        getConfiguration().setTransactionName(transactionName);
+    }
+
+    public void setTransactionTimeout(int transactionTimeout) {
+        getConfiguration().setTransactionTimeout(transactionTimeout);
+    }
+
+    public void setUseMessageIDAsCorrelationID(boolean useMessageIDAsCorrelationID) {
+        getConfiguration().setUseMessageIDAsCorrelationID(useMessageIDAsCorrelationID);
+    }
+
+    public void setUseVersion102(boolean useVersion102) {
+        getConfiguration().setUseVersion102(useVersion102);
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+
+    @Override
+    protected String createEndpointUri() {
+        String scheme = "jms";
+        Component owner = getComponent();
+        if (owner != null) {
+            // TODO get the scheme of the component?
+        }
+        if (destination != null) {
+            return scheme + ":" + destination;
+        }
+        else
+        if (destinationName != null) {
+            return scheme + ":" + destinationName;
+        }
+        DestinationResolver resolver = getDestinationResolver();
+        if (resolver != null) {
+            return scheme + ":" + resolver;
+        }
+        return super.createEndpointUri();
+    }
 }
