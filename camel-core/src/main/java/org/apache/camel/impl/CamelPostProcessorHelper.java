@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
  * both the <a href="http://activemq.apache.org/camel/spring.html">Spring</a>
  * and <a href="http://activemq.apache.org/camel/guice.html">Guice</a> support.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(CamelPostProcessorHelper.class);

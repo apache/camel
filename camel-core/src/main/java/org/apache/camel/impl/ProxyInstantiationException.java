@@ -21,7 +21,7 @@ import org.apache.camel.Endpoint;
 /**
  * A proxy creation failed trying to create a proxy of a given type and on an given endpoint
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProxyInstantiationException extends RuntimeException {
     private final Class<?> type;
