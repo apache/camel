@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
@@ -25,8 +24,8 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
 
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
@@ -68,35 +67,14 @@ public class FileComponent extends DefaultComponent {
         File file = new File(remaining);
         FileEndpoint result = new FileEndpoint(file, uri, this);
 
-        // lookup idempotent repository in registry if provided
-        String ref = getAndRemoveParameter(parameters, "idempotentRepositoryRef", String.class);
-        if (ref != null) {
-            IdempotentRepository repository = mandatoryLookup(ref, IdempotentRepository.class);
-            result.setIdempotentRepository(repository);
-        }
-
-        // lookup file filter in registry if provided
-        ref = getAndRemoveParameter(parameters, "fileFilterRef", String.class);
-        if (ref != null) {
-            FileFilter filter = mandatoryLookup(ref, FileFilter.class);
-            result.setFilter(filter);
-        }
-
-        // lookup sorter in registry if provided
-        ref = getAndRemoveParameter(parameters, "sorterRef", String.class);
-        if (ref != null) {
-            Comparator<File> sorter = mandatoryLookup(ref, Comparator.class);
-            result.setFileSorter(sorter);
-        }
-
         // sort by using file language 
         String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
-        if (sortBy != null) {
+        if (isNotNullAndNonEmpty(sortBy) && !isReferenceParameter(sortBy)) {
             // we support nested sort groups so they should be chained
             String[] groups = sortBy.split(";");
             Iterator<String> it = ObjectHelper.createIterator(groups);
             Comparator<FileExchange> comparator = createSortByComparator(it);
-            result.setExchangeSorter(comparator);
+            result.setSortBy(comparator);
         }
 
         setProperties(result, parameters);

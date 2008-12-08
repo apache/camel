@@ -51,14 +51,14 @@ public class FileConsumer extends ScheduledPollConsumer {
         this.endpoint = endpoint;
     }
 
-    protected synchronized void poll() throws Exception {
+    protected void poll() throws Exception {
         // gather list of files to process
         List<File> files = new ArrayList<File>();
         scanFilesToPoll(endpoint.getFile(), true, files);
 
         // sort files using file comparator if provided
-        if (endpoint.getFileSorter() != null) {
-            Collections.sort(files, endpoint.getFileSorter());
+        if (endpoint.getSorter() != null) {
+            Collections.sort(files, endpoint.getSorter());
         }
 
         // sort using build in sorters that is expression based
@@ -70,8 +70,8 @@ public class FileConsumer extends ScheduledPollConsumer {
             exchanges.add(exchange);
         }
         // sort files using exchange comparator if provided
-        if (endpoint.getExchangeSorter() != null) {
-            Collections.sort(exchanges, endpoint.getExchangeSorter());
+        if (endpoint.getSortBy() != null) {
+            Collections.sort(exchanges, endpoint.getSortBy());
         }
 
         // consume files one by one

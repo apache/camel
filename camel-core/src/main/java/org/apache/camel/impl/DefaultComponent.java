@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -185,7 +186,48 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * Sets the bean properties on the given bean
      */
     protected void setProperties(Object bean, Map parameters) throws Exception {
-        IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
+        if (useIntrospectionOnEndpoint()) {
+            // set reference properties first as they use # syntax that fools the regular properties setter
+            setReferenceProperties(bean, parameters);
+            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
+        }
+    }
+
+    /**
+     * Sets the reference properties on the given bean
+     * <p/>
+     * This is convention over configuration, setting all reference parameters (identifier with a value starting with #)
+     * by looking it up in registry and setting it on the bean if possible.
+     */
+    protected void setReferenceProperties(Object bean, Map parameters) throws Exception {
+        Iterator it = parameters.keySet().iterator();
+        while (it.hasNext()) {
+            Object key = it.next();
+            String value = (String) parameters.get(key);
+            if (isReferenceParameter(value)) {
+                Object ref = lookup(value.substring(1));
+                String name = key.toString();
+                if (ref != null) {
+                    boolean hit = IntrospectionSupport.setProperty(getCamelContext().getTypeConverter(), bean, name, ref);
+                    if (hit) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Configued property: " + name + " on bean: " + bean + " with value: " + ref);
+                        }
+                        // must remove as its a valid option and we could configure it
+                        it.remove();
+                    } else {
+                        throw new IllegalArgumentException("Property: " + name + " not found on bean: " + bean + " of type: " + bean.getClass().getName());
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Is the given parameter a reference parameter
+     */
+    protected boolean isReferenceParameter(String parameter) {
+        return parameter != null && parameter.startsWith("#");
     }
 
     /**
@@ -258,7 +300,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Gets the parameter and remove it from the parameter map.
      * 
-     * @param parameters  the parameters
+     * @param parameters the parameters
      * @param key        the key
      * @param type       the requested type to convert the value from the parameter
      * @return  the converted value parameter, <tt>null</tt> if parameter does not exists.
@@ -270,7 +312,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Gets the parameter and remove it from the parameter map.
      *
-     * @param parameters     the parameters
+     * @param parameters    the parameters
      * @param key           the key
      * @param type          the requested type to convert the value from the parameter
      * @param defaultValue  use this default value if the parameter does not contain the key
@@ -305,5 +347,5 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
         return null;
     }
-    
+
 }

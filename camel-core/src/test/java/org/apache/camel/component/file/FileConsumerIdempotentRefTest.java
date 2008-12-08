@@ -49,7 +49,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepositoryRef=myRepo&moveNamePrefix=done/").to("mock:result");
+                from("file://target/idempotent/?idempotent=true&idempotentRepository=#myRepo&moveNamePrefix=done/").to("mock:result");
             }
         };
     }

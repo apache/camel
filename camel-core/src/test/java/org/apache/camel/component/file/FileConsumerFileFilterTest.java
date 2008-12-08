@@ -29,7 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?fileFilterRef=myFilter";
+    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

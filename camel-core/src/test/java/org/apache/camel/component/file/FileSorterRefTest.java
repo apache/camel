@@ -29,7 +29,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorterRef=mySorter";
+    private String fileUrl = "file://target/filesorter/?sorter=#mySorter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
