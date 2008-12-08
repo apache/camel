@@ -16,56 +16,58 @@
  */
 package org.apache.camel.component.atom;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.naming.Context;
 
+import org.apache.abdera.model.Entry;
+import org.apache.abdera.model.Feed;
+import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 
-/**
- * Unit test for AtomEntryPollingConsumer
- */
-public class AtomEntryPollingConsumerTest extends ContextTestSupport {
+public class AtomEntrySortTest extends ContextTestSupport {
 
-    public void testResult() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result1");
-        mock.expectedMessageCount(7);
+    public void testSortedEntries() throws Exception { 
+        MockEndpoint mock = getMockEndpoint("mock:sorted");
+        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
+        mock.expectedMessageCount(10);
         mock.assertIsSatisfied();
     }
 
-    public void testResult2() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result2");
-        mock.expectedMessageCount(7);
-        mock.assertIsSatisfied();
-    }
-
-    public void testResult3() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result3");
-        mock.expectedMessageCount(4);
-        mock.assertIsSatisfied();
-    }
-
+    public void testUnSortedEntries() throws Exception { 
+        MockEndpoint mock = getMockEndpoint("mock:unsorted");
+        mock.expectsAscending(ExpressionBuilder.beanExpression("myBean", "getPubDate"));
+        mock.expectedMessageCount(10);
+        mock.setResultWaitTime(2000L);
+        mock.assertIsNotSatisfied(2000L);
+    }    
+    
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext jndi = new JndiContext();
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
-        jndi.bind("myDate", df.parse("2007-11-13 14:35:00 +0100"));
+        jndi.bind("myBean", new MyBean());
         return jndi;
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&consumer.delay=500").to("mock:result1");
-
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=false&consumer.delay=500").to("mock:result2");                
-
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&filter=true&lastUpdate=#myDate&consumer.delay=500").to("mock:result3");
+                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=true&consumer.delay=50").to("mock:sorted");
+                from("atom:file:src/test/data/unsortedfeed.atom?splitEntries=true&sortEntries=false&consumer.delay=50").to("mock:unsorted");
             }
         };
+    }
+    
+    public static class MyBean {
+        public Date getPubDate(@Body Object body) {
+            Entry syndEntry = (Entry) body;
+            return syndEntry.getUpdated();            
+        }
     }
 }
