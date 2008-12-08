@@ -50,14 +50,10 @@ public final class IntrospectionSupport {
     private IntrospectionSupport() {
     }
 
-    public static boolean getProperties(Object target, Map props, String optionPrefix) {
+    public static boolean getProperties(Object target, Map properties, String optionPrefix) {
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
-        if (target == null) {
-            throw new IllegalArgumentException("target was null.");
-        }
-        if (props == null) {
-            throw new IllegalArgumentException("props was null.");
-        }
         if (optionPrefix == null) {
             optionPrefix = "";
         }
@@ -81,7 +77,7 @@ public final class IntrospectionSupport {
                     }
 
                     name = name.substring(3, 4).toLowerCase() + name.substring(4);
-                    props.put(optionPrefix + name, strValue);
+                    properties.put(optionPrefix + name, strValue);
                     rc = true;
                 } catch (Throwable ignore) {
                     // ignore
@@ -92,17 +88,14 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static Object getProperty(Object target, String prop) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
-        if (target == null) {
-            throw new IllegalArgumentException("target was null.");
-        }
-        if (prop == null) {
-            throw new IllegalArgumentException("prop was null.");
-        }
-        prop = prop.substring(0, 1).toUpperCase() + prop.substring(1);
+    public static Object getProperty(Object target, String property) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(property, "property");
+
+        property = property.substring(0, 1).toUpperCase() + property.substring(1);
 
         Class clazz = target.getClass();
-        Method method = getPropertyGetter(clazz, prop);
+        Method method = getPropertyGetter(clazz, property);
         return method.invoke(target);
     }
 
@@ -111,19 +104,15 @@ public final class IntrospectionSupport {
         return method;
     }
 
-    public static boolean setProperties(Object target, Map props, String optionPrefix) throws Exception {
+    public static boolean setProperties(Object target, Map properties, String optionPrefix) throws Exception {
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
-        if (target == null) {
-            throw new IllegalArgumentException("target was null.");
-        }
-        if (props == null) {
-            throw new IllegalArgumentException("props was null.");
-        }
 
-        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String name = (String)iter.next();
             if (name.startsWith(optionPrefix)) {
-                Object value = props.get(name);
+                Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 if (setProperty(target, name, value)) {
                     iter.remove();
@@ -134,17 +123,15 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static Map extractProperties(Map props, String optionPrefix) {
-        if (props == null) {
-            throw new IllegalArgumentException("props was null.");
-        }
+    public static Map extractProperties(Map properties, String optionPrefix) {
+        ObjectHelper.notNull(properties, "properties");
 
-        HashMap rc = new HashMap(props.size());
+        HashMap rc = new HashMap(properties.size());
 
-        for (Iterator iter = props.keySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String name = (String)iter.next();
             if (name.startsWith(optionPrefix)) {
-                Object value = props.get(name);
+                Object value = properties.get(name);
                 name = name.substring(optionPrefix.length());
                 rc.put(name, value);
                 iter.remove();
@@ -154,17 +141,12 @@ public final class IntrospectionSupport {
         return rc;
     }
 
-    public static boolean setProperties(TypeConverter typeConverter, Object target, Map props) throws Exception {
+    public static boolean setProperties(TypeConverter typeConverter, Object target, Map properties) throws Exception {
+        ObjectHelper.notNull(target, "target");
+        ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
 
-        if (target == null) {
-            throw new IllegalArgumentException("target was null.");
-        }
-        if (props == null) {
-            throw new IllegalArgumentException("props was null.");
-        }
-
-        for (Iterator iter = props.entrySet().iterator(); iter.hasNext();) {
+        for (Iterator iter = properties.entrySet().iterator(); iter.hasNext();) {
             Map.Entry entry = (Map.Entry)iter.next();
             if (setProperty(typeConverter, target, (String)entry.getKey(), entry.getValue())) {
                 iter.remove();
@@ -208,7 +190,7 @@ public final class IntrospectionSupport {
                         typeConvertionFailed = e;
                     }
                     LOG.trace("Setter \"" + setter + "\" with parameter type \""
-                              + setter.getParameterTypes()[0] + "\" could not be used for type conertions of " + value);
+                              + setter.getParameterTypes()[0] + "\" could not be used for type conversions of " + value);
                 }
             }
             // we did not find a setter method to use, and if we did try to use a type converter then throw
@@ -216,7 +198,7 @@ public final class IntrospectionSupport {
             if (typeConvertionFailed != null) {
                 throw new IllegalArgumentException("Could not find a suitable setter for property: " + name
                         + " as there isn't a setter method with same type: " + value.getClass().getCanonicalName()
-                        + " nor type convertion possbile: " + typeConvertionFailed.getMessage());
+                        + " nor type conversion possible: " + typeConvertionFailed.getMessage());
             } else {
                 return false;
             }
@@ -350,13 +332,7 @@ public final class IntrospectionSupport {
     }
 
     protected static void appendToString(StringBuffer buffer, Object value) {
-        // if (value instanceof ActiveMQDestination) {
-        // ActiveMQDestination destination = (ActiveMQDestination) value;
-        // buffer.append(destination.getQualifiedName());
-        // }
-        // else {
         buffer.append(value);
-        // }
     }
 
     public static String simpleName(Class clazz) {
@@ -392,7 +368,7 @@ public final class IntrospectionSupport {
                 }
                 map.put(field.getName(), o);
             } catch (Throwable e) {
-                LOG.debug("Error adding fields", e);
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
     }
