@@ -24,7 +24,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A simple processor which just sends the message exchange to the default endpoint of the {@link ProducerTemplate}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ProducerTemplateProcessor implements Processor {
     private final ProducerTemplate producerTemplate;

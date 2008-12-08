@@ -21,7 +21,7 @@ import org.apache.camel.processor.aggregator.CustomAggregationCollectionTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 /**
- * @version $Revision: 630591 $
+ * @version $Revision$
  */
 public class SpringAggregatorWithCustomCollectionTest extends CustomAggregationCollectionTest {
     protected CamelContext createCamelContext() throws Exception {

@@ -22,7 +22,7 @@ import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
 import org.guiceyfruit.testing.junit3.GuiceyTestCase;
 
 /**
- * @version $Revision: 697494 $
+ * @version $Revision$
  */
 public class ProduceTest extends GuiceyTestCase {
 

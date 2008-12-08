@@ -29,7 +29,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
 /**
- * @version $Revision:$
+ * @version $Revision$
  */
 public class SqlDataSourceRefTest extends ContextTestSupport {
     protected String driverClass = "org.hsqldb.jdbcDriver";

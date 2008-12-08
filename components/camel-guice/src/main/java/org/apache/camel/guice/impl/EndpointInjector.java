@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Injects values into the {@link EndpointInject} injection point
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @InjectionAnnotation(EndpointInject.class)
 public class EndpointInjector extends CamelPostProcessorHelper implements AnnotationProviderFactory {
