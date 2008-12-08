@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * Filters out all entries which occur before the last time of the entry we saw (assuming
  * entries arrive sorted in order).
  *
- * @version $Revision: 656106 $
+ * @version $Revision$
  */
 public class UpdatedDateFilter implements EntryFilter {
 

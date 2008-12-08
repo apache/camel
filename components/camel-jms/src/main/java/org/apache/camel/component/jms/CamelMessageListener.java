@@ -37,7 +37,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * {@link #newInstance(org.apache.camel.CamelContext, org.apache.camel.ProducerTemplate)}
  * you can send the message exchange into a Camel endpoint for processing.
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class CamelMessageListener implements MessageListener, Processor {
     private final CamelContext camelContext;

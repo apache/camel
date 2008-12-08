@@ -35,7 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Create a collection of routes via a provider method
  *
- * @version $Revision: 705742 $
+ * @version $Revision$
  */
 public class EndpointInjectionTest extends TestCase {
 

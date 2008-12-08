@@ -21,7 +21,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 697494 $
+ * @version $Revision$
  */
 public class MyListenerService implements MyListener {
 

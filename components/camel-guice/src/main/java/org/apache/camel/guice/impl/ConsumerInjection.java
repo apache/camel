@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConsumerInjection extends CamelPostProcessorHelper implements ConstructorInterceptor {
     public Object construct(ConstructorInvocation invocation) throws Throwable {

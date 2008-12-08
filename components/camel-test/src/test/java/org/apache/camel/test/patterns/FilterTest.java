@@ -19,21 +19,21 @@ package org.apache.camel.test.patterns;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.test.CamelTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.CamelTestSupport;
 
 /**
  * Tests filtering using Camel Test
-  * @version $Revision: 630568 $
+  * @version $Revision$
  */
 // START SNIPPET: example
 public class FilterTest extends CamelTestSupport {
 
-    @EndpointInject(uri="mock:result")
+    @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
 
-    @Produce(uri="direct:start")
+    @Produce(uri = "direct:start")
     protected ProducerTemplate template;
 
     public void testSendMatchingMessage() throws Exception {
