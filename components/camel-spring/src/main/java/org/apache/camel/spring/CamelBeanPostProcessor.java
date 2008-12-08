@@ -30,6 +30,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spring.util.ReflectionUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -86,6 +87,10 @@ public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationCon
     }
 
     public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        if (bean instanceof DefaultEndpoint) {
+            DefaultEndpoint defaultEndpoint = (DefaultEndpoint) bean;
+            defaultEndpoint.setEndpointUriIfNotSpecified(beanName);
+        }
         return bean;
     }
 
