@@ -194,6 +194,16 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         return null;
     }
 
+    /**
+     * Sets the endpointUri if it has not been specified yet via some kind of dependency injection mechanism.
+     * This allows dependency injection frameworks such as Spring or Guice to set the default endpoint URI in cases
+     * where it has not been explicitly configured using the name/context in which an Endpoint is created.
+     */
+    public void setEndpointUriIfNotSpecified(String value) {
+        if (endpointUri == null) {
+            setEndpointUri(value);
+        }
+    }
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
     }

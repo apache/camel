@@ -85,6 +85,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         init();
     }
 
+    public MockEndpoint() {
+        this(null);
+    }
 
     /**
      * A helper method to resolve the mock endpoint of the given URI on the given context
