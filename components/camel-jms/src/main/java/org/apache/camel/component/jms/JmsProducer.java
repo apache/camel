@@ -146,6 +146,8 @@ public class JmsProducer extends DefaultProducer {
     public void process(final Exchange exchange) {
         final org.apache.camel.Message in = exchange.getIn();
 
+        String destinationName = endpoint.getDestinationName();
+        Destination destination = endpoint.getDestination();
         if (exchange.getPattern().isOutCapable()) {
 
             testAndSetRequestor();
@@ -169,7 +171,7 @@ public class JmsProducer extends DefaultProducer {
             final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
             final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
-            template.send(endpoint.getDestination(), new MessageCreator() {
+            MessageCreator messageCreator = new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     message.setJMSReplyTo(replyTo);
@@ -177,7 +179,7 @@ public class JmsProducer extends DefaultProducer {
 
                     FutureTask future = null;
                     future = (!msgIdAsCorrId)
-                        ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
+                            ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
                             : requestor.getReceiveFuture(callback);
 
                     futureHolder.set(future);
@@ -187,7 +189,19 @@ public class JmsProducer extends DefaultProducer {
                     }
                     return message;
                 }
-            }, callback);
+            };
+
+            if (destinationName != null) {
+                template.send(destinationName, messageCreator, callback);
+            }
+            else if (destination != null) {
+                // TODO cannot pass in callback using destination?
+                template.send(destination.toString(), messageCreator, callback);
+                // template.send(destination, messageCreator);
+            }
+            else {
+                throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
+            }
 
             setMessageId(exchange);
 
@@ -224,7 +238,7 @@ public class JmsProducer extends DefaultProducer {
                 exchange.setException(e);
             }
         } else {
-            getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
+            MessageCreator messageCreator = new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
                     if (LOG.isDebugEnabled()) {
@@ -232,7 +246,16 @@ public class JmsProducer extends DefaultProducer {
                     }
                     return message;
                 }
-            });
+            };
+            if (destinationName != null) {
+                getInOnlyTemplate().send(destinationName, messageCreator);
+            }
+            else if (destination != null) {
+                getInOnlyTemplate().send(destination, messageCreator);
+            }
+            else {
+                throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
+            }
 
             setMessageId(exchange);
         }
