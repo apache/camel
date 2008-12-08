@@ -43,14 +43,17 @@ public class UpdatedDateFilter implements EntryFilter {
 
     public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {        
         Date updated = ((Entry)entry).getUpdated();
+        if (updated == null) { // never been updated so get published date
+            updated = ((Entry)entry).getPublished();
+        }        
         if (updated == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No updated time for entry so assuming its valid: entry=[" + entry + "]");
             }
             return true;
-        }
+        }        
         if (lastUpdate != null) {
-            if (lastUpdate.after(updated)) {
+            if (lastUpdate.after(updated) || lastUpdate.equals(updated)) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Entry is older than lastupdate=[" + lastUpdate
                         + "], no valid entry=[" + entry + "]");

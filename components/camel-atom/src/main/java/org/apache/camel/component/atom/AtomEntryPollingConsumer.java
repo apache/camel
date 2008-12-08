@@ -44,12 +44,20 @@ public class AtomEntryPollingConsumer extends FeedEntryPollingConsumer {
     private Document<Feed> getDocument() throws IOException, ParseException {
         if (document == null) {
             document = AtomUtils.parseDocument(endpoint.getFeedUri());
-            list = document.getRoot().getEntries();
+            Feed root = document.getRoot();
+            if (endpoint.isSortEntries()) {
+                sortEntries(root);
+            }             
+            list = root.getEntries();            
             entryIndex = list.size() - 1;
         }
         return document;
     }
-
+    
+    protected void sortEntries(Feed feed) {
+        feed.sortEntriesByUpdated(true);
+    }
+    
     @Override
     protected void populateList(Object feed) throws ParseException, IOException {
         // list is populated already in the createFeed method
