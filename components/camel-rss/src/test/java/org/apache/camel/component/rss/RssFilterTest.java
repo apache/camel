@@ -50,8 +50,7 @@ public class RssFilterTest extends ContextTestSupport {
                 // See RssFilterWithXPathTest for an example of how to do this with XPath
                 
                 // START SNIPPET: ex1
-                // only entries with Camel in the title will get through the
-                // filter
+                // only entries with Camel in the title will get through the filter
                 from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
                     filter().method("myFilterBean", "titleContainsCamel").to("mock:result");
                 // END SNIPPET: ex1
