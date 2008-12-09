@@ -16,19 +16,7 @@
  */
 package org.apache.camel.component.rss;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-
-import java.util.Date;
-
-import javax.naming.Context;
-
-import org.apache.camel.Body;
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.jndi.JndiContext;
 
 public class RssEntrySortDefaultsTest extends RssEntrySortTest {   
     protected RouteBuilder createRouteBuilder() throws Exception {
