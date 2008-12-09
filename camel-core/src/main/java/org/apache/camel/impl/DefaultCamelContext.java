@@ -157,9 +157,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void addComponent(String componentName, final Component component) {
-        if (component == null) {
-            throw new IllegalArgumentException("Component cannot be null");
-        }
+        ObjectHelper.notNull(component, "component");
         synchronized (components) {
             if (components.containsKey(componentName)) {
                 throw new IllegalArgumentException("Component previously added: " + componentName);
@@ -180,8 +178,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (component != null) {
                         addComponent(name, component);
                         if (isStarted()) {
-                            // If the component is looked up after the context
-                            // is started,
+                            // If the component is looked up after the context is started,
                             // lets start it up.
                             startServices(component);
                         }

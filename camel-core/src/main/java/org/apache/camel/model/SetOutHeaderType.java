@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;setOutHeader/&gt; element
@@ -33,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "setOutHeader")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetOutHeaderType extends ExpressionNode {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String headerName;
     
     public SetOutHeaderType() {
@@ -61,6 +62,7 @@ public class SetOutHeaderType extends ExpressionNode {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        ObjectHelper.notNull(getHeaderName(), "headerName", this);
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setOutHeader(getHeaderName(), expr);
     }

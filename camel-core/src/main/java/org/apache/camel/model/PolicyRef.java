@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;policy/&gt; element
@@ -59,7 +60,7 @@ public class PolicyRef extends OutputType<ProcessorType> {
     @Override
     public String getLabel() {
         if (ref != null) {
-            return "ref:  " + ref;
+            return "ref: " + ref;
         } else if (policy != null) {
             return policy.toString();
         } else {
@@ -80,9 +81,7 @@ public class PolicyRef extends OutputType<ProcessorType> {
         Processor childProcessor = createOutputsProcessor(routeContext);
 
         Policy policy = resolvePolicy(routeContext);
-        if (policy == null) {
-            throw new IllegalArgumentException("No policy configured: " + this);
-        }
+        ObjectHelper.notNull(policy, "policy", this);
         return policy.wrap(childProcessor);
     }
 

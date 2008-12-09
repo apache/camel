@@ -194,7 +194,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Sets the reference properties on the given bean
      * <p/>
-     * This is convention over configuration, setting all reference parameters (identifier with a value starting with #)
+     * This is convention over configuration, setting all reference parameters (using {@link #isReferenceParameter(String)}
      * by looking it up in registry and setting it on the bean if possible.
      */
     protected void setReferenceProperties(Object bean, Map parameters) throws Exception {
@@ -222,7 +222,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Is the given parameter a reference parameter
+     * Is the given parameter a reference parameter (starting with a # char)
      */
     protected boolean isReferenceParameter(String parameter) {
         return parameter != null && parameter.startsWith("#");

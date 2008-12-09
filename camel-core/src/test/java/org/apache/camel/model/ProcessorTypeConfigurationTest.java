@@ -31,9 +31,9 @@ public class ProcessorTypeConfigurationTest extends ContextTestSupport {
                     from("direct:in").processRef("hello");
                 }
             });
-            fail("Should have thrown RuntimeCamelException");
+            fail("Should have thrown IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            assertEquals("target not provided on node: process[ref: hello]", e.getMessage());
+            assertEquals("registry entry called hello must be specified on: process[ref: hello]", e.getMessage());
         }
     }
 

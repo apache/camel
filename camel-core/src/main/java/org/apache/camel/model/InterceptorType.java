@@ -28,5 +28,6 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlType(name = "interceptorType")
 public abstract class InterceptorType extends OutputType implements Block {
+
     public abstract DelegateProcessor createInterceptor(RouteContext routeContext) throws Exception;
 }

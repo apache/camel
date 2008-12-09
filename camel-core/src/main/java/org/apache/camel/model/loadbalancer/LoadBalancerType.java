@@ -112,22 +112,22 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
 
 
     public void addProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
         loadBalancer.addProcessor(processor);
     }
 
     public List<Processor> getProcessors() {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
         return loadBalancer.getProcessors();
     }
 
     public void removeProcessor(Processor processor) {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
         loadBalancer.removeProcessor(processor);
     }
 
     public void process(Exchange exchange) throws Exception {
-        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        ObjectHelper.notNull(loadBalancer, "loadBalancer", this);
         loadBalancer.process(exchange);
     }
 

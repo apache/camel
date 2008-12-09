@@ -222,7 +222,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     protected void populateRoutes(List<Route> routes) throws Exception {
         CamelContext camelContext = getContext();
         if (camelContext == null) {
-            throw new IllegalArgumentException("No CamelContext has been injected!");
+            throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         routeCollection.setCamelContext(camelContext);
         camelContext.addRouteDefinitions(routeCollection.getRoutes());

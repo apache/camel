@@ -55,7 +55,7 @@ public class DefaultAnnotationExpressionFactory implements AnnotationExpressionF
             }
             return value.toString();
         } catch (NoSuchMethodException e) {
-            throw new IllegalArgumentException("Cannot determine the expression of the annotation: " + annotation + " as it does not have an value() method");
+            throw new IllegalArgumentException("Cannot determine the expression of the annotation: " + annotation + " as it does not have a value() method");
         }
     }
 }

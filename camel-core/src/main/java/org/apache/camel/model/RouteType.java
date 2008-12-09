@@ -91,7 +91,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     public Endpoint resolveEndpoint(String uri) throws NoSuchEndpointException {
         CamelContext context = getCamelContext();
         if (context == null) {
-            throw new IllegalArgumentException("No CamelContext has been injected!");
+            throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         return CamelContextHelper.getMandatoryEndpoint(context, uri);
     }
