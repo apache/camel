@@ -19,31 +19,17 @@ package org.apache.camel.component.rss;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Arrays;
-import java.util.Collections;
-
-import javax.naming.Context;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 
-import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.builder.ExpressionBuilder;
-import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.MyAggregationStrategy;
-import org.apache.camel.processor.aggregate.AggregationCollection;
-import org.apache.camel.util.jndi.JndiContext;
 
 public class RssCustomAggregatorTest extends ContextTestSupport {
 
@@ -73,7 +59,7 @@ public class RssCustomAggregatorTest extends ContextTestSupport {
         BufferedWriter output = new BufferedWriter(new FileWriter(new File(destination)));
  
         String line = null; 
-        while (( line = input.readLine()) != null) {
+        while ((line = input.readLine()) != null) {
             output.write(line);
         }
         input.close();

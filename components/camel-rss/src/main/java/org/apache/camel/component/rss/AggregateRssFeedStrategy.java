@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,10 +17,10 @@
 
 package org.apache.camel.component.rss;
 
-import com.sun.syndication.feed.synd.SyndFeed;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class AggregateRssFeedStrategy implements AggregationStrategy {
-    protected final transient Log LOG = LogFactory.getLog(AggregateRssFeedStrategy.class);    
+    protected final transient Log log = LogFactory.getLog(AggregateRssFeedStrategy.class);    
     
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         SyndFeed oldFeed = oldExchange.getIn().getBody(SyndFeed.class);
@@ -41,7 +41,7 @@ public class AggregateRssFeedStrategy implements AggregationStrategy {
             mergedList.addAll(newEntries);
             oldFeed.setEntries(mergedList);    
         } else {
-            LOG.debug("Could not merge exchanges. One body was null.");
+            log.debug("Could not merge exchanges. One body was null.");
         }
         return oldExchange;
     }

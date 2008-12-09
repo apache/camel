@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.rss;
 
-import com.sun.syndication.feed.synd.SyndEntry;
-import com.sun.syndication.feed.synd.SyndFeed;
-
 import java.util.Date;
 
 import javax.naming.Context;
+
+import com.sun.syndication.feed.synd.SyndEntry;
+import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
