@@ -16,9 +16,7 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
@@ -52,14 +50,14 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Runnable, Processor {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor {
 
+    private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
+    
     private ExceptionHandler exceptionHandler;
     private ResequencerEngine<Exchange> engine;
-    private PollingConsumer<? extends Exchange> consumer;
-    private Endpoint<? extends Exchange> endpoint;
     private Processor processor;
-    private Thread worker;
+    private Delivery delivery;
     private int capacity;
     
     /**
@@ -72,11 +70,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * @param comparator
      *            a sequence element comparator for exchanges.
      */
-    public StreamResequencer(Endpoint<? extends Exchange> endpoint, Processor processor, SequenceElementComparator<Exchange> comparator) {
+    public StreamResequencer(Processor processor, SequenceElementComparator<Exchange> comparator) {
         this.exceptionHandler = new LoggingExceptionHandler(getClass());
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);
-        this.endpoint = endpoint;
         this.processor = processor;
     }
 
@@ -139,11 +136,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     @Override
     protected void doStart() throws Exception {
-        consumer = endpoint.createPollingConsumer();
-        ServiceHelper.startServices(processor, consumer);
-        worker = new Thread(this, this + " Polling Thread");
+        ServiceHelper.startServices(processor);
+        delivery = new Delivery();
         engine.start();
-        worker.start();
+        delivery.start();
     }
 
     @Override
@@ -151,7 +147,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         // let's stop everything in the reverse order
         // no need to stop the worker thread -- it will stop automatically when this service is stopped
         engine.stop();
-        ServiceHelper.stopServices(consumer, processor);
+        ServiceHelper.stopServices(processor);
     }
 
     /**
@@ -164,43 +160,49 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         processor.process(o);
     }
 
-    /**
-     * Loops over {@link #processExchange()}.
-     */
-    public void run() {
-        while (!isStopped() && !isStopping()) {
-            try {
-                processExchange();
-            } catch (Exception e) {
-                exceptionHandler.handleException(e);
-            }
-        }
-    }
-
-    /**
-     * Processes an exchange received from the this resequencer's
-     * <code>endpoint</code>. Received exchanges are processed via
-     * {@link ResequencerEngine#insert(Object)}.
-     * {@link ResequencerEngine#deliver()} is then called in any case regardless
-     * whether a message was received or receiving timed out.
-     * 
-     * @throws Exception
-     *             if exchange delivery fails.
-     */
-    protected void processExchange() throws Exception {
-        if (engine.size() >= capacity) {
-            Thread.sleep(getTimeout());
-        } else {
-            Exchange exchange = consumer.receive(getTimeout());
-            if (exchange != null) {
-                engine.insert(exchange);
-            }
-        }
-        engine.deliver();
-    }
-
     public void process(Exchange exchange) throws Exception {
+        while (engine.size() >= capacity) {
+            Thread.sleep(getTimeout());
+        }
         engine.insert(exchange);
+        delivery.request();
     }
 
+    private class Delivery extends Thread {
+
+        private volatile boolean cancelRequested;
+        
+        public Delivery() {
+            super("Delivery Thread");
+        }
+        
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(DELIVERY_ATTEMPT_INTERVAL);
+                } catch (InterruptedException e) {
+                    if (cancelRequested) {
+                        return;
+                    }
+                }
+                try {
+                    engine.deliver();
+                } catch (Exception e) {
+                    exceptionHandler.handleException(e);
+                }
+            }
+        }
+
+        public void cancel() {
+            cancelRequested = true;
+            interrupt();
+        }
+        
+        public void request() {
+            interrupt();
+        }
+        
+    }
+    
 }

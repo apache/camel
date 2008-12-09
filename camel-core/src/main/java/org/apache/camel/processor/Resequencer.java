@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
@@ -35,16 +34,16 @@ import org.apache.camel.util.ExpressionListComparator;
  * @version $Revision$
  */
 public class Resequencer extends BatchProcessor {
-    public Resequencer(Endpoint endpoint, Processor processor, Expression<Exchange> expression) {
-        this(endpoint, processor, createSet(expression));
+    public Resequencer(Processor processor, Expression expression) {
+        this(processor, createSet(expression));
     }
 
-    public Resequencer(Endpoint endpoint, Processor processor, List<Expression> expressions) {
-        this(endpoint, processor, createSet(expressions));
+    public Resequencer(Processor processor, List<Expression> expressions) {
+        this(processor, createSet(expressions));
     }
 
-    public Resequencer(Endpoint endpoint, Processor processor, Set<Exchange> collection) {
-        super(endpoint, processor, collection);
+    public Resequencer(Processor processor, Set<Exchange> collection) {
+        super(processor, collection);
     }
 
     @Override

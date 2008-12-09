@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.model.config.StreamResequencerConfig;
 import org.apache.camel.model.language.ExpressionType;
@@ -223,8 +222,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
         Processor processor = routeContext.createProcessor(this);
-        Resequencer resequencer = new Resequencer(routeContext.getEndpoint(),
-                processor, resolveExpressionList(routeContext));
+        Resequencer resequencer = new Resequencer(processor, resolveExpressionList(routeContext));
         resequencer.setBatchSize(config.getBatchSize());
         resequencer.setBatchTimeout(config.getBatchTimeout());
         return resequencer;
@@ -245,32 +243,11 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
             StreamResequencerConfig config) throws Exception {
         config.getComparator().setExpressions(resolveExpressionList(routeContext));
         Processor processor = routeContext.createProcessor(this);
-        StreamResequencer resequencer = new StreamResequencer(routeContext.getEndpoint(),
-                processor, config.getComparator());
+        StreamResequencer resequencer = new StreamResequencer(processor, config.getComparator());
         resequencer.setTimeout(config.getTimeout());
         resequencer.setCapacity(config.getCapacity());
         return resequencer;
         
-    }
-    
-    private Route<? extends Exchange> createBatchResequencerRoute(RouteContext routeContext) throws Exception {
-        final Resequencer resequencer = createBatchResequencer(routeContext, batchConfig);
-        return new Route(routeContext.getEndpoint(), resequencer) {
-            @Override
-            public String toString() {
-                return "BatchResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
-            }
-        };
-    }
-    
-    private Route<? extends Exchange> createStreamResequencerRoute(RouteContext routeContext) throws Exception {
-        final StreamResequencer resequencer = createStreamResequencer(routeContext, streamConfig);
-        return new Route(routeContext.getEndpoint(), resequencer) {
-            @Override
-            public String toString() {
-                return "StreamResequencerRoute[" + getEndpoint() + " -> " + resequencer.getProcessor() + "]";
-            }
-        };
     }
     
     private List<Expression> resolveExpressionList(RouteContext routeContext) {
