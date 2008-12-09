@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadPoolExecutor;
 
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,7 +63,6 @@ import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.CollectionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -755,9 +755,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * together into a single invoice message.
      */
     public ExpressionClause<AggregatorType> aggregator() {
-        if (CollectionHelper.filterList(getOutputs(), ExceptionType.class).isEmpty()) {
-            LOG.warn("Aggregator must be the only output added to the route: " + this);
-        }
         AggregatorType answer = new AggregatorType();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
@@ -781,9 +778,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy the strategy used for the aggregation
      */
     public ExpressionClause<AggregatorType> aggregator(AggregationStrategy aggregationStrategy) {
-        if (CollectionHelper.filterList(getOutputs(), ExceptionType.class).isEmpty()) {
-            LOG.warn("Aggregator must be the only output added to the route: " + this);
-        }
         AggregatorType answer = new AggregatorType();
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
@@ -800,9 +794,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationCollection the collection used to perform the aggregation
      */
     public AggregatorType aggregator(AggregationCollection aggregationCollection) {
-        if (CollectionHelper.filterList(getOutputs(), ExceptionType.class).isEmpty()) {
-            LOG.warn("Aggregator must be the only output added to the route: " + this);
-        }
         AggregatorType answer = new AggregatorType();
         answer.setAggregationCollection(aggregationCollection);
         addOutput(answer);
@@ -830,9 +821,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                              <code>header("JMSCorrelationID")</code>
      */
     public AggregatorType aggregator(Expression correlationExpression) {
-        if (CollectionHelper.filterList(getOutputs(), ExceptionType.class).isEmpty()) {
-            LOG.warn("Aggregator must be the only output added to the route: " + this);
-        }
         AggregatorType answer = new AggregatorType(correlationExpression);
         addOutput(answer);
         return answer;
@@ -859,9 +847,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                              <code>header("JMSCorrelationID")</code>
      */
     public AggregatorType aggregator(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
-        if (CollectionHelper.filterList(getOutputs(), ExceptionType.class).isEmpty()) {
-            LOG.warn("Aggregator must be the only output added to the route: " + this);
-        }
         AggregatorType answer = new AggregatorType(correlationExpression, aggregationStrategy);
         addOutput(answer);
         return answer;

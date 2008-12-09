@@ -18,17 +18,14 @@ package org.apache.camel.processor;
 
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A base class for any kind of {@link Processor} which implements some kind of
@@ -36,41 +33,30 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class BatchProcessor extends ServiceSupport implements Runnable, Processor {
+public class BatchProcessor extends ServiceSupport implements Processor {
+    
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
-    private static final transient Log LOG = LogFactory.getLog(BatchProcessor.class);
-    private Endpoint endpoint;
-    private Processor processor;
-    private Collection<Exchange> collection;
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
-    private PollingConsumer consumer;
+
+    private Processor processor;
+    private Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
 
-    public BatchProcessor(Endpoint endpoint, Processor processor, Collection<Exchange> collection) {
-        this.endpoint = endpoint;
+    private BatchSender sender;
+    
+    public BatchProcessor(Processor processor, Collection<Exchange> collection) {
         this.processor = processor;
         this.collection = collection;
+        this.sender = new BatchSender();
     }
 
     @Override
     public String toString() {
         return "BatchProcessor[to: " + processor + "]";
-    }
-
-    public void run() {
-        LOG.debug("Starting thread for " + this);
-        while (isRunAllowed()) {
-            try {
-                processBatch();
-            } catch (Exception e) {
-                getExceptionHandler().handleException(e);
-            }
-        }
-        collection.clear();
     }
 
     // Properties
@@ -123,62 +109,20 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
         this.batchTimeout = batchTimeout;
     }
 
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
     public Processor getProcessor() {
         return processor;
     }
 
     /**
-     * A transactional method to process a batch of messages up to a timeout
-     * period or number of messages reached.
-     */
-    protected synchronized void processBatch() throws Exception {
-        long start = System.currentTimeMillis();
-        long end = start + batchTimeout;
-        for (int i = 0; !isBatchCompleted(i); i++) {
-            long timeout = end - System.currentTimeMillis();
-            if (timeout < 0L) {                
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("batch timeout expired at batch index: " + i);
-                }
-                break;
-            }
-            Exchange exchange = consumer.receive(timeout);
-            if (exchange == null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("receive with timeout: " + timeout + " expired at batch index: " + i);
-                }
-                break;
-            }
-            collection.add(exchange);
-        }
-
-        // we should NOT log the collection directly as it will invoke a toString() on collection
-        // and it will call collection.iterator() where end-users might do stuff that would break
-        // calling the iterator a 2nd time as below
-
-        // lets send the batch
-        Iterator<Exchange> iter = collection.iterator();
-        while (iter.hasNext()) {
-            Exchange exchange = iter.next();
-            iter.remove();
-            processExchange(exchange);
-        }
-    }
-
-    /**
      * A strategy method to decide if the batch is completed the resulting exchanges should be sent
      */
-    protected boolean isBatchCompleted(int index) {
+    protected boolean isBatchCompleted(int num) {
         // out batch size is optional and we should only check it if its enabled (= >0)
         if (outBatchSize > 0 && collection.size() >= outBatchSize) {
             return true;
         }
         // fallback to regular batch size check
-        return index >= batchSize;
+        return num >= batchSize;
     }
 
     /**
@@ -191,16 +135,13 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
     }
 
     protected void doStart() throws Exception {
-        consumer = endpoint.createPollingConsumer();
-
-        ServiceHelper.startServices(processor, consumer);
-
-        Thread thread = new Thread(this, this + " Polling Thread");
-        thread.start();
+        ServiceHelper.startServices(processor);
+        sender.start();
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(consumer, processor);
+        sender.cancel();
+        ServiceHelper.stopServices(processor);
         collection.clear();
     }
 
@@ -208,7 +149,71 @@ public class BatchProcessor extends ServiceSupport implements Runnable, Processo
         return collection;
     }
 
+    /**
+     * Enqueues an exchange for later batch processing.
+     */
     public void process(Exchange exchange) throws Exception {
-        // empty since exchanges come from endpoint's polling consumer
+        sender.enqueueExchange(exchange);
     }
+
+    /**
+     * Sender thread for queued-up exchanges.
+     */
+    private class BatchSender extends Thread {
+        
+        private volatile boolean cancelRequested;
+
+        private LinkedBlockingQueue<Exchange> queue;
+        
+        public BatchSender() {
+            super("Batch Sender");
+            this.queue = new LinkedBlockingQueue<Exchange>();
+        }
+
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(batchTimeout);
+                } catch (InterruptedException e) {
+                    if (cancelRequested) {
+                        return;
+                    }
+                }
+                try {
+                    sendExchanges();
+                } catch (Exception e) {
+                    getExceptionHandler().handleException(e);
+                }
+            }
+        }
+        
+        public void cancel() {
+            cancelRequested = true;
+            interrupt();
+        }
+        
+        public void sendBatch() {
+            interrupt();
+        }
+     
+        public void enqueueExchange(Exchange exchange) {
+            queue.add(exchange);
+            if (isBatchCompleted(queue.size())) {
+                sendBatch();
+            }
+        }
+        
+        private void sendExchanges() throws Exception {
+            queue.drainTo(collection, batchSize);
+            Iterator<Exchange> iter = collection.iterator();
+            while (iter.hasNext()) {
+                Exchange exchange = iter.next();
+                iter.remove();
+                processExchange(exchange);
+            }
+        }
+        
+    }
+    
 }
