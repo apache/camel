@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.RouteContext;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Base class for interceptor types.
@@ -72,9 +73,7 @@ public class InterceptorRef extends InterceptorType {
         if (interceptor == null) {
             interceptor = routeContext.lookup(getRef(), DelegateProcessor.class);
         }
-        if (interceptor == null) {
-            throw new IllegalArgumentException("No DelegateProcessor bean available for reference: " + getRef());
-        }
+        notNull(interceptor, "registry entry called " + getRef(), this);
         return interceptor;
     }
 
@@ -88,7 +87,7 @@ public class InterceptorRef extends InterceptorType {
 
     public String getLabel() {
         if (ref != null) {
-            return "ref:  " + ref;
+            return "ref: " + ref;
         } else if (interceptor != null) {
             return interceptor.toString();
         } else {
@@ -98,8 +97,6 @@ public class InterceptorRef extends InterceptorType {
     
     /**
      * Get the underlying {@link DelegateProcessor} implementation
-     * 
-     * @return the {@link DelegateProcessor}
      */
     @XmlTransient
     public DelegateProcessor getInterceptor() {

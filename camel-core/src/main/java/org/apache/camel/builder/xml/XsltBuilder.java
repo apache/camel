@@ -67,9 +67,8 @@ public class XsltBuilder implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        if (getTemplate() == null) {
-            throw new IllegalArgumentException("No template configured!");
-        }
+        notNull(getTemplate(), "template");
+
         Transformer transformer = getTemplate().newTransformer();
         configureTransformer(transformer, exchange);
         Source source = getSource(exchange);
@@ -207,7 +206,7 @@ public class XsltBuilder implements Processor {
             setTemplate(templates);
         } else {
             throw new TransformerConfigurationException("Error creating XSLT template. "
-                    + "This is most likely be caused by an XML parse error. "
+                    + "This is most likely be caused by a XML parse error. "
                     + "Please verify your XSLT file configured.");
         }
     }

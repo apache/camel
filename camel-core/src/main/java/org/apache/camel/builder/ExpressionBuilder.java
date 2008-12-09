@@ -439,7 +439,7 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "" + expression + ".convertTo(" + type.getName() + ".class)";
+                return "" + expression + ".convertTo(" + type.getCanonicalName() + ".class)";
             }
         };
     }

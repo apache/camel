@@ -60,6 +60,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -1762,10 +1763,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the original processor or a new wrapped interceptor
      */
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
-        // The target is required.
-        if (target == null) {
-            throw new IllegalArgumentException("target not provided on node: " + this);
-        }
+        ObjectHelper.notNull(target, "target", this);
 
         List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
         CamelContext camelContext = routeContext.getCamelContext();
@@ -1811,17 +1809,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * error handler.
      */
     protected Processor wrapInErrorHandler(RouteContext routeContext, Processor target) throws Exception {
-        // The target is required.
-        if (target == null) {
-            throw new IllegalArgumentException("target not provided on node: " + this);
-        }
-
+        ObjectHelper.notNull(target, "target", this);
         ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
-
         if (strategy != null) {
             return strategy.wrapProcessorInErrorHandler(routeContext, this, target);
         }
-
         return getErrorHandlerBuilder().createErrorHandler(routeContext, target);
     }
 

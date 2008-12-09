@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -79,7 +80,9 @@ public class ProcessorRef extends OutputType<ProcessorType> {
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (processor == null) {
+            ObjectHelper.notNull(ref, "ref", this);
             processor = routeContext.lookup(getRef(), Processor.class);
+            ObjectHelper.notNull(processor, "registry entry called " + getRef(), this);
         }
         return processor;
     }

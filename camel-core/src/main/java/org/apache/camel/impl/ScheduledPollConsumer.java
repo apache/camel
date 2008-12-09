@@ -21,8 +21,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,9 +50,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {
         super(endpoint, processor);
         this.executor = executor;
-        if (executor == null) {
-            throw new IllegalArgumentException("A non null ScheduledExecutorService must be provided.");
-        }
+        ObjectHelper.notNull(executor, "executor");
     }
 
     /**

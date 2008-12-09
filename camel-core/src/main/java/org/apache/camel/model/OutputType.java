@@ -53,7 +53,6 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
         }
     }
 
-
     @Override
     protected void configureChild(ProcessorType output) {
         super.configureChild(output);

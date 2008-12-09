@@ -45,7 +45,7 @@ import org.apache.camel.util.ReflectionInjector;
 /**
  * A default JNDI context
  *
- * @version $Revision$ $Date$
+ * @version $Revision$
  */
 public class JndiContext implements Context, Serializable {
     public static final String SEPARATOR = "/";

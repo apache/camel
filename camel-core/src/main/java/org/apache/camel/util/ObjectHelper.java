@@ -162,6 +162,14 @@ public final class ObjectHelper {
         }
     }
 
+    public static void notNull(Object value, String name, Object on) {
+        if (on == null) {
+            notNull(value, name);
+        } else if (value == null) {
+            throw new IllegalArgumentException(name + " must be specified on: " + on);
+        }
+    }
+
     public static void notEmpty(String value, String name) {
         if (isNullOrBlank(value)) {
             throw new IllegalArgumentException(name + " must be specified and not empty");

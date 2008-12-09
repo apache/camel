@@ -250,11 +250,8 @@ public class ThreadType extends ProcessorType<ProcessorType> {
         return this;
     }
 
-    ///////////////////////////////////////////////////////////////////
-    //
     // Property Accessors
-    //
-    ///////////////////////////////////////////////////////////////////
+    // -----------------------------------------------------------------------
 
     public void setCoreSize(int coreSize) {
         this.coreSize = coreSize;

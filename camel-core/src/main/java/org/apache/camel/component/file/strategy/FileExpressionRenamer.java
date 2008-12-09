@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * File renamed using {@link Expression} to dynamically compute the file name.
@@ -34,10 +35,7 @@ public class FileExpressionRenamer implements FileRenamer {
     private Expression expression;
 
     public File renameFile(FileExchange exchange, File file) {
-        if (expression == null) {
-            throw new IllegalArgumentException("Expression is not set");
-        }
-        File parent = file.getParentFile();
+        ObjectHelper.notNull(expression, "expression");
 
         Object result = expression.evaluate(exchange);
         String name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
@@ -45,6 +43,8 @@ public class FileExpressionRenamer implements FileRenamer {
         if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("//"))) {
             return new File(name);
         }
+
+        File parent = file.getParentFile();
         return new File(parent, name);
     }
 

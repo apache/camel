@@ -103,7 +103,7 @@ public class BeanRef extends OutputType<ProcessorType> {
             answer = new BeanProcessor(new RegistryBean(routeContext.getCamelContext(), ref));
         } else {
             if (bean == null) {
-                ObjectHelper.notNull(beanType, "bean, ref or beanType");
+                ObjectHelper.notNull(beanType, "bean, ref or beanType", this);
                 bean = CamelContextHelper.newInstance(routeContext.getCamelContext(), beanType);
             }
             answer = new BeanProcessor(bean, routeContext.getCamelContext());

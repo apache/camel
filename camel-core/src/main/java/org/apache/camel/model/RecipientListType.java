@@ -34,6 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListType extends ExpressionNode {
+
     public RecipientListType() {
     }
 

@@ -46,6 +46,9 @@ public class FileConsumer extends ScheduledPollConsumer {
     private String regexPattern = "";
     private boolean exclusiveReadLock = true;
 
+    // TODO: move option to endpoint to get rid of consumer. prefix
+    // TODO: remove idempotent again, we should just use the idempotent DSL we already have
+
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;

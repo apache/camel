@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,9 +40,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
     private AsyncProcessor processor;
 
     public SendProcessor(Endpoint destination) {
-        if (destination == null) {
-            throw new IllegalArgumentException("Endpoint cannot be null!");
-        }
+        ObjectHelper.notNull(destination, "destination");
         this.destination = destination;
     }
 
