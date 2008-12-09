@@ -17,7 +17,6 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,12 +27,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Aggregator;
@@ -107,34 +103,10 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
     public String getShortName() {
         return "aggregator";
     }
-
     
-    @SuppressWarnings("unchecked")
-    @Override
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
-        final Aggregator aggregator = createAggregator(routeContext);
-        doAddRoute(routeContext, routes, aggregator);
-    }
-    
-    private void doAddRoute(RouteContext routeContext, Collection<Route> routes, final Aggregator aggregator)
-        throws Exception {
-        Route route = new Route<Exchange>(aggregator.getEndpoint(), aggregator) {
-            @Override
-            public String toString() {
-                return "AggregatorRoute[" + getEndpoint() + " -> " + aggregator.getProcessor() + "]";
-            }
-        };
-
-        routes.add(route);
-    }
- 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        final Aggregator aggregator = createAggregator(routeContext);
-        
-        doAddRoute(routeContext, routeContext.getCamelContext().getRoutes(), aggregator);
-        routeContext.setIsRouteAdded(true);
-        return aggregator;
+        return createAggregator(routeContext);
     }
 
     public ExpressionClause<AggregatorType> createAndSetExpression() {
@@ -144,7 +116,6 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
     }
     
     protected Aggregator createAggregator(RouteContext routeContext) throws Exception {
-        Endpoint from = routeContext.getEndpoint();
         final Processor processor = routeContext.createProcessor(this);
 
         final Aggregator aggregator;
@@ -163,7 +134,7 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
                 AggregationStrategy strategy = createAggregationStrategy(routeContext);
                 aggregationCollection.setAggregationStrategy(strategy);
             }
-            aggregator = new Aggregator(from, processor, aggregationCollection);
+            aggregator = new Aggregator(processor, aggregationCollection);
         } else {
             // create the aggregator using a default collection
             AggregationStrategy strategy = createAggregationStrategy(routeContext);
@@ -180,9 +151,9 @@ public class AggregatorType extends ProcessorType<ProcessorType> {
                 predicate = getCompletedPredicate().createPredicate(routeContext);
             }
             if (predicate != null) {
-                aggregator = new Aggregator(from, processor, aggregateExpression, strategy, predicate);
+                aggregator = new Aggregator(processor, aggregateExpression, strategy, predicate);
             } else {
-                aggregator = new Aggregator(from, processor, aggregateExpression, strategy);
+                aggregator = new Aggregator(processor, aggregateExpression, strategy);
             }
         }
         
