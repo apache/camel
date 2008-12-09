@@ -32,7 +32,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 public class StickyLoadBalanceStrategy extends LoadBalancerType {
     @XmlElement(required = true, name = "expression", type = ExpressionType.class)
     private ExpressionType expressionType;
-    @XmlElement(required = false, name = "loadBalancer", type = ExpressionType.class)
+    @XmlElement(required = false, name = "loadBalancer", type = LoadBalancerType.class)
     private LoadBalancerType loadBalancerType;
 
     public StickyLoadBalanceStrategy() {

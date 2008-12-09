@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.model.IdentifiedType;
@@ -129,6 +130,22 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
     public void process(Exchange exchange) throws Exception {
         ObjectHelper.notNull(loadBalancer, "loadBalancer");
         loadBalancer.process(exchange);
+    }
+
+    public boolean process(Exchange exchange, final AsyncCallback callback) {
+        ObjectHelper.notNull(loadBalancer, "loadBalancer");
+        
+        return loadBalancer.process(exchange, new AsyncCallback() {
+            public void done(boolean doneSynchronously) {
+                // Only handle the async case...
+                if (doneSynchronously) {
+                    return;
+                } else {
+                    callback.done(doneSynchronously);
+                }
+            }
+        });                
+    
     }
 
 }
