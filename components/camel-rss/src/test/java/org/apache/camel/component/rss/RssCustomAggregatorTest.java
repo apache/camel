@@ -83,10 +83,12 @@ public class RssCustomAggregatorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: ex
                 from("rss:file:src/test/data/rss20.xml?sortEntries=true&consumer.delay=50").to("seda:temp");
                 from("rss:file:target/rss20.xml?sortEntries=true&consumer.delay=50").to("seda:temp");
                 
                 from("seda:temp").aggregate(new AggregateRssFeedCollection()).batchTimeout(5000L).to("mock:result");
+                // END SNIPPET: ex
             }
         };
     }
