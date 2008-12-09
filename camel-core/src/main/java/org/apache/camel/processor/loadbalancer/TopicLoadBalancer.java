@@ -18,14 +18,18 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
  * A {@link LoadBalancer} implementations which sends to all destinations
- * (rather like JMS Topics)
+ * (rather like JMS Topics). 
+ *  It is deprecated in Camel 2.0, you need to move to use multicast, 
+ *  if you want to send the message to all destinations.
  * 
  * @version $Revision$
+ * @deprecated
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 
@@ -49,5 +53,19 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
      */
     protected Exchange copyExchangeStrategy(Processor processor, Exchange exchange) {
         return exchange.copy();
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        List<Processor> list = getProcessors();
+        for (Processor processor : list) {
+            Exchange copy = copyExchangeStrategy(processor, exchange);
+            try {
+                processor.process(copy);
+            } catch (Exception ex) {
+                // We don't handle the exception here
+            }
+        }
+        callback.done(false);
+        return false;
     }
 }
