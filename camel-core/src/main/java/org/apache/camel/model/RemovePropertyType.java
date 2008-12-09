@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;removeProperty/&gt; element
@@ -31,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "removeProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RemovePropertyType extends OutputType<ProcessorType> {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String propertyName;   
     
     public RemovePropertyType() {
@@ -53,6 +54,7 @@ public class RemovePropertyType extends OutputType<ProcessorType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {        
+        ObjectHelper.notNull(getPropertyName(), "propertyName");
         return ProcessorBuilder.removeProperty(getPropertyName());
     }
 

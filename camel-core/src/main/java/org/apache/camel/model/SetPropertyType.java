@@ -27,6 +27,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;setProperty/&gt; element
@@ -34,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "setProperty")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SetPropertyType extends ExpressionNode {
-    @XmlAttribute
+    @XmlAttribute(required = true)
     private String propertyName;
     
     public SetPropertyType() {
@@ -67,6 +68,7 @@ public class SetPropertyType extends ExpressionNode {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        ObjectHelper.notNull(getPropertyName(), "propertyName");
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setProperty(getPropertyName(), expr);
     }
