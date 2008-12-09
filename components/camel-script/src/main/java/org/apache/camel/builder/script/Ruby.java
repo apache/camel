@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 import org.apache.camel.language.LanguageAnnotation;
 
@@ -30,6 +31,7 @@ import org.apache.camel.language.LanguageAnnotation;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER})
 @LanguageAnnotation(language = "jruby")
 public @interface Ruby {

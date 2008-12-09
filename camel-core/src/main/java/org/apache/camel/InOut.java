@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
  * Marks a method as being {@link ExchangePattern#InOut} when a class or interface has been annotated with
@@ -40,6 +41,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.METHOD})
 @Pattern(ExchangePattern.InOut)
 public @interface InOut {

@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
  * Marks methods as being {@link ExchangePattern#InOnly}
@@ -41,6 +42,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Pattern(ExchangePattern.InOnly)
 public @interface InOnly {
