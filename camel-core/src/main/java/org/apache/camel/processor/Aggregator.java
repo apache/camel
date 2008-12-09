@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -45,19 +44,19 @@ import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 public class Aggregator extends BatchProcessor {
     private Predicate aggregationCompletedPredicate;
 
-    public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
+    public Aggregator(Processor processor, Expression correlationExpression,
                       AggregationStrategy aggregationStrategy) {
-        this(endpoint, processor, new DefaultAggregationCollection(correlationExpression, aggregationStrategy));
+        this(processor, new DefaultAggregationCollection(correlationExpression, aggregationStrategy));
     }
 
-    public Aggregator(Endpoint endpoint, Processor processor, Expression correlationExpression,
+    public Aggregator(Processor processor, Expression correlationExpression,
                       AggregationStrategy aggregationStrategy, Predicate aggregationCompletedPredicate) {
-        this(endpoint, processor, new PredicateAggregationCollection(correlationExpression, aggregationStrategy, aggregationCompletedPredicate));
+        this(processor, new PredicateAggregationCollection(correlationExpression, aggregationStrategy, aggregationCompletedPredicate));
         this.aggregationCompletedPredicate = aggregationCompletedPredicate;
     }
 
-    public Aggregator(Endpoint endpoint, Processor processor, AggregationCollection collection) {
-        super(endpoint, processor, collection);
+    public Aggregator(Processor processor, AggregationCollection collection) {
+        super(processor, collection);
     }
 
     @Override
@@ -68,7 +67,7 @@ public class Aggregator extends BatchProcessor {
     @Override
     protected boolean isBatchCompleted(int index) {
         if (aggregationCompletedPredicate != null) {
-            // TODO: (davsclaus) What is the point with this code? I think its wrong
+            // TODO: (davsclaus) CAMEL-1159 What is the point with this code? I think its wrong
             if (getCollection().size() > 0) {
                 return true;
             }
