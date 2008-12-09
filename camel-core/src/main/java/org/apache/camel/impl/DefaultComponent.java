@@ -185,12 +185,10 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * Sets the bean properties on the given bean
      */
-    protected void setProperties(Object bean, Map parameters) throws Exception {
-        if (useIntrospectionOnEndpoint()) {
-            // set reference properties first as they use # syntax that fools the regular properties setter
-            setReferenceProperties(bean, parameters);
-            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);
-        }
+    protected void setProperties(Object bean, Map parameters) throws Exception {        
+        // set reference properties first as they use # syntax that fools the regular properties setter
+        setReferenceProperties(bean, parameters);        
+        IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);      
     }
 
     /**
