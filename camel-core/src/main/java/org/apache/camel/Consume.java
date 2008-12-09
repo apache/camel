@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
  * Subscribes a method to an {@link Endpoint} either via its
@@ -33,6 +34,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
 public @interface Consume {
     String uri() default "";

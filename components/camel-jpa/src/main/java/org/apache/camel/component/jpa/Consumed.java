@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
  * An annotation to mark a method to be invoked when an entity bean has been succesfully processed
@@ -30,6 +31,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.METHOD })
 public @interface Consumed {
 }

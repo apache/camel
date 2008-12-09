@@ -20,6 +20,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.annotation.Documented;
 
 /**
  * Creates a namespace prefix for an XPath
@@ -27,6 +28,7 @@ import java.lang.annotation.Target;
  * @version $Revision$
  */
 @Retention(RetentionPolicy.RUNTIME)
+@Documented
 @Target({ElementType.ANNOTATION_TYPE })
 public @interface NamespacePrefix {
     String prefix();
