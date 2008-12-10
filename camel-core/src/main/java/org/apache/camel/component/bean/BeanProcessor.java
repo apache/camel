@@ -103,7 +103,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             invocation = beanInfo.createInvocation(methodObject, bean, exchange);
         } else {
             // we just override the bean's invocation method name here
-            if (ObjectHelper.isNotNullAndNonEmpty(method)) {
+            if (ObjectHelper.isNotEmpty(method)) {
                 prevMethod = in.getHeader(METHOD_NAME, String.class);
                 in.setHeader(METHOD_NAME, method);
                 isExplicitMethod = true;

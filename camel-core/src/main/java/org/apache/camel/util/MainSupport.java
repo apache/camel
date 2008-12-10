@@ -360,7 +360,7 @@ public abstract class MainSupport extends ServiceSupport {
     }
 
     protected void outputRoutesToFile() throws IOException, JAXBException {
-        if (ObjectHelper.isNotNullAndNonEmpty(getRoutesOutputFile())) {
+        if (ObjectHelper.isNotEmpty(getRoutesOutputFile())) {
             LOG.info("Generating routes as XML in the file named: " + getRoutesOutputFile());
             ModelFileGenerator generator = createModelFileGenerator();
             generator.marshalRoutesUsingJaxb(getRoutesOutputFile(), getRouteDefinitions());
@@ -371,7 +371,7 @@ public abstract class MainSupport extends ServiceSupport {
 
     protected void generateDot(String name, CamelContext camelContext, int size) throws IOException {
         String outputDir = dotOutputDir;
-        if (ObjectHelper.isNotNullAndNonEmpty(outputDir)) {
+        if (ObjectHelper.isNotEmpty(outputDir)) {
             if (size > 1) {
                 outputDir += "/" + name;
             }

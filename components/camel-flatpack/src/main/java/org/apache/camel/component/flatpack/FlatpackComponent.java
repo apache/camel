@@ -50,7 +50,7 @@ public class FlatpackComponent extends ResourceBasedComponent {
         if (fixed) {
             resource = resolveMandatoryResource(remaining);
         } else {
-            if (ObjectHelper.isNotNullAndNonEmpty(remaining)) {
+            if (ObjectHelper.isNotEmpty(remaining)) {
                 resource = getResourceLoader().getResource(remaining);
             }
         }

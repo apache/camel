@@ -202,7 +202,7 @@ public class ExpressionType implements Expression, Predicate {
      */
     public String getLabel() {
         String language = getExpression();
-        if (ObjectHelper.isNullOrBlank(language)) {
+        if (ObjectHelper.isEmpty(language)) {
             Predicate predicate = getPredicate();
             if (predicate != null) {
                 return predicate.toString();

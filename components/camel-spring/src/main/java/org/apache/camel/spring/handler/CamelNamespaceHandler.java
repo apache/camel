@@ -191,7 +191,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             // lets avoid folks having to explicitly give an ID to a camel
             // context
-            if (ObjectHelper.isNullOrBlank(contextId)) {
+            if (ObjectHelper.isEmpty(contextId)) {
                 contextId = "camelContext";
                 element.setAttribute("id", contextId);
             }
@@ -225,7 +225,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     } else if (localName.equals("endpoint")) {
                         BeanDefinition definition = endpointParser.parse(childElement, parserContext);
                         String id = childElement.getAttribute("id");
-                        if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                        if (ObjectHelper.isNotEmpty(id)) {
                             // TODO we can zap this?
                             definition.getPropertyValues()
                                 .addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
@@ -238,7 +238,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                         if (parser != null) {
                             BeanDefinition definition = parser.parse(childElement, parserContext);
                             String id = childElement.getAttribute("id");
-                            if (ObjectHelper.isNotNullAndNonEmpty(id)) {
+                            if (ObjectHelper.isNotEmpty(id)) {
                                 parserContext.registerComponent(new BeanComponentDefinition(definition, id));
                                 if (localName.equals("jmxAgent")) {
                                     builder.addPropertyReference("camelJMXAgent", id);

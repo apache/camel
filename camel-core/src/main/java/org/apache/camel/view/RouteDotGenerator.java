@@ -29,7 +29,7 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.ToType;
 
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * A <a href="http://www.graphviz.org/">DOT</a> file creator plugin which
  * creates a DOT file showing the current routes
@@ -118,7 +118,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
             writer.println(" [");
 
             String label = fromData.edgeLabel;
-            if (isNotNullAndNonEmpty(label)) {
+            if (isNotEmpty(label)) {
                 writer.println("label = \"" + label + "\"");
             }
             writer.println("];");

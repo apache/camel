@@ -33,8 +33,8 @@ import org.apache.camel.model.SplitterType;
 import org.apache.camel.model.ToType;
 import org.apache.camel.model.WhenType;
 
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
  * Represents a node in the EIP diagram tree
@@ -128,7 +128,7 @@ public class NodeData {
         }
 
         // lets auto-default as many values as we can
-        if (isNullOrBlank(this.nodeType) && node != null) {
+        if (isEmpty(this.nodeType) && node != null) {
             // TODO we could add this to the model?
             String name = node.getClass().getName();
             int idx = name.lastIndexOf('.');
@@ -141,24 +141,24 @@ public class NodeData {
             this.nodeType = insertSpacesBetweenCamelCase(name);
         }
         if (this.label == null) {
-            if (isNullOrBlank(this.image)) {
+            if (isEmpty(this.image)) {
                 this.label = this.nodeType;
                 this.shape = "box";
-            } else if (isNotNullAndNonEmpty(this.edgeLabel)) {
+            } else if (isNotEmpty(this.edgeLabel)) {
                 this.label = "";
             } else {
                 this.label = node.toString();
             }
         }
-        if (isNullOrBlank(this.tooltop)) {
-            if (isNotNullAndNonEmpty(this.nodeType)) {
-                String description = isNotNullAndNonEmpty(this.edgeLabel) ? this.edgeLabel : this.label;
+        if (isEmpty(this.tooltop)) {
+            if (isNotEmpty(this.nodeType)) {
+                String description = isNotEmpty(this.edgeLabel) ? this.edgeLabel : this.label;
                 this.tooltop = this.nodeType + ": " + description;
             } else {
                 this.tooltop = this.label;
             }
         }
-        if (isNullOrBlank(this.url) && isNotNullAndNonEmpty(this.nodeType)) {
+        if (isEmpty(this.url) && isNotEmpty(this.nodeType)) {
             this.url = "http://activemq.apache.org/camel/" + this.nodeType.toLowerCase().replace(' ', '-')
                        + ".html";
         }

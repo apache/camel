@@ -137,7 +137,7 @@ public abstract class ServiceSupport implements Service {
     }
     
     protected synchronized String getVersion() {
-        if (ObjectHelper.isNotNullAndNonEmpty(version)) {
+        if (ObjectHelper.isNotEmpty(version)) {
             return version;
         }
         

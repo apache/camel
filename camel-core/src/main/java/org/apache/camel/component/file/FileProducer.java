@@ -58,7 +58,7 @@ public class FileProducer extends DefaultProducer {
         File target = createFileName(exchange);
 
         // should we write to a temporary name and then afterwards rename to real target
-        boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getTempPrefix());
+        boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempPrefix());
         File tempTarget = null;
         if (writeAsTempAndRename) {
             tempTarget = createTempFileName(target);

@@ -156,23 +156,57 @@ public final class ObjectHelper {
         return null;
     }
 
+    /**
+     * Asserts whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value to test
+     * @param name   the key that resolved the value
+     */
     public static void notNull(Object value, String name) {
-        if (value == null) {
+        if (isEmpty(value)) {
             throw new IllegalArgumentException(name + " must be specified");
         }
     }
 
+    /**
+     * Asserts whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value to test
+     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param name   the key that resolved the value
+     */
     public static void notNull(Object value, String name, Object on) {
         if (on == null) {
             notNull(value, name);
-        } else if (value == null) {
+        } else if (isEmpty(value)) {
             throw new IllegalArgumentException(name + " must be specified on: " + on);
         }
     }
 
-    public static void notEmpty(String value, String name) {
-        if (isNullOrBlank(value)) {
-            throw new IllegalArgumentException(name + " must be specified and not empty");
+    /**
+     * Tests whether the value is <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if empty
+     */
+    public static boolean isEmpty(Object value) {
+        return !isNotEmpty(value);
+    }
+
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if <b>not</b> empty
+     */
+    public static boolean isNotEmpty(Object value) {
+        if (value == null) {
+            return false;
+        } else if (value instanceof String) {
+            String text = (String) value;
+            return text.trim().length() > 0;
+        } else {
+            return true;
         }
     }
 
@@ -309,14 +343,6 @@ public final class ObjectHelper {
             }
         }
         return false;
-    }
-
-    public static boolean isNotNullAndNonEmpty(String text) {
-        return text != null && text.trim().length() > 0;
-    }
-
-    public static boolean isNullOrBlank(String text) {
-        return text == null || text.trim().length() <= 0;
     }
 
     /**

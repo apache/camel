@@ -48,7 +48,7 @@ public class HttpOperationFailedException extends CamelException {
     }
 
     public boolean hasRedirectLocation() {
-        return ObjectHelper.isNotNullAndNonEmpty(redirectLocation);
+        return ObjectHelper.isNotEmpty(redirectLocation);
     }
 
     public String getRedirectLocation() {
