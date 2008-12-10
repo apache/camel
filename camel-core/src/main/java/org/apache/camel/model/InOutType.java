@@ -16,69 +16,53 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
+import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
-import org.apache.camel.ExchangePattern;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;to/&gt; element
+ * Represents an XML &lt;inOut/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "to")
+@XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ToType extends SendType<ToType> {
+public class InOutType extends SendType<InOutType> {
     @XmlAttribute(required = false)
     private String uri;
     @XmlAttribute(required = false)
     private String ref;
-    @XmlAttribute(required = false)
-    private ExchangePattern pattern;
 
-    public ToType() {
+    public InOutType() {
     }
 
-    public ToType(String uri) {
+    public InOutType(String uri) {
         setUri(uri);
     }
 
-    public ToType(Endpoint endpoint) {
+    public InOutType(Endpoint endpoint) {
         setEndpoint(endpoint);
     }
 
     @Override
     public String toString() {
-        return "To[" + getLabel() + "]";
+        return "InOut[" + getLabel() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "to";
+        return "inOut";
     }
 
     @Override
     public ExchangePattern getPattern() {
-        return pattern;
+        return ExchangePattern.InOut;
     }
 
-    /**
-     * Sets the optional {@link ExchangePattern} used to invoke this endpoint
-     */
-    public void setPattern(ExchangePattern pattern) {
-        this.pattern = pattern;
-    }
 
     @Override
     public String getRef() {
