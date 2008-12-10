@@ -157,29 +157,60 @@ public final class ObjectHelper {
     }
 
     /**
-     * Asserts whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param value  the value to test
      * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static void notNull(Object value, String name) {
-        if (isEmpty(value)) {
+        if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
         }
     }
 
     /**
-     * Asserts whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     * Asserts whether the value is <b>not</b> <tt>null</tt>
      *
      * @param value  the value to test
      * @param on     additional description to indicate where this problem occured (appended as toString())
      * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
      */
     public static void notNull(Object value, String name, Object on) {
         if (on == null) {
             notNull(value, name);
-        } else if (isEmpty(value)) {
+        } else if (value == null) {
             throw new IllegalArgumentException(name + " must be specified on: " + on);
+        }
+    }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static void notEmpty(String value, String name) {
+        if (isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty");
+        }
+    }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static void notEmpty(String value, String name, Object on) {
+        if (on == null) {
+            notNull(value, name);
+        } else if (isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
         }
     }
 

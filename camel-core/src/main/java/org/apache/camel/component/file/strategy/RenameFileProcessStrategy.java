@@ -62,7 +62,6 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
 
         if (beginRenamer != null) {
             File newName = beginRenamer.renameFile(exchange, file);
-            // deleting any existing files before renaming
             File to = renameFile(file, newName);
             exchange.setFile(to);
         }
