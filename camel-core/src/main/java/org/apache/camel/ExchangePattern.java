@@ -100,6 +100,14 @@ public enum ExchangePattern {
     public static ExchangePattern fromWsdlUri(String wsdlUri) {
         return MAP.get(wsdlUri);
     }
+    
+    public static ExchangePattern asEnum(String value) {
+        try {
+            return valueOf(value);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Unknown message exchange pattern: " + value);
+        }
+    }
 
     static {
         for (ExchangePattern mep : values()) {
