@@ -61,10 +61,10 @@ public class SpringIntegrationProducer extends DefaultProducer implements AsyncP
         if (context != null && endpoint.getMessageChannel() == null) {
             outputChannelName = endpoint.getDefaultChannel();
             channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
-            if (ObjectHelper.isNullOrBlank(outputChannelName)) {
+            if (ObjectHelper.isEmpty(outputChannelName)) {
                 outputChannelName = endpoint.getInputChannel();
             }
-            if (ObjectHelper.isNullOrBlank(outputChannelName)) {
+            if (ObjectHelper.isEmpty(outputChannelName)) {
                 throw new RuntimeCamelException("Can't find the right outputChannelName, "
                                                 + "please check the endpoint uri outputChannel part!");
             } else {
@@ -80,7 +80,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements AsyncP
         if (endpoint.isInOut()) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
             // we need to setup right inputChannel for further processing
-            if (ObjectHelper.isNullOrBlank(endpoint.getInputChannel())) {
+            if (ObjectHelper.isEmpty(endpoint.getInputChannel())) {
                 throw new RuntimeCamelException("Can't find the right inputChannel, "
                                                 + "please check the endpoint uri inputChannel part!");
             } else {

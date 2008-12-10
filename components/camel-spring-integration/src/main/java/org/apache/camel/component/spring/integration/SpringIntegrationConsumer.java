@@ -51,10 +51,10 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         if (context != null && endpoint.getMessageChannel() == null) {
             channelResolver = new BeanFactoryChannelResolver(context.getApplicationContext());
             inputChannelName = endpoint.getDefaultChannel();
-            if (ObjectHelper.isNullOrBlank(inputChannelName)) {
+            if (ObjectHelper.isEmpty(inputChannelName)) {
                 inputChannelName = endpoint.getInputChannel();
             }
-            if (!ObjectHelper.isNullOrBlank(inputChannelName)) {
+            if (!ObjectHelper.isEmpty(inputChannelName)) {
                 inputChannel = (DirectChannel) channelResolver.resolveChannelName(inputChannelName);
                 ObjectHelper.notNull(inputChannel, "The inputChannel with the name [" + inputChannelName + "]");
             } else {
@@ -108,7 +108,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
                     // using the outputChannel
                     reply = outputChannel;
                 } else {
-                    if (ObjectHelper.isNullOrBlank(endpoint.getOutputChannel())) {
+                    if (ObjectHelper.isEmpty(endpoint.getOutputChannel())) {
                         outputChannel = (MessageChannel) channelResolver.resolveChannelName(endpoint.getOutputChannel());
                         ObjectHelper.notNull(inputChannel, "The outputChannel with the name [" + endpoint.getOutputChannel() + "]");
                         reply = outputChannel;
