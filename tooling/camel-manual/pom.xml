@@ -59,6 +59,12 @@
                 }
               </style>
           ]]></head>
+          <replaceToken><![CDATA[
+              <h3 id="replaceme">.*</h3>
+          ]]></replaceToken>
+          <replaceValue><![CDATA[
+              <h3>Version ${pom.version}</h3>
+          ]]></replaceValue>
         </configuration>
       </plugin>
       <plugin>

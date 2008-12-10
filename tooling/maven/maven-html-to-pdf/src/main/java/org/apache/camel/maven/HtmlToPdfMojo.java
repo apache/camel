@@ -93,6 +93,21 @@ public class HtmlToPdfMojo extends AbstractMojo {
     private String head;
 
     /**
+     * Regex to search for in the html file. This will be replaced with the value of the 
+     * replaceValue parameter.
+     *
+     * @parameter
+     */
+    private String replaceToken;    
+
+    /**
+     * String that the replaceToken will be replaced with.
+     *
+     * @parameter
+     */
+    private String replaceValue;        
+    
+    /**
      * The first div with who's class matches the contentDivClass will be
      * assumed to be the content section of the HTML and is what will be used as
      * the content in the PDF.
@@ -247,6 +262,11 @@ public class HtmlToPdfMojo extends AbstractMojo {
             }
         }
         out.println("</head>");
+        
+        if (replaceToken != null && replaceValue != null) {
+            content = content.replaceAll(replaceToken, replaceValue);
+        }
+        
         out.println("<body>" + content + "</body>");
         out.close();
         getLog().info("Stored: " + getHTMLFileName());
