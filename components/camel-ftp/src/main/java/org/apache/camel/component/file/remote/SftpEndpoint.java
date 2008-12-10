@@ -25,7 +25,7 @@ import com.jcraft.jsch.UserInfo;
 import org.apache.camel.Processor;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
     protected final transient Log log = LogFactory.getLog(getClass());
@@ -52,10 +52,10 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         final JSch jsch = new JSch();
 
         String privateKeyFile = getConfiguration().getPrivateKeyFile();
-        if (isNotNullAndNonEmpty(privateKeyFile)) {
+        if (isNotEmpty(privateKeyFile)) {
             log.debug("Using private keyfile: " + privateKeyFile);
             String privateKeyFilePassphrase = getConfiguration().getPrivateKeyFilePassphrase(); 
-            if (isNotNullAndNonEmpty(privateKeyFilePassphrase)) {
+            if (isNotEmpty(privateKeyFilePassphrase)) {
                 jsch.addIdentity(privateKeyFile, privateKeyFilePassphrase);
             } else {
                 jsch.addIdentity(privateKeyFile);
@@ -63,7 +63,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<RemoteFileExchange> {
         }
 
         String knownHostsFile = getConfiguration().getKnownHosts();
-        if (isNotNullAndNonEmpty(knownHostsFile)) {
+        if (isNotEmpty(knownHostsFile)) {
             log.debug("Using knownHosts: " + knownHostsFile);
             jsch.setKnownHosts(knownHostsFile);
         }

@@ -92,7 +92,7 @@ public class SftpProducer extends RemoteFileProducer<RemoteFileExchange> {
         String target = createFileName(exchange);
 
         // should we write to a temporary name and then afterwards rename to real target
-        boolean writeAsTempAndRename = ObjectHelper.isNotNullAndNonEmpty(endpoint.getConfiguration().getTempPrefix());
+        boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getConfiguration().getTempPrefix());
         String tempTarget = null;
         if (writeAsTempAndRename) {
             // compute temporary name with the temp prefix
