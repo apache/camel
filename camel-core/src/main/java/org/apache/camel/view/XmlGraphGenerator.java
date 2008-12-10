@@ -25,7 +25,7 @@ import org.apache.camel.model.FromType;
 import org.apache.camel.model.MulticastType;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteType;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
  * @version $Revision$
@@ -118,7 +118,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
             writer.print("\" toID=\"");
             writer.print(encode(toData.id));
             String association = toData.edgeLabel;
-            if (isNullOrBlank(association)) {
+            if (isEmpty(association)) {
                 writer.print("\" association=\"");
                 writer.print(encode(association));
             }
@@ -147,15 +147,15 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
             writer.print(encode(data.id));
             writer.print("\" name=\"");
             String name = data.label;
-            if (isNullOrBlank(name)) {
+            if (isEmpty(name)) {
                 name = data.tooltop;
             }
             writer.print(encode(name));
             writer.print("\" nodeType=\"");
             String nodeType = data.image;
-            if (isNullOrBlank(nodeType)) {
+            if (isEmpty(nodeType)) {
                 nodeType = data.shape;
-                if (isNullOrBlank(nodeType)) {
+                if (isEmpty(nodeType)) {
                     nodeType = "node";
                 }
             }

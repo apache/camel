@@ -130,7 +130,7 @@ public class ModelFileGenerator {
         XmlRootElement annotation = (RoutesType.class).getAnnotation(XmlRootElement.class);
         if (annotation != null) {
             String elementName = annotation.name();
-            if (ObjectHelper.isNotNullAndNonEmpty(elementName)) {
+            if (ObjectHelper.isNotEmpty(elementName)) {
                 return elementName;
             }
         }

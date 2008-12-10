@@ -28,8 +28,8 @@ import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
 
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
-import static org.apache.camel.util.ObjectHelper.isNullOrBlank;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -209,10 +209,10 @@ public final class CamelContextHelper {
      */
     public static Endpoint getEndpointInjection(CamelContext camelContext, String uri, String name, String injectionPointName, boolean mandatory) {
         Endpoint endpoint = null;
-        if (isNotNullAndNonEmpty(uri)) {
+        if (isNotEmpty(uri)) {
             endpoint = camelContext.getEndpoint(uri);
         } else {
-            if (isNullOrBlank(name)) {
+            if (isEmpty(name)) {
                 name = injectionPointName;
             }
             if (mandatory) {

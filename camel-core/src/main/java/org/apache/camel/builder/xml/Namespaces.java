@@ -65,7 +65,7 @@ public class Namespaces {
      * given expected namespace
      */
     public static boolean isMatchingNamespaceOrEmptyNamespace(String namespaceURI, String expectedNamespace) {
-        return ObjectHelper.isNullOrBlank(namespaceURI) || namespaceURI.equals(expectedNamespace);
+        return ObjectHelper.isEmpty(namespaceURI) || namespaceURI.equals(expectedNamespace);
     }
 
     public Namespaces add(String prefix, String uri) {

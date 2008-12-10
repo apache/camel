@@ -244,7 +244,7 @@ public final class CxfEndpointUtils {
     }
 
     public static void checkServiceClassName(String className) throws CamelException {
-        if (ObjectHelper.isNullOrBlank(className)) {
+        if (ObjectHelper.isEmpty(className)) {
             throw new CamelException("serviceClass is required for CXF endpoint configuration");
         }
     }

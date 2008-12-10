@@ -25,7 +25,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotNullAndNonEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
@@ -69,7 +69,7 @@ public class FileComponent extends DefaultComponent {
 
         // sort by using file language 
         String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
-        if (isNotNullAndNonEmpty(sortBy) && !isReferenceParameter(sortBy)) {
+        if (isNotEmpty(sortBy) && !isReferenceParameter(sortBy)) {
             // we support nested sort groups so they should be chained
             String[] groups = sortBy.split(";");
             Iterator<String> it = ObjectHelper.createIterator(groups);
@@ -94,7 +94,7 @@ public class FileComponent extends DefaultComponent {
         boolean ignoreCase = reminder.startsWith("ignoreCase:");
         reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
 
-        ObjectHelper.notEmpty(reminder, "sortBy expression");
+        ObjectHelper.notNull(reminder, "sortBy expression");
 
         // recursive add nested sorters
         return DefaultFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));

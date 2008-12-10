@@ -25,6 +25,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class ObjectHelperTest extends TestCase {
+
     public void testArrayAsIterator() throws Exception {
         String[] data = {"a", "b"};
 
@@ -36,6 +37,26 @@ public class ObjectHelperTest extends TestCase {
         Object b = iter.next();
         assertEquals("b", "b", b);
         assertFalse("should not have a next", iter.hasNext());
+    }
+
+    public void testIsEmpty() {
+        assertTrue(ObjectHelper.isEmpty(null));
+        assertTrue(ObjectHelper.isEmpty(""));
+        assertTrue(ObjectHelper.isEmpty(" "));
+        assertFalse(ObjectHelper.isEmpty("A"));
+        assertFalse(ObjectHelper.isEmpty(" A"));
+        assertFalse(ObjectHelper.isEmpty(" A "));
+        assertFalse(ObjectHelper.isEmpty(new Object()));
+    }
+
+    public void testIsNotEmpty() {
+        assertFalse(ObjectHelper.isNotEmpty(null));
+        assertFalse(ObjectHelper.isNotEmpty(""));
+        assertFalse(ObjectHelper.isNotEmpty(" "));
+        assertTrue(ObjectHelper.isNotEmpty("A"));
+        assertTrue(ObjectHelper.isNotEmpty(" A"));
+        assertTrue(ObjectHelper.isNotEmpty(" A "));
+        assertTrue(ObjectHelper.isNotEmpty(new Object()));
     }
 
 }

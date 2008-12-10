@@ -23,7 +23,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -116,7 +115,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
      * Returns the endpoint URI or the name of the reference to it
      */
     public Object getUriOrRef() {
-        if (ObjectHelper.isNullOrBlank(uri)) {
+        if (ObjectHelper.isEmpty(uri)) {
             return uri;
         } else if (endpoint != null) {
             return endpoint.getEndpointUri();
