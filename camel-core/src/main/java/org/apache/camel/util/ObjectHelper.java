@@ -300,12 +300,26 @@ public final class ObjectHelper {
         return false;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0 - use isNotEmpty() instead
+     */
     public static boolean isNotNullAndNonEmpty(String text) {
         return text != null && text.trim().length() > 0;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0 - use isEmpty() instead
+     */
     public static boolean isNullOrBlank(String text) {
         return text == null || text.trim().length() <= 0;
+    }
+
+    public static boolean isEmpty(String text) {
+        return isNullOrBlank(text);
+    }
+
+    public static boolean isNotEmpty(String text) {
+        return isNotNullAndNonEmpty(text);
     }
 
     /**
