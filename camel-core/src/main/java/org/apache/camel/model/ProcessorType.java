@@ -34,6 +34,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -1652,6 +1653,40 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type marshal(String dataTypeRef) {
         addOutput(new MarshalType(dataTypeRef));
         return (Type) this;
+    }
+    
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the ExchangePattern {@link ExchangePattern} into the exchange
+     *
+     * @param exchangePattern  instance of {@link ExchangePattern} 
+     * @return the builder
+     */
+    public Type setExchangePattern(ExchangePattern exchangePattern) {
+        addOutput(new ExchangePatternType(exchangePattern));
+        return (Type) this;
+    }
+    
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
+     *
+     * 
+     * @return the builder
+     */
+    public Type inOnly() {
+        return setExchangePattern(ExchangePattern.InOnly);
+    }
+    
+    /**
+     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * set the exchange's ExchangePattern {@link ExchangePattern} to be InOut
+     *
+     * 
+     * @return the builder
+     */
+    public Type inOut() {
+        return setExchangePattern(ExchangePattern.InOut);
     }
 
     // Properties

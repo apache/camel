@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "catch")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CatchType extends ProcessorType<ProcessorType> {
+public class CatchType extends ProcessorType<CatchType> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElementRef

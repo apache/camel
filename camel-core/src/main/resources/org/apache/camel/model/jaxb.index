@@ -22,6 +22,7 @@ ConvertBodyType
 DelayerType
 Description
 ExceptionType
+ExchangePatternType
 ExpressionSubElementType
 FilterType
 FinallyType
