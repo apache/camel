@@ -94,7 +94,7 @@ public class FileComponent extends DefaultComponent {
         boolean ignoreCase = reminder.startsWith("ignoreCase:");
         reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
 
-        ObjectHelper.notNull(reminder, "sortBy expression");
+        ObjectHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
         return DefaultFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
