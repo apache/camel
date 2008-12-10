@@ -60,8 +60,8 @@ public class RssFilterTest extends ContextTestSupport {
 
     // START SNIPPET: ex2
     public static class FilterBean {
-        public boolean titleContainsCamel(@Body Object body) {
-            SyndEntry firstEntry = (SyndEntry) ((SyndFeed) body).getEntries().get(0);
+        public boolean titleContainsCamel(@Body SyndFeed feed) {
+            SyndEntry firstEntry = (SyndEntry) feed.getEntries().get(0);
             return firstEntry.getTitle().contains("Camel");
         }
     }
