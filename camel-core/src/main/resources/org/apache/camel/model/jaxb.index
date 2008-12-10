@@ -22,7 +22,6 @@ ConvertBodyType
 DelayerType
 Description
 ExceptionType
-ExchangePatternType
 ExpressionSubElementType
 FilterType
 FinallyType
@@ -54,6 +53,7 @@ RouteBuilderRef
 RoutesType
 RoutingSlipType
 SetBodyType
+SetExchangePatternType
 SetHeaderType
 SetOutHeaderType
 SetPropertyType
