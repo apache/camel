@@ -196,6 +196,8 @@
                   </fileset>
                   <fileset dir="${basedir}/../../camel-core/src/main/java">
                     <include name="org/apache/camel/model/**/*.java"/>
+                    <include name="org/apache/camel/ExchangePattern.java"/>
+                    <include name="org/apache/camel/package-info.java"/>
                   </fileset>
                 </copy>
               </tasks>

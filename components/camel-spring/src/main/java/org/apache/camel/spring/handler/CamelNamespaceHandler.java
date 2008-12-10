@@ -48,6 +48,7 @@ import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
+import org.apache.camel.ExchangePattern;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -170,6 +171,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
+        classes.add(ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteType.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
         classes.add(org.apache.camel.model.dataformat.DataFormatType.class);
