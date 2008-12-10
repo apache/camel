@@ -32,10 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "inOut")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOutType extends SendType<InOutType> {
-    @XmlAttribute(required = false)
-    private String uri;
-    @XmlAttribute(required = false)
-    private String ref;
 
     public InOutType() {
     }
@@ -61,24 +57,5 @@ public class InOutType extends SendType<InOutType> {
     @Override
     public ExchangePattern getPattern() {
         return ExchangePattern.InOut;
-    }
-
-
-    @Override
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 }
