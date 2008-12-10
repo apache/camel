@@ -40,8 +40,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToType extends SendType<ToType> {
-    //@XmlAttribute(required = false)
-    @XmlTransient
+    @XmlAttribute(required = false)
     private ExchangePattern pattern;
 
     public ToType() {
