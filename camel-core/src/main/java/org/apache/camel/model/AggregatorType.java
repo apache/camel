@@ -45,7 +45,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregatorType extends ProcessorType<ProcessorType> {
+public class AggregatorType extends ProcessorType<AggregatorType> {
     @XmlElement(name = "correlationExpression", required = false)
     private ExpressionSubElementType correlationExpression;
     @XmlTransient
