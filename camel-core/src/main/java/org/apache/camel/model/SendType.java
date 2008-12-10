@@ -40,6 +40,10 @@ import java.util.List;
 //@XmlType(name = "sendType")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SendType<Type extends ProcessorType> extends ProcessorType<Type> {
+    @XmlAttribute(required = false)
+    private String uri;
+    @XmlAttribute(required = false)
+    private String ref;
     @XmlTransient
     private Endpoint endpoint;
 
@@ -58,12 +62,20 @@ public class SendType<Type extends ProcessorType> extends ProcessorType<Type> {
 
     // Properties
     // -----------------------------------------------------------------------
-    public String getUri() {
-        return null;
+    public String getRef() {
+        return ref;
     }
 
-    public String getRef() {
-        return null;
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public Endpoint getEndpoint() {

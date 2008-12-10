@@ -32,10 +32,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class InOnlyType extends SendType<InOnlyType> {
-    @XmlAttribute(required = false)
-    private String uri;
-    @XmlAttribute(required = false)
-    private String ref;
 
     public InOnlyType() {
     }
@@ -64,21 +60,4 @@ public class InOnlyType extends SendType<InOnlyType> {
     }
 
 
-    @Override
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
 }

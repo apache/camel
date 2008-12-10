@@ -41,10 +41,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToType extends SendType<ToType> {
     @XmlAttribute(required = false)
-    private String uri;
-    @XmlAttribute(required = false)
-    private String ref;
-    @XmlAttribute(required = false)
     private ExchangePattern pattern;
 
     public ToType() {
@@ -78,23 +74,5 @@ public class ToType extends SendType<ToType> {
      */
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
-    }
-
-    @Override
-    public String getRef() {
-        return ref;
-    }
-
-    public void setRef(String ref) {
-        this.ref = ref;
-    }
-
-    @Override
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 }
