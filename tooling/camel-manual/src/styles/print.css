@@ -436,19 +436,19 @@ div.frontcover h2 {
 
 div.frontcover h3 {
   position: absolute;
-  left: 2cm; top: 7cm;
-  color: white;
-  font-size: 24pt;
+  right: 0; top: 6.5cm;
+  color: black;
+  font-size: 16pt;
   font-weight: normal;
+  padding: 0.2em 5em 0.2em 1em;  
 }
 
 div.frontcover p {
   position: absolute;
   left: 2cm; bottom: 1.5cm;
-  font-size: 24pt;
+  font-size: 13pt;
   color: black;
   font-weight: bold;
-  text-transform: uppercase;
 }
 
 
