@@ -152,15 +152,61 @@ public final class ObjectHelper {
         return null;
     }
 
+    /**
+     * Asserts whether the value is <b>not</b> <tt>null</tt>
+     *
+     * @param value  the value to test
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
     public static void notNull(Object value, String name) {
         if (value == null) {
             throw new IllegalArgumentException(name + " must be specified");
         }
     }
 
+    /**
+     * Asserts whether the value is <b>not</b> <tt>null</tt>
+     *
+     * @param value  the value to test
+     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static void notNull(Object value, String name, Object on) {
+        if (on == null) {
+            notNull(value, name);
+        } else if (value == null) {
+            throw new IllegalArgumentException(name + " must be specified on: " + on);
+        }
+    }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
     public static void notEmpty(String value, String name) {
-        if (isNullOrBlank(value)) {
+        if (isEmpty(value)) {
             throw new IllegalArgumentException(name + " must be specified and not empty");
+        }
+    }
+
+    /**
+     * Asserts whether the string is <b>not</b> empty.
+     *
+     * @param value  the string to test
+     * @param on     additional description to indicate where this problem occured (appended as toString())
+     * @param name   the key that resolved the value
+     * @throws IllegalArgumentException is thrown if assertion fails
+     */
+    public static void notEmpty(String value, String name, Object on) {
+        if (on == null) {
+            notNull(value, name);
+        } else if (isEmpty(value)) {
+            throw new IllegalArgumentException(name + " must be specified and not empty on: " + on);
         }
     }
 
@@ -304,22 +350,41 @@ public final class ObjectHelper {
      * @deprecated will be removed in Camel 2.0 - use isNotEmpty() instead
      */
     public static boolean isNotNullAndNonEmpty(String text) {
-        return text != null && text.trim().length() > 0;
+        return isNotEmpty(text);
     }
 
     /**
      * @deprecated will be removed in Camel 2.0 - use isEmpty() instead
      */
     public static boolean isNullOrBlank(String text) {
-        return text == null || text.trim().length() <= 0;
+        return isEmpty(text);
     }
 
-    public static boolean isEmpty(String text) {
-        return isNullOrBlank(text);
+    /**
+     * Tests whether the value is <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if empty
+     */
+    public static boolean isEmpty(Object value) {
+        return !isNotEmpty(value);
     }
 
-    public static boolean isNotEmpty(String text) {
-        return isNotNullAndNonEmpty(text);
+    /**
+     * Tests whether the value is <b>not</b> <tt>null</tt> or an empty string.
+     *
+     * @param value  the value, if its a String it will be tested for text length as well
+     * @return true if <b>not</b> empty
+     */
+    public static boolean isNotEmpty(Object value) {
+        if (value == null) {
+            return false;
+        } else if (value instanceof String) {
+            String text = (String) value;
+            return text.trim().length() > 0;
+        } else {
+            return true;
+        }
     }
 
     /**
