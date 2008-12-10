@@ -80,6 +80,7 @@
     <scala-plugin-version>2.7.1</scala-plugin-version>
     <testng-version>5.8</testng-version>
     <xbean-spring-version>3.4</xbean-spring-version>
+    <xstream-version>1.3.1</xstream-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
@@ -907,7 +908,7 @@
       <dependency>
         <groupId>com.thoughtworks.xstream</groupId>
         <artifactId>xstream</artifactId>
-        <version>1.3</version>
+        <version>${xstream-version}</version>
       </dependency>
 
       <dependency>
