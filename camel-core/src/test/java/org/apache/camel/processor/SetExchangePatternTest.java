@@ -70,15 +70,16 @@ public class SetExchangePatternTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-
+             // START SNIPPET: example
+                //Set the exchange pattern to InOut, then send it from direct:inOnly to mock:result endpoint
                 from("direct:inOnly").inOut().to("mock:result");
-               
+                //Set the exchange pattern to InOut, then send it from direct:inOut to mock:result endpoint               
                 from("direct:inOut").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
-                
+                //Send the exchange from direct:inOut1 to mock:result with setting the exchange pattern to be RobustInOnly
                 from("direct:inOut1").to("mock:result", ExchangePattern.RobustInOnly);
-                
+                //Send the exchange from direct:inOut2 to mock:result with setting the exchange pattern to be InOnly
                 from("direct:inOut2").inOnly("mock:result");
-                
+             // END SNIPPET: example   
             }
         };
     }
