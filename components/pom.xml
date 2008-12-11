@@ -91,5 +91,6 @@
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
+    <module>camel-tagsoup</module>
   </modules>
 </project>
