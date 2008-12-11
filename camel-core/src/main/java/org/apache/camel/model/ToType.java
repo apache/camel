@@ -16,21 +16,13 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collections;
-import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;to/&gt; element
@@ -75,4 +67,5 @@ public class ToType extends SendType<ToType> {
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
     }
+
 }

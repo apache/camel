@@ -77,12 +77,12 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     private Boolean inheritErrorHandlerFlag;
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
-    private ProcessorType<? extends ProcessorType> parent;
+    private ProcessorType parent;
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     private String errorHandlerRef;
 
     // else to use an optional attribute in JAXB2
-    public abstract List<ProcessorType<?>> getOutputs();
+    public abstract List<ProcessorType> getOutputs();
 
 
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -90,7 +90,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     public Processor createOutputsProcessor(RouteContext routeContext) throws Exception {
-        Collection<ProcessorType<?>> outputs = getOutputs();
+        Collection<ProcessorType> outputs = getOutputs();
         return createOutputsProcessor(routeContext, outputs);
     }
 
@@ -1887,7 +1887,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return new Pipeline(list);
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType> outputs)
         throws Exception {
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorType output : outputs) {

@@ -156,7 +156,7 @@ public class InterceptType extends OutputType<ProcessorType> {
         if (index >= 0) {
             processor.addOutput(proxy);
             // replace original proceed with proxy
-            List<ProcessorType<?>> outs = processor.getOutputs();
+            List<ProcessorType> outs = processor.getOutputs();
             outs.remove(proxy);
             outs.set(index, proxy);
         } else if (force) {

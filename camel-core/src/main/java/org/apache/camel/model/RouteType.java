@@ -53,7 +53,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     private static final transient Log LOG = LogFactory.getLog(RouteType.class);
     private List<InterceptorType> interceptors = new ArrayList<InterceptorType>();
     private List<FromType> inputs = new ArrayList<FromType>();
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     private String group;
     private CamelContext camelContext;
     private Boolean streamCaching;
@@ -173,12 +173,12 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         this.inputs = inputs;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
     @XmlElementRef
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
 
         // TODO I don't think this is called when using JAXB!
@@ -241,7 +241,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
             camelContext.getLifecycleStrategy().onRouteContextCreate(routeContext);
         }
 
-        List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>(outputs);
+        List<ProcessorType> list = new ArrayList<ProcessorType>(outputs);
         for (ProcessorType output : list) {
             output.addRoutes(routeContext, routes);
         }

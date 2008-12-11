@@ -50,7 +50,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }    
     
-    protected SplitterType firstSplitterType(List<ProcessorType<?>> outputs) {
+    protected SplitterType firstSplitterType(List<ProcessorType> outputs) {
         SplitterType result = null;
         
         for (ProcessorType processorType : outputs) {

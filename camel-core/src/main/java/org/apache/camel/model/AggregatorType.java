@@ -51,7 +51,7 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     @XmlTransient
     private ExpressionType expression;
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -388,11 +388,11 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
         this.expression = expression;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
     

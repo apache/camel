@@ -16,10 +16,11 @@
  */
 package org.apache.camel;
 
-import javax.xml.bind.annotation.XmlEnum;
-import javax.xml.bind.annotation.XmlType;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * Represents the kind of message exchange pattern

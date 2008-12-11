@@ -273,7 +273,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertChildTo(ProcessorType<?> route, String... uris) {
-        List<ProcessorType<?>> list = assertListSize(route.getOutputs(), uris.length);
+        List<ProcessorType> list = assertListSize(route.getOutputs(), uris.length);
         int idx = 0;
         for (String uri : uris) {
             assertTo("output[" + idx + "] ", list.get(idx++), uri);
@@ -281,7 +281,7 @@ public class XmlParseTest extends XmlTestSupport {
     }
 
     protected void assertChildTo(ProcessorType<?> route, String uri, int toIdx) {
-        List<ProcessorType<?>> list = route.getOutputs();
+        List<ProcessorType> list = route.getOutputs();
         assertTo("to and idx=" + toIdx, list.get(toIdx), uri);
     }
 

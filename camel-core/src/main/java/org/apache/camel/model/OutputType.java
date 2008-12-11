@@ -38,13 +38,13 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
     private static final transient Log LOG = LogFactory.getLog(OutputType.class);
 
     @XmlElementRef
-    protected List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    protected List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
             for (ProcessorType output : outputs) {
