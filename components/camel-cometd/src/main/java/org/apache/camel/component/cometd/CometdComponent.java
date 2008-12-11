@@ -105,8 +105,8 @@ public class CometdComponent extends DefaultComponent {
                 connector.setPort(endpoint.getPort());
                 connector.setHost(endpoint.getUri().getHost());
                 if ("localhost".equalsIgnoreCase(endpoint.getUri().getHost())) {
-                    LOG.warn("You use localhost interface! It means that no external connections will be available." + 
-                            " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
+                    LOG.warn("You use localhost interface! It means that no external connections will be available."
+                             + " Don't you want to use 0.0.0.0 instead (all network interfaces)?");
                 }
                 getServer().addConnector(connector);
 
