@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-public class ExchangePatternTest extends ContextTestSupport {
+public class SetExchangePatternTest extends ContextTestSupport {
     
     private void sendMessage(String uri, final ExchangePattern ep, final String message) {
         template.send(uri, new Processor() {
@@ -35,7 +35,7 @@ public class ExchangePatternTest extends ContextTestSupport {
         });
     }
    
-    public void testInOut() throws Exception {
+    public void testSetInOut() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("InOnlyMessage");        
         sendMessage("direct:inOnly", ExchangePattern.InOnly, "InOnlyMessage");
@@ -43,10 +43,26 @@ public class ExchangePatternTest extends ContextTestSupport {
         assertEquals("The exchange pattern should be InOut", resultEndpoint.getExchanges().get(0).getPattern(), ExchangePattern.InOut);
     }
     
-    public void testInOnly() throws Exception {
+    public void testSetInOnly() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("InOutMessage");        
         sendMessage("direct:inOut", ExchangePattern.InOut, "InOutMessage");
+        resultEndpoint.assertIsSatisfied();
+        assertEquals("The exchange pattern should be InOnly", resultEndpoint.getExchanges().get(0).getPattern(), ExchangePattern.InOnly);
+    }
+    
+    public void testSetRobustInOnly() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived("InOutMessage");        
+        sendMessage("direct:inOut1", ExchangePattern.InOut, "InOutMessage");
+        resultEndpoint.assertIsSatisfied();
+        assertEquals("The exchange pattern should be InOnly", resultEndpoint.getExchanges().get(0).getPattern(), ExchangePattern.RobustInOnly);
+    }
+    
+    public void testSetInOnly2() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedBodiesReceived("InOutMessage");        
+        sendMessage("direct:inOut2", ExchangePattern.InOut, "InOutMessage");
         resultEndpoint.assertIsSatisfied();
         assertEquals("The exchange pattern should be InOnly", resultEndpoint.getExchanges().get(0).getPattern(), ExchangePattern.InOnly);
     }
@@ -58,6 +74,10 @@ public class ExchangePatternTest extends ContextTestSupport {
                 from("direct:inOnly").inOut().to("mock:result");
                
                 from("direct:inOut").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+                
+                from("direct:inOut1").to("mock:result", ExchangePattern.RobustInOnly);
+                
+                from("direct:inOut2").inOnly("mock:result");
                 
             }
         };

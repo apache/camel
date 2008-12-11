@@ -19,14 +19,14 @@ package org.apache.camel.spring.processor;
 
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ExchangePatternTest;
+import org.apache.camel.processor.SetExchangePatternTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 
-public class SpringExchangePatternTest extends ExchangePatternTest {
+public class SpringSetExchangePatternTest extends SetExchangePatternTest {
     
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/exchangePattern.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/setExchangePattern.xml");
     }
 
 }

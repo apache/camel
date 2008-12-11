@@ -32,6 +32,17 @@
 
     <route>
       <from uri="direct:inOut"/>
+      <setExchangePattern pattern="InOnly"/>
+      <to uri="mock:result"/> 
+    </route>
+    
+    <route>
+      <from uri="direct:inOut1"/>
+      <to uri="mock:result" pattern="RobustInOnly"/>
+    </route>
+    
+    <route>
+      <from uri="direct:inOut2"/>
       <inOnly uri="mock:result"/>
     </route>
    </camelContext>
