@@ -48,6 +48,7 @@ public class DataFormatsType {
         @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
         @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
         @XmlElement(required = false, name = "string", type = StringDataFormat.class),
+        @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),        
         @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
         @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
         @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
