@@ -46,6 +46,16 @@ public class ToType extends SendType<ToType> {
         setEndpoint(endpoint);
     }
 
+    public ToType(String uri, ExchangePattern pattern) {
+        this(uri);
+        this.pattern = pattern;
+    }
+
+    public ToType(Endpoint endpoint, ExchangePattern pattern) {
+        this(endpoint);
+        this.pattern = pattern;
+    }
+
     @Override
     public String toString() {
         return "To[" + getLabel() + "]";
