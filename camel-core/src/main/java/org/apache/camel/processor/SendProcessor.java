@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
@@ -37,6 +38,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
     private Endpoint destination;
     private Producer producer;
     private AsyncProcessor processor;
+    private ExchangePattern pattern;
 
     public SendProcessor(Endpoint destination) {
         if (destination == null) {
@@ -45,9 +47,14 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
         this.destination = destination;
     }
 
+    public SendProcessor(Endpoint destination, ExchangePattern pattern) {
+        this(destination);
+        this.pattern = pattern;
+    }
+
     @Override
     public String toString() {
-        return "sendTo(" + destination + ")";
+        return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -58,6 +65,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
                 throw new IllegalStateException("No producer, this processor has not been started!");
             }
         } else {
+            configureExchange(exchange);
             producer.process(exchange);
         }
     }
@@ -72,10 +80,11 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
             callback.done(true);
             return true;
         } else {
+            configureExchange(exchange);
             return processor.process(exchange, callback);
         }
     }
-    
+
     public Endpoint getDestination() {
         return destination;
     }
@@ -97,4 +106,9 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
         }
     }
 
+    protected void configureExchange(Exchange exchange) {
+        if (pattern != null) {
+            exchange.setPattern(pattern);
+        }
+    }
 }
