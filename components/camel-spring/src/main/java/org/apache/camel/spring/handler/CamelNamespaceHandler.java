@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
@@ -55,6 +56,7 @@ import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
+
 
 
 /**
@@ -170,6 +172,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected Set<Class> getJaxbPackages() {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
+        classes.add(ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteType.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
         classes.add(org.apache.camel.model.dataformat.DataFormatType.class);

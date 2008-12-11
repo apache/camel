@@ -52,6 +52,6 @@ public abstract class XmlTestSupport extends TestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         jaxbContext = JAXBContext
-            .newInstance("org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer");
+            .newInstance("org.apache.camel:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer");
     }
 }

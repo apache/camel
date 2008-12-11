@@ -18,6 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -32,8 +33,7 @@ import org.apache.camel.ExchangePattern;
 @XmlRootElement(name = "to")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ToType extends SendType<ToType> {
-    //@XmlAttribute(required = false)
-    @XmlTransient
+    @XmlAttribute(required = false)
     private ExchangePattern pattern;
 
     public ToType() {

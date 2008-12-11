@@ -32,46 +32,32 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;SetExchangePattern/&gt; element
+ * Represents an XML &lt;setExchangePattern/&gt; element
  *
  * @version $Revision$
  */
 @XmlRootElement(name = "setExchangePattern")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExchangePatternType extends OutputType {    
-    @XmlAttribute(name = "pattern", required = true)
-    private String pattern;
-    @XmlTransient
-    private ExchangePattern exchangePattern;
+public class SetExchangePatternType extends OutputType {
+    @XmlAttribute(required = true)
+    private ExchangePattern pattern;
     @XmlTransient
     private ExchangePatternProcessor processor;
     
-    public ExchangePatternType() {
+    public SetExchangePatternType() {
     }
 
-    public ExchangePatternType(ExchangePattern ep) {
-        exchangePattern = ep;
-        pattern = exchangePattern.toString();
+    public SetExchangePatternType(ExchangePattern pattern) {
+        this.pattern = pattern;
     }
-    
-    public void setPattern(String pattern) {
-        this.pattern = pattern;        
-        exchangePattern = ExchangePattern.asEnum(pattern);        
-    }
-    
-    public String getPattern() {
+
+
+    public ExchangePattern getPattern() {
         return pattern;
     }
 
-    public ExchangePattern getExchangePattern() {
-        if (exchangePattern == null) {
-            if (pattern != null) {
-                exchangePattern = ExchangePattern.asEnum(pattern);
-            } else {
-                exchangePattern = ExchangePattern.InOnly;
-            }
-        }
-        return exchangePattern;        
+    public void setPattern(ExchangePattern pattern) {
+        this.pattern = pattern;
     }
 
     @Override
@@ -82,19 +68,19 @@ public class ExchangePatternType extends OutputType {
     @Override
     public String toString() {
         return "setExchangePattern["
-                + "exchangePattern: " + exchangePattern
+                + "pattern: " + pattern
                 + "]";
     }
 
     @Override
     public String getLabel() {
-        return "exchangePattern: " + exchangePattern;
+        return "setExchangePattern: " + pattern;
     }
    
     @Override
     public Processor createProcessor(RouteContext routeContext) {
         if (processor == null) {
-            processor = new ExchangePatternProcessor(getExchangePattern());
+            processor = new ExchangePatternProcessor(getPattern());
         }
         return processor;
     }

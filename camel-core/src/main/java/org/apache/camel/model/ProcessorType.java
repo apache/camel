@@ -1572,7 +1572,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the builder
      */
     public Type setExchangePattern(ExchangePattern exchangePattern) {
-        addOutput(new ExchangePatternType(exchangePattern));
+        addOutput(new SetExchangePatternType(exchangePattern));
         return (Type) this;
     }
     
