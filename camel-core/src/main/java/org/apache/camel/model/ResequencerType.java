@@ -44,7 +44,7 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     @XmlElementRef
     private List<ExpressionType> expressions = new ArrayList<ExpressionType>();
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     // Binding annotation at setter
     private BatchResequencerConfig batchConfig;
     // Binding annotation at setter
@@ -193,11 +193,11 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
         return expressions;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
 

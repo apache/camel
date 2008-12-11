@@ -54,13 +54,13 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
         RouteType routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             // configure the outputs
-            List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>(routeType.getOutputs());
+            List<ProcessorType> outputs = new ArrayList<ProcessorType>(routeType.getOutputs());
 
             // clearing the outputs
             routeType.clearOutput();
 
             // add the output configure the outputs with the routeType
-            for (ProcessorType<?> processorType : outputs) {
+            for (ProcessorType processorType : outputs) {
                 routeType.addOutput(processorType);
             }
         }

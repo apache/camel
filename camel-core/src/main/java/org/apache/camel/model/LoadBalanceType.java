@@ -62,7 +62,7 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     private LoadBalancerType loadBalancerType;
 
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     public LoadBalanceType() {
     }
@@ -72,11 +72,11 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
         return "loadbalance";
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
         if (outputs != null) {
             for (ProcessorType output : outputs) {
@@ -110,7 +110,7 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
         loadBalancerType = loadbalancer;
     }
 
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType<?>> outputs)
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorType> outputs)
         throws Exception {
         LoadBalancer loadBalancer = LoadBalancerType.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorType processorType : outputs) {
@@ -189,8 +189,8 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     @Override
     public String getLabel() {
         CollectionStringBuffer buffer = new CollectionStringBuffer();
-        List<ProcessorType<?>> list = getOutputs();
-        for (ProcessorType<?> processorType : list) {
+        List<ProcessorType> list = getOutputs();
+        for (ProcessorType processorType : list) {
             buffer.append(processorType.getLabel());
         }
         return buffer.toString();

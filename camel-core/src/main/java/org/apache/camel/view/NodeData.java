@@ -33,8 +33,8 @@ import org.apache.camel.model.SplitterType;
 import org.apache.camel.model.ToType;
 import org.apache.camel.model.WhenType;
 
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Represents a node in the EIP diagram tree

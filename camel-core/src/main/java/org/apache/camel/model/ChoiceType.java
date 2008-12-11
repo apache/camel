@@ -138,7 +138,7 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         this.whenClauses = whenClauses;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         if (otherwise != null) {
             return otherwise.getOutputs();
         } else if (whenClauses.isEmpty()) {

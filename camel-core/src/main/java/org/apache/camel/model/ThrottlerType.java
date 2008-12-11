@@ -42,7 +42,7 @@ public class ThrottlerType extends ProcessorType<ProcessorType> {
     @XmlAttribute
     private long timePeriodMillis = 1000;
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     public ThrottlerType() {
     }
@@ -106,11 +106,11 @@ public class ThrottlerType extends ProcessorType<ProcessorType> {
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
 }

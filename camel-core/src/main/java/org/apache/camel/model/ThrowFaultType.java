@@ -92,7 +92,7 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
     }
 
     @Override
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 }

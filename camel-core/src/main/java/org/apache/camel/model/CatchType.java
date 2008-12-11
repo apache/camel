@@ -42,7 +42,7 @@ public class CatchType extends ProcessorType<CatchType> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
     private List<Class> exceptionClasses;
 
@@ -79,11 +79,11 @@ public class CatchType extends ProcessorType<CatchType> {
         return new CatchProcessor(getExceptionClasses(), childProcessor);
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
 

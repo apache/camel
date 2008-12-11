@@ -57,7 +57,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     @XmlAttribute(required = false)
     private Long stackSize;
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
     private BlockingQueue<Runnable> taskQueue;
     @XmlTransient
@@ -78,7 +78,7 @@ public class ThreadType extends ProcessorType<ProcessorType> {
     }
 
     @Override
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 

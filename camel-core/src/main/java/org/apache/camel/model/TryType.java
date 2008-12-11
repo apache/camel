@@ -44,7 +44,7 @@ public class TryType extends OutputType<TryType> {
     @XmlTransient
     private boolean initialized;
     @XmlTransient
-    private List<ProcessorType<?>> outputsWithoutCatches;
+    private List<ProcessorType> outputsWithoutCatches;
 
     @Override
     public String toString() {
@@ -126,14 +126,14 @@ public class TryType extends OutputType<TryType> {
         return finallyClause;
     }
 
-    public List<ProcessorType<?>> getOutputsWithoutCatches() {
+    public List<ProcessorType> getOutputsWithoutCatches() {
         if (outputsWithoutCatches == null) {
             checkInitialized();
         }
         return outputsWithoutCatches;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         initialized = false;
         super.setOutputs(outputs);
     }
@@ -150,7 +150,7 @@ public class TryType extends OutputType<TryType> {
     protected void checkInitialized() {
         if (!initialized) {
             initialized = true;
-            outputsWithoutCatches = new ArrayList<ProcessorType<?>>();
+            outputsWithoutCatches = new ArrayList<ProcessorType>();
             catchClauses = new ArrayList<CatchType>();
             finallyClause = null;
 

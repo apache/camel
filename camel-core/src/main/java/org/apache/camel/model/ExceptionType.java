@@ -62,7 +62,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     @XmlElement(name = "handled", required = false)
     private ExpressionSubElementType handled;
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
     private List<Class> exceptionClasses;
     @XmlTransient
@@ -333,11 +333,11 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
 
     // Properties
     //-------------------------------------------------------------------------
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
 

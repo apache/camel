@@ -73,7 +73,7 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
     }
 
     @Override
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }
 

@@ -72,7 +72,7 @@ public class ScatterGatherTest extends ContextTestSupport {
     }
     
     public static class MyVendor {
-        int quoteResult = 0;
+        int quoteResult;
         
         public MyVendor(int quoteResult) {
             this.quoteResult = quoteResult;

@@ -202,8 +202,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
             Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();
 
-            List<ProcessorType<?>> exceptionHandlers = new ArrayList<ProcessorType<?>>();
-            List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+            List<ProcessorType> exceptionHandlers = new ArrayList<ProcessorType>();
+            List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
             // separate out the exception handers in the outputs
             for (ProcessorType output : routeType.getOutputs()) {
@@ -225,7 +225,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             routeType.intercept(processor);
 
             // add the output
-            for (ProcessorType<?> processorType : outputs) {
+            for (ProcessorType processorType : outputs) {
                 routeType.addOutput(processorType);
             }
 

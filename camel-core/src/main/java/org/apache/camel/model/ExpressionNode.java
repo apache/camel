@@ -40,7 +40,7 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
     @XmlElementRef
     private ExpressionType expression;
     @XmlElementRef
-    private List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
+    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
 
     public ExpressionNode() {
     }
@@ -74,11 +74,11 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
         this.expression = expression;
     }
 
-    public List<ProcessorType<?>> getOutputs() {
+    public List<ProcessorType> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType<?>> outputs) {
+    public void setOutputs(List<ProcessorType> outputs) {
         this.outputs = outputs;
     }
 
