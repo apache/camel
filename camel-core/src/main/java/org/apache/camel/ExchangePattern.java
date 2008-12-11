@@ -19,11 +19,16 @@ package org.apache.camel;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
+
 /**
  * Represents the kind of message exchange pattern
  *
  * @version $Revision$
  */
+@XmlType
+@XmlEnum(String.class)
 public enum ExchangePattern {
     InOnly, RobustInOnly, InOut, InOptionalOut, OutOnly, RobustOutOnly, OutIn, OutOptionalIn;
 
