@@ -23,32 +23,36 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 public class SetExchangePatternTest extends ContextTestSupport {
 
-    public void testInvokeWithInOut() throws Exception {
-        assertMessageReceivedWithPattern("direct:invokeWithInOut", ExchangePattern.InOut);
+    public void testInOut() throws Exception {
+        assertMessageReceivedWithPattern("direct:testInOut", ExchangePattern.InOut);
     }
 
-    public void testInvokeWithInOnly() throws Exception {
-        assertMessageReceivedWithPattern("direct:invokeWithInOnly", ExchangePattern.InOnly);
+    public void testInOnly() throws Exception {
+        assertMessageReceivedWithPattern("direct:testInOnly", ExchangePattern.InOnly);
     }
 
-    public void testSetInOut() throws Exception {
-        assertMessageReceivedWithPattern("direct:inOnly", ExchangePattern.InOut);
+    public void testSetToInOnlyThenTo() throws Exception {
+        assertMessageReceivedWithPattern("direct:testSetToInOnlyThenTo", ExchangePattern.InOnly);
     }
 
-    public void testSetInOutAsToParam() throws Exception {
-        assertMessageReceivedWithPattern("direct:inOnlyAsToParam", ExchangePattern.InOnly);
+    public void testSetToInOutThenTo() throws Exception {
+        assertMessageReceivedWithPattern("direct:testSetToInOutThenTo", ExchangePattern.InOut);
     }
 
-    public void testSetInOnly() throws Exception {
-        assertMessageReceivedWithPattern("direct:inOut", ExchangePattern.InOnly);
+    public void testToWithInOnlyParam() throws Exception {
+        assertMessageReceivedWithPattern("direct:testToWithInOnlyParam", ExchangePattern.InOnly);
     }
-    
-    public void testSetRobustInOnly() throws Exception {
-        assertMessageReceivedWithPattern("direct:inOut1", ExchangePattern.RobustInOnly);
+
+    public void testToWithInOutParam() throws Exception {
+        assertMessageReceivedWithPattern("direct:testToWithInOutParam", ExchangePattern.InOut);
     }
-    
-    public void testSetInOnly2() throws Exception {
-        assertMessageReceivedWithPattern("direct:inOut2", ExchangePattern.InOnly);
+
+    public void testToWithRobustInOnlyParam() throws Exception {
+        assertMessageReceivedWithPattern("direct:testToWithRobustInOnlyParam", ExchangePattern.RobustInOnly);
+    }
+
+    public void testSetExchangePatternInOnly() throws Exception {
+        assertMessageReceivedWithPattern("direct:testSetExchangePatternInOnly", ExchangePattern.InOnly);
     }
 
 
@@ -81,20 +85,23 @@ public class SetExchangePatternTest extends ContextTestSupport {
             public void configure() {
              // START SNIPPET: example
                 // Send to an endpoint using InOut
-                from("direct:invokeWithInOut").inOut("mock:result");
+                from("direct:testInOut").inOut("mock:result");
+
                 // Send to an endpoint using InOut
-                from("direct:invokeWithInOnly").inOnly("mock:result");
+                from("direct:testInOnly").inOnly("mock:result");
+
                 // Set the exchange pattern to InOut, then send it from direct:inOnly to mock:result endpoint
-                from("direct:inOnly").inOut().to("mock:result");
-                // Or we can pass the pattern as a parameter
-                from("direct:inOnlyAsToParam").to(ExchangePattern.InOnly, "mock:result");
-                // Set the exchange pattern to InOut, then send it from direct:inOut to mock:result endpoint
-                from("direct:inOut").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
-                // Send the exchange from direct:inOut1 to mock:result with setting the exchange pattern to be RobustInOnly
-                from("direct:inOut1").to(ExchangePattern.RobustInOnly, "mock:result");
-                // Send the exchange from direct:inOut2 to mock:result with setting the exchange pattern to be InOnly
-                from("direct:inOut2").inOnly("mock:result");
-             // END SNIPPET: example   
+                from("direct:testSetToInOnlyThenTo").inOnly().to("mock:result");
+                from("direct:testSetToInOutThenTo").inOut().to("mock:result");
+
+                // Or we can pass the pattern as a parameter to the to() method
+                from("direct:testToWithInOnlyParam").to(ExchangePattern.InOnly, "mock:result");
+                from("direct:testToWithInOutParam").to(ExchangePattern.InOut, "mock:result");
+                from("direct:testToWithRobustInOnlyParam").to(ExchangePattern.RobustInOnly, "mock:result");
+
+                // Set the exchange pattern to InOut, then send it on
+                from("direct:testSetExchangePatternInOnly").setExchangePattern(ExchangePattern.InOnly).to("mock:result");
+             // END SNIPPET: example
             }
         };
     }

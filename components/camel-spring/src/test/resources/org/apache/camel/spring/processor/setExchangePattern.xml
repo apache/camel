@@ -23,31 +23,50 @@
     ">
 
   <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <!-- Set the exchange pattern to InOut, then send it from direct:inOnly to mock:result endpoint -->
+  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+    <!-- Send the exchange as InOnly -->
     <route>
-      <from uri="direct:inOnly"/>
-      <setExchangePattern pattern="InOut"/>      	
-      <to uri="mock:result"/>      
+      <from uri="direct:testInOut"/>
+      <inOut uri="mock:result"/>
     </route>
 
-    <!-- Set the exchange pattern to InOnly, then send it from direct:inOut to mock:result endpoint -->
+    <!-- Send the exchange as InOnly -->
     <route>
-      <from uri="direct:inOut"/>
-      <setExchangePattern pattern="InOnly"/>
-      <to uri="mock:result"/> 
-    </route>
-    
-    <!-- Send the exchange from direct:inOut1 to mock:result with setting the exchange pattern to be RobustInOnly-->
-    <route>
-      <from uri="direct:inOut1"/>
-      <to uri="mock:result" pattern="RobustInOnly"/>
-    </route>
-    
-    <!-- Send the exchange from direct:inOut2 to mock:result with setting the exchange pattern to be InOnly -->
-    <route>
-      <from uri="direct:inOut2"/>
+      <from uri="direct:testInOnly"/>
       <inOnly uri="mock:result"/>
+    </route>
+
+
+    <!-- lets set the exchange pattern then send it on -->
+    <route>
+      <from uri="direct:testSetToInOnlyThenTo"/>
+      <setExchangePattern pattern="InOnly"/>
+      <to uri="mock:result"/>      
+    </route>
+    <route>
+      <from uri="direct:testSetToInOutThenTo"/>
+      <setExchangePattern pattern="InOut"/>
+      <to uri="mock:result"/>
+    </route>
+    <route>
+      <from uri="direct:testSetExchangePatternInOnly"/>
+      <setExchangePattern pattern="InOnly"/>
+      <to uri="mock:result"/>
+    </route>
+
+
+    <!-- Lets pass the pattern as an argument in the to element -->
+    <route>
+      <from uri="direct:testToWithInOnlyParam"/>
+      <to uri="mock:result" pattern="InOnly"/>
+    </route>
+    <route>
+      <from uri="direct:testToWithInOutParam"/>
+      <to uri="mock:result" pattern="InOut"/>
+    </route>
+    <route>
+      <from uri="direct:testToWithRobustInOnlyParam"/>
+      <to uri="mock:result" pattern="RobustInOnly"/>
     </route>
    </camelContext>
    <!-- END SNIPPET: example -->
