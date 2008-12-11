@@ -59,15 +59,15 @@ public class SetExchangePatternTest extends ContextTestSupport {
     protected void assertMessageReceivedWithPattern(String sendUri, ExchangePattern expectedPattern) throws InterruptedException {
         ExchangePattern sendPattern;
         switch (expectedPattern) {
-            case InOut:
-                sendPattern = ExchangePattern.InOnly;
-                break;
-            case InOnly:
-            case RobustInOnly:
-                sendPattern = ExchangePattern.InOut;
-                break;
-            default:
-                sendPattern = ExchangePattern.InOnly;
+        case InOut:
+            sendPattern = ExchangePattern.InOnly;
+            break;
+        case InOnly:
+        case RobustInOnly:
+            sendPattern = ExchangePattern.InOut;
+            break;
+        default:
+            sendPattern = ExchangePattern.InOnly;
         }
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
