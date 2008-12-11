@@ -58,8 +58,8 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
         CamelContext context = (CamelContext) applicationContext.getBean("camel3");
         assertValidContext(context);
-    }
-
+    }    
+    
     public void testXMLRouteLoading() throws Exception {
         ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextFactoryBean.xml");
 
@@ -80,6 +80,15 @@ public class CamelContextFactoryBeanTest extends XmlConfigTestSupport {
 
             assertEndpointUri(key, "seda:test.c");
         }
+    }
+    
+    public void testRouteBuilderRef() throws Exception {
+        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/camelContextRouteBuilderRef.xml");
+
+        CamelContext context = (CamelContext) applicationContext.getBean("camel5");
+        assertNotNull("No context found!", context);
+        
+        assertValidContext(context);
     }
 
     public void testShouldStartContext() throws Exception {
