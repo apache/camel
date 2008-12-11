@@ -28,6 +28,8 @@ FilterType
 FinallyType
 FromType
 IdempotentConsumerType
+InOnlyType
+InOutType
 InterceptType
 InterceptorRef
 InterceptorType
