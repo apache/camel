@@ -36,6 +36,7 @@ public final class FileProcessStrategyFactory {
     public static FileProcessStrategy createFileProcessStrategy(Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
+        boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
         boolean isLock = params.get("lock") != null;
         String moveNamePrefix = (String) params.get("moveNamePrefix");
@@ -47,7 +48,7 @@ public final class FileProcessStrategyFactory {
         boolean move = moveNamePrefix != null || moveNamePostfix != null;
         boolean preMove = preMoveNamePrefix != null || preMoveNamePostfix != null;
 
-        if (params.containsKey("noop")) {
+        if (isNoop) {
             return new NoOpFileProcessStrategy(isLock);
         } else if (move || preMove) {
             RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);
