@@ -201,7 +201,14 @@ div.codeHeader {
   counter-increment: listing;
 }
 div.code {
-  margin: 1em 0;
+	border: 1px dashed #c0c0c0;
+    font-size: 12px;
+	font-family: Courier;
+    margin: 5px;
+	line-height: 13px;
+	padding: 3px;	
+	background-color: #f8f8f8;
+	
 }
 
 
