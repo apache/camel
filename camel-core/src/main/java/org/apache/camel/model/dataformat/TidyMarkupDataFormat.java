@@ -44,8 +44,9 @@ public class TidyMarkupDataFormat extends DataFormatType {
 
     public TidyMarkupDataFormat(Class<?> dataObjectType) {
         this();
-        assert dataObjectType.isAssignableFrom(String.class) || dataObjectType.isAssignableFrom(Node.class) 
-            : "TidyMarkupDataFormat only supports returning a String or a org.w3c.dom.Node object";
+        if (!dataObjectType.isAssignableFrom(String.class) && !dataObjectType.isAssignableFrom(Node.class)) {
+            throw new IllegalArgumentException("TidyMarkupDataFormat only supports returning a String or a org.w3c.dom.Node object");
+        }
         this.setDataObjectType(dataObjectType);
     }
 
