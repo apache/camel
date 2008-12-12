@@ -193,13 +193,11 @@ public class JmsProducer extends DefaultProducer {
 
             if (destinationName != null) {
                 template.send(destinationName, messageCreator, callback);
-            }
-            else if (destination != null) {
+            } else if (destination != null) {
                 // TODO cannot pass in callback using destination?
                 template.send(destination.toString(), messageCreator, callback);
                 // template.send(destination, messageCreator);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
             }
 
@@ -249,11 +247,9 @@ public class JmsProducer extends DefaultProducer {
             };
             if (destinationName != null) {
                 getInOnlyTemplate().send(destinationName, messageCreator);
-            }
-            else if (destination != null) {
+            } else if (destination != null) {
                 getInOnlyTemplate().send(destination, messageCreator);
-            }
-            else {
+            } else {
                 throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
             }
 
