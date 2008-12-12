@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,14 +22,16 @@ import org.jruby.Main;
 /**
  * @version $Revision$
  */
-public class RunScript {
+public final class RunScript {
+    private RunScript() {
+        // helper class
+    }
     public static void main(String[] args) {
         if (args.length == 0) {
             runScript("src/test/java/org/apache/camel/ruby/example.rb");
-        }
-        else {
+        } else {
             for (String arg : args) {
-              runScript(arg);
+                runScript(arg);
             }
         }
     }

@@ -16,28 +16,28 @@
  */
 package org.apache.camel.component.jms;
 
+import javax.jms.ConnectionFactory;
+import javax.jms.Destination;
+import javax.jms.ExceptionListener;
 import javax.jms.Message;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
-import javax.jms.ConnectionFactory;
-import javax.jms.ExceptionListener;
-import javax.jms.Destination;
 
+import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Component;
 import org.apache.camel.component.jms.requestor.Requestor;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
-import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.transaction.PlatformTransactionManager;
 
 /**
@@ -98,8 +98,7 @@ public class JmsEndpoint extends DefaultEndpoint {
             jmsTemplate.setPubSubDomain(pubSubDomain);
             if (destinationName != null) {
                 jmsTemplate.setDefaultDestinationName(destinationName);
-            }
-            else if (destination != null) {
+            } else if (destination != null) {
                 jmsTemplate.setDefaultDestination(destination);
             }
             /*
@@ -734,9 +733,7 @@ public class JmsEndpoint extends DefaultEndpoint {
         }
         if (destination != null) {
             return scheme + ":" + destination;
-        }
-        else
-        if (destinationName != null) {
+        } else if (destinationName != null) {
             return scheme + ":" + destinationName;
         }
         DestinationResolver resolver = getDestinationResolver();
