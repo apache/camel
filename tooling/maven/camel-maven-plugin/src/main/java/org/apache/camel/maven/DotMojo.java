@@ -446,8 +446,13 @@ public class DotMojo extends AbstractMavenReport {
     protected String convertFile(File file, String format) throws CommandLineException {
         Log log = getLog();
         if (!useDot) {
-            log.info("DOT generation disabled");
+            log.info("DOT generation disabled.");
             return null;
+        } else {            
+            if (dotHelpExitCode() != 0) {
+                log.info("'dot -?' execution failed so DOT generation disabled.");
+                return null;
+            }
         }
         if (this.executable == null || this.executable.length() == 0) {
             log.warn("Parameter <executable/> was not set in the pom.xml.  Skipping conversion.");
@@ -478,6 +483,17 @@ public class DotMojo extends AbstractMavenReport {
             log.warn(errOutput);
         }
         return generatedFileName;
+    }
+
+    private int dotHelpExitCode() throws CommandLineException {
+        Commandline cl = new Commandline();
+        cl.setExecutable(executable);
+        cl.createArgument().setValue("-?");
+
+        CommandLineUtils.StringStreamConsumer stdout = new CommandLineUtils.StringStreamConsumer();
+        CommandLineUtils.StringStreamConsumer stderr = new CommandLineUtils.StringStreamConsumer();
+
+        return CommandLineUtils.executeCommandLine(cl, stdout, stderr);
     }
 
     protected String removeFileExtension(String name) {
