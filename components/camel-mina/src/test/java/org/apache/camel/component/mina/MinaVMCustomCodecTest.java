@@ -31,11 +31,11 @@ import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 
 /**
- * Unit test with custom codec.
+ * Unit test with custom codec using the VM protocol.
  */
-public class MinaCustomCodecTest extends ContextTestSupport {
+public class MinaVMCustomCodecTest extends ContextTestSupport {
 
-    private String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    private String uri = "mina:vm://localhost:11301?sync=true&codec=myCodec";
 
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,7 +50,7 @@ public class MinaCustomCodecTest extends ContextTestSupport {
 
     public void testBadConfiguration() throws Exception {
         try {
-            template.sendBody("mina:tcp://localhost:11300?sync=true&codec=XXX", "Hello World");
+            template.sendBody("mina:vm://localhost:11300?sync=true&codec=XXX", "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // ok
