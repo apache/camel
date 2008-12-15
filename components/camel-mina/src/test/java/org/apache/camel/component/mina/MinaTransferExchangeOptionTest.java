@@ -36,7 +36,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class MinaTransferExchangeOptionTest extends ContextTestSupport {
 
-    private static final String URI = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
+    protected String uri = "mina:tcp://localhost:6321?sync=true&encoding=UTF-8&transferExchange=true";
 
     public void testMianTransferExchangeOptionWithoutException() throws Exception {
         Exchange exchange = sendExchange(false);
@@ -49,7 +49,7 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint(URI);
+        Endpoint endpoint = context.getEndpoint(uri);
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -92,7 +92,7 @@ public class MinaTransferExchangeOptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(URI).process(new Processor() {
+                from(uri).process(new Processor() {
                     public void process(Exchange e) throws InterruptedException {
                         Assert.assertNotNull(e.getIn().getBody());
                         Assert.assertNotNull(e.getIn().getHeaders());

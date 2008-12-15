@@ -117,7 +117,31 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(connectUri.getPort());
         IoConnector connector = new VmPipeConnector();
-        return new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, 0, false, false);
+
+        // connector config
+        configureCodecFactory("MinaProducer", connector.getDefaultConfig(), textline, encoding, codec);
+        if (minaLogger) {
+            connector.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+
+        // acceptor connectorConfig
+        configureCodecFactory("MinaConsumer", acceptor.getDefaultConfig(), textline, encoding, codec);
+        if (minaLogger) {
+            acceptor.getFilterChain().addLast("logger", new LoggingFilter());
+        }
+
+        MinaEndpoint endpoint = new MinaEndpoint(uri, this, address, acceptor, null, connector, null, false, timeout, transferExchange, sync);
+        if (encoding != null) {
+            endpoint.setCharsetName(getEncodingParameter("MinaProducer", encoding).name());
+        }
+        // set sync or async mode after endpoint is created
+        if (sync) {
+            endpoint.setExchangePattern(ExchangePattern.InOut);
+        } else {
+            endpoint.setExchangePattern(ExchangePattern.InOnly);
+        }
+
+        return endpoint;
     }
 
     protected MinaEndpoint createSocketEndpoint(String uri, URI connectUri, Map parameters) {
@@ -127,7 +151,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         // connector config
         SocketConnectorConfig connectorConfig = new SocketConnectorConfig();
-        configureSocketCodecFactory("MinaProducer", connectorConfig, textline, encoding, codec);
+        configureCodecFactory("MinaProducer", connectorConfig, textline, encoding, codec);
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
@@ -137,7 +161,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
         // acceptor connectorConfig
         SocketAcceptorConfig acceptorConfig = new SocketAcceptorConfig();
-        configureSocketCodecFactory("MinaConsumer", acceptorConfig, textline, encoding, codec);
+        configureCodecFactory("MinaConsumer", acceptorConfig, textline, encoding, codec);
         acceptorConfig.setReuseAddress(true);
         acceptorConfig.setDisconnectOnUnbind(true);
         if (minaLogger) {
@@ -158,7 +182,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    protected void configureSocketCodecFactory(String type, IoServiceConfig config, boolean textline, String encoding, String codec) {
+    protected void configureCodecFactory(String type, IoServiceConfig config, boolean textline, String encoding, String codec) {
         ProtocolCodecFactory codecFactory = getCodecFactory(type, codec);
 
         if (codecFactory == null) {
@@ -221,7 +245,7 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
         return endpoint;
     }
 
-    private Charset getEncodingParameter(String type, String encoding) {
+    private static Charset getEncodingParameter(String type, String encoding) {
         if (encoding == null) {
             encoding = Charset.defaultCharset().name();
             if (LOG.isDebugEnabled()) {

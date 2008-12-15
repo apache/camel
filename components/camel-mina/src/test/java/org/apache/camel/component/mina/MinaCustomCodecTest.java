@@ -23,6 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
+import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
@@ -34,21 +35,23 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
  */
 public class MinaCustomCodecTest extends ContextTestSupport {
 
-    private String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    protected String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    protected String badUri = "mina:tcp://localhost:11300?sync=true&codec=XXX";
 
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Bye World");
 
-        template.requestBody(uri, "Hello World");
+        Object out = template.requestBody(uri, "Hello World");
+        assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
     }
 
     public void testBadConfiguration() throws Exception {
         try {
-            template.sendBody("mina:tcp://localhost:11300?sync=true&codec=XXX", "Hello World");
+            template.sendBody(badUri, "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // ok
@@ -90,20 +93,15 @@ public class MinaCustomCodecTest extends ContextTestSupport {
         }
 
         public ProtocolDecoder getDecoder() throws Exception {
-            return new ProtocolDecoder() {
-                public void decode(IoSession ioSession, ByteBuffer in,
-                                   ProtocolDecoderOutput out) throws Exception {
-                    in.acquire();
-                    out.write(in);
-                }
-
-                public void finishDecode(IoSession ioSession, ProtocolDecoderOutput protocolDecoderOutput)
-                    throws Exception {
-                    // do nothing
-                }
-
-                public void dispose(IoSession ioSession) throws Exception {
-                    // do nothing
+            return new CumulativeProtocolDecoder() {
+                protected boolean doDecode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
+                    if (in.remaining() > 0) {
+                        byte[] buf = MinaConverter.toByteArray(in);
+                        out.write(new String(buf));
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             };
         }
