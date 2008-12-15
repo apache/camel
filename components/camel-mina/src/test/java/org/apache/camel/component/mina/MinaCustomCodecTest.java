@@ -35,7 +35,8 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
  */
 public class MinaCustomCodecTest extends ContextTestSupport {
 
-    private String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    protected String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    protected String badUri = "mina:tcp://localhost:11300?sync=true&codec=XXX";
 
     public void testMyCodec() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -50,7 +51,7 @@ public class MinaCustomCodecTest extends ContextTestSupport {
 
     public void testBadConfiguration() throws Exception {
         try {
-            template.sendBody("mina:tcp://localhost:11300?sync=true&codec=XXX", "Hello World");
+            template.sendBody(badUri, "Hello World");
             fail("Should have thrown a ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
             // ok
