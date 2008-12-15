@@ -79,6 +79,9 @@ public class FileConsumer extends ScheduledPollConsumer {
 
         // consume files one by one
         int total = exchanges.size();
+        if (total > 0 && LOG.isDebugEnabled()) {
+            LOG.debug("Total " + total + " files to consume");
+        }
         for (int index = 0; index < total; index++) {
             FileExchange exchange = exchanges.get(index);
             // add current index and total as headers

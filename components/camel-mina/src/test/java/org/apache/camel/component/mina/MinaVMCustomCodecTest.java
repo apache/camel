@@ -16,94 +16,16 @@
  */
 package org.apache.camel.component.mina;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.mina.common.ByteBuffer;
-import org.apache.mina.common.IoSession;
-import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
-import org.apache.mina.filter.codec.ProtocolCodecFactory;
-import org.apache.mina.filter.codec.ProtocolDecoder;
-import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.apache.mina.filter.codec.ProtocolEncoder;
-import org.apache.mina.filter.codec.ProtocolEncoderOutput;
-
 /**
  * Unit test with custom codec using the VM protocol.
  */
-public class MinaVMCustomCodecTest extends ContextTestSupport {
+public class MinaVMCustomCodecTest extends MinaCustomCodecTest {
 
-    private String uri = "mina:vm://localhost:11301?sync=true&codec=myCodec";
-
-    public void testMyCodec() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Bye World");
-
-        Object out = template.requestBody(uri, "Hello World");
-        assertEquals("Bye World", out);
-
-        mock.assertIsSatisfied();
-    }
-
-    public void testBadConfiguration() throws Exception {
-        try {
-            template.sendBody("mina:vm://localhost:11300?sync=true&codec=XXX", "Hello World");
-            fail("Should have thrown a ResolveEndpointFailedException");
-        } catch (ResolveEndpointFailedException e) {
-            // ok
-        }
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
-        return jndi;
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(uri).transform(constant("Bye World")).to("mock:result");
-            }
-        };
-    }
-
-    private class MyCodec implements ProtocolCodecFactory {
-
-        public ProtocolEncoder getEncoder() throws Exception {
-            return new ProtocolEncoder() {
-                public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
-                    throws Exception {
-                    ByteBuffer bb = ByteBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
-                    bb.put(s.getBytes());
-                    bb.flip();
-                    out.write(bb);
-                }
-
-                public void dispose(IoSession ioSession) throws Exception {
-                    // do nothing
-                }
-            };
-
-        }
-
-        public ProtocolDecoder getDecoder() throws Exception {
-            return new CumulativeProtocolDecoder() {
-                protected boolean doDecode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
-                    if (in.remaining() > 0) {
-                        byte[] buf = MinaConverter.toByteArray(in);
-                        out.write(new String(buf));
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
-        }
+    @Override
+    protected void setUp() throws Exception {
+        uri = "mina:vm://localhost:11301?sync=true&codec=myCodec";
+        badUri = "mina:vm://localhost:11301?sync=true&codec=XXX";
+        super.setUp();
     }
 
 }
