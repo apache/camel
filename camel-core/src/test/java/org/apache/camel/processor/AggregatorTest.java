@@ -41,18 +41,17 @@ public class AggregatorTest extends ContextTestSupport {
     }
 
     public void testPredicate() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-
-        resultEndpoint.expectedMessageCount(messageCount / 5);
-        // lets send a large batch of messages
-        for (int i = 1; i <= messageCount; i++) {
-            String body = "message:" + i;
-            template.sendBodyAndHeader("direct:predicate", body, "cheese", 123);
-        }
-
-        resultEndpoint.assertIsSatisfied();
+        testSendALargeBatch("direct:predicate");
+    }
+    
+    public void testOutBatchPredicate() throws Exception {
+        testSendALargeBatch("direct:outBatchPredicate");
     }
 
+    public void testOutBatchWithNoInBatching() throws Exception {
+        testSendALargeBatch("direct:outBatchNoInBatching");
+    }
+    
     public void testOneMessage() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
 
@@ -87,15 +86,38 @@ public class AggregatorTest extends ContextTestSupport {
                 // in this route we aggregate all from direct:state based on the header id cheese
                 from("direct:start").aggregator(header("cheese")).to("mock:result");
 
-                // CAMEL-393 now fixed
                 from("seda:header").setHeader("visited", constant(true)).aggregator(header("cheese")).to("mock:result");
 
                 // in this sample we aggreagte using our own startegy with a completion predicate
                 // stating that the aggregated header is equal to 5.
                 from("direct:predicate").aggregator(header("cheese"), new MyAggregationStrategy()).
                     completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
+                
+                // this sample is similar to the one above but it also illustrates the use of outBatchSize 
+                // to send exchanges to mock:endpoint in batches of 10.  
+                from("direct:outBatchPredicate").aggregator(header("cheese"), new MyAggregationStrategy()).
+                    completedPredicate(header("aggregated").isEqualTo(5)).outBatchSize(10).to("mock:result");
                 // END SNIPPET: ex
+
+                // turning off in batching (batchSize = 1) is a good way to test "out" batching.  Don't include
+                // in wiki snippet as it may not be a good example to follow.
+                from("direct:outBatchNoInBatching").aggregator(header("cheese"), new MyAggregationStrategy()).
+                completedPredicate(header("aggregated").isEqualTo(5)).batchSize(1).outBatchSize(10).to("mock:result");
             }
         };
+    }
+    
+    private void testSendALargeBatch(String endpointUri) throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+
+        resultEndpoint.expectedMessageCount(messageCount / 5);
+        // lets send a large batch of messages
+        for (int i = 1; i <= messageCount; i++) {
+            String body = "message:" + i;
+            template.sendBodyAndHeader(endpointUri, body, "cheese", 123);
+        }
+
+        resultEndpoint.assertIsSatisfied();
+        
     }
 }

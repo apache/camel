@@ -64,15 +64,4 @@ public class Aggregator extends BatchProcessor {
         return "Aggregator[to: " + getProcessor() + "]";
     }
 
-    @Override
-    protected boolean isBatchCompleted(int index) {
-        if (aggregationCompletedPredicate != null) {
-            // TODO: (davsclaus) CAMEL-1159 What is the point with this code? I think its wrong
-            if (getCollection().size() > 0) {
-                return true;
-            }
-        }
-
-        return super.isBatchCompleted(index);
-    }
 }
