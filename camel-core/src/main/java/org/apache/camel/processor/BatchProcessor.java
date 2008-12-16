@@ -114,15 +114,23 @@ public class BatchProcessor extends ServiceSupport implements Processor {
     }
 
     /**
-     * A strategy method to decide if the batch is completed the resulting exchanges should be sent
+     * A strategy method to decide if the "in" batch is completed.  That is, whether the resulting 
+     * exchanges in the in queue should be drained to the "out" collection.
      */
-    protected boolean isBatchCompleted(int num) {
-        // out batch size is optional and we should only check it if its enabled (= >0)
-        if (outBatchSize > 0 && collection.size() >= outBatchSize) {
+    protected boolean isInBatchCompleted(int num) {
+        return num >= batchSize;
+    }
+    
+    /**
+     * A strategy method to decide if the "out" batch is completed. That is, whether the resulting 
+     * exchange in the out collection should be sent.
+     */
+    protected boolean isOutBatchCompleted() {
+        if (outBatchSize == 0) {
+            // out batch is disabled, so go ahead and send.
             return true;
         }
-        // fallback to regular batch size check
-        return num >= batchSize;
+        return collection.size() > 0 && collection.size() >= outBatchSize;
     }
 
     /**
@@ -175,9 +183,18 @@ public class BatchProcessor extends ServiceSupport implements Processor {
             while (true) {
                 try {
                     Thread.sleep(batchTimeout);
+                    queue.drainTo(collection, batchSize);  
                 } catch (InterruptedException e) {
                     if (cancelRequested) {
                         return;
+                    }
+                    
+                    while (isInBatchCompleted(queue.size())) {
+                        queue.drainTo(collection, batchSize);  
+                    }
+                    
+                    if (!isOutBatchCompleted()) {
+                        continue;
                     }
                 }
                 try {
@@ -192,20 +209,13 @@ public class BatchProcessor extends ServiceSupport implements Processor {
             cancelRequested = true;
             interrupt();
         }
-        
-        public void sendBatch() {
-            interrupt();
-        }
      
         public void enqueueExchange(Exchange exchange) {
             queue.add(exchange);
-            if (isBatchCompleted(queue.size())) {
-                sendBatch();
-            }
+            interrupt();
         }
         
         private void sendExchanges() throws Exception {
-            queue.drainTo(collection, batchSize);
             Iterator<Exchange> iter = collection.iterator();
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
@@ -213,7 +223,6 @@ public class BatchProcessor extends ServiceSupport implements Processor {
                 processExchange(exchange);
             }
         }
-        
     }
     
 }
