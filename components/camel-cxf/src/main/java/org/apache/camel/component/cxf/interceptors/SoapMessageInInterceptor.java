@@ -32,7 +32,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 
-import org.apache.camel.pizza.types.CallerIDHeaderType;
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.model.SoapBindingInfo;
 import org.apache.cxf.common.logging.LogUtils;
