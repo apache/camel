@@ -35,6 +35,10 @@ import java.util.Map;
  *   <li>Either <tt>IN</tt> or <tt>OUT</tt> body according to the message exchange pattern. If the pattern is
  *   Out capable then the <tt>OUT</tt> body is returned, otherwise <tt>IN</tt>.
  * </ul>
+ * <p/>
+ * <b>Important note on usage:</b> See this
+ * <a href="http://activemq.apache.org/camel/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * before using.
  *
  * @version $Revision$
  */
