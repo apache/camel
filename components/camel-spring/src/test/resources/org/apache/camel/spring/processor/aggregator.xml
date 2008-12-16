@@ -62,8 +62,38 @@
         </completedPredicate>
       </aggregate>
     </route>
+    
+    <route>
+      <from uri="direct:outBatchPredicate"/>
+      <aggregate strategyRef="myAggregatorStrategy" outBatchSize="10">
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
+        <to uri="mock:result"/>
+        <completedPredicate>
+          <method bean="myAggregatorStrategy" method="isCompleted"/>
+        </completedPredicate>
+      </aggregate>
+    </route>
+    
+    <!--  This route turns off in batching by setting batchSize to 1 to run unit test for out batching.
+          Normal use cases may not want to disable in batching
+    -->
+    <route>
+      <from uri="direct:outBatchNoInBatching"/>
+      <aggregate strategyRef="myAggregatorStrategy" batchSize="1" outBatchSize="10">
+        <correlationExpression>
+          <simple>header.cheese</simple>
+        </correlationExpression>
+        <to uri="mock:result"/>
+        <completedPredicate>
+          <method bean="myAggregatorStrategy" method="isCompleted"/>
+        </completedPredicate>
+      </aggregate>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
+  
 
   <bean id="myAggregatorStrategy" class="org.apache.camel.processor.MyAggregationStrategy"/>
   <bean id="setHeaderProcessor" class="org.apache.camel.spring.processor.SetHeaderProcessor">
