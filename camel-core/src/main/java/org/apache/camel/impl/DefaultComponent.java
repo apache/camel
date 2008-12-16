@@ -184,10 +184,13 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     /**
      * Sets the bean properties on the given bean
+     *
+     * @param bean  the bean
+     * @param parameters  properties to set
      */
     protected void setProperties(Object bean, Map parameters) throws Exception {        
         // set reference properties first as they use # syntax that fools the regular properties setter
-        setReferenceProperties(bean, parameters);        
+        setReferenceProperties(bean, parameters);
         IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), bean, parameters);      
     }
 
@@ -213,8 +216,6 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                         }
                         // must remove as its a valid option and we could configure it
                         it.remove();
-                    } else {
-                        throw new IllegalArgumentException("Property: " + name + " not found on bean: " + bean + " of type: " + bean.getClass().getName());
                     }
                 }
             }
