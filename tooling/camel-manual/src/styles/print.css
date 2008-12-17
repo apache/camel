@@ -135,6 +135,14 @@ div.sidebar h2 {
 
 /* figures, tables, and listings */
 
+div.confluenceTableSmall th.confluenceTh { 
+  font-size: 11px;  	
+}
+
+div.confluenceTableSmall td.confluenceTd { 
+  font-size: 7px;  	
+}
+
 div.figure {
   margin: 1em 0;
   counter-increment: figure;
