@@ -18,28 +18,14 @@ package org.apache.camel.maven;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.tidy.Tidy;
-
-
+import org.apache.camel.dataformat.tagsoup.TidyMarkupDataFormat;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
@@ -280,44 +266,37 @@ public class HtmlToPdfMojo extends AbstractMojo {
         return name + ".html";
     }
 
-    private String downloadContent() throws IOException, TransformerFactoryConfigurationError, TransformerException, MojoExecutionException {
+    private String downloadContent() throws MalformedURLException, MojoExecutionException {
+        String contentTag = "<div class=\"" + contentDivClass + "\"";
+        String content = "";
 
         getLog().info("Downloading: " + page);
-        URL url = new URL(page);
-        Tidy tidy = new Tidy();
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        tidy.setErrout(new PrintWriter(result));
-        Document doc;
+        URL url = new URL(page);        
+        
         try {
-            doc = tidy.parseDOM(new BufferedInputStream(url.openStream()), new ByteArrayOutputStream());
+            TidyMarkupDataFormat dataFormat = new TidyMarkupDataFormat();
+            dataFormat.setMethod("html");
+            content = dataFormat.asStringTidyMarkup(new BufferedInputStream(url.openStream()));
         } catch (Throwable e) {
             if (errorOnDownloadFailure) {
-                getLog().debug(new String(result.toByteArray()), e);
                 throw new MojoExecutionException("Download or validation of '" + page + "' failed: " + e);
             } else {
-                getLog().debug(new String(result.toByteArray()), e);
                 getLog().error("Download or validation of '" + page + "' failed: " + e);
                 return null;
             }
         }
 
-        NodeList nodeList = doc.getElementsByTagName("div");
-        for (int i = 0; i < nodeList.getLength(); ++i) {
-            Node node = nodeList.item(i);
-            NamedNodeMap nm = node.getAttributes();
-            Node attr = nm.getNamedItem("class");
-            if (attr != null && attr.getNodeValue().equalsIgnoreCase(contentDivClass)) {
-                // Write the wiki-content div to the content variable.
-                ByteArrayOutputStream contentData = new ByteArrayOutputStream(1024 * 100);
-                TransformerFactory tFactory = TransformerFactory.newInstance();
-                Transformer transformer = tFactory.newTransformer();
-                transformer.transform(new DOMSource(node), new StreamResult(contentData));
-                String content = new String(contentData.toByteArray(), "UTF-8");
-                content = content.substring(content.indexOf("<div"));
-                return content;
+        int contentStart = content.indexOf(contentTag);
+        if (contentStart > 0) {
+            int contentEnd = content.indexOf(contentTag, contentStart + 1);
+            if (contentEnd > 0) {
+                return content.substring(contentStart, contentEnd);
+            } else {
+                return content.substring(contentStart);
             }
         }
-        throw new MojoExecutionException("The '" + page + "' page did not have a <div class=\"" + contentDivClass + "\"> element.");
+        
+        throw new MojoExecutionException("The '" + page + "' page did not have a " + contentTag + " element.");
     }
 
 }
