@@ -187,8 +187,11 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 Processor producer = pair.getProcessor();
                 Exchange subExchange = pair.getExchange();
                 updateNewExchange(subExchange, i, pairs);
-
-                producer.process(subExchange);
+                try {
+                    producer.process(subExchange);
+                } catch (Exception exception) {
+                    subExchange.setException(exception);
+                }
                 doAggregate(result, subExchange);
                 i++;
             }

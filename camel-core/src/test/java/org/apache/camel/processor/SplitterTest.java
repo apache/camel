@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -179,14 +180,50 @@ public class SplitterTest extends ContextTestSupport {
         }
 
     }
+    
+    public void testSplitterWithException() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(4);
+        resultEndpoint.expectedHeaderReceived("foo", "bar");
+        
+        MockEndpoint failedEndpoint = getMockEndpoint("mock:failed");
+        failedEndpoint.expectedMessageCount(1);
+        failedEndpoint.expectedHeaderReceived("foo", "bar");
+        
+        Exchange result = template.send("direct:exception", new Processor() {
+            public void process(Exchange exchange) {
+                Message in = exchange.getIn();
+                in.setBody("James,Guillaume,Hiram,Rob,Exception");
+                in.setHeader("foo", "bar");
+            }
+        });
+        
+        assertTrue("The result exchange should have a camel exception", result.getException() instanceof CamelException);
+
+        assertMockEndpointsSatisfied();
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0));
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
-                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy(), true).to("mock:result");
+                from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing(true).to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy(), true).streaming().to("mock:result");
+                from("direct:exception")
+                    .split(body().tokenize(","))
+                    .aggregationStrategy(new MyAggregationStrategy())
+                    .parallelProcessing(true).streaming()
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            String string = exchange.getIn().getBody(String.class);
+                            if ("Exception".equals(string)) {
+                                throw new CamelException("Just want to throw exception here");
+                            }
+                        
+                        }                    
+                    }).to("mock:result");
             }
         };
     }
