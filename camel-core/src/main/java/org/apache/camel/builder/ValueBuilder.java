@@ -82,6 +82,9 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
         return onNewPredicate(PredicateBuilder.isInstanceOf(expression, type));
     }
 
+    /**
+     * @deprecated use {@link #regex(String)}. Will be removed in Camel 2.0
+     */
     public Predicate<E> matchesRegex(String regex) {
         return onNewPredicate(PredicateBuilder.regex(expression, regex));
     }
