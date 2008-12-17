@@ -28,6 +28,13 @@ import org.apache.camel.Exchange;
 public class UseLatestAggregationStrategy implements AggregationStrategy {
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        newExchange.setException(checkException(oldExchange, newExchange));
         return newExchange;
+    }
+    
+    protected Throwable checkException(Exchange oldExchange, Exchange newExchange) {
+        return newExchange.getException() != null
+                ? newExchange.getException()
+                : oldExchange.getException();
     }
 }
