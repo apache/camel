@@ -72,7 +72,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
                 // START SNIPPET: example
                 // The message will be sent parallelly to the endpoints
                 from("direct:parallel")
-                    .multicast(new BodyOutAggregatingStrategy(), true).setThreadPoolExecutor(tpExecutor)
+                    .multicast(new BodyOutAggregatingStrategy(), true).executor(tpExecutor)
                         .to("direct:x", "direct:y", "direct:z");
                 // Multicast the message in a sequential way
                 from("direct:sequential").multicast(new BodyOutAggregatingStrategy()).to("direct:x", "direct:y", "direct:z");

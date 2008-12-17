@@ -59,6 +59,14 @@ public class DelayerType extends ExpressionNode {
     public String toString() {
         return "Delayer[" + getExpression() + " -> " + getOutputs() + "]";
     }
+    
+    // Fluent API
+    // -------------------------------------------------------------------------
+    
+    public DelayerType delayTime(Long delay) {
+        setDelayTime(delay);
+        return this;
+    }
 
     @Override
     public String getShortName() {
@@ -71,7 +79,8 @@ public class DelayerType extends ExpressionNode {
 
     public void setDelayTime(Long delay) {
         this.delayTime = delay;
-    }
+    }   
+    
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
