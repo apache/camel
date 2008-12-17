@@ -85,6 +85,54 @@ public class SplitterType extends ExpressionNode {
                 isParallelProcessing(), threadPoolExecutor, streaming);
     }
     
+    // Fluent API
+    // -------------------------------------------------------------------------
+    /**
+     * Set the spliter's aggregationStrategy
+     * @param aggregationStrategy 
+     *
+     * @return the builder
+     */
+    public SplitterType aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+    
+    /**
+     * Set the splitting action's thread model
+     * @param parallelProcessing 
+     * if it is true the Splitter will use a thread pool to do the splitting work; 
+     * if it is false the Splitter only do the splitting work in the calling thread.
+     *
+     * @return the builder
+     */
+    public SplitterType parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+    
+    /**
+     * Enables streaming. 
+     * See {@link SplitterType#setStreaming(boolean)} for more information
+     *
+     * @return the builder
+     */
+    public SplitterType streaming() {
+        setStreaming(true);
+        return this;
+    }
+    
+    /**
+     * Setting the executor for executing the splitting action. 
+     * @param executor , it should be a instance of ThreadPoolExcutor
+     * NOTE in Camel 2.0 , it will change to use the instance which implements Executor interface
+     * @return the builder
+     */
+    public SplitterType executor(ThreadPoolExecutor executor) {
+        setThreadPoolExecutor(executor);
+        return this;
+    }
+    
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }
@@ -115,15 +163,7 @@ public class SplitterType extends ExpressionNode {
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
     }
-    
-    /**
-     * Enables streaming. 
-     * Cfr. {@link SplitterType#setStreaming(boolean)} for more information
-     */
-    public SplitterType streaming() {
-        setStreaming(true);
-        return this;
-    }
+
 
     private ThreadPoolExecutor createThreadPoolExecutor(RouteContext routeContext) {
         ThreadPoolExecutor threadPoolExecutor = getThreadPoolExecutor();
