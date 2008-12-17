@@ -66,6 +66,45 @@ public class MulticastType extends OutputType<ProcessorType> {
         return createOutputsProcessor(routeContext);
     }
 
+    // Fluent API
+    // -------------------------------------------------------------------------
+    /**
+     * Set the multicasting aggregationStrategy
+     * @param aggregationStrategy 
+     *
+     * @return the builder
+     */
+    public MulticastType aggregationStrategy(AggregationStrategy aggregationStrategy) {
+        setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+    
+    /**
+     * Set the multicasting action's thread model
+     * @param parallelProcessing 
+     * if it is true the Splitter will use a thread pool to do the multicasting work; 
+     * if it is false the Splitter only do the multicasting work in the calling thread.
+     *
+     * @return the builder
+     */
+    public MulticastType parallelProcessing(boolean parallelProcessing) {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+    
+    /**
+     * Setting the executor for executing the multicasting action.
+     *   
+     * @param executor , it should be a instance of ThreadPoolExcutor
+     * NOTE in Camel 2.0 , it will change to use the instance which implements Executor interface
+     *
+     * @return the builder
+     */
+    public MulticastType executor(ThreadPoolExecutor executor) {
+        setThreadPoolExecutor(executor);
+        return this;
+    }
+    
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
         if (aggregationStrategy == null && strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -82,28 +121,26 @@ public class MulticastType extends OutputType<ProcessorType> {
     public AggregationStrategy getAggregationStrategy() {
         return aggregationStrategy;
     }
-
-    public MulticastType setAggregationStrategy(AggregationStrategy aggregationStrategy) {
-        this.aggregationStrategy = aggregationStrategy;
-        return this;
+    
+    public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
+        this.aggregationStrategy = aggregationStrategy;        
     }
 
     public boolean isParallelProcessing() {
         return parallelProcessing != null ? parallelProcessing : false;
     }
 
-    public MulticastType setParallelProcessing(boolean parallelProcessing) {
-        this.parallelProcessing = parallelProcessing;
-        return this;
+    public void setParallelProcessing(boolean parallelProcessing) {
+        this.parallelProcessing = parallelProcessing;        
     }
 
     public ThreadPoolExecutor getThreadPoolExecutor() {
         return threadPoolExecutor;
     }
 
-    public MulticastType setThreadPoolExecutor(ThreadPoolExecutor executor) {
-        this.threadPoolExecutor = executor;
-        return this;
+    public void setThreadPoolExecutor(ThreadPoolExecutor executor) {
+        this.threadPoolExecutor = executor;        
+
     }
 
     @Override

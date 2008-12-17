@@ -51,6 +51,10 @@ public class SetExchangePatternType extends OutputType {
         this.pattern = pattern;
     }
 
+    public SetExchangePatternType pattern(ExchangePattern pattern) {
+        setPattern(pattern);
+        return this;
+    }
 
     public ExchangePattern getPattern() {
         return pattern;

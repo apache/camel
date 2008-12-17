@@ -100,7 +100,7 @@ public class LoanBroker extends RouteBuilder {
             // Set the aggregation strategy for aggregating the out message            
             .multicast(new BankResponseAggregationStrategy().setAggregatingOutMessage(true))
                 // Send out the request the below three different banks parallelly
-                .setParallelProcessing(true).to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
+                .parallelProcessing(true).to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
         
         // Each bank processor will process the message and put the response message back
         from("jms:queue2:bank1").process(new Bank("bank1"));
