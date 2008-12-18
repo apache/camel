@@ -45,7 +45,7 @@ public class MulticastType extends OutputType<ProcessorType> {
     @XmlAttribute(required = false)
     private String strategyRef;
     @XmlAttribute(required = false)
-    private String threadPoolRef;
+    private String threadPoolRef;    
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlTransient
@@ -101,8 +101,8 @@ public class MulticastType extends OutputType<ProcessorType> {
     public MulticastType executor(Executor executor) {
         setExecutor(executor);
         return this;
-    }
-    
+    }    
+        
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
         if (aggregationStrategy == null && strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
@@ -140,10 +140,11 @@ public class MulticastType extends OutputType<ProcessorType> {
     public void setExecutor(Executor executor) {
         this.executor = executor;        
     }
-
+    
     @Override
-    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
-        // No need to wrap me in interceptors as they are all applied directly to my children
-        return new StreamCachingInterceptor(target);
+    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {        
+        //CAMEL-1193 now we need to wrap the multicast processor with the interceptors
+        //Current we wrap the StreamCachingInterceptor by default
+        return super.wrapProcessorInInterceptors(routeContext, new StreamCachingInterceptor(target));        
     }
 }
