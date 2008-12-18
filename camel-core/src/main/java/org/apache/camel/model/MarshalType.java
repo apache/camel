@@ -58,7 +58,7 @@ public class MarshalType extends OutputType<ProcessorType> {
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
-    @XmlElement(required = false, name = "string", type = StringDataFormat.class),
+    @XmlElement(required = false, name = "string", type = StringDataFormat.class), 
     @XmlElement(required = false, name = "xmlBeans", type = XMLBeansDataFormat.class),
     @XmlElement(required = false, name = "xstream", type = XStreamDataFormat.class),
     @XmlElement(required = false, name = "zip", type = ZipDataFormat.class)}
