@@ -75,7 +75,7 @@ public class LoanBroker extends RouteBuilder {
         // Now we can let the CreditAgency process the request, then the message will be put into creditResponseQueue
         from("jms:queue:creditRequestQueue").process(new CreditAgency()).to("jms:queue:creditResponseQueue");
 
-        // Here we use the multicast pattern to send the message to three different bank queue
+        // Here we use the multicast pattern to send the message to three different bank queues
         from("jms:queue:creditResponseQueue").multicast().to("jms:queue:bank1", "jms:queue:bank2", "jms:queue:bank3");
 
         // Each bank processor will process the message and put the response message into the bankReplyQueue
@@ -83,8 +83,8 @@ public class LoanBroker extends RouteBuilder {
         from("jms:queue:bank2").process(new Bank("bank2")).to("jms:queue:bankReplyQueue");
         from("jms:queue:bank3").process(new Bank("bank3")).to("jms:queue:bankReplyQueue");
 
-        // Now we aggregating the response message by using the Constants.PROPERTY_SSN header
-        // The aggregation will completed when all the three bank responses are received
+        // Now we aggregate the response message by using the Constants.PROPERTY_SSN header.
+        // The aggregation will be complete when all the three bank responses are received
         from("jms:queue:bankReplyQueue")
             .aggregate(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
             .completedPredicate(header(Exchange.AGGREGATED_COUNT).isEqualTo(3))
@@ -99,7 +99,7 @@ public class LoanBroker extends RouteBuilder {
         from("jms:queue2:parallelLoanRequestQueue").process(new CreditAgency())
             // Set the aggregation strategy for aggregating the out message            
             .multicast(new BankResponseAggregationStrategy().setAggregatingOutMessage(true))
-                // Send out the request the below three different banks parallelly
+                // Send out the request to three different banks in parallel
                 .setParallelProcessing(true).to("jms:queue2:bank1", "jms:queue2:bank2", "jms:queue2:bank3");
         
         // Each bank processor will process the message and put the response message back
