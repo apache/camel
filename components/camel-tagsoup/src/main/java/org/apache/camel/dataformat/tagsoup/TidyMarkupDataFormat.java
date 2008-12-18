@@ -32,9 +32,13 @@ import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.ccil.cowan.tagsoup.HTMLSchema;
 import org.ccil.cowan.tagsoup.Parser;
 import org.ccil.cowan.tagsoup.Schema;
@@ -48,6 +52,11 @@ import org.ccil.cowan.tagsoup.XMLWriter;
  * 
  */
 public class TidyMarkupDataFormat implements DataFormat {
+
+    /*
+     * Our Logger
+     */
+    private static final transient Log LOG = LogFactory.getLog(TidyMarkupDataFormat.class);
 
     private static final String NO = "no";
 
@@ -94,24 +103,29 @@ public class TidyMarkupDataFormat implements DataFormat {
     private Map<String, Object> parserPropeties;
 
     /**
-     * Unsupported operation
+     * Unsupported operation. We cannot create ugly HTML.
      */
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         throw new CamelException("Marshalling from Well Formed HTML to ugly HTML is not supported."
-                + " Only use <unmarshal><wellFormedHtml/><unmarshal>");
+                + " Only unmarshal is supported");
     }
 
     /**
      * Unmarshal the data
+     * 
+     * @throws Exception
      */
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
 
-        if (dataObjectType.isAssignableFrom(String.class)) {
-            return asStringTidyMarkup(inputStream);
-        } else if (dataObjectType.isAssignableFrom(Node.class)) {
+        ObjectHelper.notNull(dataObjectType, "dataObjectType", this);
+
+        if (dataObjectType.isAssignableFrom(Node.class)) {
             return asNodeTidyMarkup(inputStream);
+        } else if (dataObjectType.isAssignableFrom(String.class)) {
+            return asStringTidyMarkup(inputStream);
         } else {
-            throw new CamelException("The return type [" + dataObjectType.getCanonicalName() + "] is unsupported");
+            throw new IllegalArgumentException("The return type [" + dataObjectType.getCanonicalName()
+                    + "] is unsupported");
         }
     }
 
@@ -121,7 +135,6 @@ public class TidyMarkupDataFormat implements DataFormat {
      * @param inputStream
      * @return String of XML
      * @throws CamelException
-     * @throws Exception
      */
     private String asStringTidyMarkup(InputStream inputStream) throws CamelException {
 
@@ -134,16 +147,24 @@ public class TidyMarkupDataFormat implements DataFormat {
             return w.toString();
 
         } catch (Exception e) {
-            throw new CamelException("Failed to turn the HTML into tidy Markup", e);
+            throw new CamelException("Failed to convert the HTML to tidy Markup", e);
         } finally {
             try {
                 inputStream.close();
             } catch (Exception e) {
-                throw new CamelException("Failed to close the inputStream", e);
+                LOG.warn("Failed to close the inputStream");
             }
         }
     }
 
+    /**
+     * Return the HTML Markup as an {@link org.w3c.dom.Node}
+     * 
+     * @param inputStream
+     *            The input Stream to convert
+     * @return org.w3c.dom.Node The HTML Markup as a DOM Node
+     * @throws CamelException
+     */
     private Node asNodeTidyMarkup(InputStream inputStream) throws CamelException {
         XMLReader parser = createTagSoupParser();
         StringWriter w = new StringWriter();
@@ -155,7 +176,7 @@ public class TidyMarkupDataFormat implements DataFormat {
             transformer.transform(new SAXSource(parser, new InputSource(inputStream)), result);
             return result.getNode();
         } catch (Exception e) {
-            throw new CamelException("Failed to convert the HTML to tidy Markup (returning as a DOM Node)");
+            throw new CamelException("Failed to convert the HTML to tidy Markup", e);
         }
     }
 
@@ -202,7 +223,7 @@ public class TidyMarkupDataFormat implements DataFormat {
             }
 
         } catch (Exception e) {
-            throw new CamelException("Problem setting the parser feature", e);
+            throw new IllegalArgumentException("Problem configuring the parser", e);
         }
         return reader;
     }

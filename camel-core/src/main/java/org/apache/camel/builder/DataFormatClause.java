@@ -18,6 +18,8 @@ package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
@@ -163,11 +165,11 @@ public class DataFormatClause<T extends ProcessorType> {
     }
 
     /**
-     * Return TidyMarkup  HTML DataFormat (an XML Document) either 
+     * Return TidyMarkup in the default format 
      *  as {@link org.w3c.dom.Node}
      */
     public T tidyMarkup() {
-        return dataFormat(new TidyMarkupDataFormat(String.class));
+        return dataFormat(new TidyMarkupDataFormat(Node.class));
     }
 
     
