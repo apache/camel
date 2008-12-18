@@ -136,7 +136,7 @@ public class TidyMarkupDataFormat implements DataFormat {
      * @return String of XML
      * @throws CamelException
      */
-    private String asStringTidyMarkup(InputStream inputStream) throws CamelException {
+    public String asStringTidyMarkup(InputStream inputStream) throws CamelException {
 
         XMLReader parser = createTagSoupParser();
         StringWriter w = new StringWriter();
@@ -165,7 +165,7 @@ public class TidyMarkupDataFormat implements DataFormat {
      * @return org.w3c.dom.Node The HTML Markup as a DOM Node
      * @throws CamelException
      */
-    private Node asNodeTidyMarkup(InputStream inputStream) throws CamelException {
+    public Node asNodeTidyMarkup(InputStream inputStream) throws CamelException {
         XMLReader parser = createTagSoupParser();
         StringWriter w = new StringWriter();
         parser.setContentHandler(createContentHandler(w));
