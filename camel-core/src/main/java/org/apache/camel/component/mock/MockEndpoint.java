@@ -66,6 +66,7 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     private CountDownLatch latch;
     private long sleepForEmptyTest;
     private long resultWaitTime;
+    private long resultMinimumWaitTime;
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
@@ -223,17 +224,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
      */
     public void assertIsSatisfied(long timeoutForEmptyEndpoints) throws InterruptedException {
         LOG.info("Asserting: " + this + " is satisfied");
-        if (expectedCount >= 0) {
+        if (expectedCount == 0) {
+            if (timeoutForEmptyEndpoints > 0) {
+                LOG.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
+                Thread.sleep(timeoutForEmptyEndpoints);
+            }
+            assertEquals("Received message count", expectedCount, getReceivedCounter());
+        } else if (expectedCount > 0) {
             if (expectedCount != getReceivedCounter()) {
-                if (expectedCount == 0) {
-                    // lets wait a little bit just in case
-                    if (timeoutForEmptyEndpoints > 0) {
-                        LOG.debug("Sleeping for: " + timeoutForEmptyEndpoints + " millis to check there really are no messages received");
-                        Thread.sleep(timeoutForEmptyEndpoints);
-                    }
-                } else {
-                    waitForCompleteLatch();
-                }
+                waitForCompleteLatch();
             }
             assertEquals("Received message count", expectedCount, getReceivedCounter());
         } else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
@@ -574,6 +573,14 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     }
 
     /**
+     * Sets the minimum expected amount of time (in millis) the {@link #assertIsSatisfied()} will
+     * wait on a latch until it is satisfied
+     */
+    public void setMinimumResultWaitTime(long resultMinimumWaitTime) {
+        this.resultMinimumWaitTime = resultMinimumWaitTime;
+    }
+
+    /**
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint
      *
@@ -626,8 +633,9 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
         failures = new CopyOnWriteArrayList<Throwable>();
         tests = new CopyOnWriteArrayList<Runnable>();
         latch = null;
-        sleepForEmptyTest = 1000L;
+        sleepForEmptyTest = 0;
         resultWaitTime = 20000L;
+        resultMinimumWaitTime = 0L;
         expectedMinimumCount = -1;
         expectedBodyValues = null;
         actualBodyValues = new ArrayList();
@@ -686,7 +694,15 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
 
         // now lets wait for the results
         LOG.debug("Waiting on the latch for: " + resultWaitTime + " millis");
+        long start = System.currentTimeMillis();
         latch.await(resultWaitTime, TimeUnit.MILLISECONDS);
+        long delta = System.currentTimeMillis() - start;
+        LOG.debug("Took " + delta + " millis to complete latch");
+
+        if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
+            fail("Expected minimum " + resultWaitTime
+                    + " millis waiting on the result, but was faster with " + delta + " millis.");
+        }
     }
 
     protected void assertEquals(String message, Object expectedValue, Object actualValue) {
