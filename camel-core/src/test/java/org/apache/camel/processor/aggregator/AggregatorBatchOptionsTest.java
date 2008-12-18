@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor.aggregator;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -111,6 +113,9 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 1b", "id", "1");
         template.sendBodyAndHeader("direct:start", "Message 2b", "id", "2");
         template.sendBodyAndHeader("direct:start", "Message 1c", "id", "1");
+
+        result.await(500L, TimeUnit.MILLISECONDS);
+        
         // when we sent the next message we have reached the in batch size limit and the current
         // aggregated exchanges will be sent
         // wait a while for aggregating in a slower box
