@@ -249,7 +249,9 @@ public class RouteBuilderTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
-
+            // take off the InstrumentationProcessor
+            processor = unwrapDelegateProcessor(processor);
+            // take off the StreamCacheInterceptor
             processor = unwrapInterceptor(processor);
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
             List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
@@ -495,6 +497,15 @@ public class RouteBuilderTest extends TestSupport {
         if (processor instanceof Interceptor) {
             Interceptor interceptor = (Interceptor) processor;
             return interceptor.getProcessor();
+        } else {
+            return processor;
+        }
+    }
+    
+    protected Processor unwrapDelegateProcessor(Processor processor) {
+        if (processor instanceof DelegateProcessor) {
+            DelegateProcessor delegate = (DelegateProcessor) processor;
+            return delegate.getProcessor();
         } else {
             return processor;
         }
