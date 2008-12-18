@@ -18,7 +18,6 @@ package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
 
-import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
@@ -29,6 +28,7 @@ import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
+import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
@@ -154,6 +154,23 @@ public class DataFormatClause<T extends ProcessorType> {
         return dataFormat(new XMLBeansDataFormat());
     }
 
+    /**
+     * Return WellFormed HTML (an XML Document) either 
+     * {@link java.lang.String} or {@link org.w3c.dom.Node}
+     */
+    public T tidyMarkup(Class<?> dataObjectType) {
+        return dataFormat(new TidyMarkupDataFormat(dataObjectType));
+    }
+
+    /**
+     * Return TidyMarkup  HTML DataFormat (an XML Document) either 
+     *  as {@link org.w3c.dom.Node}
+     */
+    public T tidyMarkup() {
+        return dataFormat(new TidyMarkupDataFormat(String.class));
+    }
+
+    
     /**
      * Uses the XStream data format
      */
