@@ -219,7 +219,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
-            predicate.assertMatches("Predicate should match", exchange);
+            predicate.assertMatches("Predicate should match: ", exchange);
         } catch (AssertionError e) {
             log.debug("Caught expected assertion error: " + e);
         }
@@ -231,7 +231,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected boolean assertPredicate(Predicate predicate, Exchange exchange, boolean expected) {
         if (expected) {
-            predicate.assertMatches("Predicate failed", exchange);
+            predicate.assertMatches("Predicate failed: ", exchange);
         }
         boolean value = predicate.matches(exchange);
 

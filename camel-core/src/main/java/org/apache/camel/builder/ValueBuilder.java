@@ -82,19 +82,16 @@ public class ValueBuilder implements Expression {
         return onNewPredicate(PredicateBuilder.isInstanceOf(expression, type));
     }
 
-    /**
-     * @deprecated use {@link #regex(String)}
-     */
-    public Predicate matchesRegex(String regex) {
-        return onNewPredicate(PredicateBuilder.regex(expression, regex));
-    }
-
     public Predicate isNull() {
         return onNewPredicate(PredicateBuilder.isNull(expression));
     }
 
     public Predicate isNotNull() {
         return onNewPredicate(PredicateBuilder.isNotNull(expression));
+    }
+
+    public Predicate not(Predicate predicate) {
+        return onNewPredicate(PredicateBuilder.not(predicate));
     }
 
     /**

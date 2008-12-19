@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
  * @version $Revision$
@@ -38,11 +39,13 @@ public class PredicateBuilderTest extends TestSupport {
 
     public void testPredicates() throws Exception {
         assertMatches(header("name").isEqualTo(constant("James")));
+        assertMatches(not(header("name").isEqualTo(constant("Claus"))));
     }
 
     public void testFailingPredicates() throws Exception {
         assertDoesNotMatch(header("name").isEqualTo(constant("Hiram")));
         assertDoesNotMatch(header("size").isGreaterThan(constant(100)));
+        assertDoesNotMatch(not(header("size").isLessThan(constant(100))));
     }
 
     @Override
