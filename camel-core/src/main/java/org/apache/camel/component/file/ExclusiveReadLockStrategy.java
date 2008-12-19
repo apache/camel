@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
 
 /**
  * Strategy for acquiring exclusive read locks for files to be consumed.
@@ -37,9 +36,9 @@ public interface ExclusiveReadLockStrategy {
      * Acquires exclusive read lock to the file.
      *
      * @param file the file
-     * @return true if read lock was acquired
-     * @throws IOException can be thrown
+     * @return <tt>true</tt> if read lock was acquired.
+     *                       If <tt>false</tt> Camel will skip the file and try it on the next poll
      */
-    boolean acquireExclusiveReadLock(File file) throws IOException;
+    boolean acquireExclusiveReadLock(File file);
 
 }

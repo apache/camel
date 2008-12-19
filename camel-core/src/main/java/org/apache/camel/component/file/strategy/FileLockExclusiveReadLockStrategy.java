@@ -22,6 +22,7 @@ import java.io.RandomAccessFile;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.ExclusiveReadLockStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -35,18 +36,20 @@ import org.apache.commons.logging.LogFactory;
 public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrategy {
     private static final transient Log LOG = LogFactory.getLog(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
-
-    public boolean acquireExclusiveReadLock(File file) throws IOException {
+    
+    public boolean acquireExclusiveReadLock(File file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + file);
         }
 
-        // try to acquire rw lock on the file before we can consume it
-        FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
-
-        long start = System.currentTimeMillis();
-        boolean exclusive = false;
+        FileChannel channel = null;
         try {
+            // try to acquire rw lock on the file before we can consume it
+            channel = new RandomAccessFile(file, "rw").getChannel();
+    
+            long start = System.currentTimeMillis();
+            boolean exclusive = false;
+
             while (!exclusive) {
                 // timeout check
                 if (timeout > 0) {
@@ -68,20 +71,35 @@ public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrat
                     lock.release();
                     exclusive = true;
                 } else {
-                    LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
+                    sleep();
                 }
             }
+        } catch (IOException e) {
+            // must handle IOException as some apps on Windows etc. will still somehow hold a lock to a file
+            // such as AntiVirus or MS Office that has special locks for it's supported files
+            if (timeout == 0) {
+                // if not using timeout, then we cant retry, so rethrow
+                throw new RuntimeCamelException(e);
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Can not acquire read lock. Will try again.", e);
+            }
+            sleep();
         } finally {
             // must close channel
             ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + file, LOG);
         }
 
         return true;
+    }
+    
+    private void sleep() {
+        LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 
     public long getTimeout() {
