@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.TransformProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -55,5 +56,15 @@ public class TransformType extends ExpressionNode {
         Processor childProcessor = routeContext.createProcessor(this);
 
         return new TransformProcessor(expr, childProcessor);
+    }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Set the expression that TransformType will use
+     * @return the builder
+     */
+    public ExpressionClause<TransformType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 }

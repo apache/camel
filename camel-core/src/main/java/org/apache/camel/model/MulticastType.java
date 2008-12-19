@@ -80,10 +80,20 @@ public class MulticastType extends OutputType<ProcessorType> {
     }
     
     /**
+     * use a thread pool to do the multicasting work
+     *     
+     * @return the builder
+     */
+    public MulticastType parallelProcessing() {
+        setParallelProcessing(parallelProcessing);
+        return this;
+    }
+    
+    /**
      * Set the multicasting action's thread model
      * @param parallelProcessing 
-     * if it is true the Splitter will use a thread pool to do the multicasting work; 
-     * if it is false the Splitter only do the multicasting work in the calling thread.
+     * if it is true the MulticastType will use a thread pool to do the multicasting work; 
+     * if it is false the MulticastType only do the multicasting work in the calling thread.
      *
      * @return the builder
      */

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.LoopProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -50,6 +51,8 @@ public class LoopType extends ExpressionNode implements Block {
             setExpression(new ExpressionType(expr));
         }
     }
+    
+    
     @Override
     public String toString() {
         return "Loop[" + getExpression() + " -> " + getOutputs() + "]";
@@ -65,5 +68,15 @@ public class LoopType extends ExpressionNode implements Block {
         return new LoopProcessor(
             getExpression().createExpression(routeContext),
             routeContext.createProcessor(this));
+    }
+    
+     // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Set the expression that LoopType will use
+     * @return the builder
+     */
+    public ExpressionClause<LoopType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 }

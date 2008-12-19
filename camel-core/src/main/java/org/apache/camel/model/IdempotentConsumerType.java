@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.idempotent.IdempotentConsumer;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.RouteContext;
@@ -61,6 +62,14 @@ public class IdempotentConsumerType extends ExpressionNode {
     
     // Fluent API
     //-------------------------------------------------------------------------
+    /**
+     * Set the expression that IdempotentConsumerType will use
+     * @return the builder
+     */
+    public ExpressionClause<IdempotentConsumerType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
+    }
+    
     /**
      * Sets the reference name of the message id repository
      *

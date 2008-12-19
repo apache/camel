@@ -19,6 +19,7 @@ package org.apache.camel.model;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -29,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlRootElement(name = "when")
-public class WhenType<Type extends ProcessorType> extends ExpressionNode {
+public class WhenType extends ExpressionNode {
 
     public WhenType() {
     }
@@ -55,5 +56,15 @@ public class WhenType<Type extends ProcessorType> extends ExpressionNode {
     @Override
     public FilterProcessor createProcessor(RouteContext routeContext) throws Exception {
         return createFilterProcessor(routeContext);
+    }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Set the expression that WhenType will use
+     * @return the builder
+     */
+    public ExpressionClause<WhenType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 }

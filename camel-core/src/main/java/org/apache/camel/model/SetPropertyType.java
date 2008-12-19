@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.spi.RouteContext;
@@ -79,5 +80,15 @@ public class SetPropertyType extends ExpressionNode {
 
     public String getPropertyName() {
         return propertyName;
+    }
+    
+ // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Set the expression that SetPropertyType will use
+     * @return the builder
+     */
+    public ExpressionClause<SetPropertyType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 }
