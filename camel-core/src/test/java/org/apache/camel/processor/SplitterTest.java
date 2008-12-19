@@ -210,7 +210,7 @@ public class SplitterTest extends ContextTestSupport {
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
                 from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing(true).to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
-                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy(), true).streaming().to("mock:result");
+                from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
                 from("direct:exception")
                     .split(body().tokenize(","))
                     .aggregationStrategy(new MyAggregationStrategy())

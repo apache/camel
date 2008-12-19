@@ -758,6 +758,21 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * This splitter responds with the latest message returned from destination
      * endpoint.
      *
+     * @return the expression clause builder for the expression on which to split
+     */
+    public ExpressionClause<SplitterType> split() {
+        SplitterType answer = new SplitterType();
+        addOutput(answer);
+        return ExpressionClause.createAndSetExpression(answer);
+    }
+
+    /**
+     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
+     * <p>
+     * This splitter responds with the latest message returned from destination
+     * endpoint.
+     *
      * @param expression  the expression on which to split the message
      * @return the builder
      */
@@ -771,27 +786,11 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
-     * This splitter responds with the latest message returned from destination
-     * endpoint.
-     *
-     * @return the expression clause builder for the expression on which to split
-     */
-    public ExpressionClause<SplitterType> split() {
-        SplitterType answer = new SplitterType();
-        addOutput(answer);
-        return ExpressionClause.createAndSetExpression(answer);
-    }
-
-    /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
-     * Creates a splitter allowing you split a message into a number of pieces and process them individually.
-     * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
      *
      * @param expression  the expression on which to split
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the builder
-     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy) {
         SplitterType answer = new SplitterType(expression);
@@ -946,6 +945,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
+     * @deprecated will be removed in Camel 2.0
      */
     public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy, boolean parallelProcessing) {
         SplitterType answer = new SplitterType();
