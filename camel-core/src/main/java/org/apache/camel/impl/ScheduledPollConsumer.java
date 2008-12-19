@@ -61,7 +61,9 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements
             LOG.debug("Starting to poll: " + this.getEndpoint());
         }
         try {
-            poll();
+            if (isRunAllowed()) {
+                poll();
+            }
         } catch (Exception e) {
             LOG.warn("An exception occured while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
             if (firstExceptionThrown == null) {

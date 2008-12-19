@@ -78,6 +78,9 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private FileFilter filter;
     private Comparator<File> sorter;
     private Comparator<FileExchange> sortBy;
+    private ExclusiveReadLockStrategy exclusiveReadLockStrategy;
+    private String readLock = "fileLock";
+    private long readLockTimeout;
 
     protected FileEndpoint(File file, String endpointUri, FileComponent component) {
         super(endpointUri, component);
@@ -424,6 +427,30 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         setSortBy(DefaultFileSorter.sortByFileLanguage(expression, reverse));
     }
 
+    public ExclusiveReadLockStrategy getExclusiveReadLockStrategy() {
+        return exclusiveReadLockStrategy;
+    }
+
+    public void setExclusiveReadLockStrategy(ExclusiveReadLockStrategy exclusiveReadLockStrategy) {
+        this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
+    }
+
+    public String getReadLock() {
+        return readLock;
+    }
+
+    public void setReadLock(String readLock) {
+        this.readLock = readLock;
+    }
+
+    public long getReadLockTimeout() {
+        return readLockTimeout;
+    }
+
+    public void setReadLockTimeout(long readLockTimeout) {
+        this.readLockTimeout = readLockTimeout;
+    }
+
     /**
      * A strategy method to lazily create the file strategy
      */
@@ -487,6 +514,15 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         }
         if (preMoveExpression != null) {
             params.put("preMoveExpression", preMoveExpression);
+        }
+        if (exclusiveReadLockStrategy != null) {
+            params.put("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+        }
+        if (readLock != null) {
+            params.put("readLock", readLock);
+        }
+        if (readLockTimeout > 0) {
+            params.put("readLockTimeout", Long.valueOf(readLockTimeout));
         }
 
         return params;

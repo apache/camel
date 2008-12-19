@@ -22,6 +22,7 @@ import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
+import org.apache.camel.component.file.ExclusiveReadLockStrategy;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.component.file.FileProcessStrategy;
@@ -39,6 +40,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
     private static final transient Log LOG = LogFactory.getLog(FileProcessStrategySupport.class);
     private boolean lockFile;
     private FileRenamer lockFileRenamer;
+    private ExclusiveReadLockStrategy exclusiveReadLockStrategy;
 
     protected FileProcessStrategySupport() {
         this(true);
@@ -54,6 +56,15 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
     }
 
     public boolean begin(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
+        // is we use excluse read then acquire the exclusive read (waiting until we got it)
+        if (exclusiveReadLockStrategy != null) {
+            boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(file);
+            if (!lock) {
+                // do not begin sice we could not get the exclusive read lcok
+                return false;
+            }
+        }
+
         if (isLockFile()) {
             File newFile = lockFileRenamer.renameFile(exchange, file);
             String lockFileName = newFile.getAbsolutePath();
@@ -71,6 +82,7 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
                 return false;
             }
         }
+
         return true;
     }
 
@@ -84,22 +96,6 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
         } catch (Exception e) {
             LOG.warn("Unable to unlock file: " + file, e);
         }
-    }
-
-    public boolean isLockFile() {
-        return lockFile;
-    }
-
-    public void setLockFile(boolean lockFile) {
-        this.lockFile = lockFile;
-    }
-
-    public FileRenamer getLockFileRenamer() {
-        return lockFileRenamer;
-    }
-
-    public void setLockFileRenamer(FileRenamer lockFileRenamer) {
-        this.lockFileRenamer = lockFileRenamer;
     }
 
     protected void unlockFile(FileEndpoint endpoint, FileExchange exchange, File file) throws Exception {
@@ -123,5 +119,29 @@ public abstract class FileProcessStrategySupport implements FileProcessStrategy 
                 lockfile.delete();
             }
         }
+    }
+
+    public boolean isLockFile() {
+        return lockFile;
+    }
+
+    public void setLockFile(boolean lockFile) {
+        this.lockFile = lockFile;
+    }
+
+    public FileRenamer getLockFileRenamer() {
+        return lockFileRenamer;
+    }
+
+    public void setLockFileRenamer(FileRenamer lockFileRenamer) {
+        this.lockFileRenamer = lockFileRenamer;
+    }
+
+    public ExclusiveReadLockStrategy getExclusiveReadLockStrategy() {
+        return exclusiveReadLockStrategy;
+    }
+
+    public void setExclusiveReadLockStrategy(ExclusiveReadLockStrategy exclusiveReadLockStrategy) {
+        this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
     }
 }

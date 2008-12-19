@@ -17,10 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +25,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -44,10 +39,6 @@ public class FileConsumer extends ScheduledPollConsumer {
     private FileEndpoint endpoint;
     private boolean recursive;
     private String regexPattern = "";
-    private boolean exclusiveReadLock = true;
-
-    // TODO: move option to endpoint to get rid of consumer. prefix
-    // TODO: remove idempotent again, we should just use the idempotent DSL we already have
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -139,11 +130,6 @@ public class FileConsumer extends ScheduledPollConsumer {
         try {
             final FileProcessStrategy processStrategy = endpoint.getFileStrategy();
 
-            // is we use excluse read then acquire the exclusive read (waiting until we got it)
-            if (exclusiveReadLock) {
-                acquireExclusiveReadLock(target);
-            }
-
             if (LOG.isDebugEnabled()) {
                 LOG.debug("About to process file: " + target + " using exchange: " + exchange);
             }
@@ -189,31 +175,6 @@ public class FileConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
-     * After granting the read lock it is realeased, we just want to make sure that when we start
-     * consuming the file its not currently in progress of being written by third party.
-     */
-    protected void acquireExclusiveReadLock(File file) throws IOException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Waiting for exclusive read lock to file: " + file);
-        }
-
-        // try to acquire rw lock on the file before we can consume it
-        FileChannel channel = new RandomAccessFile(file, "rw").getChannel();
-        try {
-            FileLock lock = channel.lock();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + file);
-            }
-            // just release it now we dont want to hold it during the rest of the processing
-            lock.release();
-        } finally {
-            // must close channel
-            ObjectHelper.close(channel, "FileConsumer during acquiring of exclusive read lock", LOG);
-        }
-    }
-
-    /**
      * Strategy when the file was processed and a commit should be executed.
      *
      * @param processStrategy   the strategy to perform the commit
@@ -225,6 +186,12 @@ public class FileConsumer extends ScheduledPollConsumer {
      */
     protected void processStrategyCommit(FileProcessStrategy processStrategy, FileExchange exchange,
                                          File file, boolean failureHandled) {
+        if (endpoint.isIdempotent()) {
+            // only add to idempotent repository if we could process the file
+            // use file.getPath as key for the idempotent repository to support files with same name but in different folders
+            endpoint.getIdempotentRepository().add(file.getPath());
+        }
+        
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing file strategy: " + processStrategy + " for file: "
@@ -262,11 +229,9 @@ public class FileConsumer extends ScheduledPollConsumer {
                 LOG.trace("File did not match. Will skip this file: " + file);
             }
             return false;
-        } else  if (endpoint.isIdempotent() && !endpoint.getIdempotentRepository().add(file.getName())) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
-            }
-            // skip as we have already processed it
+        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getPath())) {
+            // use file.getPath as key for the idempotent repository to support files with same name but in different folders
+            LOG.warn("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
             return false;
         }
 
@@ -350,14 +315,6 @@ public class FileConsumer extends ScheduledPollConsumer {
 
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
-    }
-
-    public boolean isExclusiveReadLock() {
-        return exclusiveReadLock;
-    }
-
-    public void setExclusiveReadLock(boolean exclusiveReadLock) {
-        this.exclusiveReadLock = exclusiveReadLock;
     }
 
 }
