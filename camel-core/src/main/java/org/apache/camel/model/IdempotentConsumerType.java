@@ -58,6 +58,30 @@ public class IdempotentConsumerType extends ExpressionNode {
     public String getShortName() {
         return "idempotentConsumer";
     }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Sets the reference name of the message id repository
+     *
+     * @param messageIdRepositoryRef  the reference name of message id repository
+     * @return builder
+     */
+    public IdempotentConsumerType messageIdRepositoryRef(String messageIdRepositoryRef) {
+        setMessageIdRepositoryRef(messageIdRepositoryRef);
+        return this;
+    }
+    
+    /**
+     * Sets the the message id repository for the IdempotentConsumerType
+     *
+     * @param idempotentRepository  the repository instance of idempotent
+     * @return builder
+     */
+    public IdempotentConsumerType messageIdRepository(IdempotentRepository idempotentRepository) {
+        setMessageIdRepository(idempotentRepository);
+        return this;
+    }
 
     public String getMessageIdRepositoryRef() {
         return messageIdRepositoryRef;

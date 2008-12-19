@@ -65,7 +65,9 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
     public String getShortName() {
         return "resequencer";
     }
-
+    
+    // Fluent API
+    // -------------------------------------------------------------------------
     /**
      * Configures the stream-based resequencing algorithm using the default
      * configuration.
