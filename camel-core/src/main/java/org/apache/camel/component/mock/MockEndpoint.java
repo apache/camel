@@ -718,7 +718,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         LOG.debug("Took " + delta + " millis to complete latch");
 
         if (resultMinimumWaitTime > 0 && delta < resultMinimumWaitTime) {
-            fail("Expected minimum " + resultWaitTime
+            fail("Expected minimum " + resultMinimumWaitTime
                     + " millis waiting on the result, but was faster with " + delta + " millis.");
         }
     }

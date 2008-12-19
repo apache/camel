@@ -19,7 +19,9 @@ package org.apache.camel.component.file.strategy;
 import java.util.Map;
 
 import org.apache.camel.Expression;
+import org.apache.camel.component.file.ExclusiveReadLockStrategy;
 import org.apache.camel.component.file.FileProcessStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory to provide the {@link org.apache.camel.component.file.FileProcessStrategy} to use.
@@ -49,9 +51,12 @@ public final class FileProcessStrategyFactory {
         boolean preMove = preMoveNamePrefix != null || preMoveNamePostfix != null;
 
         if (isNoop) {
-            return new NoOpFileProcessStrategy(isLock);
+            NoOpFileProcessStrategy strategy = new NoOpFileProcessStrategy(isLock);
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            return strategy;
         } else if (move || preMove) {
             RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (move) {
                 strategy.setCommitRenamer(new DefaultFileRenamer(moveNamePrefix, moveNamePostfix));
             }
@@ -61,6 +66,7 @@ public final class FileProcessStrategyFactory {
             return strategy;
         } else if (expression != null || preMoveExpression != null) {
             RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (expression != null) {
                 FileExpressionRenamer renamer = new FileExpressionRenamer();
                 renamer.setExpression(expression);
@@ -73,10 +79,44 @@ public final class FileProcessStrategyFactory {
             }
             return strategy;
         } else if (isDelete) {
-            return new DeleteFileProcessStrategy(isLock);
+            DeleteFileProcessStrategy strategy = new DeleteFileProcessStrategy(isLock);
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            return strategy;
         } else {
             // default strategy will move to .camel subfolder
-            return new RenameFileProcessStrategy(isLock);
+            RenameFileProcessStrategy strategy = new RenameFileProcessStrategy(isLock);
+            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            return strategy;
         }
+    }
+
+    private static ExclusiveReadLockStrategy getExclusiveReadLockStrategy(Map<String, Object> params) {
+        ExclusiveReadLockStrategy strategy = (ExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
+        if (strategy != null) {
+            return strategy;
+        }
+
+        // no explicit stategy set then fallback to readLock option
+        String readLock = (String) params.get("readLock");
+        if (ObjectHelper.isNotEmpty(readLock)) {
+            if ("none".equals(readLock) || "false".equals(readLock)) {
+                return null;
+            } else if ("fileLock".equals(readLock)) {
+                FileLockExclusiveReadLockStrategy readLockStrategy = new FileLockExclusiveReadLockStrategy();
+                Long timeout = (Long) params.get("readLockTimeout");
+                if (timeout != null) {
+                    readLockStrategy.setTimeout(timeout);
+                }
+            } else if ("rename".equals(readLock)) {
+                FileRenameExclusiveReadLockStrategy readLockStrategy = new FileRenameExclusiveReadLockStrategy();
+                Long timeout = (Long) params.get("readLockTimeout");
+                if (timeout != null) {
+                    readLockStrategy.setTimeout(timeout);
+                }
+                return readLockStrategy;
+            }
+        }
+        
+        return null;
     }
 }
