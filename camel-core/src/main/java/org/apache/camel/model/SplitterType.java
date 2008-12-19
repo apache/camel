@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -89,6 +90,13 @@ public class SplitterType extends ExpressionNode {
     // Fluent API
     // -------------------------------------------------------------------------
     /**
+     * Set the expression that the Splitter will use
+     * @return the builder
+     */
+    public ExpressionClause<SplitterType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
+    }
+    /**
      * Set the spliter's aggregationStrategy
      * @param aggregationStrategy 
      *
@@ -96,6 +104,16 @@ public class SplitterType extends ExpressionNode {
      */
     public SplitterType aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
+        return this;
+    }
+    
+    /**
+     * Doing the splitting work parallelly
+     *
+     * @return the builder
+     */
+    public SplitterType parallelProcessing() {
+        setParallelProcessing(true);
         return this;
     }
     

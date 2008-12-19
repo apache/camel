@@ -537,6 +537,19 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         addOutput(answer);
         return this;
     }
+    
+    /**
+     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
+     * to avoid duplicate messages
+     *      
+     * @return the builder
+     */
+    public IdempotentConsumerType idempotentConsumer() {
+        IdempotentConsumerType answer = new IdempotentConsumerType();
+        addOutput(answer);
+        return answer;
+    }
 
     /**
      * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
@@ -778,6 +791,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression  the expression on which to split
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy) {
         SplitterType answer = new SplitterType(expression);
@@ -794,6 +808,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the expression clause for the expression on which to split
+     * @deprecated will be removed in Camel 2.0
      */
     public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy) {
         SplitterType answer = new SplitterType();
@@ -811,6 +826,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression the expression on which to split
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, boolean parallelProcessing) {
         SplitterType answer = new SplitterType(expression);
@@ -829,6 +845,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param executor override the default {@link Executor}
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, boolean parallelProcessing,
                                  Executor executor) {
@@ -847,6 +864,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the expression clause for the expression on which to split
+     * @deprecated will be removed in Camel 2.0
      */
     public ExpressionClause<SplitterType> split(boolean parallelProcessing) {
         SplitterType answer = new SplitterType();
@@ -865,6 +883,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param executor override the default {@link Executor}
      * @return the expression clause for the expression on which to split
+     * @deprecated will be removed in Camel 2.0
      */
     public ExpressionClause<SplitterType> split(boolean parallelProcessing, Executor executor) {
         SplitterType answer = new SplitterType();
@@ -884,6 +903,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param aggregationStrategy the strategy used to aggregate responses for every part
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy,
                                  boolean parallelProcessing) {
@@ -905,6 +925,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param executor override the default {@link Executor}
      * @return the builder
+     * @deprecated will be removed in Camel 2.0
      */
     public SplitterType split(Expression expression, AggregationStrategy aggregationStrategy,
                                  boolean parallelProcessing, Executor executor) {
@@ -944,6 +965,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param parallelProcessing if is <tt>true</tt> camel will fork thread to call the endpoint producer
      * @param executor override the default {@link Executor}
      * @return the expression clause for the expression on which to split
+     * @deprecated will be removed in Camel 2.0
      */
     public ExpressionClause<SplitterType> split(AggregationStrategy aggregationStrategy, boolean parallelProcessing,
                                                    Executor executor) {

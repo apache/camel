@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.spi.RouteContext;
 
@@ -54,5 +55,15 @@ public class SetBodyType extends ExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Expression expr = getExpression().createExpression(routeContext);
         return ProcessorBuilder.setBody(expr);
+    }
+    
+     // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Set the expression that SetBodyType class will use
+     * @return the builder
+     */
+    public ExpressionClause<SetBodyType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 }

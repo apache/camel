@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.Delayer;
 import org.apache.camel.spi.RouteContext;
@@ -66,6 +67,14 @@ public class DelayerType extends ExpressionNode {
     public DelayerType delayTime(Long delay) {
         setDelayTime(delay);
         return this;
+    }
+    
+    /**
+     * Set the expression that the delayer will use
+     * @return the builder
+     */
+    public ExpressionClause<DelayerType> expression() {
+        return ExpressionClause.createAndSetExpression(this);
     }
 
     @Override
