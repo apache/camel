@@ -99,10 +99,19 @@ public class SplitterType extends ExpressionNode {
     }
     
     /**
+     * Set to run the splitting action parallelly
+     * 
+     * @return the builder
+     */
+    public SplitterType parallelProcessing() {
+        setParallelProcessing(true);
+        return this;
+    }
+    
+    /**
      * Set the splitting action's thread model
-     * @param parallelProcessing 
-     * if it is true the Splitter will use a thread pool to do the splitting work; 
-     * if it is false the Splitter only do the splitting work in the calling thread.
+     * @param parallelProcessing <tt>true</tt> to use a thread pool, 
+     * if <tt>false</tt> then work is done in the calling thread. 
      *
      * @return the builder
      */
