@@ -89,16 +89,17 @@ public class SplitterType extends ExpressionNode {
     
     // Fluent API
     // -------------------------------------------------------------------------
+
     /**
-     * Set the expression that the Splitter will use
+     * Set the expression that the splitter will use
+     *
      * @return the builder
      */
     public ExpressionClause<SplitterType> expression() {
         return ExpressionClause.createAndSetExpression(this);
     }
     /**
-     * Set the spliter's aggregationStrategy
-     * @param aggregationStrategy 
+     * Set the aggregationStrategy
      *
      * @return the builder
      */
@@ -108,7 +109,7 @@ public class SplitterType extends ExpressionNode {
     }
     
     /**
-     * Doing the splitting work parallelly
+     * Doing the splitting work in parallel
      *
      * @return the builder
      */
@@ -119,9 +120,9 @@ public class SplitterType extends ExpressionNode {
     
     /**
      * Set the splitting action's thread model
-     * @param parallelProcessing 
-     * if it is true the Splitter will use a thread pool to do the splitting work; 
-     * if it is false the Splitter only do the splitting work in the calling thread.
+     *
+     * @param parallelProcessing <tt>true</tt> to use a thread pool, if <tt>false</tt> then work is done in the
+     * calling thread.
      *
      * @return the builder
      */
@@ -143,7 +144,6 @@ public class SplitterType extends ExpressionNode {
     
     /**
      * Setting the executor for executing the splitting action. 
-     * @param executor 
      *
      * @return the builder
      */
