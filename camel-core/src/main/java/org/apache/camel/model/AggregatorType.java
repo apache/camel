@@ -304,9 +304,9 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     }
 
     /**
-     * Sets the aggegate strategy to use
+     * Sets the aggregate strategy to use
      *
-     * @param aggregationStrategy  the aggreage startegy to use
+     * @param aggregationStrategy  the aggregate strategy to use
      * @return the builder
      */
     public AggregatorType aggregationStrategy(AggregationStrategy aggregationStrategy) {
@@ -315,7 +315,7 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     }
 
     /**
-     * Sets the aggegate collection to use
+     * Sets the aggregate collection to use
      *
      * @param collectionRef  reference to the aggregate collection to lookup in the registry
      * @return the builder
@@ -326,7 +326,7 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     }
 
     /**
-     * Sets the aggegate strategy to use
+     * Sets the aggregate strategy to use
      *
      * @param strategyRef  reference to the strategy to lookup in the registry
      * @return the builder

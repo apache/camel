@@ -134,7 +134,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
 
     /**
-     * Sets wether the exchange should be marked as handled or not.
+     * Sets whether the exchange should be marked as handled or not.
      *
      * @param handled  handled or not
      * @return the builder
@@ -145,7 +145,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
     
     /**
-     * Sets wether the exchange should be marked as handled or not.
+     * Sets whether the exchange should be marked as handled or not.
      *
      * @param handled  predicate that determines true or false
      * @return the builder
@@ -156,7 +156,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     }
     
     /**
-     * Sets wether the exchange should be marked as handled or not.
+     * Sets whether the exchange should be marked as handled or not.
      *
      * @param handled  expression that determines true or false
      * @return the builder
@@ -169,7 +169,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     /**
      * Sets an additional predicate that should be true before the onException is triggered.
      * <p/>
-     * To be used for fine grained controlling wether a thrown exception should be intercepted
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
      * by this exception type or not.
      *
      * @param predicate  predicate that determines true or false
@@ -184,7 +184,7 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
      * Creates an expression to configure an additional predicate that should be true before the
      * onException is triggered.
      * <p/>
-     * To be used for fine grained controlling wether a thrown exception should be intercepted
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
      * by this exception type or not.
      *
      * @return the expression clause to configure

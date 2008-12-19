@@ -100,4 +100,28 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
         }
         return typeClass;
     }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Sets the type class that you want ConvertBodyType to covert
+     *
+     * @param typeClass  the type class that you want to covert body instance to
+     * @return the builder
+     */
+    public ConvertBodyType typeClass(Class typeClass) {
+        setTypeClass(typeClass);
+        return this;
+    }
+    
+    /**
+     * Sets the type class name that you want to covert body instance to
+     *
+     * @param type  the type class name
+     * @return the builder
+     */
+    public ConvertBodyType type(String type) {
+        setType(type);
+        return this;
+    }
 }

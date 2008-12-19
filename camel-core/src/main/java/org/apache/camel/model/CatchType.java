@@ -97,6 +97,31 @@ public class CatchType extends ProcessorType<CatchType> {
     public void setExceptionClasses(List<Class> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Sets the exceptionClasses of the CatchType
+     *
+     * @param exceptionClasses  a list of the exception classes
+     * @return the builder
+     */
+    public CatchType exceptionClasses(List<Class> exceptionClasses) {
+        setExceptionClasses(exceptionClasses);
+        return this;
+    }
+    
+    /**
+     * Sets the exception class that the CatchType want to catch
+     *
+     * @param exception  the exception of class
+     * @return the builder
+     */
+    public CatchType exceptionClasses(Class exception) {
+        List<Class> list = getExceptionClasses();
+        list.add(exception);
+        return this;
+    }
 
     public List<String> getExceptions() {
         return exceptions;

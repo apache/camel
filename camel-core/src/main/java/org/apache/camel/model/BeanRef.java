@@ -95,6 +95,52 @@ public class BeanRef extends OutputType<ProcessorType> {
     public void setBeanType(Class beanType) {
         this.beanType = beanType;
     }
+    
+    // Fluent API
+    //-------------------------------------------------------------------------
+    /**
+     * Sets the ref String on camel bean
+     *
+     * @param ref  the bean's id in the registry
+     * @return the builder
+     */
+    public BeanRef ref(String ref) {
+        setRef(ref);
+        return this;
+    }
+    
+    /**
+     * Sets the calling method name of camel bean
+     *
+     * @param method  the bean's method name which wants camel to call
+     * @return the builder
+     */
+    public BeanRef method(String method) {
+        setMethod(method);
+        return this;
+    }
+    
+    /**
+     * Sets the bean's instance that camel to call
+     *
+     * @param bean the instance of the bean
+     * @return the builder
+     */
+    public BeanRef bean(Object bean) {
+        setBean(bean);
+        return this;
+    }
+    
+    /**
+     * Sets the Class of the bean that camel will instantiation it for calling
+     *
+     * @param beanType the Class of the bean
+     * @return the builder
+     */
+    public BeanRef beanType(Class beanType) {
+        setBean(beanType);
+        return this;
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
