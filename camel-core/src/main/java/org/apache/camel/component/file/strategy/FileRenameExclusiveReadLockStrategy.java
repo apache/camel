@@ -17,8 +17,8 @@
 package org.apache.camel.component.file.strategy;
 
 import java.io.File;
-import java.io.IOException;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.ExclusiveReadLockStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +32,7 @@ public class FileRenameExclusiveReadLockStrategy implements ExclusiveReadLockStr
     private static final transient Log LOG = LogFactory.getLog(FileRenameExclusiveReadLockStrategy.class);
     private long timeout;
 
-    public boolean acquireExclusiveReadLock(File file) throws IOException {
+    public boolean acquireExclusiveReadLock(File file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + file);
         }
@@ -64,16 +64,20 @@ public class FileRenameExclusiveReadLockStrategy implements ExclusiveReadLockStr
                 // rename it back so we can read it
                 tempFile.renameTo(file);
             } else {
-                LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
+                sleep();
             }
         }
-
+    
         return true;
+    }
+
+    private void sleep() {
+        LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            // ignore
+        }
     }
 
     public long getTimeout() {
