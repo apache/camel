@@ -16,25 +16,19 @@
  */
 package org.apache.camel.component.jms.tx;
 
-import org.apache.camel.spi.Policy;
+import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.log4j.Logger;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * Test case derived from:
- * http://activemq.apache.org/camel/transactional-client.html and Martin
- * Krasser's sample:
- * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
- * NOTE: had to split into separate test classes as I was unable to fully tear
- * down and isolate the test cases, I'm not sure why, but as soon as we know the
- * Transaction classes can be joined into one.
- *
- * @author Kevin Ross
- */
-public class QueueToQueueTransactionTest extends AbstractTransactionTest {
+public class QueueToQueueTransactionWithoutDefineTransactionManagerTest extends AbstractTransactionTest {
 
     private Logger log = Logger.getLogger(getClass());
+    
+    protected CamelContext createCamelContext() throws Exception {
+
+        return createSpringCamelContext(this, "org/apache/camel/component/jms/tx/ActiveMQWithoutTransactionManager.xml");
+    }
 
     public void testRollbackUsingXmlQueueToQueue() throws Exception {
 
@@ -43,10 +37,9 @@ public class QueueToQueueTransactionTest extends AbstractTransactionTest {
 
             @Override
             public void configure() throws Exception {
-
-                Policy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED_POLICY");
-                from("activemq:queue:foo?transacted=true").policy(required).process(new ConditionalExceptionProcessor())
-                    .to("activemq:queue:bar?transacted=true");
+               
+                from("activemq:queue:foo").process(new ConditionalExceptionProcessor())
+                    .to("activemq:queue:bar");
             }
         });
 

@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.connection.JmsResourceHolder;
+import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.JmsTemplate102;
@@ -111,6 +112,7 @@ public class JmsConfiguration implements Cloneable {
     // Transaction related configuration
     private boolean transacted;
     private boolean transactedInOut;
+    private boolean lazyCreateTransactionManager = true;
     private PlatformTransactionManager transactionManager;
     private String transactionName;
     private int transactionTimeout = -1;
@@ -576,6 +578,9 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public PlatformTransactionManager getTransactionManager() {
+        if (transactionManager == null && isTransacted() && isLazyCreateTransactionManager()) {
+            transactionManager = createTransactionManager();
+        }
         return transactionManager;
     }
 
@@ -718,6 +723,14 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTransactedInOut(boolean transactedInOut) {
         this.transactedInOut = transactedInOut;
+    }
+    
+    public boolean isLazyCreateTransactionManager() {
+        return lazyCreateTransactionManager;
+    }
+    
+    public void setLazyCreateTransactionManager(boolean lazyCreating) {
+        this.lazyCreateTransactionManager = lazyCreating;
     }
 
     public boolean isEagerLoadingOfProperties() {
@@ -863,8 +876,8 @@ public class JmsConfiguration implements Cloneable {
 
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
-        container.setSessionTransacted(transacted && transactedInOut);
-        if (transacted && transactedInOut) {
+        container.setSessionTransacted(transacted);
+        if (transacted) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
             if (acknowledgementMode >= 0) {
@@ -913,9 +926,9 @@ public class JmsConfiguration implements Cloneable {
                 listenerContainer.setTaskExecutor(taskExecutor);
             }
             PlatformTransactionManager tm = getTransactionManager();
-            if (tm != null && (transacted && transactedInOut)) {
+            if (tm != null && transacted) {
                 listenerContainer.setTransactionManager(tm);
-            } else if (transacted && transactedInOut) {
+            } else if (transacted) {
                 throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
@@ -1024,6 +1037,16 @@ public class JmsConfiguration implements Cloneable {
      */
     protected ConnectionFactory createTemplateConnectionFactory() {
         return getConnectionFactory();
+    }
+    
+    /**
+     * Factory method which which allows derived classes to customize the lazy 
+     * transcationManager creation
+     */
+    protected PlatformTransactionManager createTransactionManager() {
+        JmsTransactionManager answer = new JmsTransactionManager();
+        answer.setConnectionFactory(getConnectionFactory());
+        return answer;
     }
 
     public boolean isPreserveMessageQos() {
