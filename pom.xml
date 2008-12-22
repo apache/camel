@@ -76,8 +76,8 @@
     <guiceyfruit-version>2.0-beta-4</guiceyfruit-version>
     <junit-version>3.8.2</junit-version>
     <saxon-version>9.1.0.1</saxon-version>
-    <scala-version>2.7.2-rc1</scala-version>
-    <scala-plugin-version>2.7.1</scala-plugin-version>
+    <scala-version>2.7.2</scala-version>
+    <scala-plugin-version>2.9.1</scala-plugin-version>
     <testng-version>5.8</testng-version>
     <xbean-spring-version>3.4</xbean-spring-version>
     <xstream-version>1.3.1</xstream-version>
