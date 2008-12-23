@@ -231,6 +231,10 @@ public class TraceFormatter {
         String node = "";
         String result;
         
+        if (!showBreadCrumb && !showExchangeId && !showNode) {
+            return "";
+        }
+        
         if (showBreadCrumb || showExchangeId) {
             id = getBreadCrumbID(exchange).toString();
         }
