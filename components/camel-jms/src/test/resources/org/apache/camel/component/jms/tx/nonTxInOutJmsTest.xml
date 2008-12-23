@@ -14,7 +14,7 @@
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
-        <property name="transacted" value="true"/>
+        <property name="transacted" value="false"/>
         <property name="transactedInOut" value="false" />
     </bean>
     
