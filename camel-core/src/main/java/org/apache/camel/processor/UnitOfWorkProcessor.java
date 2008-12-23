@@ -34,7 +34,7 @@ public final class UnitOfWorkProcessor extends DelegateAsyncProcessor {
     
     @Override
     public String toString() {
-        return "UnitOfWrok(" + processor + ")";
+        return "UnitOfWork(" + processor + ")";
     }
     
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
