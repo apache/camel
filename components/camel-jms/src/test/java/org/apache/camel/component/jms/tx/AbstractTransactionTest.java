@@ -75,10 +75,10 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
     protected void assertResult() throws InterruptedException {
 
         template.sendBody("activemq:queue:foo", "blah");
-        Thread.sleep(3000L);
+        Thread.sleep(3000L);        
         assertTrue("Expected only 2 calls to process() (1 failure, 1 success) but encountered "
                    + getConditionalExceptionProcessor().getCount() + "."
-                   , getConditionalExceptionProcessor().getCount() <= 2);
+                   , getConditionalExceptionProcessor().getCount() == 2);
     }
 
     protected ConditionalExceptionProcessor getConditionalExceptionProcessor() {
