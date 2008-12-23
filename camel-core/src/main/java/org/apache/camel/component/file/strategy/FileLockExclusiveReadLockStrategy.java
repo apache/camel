@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
- * After granting the read lock it is realeased, we just want to make sure that when we start
+ * After granting the read lock it is released, we just want to make sure that when we start
  * consuming the file its not currently in progress of being written by third party.
  */
 public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrategy {
@@ -62,7 +62,13 @@ public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrat
                 }
 
                 // get the lock using either try lock or not depending on if we are using timeout or not
-                FileLock lock = timeout > 0 ? channel.tryLock() : channel.lock();
+                FileLock lock = null; 
+                try {
+                    lock = timeout > 0 ? channel.tryLock() : channel.lock();
+                } catch (IllegalStateException ex) {
+                    // Also catch the OverlappingFileLockException here
+                    // Do nothing here
+                }
                 if (lock != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + file);
