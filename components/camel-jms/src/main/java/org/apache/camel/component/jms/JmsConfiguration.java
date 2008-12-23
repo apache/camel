@@ -880,8 +880,8 @@ public class JmsConfiguration implements Cloneable {
 
         container.setAcceptMessagesWhileStopping(acceptMessagesWhileStopping);
         container.setExposeListenerSession(exposeListenerSession);
-        container.setSessionTransacted(transacted && transactedInOut);
-        if (transacted && transactedInOut) {
+        container.setSessionTransacted(transacted);
+        if (transacted) {
             container.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
         } else {
             if (acknowledgementMode >= 0) {
@@ -930,9 +930,9 @@ public class JmsConfiguration implements Cloneable {
                 listenerContainer.setTaskExecutor(taskExecutor);
             }
             PlatformTransactionManager tm = getTransactionManager();
-            if (tm != null && (transacted && transactedInOut)) {
+            if (tm != null && transacted) {
                 listenerContainer.setTransactionManager(tm);
-            } else if (transacted && transactedInOut) {
+            } else if (transacted) {
                 throw new IllegalArgumentException("Property transacted is enabled but a transactionManager was not injected!");
             }
             if (transactionName != null) {
