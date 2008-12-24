@@ -35,6 +35,12 @@ public class MinaExchange extends DefaultExchange {
         super(camelContext, pattern);
         this.session = session;
     }
+    
+    public MinaExchange(DefaultExchange parent, IoSession session) {
+        super(parent);
+        this.session = session;
+    }
+
 
     /**
      * The associated Mina session, is <b>only</b> available for {@link MinaConsumer}.
@@ -44,5 +50,11 @@ public class MinaExchange extends DefaultExchange {
     public IoSession getSession() {
         return session;
     }
+    
+    @Override
+    public Exchange newInstance() {
+        return new MinaExchange(this, getSession());
+    }
+
 
 }
