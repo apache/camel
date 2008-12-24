@@ -54,6 +54,9 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
+        deleteDirectory("./target/exclusiveread");
+        createDirectory("./target/exclusiveread/slowfile");
+        
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -62,9 +65,7 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             }
         });
         context.start();
-
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
+       
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye World");
@@ -77,6 +78,9 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testPollFileWhileSlowFileIsBeingWrittenWithTimeout() throws Exception {
+        deleteDirectory("./target/exclusiveread");
+        createDirectory("./target/exclusiveread/slowfile");
+        
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -85,9 +89,7 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             }
         });
         context.start();
-
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
+        
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         mock.setMinimumResultWaitTime(2000);
@@ -100,6 +102,8 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testPollFileWhileSlowFileIsBeingWrittenWithTimeoutAndNoop() throws Exception {
+        deleteDirectory("./target/exclusiveread");
+        createDirectory("./target/exclusiveread/slowfile");
         // to test that if noop and thus idempotent we will retry to consume the file
         // the 2nd. time since the first time we could not get the read lock due timeout
         // so the file should only be marked in the idempotent repository if we could process it
@@ -111,11 +115,9 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             }
         });
         context.start();
-
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
+        
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(1);        
         mock.setMinimumResultWaitTime(3000);
         mock.setResultWaitTime(5000);
 
