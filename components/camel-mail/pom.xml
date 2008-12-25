@@ -49,22 +49,37 @@
 
     <dependencies>
 
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-spring</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-        </dependency>
+	<dependency>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-core</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.camel</groupId>
+		<artifactId>camel-spring</artifactId>
+	</dependency>
+	<dependency>
+		<groupId>org.springframework</groupId>
+		<artifactId>spring-context-support</artifactId>
+	</dependency>
+	<!--
+		dependency> <groupId>javax.mail</groupId>
+		<artifactId>mail</artifactId> </dependency
+	-->
+	<dependency>
+		<groupId>org.apache.geronimo.specs</groupId>
+		<artifactId>geronimo-javamail_1.4_spec</artifactId>
+		<version>1.5</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.geronimo.javamail</groupId>
+		<artifactId>geronimo-javamail_1.4_mail</artifactId>
+		<version>1.6</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.geronimo.javamail</groupId>
+		<artifactId>geronimo-javamail_1.4_provider</artifactId>
+		<version>1.6</version>
+	</dependency>
 
         <!-- testing -->
         <dependency>
