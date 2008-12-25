@@ -74,11 +74,31 @@ public final class CxfEndpointUtils {
     }
 
     public static QName getPortName(final CxfEndpoint endpoint) {
-        return getQName(endpoint.getPortName());
+        if (endpoint.getPortName() != null) {
+            return getQName(endpoint.getPortName());
+        } else {
+            String portLocalName = getCxfEndpointPropertyValue(endpoint, CxfConstants.PORT_LOCALNAME);
+            String portNamespace = getCxfEndpointPropertyValue(endpoint, CxfConstants.PORT_NAMESPACE);
+            if (portLocalName != null) {
+                return new QName(portNamespace, portLocalName);
+            } else {
+                return null;
+            }           
+        }
     }
 
     public static QName getServiceName(final CxfEndpoint endpoint) {
-        return getQName(endpoint.getServiceName());
+        if (endpoint.getServiceName() != null) {
+            return getQName(endpoint.getServiceName());
+        } else {
+            String serviceLocalName = getCxfEndpointPropertyValue(endpoint, CxfConstants.SERVICE_LOCALNAME);
+            String serviceNamespace = getCxfEndpointPropertyValue(endpoint, CxfConstants.SERVICE_NAMESPACE);
+            if (serviceLocalName != null) {
+                return new QName(serviceNamespace, serviceLocalName);
+            } else {
+                return null;
+            }
+        }
     }
 
     public static EndpointInfo getEndpointInfo(final Service service, final CxfEndpoint endpoint) {
@@ -248,14 +268,20 @@ public final class CxfEndpointUtils {
             throw new CamelException("serviceClass is required for CXF endpoint configuration");
         }
     }
-
+    
+    public static String getCxfEndpointPropertyValue(CxfEndpoint endpoint, String property) {
+        String result = null;
+        CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
+        if (cxfEndpointBean != null && cxfEndpointBean.getProperties() != null) {
+            result = (String) cxfEndpointBean.getProperties().get(property);
+        }
+        return result;
+    }
+    
     public static DataFormat getDataFormat(CxfEndpoint endpoint) throws CamelException {
         String dataFormatString = endpoint.getDataFormat();
         if (dataFormatString == null) {
-            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
-            if (cxfEndpointBean != null && cxfEndpointBean.getProperties() != null) {
-                dataFormatString = (String) cxfEndpointBean.getProperties().get(CxfConstants.DATA_FORMAT);
-            }
+            dataFormatString = getCxfEndpointPropertyValue(endpoint, CxfConstants.DATA_FORMAT);           
         }
 
         // return the default value if nothing is set

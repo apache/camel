@@ -72,17 +72,19 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
             isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);
             svrBean.setAddress(endpoint.getAddress());
-            svrBean.setServiceClass(serviceClass);
-            if (endpoint.getServiceName() != null) {
-                svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
-            }
-            if (endpoint.getPortName() != null) {
-                svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-            }
+            svrBean.setServiceClass(serviceClass);            
             if (endpoint.getWsdlURL() != null) {
                 svrBean.setWsdlURL(endpoint.getWsdlURL());
             }
         }
+        
+        if (CxfEndpointUtils.getServiceName(endpoint) != null) {
+            svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+        }
+        if (CxfEndpointUtils.getServiceName(endpoint) != null) {
+            svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
+        }
+        
         DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
 
         svrBean.setInvoker(new CamelInvoker(this));
