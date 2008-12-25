@@ -30,6 +30,10 @@ public interface CxfConstants {
     String ADDRESS = "address";
     String SERVICE_NAME = "serviceName";
     String PORT_NAME = "portName";
+    String SERVICE_LOCALNAME = "serviceLocalName";
+    String SERVICE_NAMESPACE = "serviceNamespace";
+    String PORT_LOCALNAME = "endpointLocalName";
+    String PORT_NAMESPACE = "endpointNamespace";
     String PROTOCOL_NAME_RES = "res";
     String OPERATION_NAME = "operationName";
     String OPERATION_NAMESPACE = "operationNameSpace";

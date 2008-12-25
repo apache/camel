@@ -137,17 +137,17 @@ public class CxfProducer extends DefaultProducer {
             } catch (ClassNotFoundException e) {
                 throw new CamelException(e);
             }
-
-            if (endpoint.getServiceName() != null) {
-                cfb.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
-            }
-            if (endpoint.getPortName() != null) {
-                cfb.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-
-            }
+            
             if (endpoint.getWsdlURL() != null) {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             }
+        }
+        
+        if (CxfEndpointUtils.getServiceName(endpoint) != null) {
+            cfb.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
+        }
+        if (CxfEndpointUtils.getPortName(endpoint) != null) {
+            cfb.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
         }
         
         if (dataFormat.equals(DataFormat.MESSAGE)) {

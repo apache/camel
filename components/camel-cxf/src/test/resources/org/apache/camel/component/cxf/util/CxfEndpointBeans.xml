@@ -42,6 +42,15 @@
     xmlns:s="http://www.example.com/test">
    </cxf:cxfEndpoint>
 
+   <cxf:cxfEndpoint id="testPropertiesEndpoint" address="http://localhost:9000/router"    
+    xmlns:s="http://www.example.com/test">
+      <cxf:properties>
+      	<entry key="serviceLocalName" value="ServiceName"/>
+      	<entry key="serviceNamespace" value="http://www.example.com/test"/>
+        <entry key="endpointLocalName" value="PortName"/>
+      	<entry key="endpointNamespace" value="http://www.example.com/test"/>
+    </cxf:properties>
+   </cxf:cxfEndpoint>
 
 
 </beans>
