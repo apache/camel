@@ -134,7 +134,7 @@ public class MinaProducer extends DefaultProducer {
 
         if (connector instanceof SocketConnector) {
             // Change the worker timeout to 0 second to make the I/O thread quit soon when there's no connection to manage.
-            // Default worker timeout is 60 sec and therefore the client using MinaProducer can not terminate the JVM
+            // Default worker timeout is 60 sec and therefore the client using MinaProducer cannot terminate the JVM
             // asap but must wait for the timeout to happend, so to speed this up we set the timeout to 0.
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Setting SocketConnector WorkerTimeout=0 to force MINA stopping its resources faster");

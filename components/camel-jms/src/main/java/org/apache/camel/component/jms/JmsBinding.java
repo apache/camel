@@ -248,7 +248,7 @@ public class JmsBinding {
             if (value != null) {
                 jmsMessage.setObjectProperty(key, value);
             } else if (LOG.isDebugEnabled()) {
-                // okay the value is not a primitive or string so we can not sent it over the wire
+                // okay the value is not a primitive or string so we cannot sent it over the wire
                 LOG.debug("Ignoring non primitive header: " + headerName + " of class: "
                     + headerValue.getClass().getName() + " with value: " + headerValue);
             }
@@ -316,7 +316,7 @@ public class JmsBinding {
                 return result;
             } catch (JMSException e) {
                 // if MapMessage creation failed then fall back to Object Message
-                LOG.warn("Can not populate MapMessage will fall back to ObjectMessage, cause by: " + e.getMessage());
+                LOG.warn("Cannot populate MapMessage will fall back to ObjectMessage, cause by: " + e.getMessage());
             }
         }
         if (body instanceof String) {

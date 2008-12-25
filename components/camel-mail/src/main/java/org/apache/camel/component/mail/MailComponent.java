@@ -69,7 +69,7 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
     }
 
     private void configureAdditionalJavaMailProperties(MailConfiguration config, Map parameters) {
-        // we can not remove while iterating, as we will get a modification exception
+        // we cannot remove while iterating, as we will get a modification exception
         Set toRemove = new HashSet();
 
         for (Object key : parameters.keySet()) {

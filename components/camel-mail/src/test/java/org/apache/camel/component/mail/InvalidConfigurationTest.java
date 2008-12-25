@@ -31,7 +31,7 @@ public class InvalidConfigurationTest extends ContextTestSupport {
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
             consumer.start();
-            fail("Should have thrown NoSuchProviderException as stmp protocol can not be used for consuming mails");
+            fail("Should have thrown NoSuchProviderException as stmp protocol cannot be used for consuming mails");
         } catch (IllegalArgumentException e) {
             // expected
         }
@@ -42,7 +42,7 @@ public class InvalidConfigurationTest extends ContextTestSupport {
         PollingConsumer consumer = endpoint.createPollingConsumer();
         try {
             consumer.start();
-            fail("Should have thrown NoSuchProviderException as stmp protocol can not be used for consuming mails");
+            fail("Should have thrown NoSuchProviderException as stmp protocol cannot be used for consuming mails");
         } catch (IllegalArgumentException e) {
             // expected
         }

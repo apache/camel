@@ -258,7 +258,7 @@ public class XmppEndpoint extends DefaultEndpoint {
         XMPPConnection conn = getConnection();
         Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
         if (!iterator.hasNext()) {
-            throw new CamelException("Can not find Multi User Chat service");
+            throw new CamelException("Cannot find Multi User Chat service");
         }
         String chatServer = iterator.next();
         if (LOG.isInfoEnabled()) {
