@@ -81,6 +81,12 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         assertEquals("We should get the setDefaultBus value", CxfEndpointUtils.getSetDefaultBus(endpoint),
                      true);
         assertEquals("The cxf endpoint's DataFromat should be MESSAGE", CxfEndpointUtils.getDataFormat(endpoint), DataFormat.MESSAGE);
+        
+        endpoint = createEndpoint("cxf:bean:testPropertiesEndpoint");
+        service = CxfEndpointUtils.getServiceName(endpoint);
+        assertEquals("We should get the right service name", service, SERVICE_NAME);
+        QName port = CxfEndpointUtils.getPortName(endpoint);
+        assertEquals("We should get the right endpoint name", port, PORT_NAME);
     }
 
     public void testGetDataFormatFromCxfEndpontProperties() throws Exception {
