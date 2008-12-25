@@ -134,7 +134,7 @@ public class StreamProducer extends DefaultProducer {
             outputStream.write((byte[])body);
         } else {
             throw new CamelExchangeException("The body is neither a String or byte array. "
-                + "Can not write body to output stream", exchange);
+                + "Cannot write body to output stream", exchange);
         }
     }
 

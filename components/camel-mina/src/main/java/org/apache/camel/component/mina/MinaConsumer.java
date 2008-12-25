@@ -121,7 +121,7 @@ public class MinaConsumer extends DefaultConsumer {
                 if (body == null) {
                     // must close session if no data to write otherwise client will never receive a response
                     // and wait forever (if not timing out)
-                    LOG.warn("Can not write body since its null, closing session: " + exchange);
+                    LOG.warn("Cannot write body since its null, closing session: " + exchange);
                     session.close();
                 } else {
                     // we got a response to write

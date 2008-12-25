@@ -116,7 +116,7 @@ public class MinaPayloadHolder implements Serializable {
         if (object instanceof Serializable) {
             return object;
         } else {
-            LOG.warn(type + " containig object " + object + " can not be serialized, it will be excluded by the MinaPayloadHolder");
+            LOG.warn(type + " containig object " + object + " cannot be serialized, it will be excluded by the MinaPayloadHolder");
             return null;
         }
     }
@@ -132,7 +132,7 @@ public class MinaPayloadHolder implements Serializable {
                 result.put(entry.getKey(), entry.getValue());
             } else {
                 LOG.warn(type + " containing object " + entry.getValue() + " of key " + entry.getKey()
-                         + " can not be serialized, it will be excluded by the MinaPayloadHolder");
+                         + " cannot be serialized, it will be excluded by the MinaPayloadHolder");
             }
         }
 

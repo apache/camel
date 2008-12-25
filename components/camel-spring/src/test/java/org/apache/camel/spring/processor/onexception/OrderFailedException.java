@@ -17,7 +17,7 @@
 package org.apache.camel.spring.processor.onexception;
 
 /**
- * Exception thrown if the order can not be processed
+ * Exception thrown if the order cannot be processed
  */
 public class OrderFailedException extends Exception {
 
