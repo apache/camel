@@ -32,7 +32,8 @@ public class CxfEndpointUtilsTest extends TestCase {
     // set up the port name and service name
     protected static final QName SERVICE_NAME =
         new QName("http://www.example.com/test", "ServiceName");
-
+    protected static final QName PORT_NAME = 
+        new QName("http://www.example.com/test", "PortName");
 
     private static final String CXF_BASE_URI = "cxf://http://www.example.com/testaddress"
         + "?serviceClass=org.apache.camel.component.cxf.HelloService"
