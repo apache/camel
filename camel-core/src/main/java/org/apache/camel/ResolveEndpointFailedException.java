@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * A runtime exception thrown if an {@link Endpoint} can not be resolved via URI
+ * A runtime exception thrown if an {@link Endpoint} cannot be resolved via URI
  * 
  * @version $Revision$
  */

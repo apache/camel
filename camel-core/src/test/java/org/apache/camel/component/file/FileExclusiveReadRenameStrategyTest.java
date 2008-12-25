@@ -132,7 +132,7 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     private class MySlowFileProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            LOG.info("Creating a slow fil ...");
+            LOG.info("Creating a slow file ...");
             File file = new File("./target/exclusiveread/slowfile/hello.txt");
             FileOutputStream fos = new FileOutputStream(file);
             FileLock lock = fos.getChannel().lock();

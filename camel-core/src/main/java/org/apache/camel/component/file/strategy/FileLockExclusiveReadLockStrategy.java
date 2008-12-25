@@ -88,7 +88,7 @@ public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrat
                 throw new RuntimeCamelException(e);
             }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Can not acquire read lock. Will try again.", e);
+                LOG.debug("Cannot acquire read lock. Will try again.", e);
             }
             sleep();
         } finally {

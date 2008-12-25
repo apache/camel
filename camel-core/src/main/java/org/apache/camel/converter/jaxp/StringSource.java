@@ -43,7 +43,7 @@ public class StringSource extends StreamSource implements Externalizable {
 
     public StringSource(String text) {
         if (text == null) {
-            throw new NullPointerException("text can not be null");
+            throw new NullPointerException("text cannot be null");
         }
         this.text = text;
     }

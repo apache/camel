@@ -42,7 +42,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new MyFunctionalException("Sorry you can not do this");
+                        throw new MyFunctionalException("Sorry you cannot do this");
                     }
                 });
             }
@@ -68,14 +68,14 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new MyFunctionalException("Sorry you can not do this again to me");
+                        throw new MyFunctionalException("Sorry you cannot do this again to me");
                     }
                 });
             }
         });
 
         Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("Sorry you can not do this again to me", out);
+        assertEquals("Sorry you cannot do this again to me", out);
     }
 
     public void testOnExceptionSimpleLangaugeExceptionMessage() throws Exception {
@@ -90,7 +90,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                 // using the simple language where we want insert the exception message
                 onException(MyFunctionalException.class)
                         .handled(true)
-                        .transform().simple("Error reported: ${exception.message} - can not process this message.");
+                        .transform().simple("Error reported: ${exception.message} - cannot process this message.");
                 // END SNIPPET: e3
 
                 from("direct:start").process(new Processor() {
@@ -102,7 +102,7 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
         });
 
         Object out = template.requestBody("direct:start", "Hello World");
-        assertEquals("Error reported: Out of order - can not process this message.", out);
+        assertEquals("Error reported: Out of order - cannot process this message.", out);
     }
 
 }

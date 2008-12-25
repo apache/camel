@@ -28,7 +28,7 @@ class MyExceptionThrowingProcessor implements Processor {
         if ("Hello NPE".equals(s)) {
             throw new NullPointerException();
         } else if ("Hello IO".equals(s)) {
-            throw new ConnectException("Forced for testing - can not connect to remote server");
+            throw new ConnectException("Forced for testing - cannot connect to remote server");
         }
         exchange.getOut().setBody("Hello World");
     }
