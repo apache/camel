@@ -57,7 +57,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new MyFunctionalException("Sorry you can not do this");
+                        throw new MyFunctionalException("Sorry you cannot do this");
                     }
                 });
             }

@@ -167,7 +167,7 @@ public class FileConsumer extends ScheduledPollConsumer {
                 });
 
             } else {
-                LOG.warn(endpoint + " can not process file: " + target);
+                LOG.warn(endpoint + " cannot process file: " + target);
             }
         } catch (Exception e) {
             handleException(e);

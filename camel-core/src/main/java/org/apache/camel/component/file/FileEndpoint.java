@@ -107,7 +107,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         Consumer result = new FileConsumer(this, processor);
 
         if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
-            throw new IllegalArgumentException("You cannot set delet and a moveNamePrefix, moveNamePostfix or expression option");
+            throw new IllegalArgumentException("You cannot set delete=true and a moveNamePrefix, moveNamePostfix or expression option");
         }
         
         // if noop=true then idempotent should also be configured

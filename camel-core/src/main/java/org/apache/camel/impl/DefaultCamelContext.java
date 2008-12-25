@@ -620,7 +620,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
 
         if (getTrace()) {
-            // only add a new tracer if not already configued
+            // only add a new tracer if not already configured
             if (Tracer.getTracer(this) == null) {
                 Tracer tracer = new Tracer();
                 // lets see if we have a formatter if so use it
@@ -633,7 +633,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
 
         if (getDelay() > 0) {
-            // only add a new delayer if not already configued
+            // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
                 addInterceptStrategy(new Delayer(getDelay()));
             }
@@ -664,12 +664,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     protected void doStop() throws Exception {
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
         stopServices(servicesToClose);
         if (components != null) {
             for (Component component : components.values()) {
                 stopServices(component);
             }
         }
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
     protected void startRoutes(Collection<Route> routeList) throws Exception {

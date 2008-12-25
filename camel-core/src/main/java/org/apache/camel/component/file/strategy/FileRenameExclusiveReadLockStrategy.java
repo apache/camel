@@ -38,7 +38,7 @@ public class FileRenameExclusiveReadLockStrategy implements ExclusiveReadLockStr
         }
 
         // the trick is to try to rename the file, if we can rename then we have exclusive read
-        // since its a remote file we can not use java.nio to get a RW lock
+        // since its a remote file we cannot use java.nio to get a RW lock
         String originalName = file.getName();
         File tempFile = new File(file.getParent(), originalName + ".camelExclusiveReadLock");
 

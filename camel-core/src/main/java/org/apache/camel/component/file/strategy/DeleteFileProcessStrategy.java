@@ -46,7 +46,7 @@ public class DeleteFileProcessStrategy extends FileProcessStrategySupport {
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            throw new IOException("Can not delete file: " + file);
+            throw new IOException("Cannot delete file: " + file);
         }
 
         // must commit to release the lock

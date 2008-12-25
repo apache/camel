@@ -92,7 +92,7 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
             }
             boolean mkdir = parent.mkdirs();
             if (!mkdir) {
-                throw new IOException("Can not create directory: " + parent);
+                throw new IOException("Cannot create directory: " + parent);
             }
         }
 
@@ -101,7 +101,7 @@ public class RenameFileProcessStrategy extends FileProcessStrategySupport {
         }
         boolean renamed = from.renameTo(to);
         if (!renamed) {
-            throw new IOException("Can not rename file from: " + from + " to: " + to);
+            throw new IOException("Cannot rename file from: " + from + " to: " + to);
         }
 
         return to;

@@ -175,7 +175,7 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         for (Exchange exchange : resultEndpoint.getReceivedExchanges()) {
             assertNotNull(exchange.getIn().getHeader(Splitter.SPLIT_COUNTER));
-            //this header can not be set when streaming is used
+            //this header cannot be set when streaming is used
             assertNull(exchange.getIn().getHeader(Splitter.SPLIT_SIZE));
         }
 

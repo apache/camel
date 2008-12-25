@@ -74,7 +74,7 @@ public class FileProducer extends DefaultProducer {
             }
             boolean renamed = tempTarget.renameTo(target);
             if (!renamed) {
-                throw new IOException("Can not rename file from: " + tempTarget + " to: " + target);
+                throw new IOException("Cannot rename file from: " + tempTarget + " to: " + target);
             }
 
         }

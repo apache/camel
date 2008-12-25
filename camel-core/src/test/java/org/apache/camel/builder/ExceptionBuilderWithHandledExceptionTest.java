@@ -98,7 +98,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                             throw new NullPointerException();
                         } else if ("Hello IOE".equals(s)) {
                             // specialized IOException
-                            throw new ConnectException("Forced for testing - can not connect to remote server");
+                            throw new ConnectException("Forced for testing - cannot connect to remote server");
                         }
                         exchange.getOut().setBody("Hello World");
                     }
