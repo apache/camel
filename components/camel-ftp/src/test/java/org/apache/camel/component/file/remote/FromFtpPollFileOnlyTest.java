@@ -33,7 +33,6 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
     public void testPollFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello World from FTPServer");
 
         mock.assertIsSatisfied();

@@ -22,7 +22,7 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.converter.IOConverter;
 
 /**
- * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
+ * Unit test to verify that Camel can builde remote directory on FTP server if missing (full or part of).
  */
 public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
 

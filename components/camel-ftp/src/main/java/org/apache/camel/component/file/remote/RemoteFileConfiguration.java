@@ -18,41 +18,31 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
-import org.apache.camel.Expression;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.language.simple.FileLanguage;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
-public class RemoteFileConfiguration implements Cloneable {
+/**
+ * Configuration of the FTP server
+ */
+public class RemoteFileConfiguration {
     private String protocol;
     private String username;
     private String host;
     private int port;
     private String password;
     private String file;
-    private boolean binary;
     private boolean directory = true;
-    private FTPClientConfig ftpClientConfig;
-    private Expression expression;
+    private boolean binary;
     private boolean passiveMode;
-    private String knownHosts;
-    private String tempPrefix;
+    private String knownHostsFile;
     private String privateKeyFile;
     private String privateKeyFilePassphrase;
+    private FTPClientConfig ftpClientConfig;
 
     public RemoteFileConfiguration() {
     }
 
     public RemoteFileConfiguration(URI uri) {
         configure(uri);
-    }
-
-    public RemoteFileConfiguration copy() {
-        try {
-            return (RemoteFileConfiguration)clone();
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeCamelException(e);
-        }
     }
 
     public String toString() {
@@ -94,14 +84,6 @@ public class RemoteFileConfiguration implements Cloneable {
             file = file.substring(1);
         }
         this.file = file;
-    }
-
-    public String getKnownHosts() {
-        return knownHosts;
-    }
-
-    public void setKnownHosts(String knownHosts) {
-        this.knownHosts = knownHosts;
     }
 
     public String getHost() {
@@ -162,30 +144,6 @@ public class RemoteFileConfiguration implements Cloneable {
         this.directory = directory;
     }
 
-    public FTPClientConfig getFtpClientConfig() {
-        return ftpClientConfig;
-    }
-
-    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
-        this.ftpClientConfig = ftpClientConfig;
-    }
-
-
-    public Expression getExpression() {
-        return expression;
-    }
-
-    public void setExpression(Expression expression) {
-        this.expression = expression;
-    }
-
-    /**
-     * Sets the expression based on {@link org.apache.camel.language.simple.FileLanguage}
-     */
-    public void setExpression(String fileLanguageExpression) {
-        this.expression = FileLanguage.file(fileLanguageExpression);
-    }
-
     public boolean isPassiveMode() {
         return passiveMode;
     }
@@ -199,15 +157,12 @@ public class RemoteFileConfiguration implements Cloneable {
         this.passiveMode = passiveMode;
     }
 
-    public String getTempPrefix() {
-        return tempPrefix;
+    public String getKnownHostsFile() {
+        return knownHostsFile;
     }
 
-    /**
-     * Enables and uses temporary prefix when writing files, after write it will be renamed to the correct name.
-     */
-    public void setTempPrefix(String tempPrefix) {
-        this.tempPrefix = tempPrefix;
+    public void setKnownHostsFile(String knownHostsFile) {
+        this.knownHostsFile = knownHostsFile;
     }
 
     public String getPrivateKeyFile() {
@@ -225,5 +180,12 @@ public class RemoteFileConfiguration implements Cloneable {
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyFilePassphrase = privateKeyFilePassphrase;
     }
-    
+
+    public FTPClientConfig getFtpClientConfig() {
+        return ftpClientConfig;
+    }
+
+    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
+        this.ftpClientConfig = ftpClientConfig;
+    }
 }

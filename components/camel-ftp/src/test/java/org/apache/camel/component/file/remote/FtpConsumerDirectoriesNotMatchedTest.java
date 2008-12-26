@@ -28,7 +28,7 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
     private int port = 20055;
 
     private String ftpUrl = "ftp://admin@localhost:" + port + "/dirnotmatched/?password=admin"
-            + "&consumer.recursive=true&consumer.regexPattern=.*txt$";
+            + "&recursive=true&regexPattern=.*txt$";
 
     public void testSkipDirectories() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -30,10 +30,10 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testFtpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("ftp://hostname");
-        assertTrue("Endpoint not an FtpEndpoint: " + endpoint, endpoint instanceof FtpEndpoint);
-        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        assertIsInstanceOf(RemoteFileEndpoint.class, endpoint);
+        RemoteFileEndpoint ftpEndpoint = (RemoteFileEndpoint) endpoint;
         RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
-        
+
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(21, config.getPort());
@@ -45,10 +45,10 @@ public class UriConfigurationTest extends TestSupport {
     
     public void testSftpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("sftp://hostname");
-        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
-        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+        assertIsInstanceOf(RemoteFileEndpoint.class, endpoint);
+        RemoteFileEndpoint sftpEndpoint = (RemoteFileEndpoint) endpoint;
         RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
-        
+
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(22, config.getPort());
@@ -60,10 +60,10 @@ public class UriConfigurationTest extends TestSupport {
     
     public void testFtpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
-        assertTrue("Endpoint not an FtpEndpoint: " + endpoint, endpoint instanceof FtpEndpoint);
-        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
+        assertIsInstanceOf(RemoteFileEndpoint.class, endpoint);
+        RemoteFileEndpoint ftpEndpoint = (RemoteFileEndpoint) endpoint;
         RemoteFileConfiguration config = ftpEndpoint.getConfiguration();
-        
+
         assertEquals("ftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(1021, config.getPort());
@@ -75,10 +75,10 @@ public class UriConfigurationTest extends TestSupport {
     
     public void testSftpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
-        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
-        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+        assertIsInstanceOf(RemoteFileEndpoint.class, endpoint);
+        RemoteFileEndpoint sftpEndpoint = (RemoteFileEndpoint) endpoint;
         RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
-        
+
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(1021, config.getPort());
@@ -107,12 +107,12 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
     }
     
-    public void testSftpKnownHostsConfiguration() {
-        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false&knownHosts=/home/janstey/.ssh/known_hosts");
-        assertTrue("Endpoint not an SftpEndpoint: " + endpoint, endpoint instanceof SftpEndpoint);
-        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+    public void testSftpKnownHostsFileConfiguration() {
+        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false&knownHostsFile=/home/janstey/.ssh/known_hosts");
+        assertIsInstanceOf(RemoteFileEndpoint.class, endpoint);
+        RemoteFileEndpoint sftpEndpoint = (RemoteFileEndpoint) endpoint;
         RemoteFileConfiguration config = sftpEndpoint.getConfiguration();
-        
+
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());
         assertEquals(1021, config.getPort());
@@ -120,6 +120,6 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
         assertEquals(false, config.isDirectory());
-        assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHosts());
+        assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHostsFile());
     }
 }

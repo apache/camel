@@ -27,7 +27,7 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
 
     private int port = 20097;
 
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/regexp?password=admin&consumer.regexPattern=report.*";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/regexp?password=admin&regexPattern=report.*";
 
     public void testFtpRegexPattern() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

@@ -29,7 +29,7 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
 
     private int port = 20066;
 
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/clientconfig?password=admin&ftpClientConfig=myConfig";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/clientconfig?password=admin&ftpClientConfig=#myConfig";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

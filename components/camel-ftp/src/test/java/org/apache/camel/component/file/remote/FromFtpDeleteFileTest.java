@@ -26,12 +26,12 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to test consumer.deleteFile option.
+ * Unit test to test delete option.
  */
 public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
     private int port = 20022;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/deletefile?password=admin&binary=false&consumer.deleteFile=true";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/deletefile?password=admin&binary=false&delete=true";
 
     public int getPort() {
         return port;
@@ -65,8 +65,10 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be deleted");
-
+        
         mock.assertIsSatisfied();
+
+        Thread.sleep(500);
 
         // assert the file is deleted
         File file = new File("./res/home/deletefile/hello.txt");

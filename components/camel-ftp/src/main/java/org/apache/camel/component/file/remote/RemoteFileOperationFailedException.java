@@ -19,33 +19,55 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Exception thrown in case of last FTP operation failed.
+ * Exception thrown in case of last remote file operation failed.
  *
  * @version $Revision$
  */
-public class FtpOperationFailedException extends RuntimeCamelException {
+public class RemoteFileOperationFailedException extends RuntimeCamelException {
     private final int code;
     private final String reason;
 
-    public FtpOperationFailedException(int code, String reason) {
-        super("Ftp operation failed: " + reason + ". Code: " + code);
+    public RemoteFileOperationFailedException(String message) {
+        super(message);
+        this.code = 0;
+        this.reason = null;
+    }
+
+    public RemoteFileOperationFailedException(String message, Throwable cause) {
+        super(message, cause);
+        this.code = 0;
+        this.reason = null;
+    }
+
+    public RemoteFileOperationFailedException(int code, String reason) {
+        super("Remote file operation failed: " + reason + ". Code: " + code);
         this.code = code;
         this.reason = reason;
     }
 
-    public FtpOperationFailedException(int code, String reason, String message) {
+    public RemoteFileOperationFailedException(int code, String reason, Throwable cause) {
+        super("Remote file operation failed: " + reason + ". Code: " + code, cause);
+        this.code = code;
+        this.reason = reason;
+    }
+
+    public RemoteFileOperationFailedException(int code, String reason, String message) {
         this(code, reason + " " + message);
     }
 
+    public RemoteFileOperationFailedException(int code, String reason, String message, Throwable cause) {
+        this(code, reason + " " + message, cause);
+    }
+
     /**
-     * Return the FTP failure code
+     * Return the FTP failure code (if any)
      */
     public int getCode() {
         return code;
     }
 
     /**
-     * Return the FTP failure reason
+     * Return the FTP failure reason (if any)
      */
     public String getReason() {
         return reason;

@@ -32,7 +32,7 @@ public class FtpConsumerExpressionTest extends FtpServerTestSupport {
 
     private int port = 20063;
 
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/filelanguage?password=admin";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/filelanguage?password=admin&consumer.delay=5000";
 
     public int getPort() {
         return port;

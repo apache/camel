@@ -34,7 +34,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     private int port = 20014;
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp4/camel?password=admin&binary=true"
-        + "&consumer.delay=2000&consumer.recursive=false";
+        + "&consumer.delay=5000&recursive=false";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -45,7 +45,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         assertTrue("Logo size wrong", bytes.length > 10000);
 
         // wait until the file producer has written the file
-        Thread.sleep(1000);
+        Thread.sleep(2 * 1000);
 
         // assert the file
         File file = new File("target/ftptest/deleteme.jpg");
@@ -63,6 +63,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
+        deleteDirectory("./res/home");
         prepareFtpServer();
     }
 
@@ -82,7 +83,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftptest/?noop=true";
+                String fileUrl = "file:target/ftptest/?noop=true&append=false";
                 from(ftpUrl).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.jpg"))
                     .to(fileUrl, "mock:result");
             }

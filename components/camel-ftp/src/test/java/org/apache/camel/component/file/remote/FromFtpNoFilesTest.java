@@ -16,22 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Unit test to verify polling a server with no files to poll.
  */
 public class FromFtpNoFilesTest extends FtpServerTestSupport {
-
-    private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadTest.class);
-
     private int port = 20020;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&consumer.exclusiveReadLock=true&consumer.delay=500";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=500";
 
     public int getPort() {
         return port;
@@ -47,7 +40,6 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
     }
-
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -28,17 +28,19 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
     private int port = 20087;
 
     private String ftpUrl = "ftp://dummy@localhost:" + port + "/deletenoperm?password=foo"
-        + "&consumer.deleteFile=true";
+            + "&delete=true&consumer.delay=5000";
 
     public void testExludePreAndPostfixes() throws Exception {
         PollingConsumer consumer = context.getEndpoint(ftpUrl).createPollingConsumer();
         consumer.start();
         Exchange out = consumer.receive(3000);
-        assertNull("Should not get the file", out);
+        assertNotNull("Should get the file", out);
 
         try {
+            // give consumer time to try to delete the file
+            Thread.sleep(1000);
             consumer.stop();
-        } catch (FtpOperationFailedException fofe) {
+        } catch (RemoteFileOperationFailedException fofe) {
             // expected, ignore
         }
     }
