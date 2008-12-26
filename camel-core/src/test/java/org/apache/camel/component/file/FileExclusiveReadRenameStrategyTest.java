@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FileExclusiveReadRenameStrategyTest.class);
+    private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
     private String fileUrl = "file://target/exclusiveread/slowfile?consumer.delay=500&readLock=rename";
 
     @Override
@@ -42,6 +43,11 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testPoolIn3SecondsButNoFiles() throws Exception {
+        // can only be tested on Windows
+        if (!ON_WINDOWS) {
+            return;
+        }
+
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -53,8 +59,12 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    //TODO fix the test failure in no windows box
-    public void xtestPollFileWhileSlowFileIsBeingWritten() throws Exception {
+    public void testPollFileWhileSlowFileIsBeingWritten() throws Exception {
+        // can only be tested on Windows
+        if (!ON_WINDOWS) {
+            return;
+        }
+
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         
@@ -79,6 +89,11 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testPollFileWhileSlowFileIsBeingWrittenWithTimeout() throws Exception {
+        // can only be tested on Windows
+        if (!ON_WINDOWS) {
+            return;
+        }
+
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         
@@ -102,8 +117,12 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
-    //TODO fix the test failure in no windows box
-    public void xtestPollFileWhileSlowFileIsBeingWrittenWithTimeoutAndNoop() throws Exception {
+    public void testPollFileWhileSlowFileIsBeingWrittenWithTimeoutAndNoop() throws Exception {
+        // can only be tested on Windows
+        if (!ON_WINDOWS) {
+            return;
+        }
+
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         // to test that if noop and thus idempotent we will retry to consume the file
