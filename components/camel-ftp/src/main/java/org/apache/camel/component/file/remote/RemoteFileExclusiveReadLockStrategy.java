@@ -31,10 +31,10 @@ public interface RemoteFileExclusiveReadLockStrategy {
     /**
      * Acquires exclusive read lock to the file.
      *
-     * @param ftp ftp file operations
+     * @param operations remote file operations
      * @param file the remote file
      * @return <tt>true</tt> if read lock was acquired. If <tt>false</tt> Camel will skip the file and
      *         try it on the next poll
      */
-    boolean acquireExclusiveReadLock(RemoteFileOperations ftp, RemoteFile file);
+    boolean acquireExclusiveReadLock(RemoteFileOperations operations, RemoteFile file);
 }
