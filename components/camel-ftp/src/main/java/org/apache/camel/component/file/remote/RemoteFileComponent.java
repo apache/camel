@@ -17,76 +17,80 @@
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
+import java.util.Comparator;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.commons.net.ftp.FTPClientConfig;
+import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
+/**
+ * Remote file component.
+ */
 public class RemoteFileComponent extends DefaultComponent {
-    private RemoteFileConfiguration configuration;
 
     public RemoteFileComponent() {
-        this.configuration = new RemoteFileConfiguration();
-    }
-
-    public RemoteFileComponent(RemoteFileConfiguration configuration) {
-        this.configuration = configuration;
     }
 
     public RemoteFileComponent(CamelContext context) {
         super(context);
-        this.configuration = new RemoteFileConfiguration();
-    }
-
-    public String toString() {
-        return "RemoteFileComponent";
-    }
-
-    public static RemoteFileComponent remoteFileComponent() {
-        return new RemoteFileComponent();
     }
 
     protected RemoteFileEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        RemoteFileConfiguration config = getConfiguration().copy();
-
         // get the uri part before the options as they can be non URI valid such as the expression using $ chars
         if (uri.indexOf("?") != -1) {
             uri = uri.substring(0, uri.indexOf("?"));
         }
-        config.configure(new URI(uri));
 
-        // lets make sure we copy the configuration as each endpoint can
-        // customize its own version
+        // lets make sure we create a new configuration as each endpoint can customize its own version
+        RemoteFileConfiguration config = new RemoteFileConfiguration(new URI(uri));
+
+        // create the correct endpoint based on the protocol
         final RemoteFileEndpoint endpoint;
         if ("ftp".equals(config.getProtocol())) {
-            endpoint = new FtpEndpoint(uri, this, config);
+            RemoteFileOperations operations = new FtpRemoteFileOperations();
+            endpoint = new RemoteFileEndpoint(uri, this, operations, config);
         } else if ("sftp".equals(config.getProtocol())) {
-            endpoint = new SftpEndpoint(uri, this, config);
+            RemoteFileOperations operations = new SftpRemoteFileOperations();
+            endpoint = new RemoteFileEndpoint(uri, this, operations, config);
         } else {
-            throw new RuntimeCamelException("Unsupported protocol: " + config.getProtocol());
+            throw new IllegalArgumentException("Unsupported protocol: " + config.getProtocol());
         }
 
-        configureFTPClientConfig(parameters, endpoint);
+        // sort by using file language
+        String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
+        if (isNotEmpty(sortBy) && !isReferenceParameter(sortBy)) {
+            // we support nested sort groups so they should be chained
+            String[] groups = sortBy.split(";");
+            Iterator<String> it = ObjectHelper.createIterator(groups);
+            Comparator<RemoteFileExchange> comparator = createSortByComparator(it);
+            endpoint.setSortBy(comparator);
+        }
+
         setProperties(endpoint.getConfiguration(), parameters);
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 
-    private void configureFTPClientConfig(Map parameters, RemoteFileEndpoint endpoint) {
-        // lookup client config in registry if provided
-        String ref = getAndRemoveParameter(parameters, "ftpClientConfig", String.class);
-        if (ref != null) {
-            FTPClientConfig ftpClientConfig = mandatoryLookup(ref, FTPClientConfig.class);
-            endpoint.getConfiguration().setFtpClientConfig(ftpClientConfig);
+    private Comparator<RemoteFileExchange> createSortByComparator(Iterator<String> it) {
+        if (!it.hasNext()) {
+            return null;
         }
+
+        String group = it.next();
+
+        boolean reverse = group.startsWith("reverse:");
+        String reminder = reverse ? ifStartsWithReturnRemainder("reverse:", group) : group;
+
+        boolean ignoreCase = reminder.startsWith("ignoreCase:");
+        reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
+
+        ObjectHelper.notEmpty(reminder, "sortBy expression", this);
+
+        // recursive add nested sorters
+        return DefaultRemoteFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
     }
 
-    public RemoteFileConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(RemoteFileConfiguration configuration) {
-        this.configuration = configuration;
-    }
 }

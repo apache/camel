@@ -43,8 +43,8 @@ public class FtpLoginTest extends FtpServerTestSupport {
     public void testBadLogin() throws Exception {
         try {
             uploadFile("dummy", "cantremeber");
-            fail("Should have thrown a FtpOperationFailedException");
-        } catch (FtpOperationFailedException e) {
+            fail("Should have thrown a RemoteFileOperationFailedException");
+        } catch (RemoteFileOperationFailedException e) {
             // expected
             assertEquals(530, e.getCode());
         }
@@ -68,6 +68,8 @@ public class FtpLoginTest extends FtpServerTestSupport {
     }
 
     private void uploadFile(String username, String password) throws Exception {
+        RemoteFileComponent component = new RemoteFileComponent(context);
+
         RemoteFileConfiguration config = new RemoteFileConfiguration();
         config.setBinary(false);
         config.setUsername(username);
@@ -78,11 +80,9 @@ public class FtpLoginTest extends FtpServerTestSupport {
         config.setProtocol("ftp");
         config.setFile("login");
 
-        RemoteFileComponent component = new RemoteFileComponent(context);
-        component.setConfiguration(config);
+        FtpRemoteFileOperations remoteFileOperations = new FtpRemoteFileOperations();
+        RemoteFileEndpoint endpoint = new RemoteFileEndpoint(ftpUrl, component, remoteFileOperations, config);
 
-        RemoteFileEndpoint endpoint = new FtpEndpoint(ftpUrl, component, config);
-        
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "report.txt");

@@ -36,7 +36,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
 
     // must user "consumer." prefix on the parameters to the file component
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
-        + "&consumer.delay=2000&consumer.recursive=true&consumer.setNames=true";
+        + "&consumer.delay=2000&recursive=true&setNames=true";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");

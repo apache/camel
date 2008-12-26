@@ -26,25 +26,15 @@ public class FromFtpToMockTest extends FtpServerTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String expectedBody = "Hello there!";
     protected int port = 2001;
-    protected String ftpUrl = "ftp://admin@localhost:" + port + "/tmp/camel?password=admin&consumer.recursive=true";
+    protected String ftpUrl = "ftp://admin@localhost:" + port + "/tmp/camel?password=admin&recursive=true";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived(expectedBody);
 
-        // TODO when we support multiple marshallers for messages
-        // we can support passing headers over files using serialized/XML files
-        //resultEndpoint.message(0).header("cheese").isEqualTo(123);
-
         template.sendBodyAndHeader(ftpUrl, expectedBody, "cheese", 123);
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
 
         resultEndpoint.assertIsSatisfied();
-
-        Thread.sleep(1000);
-
-
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

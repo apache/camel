@@ -18,9 +18,12 @@ package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 
 /**
  * A set of converter methods for working with remote file types
@@ -47,6 +50,22 @@ public final class RemoteFileConverter {
     @Converter
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         return new ByteArrayInputStream(os.toByteArray());
+    }
+
+    @Converter
+    public static InputStream toInputStream(RemoteFile file, Exchange exchange) {
+        return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
+    }
+
+    @Converter
+    public static byte[] toByteArray(RemoteFile file, Exchange exchange) throws IOException {
+        return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, file.getBody());
+    }
+
+    @Converter
+    public static String toString(RemoteFile file, Exchange exchange) throws IOException {
+        OutputStream os = file.getBody();
+        return os != null ? os.toString() : null;
     }
 
 }

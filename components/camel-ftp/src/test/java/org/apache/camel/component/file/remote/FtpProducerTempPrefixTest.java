@@ -36,7 +36,7 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
 
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(ftpUrl);
-        FtpProducer producer = (FtpProducer) endpoint.createProducer();
+        RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
 
         String fileName = "somepath/someuser/claus.txt";
         String tempFileName = producer.createTempFileName(fileName);
@@ -45,7 +45,7 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
 
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(ftpUrl);
-        FtpProducer producer = (FtpProducer) endpoint.createProducer();
+        RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
 
         String fileName = "claus.txt";
         String tempFileName = producer.createTempFileName(fileName);

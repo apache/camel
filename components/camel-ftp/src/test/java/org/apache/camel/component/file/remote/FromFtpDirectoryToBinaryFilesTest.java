@@ -35,8 +35,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
     private int port = 20034;
 
     private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming/?password=admin&directory=true"
-        + "&binary=true&consumer.useFixedDelay=false&consumer.setNames=true&consumer.recursive=false";
-    // must user "consumer." prefix on the parameters to the file component
+        + "&binary=true&consumer.useFixedDelay=false&setNames=true&recursive=false&consumer.delay=5000";
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -47,7 +46,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         assertTrue("Logo size wrong", bytes.length > 10000);
 
         // wait until the file producer has written the file
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         // assert the file
         File file = new File("target/ftptest/logo1.jpeg");
@@ -58,9 +57,6 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         file = new File("target/ftptest/logo.jpeg");
         assertTrue(" The binary file should exists", file.exists());
         assertTrue("Logo size wrong", file.length() > 10000);
-
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
     }
 
     public int getPort() {
@@ -77,7 +73,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + port + "/incoming/?password=admin&binary=true"
-            + "&consumer.delay=2000&consumer.recursive=false&consumer.append=false";
+            + "&consumer.delay=2000&recursive=false";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));

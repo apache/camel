@@ -16,3 +16,4 @@
 #
 
 class=org.apache.camel.component.file.remote.RemoteFileComponent
+strategy.factory.class=org.apache.camel.component.file.remote.strategy.RemoteFileProcessStrategyFactory

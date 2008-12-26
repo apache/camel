@@ -34,17 +34,13 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected void setUp() throws Exception {
         super.setUp();
         initFtpServer();
-        if (ftpServer.isStopped()) {
-            ftpServer.start();
-        }
+        ftpServer.start();
     }
 
     protected void tearDown() throws Exception {
         super.tearDown();
-        if (!ftpServer.isStopped()) {
-            ftpServer.getServerContext().dispose();
-            ftpServer.stop();
-        }
+        ftpServer.stop();
+        ftpServer = null;
     }
 
     protected void initFtpServer() throws Exception {

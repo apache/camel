@@ -32,7 +32,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
     private int port = 20032;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
-        + "&consumer.moveNamePrefix=done/sub2/&consumer.moveNamePostfix=.old";
+        + "&moveNamePrefix=done/sub2/&moveNamePostfix=.old&consumer.delay=5000";
 
     public int getPort() {
         return port;
@@ -69,6 +69,9 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World this file will be moved");
 
         mock.assertIsSatisfied();
+
+        // give time to allow ftp consumer to move file after its processed
+        Thread.sleep(1000);
 
         // assert the file is deleted
         File file = new File("./res/home/movefile/done/sub2/hello.txt.old");

@@ -31,8 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
 
     private int port = 20030;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
-        + "&consumer.moveNamePrefix=done/";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false&consumer.delay=5000"
+        + "&moveNamePrefix=done/";
 
     public int getPort() {
         return port;
@@ -69,6 +69,9 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World this file will be moved");
 
         mock.assertIsSatisfied();
+
+        // give ftp time to move the file
+        Thread.sleep(1000);
 
         // assert the file is deleted
         File file = new File("./res/home/movefile/done/hello.txt");

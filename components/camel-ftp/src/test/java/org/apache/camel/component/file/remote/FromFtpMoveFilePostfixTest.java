@@ -32,7 +32,7 @@ public class FromFtpMoveFilePostfixTest extends FtpServerTestSupport {
 
     private int port = 20031;
     private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
-        + "&consumer.moveNamePostfix=.old";
+        + "&moveNamePostfix=.old&consumer.delay=5000";
 
     public int getPort() {
         return port;
@@ -70,7 +70,10 @@ public class FromFtpMoveFilePostfixTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
 
-        // assert the file is deleted
+        // give some time to move the file after we recieved it on mock
+        Thread.sleep(1000);
+
+        // assert the file is moved
         File file = new File("./res/home/movefile/hello.txt.old");
         file = file.getAbsoluteFile();
         assertTrue("The file should have been moved", file.exists());

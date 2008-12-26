@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
@@ -92,24 +89,18 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
                         // create a ftp endpoint
                         Endpoint ftp = context.getEndpoint(url);
 
-                        // use this latch to wait for completion of the consumer
-                        final CountDownLatch latch = new CountDownLatch(1);
+                        // create a polling consumer where we can poll the myfile from the ftp server
+                        PollingConsumer consumer = ftp.createPollingConsumer();
 
-                        // create a consumer and process the result using the processor
-                        Consumer consumer = ftp.createConsumer(new Processor() {
-                            public void process(Exchange result) throws Exception {
-                                // the result is the response from the FTP consumer (the downloaded file)
-                                // replace the outher exchange with the content from the downloaded file
-                                exchange.getIn().setBody(result.getIn().getBody());
-                                // signal we are complete
-                                latch.countDown();
-                            }
-                        });
-                        // start the consumer
+                        // must start the consumer before we can receive
                         consumer.start();
 
-                        // wait for the completion or timeout after 30 seconds
-                        latch.await(30, TimeUnit.SECONDS);
+                        // poll the file from the ftp server
+                        Exchange result = consumer.receive();
+
+                        // the result is the response from the FTP consumer (the downloaded file)
+                        // replace the outher exchange with the content from the downloaded file
+                        exchange.getIn().setBody(result.getIn().getBody());
 
                         // stop the consumer
                         consumer.stop();
