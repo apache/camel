@@ -28,6 +28,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
@@ -41,9 +43,10 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     private static final transient Log LOG = LogFactory.getLog(RemoteFileEndpoint.class);
     private static final transient String DEFAULT_STRATEGYFACTORY_CLASS =
             "org.apache.camel.component.file.remote.strategy.RemoteFileProcessStrategyFactory";
+    private static final transient int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
-    private RemoteFileProcessStrategy remoteFileProcessStrategy;
-    private RemoteFileOperations remoteFileOperations;
+    private RemoteFileProcessStrategy processStrategy;
+    private RemoteFileOperations operations;
     private RemoteFileConfiguration configuration;
     private boolean noop;
     private String tempPrefix;
@@ -59,6 +62,8 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     private boolean delete;
     private Expression expression;
     private Expression preMoveExpression;
+    private boolean idempotent;
+    private IdempotentRepository idempotentRepository;
     private RemoteFileFilter filter;
     private Comparator<RemoteFile> sorter;
     private Comparator<RemoteFileExchange> sortBy;
@@ -66,9 +71,9 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     private String readLock = "none";
     private long readLockTimeout;
 
-    public RemoteFileEndpoint(String uri, RemoteFileComponent component, RemoteFileOperations remoteFileOperations, RemoteFileConfiguration configuration) {
+    public RemoteFileEndpoint(String uri, RemoteFileComponent component, RemoteFileOperations operations, RemoteFileConfiguration configuration) {
         super(uri, component);
-        this.remoteFileOperations = remoteFileOperations;
+        this.operations = operations;
         this.configuration = configuration;
     }
 
@@ -81,24 +86,36 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     }
 
     public RemoteFileProducer createProducer() throws Exception {
-        return new RemoteFileProducer(this, remoteFileOperations);
+        return new RemoteFileProducer(this, operations);
     }
 
     public RemoteFileConsumer createConsumer(Processor processor) throws Exception {
         String protocol = getConfiguration().getProtocol();
         ObjectHelper.notEmpty(protocol, "protocol");
 
-        RemoteFileConsumer consumer = null;
+        RemoteFileConsumer consumer;
         if ("ftp".equals(protocol)) {
-            consumer = new FtpConsumer(this, processor, remoteFileOperations);
+            consumer = new FtpConsumer(this, processor, operations);
         } else if ("sftp".equals(protocol)) {
-            consumer = new SftpConsumer(this, processor, remoteFileOperations);
+            consumer = new SftpConsumer(this, processor, operations);
         } else {
             throw new IllegalArgumentException("Unsupported protocol: " + protocol);
         }
 
         if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
             throw new IllegalArgumentException("You cannot set delete=true and a moveNamePrefix, moveNamePostfix or expression option");
+        }
+
+        // if noop=true then idempotent should also be configured
+        if (isNoop() && !isIdempotent()) {
+            LOG.info("Endpoint is configured with noop=true so forcing endpoint to be idempotent as well");
+            setIdempotent(true);
+        }
+
+        // if idempotent and no repository set then create a default one
+        if (isIdempotent() && idempotentRepository == null) {
+            LOG.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
+            idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
         configureConsumer(consumer);
@@ -121,15 +138,17 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     }
 
     public RemoteFileProcessStrategy getRemoteFileProcessStrategy() {
-        if (remoteFileProcessStrategy == null) {
-            remoteFileProcessStrategy = createRemoteFileStrategy();
-            LOG.debug("Using remote file process strategy: " + remoteFileProcessStrategy);
+        if (processStrategy == null) {
+            processStrategy = createRemoteFileStrategy();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using remote file process strategy: " + processStrategy);
+            }
         }
-        return remoteFileProcessStrategy;
+        return processStrategy;
     }
 
     public void setRemoteFileProcessStrategy(RemoteFileProcessStrategy remoteFileProcessStrategy) {
-        this.remoteFileProcessStrategy = remoteFileProcessStrategy;
+        this.processStrategy = remoteFileProcessStrategy;
     }
 
     public boolean isNoop() {
@@ -248,6 +267,22 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
      */
     public void setPreMoveExpression(String fileLanguageExpression) {
         this.preMoveExpression = FileLanguage.file(fileLanguageExpression);
+    }
+
+    public boolean isIdempotent() {
+        return idempotent;
+    }
+
+    public void setIdempotent(boolean idempotent) {
+        this.idempotent = idempotent;
+    }
+
+    public IdempotentRepository getIdempotentRepository() {
+        return idempotentRepository;
+    }
+
+    public void setIdempotentRepository(IdempotentRepository idempotentRepository) {
+        this.idempotentRepository = idempotentRepository;
     }
 
     public RemoteFileFilter getFilter() {

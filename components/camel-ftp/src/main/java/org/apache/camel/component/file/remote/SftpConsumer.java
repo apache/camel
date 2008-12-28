@@ -26,8 +26,8 @@ import org.apache.camel.Processor;
  */
 public class SftpConsumer extends RemoteFileConsumer {
 
-    public SftpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations remoteFileOperations) {
-        super(endpoint, processor, remoteFileOperations);
+    public SftpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations operations) {
+        super(endpoint, processor, operations);
     }
 
     protected void pollDirectory(String fileName, boolean processDir, List<RemoteFile> fileList) {

@@ -58,9 +58,8 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
 
     public void testNoop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // we should be able to poll the file more than once since its noop
-        mock.expectedMinimumMessageCount(2);
-        mock.setResultWaitTime(5000);
+        // we should not be able to poll the file more than once since its noop and idempotent
+        mock.expectedMessageCount(1);
         
         mock.assertIsSatisfied();
 

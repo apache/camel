@@ -35,13 +35,13 @@ import org.apache.commons.logging.LogFactory;
 public class RemoteFileProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(RemoteFileProducer.class);
     private RemoteFileEndpoint endpoint;
-    private RemoteFileOperations ftp;
+    private RemoteFileOperations operations;
     private boolean loggedIn;
 
-    protected RemoteFileProducer(RemoteFileEndpoint endpoint, RemoteFileOperations ftp) {
+    protected RemoteFileProducer(RemoteFileEndpoint endpoint, RemoteFileOperations operations) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.ftp = ftp;
+        this.operations = operations;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -82,7 +82,7 @@ public class RemoteFileProducer extends DefaultProducer {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Renaming file: " + tempTarget + " to: " + target);
                 }
-                boolean renamed = ftp.renameFile(tempTarget, target);
+                boolean renamed = operations.renameFile(tempTarget, target);
                 if (!renamed) {
                     throw new RemoteFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
                 }
@@ -112,7 +112,7 @@ public class RemoteFileProducer extends DefaultProducer {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                if (!ftp.buildDirectory(directory)) {
+                if (!operations.buildDirectory(directory)) {
                     LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
                 }
             }
@@ -122,7 +122,7 @@ public class RemoteFileProducer extends DefaultProducer {
                 LOG.trace("About to send: " + fileName + " to: " + remoteServer() + " from exchange: " + exchange);
             }
 
-            boolean success = ftp.storeFile(fileName, payload);
+            boolean success = operations.storeFile(fileName, payload);
             if (!success) {
                 throw new RemoteFileOperationFailedException("Error sending file: " + fileName + " to: " + remoteServer());
             }
@@ -208,11 +208,11 @@ public class RemoteFileProducer extends DefaultProducer {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!ftp.isConnected() || !loggedIn) {
+        if (!operations.isConnected() || !loggedIn) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Not connected/logged in, connecting to " + remoteServer());
             }
-            loggedIn = ftp.connect(endpoint.getConfiguration());
+            loggedIn = operations.connect(endpoint.getConfiguration());
             if (!loggedIn) {
                 return;
             }
@@ -225,7 +225,7 @@ public class RemoteFileProducer extends DefaultProducer {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Disconnecting from " + remoteServer());
         }
-        ftp.disconnect();
+        operations.disconnect();
     }
 
     protected String remoteServer() {

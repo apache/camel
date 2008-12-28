@@ -193,23 +193,29 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
     /**
      * Strategy when the file was processed and a commit should be executed.
      *
-     * @param remoteFileProcessStrategy the strategy to perform the commit
-     * @param exchange                  the exchange
-     * @param remoteFile                the file processed
-     * @param failureHandled            is <tt>false</tt> if the exchange was processed succesfully, <tt>true</tt> if
-     *                                  an exception occured during processing but it was handled by the failure processor (usually the
-     *                                  DeadLetterChannel).
+     * @param processStrategy  the strategy to perform the commit
+     * @param exchange         the exchange
+     * @param file             the file processed
+     * @param failureHandled   is <tt>false</tt> if the exchange was processed succesfully, <tt>true</tt> if
+     *                         an exception occured during processing but it was handled by the failure processor (usually the
+     *                         DeadLetterChannel).
      */
-    protected void processStrategyCommit(RemoteFileProcessStrategy remoteFileProcessStrategy, RemoteFileExchange exchange,
-                                         RemoteFile remoteFile, boolean failureHandled) {
+    protected void processStrategyCommit(RemoteFileProcessStrategy processStrategy, RemoteFileExchange exchange,
+                                         RemoteFile file, boolean failureHandled) {
+        if (endpoint.isIdempotent()) {
+            // only add to idempotent repository if we could process the file
+            // use file.getAbsoluteFileName as key for the idempotent repository to support files with same name but in different folders
+            endpoint.getIdempotentRepository().add(file.getAbsolutelFileName());
+        }
+
         try {
             if (log.isDebugEnabled()) {
-                log.debug("Committing remote file strategy: " + remoteFileProcessStrategy + " for file: "
-                        + remoteFile + (failureHandled ? " that was handled by the failure processor." : ""));
+                log.debug("Committing remote file strategy: " + processStrategy + " for file: "
+                        + file + (failureHandled ? " that was handled by the failure processor." : ""));
             }
-            remoteFileProcessStrategy.commit(operations, endpoint, exchange, remoteFile);
+            processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
-            log.warn("Error committing remote file strategy: " + remoteFileProcessStrategy, e);
+            log.warn("Error committing remote file strategy: " + processStrategy, e);
             handleException(e);
         }
     }
@@ -217,16 +223,16 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
     /**
      * Strategy when the file was not processed and a rollback should be executed.
      *
-     * @param remoteFileProcessStrategy the strategy to perform the commit
-     * @param exchange                  the exchange
-     * @param remoteFile                the file processed
+     * @param processStrategy  the strategy to perform the commit
+     * @param exchange         the exchange
+     * @param file             the file processed
      */
-    protected void processStrategyRollback(RemoteFileProcessStrategy remoteFileProcessStrategy, RemoteFileExchange exchange,
-                                           RemoteFile remoteFile) {
+    protected void processStrategyRollback(RemoteFileProcessStrategy processStrategy, RemoteFileExchange exchange,
+                                           RemoteFile file) {
         if (log.isDebugEnabled()) {
-            log.debug("Rolling back remote file strategy: " + remoteFileProcessStrategy + " for file: " + remoteFile);
+            log.debug("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }
-        remoteFileProcessStrategy.rollback(operations, endpoint, exchange, remoteFile);
+        processStrategy.rollback(operations, endpoint, exchange, file);
     }
 
     /**
@@ -241,6 +247,10 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
             if (log.isTraceEnabled()) {
                 log.trace("Remote file did not match. Will skip this remote file: " + file);
             }
+            return false;
+        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsolutelFileName())) {
+            // use file.getAbsoluteFileName as key for the idempotent repository to support files with same name but in different folders
+            log.warn("RemoteFileConsumer is idempotent and the file has been consumed before. Will skip this remote file: " + file);
             return false;
         }
 
