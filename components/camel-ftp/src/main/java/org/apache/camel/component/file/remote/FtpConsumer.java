@@ -45,15 +45,19 @@ public class FtpConsumer extends RemoteFileConsumer {
         List<FTPFile> files = operations.listFiles(fileName);
         for (FTPFile file : files) {
             RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
-            if (processDir && file.isDirectory() && isValidFile(remote, true)) {
-                // recursive scan and add the sub files and folders
-                String directory = fileName + "/" + file.getName();
-                pollDirectory(directory, endpoint.isRecursive(), fileList);
-            } else if (file.isFile() && isValidFile(remote, false)) {
-                // matched file so add
-                fileList.add(remote);
+            if (processDir && file.isDirectory()) {
+                if (isValidFile(remote, true)) {
+                    // recursive scan and add the sub files and folders
+                    String directory = fileName + "/" + file.getName();
+                    pollDirectory(directory, endpoint.isRecursive(), fileList);
+                }
+            } else if (file.isFile()) {
+                if (isValidFile(remote, false)) {
+                    // matched file so add
+                    fileList.add(remote);
+                }
             } else {
-                log.debug("Ignoring unsupported file type " + file);
+                log.debug("Ignoring unsupported remote file type: " + file);
             }
         }
     }
@@ -69,7 +73,10 @@ public class FtpConsumer extends RemoteFileConsumer {
         FTPFile file = list.get(0);
         if (file != null) {
             RemoteFile remoteFile = asRemoteFile(directory, file);
-            fileList.add(remoteFile);
+            if (isValidFile(remoteFile, false)) {
+                // matched file so add
+                fileList.add(remoteFile);
+            }
         }
     }
 
