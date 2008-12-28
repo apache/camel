@@ -18,7 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.nio.channels.FileLock;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -51,7 +50,6 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
         deleteDirectory("./target/exclusiveread");
         createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
         // send a message to seda:start to trigger the creating of the slowfile to poll
@@ -67,7 +65,7 @@ public class FileExclusiveReadNoneStrategyTest extends ContextTestSupport {
     private class MySlowFileProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            LOG.info("Creating a slow fil with no locks...");
+            LOG.info("Creating a slow file with no locks...");
             File file = new File("./target/exclusiveread/slowfile/hello.txt");
             FileOutputStream fos = new FileOutputStream(file);
             fos.write("Hello World".getBytes());

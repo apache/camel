@@ -36,7 +36,9 @@ public class FileExclusiveReadManuelTest extends ContextTestSupport {
     public void testManually() throws Exception {
         deleteDirectory("./target/exclusiveread");
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setSleepForEmptyTest(10000);
+        // this is used for manual testing where you can copy/lock files etc. while this test runs
+        //mock.setSleepForEmptyTest(10 * 1000L);
+        mock.setSleepForEmptyTest(100);
         mock.expectedMessageCount(0);
 
         mock.assertIsSatisfied();

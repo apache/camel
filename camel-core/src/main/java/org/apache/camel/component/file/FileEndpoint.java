@@ -183,7 +183,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     }
 
     public boolean isAutoCreate() {
-        return this.autoCreate;
+        return autoCreate;
     }
 
     public void setAutoCreate(boolean autoCreate) {
@@ -193,7 +193,9 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     public FileProcessStrategy getFileStrategy() {
         if (fileProcessStrategy == null) {
             fileProcessStrategy = createFileStrategy();
-            LOG.debug("Using file process strategy: " + fileProcessStrategy);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using file process strategy: " + fileProcessStrategy);
+            }
         }
         return fileProcessStrategy;
     }

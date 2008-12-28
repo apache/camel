@@ -48,7 +48,13 @@ public class FileConsumer extends ScheduledPollConsumer {
     protected void poll() throws Exception {
         // gather list of files to process
         List<File> files = new ArrayList<File>();
-        scanFilesToPoll(endpoint.getFile(), true, files);
+
+        boolean isDirectory = endpoint.getFile().isDirectory();
+        if (isDirectory) {
+            pollDirectory(endpoint.getFile(), isRecursive(), files);
+        } else {
+            pollFile(endpoint.getFile(), files);
+        }
 
         // sort files using file comparator if provided
         if (endpoint.getSorter() != null) {
@@ -83,42 +89,59 @@ public class FileConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Scans the given file or directory for files to process.
+     * Polls the given directory for files to process
      *
-     * @param fileOrDirectory  current file or directory when doing recursion
-     * @param processDir  recursive
-     * @param fileList  current list of files gathered
+     * @param fileOrDirectory current directory or file
+     * @param processDir      recursive
+     * @param fileList        current list of files gathered
      */
-    protected void scanFilesToPoll(File fileOrDirectory, boolean processDir, List<File> fileList) {
+    protected void pollDirectory(File fileOrDirectory, boolean processDir, List<File> fileList) {
         if (fileOrDirectory == null || !fileOrDirectory.exists()) {
-            // not a file so skip it
             return;
         }
 
-        if (!fileOrDirectory.isDirectory()) {
-            addFile(fileOrDirectory, fileList);
-        // must test matching for directories as well as we want to skip directories starting with a dot etc.
-        } else if (processDir && matchFile(fileOrDirectory)) {
-            // directory that can be recursive
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Polling directory " + fileOrDirectory);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling directory: " + fileOrDirectory.getPath());
+        }
+        File[] files = fileOrDirectory.listFiles();
+        for (File file : files) {
+            if (processDir && file.isDirectory()) {
+                if (isValidFile(file)) {
+                    // recursive scan and add the sub files and folders
+                    pollDirectory(file, isRecursive(), fileList);
+                }
+            } else if (file.isFile()) {
+                if (isValidFile(file)) {
+                    // matched file so add
+                    fileList.add(file);
+                }
+            } else {
+                LOG.debug("Ignoring unsupported file type " + file);
             }
-            File[] files = fileOrDirectory.listFiles();
-            for (File file : files) {
-                // recursive scan and add the files
-                scanFilesToPoll(file, isRecursive(), fileList);
-            }
-        } else {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Skipping directory " + fileOrDirectory);
-            }
+        }
+    }
+
+    /**
+     * Polls the given file
+     *
+     * @param file     the file
+     * @param fileList current list of files gathered
+     */
+    protected void pollFile(File file, List<File> fileList) {
+        if (file == null || !file.exists()) {
+            return;
+        }
+
+        if (isValidFile(file)) {
+            // matched file so add
+            fileList.add(file);
         }
     }
 
     /**
      * Processes the given file
      *
-     * @param exchange  the file exchange
+     * @param exchange the file exchange
      */
     protected void processExchange(final FileExchange exchange) {
         final File target = exchange.getFile();
@@ -177,12 +200,12 @@ public class FileConsumer extends ScheduledPollConsumer {
     /**
      * Strategy when the file was processed and a commit should be executed.
      *
-     * @param processStrategy   the strategy to perform the commit
-     * @param exchange          the exchange
-     * @param file              the file processed
-     * @param failureHandled    is <tt>false</tt> if the exchange was processed succesfully, <tt>true</tt> if
-     * an exception occured during processing but it was handled by the failure processor (usually the
-     * DeadLetterChannel).
+     * @param processStrategy the strategy to perform the commit
+     * @param exchange        the exchange
+     * @param file            the file processed
+     * @param failureHandled  is <tt>false</tt> if the exchange was processed succesfully, <tt>true</tt> if
+     *                        an exception occured during processing but it was handled by the failure processor (usually the
+     *                        DeadLetterChannel).
      */
     protected void processStrategyCommit(FileProcessStrategy processStrategy, FileExchange exchange,
                                          File file, boolean failureHandled) {
@@ -191,7 +214,7 @@ public class FileConsumer extends ScheduledPollConsumer {
             // use file.getPath as key for the idempotent repository to support files with same name but in different folders
             endpoint.getIdempotentRepository().add(file.getPath());
         }
-        
+
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Committing file strategy: " + processStrategy + " for file: "
@@ -207,9 +230,9 @@ public class FileConsumer extends ScheduledPollConsumer {
     /**
      * Strategy when the file was not processed and a rollback should be executed.
      *
-     * @param processStrategy   the strategy to perform the commit
-     * @param exchange          the exchange
-     * @param file              the file processed
+     * @param processStrategy the strategy to perform the commit
+     * @param exchange        the exchange
+     * @param file            the file processed
      */
     protected void processStrategyRollback(FileProcessStrategy processStrategy, FileExchange exchange, File file) {
         if (LOG.isDebugEnabled()) {
@@ -220,11 +243,12 @@ public class FileConsumer extends ScheduledPollConsumer {
 
     /**
      * Strategy for validating if the given file should be included or not
-     * @param file  the file
+     *
+     * @param file the file
      * @return true to include the file, false to skip it
      */
-    protected boolean validateFile(File file) {
-        if (!matchFile(file)) {
+    protected boolean isValidFile(File file) {
+        if (!isMatched(file)) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("File did not match. Will skip this file: " + file);
             }
@@ -244,15 +268,15 @@ public class FileConsumer extends ScheduledPollConsumer {
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
      * <ul>
-     *    <li>Starting with a dot</li>
-     *    <li>lock files</li>
+     *   <li>Starting with a dot</li>
+     *   <li>lock files</li>
      * </ul>
      * And then <tt>true</tt> for directories.
      *
-     * @param file  the file
-     * @return true if the file is matche, false if not
+     * @param file the file
+     * @return true if the file is matched, false if not
      */
-    protected boolean matchFile(File file) {
+    protected boolean isMatched(File file) {
         String name = file.getName();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
@@ -293,12 +317,6 @@ public class FileConsumer extends ScheduledPollConsumer {
         }
 
         return true;
-    }
-
-    private void addFile(File file, List<File> fileList) {
-        if (validateFile(file)) {
-            fileList.add(file);
-        }
     }
 
     public boolean isRecursive() {

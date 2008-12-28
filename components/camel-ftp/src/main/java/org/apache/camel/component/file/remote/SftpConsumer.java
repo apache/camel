@@ -35,27 +35,30 @@ public class SftpConsumer extends RemoteFileConsumer {
             return;
         }
 
-        String currentDir = operations.getCurrentDirectory();
-        operations.changeCurrentDirectory(fileName);
+        if (fileName.endsWith("/")) {
+            fileName = fileName.substring(0, fileName.length() - 1);
+        }
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + fileName);
         }
-        List<ChannelSftp.LsEntry> files = operations.listFiles();
+        List<ChannelSftp.LsEntry> files = operations.listFiles(fileName);
         for (ChannelSftp.LsEntry file : files) {
-            RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(file);
-            if (processDir && file.getAttrs().isDir() && isValidFile(remote, true)) {
-                // recursive scan and add the sub files and folders
-                pollDirectory(file.getFilename(), endpoint.isRecursive(), fileList);
-            } else if (!file.getAttrs().isLink() && isValidFile(remote, false)) {
-                // matched file so add
-                fileList.add(remote);
+            RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
+            if (processDir && file.getAttrs().isDir()) {
+                if (isValidFile(remote, true)) {
+                    // recursive scan and add the sub files and folders
+                    pollDirectory(file.getFilename(), endpoint.isRecursive(), fileList);
+                }
+            } else if (!file.getAttrs().isLink()) {
+                if (isValidFile(remote, false)) {
+                    // matched file so add
+                    fileList.add(remote);
+                }
             } else {
-                log.debug("Ignoring unsupported file type " + file);
+                log.debug("Ignoring unsupported remote file type: " + file);
             }
         }
-
-        operations.changeCurrentDirectory(currentDir);
     }
 
     /**
@@ -65,43 +68,42 @@ public class SftpConsumer extends RemoteFileConsumer {
      * @param fileList  current list of files gathered
      */
     protected void pollFile(String fileName, List<RemoteFile> fileList) {
+        String directory = ".";
         int index = fileName.lastIndexOf("/");
         if (index > -1) {
-            // cd to the folder of the filename
-            operations.changeCurrentDirectory(fileName.substring(0, index));
+            directory = fileName.substring(0, index);
         }
         // list the files in the fold and poll the first file
-        List<ChannelSftp.LsEntry> list = operations.listFiles(fileName.substring(index + 1));
+        List<ChannelSftp.LsEntry> list = operations.listFiles(fileName);
         ChannelSftp.LsEntry file = list.get(0);
         if (file != null) {
-            RemoteFile remoteFile = asRemoteFile(file);
-            fileList.add(remoteFile);
+            RemoteFile remoteFile = asRemoteFile(directory, file);
+            if (isValidFile(remoteFile, false)) {
+                // matched file so add
+                fileList.add(remoteFile);
+            }
         }
     }
 
-    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(ChannelSftp.LsEntry file) {
+    private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String directory, ChannelSftp.LsEntry file) {
         RemoteFile<ChannelSftp.LsEntry> remote = new RemoteFile<ChannelSftp.LsEntry>();
         remote.setFile(file);
         remote.setFileName(file.getFilename());
         remote.setFileLength(file.getAttrs().getSize());
         remote.setLastModified(file.getAttrs().getMTime() * 1000L);
         remote.setHostname(endpoint.getConfiguration().getHost());
-        String absoluteFileName = getAbsoluteFileName(file);
+        String absoluteFileName = directory + "/" + file.getFilename();
         remote.setAbsolutelFileName(absoluteFileName);
 
         // the relative filename
         String ftpBasePath = endpoint.getConfiguration().getFile();
-        String relativePath = absoluteFileName.substring(ftpBasePath.length() + 1);
+        String relativePath = absoluteFileName.substring(ftpBasePath.length());
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
         }
         remote.setRelativeFileName(relativePath);
 
         return remote;
-    }
-
-    private String getAbsoluteFileName(ChannelSftp.LsEntry ftpFile) {
-        return operations.getCurrentDirectory() + "/" + ftpFile.getFilename();
     }
 
 }

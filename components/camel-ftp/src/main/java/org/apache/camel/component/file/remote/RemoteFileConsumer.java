@@ -48,8 +48,59 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
         this.operations = operations;
     }
 
+    protected void poll() throws Exception {
+        connectIfNecessary();
+        if (!loggedIn) {
+            String message = "Could not connect/login to: " + endpoint.remoteServerInformation() + ". Will skip this poll.";
+            log.warn(message);
+            return;
+        }
+
+        // gather list of files to process
+        List<RemoteFile> files = new ArrayList<RemoteFile>();
+
+        String name = endpoint.getConfiguration().getFile();
+        boolean isDirectory = endpoint.getConfiguration().isDirectory();
+        if (isDirectory) {
+            pollDirectory(name, endpoint.isRecursive(), files);
+        } else {
+            pollFile(name, files);
+        }
+
+        // sort files using file comparator if provided
+        if (endpoint.getSorter() != null) {
+            Collections.sort(files, endpoint.getSorter());
+        }
+
+        // sort using build in sorters that is expression based
+        // first we need to convert to RemoteFileExchange objects so we can sort using expressions
+        List<RemoteFileExchange> exchanges = new ArrayList<RemoteFileExchange>(files.size());
+        for (RemoteFile file : files) {
+            RemoteFileExchange exchange = endpoint.createExchange(file);
+            endpoint.configureMessage(file, exchange.getIn());
+            exchanges.add(exchange);
+        }
+        // sort files using exchange comparator if provided
+        if (endpoint.getSortBy() != null) {
+            Collections.sort(exchanges, endpoint.getSortBy());
+        }
+
+        // consume files one by one
+        int total = exchanges.size();
+        if (total > 0 && log.isDebugEnabled()) {
+            log.debug("Total " + total + " files to consume");
+        }
+        for (int index = 0; index < total; index++) {
+            RemoteFileExchange exchange = exchanges.get(index);
+            // add current index and total as headers
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
+            processExchange(exchange);
+        }
+    }
+
     /**
-     * Polls the given directory for files to process.
+     * Polls the given directory for files to process
      *
      * @param fileName    current directory or file
      * @param processDir  recursive
@@ -183,12 +234,12 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
      *
      * @param file         the remote file
      * @param isDirectory  wether the file is a directory or a file
-     * @return <tttrue</tt> to include the file, <tt>false</tt> to skip it
+     * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(RemoteFile file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
             if (log.isTraceEnabled()) {
-                log.trace("File did not match. Will skip this file: " + file);
+                log.trace("Remote file did not match. Will skip this remote file: " + file);
             }
             return false;
         }
@@ -198,11 +249,18 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * Is the given file matched to be consumed.
+     * Strategy to perform file matching based on endpoint configuration.
+     * <p/>
+     * Will always return <tt>false</tt> for certain files/folders:
+     * <ul>
+     *   <li>Starting with a dot</li>
+     *   <li>lock files</li>
+     * </ul>
+     * And then <tt>true</tt> for directories.
      *
      * @param file         the remote file
-     * @param isDirectory  is the given file a directory or a file
-     * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
+     * @param isDirectory  wether the file is a directory or a file
+     * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(RemoteFile file, boolean isDirectory) {
         String name = file.getFileName();
@@ -284,56 +342,5 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
      */
     protected String remoteServer() {
         return endpoint.remoteServerInformation();
-    }
-
-    protected void poll() throws Exception {
-        connectIfNecessary();
-        if (!loggedIn) {
-            String message = "Could not connect/login to: " + endpoint.remoteServerInformation() + ". Will skip this poll.";
-            log.warn(message);
-            return;
-        }
-
-        // gather list of files to process
-        List<RemoteFile> files = new ArrayList<RemoteFile>();
-
-        String name = endpoint.getConfiguration().getFile();
-        boolean isDirectory = endpoint.getConfiguration().isDirectory();
-        if (isDirectory) {
-            pollDirectory(name, true, files);
-        } else {
-            pollFile(name, files);
-        }
-
-        // sort files using file comparator if provided
-        if (endpoint.getSorter() != null) {
-            Collections.sort(files, endpoint.getSorter());
-        }
-
-        // sort using build in sorters that is expression based
-        // first we need to convert to RemoteFileExchange objects so we can sort using expressions
-        List<RemoteFileExchange> exchanges = new ArrayList<RemoteFileExchange>(files.size());
-        for (RemoteFile file : files) {
-            RemoteFileExchange exchange = endpoint.createExchange(file);
-            endpoint.configureMessage(file, exchange.getIn());
-            exchanges.add(exchange);
-        }
-          // sort files using exchange comparator if provided
-        if (endpoint.getSortBy() != null) {
-            Collections.sort(exchanges, endpoint.getSortBy());
-        }
-
-        // consume files one by one
-        int total = exchanges.size();
-        if (total > 0 && log.isDebugEnabled()) {
-            log.debug("Total " + total + " files to consume");
-        }
-        for (int index = 0; index < total; index++) {
-            RemoteFileExchange exchange = exchanges.get(index);
-            // add current index and total as headers
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
-            processExchange(exchange);
-        }
     }
 }
