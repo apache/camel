@@ -24,6 +24,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * A useful base class for {@link Predicate} implementations
  * 
+ * @deprecated is a duplicate of the same class in the builder package. Will be removed in Camel 2.0
  * @version $Revision$
  */
 public abstract class BinaryPredicateSupport<E extends Exchange> implements Predicate<E> {
