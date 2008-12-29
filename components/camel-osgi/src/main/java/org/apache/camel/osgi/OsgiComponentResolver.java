@@ -111,12 +111,15 @@ public class OsgiComponentResolver implements ComponentResolver {
     }
 
     protected synchronized void mayBeRemoveComponentFor(Bundle bundle) {
-        for (ComponentEntry entry : components.values()) {
+        // To avoid the CurrentModificationException, do not use components.values directly 
+        ComponentEntry[] entriesArray = components.values().toArray(new ComponentEntry[0]);
+        for (ComponentEntry entry : entriesArray) {
             if (entry.bundle == bundle) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Removing entry: " + entry.path + " in bundle " + bundle.getSymbolicName());
                 }
                 components.remove(entry.name);
+                break;
             }
         }
     }
