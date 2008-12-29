@@ -66,7 +66,7 @@
     <dependency>
       <groupId>org.codehaus.woodstox</groupId>
       <artifactId>wstx-asl</artifactId>
-      <version>3.2.7</version>
+      <version>3.2.8</version>
     </dependency>
 
     <!-- testing -->
