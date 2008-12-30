@@ -16,8 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A <a href="http://activemq.apache.org/camel/throttler.html">Throttler</a>
@@ -33,8 +37,8 @@ import org.apache.camel.Processor;
 public class Throttler extends DelayProcessorSupport {
     private long maximumRequestsPerPeriod;
     private long timePeriodMillis;
-    private long startTimeMillis;
-    private long requestCount;
+    private AtomicLong startTimeMillis = new AtomicLong(0);
+    private AtomicLong requestCount = new AtomicLong(0);
 
     public Throttler(Processor processor, long maximumRequestsPerPeriod) {
         this(processor, maximumRequestsPerPeriod, 1000);
@@ -81,32 +85,36 @@ public class Throttler extends DelayProcessorSupport {
      * period
      */
     public long getRequestCount() {
-        return requestCount;
+        return requestCount.get();
     }
 
     /**
      * The start time when this current period began
      */
     public long getStartTimeMillis() {
-        return startTimeMillis;
+        return startTimeMillis.get();
+    }
+    
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        super.process(exchange);
+        
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void delay(Exchange exchange) throws Exception {
         long now = currentSystemTime();
-        if (startTimeMillis == 0) {
-            startTimeMillis = now;
-        }
-        if (now - startTimeMillis > timePeriodMillis) {
+        startTimeMillis.compareAndSet(0, now);
+        if (now - startTimeMillis.get() > timePeriodMillis) {
             // we're at the start of a new time period
             // so lets reset things
-            requestCount = 1;
-            startTimeMillis = now;
+            requestCount.set(0);
+            startTimeMillis.set(0);
         } else {
-            if (++requestCount > maximumRequestsPerPeriod) {
+            if (requestCount.incrementAndGet() > maximumRequestsPerPeriod) {
                 // lets sleep until the start of the next time period
-                long time = startTimeMillis + timePeriodMillis;
+                long time = startTimeMillis.get() + timePeriodMillis;
                 waitUntil(time, exchange);
             }
         }
