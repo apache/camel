@@ -51,6 +51,8 @@ public class SplitterType extends ExpressionNode {
     @XmlTransient
     private Executor executor;
     @XmlAttribute(required = false)
+    private String strategyRef;
+    @XmlAttribute(required = false)
     private String threadPoolExecutorRef;
     @XmlAttribute(required = false)
     private Boolean streaming = false;
@@ -79,13 +81,36 @@ public class SplitterType extends ExpressionNode {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        if (aggregationStrategy == null) {
-            aggregationStrategy = new UseLatestAggregationStrategy();
-        }
+        aggregationStrategy = createAggregationStrategy(routeContext);
         executor = createThreadPoolExecutor(routeContext);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
                 isParallelProcessing(), executor, streaming);
     }
+
+    
+    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+        AggregationStrategy strategy = getAggregationStrategy();
+        if (strategy == null && strategyRef != null) {
+            strategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
+        }
+        if (strategy == null) {
+            // fallback to use latest
+            strategy = new UseLatestAggregationStrategy();
+        }
+        return strategy;
+    }        
+    
+    private Executor createThreadPoolExecutor(RouteContext routeContext) {
+        Executor executor = getExecutor();
+        if (executor == null && threadPoolExecutorRef != null) {
+            executor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
+        }
+        if (executor == null) {
+            // fall back and use default
+            executor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+        }
+        return executor;
+    }         
     
     // Fluent API
     // -------------------------------------------------------------------------
@@ -181,20 +206,8 @@ public class SplitterType extends ExpressionNode {
 
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
-    }
-
-    private Executor createThreadPoolExecutor(RouteContext routeContext) {
-        Executor executor = getExecutor();
-        if (executor == null && threadPoolExecutorRef != null) {
-            executor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
-        }
-        if (executor == null) {
-            // fall back and use default
-            executor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
-        }
-        return executor;
-    }    
-   
+    }  
+    
     public Executor getExecutor() {
         return executor;
     }
