@@ -20,8 +20,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A <a href="http://activemq.apache.org/camel/throttler.html">Throttler</a>
@@ -110,7 +108,7 @@ public class Throttler extends DelayProcessorSupport {
             // we're at the start of a new time period
             // so lets reset things
             requestCount.set(0);
-            startTimeMillis.set(0);
+            startTimeMillis.set(now);
         } else {
             if (requestCount.incrementAndGet() > maximumRequestsPerPeriod) {
                 // lets sleep until the start of the next time period
