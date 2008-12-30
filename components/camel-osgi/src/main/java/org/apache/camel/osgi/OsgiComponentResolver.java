@@ -118,8 +118,7 @@ public class OsgiComponentResolver implements ComponentResolver {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Removing entry: " + entry.path + " in bundle " + bundle.getSymbolicName());
                 }
-                components.remove(entry.name);
-                break;
+                components.remove(entry.name);                
             }
         }
     }
