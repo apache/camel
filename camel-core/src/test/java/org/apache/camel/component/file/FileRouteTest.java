@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String targetdir = "target/test-default-inbox";
-    protected String params = "?consumer.recursive=true";
+    protected String params = "?recursive=true";
     protected String uri = "file:" + targetdir + params;
     protected LockRecorderProcessor recorder = new LockRecorderProcessor();
 

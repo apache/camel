@@ -62,6 +62,8 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private boolean delete;
     private boolean noop;
     private boolean append = true;
+    private boolean recursive;
+    private String regexPattern = "";
     private String moveNamePrefix;
     private String moveNamePostfix;
     private String preMoveNamePrefix;
@@ -299,6 +301,22 @@ public class FileEndpoint extends ScheduledPollEndpoint {
      */
     public void setAppend(boolean append) {
         this.append = append;
+    }
+
+    public boolean isRecursive() {
+        return this.recursive;
+    }
+
+    public void setRecursive(boolean recursive) {
+        this.recursive = recursive;
+    }
+
+    public String getRegexPattern() {
+        return this.regexPattern;
+    }
+
+    public void setRegexPattern(String regexPattern) {
+        this.regexPattern = regexPattern;
     }
 
     public int getBufferSize() {

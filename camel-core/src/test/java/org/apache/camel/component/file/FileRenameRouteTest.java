@@ -23,7 +23,7 @@ public class FileRenameRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         targetdir = "target/test-rename-inbox";
-        params = "?moveNamePrefix=foo/?consumer.recursive=true";
+        params = "?moveNamePrefix=foo/?recursive=true";
         super.setUp();
     }
 }
