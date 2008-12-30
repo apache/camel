@@ -16,6 +16,9 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,13 +42,33 @@ public class ThrottlerTest extends ContextTestSupport {
         // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
+    
+    public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(3);
+        resultEndpoint.setResultWaitTime(1000);
+
+        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
+        for (int i = 0; i < messageCount; i++) {
+            executor.execute(new Runnable() {
+                public void run() {
+                    template.sendBody("direct:a", "<message>payload</message>");
+                }                
+            });
+        }
+
+        // lets pause to give the requests time to be processed
+        // to check that the throttle really does kick in
+        resultEndpoint.assertIsSatisfied();
+    }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
-                from("seda:a").throttle(3).timePeriodMillis(30000).to("mock:result");
+                from("seda:a").throttle(3).timePeriodMillis(10000).to("mock:result");
                 // END SNIPPET: ex
+                from("direct:a").throttle(3).timePeriodMillis(10000).to("mock:result");
             }
         };
     }
