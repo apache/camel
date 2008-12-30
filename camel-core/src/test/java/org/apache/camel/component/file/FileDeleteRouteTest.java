@@ -28,7 +28,7 @@ public class FileDeleteRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         targetdir = "target/test-delete-inbox";
-        params = "?consumer.delay=1000&delete=true&consumer.recursive=true";
+        params = "?consumer.delay=1000&delete=true&recursive=true";
         super.setUp();
     }
 

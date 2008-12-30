@@ -45,7 +45,7 @@ public class FileConsumeFileOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/fileonly/report.txt?consumer.recursive=false&delete=true").to("mock:result");
+                from("file://target/fileonly/report.txt?recursive=false&delete=true").to("mock:result");
             }
         };
     }

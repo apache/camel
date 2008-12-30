@@ -45,7 +45,7 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/singledirectoryonly/?consumer.recursive=false&delete=true").to("mock:result");
+                from("file://target/singledirectoryonly/?recursive=false&delete=true").to("mock:result");
             }
         };
     }

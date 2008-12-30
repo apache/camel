@@ -23,7 +23,7 @@ public class FileNoOpRouteTest extends FileRouteTest {
     @Override
     protected void setUp() throws Exception {
         targetdir = "target/test-noop-inbox";
-        params = "?noop=true&consumer.recursive=true";
+        params = "?noop=true&recursive=true";
         super.setUp();
     }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.commons.logging.Log;
@@ -37,8 +38,6 @@ public class FileConsumer extends ScheduledPollConsumer {
     private static final transient Log LOG = LogFactory.getLog(FileConsumer.class);
 
     private FileEndpoint endpoint;
-    private boolean recursive;
-    private String regexPattern = "";
 
     public FileConsumer(final FileEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -51,7 +50,7 @@ public class FileConsumer extends ScheduledPollConsumer {
 
         boolean isDirectory = endpoint.getFile().isDirectory();
         if (isDirectory) {
-            pollDirectory(endpoint.getFile(), isRecursive(), files);
+            pollDirectory(endpoint.getFile(), files);
         } else {
             pollFile(endpoint.getFile(), files);
         }
@@ -92,10 +91,9 @@ public class FileConsumer extends ScheduledPollConsumer {
      * Polls the given directory for files to process
      *
      * @param fileOrDirectory current directory or file
-     * @param processDir      recursive
      * @param fileList        current list of files gathered
      */
-    protected void pollDirectory(File fileOrDirectory, boolean processDir, List<File> fileList) {
+    protected void pollDirectory(File fileOrDirectory, List<File> fileList) {
         if (fileOrDirectory == null || !fileOrDirectory.exists()) {
             return;
         }
@@ -105,10 +103,10 @@ public class FileConsumer extends ScheduledPollConsumer {
         }
         File[] files = fileOrDirectory.listFiles();
         for (File file : files) {
-            if (processDir && file.isDirectory()) {
+            if (endpoint.isRecursive() && file.isDirectory()) {
                 if (isValidFile(file)) {
                     // recursive scan and add the sub files and folders
-                    pollDirectory(file, isRecursive(), fileList);
+                    pollDirectory(file, fileList);
                 }
             } else if (file.isFile()) {
                 if (isValidFile(file)) {
@@ -299,40 +297,24 @@ public class FileConsumer extends ScheduledPollConsumer {
             }
         }
 
-        if (regexPattern != null && regexPattern.length() > 0) {
-            if (!name.matches(regexPattern)) {
+        if (ObjectHelper.isNotEmpty(endpoint.getRegexPattern())) {
+            if (!name.matches(endpoint.getRegexPattern())) {
                 return false;
             }
         }
 
-        if (endpoint.getExcludedNamePrefix() != null) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePrefix())) {
             if (name.startsWith(endpoint.getExcludedNamePrefix())) {
                 return false;
             }
         }
-        if (endpoint.getExcludedNamePostfix() != null) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePostfix())) {
             if (name.endsWith(endpoint.getExcludedNamePostfix())) {
                 return false;
             }
         }
 
         return true;
-    }
-
-    public boolean isRecursive() {
-        return this.recursive;
-    }
-
-    public void setRecursive(boolean recursive) {
-        this.recursive = recursive;
-    }
-
-    public String getRegexPattern() {
-        return this.regexPattern;
-    }
-
-    public void setRegexPattern(String regexPattern) {
-        this.regexPattern = regexPattern;
     }
 
 }

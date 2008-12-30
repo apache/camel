@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?consumer.recursive=true&delete=true&consumer.delay=5000&sortBy=file:path";
+    private String fileUrl = "file://target/multidir/?recursive=true&delete=true&consumer.delay=5000&sortBy=file:path";
 
     @Override
     protected void setUp() throws Exception {

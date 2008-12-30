@@ -51,10 +51,10 @@ public class FileConfigureTest extends ContextTestSupport {
     }
 
     public void testConsumerConfigurations() throws Exception {
-        FileConsumer consumer = createFileConsumer("file://target/foo/bar?consumer.recursive=true");
-        assertEquals("The recurisive should be true", consumer.isRecursive(), true);
+        FileConsumer consumer = createFileConsumer("file://target/foo/bar?recursive=true");
+        assertNotNull(consumer);
         try {
-            createFileConsumer("file://target/foo/bar?consumer.recursiv=true");
+            createFileConsumer("file://target/foo/bar?recursiv=true");
             fail("Expect a configure exception here");
         } catch (Exception ex) {
             assertTrue("Get the wrong exception type here", ex instanceof ResolveEndpointFailedException);
