@@ -27,6 +27,7 @@ import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 public class RestRouteBuilderTest extends ContextTestSupport {
     private static final String ID = "89531";
@@ -82,8 +83,9 @@ public class RestRouteBuilderTest extends ContextTestSupport {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 
                 "http://localhost:8080/orders/99991/6"));
-        // expect null as no Restlet consumer to handle POST method
-        assertNull(response.getEntity().getText());
+        // expect error status as no Restlet consumer to handle POST method
+        assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
+        assertNotNull(response.getEntity().getText());
     }
 
 }
