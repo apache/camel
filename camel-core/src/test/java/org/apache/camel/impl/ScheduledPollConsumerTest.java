@@ -14,12 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.impl;
 
 import junit.framework.Assert;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 
 public class ScheduledPollConsumerTest extends ContextTestSupport {
     

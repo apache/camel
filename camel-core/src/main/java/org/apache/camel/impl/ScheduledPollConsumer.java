@@ -31,18 +31,19 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public abstract class ScheduledPollConsumer extends DefaultConsumer implements
-    Runnable {
+public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable {
     private static final transient Log LOG = LogFactory.getLog(ScheduledPollConsumer.class);
 
     private final ScheduledExecutorService executor;
+    private ScheduledFuture<?> future;
+    private Exception firstExceptionThrown;
+
+    // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
     private long initialDelay = 1000;
     private long delay = 500;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;
     private boolean useFixedDelay;
-    private ScheduledFuture<?> future;
-    private Exception firstExceptionThrown;
-    
+
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
         this(endpoint, processor, endpoint.getExecutorService());
     }
