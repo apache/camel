@@ -35,10 +35,12 @@ public class GoogleTalkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: e1
                 // send a message from fromuser@gmail.com to touser@gmail.com
                 from("direct:start").
                     to("xmpp://talk.google.com:5222/touser@gmail.com?serviceName=gmail.com&user=fromuser&password=secret").
                     to("mock:result");
+                // END SNIPPET: e1
             }
         };
     }
