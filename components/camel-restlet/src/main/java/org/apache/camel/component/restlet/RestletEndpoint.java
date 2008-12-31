@@ -45,6 +45,7 @@ public class RestletEndpoint extends DefaultEndpoint {
     private int port = DEFAULT_PORT;
     private String uriPattern;
     private RestletBinding restletBinding;
+    private Map<String, String> realm;
     
     public RestletEndpoint(RestletComponent component, String remaining, 
             Map<String, String> parameters, RestletBinding restletBinding) throws Exception {
@@ -145,5 +146,20 @@ public class RestletEndpoint extends DefaultEndpoint {
     public Method getRestletMethod() {
         return restletMethod;
     }
+
+    /**
+     * @param realm
+     */
+    public void setRealm(Map<String, String> realm) {
+        this.realm = realm;
+    }
+    
+    /**
+     * @return the realm
+     */
+    public Map<String, String> getRealm() {
+        return realm;
+    }
+
 
 }
