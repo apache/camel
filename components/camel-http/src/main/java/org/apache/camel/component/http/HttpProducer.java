@@ -97,7 +97,7 @@ public class HttpProducer extends DefaultProducer {
             } else {
                 HttpOperationFailedException exception = null;
                 Header[] headers = method.getResponseHeaders();
-                InputStream is =  extractResponseBody(method);
+                InputStream is = extractResponseBody(method);
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectLocation;
                     Header locationHeader = method.getResponseHeader("location");
