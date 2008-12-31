@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.Chat;
+import org.jivesoftware.smack.ChatManager;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.Message;
@@ -47,10 +48,11 @@ public class XmppPrivateChatProducer extends DefaultProducer {
         String threadId = exchange.getExchangeId();
 
         try {
-            Chat chat = endpoint.getConnection().getChatManager().getThreadChat(threadId);
+            ChatManager chatManager = endpoint.getConnection().getChatManager();
+            Chat chat = chatManager.getThreadChat(threadId);
 
             if (chat == null) {
-                chat = endpoint.getConnection().getChatManager().createChat(getParticipant(), threadId, new MessageListener() {
+                chat = chatManager.createChat(getParticipant(), threadId, new MessageListener() {
                     public void processMessage(Chat chat, Message message) {
                         // not here to do conversation
                     }
@@ -60,7 +62,6 @@ public class XmppPrivateChatProducer extends DefaultProducer {
             // TODO it would be nice if we could reuse the message from the exchange
             Message message = new Message();
             message.setTo(participant);
-            message.setFrom(endpoint.getUser());
             message.setThread(threadId);
             message.setType(Message.Type.normal);
 
