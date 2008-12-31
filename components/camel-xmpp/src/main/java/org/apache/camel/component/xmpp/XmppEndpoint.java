@@ -52,6 +52,7 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     private String room;
     private String participant;
     private String nickname;
+    private String serviceName;
 
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
@@ -192,6 +193,14 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
         this.nickname = nickname;
     }
 
+    public void setServiceName(String serviceName) {
+        this.serviceName = serviceName;
+    }
+
+    public String getServiceName() {
+        return serviceName;
+    }    
+    
     public XMPPConnection getConnection() throws XMPPException {
         if (connection == null) {
             connection = createConnection();
@@ -207,8 +216,12 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     // -------------------------------------------------------------------------
     protected XMPPConnection createConnection() throws XMPPException {
         XMPPConnection connection;
-        if (port > 0) {
-            connection = new XMPPConnection(new ConnectionConfiguration(host, port));
+        if (port > 0) {            
+            if (getServiceName() == null) {
+                connection = new XMPPConnection(new ConnectionConfiguration(host, port));
+            } else {
+                connection = new XMPPConnection(new ConnectionConfiguration(host, port, getServiceName()));
+            }
         } else {
             connection = new XMPPConnection(host);
         }
@@ -270,5 +283,4 @@ public class XmppEndpoint extends DefaultEndpoint<XmppExchange> {
     public boolean isSingleton() {
         return true;
     }
-
 }

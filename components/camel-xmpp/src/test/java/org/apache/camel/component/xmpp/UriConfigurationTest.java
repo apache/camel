@@ -29,7 +29,7 @@ public class UriConfigurationTest extends TestCase {
     protected CamelContext context = new DefaultCamelContext();
 
     public void testPrivateChatConfiguration() throws Exception {
-        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret");
+        Endpoint endpoint = context.getEndpoint("xmpp://camel-user@localhost:123/test-user@localhost?password=secret&serviceName=someCoolChat");
         assertTrue("Endpoint not an XmppEndpoint: " + endpoint, endpoint instanceof XmppEndpoint);
         XmppEndpoint xmppEndpoint = (XmppEndpoint) endpoint;
 
@@ -39,6 +39,7 @@ public class UriConfigurationTest extends TestCase {
         assertEquals("camel-user", xmppEndpoint.getUser());
         assertEquals("test-user@localhost", xmppEndpoint.getParticipant());
         assertEquals("secret", xmppEndpoint.getPassword());
+        assertEquals("someCoolChat", xmppEndpoint.getServiceName());
     }
 
     public void testGroupChatConfiguration() throws Exception {
