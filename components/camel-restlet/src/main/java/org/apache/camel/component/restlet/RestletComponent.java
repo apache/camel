@@ -25,7 +25,10 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.Component;
+import org.restlet.Guard;
+import org.restlet.Restlet;
 import org.restlet.Server;
+import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 
@@ -39,7 +42,7 @@ public class RestletComponent extends DefaultComponent {
 
     private Map<String, Server> servers = new HashMap<String, Server>();
     private Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
-
+    
     private Component component = new Component();
 
     @Override
@@ -52,18 +55,35 @@ public class RestletComponent extends DefaultComponent {
         if (ref != null) {
             restletBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), 
                     ref, RestletBinding.class);
+            if (restletBinding == null) {
+                LOG.warn("Binding '" + ref + "' cannot be found in the context");
+            }
         }
         
         if (restletBinding == null) {
             restletBinding = new DefaultRestletBinding();
         }
         
+        Map<String, String> realm = null;
+        ref = getAndRemoveParameter(parameters, "restletRealmRef", String.class);
+        if (ref != null) {
+            realm = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, Map.class);
+            if (realm == null) {
+                LOG.warn("Realm '" + ref + "' cannot be found in the context");
+            }
+        }
+        
         Method method = getAndRemoveParameter(parameters, "restletMethod", Method.class);
         RestletEndpoint result = new RestletEndpoint(this, remaining, parameters, restletBinding);
+        
         if (method != null) {
             result.setRestletMethod(method);
         }
         
+        if (realm != null) {
+            result.setRealm(realm);
+        }
+                
         return result;
     }
     
@@ -91,7 +111,23 @@ public class RestletComponent extends DefaultComponent {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
         addServerIfNeccessary(endpoint);
         MethodBasedRouter router = getMethodRouter(endpoint.getUriPattern());
-        router.addRoute(endpoint.getRestletMethod(), consumer.getRestlet());
+        
+        Map<String, String> realm = endpoint.getRealm();
+        Restlet target = consumer.getRestlet();
+        if (realm != null && realm.size() > 0) {
+            Guard guard = new Guard(component.getContext().createChildContext(), 
+                    ChallengeScheme.HTTP_BASIC, "Camel-Restlet Endpoint Realm");
+            for (Map.Entry<String, String> entry : realm.entrySet()) {
+                guard.getSecrets().put(entry.getKey(), entry.getValue().toCharArray());
+            }
+            guard.setNext(target);
+            target = guard;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Target has been set to guard: " + guard);
+            }
+        }
+        
+        router.addRoute(endpoint.getRestletMethod(), target);
         
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(endpoint.getUriPattern(), router);
