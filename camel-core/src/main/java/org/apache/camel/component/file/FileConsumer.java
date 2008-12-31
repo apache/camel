@@ -253,7 +253,9 @@ public class FileConsumer extends ScheduledPollConsumer {
             return false;
         } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getPath())) {
             // use file.getPath as key for the idempotent repository to support files with same name but in different folders
-            LOG.warn("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
+            }
             return false;
         }
 
