@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -58,7 +59,6 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
     protected void configureConsumer(Consumer consumer) throws Exception {
         if (consumerProperties != null) {
-            // TODO pass in type converter
             IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), consumer, consumerProperties);
             if (!this.isLenientProperties() && consumerProperties.size() > 0) {
                 throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + consumerProperties.size()
@@ -73,6 +73,33 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Map consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
         if (consumerProperties != null) {
             setConsumerProperties(consumerProperties);
+        }
+        configureScheduledPollConsumerProperties(options, consumerProperties);
+    }
+
+    private void configureScheduledPollConsumerProperties(Map options, Map consumerProperties) {
+        // special for scheduled poll consumers as we want to allow end users to configure its options
+        // from the URI parameters without the consumer. prefix
+        Object initialDelay = options.remove("initialDelay");
+        Object delay = options.remove("delay");
+        Object timeUnit = options.remove("timeUnit");
+        Object useFixedDelay = options.remove("useFixedDelay");
+        if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null) {
+            if (consumerProperties == null) {
+                consumerProperties = new HashMap();
+            }
+            if (initialDelay != null) {
+                consumerProperties.put("initialDelay", initialDelay);
+            }
+            if (delay != null) {
+                consumerProperties.put("delay", delay);
+            }
+            if (timeUnit != null) {
+                consumerProperties.put("timeUnit", timeUnit);
+            }
+            if (useFixedDelay != null) {
+                consumerProperties.put("useFixedDelay", useFixedDelay);
+            }
         }
     }
 
