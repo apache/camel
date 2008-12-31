@@ -25,6 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.restlet.data.ChallengeResponse;
+import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
@@ -103,6 +105,20 @@ public class DefaultRestletBinding implements RestletBinding {
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet request from exchange body: " + body);
+        }
+        
+        String login = (String) exchange.getIn().removeHeader(
+                RestletConstants.LOGIN);
+        String password = (String) exchange.getIn().removeHeader(
+                RestletConstants.PASSWORD);
+          
+        if (login != null && password != null) {
+            ChallengeResponse authentication = new ChallengeResponse(
+                    ChallengeScheme.HTTP_BASIC, login, password);
+            request.setChallengeResponse(authentication);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Basic HTTP Authentication has been applied");
+            }
         }
         
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
