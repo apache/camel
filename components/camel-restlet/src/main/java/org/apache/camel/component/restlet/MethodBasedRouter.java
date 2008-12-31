@@ -26,6 +26,7 @@ import org.restlet.Restlet;
 import org.restlet.data.Method;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 /**
  * A simple router that routes requests to target Restlets based on method. 
@@ -56,6 +57,7 @@ class MethodBasedRouter extends Restlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("No route for request method: " + request.getMethod());
             }
+            response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
         }
     }
 
