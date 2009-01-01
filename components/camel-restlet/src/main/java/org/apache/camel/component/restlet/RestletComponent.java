@@ -175,7 +175,7 @@ public class RestletComponent extends DefaultComponent implements HeaderFilterSt
         }
     }
     
-    private String buildKey(RestletEndpoint endpoint) {
+    private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
     

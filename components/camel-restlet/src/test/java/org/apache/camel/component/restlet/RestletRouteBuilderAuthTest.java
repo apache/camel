@@ -17,6 +17,8 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.spring.SpringTestSupport;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -24,15 +26,30 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class RestletRouteBuilderAuthTest extends SpringTestSupport {
 
     public void testBasicAuth() throws IOException {
-        String response = (String) template.requestBody("direct:start-auth", 
-                "<order foo='1'/>");
-        assertEquals("received [<order foo='1'/>] as an order id = " + 89531,
+        
+        // START SNIPPET: auth_request
+        final String id = "89531";
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(RestletConstants.LOGIN, "admin");
+        headers.put(RestletConstants.PASSWORD, "foo");
+        headers.put("id", id);
+        
+        String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
+                "<order foo='1'/>", headers);
+        // END SNIPPET: auth_request
+
+        assertEquals("received [<order foo='1'/>] as an order id = " + id,
                 response);
     }
 
     public void testhBasicAuthError() throws IOException {
-        String response = (String) template.requestBody("direct:start-bad-auth", 
-                "<order foo='1'/>");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(RestletConstants.LOGIN, "admin");
+        headers.put(RestletConstants.PASSWORD, "bad");
+        headers.put("id", "xyz");
+        String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
+                "<order foo='1'/>", headers);
         assertTrue(response.contains("requires user authentication"));
     }
 
