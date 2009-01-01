@@ -20,7 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,13 +39,13 @@ import org.restlet.data.Protocol;
  *
  * @version $Revision$
  */
-public class RestletComponent extends DefaultComponent {
+public class RestletComponent extends DefaultComponent implements HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(RestletComponent.class);
 
     private Map<String, Server> servers = new HashMap<String, Server>();
     private Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
-    
     private Component component = new Component();
+    private HeaderFilterStrategy headerFilterStrategy = new RestletHeaderFilterStrategy();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining,
@@ -55,22 +57,20 @@ public class RestletComponent extends DefaultComponent {
         if (ref != null) {
             restletBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), 
                     ref, RestletBinding.class);
-            if (restletBinding == null) {
-                LOG.warn("Binding '" + ref + "' cannot be found in the context");
-            }
         }
         
         if (restletBinding == null) {
             restletBinding = new DefaultRestletBinding();
         }
         
+        if (restletBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(headerFilterStrategy);
+        }
+        
         Map<String, String> realm = null;
         ref = getAndRemoveParameter(parameters, "restletRealmRef", String.class);
         if (ref != null) {
             realm = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, Map.class);
-            if (realm == null) {
-                LOG.warn("Realm '" + ref + "' cannot be found in the context");
-            }
         }
         
         Method method = getAndRemoveParameter(parameters, "restletMethod", Method.class);
@@ -89,21 +89,13 @@ public class RestletComponent extends DefaultComponent {
     
     @Override
     protected void doStart() throws Exception {
-        try {
-            super.doStart();
-        } catch (Exception e) {
-            LOG.warn("Failed to stop", e);
-        }
+        super.doStart();
         component.start();
     }
     
     @Override
     protected void doStop() throws Exception {
-        try {
-            component.stop();
-        } catch (Exception e) {
-            LOG.warn("Failed to stop", e);
-        }
+        component.stop();
         super.doStop();
     }
     
@@ -148,6 +140,14 @@ public class RestletComponent extends DefaultComponent {
         LOG.info("Detached restlet uriPattern: " + endpoint.getUriPattern() + " method: " 
                 + endpoint.getRestletMethod());
     }    
+    
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+    }
     
     private MethodBasedRouter getMethodRouter(String uriPattern) {
         synchronized (routers) {
