@@ -19,7 +19,6 @@ package org.apache.camel.component.restlet.route;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.restlet.RestletConstants;
 
 /**
  * Route builder for RestletRouteBuilderAuthTest
@@ -27,25 +26,11 @@ import org.apache.camel.component.restlet.RestletConstants;
  * @version $Revision$
  */
 public class TestRouteBuilder extends RouteBuilder {
-    private static final String ID = "89531";
 
     @Override
     public void configure() throws Exception {
 
-        // Note: restletMethod and restletRealmRef are stripped 
-        // from the query before a request is sent as they are 
-        // only processed by Camel.
-        
-        from("direct:start-auth").setHeader("id", constant(ID))
-            .setHeader(RestletConstants.LOGIN, constant("admin"))
-            .setHeader(RestletConstants.PASSWORD, constant("foo"))
-            .to("restlet:http://localhost:8080/securedOrders?restletMethod=post");
-
-        from("direct:start-bad-auth").setHeader("id", constant(ID))
-            .setHeader(RestletConstants.LOGIN, constant("admizzzn"))
-            .setHeader(RestletConstants.PASSWORD, constant("fozzzo"))
-            .to("restlet:http://localhost:8080/securedOrders?restletMethod=post");
-        
+        // START SNIPPET: consumer_route
         from("restlet:http://localhost:8080/securedOrders?restletMethod=post&restletRealmRef=realm").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody(
@@ -54,6 +39,15 @@ public class TestRouteBuilder extends RouteBuilder {
                         + exchange.getIn().getHeader("id"));
             }
         });
+        // END SNIPPET: consumer_route
+
+        // START SNIPPET: producer_route
+        // Note: restletMethod and restletRealmRef are stripped 
+        // from the query before a request is sent as they are 
+        // only processed by Camel.
+        from("direct:start-auth").to("restlet:http://localhost:8080/securedOrders?restletMethod=post");
+        // END SNIPPET: producer_route
+      
     }
 
 }

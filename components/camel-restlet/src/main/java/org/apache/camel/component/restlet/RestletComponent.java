@@ -176,7 +176,7 @@ public class RestletComponent extends DefaultComponent<Exchange> implements Head
         }
     }
     
-    private String buildKey(RestletEndpoint endpoint) {
+    private static String buildKey(RestletEndpoint endpoint) {
         return endpoint.getHost() + ":" + endpoint.getPort();
     }
     
