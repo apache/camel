@@ -22,7 +22,10 @@ import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.HeaderFilterStrategyAware;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.data.ChallengeResponse;
@@ -37,80 +40,79 @@ import org.restlet.data.Response;
  *
  * @version $Revision$
  */
-public class DefaultRestletBinding implements RestletBinding {
+public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(DefaultRestletBinding.class);
+    private static final String CAMEL_REQUEST = "camel.request";
+    private HeaderFilterStrategy headerFilterStrategy;
 
     /**
-     * populateExchangeFromRestletRequest
+     * Populate Camel message from Restlet request
+     * 
+     * @param request message to be copied from
+     * @param exchange to be populated
+     * @throws Exception 
      */
     public void populateExchangeFromRestletRequest(Request request,
             Exchange exchange) throws Exception {
 
+        // extract headers from restlet 
         for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
-            if (!entry.getKey().startsWith("org.restlet.")) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
+                    entry.getValue())) {
+                
                 exchange.getIn().setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Populate exchange from Restlet request header: " 
                             + entry.getKey() + " value: " + entry.getValue());
                 }
+
             }
         }
-        
-        Form headers = (Form) request.getAttributes().get("org.restlet.http.headers");
-        if (headers != null) {
-            for (Map.Entry<String, String> entry : headers.getValuesMap().entrySet()) {
-                if (!entry.getKey().startsWith("org.restlet.")
-                        && !entry.getKey().equals("Host")
-                        && !entry.getKey().equals("User-Agent")
-                        && !entry.getKey().equals("Content-Length")
-                        && !entry.getKey().equals("Content-Type")
-                        && !entry.getKey().equals("Connection")
-                        && !entry.getKey().equals("Accept")) {
-                    exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+
+        // extract our header and body
+        Form form = new Form(request.getEntity());
+        if (form != null) {
+            for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
+                if (CAMEL_REQUEST.equals(entry.getKey())) {
+                    exchange.getIn().setBody(entry.getValue());
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Populate exchange from Restlet request header: " 
-                                + entry.getKey() + " value: " + entry.getValue());
+                        LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
+                    }
+                } else {
+                    if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
+                            entry.getValue())) {
+
+                        exchange.getIn().setHeader(entry.getKey(), entry.getValue());
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Populate exchange from Restlet request user header: " 
+                                    + entry.getKey() + " value: " + entry.getValue());
+                        }
                     }
                 }
             }
         }
-        Form form = new Form(request.getEntity());
-        if (form != null) {
-            for (Map.Entry<String, String> entry : form.getValuesMap()
-                    .entrySet()) {
-                exchange.getIn().setHeader(entry.getKey(), entry.getValue());
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Populate exchange from Restlet request header: " 
-                            + entry.getKey() + " value: " + entry.getValue());
-                }
-            }
-        }
-        
-        Object body = form.getValuesMap().get("camel.body");
-        exchange.getIn().setBody(body);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Populate exchange from Restlet request body: " + body);
-        }
-    }
+    }   
 
     /**
-     * populateRestletRequestFromExchange
+     * Populate Restlet Request from Camel message
+     * 
+     * @param request to be populated
+     * @param exchange message to be copied from
      */
     public void populateRestletRequestFromExchange(Request request,
             Exchange exchange) {
         request.setReferrerRef("camel-restlet");
         String body = exchange.getIn().getBody(String.class);
         Form form = new Form();
-        form.add("camel.body", body);
+        form.add(CAMEL_REQUEST, body);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet request from exchange body: " + body);
         }
         
-        String login = (String) exchange.getIn().removeHeader(
-                RestletConstants.LOGIN);
-        String password = (String) exchange.getIn().removeHeader(
-                RestletConstants.PASSWORD);
+        // login and password are filtered by header filter strategy
+        String login = (String) exchange.getIn().getHeader(RestletConstants.LOGIN);
+        String password = (String) exchange.getIn().getHeader(RestletConstants.PASSWORD);
           
         if (login != null && password != null) {
             ChallengeResponse authentication = new ChallengeResponse(
@@ -122,25 +124,30 @@ public class DefaultRestletBinding implements RestletBinding {
         }
         
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-            form.add(entry.getKey(), entry.getValue().toString());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Populate Restlet request from exchange header: " 
-                        + entry.getKey() + " value: " + entry.getValue());
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), 
+                    entry.getValue())) {
+                if (entry.getKey().startsWith("org.restlet.")) {
+                    // put the org.restlet headers in attributes
+                    request.getAttributes().put(entry.getKey(), entry.getValue());
+                } else {
+                    // put the user stuff in the form
+                    form.add(entry.getKey(), entry.getValue().toString());   
+                }
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Populate Restlet request from exchange header: " 
+                            + entry.getKey() + " value: " + entry.getValue());
+                }
             }
         }
         
-        for (Map.Entry<String, Object> entry : exchange.getProperties().entrySet()) {
-            form.add(entry.getKey(), entry.getValue().toString());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Populate Restlet request from exchange header: " 
-                        + entry.getKey() + " value: " + entry.getValue());
-            }
-        }
         request.setEntity(form.getWebRepresentation());
     }
 
     /**
-     * populateRestletResponseFromExchange
+     * Populate Restlet request from Camel message
+     *  
+     * @param exchange message to be copied from 
+     * @param response to be populated
      */
     public void populateRestletResponseFromExchange(Exchange exchange,
             Response response) {
@@ -151,20 +158,46 @@ public class DefaultRestletBinding implements RestletBinding {
         } else if (body instanceof StringSource || body instanceof DOMSource) {
             mediaType = MediaType.TEXT_XML;
         }
+                
+        for (Map.Entry<String, Object> entry : exchange.getOut().getHeaders().entrySet()) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), 
+                    entry.getValue())) {
+                response.getAttributes().put(entry.getKey(), entry.getValue());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Populate Restlet response from exchange header: " 
+                            + entry.getKey() + " value: " + entry.getValue());
+                }
+            }
+        }
         
         String text = exchange.getOut().getBody(String.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet response from exchange body: " + text);
         }
         response.setEntity(text, mediaType);
-        exchange.getIn().setBody(body);
     }
 
     /**
-     * populateExchangeFromRestletResponse
+     * Populate Camel message from Restlet response
+     * 
+     * @param exchange to be populated
+     * @param response message to be copied from
+     * @throws IOException 
      */
     public void populateExchangeFromRestletResponse(Exchange exchange,
             Response response) throws IOException {
+        
+        for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
+                    entry.getValue())) {
+                exchange.getOut().setHeader(entry.getKey(), entry.getValue());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Populate exchange from Restlet response header: " 
+                            + entry.getKey() + " value: " + entry.getValue());
+                }
+            }
+        }
+
         String text = response.getEntity().getText();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate exchange from Restlet response: " + text);
@@ -173,7 +206,16 @@ public class DefaultRestletBinding implements RestletBinding {
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setBody(text);
         } else {
-            LOG.warn("Exchange is incapable of receiving response");
+            throw new RuntimeCamelException("Exchange is incapable of receiving response: " 
+                    + exchange);
         }
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
     }
 }
