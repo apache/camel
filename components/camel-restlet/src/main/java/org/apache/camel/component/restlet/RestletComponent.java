@@ -125,7 +125,7 @@ public class RestletComponent extends DefaultComponent<Exchange> implements Head
         if (!router.hasBeenAttached()) {
             component.getDefaultHost().attach(endpoint.getUriPattern(), router);
             if (LOG.isDebugEnabled()) {
-                LOG.debug("attached methodRouter uriPattern: " + endpoint.getUriPattern());
+                LOG.debug("Attached methodRouter uriPattern: " + endpoint.getUriPattern());
             }
         }
         
