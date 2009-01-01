@@ -19,8 +19,8 @@ package org.apache.camel.component.restlet;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.Restlet;
@@ -54,8 +54,7 @@ public class RestletConsumer extends DefaultConsumer {
                     getProcessor().process(exchange);
                     binding.populateRestletResponseFromExchange(exchange, response);
                 } catch (Exception e) {
-                    LOG.error(e);
-                    throw ObjectHelper.wrapRuntimeCamelException(e);
+                    throw new RuntimeCamelException(e);
                 }
             }
         };
@@ -68,9 +67,9 @@ public class RestletConsumer extends DefaultConsumer {
     }
 
     @Override
-    public void stop() throws Exception {
+    public void doStop() throws Exception {
         ((RestletEndpoint)getEndpoint()).disconnect(this);
-        super.stop();
+        super.doStop();
     }
 
     public Restlet getRestlet() {
