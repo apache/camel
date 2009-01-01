@@ -29,9 +29,6 @@ public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // No IN filters and copy all headers from Restlet to Camel
         
         // OUT filters (from Camel headers to Restlet headers)
-        // filter headers start with the org.restlet.
-        setOutFilterPattern("(org\\.restlet)[\\.|a-z|A-z|0-9]*");
-        
         // filter headers used internally by this component
         getOutFilter().add(RestletConstants.LOGIN);
         getOutFilter().add(RestletConstants.PASSWORD);
