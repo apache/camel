@@ -12,7 +12,7 @@
 		CONDITIONS OF ANY KIND, either express or implied. See the License for
 		the specific language governing permissions and limitations under the
 		License.
-	-->
+	-->	
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:util="http://www.springframework.org/schema/util"
@@ -28,8 +28,12 @@
 	<camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
 		<package>org.apache.camel.component.restlet.route</package>
 	</camelContext>
+	
+	<!-- START SNIPPET: realm  -->
 	<util:map id="realm">
 		<entry key="admin" value="foo" />
 		<entry key="bar" value="foo" />
 	</util:map>
+	<!-- END SNIPPET: realm -->
+	
 </beans>

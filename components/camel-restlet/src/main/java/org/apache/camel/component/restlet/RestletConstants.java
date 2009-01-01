@@ -23,8 +23,8 @@ package org.apache.camel.component.restlet;
  */
 public final class RestletConstants {
     
-    public static final String LOGIN = "camel.restlet.auth.login";
-    public static final String PASSWORD = "camel.restlet.auth.password";
+    public static final String LOGIN = "org.apache.camel.restlet.auth.login";
+    public static final String PASSWORD = "org.apache.camel.restlet.auth.password";
 
     private RestletConstants() {
     }
