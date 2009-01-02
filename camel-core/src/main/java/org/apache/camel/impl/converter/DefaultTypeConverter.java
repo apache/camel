@@ -62,6 +62,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         addFallbackConverter(new EnumTypeConverter());
     }
 
+    public List<TypeConverterLoader> getTypeConverterLoaders() {
+        return typeConverterLoaders;
+    }  
+    
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
