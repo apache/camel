@@ -16,11 +16,16 @@
  */
 package org.apache.camel.osgi;
 
+import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.spring.SpringCamelContext;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
@@ -44,9 +49,28 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     protected SpringCamelContext createContext() {
         SpringCamelContext context = super.createContext();
         if (bundleContext != null) {
-            context.setComponentResolver(new OsgiComponentResolver(bundleContext));
+            context.setComponentResolver(new OsgiComponentResolver());
+            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
         }
+        
         return context;
+    }
+    
+    protected void addOsgiAnnotationTypeConverterLoader(SpringCamelContext context, BundleContext bundleContext) {
+        DefaultTypeConverter typeConverter = (DefaultTypeConverter) context.getTypeConverter();
+        List<TypeConverterLoader> typeConverterLoaders = typeConverter.getTypeConverterLoaders();
+        // Remove the AnnotationTypeConverterLoader
+        TypeConverterLoader atLoader = null; 
+        for (TypeConverterLoader loader : typeConverterLoaders) {
+            if (loader instanceof AnnotationTypeConverterLoader) {
+                atLoader = loader;
+                break;
+            }
+        }
+        if (atLoader != null) {
+            typeConverterLoaders.remove(atLoader);
+        }
+        typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
     }
 
 }

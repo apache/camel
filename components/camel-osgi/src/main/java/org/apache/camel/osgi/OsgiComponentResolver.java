@@ -35,121 +35,11 @@ import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 public class OsgiComponentResolver implements ComponentResolver {
-
+    
     private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
 
-    private BundleContext bundleContext;
-    private Map<String, ComponentEntry> components;
-
-    private class BundleListener implements SynchronousBundleListener {
-        public void bundleChanged(BundleEvent event) {
-            try {
-                Bundle bundle = event.getBundle();
-                if (event.getType() == BundleEvent.RESOLVED) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Bundle resolved: " + bundle.getSymbolicName());
-                    }
-                    mayBeAddComponentFor(bundle);
-                } else if (event.getType() == BundleEvent.UNRESOLVED) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Bundle unresolved: " + bundle.getSymbolicName());
-                    }
-                    mayBeRemoveComponentFor(bundle);
-                }
-            } catch (Throwable e) {
-                LOG.fatal("Exception handing bundle changed event", e);
-            }
-        }
-    }
-
-    private class ComponentEntry {
-        Bundle bundle;
-        String path;
-        String name;
-        Class type;
-    }
-
-    public OsgiComponentResolver(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-    }
-
-    protected void init() {
-        if (components != null) {
-            return;
-        }
-        LOG.debug("Initializing OsgiComponentResolver");
-        components = new HashMap<String, ComponentEntry>();
-        bundleContext.addBundleListener(new BundleListener());
-        Bundle[] previousBundles = bundleContext.getBundles();
-        for (int i = 0; i < previousBundles.length; i++) {
-            int state = previousBundles[i].getState();
-            if (state == Bundle.RESOLVED || state == Bundle.ACTIVE) {
-                try {
-                    mayBeAddComponentFor(previousBundles[i]);
-                } catch (Exception e) {
-                    LOG.error("Component " + previousBundles[i] + " not added due to " + e.toString(), e);
-                }
-            }
-        }
-    }
-
-    protected synchronized void mayBeAddComponentFor(Bundle bundle) {
-        Enumeration e = bundle.getEntryPaths("/META-INF/services/org/apache/camel/component/");
-        if (e != null) {
-            while (e.hasMoreElements()) {
-                String path = (String)e.nextElement();
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Found entry: " + path + " in bundle " + bundle.getSymbolicName());
-                }
-                ComponentEntry entry = new ComponentEntry();
-                entry.bundle = bundle;
-                entry.path = path;
-                entry.name = path.substring(path.lastIndexOf("/") + 1);
-                components.put(entry.name, entry);
-            }
-        }
-    }
-
-    protected synchronized void mayBeRemoveComponentFor(Bundle bundle) {
-        // To avoid the CurrentModificationException, do not use components.values directly 
-        ComponentEntry[] entriesArray = components.values().toArray(new ComponentEntry[0]);
-        for (ComponentEntry entry : entriesArray) {
-            if (entry.bundle == bundle) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Removing entry: " + entry.path + " in bundle " + bundle.getSymbolicName());
-                }
-                components.remove(entry.name);                
-            }
-        }
-    }
-
     protected synchronized Class getComponent(String name) throws Exception {
-        ComponentEntry entry = components.get(name);
-        if (entry == null) {
-            return null;
-        }
-        if (entry.type == null) {
-            URL url = entry.bundle.getEntry(entry.path);
-            // lets load the file
-            Properties properties = new Properties();
-            BufferedInputStream reader = null;
-            try {
-                reader = new BufferedInputStream(url.openStream());
-                properties.load(reader);
-            } finally {
-                try {
-                    reader.close();
-                } catch (Exception ignore) {
-                }
-            }
-            String classname = (String)properties.get("class");
-            ClassLoader loader = BundleDelegatingClassLoader.createBundleClassLoaderFor(entry.bundle);
-            entry.type = loader.loadClass(classname);
-        }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found component: " + name + " via type: " + entry.type.getName());
-        }
-        return entry.type;
+        return Activator.getComponent(name);       
     }
 
     public Component resolveComponent(String name, CamelContext context) throws Exception {
@@ -168,8 +58,7 @@ public class OsgiComponentResolver implements ComponentResolver {
             }
             // we do not throw the exception here and try to auto create a component
         }
-        // Check in OSGi bundles
-        init();
+        // Check in OSGi bundles        
         Class type = null;
         try {
             type = getComponent(name);

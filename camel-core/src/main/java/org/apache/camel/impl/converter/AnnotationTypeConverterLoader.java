@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
-    private ResolverUtil resolver = new ResolverUtil();
+    private ResolverUtil resolver;
     private Set<Class> visitedClasses = new HashSet<Class>();
 
     public AnnotationTypeConverterLoader() {
@@ -58,7 +58,13 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         if (WebSphereResolverUtil.isWebSphereClassLoader(this.getClass().getClassLoader())) {
             LOG.info("Using WebSphere specific ResolverUtil");
             resolver = new WebSphereResolverUtil(META_INF_SERVICES);
+        } else {
+            resolver = new ResolverUtil();
         }
+    }
+    
+    public AnnotationTypeConverterLoader(ResolverUtil resolverUtil) {
+        this.resolver = resolverUtil;
     }
 
     public void load(TypeConverterRegistry registry) throws Exception {
