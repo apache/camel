@@ -128,7 +128,7 @@ public class RestletComponent extends DefaultComponent implements HeaderFilterSt
             }
         }
         
-        LOG.info("Attached restlet uriPattern: " + endpoint.getUriPattern() + " method: " 
+        LOG.debug("Attached restlet uriPattern: " + endpoint.getUriPattern() + " method: " 
                 + endpoint.getRestletMethod());
 
     }
@@ -137,7 +137,7 @@ public class RestletComponent extends DefaultComponent implements HeaderFilterSt
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
         MethodBasedRouter router = getMethodRouter(endpoint.getUriPattern());
         router.removeRoute(endpoint.getRestletMethod());
-        LOG.info("Detached restlet uriPattern: " + endpoint.getUriPattern() + " method: " 
+        LOG.debug("Detached restlet uriPattern: " + endpoint.getUriPattern() + " method: " 
                 + endpoint.getRestletMethod());
     }    
     
