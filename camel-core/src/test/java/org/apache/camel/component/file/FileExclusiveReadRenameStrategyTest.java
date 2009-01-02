@@ -139,7 +139,7 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
         
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);        
-        mock.setMinimumResultWaitTime(3000);
+        mock.setMinimumResultWaitTime(2500);
         mock.setResultWaitTime(5000);
 
         // send a message to seda:start to trigger the creating of the slowfile to poll
