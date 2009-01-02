@@ -127,6 +127,21 @@
       </resource>
     </resources>
     <plugins>
+	<plugin>
+		<groupId>org.apache.felix</groupId>
+		<artifactId>maven-bundle-plugin</artifactId>
+		<configuration>
+			<instructions>
+				<Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>				
+				<Export-Package>${camel.osgi.export.pkg}</Export-Package>
+				<Import-Package>*</Import-Package>				
+				<Bundle-Activator>org.apache.camel.osgi.Activator</Bundle-Activator>
+				<Implementation-Title>Apache Camel</Implementation-Title>
+				<Implementation-Version>${project.version}</Implementation-Version>
+			</instructions>
+			<unpackBundle>true</unpackBundle>
+		</configuration>
+	</plugin>
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
