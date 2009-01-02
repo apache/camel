@@ -81,6 +81,13 @@
       <scope>test</scope>
     </dependency>
 
+      <!-- for unit testing AntPathMatcher -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spring</artifactId>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.apache.ftpserver</groupId>
       <artifactId>ftpserver-core</artifactId>
