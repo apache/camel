@@ -250,7 +250,9 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
             return false;
         } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsolutelFileName())) {
             // use file.getAbsoluteFileName as key for the idempotent repository to support files with same name but in different folders
-            log.warn("RemoteFileConsumer is idempotent and the file has been consumed before. Will skip this remote file: " + file);
+            if (log.isTraceEnabled()) {
+                log.trace("RemoteFileConsumer is idempotent and the file has been consumed before. Will skip this remote file: " + file);
+            }
             return false;
         }
 
