@@ -37,7 +37,16 @@ public class AntPathMatcherFileFilter implements FileFilter {
     private String[] includes;
 
     public boolean accept(File pathname) {
-        String path = pathname.getPath();
+        return acceptPathName(pathname.getPath());
+    }
+
+    /**
+     * Accepts the given file by the path name
+     *
+     * @param path the path
+     * @return <tt>true</tt> if accepted, <tt>false</tt> if not
+     */
+    public boolean acceptPathName(String path) {
         // must use single / as path seperators
         path = StringUtils.replace(path, File.separator, "/");
 

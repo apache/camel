@@ -30,7 +30,7 @@ public class FtpConsumer extends RemoteFileConsumer {
         super(endpoint, processor, ftp);
     }
 
-    protected void pollDirectory(String fileName, boolean processDir, List<RemoteFile> fileList) {
+    protected void pollDirectory(String fileName, List<RemoteFile> fileList) {
         if (fileName == null) {
             return;
         }
@@ -45,11 +45,11 @@ public class FtpConsumer extends RemoteFileConsumer {
         List<FTPFile> files = operations.listFiles(fileName);
         for (FTPFile file : files) {
             RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
-            if (processDir && file.isDirectory()) {
-                if (isValidFile(remote, true)) {
+            if (file.isDirectory()) {
+                if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
                     String directory = fileName + "/" + file.getName();
-                    pollDirectory(directory, endpoint.isRecursive(), fileList);
+                    pollDirectory(directory, fileList);
                 }
             } else if (file.isFile()) {
                 if (isValidFile(remote, false)) {

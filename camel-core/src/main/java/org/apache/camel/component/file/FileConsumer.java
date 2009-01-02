@@ -23,9 +23,9 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -103,8 +103,8 @@ public class FileConsumer extends ScheduledPollConsumer {
         }
         File[] files = fileOrDirectory.listFiles();
         for (File file : files) {
-            if (endpoint.isRecursive() && file.isDirectory()) {
-                if (isValidFile(file)) {
+            if (file.isDirectory()) {
+                if (endpoint.isRecursive() && isValidFile(file)) {
                     // recursive scan and add the sub files and folders
                     pollDirectory(file, fileList);
                 }

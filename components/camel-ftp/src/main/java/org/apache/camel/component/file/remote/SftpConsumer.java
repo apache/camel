@@ -30,7 +30,7 @@ public class SftpConsumer extends RemoteFileConsumer {
         super(endpoint, processor, operations);
     }
 
-    protected void pollDirectory(String fileName, boolean processDir, List<RemoteFile> fileList) {
+    protected void pollDirectory(String fileName, List<RemoteFile> fileList) {
         if (fileName == null) {
             return;
         }
@@ -45,10 +45,10 @@ public class SftpConsumer extends RemoteFileConsumer {
         List<ChannelSftp.LsEntry> files = operations.listFiles(fileName);
         for (ChannelSftp.LsEntry file : files) {
             RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
-            if (processDir && file.getAttrs().isDir()) {
-                if (isValidFile(remote, true)) {
+            if (file.getAttrs().isDir()) {
+                if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    pollDirectory(file.getFilename(), endpoint.isRecursive(), fileList);
+                    pollDirectory(file.getFilename(), fileList);
                 }
             } else if (!file.getAttrs().isLink()) {
                 if (isValidFile(remote, false)) {

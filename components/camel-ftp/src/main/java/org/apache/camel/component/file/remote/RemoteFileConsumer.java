@@ -62,7 +62,7 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
         String name = endpoint.getConfiguration().getFile();
         boolean isDirectory = endpoint.getConfiguration().isDirectory();
         if (isDirectory) {
-            pollDirectory(name, endpoint.isRecursive(), files);
+            pollDirectory(name, files);
         } else {
             pollFile(name, files);
         }
@@ -103,10 +103,9 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
      * Polls the given directory for files to process
      *
      * @param fileName    current directory or file
-     * @param processDir  recursive
      * @param fileList    current list of files gathered
      */
-    protected abstract void pollDirectory(String fileName, boolean processDir, List<RemoteFile> fileList);
+    protected abstract void pollDirectory(String fileName, List<RemoteFile> fileList);
 
     /**
      * Polls the given file

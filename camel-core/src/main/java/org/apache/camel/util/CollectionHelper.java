@@ -18,7 +18,9 @@ package org.apache.camel.util;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -107,4 +109,29 @@ public final class CollectionHelper {
         }
         return answer;
     }
+
+    public static String collectionAsCommaDelimitedString(String[] col) {
+        if (col == null || col.length == 0) {
+            return "";
+        }
+        return collectionAsCommaDelimitedString(Arrays.asList(col));
+    }
+
+    public static String collectionAsCommaDelimitedString(Collection col) {
+        if (col == null || col.isEmpty()) {
+            return "";
+        }
+
+        StringBuilder sb = new StringBuilder();
+        Iterator it = col.iterator();
+        while (it.hasNext()) {
+            sb.append(it.next());
+            if (it.hasNext()) {
+                sb.append(",");
+            }
+        }
+
+        return sb.toString();
+    }
+    
 }
