@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.lang.reflect.Method;
+
 import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedString;
 
@@ -29,29 +31,46 @@ public class AntPathMatcherRemoteFileFilter implements RemoteFileFilter {
     private String[] excludes;
     private String[] includes;
 
-    public boolean accept(RemoteFile file) {
-        // we must use reflection to invoke the AntPathMatcherFileFilter that reside in camel-spring.jar
-        // and we don't want camel-ftp to have runtime dependency on camel-spring.jar
-        Class clazz = ObjectHelper.loadClass(ANTPATHMATCHER_CLASSNAME);
-        ObjectHelper.notNull(clazz, ANTPATHMATCHER_CLASSNAME + " not found in classpath. camel-spring.jar is required in the classpath.");
+    private Object filter;
+    private Method includesMethod;
+    private Method excludesMethod;
+    private Method acceptsMethod;
 
+    public boolean accept(RemoteFile file) {
         try {
-            Object filter = ObjectHelper.newInstance(clazz);
+            synchronized (this) {
+                if (filter == null) {
+                    init();
+                }
+            }
 
             // invoke setIncludes(String), must using string type as invoking with string[] does not work
-            ObjectHelper.invokeMethod(filter.getClass().getMethod("setIncludes", String.class), filter, collectionAsCommaDelimitedString(includes));
+            ObjectHelper.invokeMethod(includesMethod, filter, collectionAsCommaDelimitedString(includes));
 
             // invoke setExcludes(String), must using string type as invoking with string[] does not work
-            ObjectHelper.invokeMethod(filter.getClass().getMethod("setExcludes", String.class), filter, collectionAsCommaDelimitedString(excludes));
+            ObjectHelper.invokeMethod(excludesMethod, filter, collectionAsCommaDelimitedString(excludes));
 
             // invoke acceptPathName(String)
             String path = file.getRelativeFileName();
-            Boolean result = (Boolean) ObjectHelper.invokeMethod(filter.getClass().getMethod("acceptPathName", String.class), filter, path);
+            Boolean result = (Boolean) ObjectHelper.invokeMethod(acceptsMethod, filter, path);
             return result;
 
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(ANTPATHMATCHER_CLASSNAME, e);
         }
+    }
+
+    private void init() throws NoSuchMethodException {
+        // we must use reflection to invoke the AntPathMatcherFileFilter that reside in camel-spring.jar
+        // and we don't want camel-ftp to have runtime dependency on camel-spring.jar
+        Class clazz = ObjectHelper.loadClass(ANTPATHMATCHER_CLASSNAME);
+        ObjectHelper.notNull(clazz, ANTPATHMATCHER_CLASSNAME + " not found in classpath. camel-spring.jar is required in the classpath.");
+
+        filter = ObjectHelper.newInstance(clazz);
+
+        includesMethod = filter.getClass().getMethod("setIncludes", String.class);
+        excludesMethod = filter.getClass().getMethod("setExcludes", String.class);
+        acceptsMethod = filter.getClass().getMethod("acceptPathName", String.class);
     }
 
     public String[] getExcludes() {
