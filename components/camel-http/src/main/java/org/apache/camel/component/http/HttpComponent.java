@@ -79,6 +79,13 @@ public class HttpComponent extends DefaultComponent<HttpExchange> implements Hea
             httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
         }
         
+        // check the user name and password for basic authentication
+        String username = getAndRemoveParameter(parameters, "username", String.class);
+        String password = getAndRemoveParameter(parameters, "password", String.class);
+        if (username != null && password != null) {
+            httpClientConfigurer = new BasicAuthenticationHttpClientConfigurer(username, password);
+        }
+        
         // lookup http client front configurer in the registry if provided
         ref = getAndRemoveParameter(parameters, "httpClientConfigurerRef", String.class);
         if (ref != null) {
