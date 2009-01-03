@@ -29,10 +29,8 @@ public class ValidationWithInFlowExceptionTest extends ValidationTest {
                 onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").
-                        onException(ValidationException.class).to("mock:invalid").
-                        end().
-                        process(validator).
-                        to("mock:valid");
+                    process(validator).
+                    to("mock:valid");
             }
         };
     }

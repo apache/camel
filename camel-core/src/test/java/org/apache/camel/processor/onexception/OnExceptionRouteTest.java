@@ -104,10 +104,11 @@ public class OnExceptionRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: e1
+
                 // default should errors go to mock:error
                 errorHandler(deadLetterChannel("mock:error"));
                 
-                // START SNIPPET: e1
                 // if a MyTechnicalException is thrown we will not try to redeliver and we mark it as handled
                 // so the caller does not get a failure
                 // since we have no to then the exchange will continue to be routed to the normal error handler
@@ -119,11 +120,12 @@ public class OnExceptionRouteTest extends ContextTestSupport {
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 
                 // here we route message to our service bean
-                from("direct:start").choice()
-                        .when().xpath("//type = 'myType'")
-                        .to("bean:myServiceBean")
+                from("direct:start")
+                    .choice()
+                        .when().xpath("//type = 'myType'").to("bean:myServiceBean")
+                    .end()
+                    .to("mock:result");
                 // END SNIPPET: e1
-                        .to("mock:result");
             }
         };
     }
