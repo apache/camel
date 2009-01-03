@@ -65,14 +65,15 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
     public void disconnect(HttpConsumer consumer) throws Exception {
     }
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
-        throws Exception {
-
-        // http client can be configured from URI options
-        HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
-
+    /** 
+     * Setting http binding and http client configurer according to the parameters
+     * Also setting the BasicAuthenticationHttpClientConfigurer if the username 
+     * and password option are not null.
+     * 
+     * @param parameters the map of parameters 
+     * 
+     */
+    protected void configureParameters(Map parameters) {
         // lookup http binding in registry if provided
         String ref = getAndRemoveParameter(parameters, "httpBindingRef", String.class);
         if (ref != null) {
@@ -91,6 +92,17 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
         if (ref != null) {
             httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
         }
+    }
+    
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
+        throws Exception {
+
+        // http client can be configured from URI options
+        HttpClientParams params = new HttpClientParams();
+        IntrospectionSupport.setProperties(params, parameters, "httpClient.");        
+        
+        configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
