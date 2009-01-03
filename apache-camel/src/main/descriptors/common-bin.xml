@@ -77,6 +77,7 @@
         <include>org.apache.camel:camel-rest:classes</include>
         <include>org.apache.camel:camel-rmi</include>
         <include>org.apache.camel:camel-rss</include>
+        <include>org.apache.camel:camel-restlet</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
         <include>org.apache.camel:camel-script</include>
