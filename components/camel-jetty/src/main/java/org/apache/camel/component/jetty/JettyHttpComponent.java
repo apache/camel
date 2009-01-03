@@ -22,18 +22,16 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.http.CamelServlet;
-import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
+import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Server;
-import org.mortbay.jetty.client.HttpClient;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
@@ -72,8 +70,7 @@ public class JettyHttpComponent extends HttpComponent {
     private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
     
     protected Server server;
-    protected HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
-    protected HttpClient httpClient;
+    protected HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();    
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
@@ -83,23 +80,16 @@ public class JettyHttpComponent extends HttpComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
-        // http client can be configured from URI options
-        if (httpClient == null) {
-            httpClient = createHttpClient();
-        }
-        IntrospectionSupport.setProperties(httpClient, parameters, "httpClient.");
+        HttpClientParams params = new HttpClientParams();
+        IntrospectionSupport.setProperties(params, parameters, "httpClient.");   
 
-        // lookup http binding in registry if provided
-        String ref = getAndRemoveParameter(parameters, "httpBindingRef", String.class);
-        if (ref != null) {
-            httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
-        }
+        configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
         uri = httpUri.toString();
 
-        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, getHttpConnectionManager());
+        JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
@@ -283,31 +273,8 @@ public class JettyHttpComponent extends HttpComponent {
         if (server != null) {
             server.stop();
         }
-        httpClient.stop();
+        
         super.doStop();
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (httpClient == null) {
-            httpClient = createHttpClient();
-        }
-        httpClient.start();
-    }
-
-    protected HttpClient createHttpClient() throws Exception {
-        HttpClient httpClient = new HttpClient();
-        httpClient.setConnectorType(HttpClient.CONNECTOR_SELECT_CHANNEL);
-        httpClient.setMaxConnectionsPerAddress(2);
-        return httpClient;
-    }
-
-    public HttpClient getHttpClient() {
-        return httpClient;
-    }
-
-    public void setHttpClient(HttpClient httpClient) {
-        this.httpClient = httpClient;
-    }
+   
 }
