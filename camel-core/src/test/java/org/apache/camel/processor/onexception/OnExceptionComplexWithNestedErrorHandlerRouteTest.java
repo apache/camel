@@ -1,5 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor.onexception;
 
+import java.io.IOException;
 import org.apache.camel.builder.RouteBuilder;
 
 public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExceptionComplexRouteTest {
@@ -28,7 +45,6 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
                 // global error handler
                 errorHandler(deadLetterChannel("mock:error"));
 
@@ -50,16 +66,17 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
                     .to("bean:myServiceBean")
                     .to("mock:result");
 
+                // START SNIPPET: e1
                 from("direct:start3")
                     // route specific error handler that is different than the global error handler
-                    // here we do not redeliver and transform the body to a simple text message with
-                    // the exception message using the SimpleLanguage
-                    // we MUST use .end() to indicate that this sub block is ended
+                    // here we do not redeliver and send errors to mock:error3 instead of the global endpoint
                     .errorHandler(deadLetterChannel("mock:error3")
                             .maximumRedeliveries(0))
 
-                    // route specific on exception for all exception to mark them as handled
-                    .onException(Exception.class).handled(true).end()
+                    // route specific on exception to mark MyFunctionalException as being handled
+                    .onException(MyFunctionalException.class).handled(true).end()
+                    // however we want the IO exceptions to redeliver at most 3 times
+                    .onException(IOException.class).maximumRedeliveries(3).end()
                     .to("bean:myServiceBean")
                     .to("mock:result");
                 // END SNIPPET: e1
