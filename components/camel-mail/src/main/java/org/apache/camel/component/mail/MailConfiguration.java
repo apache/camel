@@ -26,7 +26,6 @@ import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
-import org.apache.camel.component.mail.security.DummySSLSocketFactory;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -159,7 +158,7 @@ public class MailConfiguration {
 
         if (dummyTrustManager && isSecureProtocol()) {
             // set the custom SSL properties
-            properties.put("mail." + protocol + ".socketFactory.class", DummySSLSocketFactory.class.getName());
+            properties.put("mail." + protocol + ".socketFactory.class", "org.apache.camel.component.mail.security.DummySSLSocketFactory");
             properties.put("mail." + protocol + ".socketFactory.fallback", "false");
             properties.put("mail." + protocol + ".socketFactory.port", "" + port);
         }
