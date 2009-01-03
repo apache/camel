@@ -78,6 +78,12 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
         if (ref != null) {
             httpBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpBinding.class);
         }
+        
+        // lookup http client front configurer in the registry if provided
+        ref = getAndRemoveParameter(parameters, "httpClientConfigurerRef", String.class);
+        if (ref != null) {
+            httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
+        }
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
