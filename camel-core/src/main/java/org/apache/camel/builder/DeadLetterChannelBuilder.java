@@ -250,4 +250,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
+    @Override
+    public String toString() {
+        return "DeadLetterChannelBuilder(" + (deadLetterFactory != null ? deadLetterFactory : defaultDeadLetterEndpoint) + ")";
+    }
 }

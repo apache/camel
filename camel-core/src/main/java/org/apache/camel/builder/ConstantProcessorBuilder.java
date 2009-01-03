@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A builder wrapping a {@link Processor}.
@@ -27,10 +28,16 @@ public class ConstantProcessorBuilder implements ProcessorFactory {
     private Processor processor;
 
     public ConstantProcessorBuilder(Processor processor) {
+        ObjectHelper.notNull(processor, "processor");
         this.processor = processor;
     }
 
     public Processor createProcessor() {
         return processor;
+    }
+
+    @Override
+    public String toString() {
+        return processor.toString();
     }
 }

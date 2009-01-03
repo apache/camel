@@ -1463,6 +1463,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      */
     public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
+        // TODO: davsclaus. I think we need to set the parent so you can use .end() blocks for
+        // nested error handler with a complex routing
+        //setParent(this);
         return (Type) this;
     }
 
