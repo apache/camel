@@ -26,7 +26,6 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -37,12 +36,14 @@ import org.apache.camel.processor.SendProcessor;
  */
 public class ErrorHandlerTest extends TestSupport {
 
-
     public void testOverloadingTheDefaultErrorHandler() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                errorHandler(loggingErrorHandler("FOO.BAR"));
+                // use logging error handler
+                errorHandler(loggingErrorHandler("com.mycompany.foo"));
+
+                // here is our regular route
                 from("seda:a").to("seda:b");
             }
         };
@@ -69,9 +70,14 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e2
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).to("seda:b");
-                // this route will use the default error handler,
-                // DeadLetterChannel
+                // this route is using a nested logging error handler
+                from("seda:a")
+                    // here we configure the logging error handler
+                    .errorHandler(loggingErrorHandler("com.mycompany.foo"))
+                    // and we continue with the routing here
+                    .to("seda:b");
+
+                // this route will use the default error handler (DeadLetterChannel)
                 from("seda:b").to("seda:c");
             }
         };
@@ -117,7 +123,10 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                // using dead letter channel with a seda queue for errors
                 errorHandler(deadLetterChannel("seda:errors"));
+
+                // here is our route
                 from("seda:a").to("seda:b");
             }
         };
@@ -141,7 +150,11 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e4
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                // configures dead letter channel to use seda queue for errors and use at most 2 redelveries
+                // and exponential backoff
                 errorHandler(deadLetterChannel("seda:errors").maximumRedeliveries(2).useExponentialBackOff());
+
+                // here is our route
                 from("seda:a").to("seda:b");
             }
         };
