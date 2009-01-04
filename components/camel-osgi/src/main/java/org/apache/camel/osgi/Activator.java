@@ -40,11 +40,13 @@ import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 public class Activator implements BundleActivator, SynchronousBundleListener {
-    public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
+    public static final String META_INF_TYPE_CONVERTER = "/META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_COMPONENT = "/META-INF/services/org/apache/camel/component/";
+    public static final String META_INF_LANGUAGE = "/META-INF/services/org/apache/camel/language/";
     private static final transient Log LOG = LogFactory.getLog(Activator.class);    
     private static final Map<String, ComponentEntry> COMPONENTS = new HashMap<String, ComponentEntry>();
     private static final Map<Bundle, TypeConverterEntry> TYPE_CONVERTERS = new HashMap<Bundle, TypeConverterEntry>();
+    private static final Map<String, ComponentEntry> LANGUAGES = new HashMap<String, ComponentEntry>();
     private static Bundle bundle;
     
     private class ComponentEntry {
@@ -67,13 +69,13 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Bundle resolved: " + bundle.getSymbolicName());
                 }
-                mayBeAddComponentFor(bundle);
+                mayBeAddComponentAndLanguageFor(bundle);                
                 mayBeAddTypeConverterFor(bundle);
             } else if (event.getType() == BundleEvent.UNRESOLVED) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Bundle unresolved: " + bundle.getSymbolicName());
                 }
-                mayBeRemoveComponentFor(bundle);
+                mayBeRemoveComponentAndLanguageFor(bundle);                
                 mayBeRemoveTypeConverterFor(bundle);
             }
         } catch (Throwable e) {
@@ -81,9 +83,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }
         
     }
-    
-    protected synchronized void mayBeAddComponentFor(Bundle bundle) {
-        Enumeration e = bundle.getEntryPaths(META_INF_COMPONENT);
+
+    protected void addComponentEntry(Enumeration e, Map<String, ComponentEntry> entries) {
         if (e != null) {
             while (e.hasMoreElements()) {
                 String path = (String)e.nextElement();
@@ -94,9 +95,15 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 entry.bundle = bundle;
                 entry.path = path;
                 entry.name = path.substring(path.lastIndexOf("/") + 1);
-                COMPONENTS.put(entry.name, entry);
+                entries.put(entry.name, entry);
             }
         }
+        
+    }
+
+    protected synchronized void mayBeAddComponentAndLanguageFor(Bundle bundle) {        
+        addComponentEntry(bundle.getEntryPaths(META_INF_COMPONENT), COMPONENTS);
+        addComponentEntry(bundle.getEntryPaths(META_INF_LANGUAGE), LANGUAGES);
     }
     
     protected synchronized void mayBeAddTypeConverterFor(Bundle bundle) {
@@ -120,16 +127,21 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }
     }
 
-    protected synchronized void mayBeRemoveComponentFor(Bundle bundle) {
-        ComponentEntry[] entriesArray = COMPONENTS.values().toArray(new ComponentEntry[0]);
+    protected synchronized void mayBeRemoveComponentAndLanguageFor(Bundle bundle) {
+        removeComponentEntry(bundle, COMPONENTS);
+        removeComponentEntry(bundle, LANGUAGES);        
+    }
+    
+    protected void removeComponentEntry(Bundle bundle, Map<String, ComponentEntry> entries) {
+        ComponentEntry[] entriesArray = entries.values().toArray(new ComponentEntry[0]);
         for (ComponentEntry entry : entriesArray) {        
             if (entry.bundle == bundle) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Removing entry: " + entry.path + " in bundle " + bundle.getSymbolicName());
                 }
-                COMPONENTS.remove(entry.name);
+                entries.remove(entry.name);
             }
-        }
+        }        
     }
     
     protected synchronized void mayBeRemoveTypeConverterFor(Bundle bundle) {
@@ -153,7 +165,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING
                 || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
-                mayBeAddComponentFor(bundle);
+                mayBeAddComponentAndLanguageFor(bundle);
                 mayBeAddTypeConverterFor(bundle);
             }
         }
@@ -170,7 +182,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         for (Bundle bundle : context.getBundles()) {
             if (bundle.getState() == Bundle.RESOLVED || bundle.getState() == Bundle.STARTING 
                 || bundle.getState() == Bundle.ACTIVE || bundle.getState() == Bundle.STOPPING) {
-                mayBeRemoveComponentFor(bundle);
+                mayBeRemoveComponentAndLanguageFor(bundle);
                 mayBeRemoveTypeConverterFor(bundle);
             }
         }
@@ -231,8 +243,16 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         return packages.toArray(new String[packages.size()]);
     }
         
-    protected static synchronized Class getComponent(String name) throws Exception {
-        ComponentEntry entry = COMPONENTS.get(name);
+    public static synchronized Class getComponent(String name) throws Exception {
+        return getClassFromEntries(name, COMPONENTS);
+    }
+    
+    public static synchronized Class getLanguage(String name) throws Exception {
+        return getClassFromEntries(name, LANGUAGES);
+    }
+    
+    protected static Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
+        ComponentEntry entry = entries.get(name);
         if (entry == null) {
             return null;
         }
@@ -246,7 +266,9 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 properties.load(reader);
             } finally {
                 try {
-                    reader.close();
+                    if (reader != null) {
+                        reader.close();
+                    }
                 } catch (Exception ignore) {
                 }
             }
@@ -255,9 +277,10 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
             entry.type = loader.loadClass(classname);
         }
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Found component: " + name + " via type: " + entry.type.getName());
+            LOG.debug("Found entry: " + name + " via type: " + entry.type.getName());
         }
         return entry.type;
     }
+    
 
 }
