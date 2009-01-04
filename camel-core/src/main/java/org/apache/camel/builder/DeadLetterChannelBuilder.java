@@ -106,6 +106,16 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DeadLetterChannelBuilder retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+        getRedeliveryPolicy().setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+        return this;
+    }
+
+    public DeadLetterChannelBuilder retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+        getRedeliveryPolicy().setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+        return this;
+    }
+
     /**
      * Sets the logger used for caught exceptions
      */
