@@ -50,7 +50,8 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         SpringCamelContext context = super.createContext();
         if (bundleContext != null) {
             context.setComponentResolver(new OsgiComponentResolver());
-            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
+            context.setLanguageResolver(new OsgiLanguageResolver());
+            addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
         }
         
         return context;
