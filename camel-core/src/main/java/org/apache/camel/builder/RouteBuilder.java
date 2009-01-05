@@ -149,7 +149,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
-     * for cathing certain exceptions and handling them.
+     * for catching certain exceptions and handling them.
      *
      * @param exception exception to catch
      * @return the builder
@@ -160,7 +160,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
 
     /**
      * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
-     * for cathing certain exceptions and handling them.
+     * for catching certain exceptions and handling them.
      *
      * @param exceptions list of exceptions to catch
      * @return the builder
