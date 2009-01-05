@@ -35,7 +35,7 @@
 
     <route>
       <from uri="direct:a" />
-      <throttle maximumRequestsPerPeriod="3" timePeriodMillis="10000">
+      <throttle maximumRequestsPerPeriod="1" timePeriodMillis="500">
         <to uri="mock:result" />
       </throttle>
     </route>

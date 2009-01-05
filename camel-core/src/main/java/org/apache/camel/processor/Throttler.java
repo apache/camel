@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -35,8 +33,7 @@ import org.apache.camel.Processor;
 public class Throttler extends DelayProcessorSupport {
     private long maximumRequestsPerPeriod;
     private long timePeriodMillis;
-    private AtomicLong startTimeMillis = new AtomicLong(0);
-    private AtomicLong requestCount = new AtomicLong(0);
+    private TimeSlot slot;
 
     public Throttler(Processor processor, long maximumRequestsPerPeriod) {
         this(processor, maximumRequestsPerPeriod, 1000);
@@ -78,43 +75,64 @@ public class Throttler extends DelayProcessorSupport {
         this.timePeriodMillis = timePeriodMillis;
     }
 
-    /**
-     * The number of requests which have taken place so far within this time
-     * period
-     */
-    public long getRequestCount() {
-        return requestCount.get();
-    }
-
-    /**
-     * The start time when this current period began
-     */
-    public long getStartTimeMillis() {
-        return startTimeMillis.get();
-    }
-    
-    @Override
-    public void process(Exchange exchange) throws Exception {
-        super.process(exchange);
-        
-    }
-
     // Implementation methods
     // -----------------------------------------------------------------------
     protected void delay(Exchange exchange) throws Exception {
-        long now = currentSystemTime();
-        startTimeMillis.compareAndSet(0, now);
-        if (now - startTimeMillis.get() > timePeriodMillis) {
-            // we're at the start of a new time period
-            // so lets reset things
-            requestCount.set(0);
-            startTimeMillis.set(now);
-        } else {
-            if (requestCount.incrementAndGet() > maximumRequestsPerPeriod) {
-                // lets sleep until the start of the next time period
-                long time = startTimeMillis.get() + timePeriodMillis;
-                waitUntil(time, exchange);
-            }
+        TimeSlot slot = nextSlot();
+        if (!slot.isActive()) {
+            waitUntil(slot.startTime, exchange);
         }
+    }
+    
+    /*
+     * Determine what the next available time slot is for handling an Exchange
+     */
+    protected synchronized TimeSlot nextSlot() {
+        if (slot == null) {
+            slot = new TimeSlot();
+        }
+        if (slot.isFull()) {
+            slot = slot.next();
+        }
+        slot.assign();
+        return slot;
+    }
+    
+    /*
+     * A time slot is capable of handling a number of exchanges within a certain period of time.
+     */
+    protected class TimeSlot {
+        
+        private long capacity = Throttler.this.maximumRequestsPerPeriod;
+        private final long duration = Throttler.this.timePeriodMillis;
+        private final long startTime;
+
+        protected TimeSlot() {
+            this(System.currentTimeMillis());
+        }
+
+        protected TimeSlot(long startTime) {
+            this.startTime = startTime;
+        }
+        
+        protected void assign() {
+            capacity--;
+        }
+        
+        /*
+         * Start the next time slot either now or in the future
+         * (no time slots are being created in the past)
+         */
+        protected TimeSlot next() {
+            return new TimeSlot(Math.max(System.currentTimeMillis(), this.startTime + this.duration));
+        }
+        
+        protected boolean isActive() {
+            return startTime <= System.currentTimeMillis();
+        }
+        
+        protected boolean isFull() {
+            return capacity <= 0;
+        }        
     }
 }
