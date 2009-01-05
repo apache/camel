@@ -205,6 +205,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
+                builder.addPropertyValue("exceptionClauses", factoryBean.getExceptionClauses());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
 
                 if (factoryBean.getPackages().length > 0) {

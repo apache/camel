@@ -103,6 +103,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<EndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
     private DataFormatsType dataFormats;
+    @XmlElement(name = "onException", required = false)
+    private List<ExceptionType> exceptionClauses = new ArrayList<ExceptionType>();
     @XmlElement(name = "intercept", required = false)
     private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlElement(name = "route", required = false)
@@ -185,6 +187,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // setup the intercepts
         for (RouteType route : routes) {
 
+            if (exceptionClauses != null) {
+                route.getOutputs().addAll(exceptionClauses);
+            }    
+            
             for (InterceptType intercept : intercepts) {
                 List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
                 List<ProcessorType<?>> exceptionHandlers = new ArrayList<ProcessorType<?>>();
@@ -201,7 +207,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
                 // add exception handlers as top children
                 route.getOutputs().addAll(exceptionHandlers);
-
+                
                 // add the interceptor
                 InterceptType proxy = intercept.createProxy();
                 route.addOutput(proxy);
@@ -220,8 +226,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         if (dataFormats != null) {
             getContext().setDataFormats(dataFormats.asMap());
-        }
-
+        } 
+        
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
@@ -519,5 +525,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public DataFormatsType getDataFormats() {
         return dataFormats;
+    }
+
+    public void setExceptionClauses(List<ExceptionType> exceptionClauses) {
+        this.exceptionClauses = exceptionClauses;
+    }
+
+    public List<ExceptionType> getExceptionClauses() {
+        return exceptionClauses;
     }
 }
