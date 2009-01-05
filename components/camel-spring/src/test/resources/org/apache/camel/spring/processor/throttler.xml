@@ -31,6 +31,12 @@
         <to uri="mock:result" />
       </throttler>
     </route>
+    <route>
+      <from uri="direct:a" />
+      <throttler maximumRequestsPerPeriod="1" timePeriodMillis="500">
+        <to uri="mock:result" />
+      </throttler>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 
