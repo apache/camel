@@ -41,7 +41,7 @@ public class JdbcComponent extends DefaultComponent {
         DataSource dataSource;
 
         if (ds != null) {
-            // perfer to use datasource set by setter
+            // prefer to use datasource set by setter
             dataSource = ds;
         } else {
             dataSource = mandatoryLookup(remaining, DataSource.class);
