@@ -58,8 +58,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting to poll: " + this.getEndpoint());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Starting to poll: " + this.getEndpoint());
         }
         try {
             if (isRunAllowed()) {
