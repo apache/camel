@@ -35,28 +35,26 @@
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
 
+        <onException>
+            <!-- the exception is full qualified names as plain strings -->
+            <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
+            <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
+            <exception>java.lang.IllegalArgumentException</exception>
+            <!-- here we reference our redelivy policy -->
+            <redeliveryPolicy ref="myRedeliveryPolicy"/>
+            <!-- mark this as handled -->
+            <handled>
+              <constant>true</constant>
+            </handled>
+            <!-- let our order service handle this exception, call the orderFailed method -->
+            <bean ref="orderService" method="orderFailed"/>
+            <!-- and since this is a unit test we use mock for assertions -->
+            <to uri="mock:error"/>
+        </onException>
+
         <route>
             <!-- the route -->
             <from uri="direct:start"/>
-
-            <!-- we must configure the on exception within the route, as opposed to Java DSL where we can do this outside -->
-            <onException>
-                <!-- the exception is full qualified names as plain strings -->
-                <!-- there can be more just add a 2nd, 3rd exception element (unbounded) -->
-                <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-                <exception>java.lang.IllegalArgumentException</exception>
-                <!-- here we reference our redelivy policy -->
-                <redeliveryPolicy ref="myRedeliveryPolicy"/>
-                <!-- mark this as handled -->
-                <handled>
-                  <constant>true</constant>
-                </handled>
-                <!-- let our order service handle this exception, call the orderFailed method -->
-                <bean ref="orderService" method="orderFailed"/>
-                <!-- and since this is a unit test we use mock for assertions -->
-                <to uri="mock:error"/>
-            </onException>
-
             <!-- in the normal route then route to our order service and call handleOrder method -->
             <bean ref="orderService" method="handleOrder"/>
             <!-- and since this is a unit test we use mock for assertions -->
