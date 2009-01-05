@@ -15,21 +15,20 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-  <!-- START SNIPPET: example5 -->
+  <!-- START SNIPPET: xsdlocation -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
        xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
-    ">
-  <!-- END SNIPPET: example5 -->
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+          http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+  <!-- END SNIPPET: xsdlocation -->
 
-  <!-- START SNIPPET: example -->
+  <!-- START SNIPPET: example1 -->
   <bean id="camel" class="org.apache.camel.spring.CamelContextFactoryBean">
     <property name="packages" value="org.apache.camel.spring.example"/>
   </bean>
-  <!-- END SNIPPET: example -->
+  <!-- END SNIPPET: example1 -->
 
   <!-- START SNIPPET: example2 -->
   <camelContext id="camel2" xmlns="http://activemq.apache.org/camel/schema/spring">
@@ -52,10 +51,10 @@
   </camelContext>
   <!-- END SNIPPET: example4 --> 
   
-  <!-- START SNIPPET: example6 -->
+  <!-- START SNIPPET: example5 -->
   <camel:camelContext id="camel5">
     <camel:package>org.apache.camel.spring.example</camel:package>
   </camel:camelContext>
-  <!-- END SNIPPET: example6 -->
+  <!-- END SNIPPET: example5 -->
   
 </beans>
