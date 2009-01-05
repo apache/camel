@@ -59,8 +59,8 @@ public abstract class ScheduledPollConsumer<E extends Exchange> extends DefaultC
      * Invoked whenever we should be polled
      */
     public void run() {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting to poll: " + this.getEndpoint());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Starting to poll: " + this.getEndpoint());
         }
         try {
             poll();
