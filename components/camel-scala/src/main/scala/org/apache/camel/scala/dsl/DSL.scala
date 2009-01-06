@@ -42,6 +42,7 @@ trait DSL {
   def resequence(expression: Exchange => Any) : SResequencerType
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
+  def thread(number: Int) : SThreadType
   def unmarshal(format: DataFormatType) : DSL
   def aggregate(expression: Exchange => Any) : SAggregatorType
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
