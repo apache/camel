@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
- * be read as many times as required.
+ * be read as many times as required. Encoding is default UTF-8.
  *
  * @version $Revision$
  */
@@ -50,13 +50,14 @@ public class StringSource extends StreamSource implements Externalizable {
 
     public StringSource(String text, String systemId) {
         this(text);
+        ObjectHelper.notNull(systemId, "systemId");
         setSystemId(systemId);
     }
 
     public StringSource(String text, String systemId, String encoding) {
-        this.text = text;
+        this(text, systemId);
+        ObjectHelper.notNull(encoding, "encoding");
         this.encoding = encoding;
-        setSystemId(systemId);
     }
 
     public InputStream getInputStream() {
@@ -83,10 +84,16 @@ public class StringSource extends StreamSource implements Externalizable {
         return encoding;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public void setText(String text) {
         this.text = text;
     }
