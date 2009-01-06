@@ -84,7 +84,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         
     }
 
-    protected void addComponentEntry(Enumeration e, Map<String, ComponentEntry> entries) {
+    protected synchronized void addComponentEntry(String entryPath, Bundle bundle, Map<String, ComponentEntry> entries) {
+        Enumeration e = bundle.getEntryPaths(entryPath);
         if (e != null) {
             while (e.hasMoreElements()) {
                 String path = (String)e.nextElement();
@@ -101,9 +102,9 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         
     }
 
-    protected synchronized void mayBeAddComponentAndLanguageFor(Bundle bundle) {        
-        addComponentEntry(bundle.getEntryPaths(META_INF_COMPONENT), COMPONENTS);
-        addComponentEntry(bundle.getEntryPaths(META_INF_LANGUAGE), LANGUAGES);
+    protected void mayBeAddComponentAndLanguageFor(Bundle bundle) {        
+        addComponentEntry(META_INF_COMPONENT, bundle, COMPONENTS);
+        addComponentEntry(META_INF_LANGUAGE, bundle, LANGUAGES);
     }
     
     protected synchronized void mayBeAddTypeConverterFor(Bundle bundle) {
@@ -127,7 +128,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         }
     }
 
-    protected synchronized void mayBeRemoveComponentAndLanguageFor(Bundle bundle) {
+    protected void mayBeRemoveComponentAndLanguageFor(Bundle bundle) {
         removeComponentEntry(bundle, COMPONENTS);
         removeComponentEntry(bundle, LANGUAGES);        
     }
@@ -251,13 +252,16 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         return getClassFromEntries(name, LANGUAGES);
     }
     
-    protected static Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
+    protected static synchronized Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
         ComponentEntry entry = entries.get(name);
         if (entry == null) {
             return null;
         }
         if (entry.type == null) {
             URL url = entry.bundle.getEntry(entry.path);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("The entry " + name + "'s url is" + url);
+            }
             // lets load the file
             Properties properties = new Properties();
             BufferedInputStream reader = null;
