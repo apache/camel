@@ -38,39 +38,38 @@
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://activemq.apache.org/camel/schema/spring" errorHandlerRef="dlc">
 
-        <onException>
-            <exception>java.lang.NullPointerException</exception>
-            <redeliveryPolicy maximumRedeliveries="0"/>
-            <setHeader headerName="messageInfo">
-              <constant>Damm a NPE</constant>
-            </setHeader>
-            <to uri="mock:error"/>
-        </onException>
+      <onException>
+        <exception>java.lang.NullPointerException</exception>
+        <redeliveryPolicy maximumRedeliveries="0" />
+        <setHeader headerName="messageInfo">
+          <constant>Damm a NPE</constant>
+        </setHeader>
+        <to uri="mock:error" />
+      </onException>
 
-       <!-- START SNIPPET: e1 -->
-        <onException>
-            <exception>java.io.IOException</exception>
-            <redeliveryPolicy 
-                redeliveryDelay="1000"
-                maximumRedeliveries="3"
-                maximumRedeliveryDelay="10000"
-                backOffMultiplier="1.0"
-                useExponentialBackOff="true"
-                retryAttemptedLogLevel="TRACE"
-                retriesExhaustedLogLevel="FATAL"               
-            />
-            <setHeader headerName="messageInfo">
-              <constant>Damm somekind of IO exception</constant>
-            </setHeader>
-            <to uri="mock:error"/>
-        </onException>
-        <!-- END SNIPPET: e1 -->
+      <!-- START SNIPPET: e1 -->
+      <onException>
+        <exception>java.io.IOException</exception>
+        <redeliveryPolicy 
+          redeliveryDelay="1000" 
+          maximumRedeliveries="3" 
+          maximumRedeliveryDelay="10000" 
+          backOffMultiplier="1.0"
+          useExponentialBackOff="true" 
+          retryAttemptedLogLevel="TRACE" 
+          retriesExhaustedLogLevel="FATAL" />
+        <setHeader headerName="messageInfo">
+          <constant>Damm somekind of IO exception</constant>
+        </setHeader>
+        <to uri="mock:error" />
+      </onException>
+      <!-- END SNIPPET: e1 -->
 
-        <route>
-            <from uri="direct:a"/>               
-            <process ref="myExceptionThrowingProcessor"/>
-            <to uri="mock:result"/>
-        </route>
+      <route>
+        <from uri="direct:a" />
+        <process ref="myExceptionThrowingProcessor" />
+        <to uri="mock:result" />
+      </route>
 
     </camelContext>
 </beans>
