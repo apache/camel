@@ -63,16 +63,16 @@ public class JmsMessage extends DefaultMessage {
 
     @Override
     public void copyFrom(org.apache.camel.Message that) {
-        // for performance lets not copy the messageID if we are a JMS message
         boolean copyMessageId = true;
         if (that instanceof JmsMessage) {
             JmsMessage thatMessage = (JmsMessage) that;
             this.jmsMessage = thatMessage.jmsMessage;
             if (this.jmsMessage != null) {
+                // for performance lets not copy the messageID if we are a JMS message
                 copyMessageId = false;
             }
         }
-        if (!copyMessageId) {
+        if (copyMessageId) {
             setMessageId(that.getMessageId());
         }
         setBody(that.getBody());
