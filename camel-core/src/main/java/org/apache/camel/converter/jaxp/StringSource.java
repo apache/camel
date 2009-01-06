@@ -54,9 +54,9 @@ public class StringSource extends StreamSource implements Externalizable {
     }
 
     public StringSource(String text, String systemId, String encoding) {
-        this.text = text;
+        this(text, systemId);
+        ObjectHelper.notNull(encoding, "encoding");
         this.encoding = encoding;
-        setSystemId(systemId);
     }
 
     public InputStream getInputStream() {
@@ -81,14 +81,6 @@ public class StringSource extends StreamSource implements Externalizable {
 
     public String getEncoding() {
         return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
-    public void setText(String text) {
-        this.text = text;
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
