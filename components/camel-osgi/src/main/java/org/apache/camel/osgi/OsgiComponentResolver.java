@@ -38,7 +38,7 @@ public class OsgiComponentResolver implements ComponentResolver {
     
     private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
 
-    protected synchronized Class getComponent(String name) throws Exception {
+    protected Class getComponent(String name) throws Exception {
         return Activator.getComponent(name);       
     }
 
