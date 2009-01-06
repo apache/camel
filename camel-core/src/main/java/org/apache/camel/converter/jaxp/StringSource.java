@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
- * be read as many times as required.
+ * be read as many times as required. Encoding is default UTF-8.
  *
  * @version $Revision$
  */
@@ -50,6 +50,7 @@ public class StringSource extends StreamSource implements Externalizable {
 
     public StringSource(String text, String systemId) {
         this(text);
+        ObjectHelper.notNull(systemId, "systemId");
         setSystemId(systemId);
     }
 
