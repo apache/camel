@@ -102,6 +102,8 @@ abstract class SAbstractType extends DSL {
   
   def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorType[P] forSome {type P}])
   
+  def thread(count: Int) = new SThreadType(target.thread(count))
+  
   def unmarshal(format: DataFormatType) = {
     target.unmarshal(format)
     this

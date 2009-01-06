@@ -77,6 +77,7 @@ class RouteBuilder extends Preamble with DSL with Routes {
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
+  def thread(count: Int) = stack.top.thread(count)
   def unmarshal(format: DataFormatType) = stack.top.unmarshal(format)
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
