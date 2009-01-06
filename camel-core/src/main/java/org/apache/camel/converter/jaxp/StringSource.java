@@ -28,6 +28,8 @@ import java.io.UnsupportedEncodingException;
 
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.camel.util.ObjectHelper;
+
 /**
  * A helper class which provides a JAXP {@link javax.xml.transform.Source Source} from a String which can
  * be read as many times as required.
@@ -42,9 +44,7 @@ public class StringSource extends StreamSource implements Externalizable {
     }
 
     public StringSource(String text) {
-        if (text == null) {
-            throw new NullPointerException("text cannot be null");
-        }
+        ObjectHelper.notNull(text, "text");
         this.text = text;
     }
 
