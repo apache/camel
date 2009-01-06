@@ -17,6 +17,7 @@ embedding in any Java application.
 
 Apache Camel can be used as a routing and mediation engine for the
 following projects:
+
     * Apache ActiveMQ which is the most popular and powerful open
       source message broker
     * Apache CXF which is a smart web services suite (JAX-WS)
