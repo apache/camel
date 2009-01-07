@@ -746,6 +746,12 @@
       </dependency>
 
       <dependency>
+        <groupId>org.springframework.osgi</groupId>
+        <artifactId>spring-osgi-test</artifactId>
+        <version>${spring-osgi-version}</version>
+      </dependency>
+
+      <dependency>
         <groupId>javax.annotation</groupId>
         <artifactId>jsr250-api</artifactId>
         <version>1.0</version>
