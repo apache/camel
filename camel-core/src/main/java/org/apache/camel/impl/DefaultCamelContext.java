@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,7 +68,6 @@ import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *
@@ -97,6 +97,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
+    private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -695,7 +696,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected Injector createInjector() {
-        FactoryFinder finder = new FactoryFinder();
+        FactoryFinder finder = createFactoryFinder();
         try {
             return (Injector) finder.newInstance("Injector");
         } catch (NoFactoryAvailableException e) {
@@ -772,5 +773,28 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public Map<String, DataFormatType> getDataFormats() {
         return dataFormats;
+    }
+    
+    public void setFactoryFinderClass(Class<? extends FactoryFinder> finderClass) {
+        factoryFinderClass = finderClass;
+    }
+
+    public FactoryFinder createFactoryFinder() {
+        try {
+            return factoryFinderClass.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
+    public FactoryFinder createFactoryFinder(String path) {
+        try {
+            Constructor<? extends FactoryFinder> constructor;
+            constructor = factoryFinderClass.getConstructor(String.class);
+            return constructor.newInstance(path);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
+        }
+        
     }
 }

@@ -27,6 +27,7 @@ import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.FactoryFinder;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -44,14 +45,14 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }
-
-
+    
     protected SpringCamelContext createContext() {
         SpringCamelContext context = super.createContext();
         if (bundleContext != null) {
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
-            addOsgiAnnotationTypeConverterLoader(context, bundleContext);            
+            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
+            context.setFactoryFinderClass(OsgiFactoryFinder.class);
         }
         
         return context;
@@ -72,6 +73,6 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
             typeConverterLoaders.remove(atLoader);
         }
         typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
-    }
-
+    }    
+    
 }

@@ -378,7 +378,7 @@ public class FileEndpoint extends ScheduledPollEndpoint<FileExchange> {
     protected FileProcessStrategy createFileStrategy() {
         Class<?> factory = null;
         try {
-            FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
+            FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
             factory = finder.findClass("file", "strategy.factory.");
         } catch (ClassNotFoundException e) {
             LOG.debug("'strategy.factory.class' not found", e);
