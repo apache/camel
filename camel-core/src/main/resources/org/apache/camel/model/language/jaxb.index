@@ -23,6 +23,7 @@ JavaScriptExpression
 JXPathExpression
 LanguageExpression
 MethodCallExpression
+MvelExpression
 OgnlExpression
 PhpExpression
 PythonExpression
