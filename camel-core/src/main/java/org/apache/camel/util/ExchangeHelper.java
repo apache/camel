@@ -203,7 +203,13 @@ public final class ExchangeHelper {
                 // as the final processor on a pipeline might not
                 // have created any OUT; such as a mock:endpoint
                 // so lets assume the last IN is the OUT
-                result.getOut(true).copyFrom(source.getIn());
+                if (result.getPattern().isOutCapable()) {
+                    // only set OUT if its OUT capable
+                    result.getOut(true).copyFrom(source.getIn());
+                } else {
+                    // if not replace IN instead to keep the MEP
+                    result.getIn().copyFrom(source.getIn());
+                }
             }
             result.getProperties().clear();
             result.getProperties().putAll(source.getProperties());

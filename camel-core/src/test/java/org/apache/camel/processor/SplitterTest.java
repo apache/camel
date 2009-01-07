@@ -38,6 +38,7 @@ public class SplitterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob");
 
+        // InOnly
         template.send("direct:seqential", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -61,7 +62,7 @@ public class SplitterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob", "Roman");
 
-        Exchange result = template.send("direct:seqential", new Processor() {
+        Exchange result = template.request("direct:seqential", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Roman");
@@ -77,7 +78,7 @@ public class SplitterTest extends ContextTestSupport {
     }
 
     public void testEmptyBody() {
-        Exchange result = template.send("direct:seqential", new Processor() {
+        Exchange result = template.request("direct:seqential", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("foo", "bar");
             }
@@ -92,6 +93,7 @@ public class SplitterTest extends ContextTestSupport {
         resultEndpoint.expectsNoDuplicates(body());
         resultEndpoint.expectedMessageCount(4);
 
+        // InOnly
         template.send("direct:parallel", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -124,7 +126,7 @@ public class SplitterTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
 
-        Exchange result = template.send("direct:parallel", new Processor() {
+        Exchange result = template.request("direct:parallel", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Roman");
@@ -144,7 +146,7 @@ public class SplitterTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(5);
         resultEndpoint.expectedBodiesReceivedInAnyOrder("James", "Guillaume", "Hiram", "Rob", "Roman");
 
-        Exchange result = template.send("direct:parallel-streaming", new Processor() {
+        Exchange result = template.request("direct:parallel-streaming", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Roman");
@@ -164,7 +166,7 @@ public class SplitterTest extends ContextTestSupport {
         resultEndpoint.expectedMessageCount(5);
         resultEndpoint.expectedHeaderReceived("foo", "bar");
 
-        Exchange result = template.send("direct:streaming", new Processor() {
+        template.request("direct:streaming", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Roman");
@@ -190,7 +192,7 @@ public class SplitterTest extends ContextTestSupport {
         failedEndpoint.expectedMessageCount(1);
         failedEndpoint.expectedHeaderReceived("foo", "bar");
         
-        Exchange result = template.send("direct:exception", new Processor() {
+        Exchange result = template.request("direct:exception", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("James,Guillaume,Hiram,Rob,Exception");
