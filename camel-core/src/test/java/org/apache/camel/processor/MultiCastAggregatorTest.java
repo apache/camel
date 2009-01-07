@@ -50,7 +50,8 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
             url = "direct:sequential";
         }
 
-        Exchange exchange = template.send(url, new Processor() {
+        // use InOut
+        Exchange exchange = template.request(url, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("input");
