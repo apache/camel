@@ -63,7 +63,7 @@ public class PipelineTest extends ContextTestSupport {
     public void testSendMessageThroughAPipeline() throws Exception {
         resultEndpoint.expectedBodiesReceived(4);
 
-        Exchange results = template.send("direct:a", new Processor() {
+        Exchange results = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) {
                 // now lets fire in a message
                 Message in = exchange.getIn();
@@ -79,7 +79,7 @@ public class PipelineTest extends ContextTestSupport {
 
     
     public void testResultsReturned() throws Exception {
-        Exchange exchange = template.send("direct:b", new Processor() {
+        Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Hello World");
             }
@@ -95,7 +95,7 @@ public class PipelineTest extends ContextTestSupport {
      * @throws Exception
      */
     public void testFaultStopsPipeline() throws Exception {
-        Exchange exchange = template.send("direct:c", new Processor() {
+        Exchange exchange = template.request("direct:c", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setBody("Fault Message");
             }
@@ -111,7 +111,7 @@ public class PipelineTest extends ContextTestSupport {
     }
 
     public void testOnlyProperties() {
-        Exchange exchange = template.send("direct:b", new Processor() {
+        Exchange exchange = template.request("direct:b", new Processor() {
             public void process(Exchange exchange) {
                 exchange.getIn().setHeader("header", "headerValue");
             }
@@ -124,7 +124,6 @@ public class PipelineTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
@@ -135,8 +134,6 @@ public class PipelineTest extends ContextTestSupport {
                 if (number == null) {
                     number = 0;
                 }
-                // todo set the endpoint name we were received from
-                //exchange.setProperty(exchange.get);
                 number = number + 1;
                 exchange.getOut().setBody(number);
             }
