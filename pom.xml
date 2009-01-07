@@ -88,6 +88,7 @@
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
+    <camel.osgi.activator></camel.osgi.activator>
     <camel.osgi.private.pkg>!*</camel.osgi.private.pkg>
     <camel.osgi.export>${camel.osgi.export.pkg};${camel.osgi.version}</camel.osgi.export>
     <camel.osgi.version>version=${project.version}</camel.osgi.version>
@@ -1118,6 +1119,7 @@
 	      <instructions>
 	        <Bundle-Name>${artifactId}</Bundle-Name>
 	        <Bundle-SymbolicName>${camel.osgi.symbolic.name}</Bundle-SymbolicName>
+                <Bundle-Activator>${camel.osgi.activator}</Bundle-Activator>
 	        <Export-Package>${camel.osgi.export}</Export-Package>
 	        <Import-Package>${camel.osgi.import}</Import-Package>
 	        <Private-Package>${camel.osgi.private.pkg}</Private-Package>

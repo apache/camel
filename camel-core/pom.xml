@@ -36,9 +36,14 @@
   <description>The Core Camel POJO based router</description>
 
   <properties>
-    <camel.osgi.export.pkg>
-      org.apache.camel.*
+	<camel.osgi.export.pkg>
+		org.apache.camel.*
     </camel.osgi.export.pkg>
+	<camel.osgi.import>
+		!javax.xml.bind.annotation.adapters,
+		org.apache.xalan.xsltc.trax;resolution:=optional,
+		*
+    </camel.osgi.import>
   </properties>
 
   <repositories>
