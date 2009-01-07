@@ -389,7 +389,7 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     protected RemoteFileProcessStrategy createRemoteFileStrategy() {
         Class<?> factory = null;
         try {
-            FactoryFinder finder = new FactoryFinder("META-INF/services/org/apache/camel/component/");
+            FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
             factory = finder.findClass("ftp", "strategy.factory.");
         } catch (ClassNotFoundException e) {
             LOG.debug("'strategy.factory.class' not found", e);

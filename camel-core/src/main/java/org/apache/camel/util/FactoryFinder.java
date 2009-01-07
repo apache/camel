@@ -32,7 +32,7 @@ import org.apache.camel.spi.Injector;
  */
 public class FactoryFinder {
     private final String path;
-    private final ConcurrentHashMap classMap = new ConcurrentHashMap();
+    protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
 
     public FactoryFinder() {
         this("META-INF/services/org/apache/camel/");
@@ -66,7 +66,7 @@ public class FactoryFinder {
 
     public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException,
         ClassNotFoundException {
-        Class type = findClass(key, propertyPrefix);
+        Class<?> type = findClass(key, propertyPrefix);
         return injector.newInstance(type);
     }
 
@@ -77,7 +77,7 @@ public class FactoryFinder {
 
     public <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType)
         throws IOException, ClassNotFoundException {
-        Class type = findClass(key, propertyPrefix);
+        Class<?> type = findClass(key, propertyPrefix);
         Object value = injector.newInstance(type);
         if (expectedType.isInstance(value)) {
             return expectedType.cast(value);
