@@ -30,6 +30,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.FactoryFinder;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -326,4 +327,17 @@ public interface CamelContext extends Service {
      * @return the data formats available
      */
     Map<String, DataFormatType> getDataFormats();
+    
+    /**
+     * Create a FactoryFinder which will be used for the loading the factory class from META-INF
+     * @return the factory finder
+     */
+    FactoryFinder createFactoryFinder();
+    
+    /**
+     * Create a FactoryFinder which will be used for the loading the factory class from META-INF
+     * @param path the META-INF path
+     * @return the factory finder
+     */
+    FactoryFinder createFactoryFinder(String path);
 }

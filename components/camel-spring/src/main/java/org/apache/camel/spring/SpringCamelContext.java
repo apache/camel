@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.Processor;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
@@ -213,5 +212,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     public boolean getShouldStartContext() {
         return shouldStartContext;
-    }
+    }    
+    
 }
