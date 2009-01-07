@@ -246,6 +246,17 @@ public class ExpressionClause<T> extends ExpressionType {
     }
 
     /**
+     * Evaluates a <a href="http://activemq.apache.org/camel/mvel.html">MVEL
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T mvel(String text) {
+        return language("mvel", text);
+    }
+
+    /**
      * Evaluates a <a href="http://activemq.apache.org/camel/php.html">PHP
      * expression</a>
      * 
