@@ -93,7 +93,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-test</artifactId>
+      <artifactId>spring-osgi-mock</artifactId>
       <scope>test</scope>
     </dependency>
 
