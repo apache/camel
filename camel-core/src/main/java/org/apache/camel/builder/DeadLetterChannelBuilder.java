@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+    private Processor onRedelivery;
     private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private ProcessorFactory deadLetterFactory;
     private Processor defaultDeadLetterEndpoint;
@@ -63,8 +64,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        Processor deadLetter = getDeadLetterFactory().createProcessor();       
-        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
+        Processor deadLetter = getDeadLetterFactory().createProcessor();
+        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         configure(answer);
         return answer;
     }
@@ -159,6 +160,16 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      */
     public DeadLetterChannelBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         setExceptionPolicyStrategy(exceptionPolicyStrategy);
+        return this;
+    }
+
+    /**
+     * Sets a processor that should be processed <b>before</b> a redelivey attempt.
+     * <p/>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     */
+    public DeadLetterChannelBuilder onRedelivery(Processor processor) {
+        setOnRedelivery(processor);
         return this;
     }
 
@@ -258,6 +269,14 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
         this.exceptionPolicyStrategy = exceptionPolicyStrategy;
+    }
+
+    public Processor getOnRedelivery() {
+        return onRedelivery;
+    }
+
+    public void setOnRedelivery(Processor onRedelivery) {
+        this.onRedelivery = onRedelivery;
     }
 
     @Override
