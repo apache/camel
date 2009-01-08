@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -26,11 +26,11 @@ import org.apache.camel.processor.onexception.MyTechnicalException;
 /**
  * Unit test for testing possibility to modify exchange before redelivering
  */
-public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSupport {
+public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
 
     static int counter;
 
-    public void testInterceptAlterMessageBeforeRedelivery() throws Exception {
+    public void testOnExceptionAlterMessageBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World123");
 
@@ -39,7 +39,7 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
-    public void testInterceptAlterMessageWithHeadersBeforeRedelivery() throws Exception {
+    public void testOnExceptionAlterMessageWithHeadersBeforeRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World123");
         mock.expectedHeaderReceived("foo", "123");
@@ -60,25 +60,14 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // to execute unit test much faster we dont use delay between redeliveries
-                errorHandler(deadLetterChannel("mock:error").delay(0L));
-
                 // START SNIPPET: e1
-                // we configure an interceptor that is triggered when the redelivery flag
-                // has been set TRUE on an exchange
-                intercept().when(header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE)).
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // the message is being redelivered so we can alter it
-
-                                // we just append the redelivery counter to the body
-                                // you can of course do all kind of stuff instead
-                                String body = exchange.getIn().getBody(String.class);
-                                int count = exchange.getIn().getHeader("org.apache.camel.RedeliveryCounter", Integer.class);
-
-                                exchange.getIn().setBody(body + count);
-                            }
-                        });
+                // we configure our Dead Letter Channel to invoke
+                // MyRedeliveryProcessor before a redelivery is
+                // attempted. This allows us to alter the message before
+                errorHandler(deadLetterChannel("mock:error")
+                        .onRedelivery(new MyRedeliverPrcessor())
+                        // setting delay to zero is just to make unit teting faster
+                        .delay(0L));
                 // END SNIPPET: e1
 
 
@@ -94,6 +83,24 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
             }
         };
     }
+
+    // START SNIPPET: e2
+    // This is our processor that is executed before every redelivery attempt
+    // here we can do what we want in the java code, such as altering the message
+    public class MyRedeliverPrcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // the message is being redelivered so we can alter it
+
+            // we just append the redelivery counter to the body
+            // you can of course do all kind of stuff instead
+            String body = exchange.getIn().getBody(String.class);
+            int count = exchange.getIn().getHeader("org.apache.camel.RedeliveryCounter", Integer.class);
+
+            exchange.getIn().setBody(body + count);
+        }
+    }
+    // END SNIPPET: e2
 
 
 }
