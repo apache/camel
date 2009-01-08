@@ -40,12 +40,12 @@ import org.osgi.framework.SynchronousBundleListener;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 public class Activator implements BundleActivator, SynchronousBundleListener {
-    public static final String META_INF_TYPE_CONVERTER = "/META-INF/services/org/apache/camel/TypeConverter";
-    public static final String META_INF_COMPONENT = "/META-INF/services/org/apache/camel/component/";
-    public static final String META_INF_LANGUAGE = "/META-INF/services/org/apache/camel/language/";
+    public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
+    public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
+    public static final String META_INF_LANGUAGE = "META-INF/services/org/apache/camel/language/";
     private static final transient Log LOG = LogFactory.getLog(Activator.class);    
     private static final Map<String, ComponentEntry> COMPONENTS = new HashMap<String, ComponentEntry>();
-    private static final Map<Bundle, TypeConverterEntry> TYPE_CONVERTERS = new HashMap<Bundle, TypeConverterEntry>();
+    private static final Map<URL, TypeConverterEntry> TYPE_CONVERTERS = new HashMap<URL, TypeConverterEntry>();
     private static final Map<String, ComponentEntry> LANGUAGES = new HashMap<String, ComponentEntry>();
     private static Bundle bundle;
     
@@ -120,7 +120,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                     entry.bundle = bundle;                   
                     entry.resource = resource;
                     entry.converterPackages = getConverterPackages(resource);
-                    TYPE_CONVERTERS.put(bundle, entry);
+                    TYPE_CONVERTERS.put(resource, entry);
                 }
             }
         } catch (IOException ignore) {
@@ -152,7 +152,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Removing entry: " + entry.resource + " in bundle " + bundle.getSymbolicName());
                 }
-                COMPONENTS.remove(bundle);
+                COMPONENTS.remove(entry.resource);
             }
         }
     }

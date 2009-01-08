@@ -747,7 +747,7 @@
 
       <dependency>
         <groupId>org.springframework.osgi</groupId>
-        <artifactId>spring-osgi-test</artifactId>
+        <artifactId>spring-osgi-mock</artifactId>
         <version>${spring-osgi-version}</version>
       </dependency>
 
