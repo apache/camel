@@ -25,6 +25,12 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class AggregatorBatchOptionsTest extends ContextTestSupport {
 
+    @Override
+    protected void setUp() throws Exception {
+        disableJMX();
+        super.setUp();
+    }
+
     public boolean isUseRouteBuilder() {
         return false;
     }
