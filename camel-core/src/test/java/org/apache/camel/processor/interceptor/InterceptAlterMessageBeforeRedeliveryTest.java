@@ -14,11 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.onexception;
+package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.onexception.MyTechnicalException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -64,8 +65,8 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
 
                 // START SNIPPET: e1
                 // we configure an interceptor that is triggered when the redelivery flag
-                // has been set on an exchange
-                intercept().when(header("org.apache.camel.Redelivered").isNotNull()).
+                // has been set TRUE on an exchange
+                intercept().when(header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE)).
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // the message is being redelivered so we can alter it
