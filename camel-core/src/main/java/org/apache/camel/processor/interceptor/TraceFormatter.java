@@ -27,15 +27,17 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class TraceFormatter {
+    private int breadCrumbLength;
     private boolean showBreadCrumb = true;
     private boolean showNode = true;
     private boolean showExchangeId;
+    private boolean showShortExchangeId;
     private boolean showExchangePattern = true;
     private boolean showProperties = true;
     private boolean showHeaders = true;
-    private boolean showBody = true;    
+    private boolean showBody = true;
     private boolean showBodyType = true;
-    private boolean showOutBody;    
+    private boolean showOutBody;
     private boolean showOutBodyType;
     private boolean showException = true;
 
@@ -167,6 +169,22 @@ public class TraceFormatter {
         this.showException = showException;
     }
 
+    public int getBreadCrumbLength() {
+        return breadCrumbLength;
+    }
+
+    public void setBreadCrumbLength(int breadCrumbLength) {
+        this.breadCrumbLength = breadCrumbLength;
+    }
+
+    public boolean isShowShortExchangeId() {
+        return showShortExchangeId;
+    }
+
+    public void setShowShortExchangeId(boolean showShortExchangeId) {
+        this.showShortExchangeId = showShortExchangeId;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
@@ -231,23 +249,36 @@ public class TraceFormatter {
         String node = "";
         String result;
         
-        if (!showBreadCrumb && !showExchangeId && !showNode) {
+        if (!showBreadCrumb && !showExchangeId && !showShortExchangeId && !showNode) {
             return "";
         }
         
-        if (showBreadCrumb || showExchangeId) {
+        if (showBreadCrumb) {
             id = getBreadCrumbID(exchange).toString();
+        } else if (showExchangeId || showShortExchangeId) {
+            id = getBreadCrumbID(exchange).toString();
+            if (showShortExchangeId) {
+                // skip hostname for short exchange id
+                id = id.substring(id.indexOf("/") + 1);
+            }
         }
+
         if (showNode) {
             node = getNodeMessage(interceptor);
         }
+
         if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
             result = node.trim() + " -> " + id.trim();
         } else {
             result = id.trim() + " -> " + node.trim();
         }
-        
-        // we want to ensure text coming after this is aligned for readability
-        return String.format("%1$-65.65s", result);
+
+        if (breadCrumbLength > 0) {
+            // we want to ensure text coming after this is aligned for readability
+            return String.format("%1$-" + breadCrumbLength + "." + breadCrumbLength + "s", result).trim();
+        } else {
+            return result.trim();
+        }
+
     }
 }
