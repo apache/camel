@@ -61,6 +61,13 @@ public class FileConfigureTest extends ContextTestSupport {
         }
     }
 
+    @Override
+    protected void tearDown() throws Exception {
+        super.tearDown();
+        // one of the above tests created a /target folder in the root we want to get rid of when testing
+        deleteDirectory("/target");
+    }
+
     private FileConsumer createFileConsumer(String endpointUri) throws Exception {
         FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         return (FileConsumer)endpoint.createConsumer(DUMMY_PROCESSOR);
