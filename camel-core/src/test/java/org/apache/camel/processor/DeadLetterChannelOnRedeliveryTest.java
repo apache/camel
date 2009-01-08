@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.onexception.MyTechnicalException;
 
 /**
  * Unit test for testing possibility to modify exchange before redelivering
@@ -75,7 +74,7 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         // force some error so Camel will do redelivery
                         if (++counter <= 3) {
-                            throw new MyTechnicalException("Forced by unit test");
+                            throw new IllegalArgumentException("Forced by unit test");
                         }
                     }
                 }).to("mock:result");
