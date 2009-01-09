@@ -46,15 +46,14 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
         Bus bus = null;
         this.endpoint = endpoint;
         boolean isWebServiceProvider = false;
-        if (endpoint.getApplicationContext() != null) {
-            SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
-            bus = bf.createBus();
+        if (endpoint.getApplicationContext() != null) {            
+            bus = endpoint.getCxfEndpointBean().getBus();
             if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
-                BusFactory.setDefaultBus(bus);
+                BusFactory.setThreadDefaultBus(bus);
             }
         } else {
             // now we just use the default bus here
-            bus = BusFactory.getDefaultBus();
+            bus = BusFactory.getThreadDefaultBus();
         }
         ServerFactoryBean svrBean = null;
 
