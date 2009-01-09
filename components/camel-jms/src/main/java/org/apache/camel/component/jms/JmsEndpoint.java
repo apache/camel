@@ -156,11 +156,11 @@ public class JmsEndpoint extends DefaultEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new JmsExchange(getCamelContext(), pattern, getBinding());
+        return new JmsExchange(this, pattern, getBinding());
     }
 
     public JmsExchange createExchange(Message message) {
-        return new JmsExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
+        return new JmsExchange(this, getExchangePattern(), getBinding(), message);
     }
 
     /**

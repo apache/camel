@@ -93,17 +93,9 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createExchange(Notification notification) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        Exchange exchange = createExchange();
         exchange.setIn(new JMXMessage(notification));
         return exchange;
-    }
-
-    public Exchange createExchange() {
-        return createExchange(getExchangePattern());
-    }
-
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(getCamelContext(), pattern);
     }
 
     public String getAttributeName() {

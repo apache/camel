@@ -32,13 +32,19 @@ import org.apache.camel.impl.DefaultExchange;
 public class JmsExchange extends DefaultExchange {
     private JmsBinding binding;
 
-    public JmsExchange(CamelContext context, ExchangePattern pattern, JmsBinding binding) {
-        super(context, pattern);
+    public JmsExchange(JmsEndpoint endpoint, ExchangePattern pattern, JmsBinding binding) {
+        super(endpoint, pattern);
         this.binding = binding;
     }
 
     public JmsExchange(CamelContext context, ExchangePattern pattern, JmsBinding binding, Message message) {
-        this(context, pattern, binding);
+        super(context, pattern);
+        this.binding = binding;
+        setIn(new JmsMessage(message));
+    }
+
+    public JmsExchange(JmsEndpoint endpoint, ExchangePattern pattern, JmsBinding binding, Message message) {
+        this(endpoint, pattern, binding);
         setIn(new JmsMessage(message));
     }
 

@@ -169,7 +169,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(getCamelContext(), pattern);
+        return new DefaultExchange(this, pattern);
     }
 
     public ExchangePattern getExchangePattern() {

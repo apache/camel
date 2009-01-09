@@ -207,6 +207,21 @@ public interface Exchange {
      */
     void copyFrom(Exchange source);
 
+
+    /**
+     * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message exchange
+     * otherwise this property will be null
+     */
+    Endpoint getFromEndpoint();
+
+    /**
+     * Sets the endpoint which originated this message exchange. This method
+     * should typically only be called by {@link org.apache.camel.Endpoint} implementations
+     *
+     * @param fromEndpoint the endpoint which is originating this message exchange
+     */
+    void setFromEndpoint(Endpoint fromEndpoint);
+    
     /**
      * Returns the unit of work that this exchange belongs to; which may map to
      * zero, one or more physical transactions

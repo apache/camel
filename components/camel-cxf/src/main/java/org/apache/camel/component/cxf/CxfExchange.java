@@ -52,8 +52,8 @@ public class CxfExchange extends DefaultExchange {
         }
     }
 
-    public CxfExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);
+    public CxfExchange(CxfEndpoint endpoint, ExchangePattern pattern) {
+        super(endpoint, pattern);
     }
     
     public CxfExchange(CxfExchange exchange) {
@@ -61,8 +61,8 @@ public class CxfExchange extends DefaultExchange {
         this.exchange = exchange.getExchange();      
     }
 
-    public CxfExchange(CamelContext context, ExchangePattern pattern, Message inMessage) {
-        this(context, pattern);
+    public CxfExchange(CxfEndpoint endpoint, ExchangePattern pattern, Message inMessage) {
+        this(endpoint, pattern);
         this.exchange = inMessage.getExchange();
 
         setIn(new CxfMessage(inMessage));

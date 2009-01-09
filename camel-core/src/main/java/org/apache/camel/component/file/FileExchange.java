@@ -33,8 +33,8 @@ import org.apache.camel.impl.DefaultExchange;
 public class FileExchange extends DefaultExchange {
     private File file;
 
-    public FileExchange(CamelContext camelContext, ExchangePattern pattern, File file) {
-        super(camelContext, pattern);
+    public FileExchange(FileEndpoint endpoint, ExchangePattern pattern, File file) {
+        super(endpoint, pattern);
         setFile(file);
     }
 

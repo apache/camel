@@ -31,13 +31,13 @@ import org.jivesoftware.smack.packet.Message;
 public class XmppExchange extends DefaultExchange {
     private XmppBinding binding;
 
-    public XmppExchange(CamelContext context, ExchangePattern pattern, XmppBinding binding) {
-        super(context, pattern);
+    public XmppExchange(XmppEndpoint endpoint, ExchangePattern pattern, XmppBinding binding) {
+        super(endpoint, pattern);
         this.binding = binding;
     }
 
-    public XmppExchange(CamelContext context, ExchangePattern pattern, XmppBinding binding, Message message) {
-        this(context, pattern, binding);
+    public XmppExchange(XmppEndpoint endpoint, ExchangePattern pattern, XmppBinding binding, Message message) {
+        this(endpoint, pattern, binding);
         setIn(new XmppMessage(message));
     }
 

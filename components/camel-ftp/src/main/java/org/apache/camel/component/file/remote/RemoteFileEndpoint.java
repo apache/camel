@@ -78,11 +78,11 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     }
 
     public RemoteFileExchange createExchange() {
-        return new RemoteFileExchange(getCamelContext(), getExchangePattern(), null);
+        return new RemoteFileExchange(this, getExchangePattern(), null);
     }
 
     public RemoteFileExchange createExchange(RemoteFile remote) {
-        return new RemoteFileExchange(getCamelContext(), getExchangePattern(), remote);
+        return new RemoteFileExchange(this, getExchangePattern(), remote);
     }
 
     public RemoteFileProducer createProducer() throws Exception {

@@ -135,7 +135,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
      * @return the created exchange
      */
     public FileExchange createExchange(File file) {
-        return new FileExchange(getCamelContext(), getExchangePattern(), file);
+        return new FileExchange(this, getExchangePattern(), file);
     }
 
     @Override
@@ -145,7 +145,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new FileExchange(getCamelContext(), pattern, file);
+        return new FileExchange(this, pattern, file);
     }
 
     /**
