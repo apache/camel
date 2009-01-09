@@ -100,15 +100,14 @@ public class CxfProducer extends DefaultProducer {
     // If cfb is null, we will try to find the right cfb to use.
     private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws CamelException {
         Bus bus = null;
-        if (endpoint.getApplicationContext() != null) {
-            SpringBusFactory bf = new SpringBusFactory(endpoint.getApplicationContext());
-            bus = bf.createBus();
+        if (endpoint.getApplicationContext() != null) {            
+            bus = endpoint.getCxfEndpointBean().getBus();
             if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
-                BusFactory.setDefaultBus(bus);
+                BusFactory.setThreadDefaultBus(bus);
             }
         } else {
             // now we just use the default bus here
-            bus = BusFactory.getDefaultBus();
+            bus = BusFactory.getThreadDefaultBus();
         }
         if (endpoint.isSpringContextEndpoint()) {
             CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
