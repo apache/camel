@@ -68,7 +68,7 @@ public class SpringIntegrationEndpoint extends ScheduledPollEndpoint {
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new SpringIntegrationExchange(getCamelContext(), pattern);
+        return new SpringIntegrationExchange(this, pattern);
     }
 
     public void setInputChannel(String input) {

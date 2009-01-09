@@ -78,15 +78,15 @@ public class CxfEndpoint extends DefaultEndpoint {
     }
 
     public Exchange createExchange() {
-        return new CxfExchange(getCamelContext(), getExchangePattern());
+        return new CxfExchange(this, getExchangePattern());
     }
 
     public Exchange createExchange(ExchangePattern pattern) {
-        return new CxfExchange(getCamelContext(), pattern);
+        return new CxfExchange(this, pattern);
     }
 
     public CxfExchange createExchange(Message inMessage) {
-        return new CxfExchange(getCamelContext(), getExchangePattern(), inMessage);
+        return new CxfExchange(this, getExchangePattern(), inMessage);
     }
     
     /* Override the defaultEndpoint exchange create method */

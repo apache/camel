@@ -102,7 +102,7 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public JmsExchange createExchange(Message message, Destination replyDestination) {
-        JmsExchange exchange = new JmsExchange(endpoint.getCamelContext(), endpoint.getExchangePattern(), getBinding(), message);
+        JmsExchange exchange = new JmsExchange(endpoint, endpoint.getExchangePattern(), getBinding(), message);
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
             exchange.setProperty("org.apache.camel.jms.replyDestination", replyDestination);

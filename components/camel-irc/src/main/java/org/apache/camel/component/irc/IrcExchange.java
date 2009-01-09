@@ -23,13 +23,13 @@ import org.apache.camel.impl.DefaultExchange;
 public class IrcExchange extends DefaultExchange {
     private IrcBinding binding;
 
-    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding) {
-        super(context, pattern);
+    public IrcExchange(IrcEndpoint endpoint, ExchangePattern pattern, IrcBinding binding) {
+        super(endpoint, pattern);
         this.binding = binding;
     }
 
-    public IrcExchange(CamelContext context, ExchangePattern pattern, IrcBinding binding, IrcMessage inMessage) {
-        this(context, pattern, binding);
+    public IrcExchange(IrcEndpoint endpoint, ExchangePattern pattern, IrcBinding binding, IrcMessage inMessage) {
+        this(endpoint, pattern, binding);
         setIn(inMessage);
     }
 

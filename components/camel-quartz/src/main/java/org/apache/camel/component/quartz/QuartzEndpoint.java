@@ -124,13 +124,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(getCamelContext(), pattern);
-    }
-
     public Exchange createExchange(JobExecutionContext jobExecutionContext) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        Exchange exchange = createExchange();
         exchange.setIn(new QuartzMessage(exchange, jobExecutionContext));
         return exchange;
     }

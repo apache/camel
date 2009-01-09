@@ -50,7 +50,7 @@ public class CamelInvocationHandler implements InvocationHandler {
         if (methodInfo != null) {
             pattern = methodInfo.getPattern();
         }
-        Exchange exchange = new DefaultExchange(endpoint.getCamelContext(), pattern);
+        Exchange exchange = new DefaultExchange(endpoint, pattern);
         exchange.getIn().setBody(invocation);
 
         producer.process(exchange);

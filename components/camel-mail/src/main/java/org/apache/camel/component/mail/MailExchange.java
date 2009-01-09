@@ -31,13 +31,13 @@ import org.apache.camel.impl.DefaultExchange;
 public class MailExchange extends DefaultExchange {
     private MailBinding binding;
 
-    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding) {
-        super(context, pattern);
+    public MailExchange(MailEndpoint endpoint, ExchangePattern pattern, MailBinding binding) {
+        super(endpoint, pattern);
         this.binding = binding;
     }
 
-    public MailExchange(CamelContext context, ExchangePattern pattern, MailBinding binding, Message message) {
-        this(context, pattern, binding);
+    public MailExchange(MailEndpoint endpoint, ExchangePattern pattern, MailBinding binding, Message message) {
+        this(endpoint, pattern, binding);
         setIn(new MailMessage(message));
     }
 

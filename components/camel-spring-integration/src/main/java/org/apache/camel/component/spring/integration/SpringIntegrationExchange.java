@@ -17,31 +17,40 @@
 
 package org.apache.camel.component.spring.integration;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
+import org.apache.camel.component.spring.integration.adapter.CamelTargetAdapter;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
  * An {@link Exchange} for working with Spring Integration endpoints which exposes the underlying
- * Spring messages via {@link #getInMessage()} and {@link #getOutMessage()}
+ * Spring messages via {@link #getIn()} and {@link #getOut()}
  *
  * @version $Revision$
  */
-public class SpringIntegrationExchange  extends DefaultExchange {
+public class SpringIntegrationExchange extends DefaultExchange {
 
-    public SpringIntegrationExchange(CamelContext context) {
-        super(context);
+    public SpringIntegrationExchange(SpringIntegrationEndpoint endpoint) {
+        super(endpoint);
     }
 
-    public SpringIntegrationExchange(CamelContext context, ExchangePattern pattern) {
-        super(context, pattern);
+    public SpringIntegrationExchange(SpringIntegrationEndpoint endpoint, ExchangePattern pattern) {
+        super(endpoint, pattern);
+    }
+
+    public SpringIntegrationExchange(CamelTargetAdapter adapter, ExchangePattern pattern) {
+        super(adapter.getCamelContext(), pattern);
+    }
+
+    public SpringIntegrationEndpoint getFromSpringIntegrationEndpoint() {
+        return (SpringIntegrationEndpoint) super.getFromEndpoint();
+
     }
 
     @Override
     public Exchange newInstance() {
-        return new SpringIntegrationExchange(this.getContext());
+        return new SpringIntegrationExchange(getFromSpringIntegrationEndpoint());
     }
 
     @Override

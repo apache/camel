@@ -90,11 +90,11 @@ public class XmppEndpoint extends DefaultEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new XmppExchange(getCamelContext(), pattern, getBinding());
+        return new XmppExchange(this, pattern, getBinding());
     }
 
     public XmppExchange createExchange(Message message) {
-        return new XmppExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
+        return new XmppExchange(this, getExchangePattern(), getBinding(), message);
     }
 
     // Properties

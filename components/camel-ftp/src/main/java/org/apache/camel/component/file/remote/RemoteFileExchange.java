@@ -24,8 +24,8 @@ import org.apache.camel.impl.DefaultExchange;
 public class RemoteFileExchange extends DefaultExchange {
     private RemoteFile remoteFile;
 
-    public RemoteFileExchange(CamelContext context, ExchangePattern pattern, RemoteFile remoteFile) {
-        super(context, pattern);
+    public RemoteFileExchange(RemoteFileEndpoint endpoint, ExchangePattern pattern, RemoteFile remoteFile) {
+        super(endpoint, pattern);
         setRemoteFile(remoteFile);
     }
 

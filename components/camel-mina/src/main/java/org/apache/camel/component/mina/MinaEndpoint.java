@@ -79,13 +79,8 @@ public class MinaEndpoint extends DefaultEndpoint {
         return new MinaConsumer(this, processor);
     }
 
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new DefaultExchange(getCamelContext(), pattern);
-    }
-
     public Exchange createExchange(IoSession session, Object payload) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+        Exchange exchange = createExchange();
         MinaPayloadHelper.setIn(exchange, payload);
         return exchange;
     }

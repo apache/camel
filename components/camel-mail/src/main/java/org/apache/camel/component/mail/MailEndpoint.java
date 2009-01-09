@@ -90,11 +90,11 @@ public class MailEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Exchange createExchange(ExchangePattern pattern) {
-        return new MailExchange(getCamelContext(), pattern, getBinding());
+        return new MailExchange(this, pattern, getBinding());
     }
 
     public MailExchange createExchange(Message message) {
-        return new MailExchange(getCamelContext(), getExchangePattern(), getBinding(), message);
+        return new MailExchange(this, getExchangePattern(), getBinding(), message);
     }
 
     // Properties

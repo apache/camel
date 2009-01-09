@@ -25,6 +25,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
@@ -46,6 +47,7 @@ public class DefaultExchange implements Exchange {
     private String exchangeId;
     private UnitOfWork unitOfWork;
     private ExchangePattern pattern;
+    private Endpoint fromEndpoint;
 
     public DefaultExchange(CamelContext context) {
         this(context, ExchangePattern.InOnly);
@@ -59,6 +61,16 @@ public class DefaultExchange implements Exchange {
     public DefaultExchange(DefaultExchange parent) {
         this(parent.getContext(), parent.getPattern());
         this.unitOfWork = parent.getUnitOfWork();
+    }
+
+    public DefaultExchange(Endpoint fromEndpoint) {
+        this(fromEndpoint, ExchangePattern.InOnly);
+    }
+    
+    public DefaultExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
+        this.context = fromEndpoint.getCamelContext();
+        this.fromEndpoint = fromEndpoint;
+        this.pattern = pattern;
     }
 
     @Override
@@ -92,6 +104,7 @@ public class DefaultExchange implements Exchange {
 
         unitOfWork = exchange.getUnitOfWork();
         pattern = exchange.getPattern();
+        setFromEndpoint(exchange.getFromEndpoint());
     }
 
     private static void safeCopy(Message message, Exchange exchange, Message that) {
@@ -235,6 +248,14 @@ public class DefaultExchange implements Exchange {
 
     public void setPattern(ExchangePattern pattern) {
         this.pattern = pattern;
+    }
+
+    public Endpoint getFromEndpoint() {
+        return fromEndpoint;
+    }
+
+    public void setFromEndpoint(Endpoint fromEndpoint) {
+        this.fromEndpoint = fromEndpoint;
     }
 
     public void throwException() throws Exception {

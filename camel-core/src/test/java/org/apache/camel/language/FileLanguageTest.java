@@ -27,6 +27,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 
@@ -105,11 +106,13 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         // create the file
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        String uri = "file://target/filelanguage";
+        template.sendBodyAndHeader(uri, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         // get the file handle
         file = new File("target/filelanguage/hello.txt");
-        Exchange answer = new FileExchange(context, ExchangePattern.InOut, file);
+        FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
+        Exchange answer = new FileExchange(endpoint, ExchangePattern.InOut, file);
 
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
