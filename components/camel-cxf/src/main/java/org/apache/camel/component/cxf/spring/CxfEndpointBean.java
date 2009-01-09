@@ -29,7 +29,11 @@ public class CxfEndpointBean extends AbstractWSDLBasedEndpointFactory {
     private List handlers;
 
     public CxfEndpointBean() {
-        setServiceFactory(new ReflectionServiceFactoryBean());
+        this(new ReflectionServiceFactoryBean());
+    }
+    
+    public CxfEndpointBean(ReflectionServiceFactoryBean factory) {
+        setServiceFactory(factory);
     }
     
     public List getHandlers() {
