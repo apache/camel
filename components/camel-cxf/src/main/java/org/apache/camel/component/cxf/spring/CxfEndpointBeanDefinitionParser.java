@@ -40,7 +40,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
 
     @Override
     protected Class getBeanClass(Element arg0) {
-        return CxfEndpointBean.class;
+        return CxfSpringEndpointBean.class;
     }
 
     @Override
@@ -96,6 +96,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         return true;
     }
     
+    // To make the CxfEndpointBean clear without touching any Spring relates class 
+    // , we implements the ApplicationContextAware here
     public static class CxfSpringEndpointBean extends CxfEndpointBean implements ApplicationContextAware {
         public CxfSpringEndpointBean() {
             super();
