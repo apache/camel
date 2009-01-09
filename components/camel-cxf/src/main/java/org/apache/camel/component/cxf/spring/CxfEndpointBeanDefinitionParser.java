@@ -40,7 +40,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
 
     @Override
     protected Class getBeanClass(Element arg0) {
-        return CxfEndpointBean.class;
+        return CxfSpringEndpointBean.class;
     }
 
     @Override
