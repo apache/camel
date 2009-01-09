@@ -118,6 +118,8 @@ public class AggregatorBatchOptionsTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "Message 2b", "id", "2");
         template.sendBodyAndHeader("direct:start", "Message 1c", "id", "1");
 
+        // need a little sleep between batches
+        Thread.sleep(10);
         // when we sent the next message we have reached the in batch size limit and the current
         // aggregated exchanges will be sent
         template.sendBodyAndHeader("direct:start", "Message 3a", "id", "3");
