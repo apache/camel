@@ -17,9 +17,7 @@
 package org.apache.camel.component.cxf.spring;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
@@ -28,9 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.message.Message;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -57,7 +52,7 @@ public class CxfEndpointBeanTest extends TestCase {
         CamelContext camelContext = (CamelContext) ctx.getBean("camel");
         ProducerTemplate template = camelContext.createProducerTemplate();
         try {
-            Exchange exchange = template.send("cxf:bean:routerEndpoint", new Processor() {
+            template.send("cxf:bean:serviceEndpoint", new Processor() {
                 public void process(final Exchange exchange) {
                     final List<String> params = new ArrayList<String>();
                     params.add("hello");
@@ -67,7 +62,8 @@ public class CxfEndpointBeanTest extends TestCase {
             });
             fail("should get the exception here");
         } catch (RuntimeCamelException ex) {
-            // do nothing here
+            assertTrue("Should get the fault here ", ex.getCause() instanceof org.apache.cxf.interceptor.Fault);
+            // do nothing here;
         }
 
     }
