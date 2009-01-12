@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
@@ -28,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class TraceFormatter {
     private int breadCrumbLength;
+    private int nodeLength;
     private boolean showBreadCrumb = true;
     private boolean showNode = true;
     private boolean showExchangeId;
@@ -185,6 +187,14 @@ public class TraceFormatter {
         this.showShortExchangeId = showShortExchangeId;
     }
 
+    public int getNodeLength() {
+        return nodeLength;
+    }
+
+    public void setNodeLength(int nodeLength) {
+        this.nodeLength = nodeLength;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
@@ -234,9 +244,13 @@ public class TraceFormatter {
 
     protected String getNodeMessage(TraceInterceptor interceptor) {
         String message = interceptor.getNode().getShortName() + "(" + interceptor.getNode().getLabel() + ")";
-        return String.format("%1$-25.25s", message);
+        if (nodeLength > 0) {
+            return String.format("%1$-" + nodeLength + "." + nodeLength + "s", message);
+        } else {
+            return message;
+        }
     }
-    
+
     /**
      * Returns the exchange id and node, ordered based on whether this was a trace of
      * an exchange coming out of or into a processing step. For example, 
