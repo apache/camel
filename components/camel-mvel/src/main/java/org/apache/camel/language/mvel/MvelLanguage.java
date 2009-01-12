@@ -23,7 +23,7 @@ import org.apache.camel.spi.Language;
 /**
  * An <a href="http://mvel.codehaus.org/">MVEL</a> {@link Language} plugin
  * 
- * @version $Revision: 709613 $
+ * @version $Revision$
  */
 public class MvelLanguage implements Language {
 
