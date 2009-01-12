@@ -19,8 +19,8 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.model.ProcessorType;
 import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ObjectHelper;
 
