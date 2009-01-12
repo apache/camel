@@ -164,7 +164,7 @@ public class CxfClient extends ClientImpl {
         return retval;
     }
 
-    private void waitResponse(Exchange exchange) {
+    protected void waitResponse(Exchange exchange) {
         int remaining = synchronousTimeout;
         while (!Boolean.TRUE.equals(exchange.get(FINISHED)) && remaining > 0) {
             long start = System.currentTimeMillis();
