@@ -40,7 +40,7 @@
     <property name="traceOutExchanges" value="true" />
   </bean>
 
-  <bean id="traceFormatter" class="org.apache.camel.processor.interceptor.TraceFormatter">
+  <bean id="traceFormatter" class="org.apache.camel.processor.interceptor.DefaultTraceFormatter">
     <property name="showOutBody" value="true" />
     <property name="showOutBodyType" value="true" />
   </bean>

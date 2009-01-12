@@ -330,7 +330,7 @@ public class RouteBuilderTest extends TestSupport {
              * SendProcessor sendProcessor =
              * assertIsInstanceOf(SendProcessor.class,
              * filterProcessor.getProcessor()); assertEquals("Endpoint URI",
-             * "seda:b", sendProcessor.getDestination().getEndpointUri());
+             * "seda:b", sendProcessor.getDestinationUri().getEndpointUri());
              */
         }
     }

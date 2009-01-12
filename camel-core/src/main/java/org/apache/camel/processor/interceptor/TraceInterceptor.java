@@ -80,7 +80,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     public void process(final Exchange exchange) throws Exception {
         // interceptor will also trace routes supposed only for TraceEvents so we need to skip
         // logging TraceEvents to avoid infinite looping
-        if (exchange instanceof TraceEvent || exchange.getProperty(TRACE_EVENT, Boolean.class) != null) {
+        if (exchange instanceof TraceEventExchange || exchange.getProperty(TRACE_EVENT, Boolean.class) != null) {
             // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
             super.process(exchange);
             return;
@@ -137,9 +137,9 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     protected void traceExchange(Exchange exchange) throws Exception {
         // should we send a trace event to an optional destination?
-        if (traceEventProducer != null) {
+        if (tracer.getDestinationUri() != null) {
             // create event and add it as a property on the original exchange
-            TraceEvent event = new TraceEvent(exchange);
+            TraceEventExchange event = new TraceEventExchange(exchange);
             event.setNodeId(node.getId());
             event.setTimestamp(new Date());
             event.setTracedExchange(exchange);
@@ -151,12 +151,12 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             // new Exchange instances is created during trace routing so we can check
             // for this marker when interceptor also kickins in during routing of trace events
             event.setProperty(TRACE_EVENT, Boolean.TRUE);
-            // process the trace route
             try {
-                traceEventProducer.process(event);
+                // process the trace route
+                getTraceEventProducer(exchange).process(event);
             } catch (Exception e) {
                 // log and ignore this as the original Exchange should be allowed to continue
-                LOG.error("Error processing TraceEvent (original Exchange will be continued): " + event, e);
+                LOG.error("Error processing TraceEventExchange (original Exchange will be continued): " + event, e);
             }
         }
     }
@@ -201,14 +201,19 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         return true;
     }
 
+    private synchronized Producer getTraceEventProducer(Exchange exchange) throws Exception {
+        if (traceEventProducer == null) {
+            // create producer when we have access the the camel context (we dont in doStart)
+            traceEventProducer = exchange.getContext().getEndpoint(tracer.getDestinationUri()).createProducer();
+            ServiceHelper.startService(traceEventProducer);
+        }
+        return traceEventProducer;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        // in case of destination then create a producer to send the TraceEvent to
-        if (tracer.getDestination() != null) {
-            traceEventProducer = tracer.getDestination().createProducer();
-            ServiceHelper.startService(traceEventProducer);
-        }
+        traceEventProducer = null;
     }
 
     @Override
