@@ -28,20 +28,18 @@ import org.apache.camel.impl.DefaultExchange;
  * <p/>
  * The IN body contains {@link TraceEventMessage} with trace details of the original IN message.
  */
-public class TraceEvent extends DefaultExchange {
+public class TraceEventExchange extends DefaultExchange {
     private String nodeId;
-    private String exchangeId;
     private Date timestamp;
     private Exchange tracedExchange;
 
-    public TraceEvent(Exchange parent) {
+    public TraceEventExchange(Exchange parent) {
         super(parent);
     }
 
     @Override
     public Exchange newInstance() {
-        TraceEvent answer = new TraceEvent(this);
-        answer.setExchangeId(exchangeId);
+        TraceEventExchange answer = new TraceEventExchange(this);
         answer.setNodeId(nodeId);
         answer.setTimestamp(timestamp);
         answer.setTracedExchange(tracedExchange);
@@ -85,6 +83,6 @@ public class TraceEvent extends DefaultExchange {
 
     @Override
     public String toString() {
-        return "TraceEvent[" + tracedExchange.getExchangeId() + "] on node: " + nodeId;
+        return "TraceEventExchange[" + tracedExchange.getExchangeId() + "] on node: " + nodeId;
     }
 }

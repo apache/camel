@@ -19,7 +19,6 @@ package org.apache.camel.processor.interceptor;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -42,8 +41,8 @@ public class Tracer implements InterceptStrategy {
     private boolean traceInterceptors;
     private boolean traceExceptions = true;
     private boolean traceOutExchanges;
-    private Endpoint destination;
-    
+    private String destinationUri;
+
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
      *
@@ -153,19 +152,19 @@ public class Tracer implements InterceptStrategy {
         return traceOutExchanges;
     }
 
-    public Endpoint getDestination() {
-        return destination;
+    public String getDestinationUri() {
+        return destinationUri;
     }
 
     /**
-     * Sets an optional destination to send the traced Exchange wrapped in a {@link TraceEvent}.
+     * Sets an optional destination to send the traced Exchange wrapped in a {@link TraceEventExchange}.
      * <p/>
      * Can be used to store tracing as files, in a database or whatever. The routing of the Exchange
      * will happen synchronously and the original route will first continue when this destination routing
      * has been compledted.
      */
-    public void setDestination(Endpoint destination) {
-        this.destination = destination;
+    public void setDestinationUri(String destinationUri) {
+        this.destinationUri = destinationUri;
     }
 
 }

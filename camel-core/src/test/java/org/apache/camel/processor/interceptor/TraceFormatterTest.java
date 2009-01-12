@@ -69,7 +69,7 @@ public class TraceFormatterTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 // this is only for unit testing to use mock for assertion
-                tracer.setDestination(context.getEndpoint("direct:traced"));
+                tracer.setDestinationUri("direct:traced");
 
                 from("direct:start")
                         .process(new MyProcessor("Hello World"))

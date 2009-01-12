@@ -36,10 +36,10 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
 
     public void testSendingSomeMessagesBeingTraced() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        result.expectedBodiesReceived("Bye World", "Foo World");
+        result.expectedBodiesReceived("Bye World", "Foo World", "Foo World");
 
         MockEndpoint mock = getMockEndpoint("mock:traced");
-        mock.expectedMessageCount(6);
+        mock.expectedMessageCount(8);
         // should be in our CSV format (defined in bottom of this class)
         mock.message(0).body().regex("^direct:start;.*;.*;Hello London");
         mock.message(1).body().regex("^direct:start;.*;.*;Hello World");
@@ -47,9 +47,13 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
         mock.message(3).body().regex("^direct:start;.*;.*;Bye World");
         mock.message(4).body().regex("^direct:foo;.*;.*;Hello Copenhagen");
         mock.message(5).body().regex("^direct:foo;.*;.*;Foo World");
+        mock.message(6).body().regex("^direct:foo;.*;.*;Hello Beijing");
+        mock.message(7).body().regex("^direct:foo;.*;.*;Foo World");
 
         template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
         template.sendBody("direct:foo", "Hello Copenhagen");
+        // to test sending to same endpoint twice
+        template.sendBody("direct:foo", "Hello Beijing");
 
         assertMockEndpointsSatisfied();
 
@@ -62,6 +66,8 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
         assertEquals("Bye World", tracedBodies.get(3));
         assertEquals("Hello Copenhagen", tracedBodies.get(4));
         assertEquals("Foo World", tracedBodies.get(5));
+        assertEquals("Hello Beijing", tracedBodies.get(6));
+        assertEquals("Foo World", tracedBodies.get(7));
 
         // assert headers as well
         assertEquals("{to=James}", tracedHeaders.get(0));
@@ -69,6 +75,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
         assertEquals("{to=Goodday}", tracedHeaders.get(2));
         assertEquals("{to=Bye}", tracedHeaders.get(3));
         assertEquals("{to=Foo}", tracedHeaders.get(4));
+        assertEquals("{to=Foo}", tracedHeaders.get(5));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -79,7 +86,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
                 // "direct:traced" where we can do some custom processing such as storing
                 // it in a file or a database
                 Tracer tracer = new Tracer();
-                tracer.setDestination(context.getEndpoint("direct:traced"));
+                tracer.setDestinationUri("direct:traced");
                 // we disable regular trace logging in the log file. You can omit this and
                 // have both.
                 tracer.setLogLevel(LoggingLevel.OFF);
@@ -122,7 +129,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
     class MyTraveAssertProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
-            TraceEvent event = (TraceEvent) exchange;
+            TraceEventExchange event = (TraceEventExchange) exchange;
             assertNotNull(event);
             assertEquals(event.getExchangeId(), exchange.getExchangeId());
             assertNotNull(event.getNodeId());
