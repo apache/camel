@@ -28,7 +28,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 700232 $
+ * @version $Revision$
  */
 public class TidyMarkupDataFormatAsDomNodeTest extends ContextTestSupport {
     private static final transient Log LOG = LogFactory.getLog(TidyMarkupDataFormatAsDomNodeTest.class);
