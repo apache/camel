@@ -323,15 +323,6 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             log.debug("processor: " + processor);
-            /*
-             * TODO FilterProcessor filterProcessor =
-             * assertIsInstanceOf(FilterProcessor.class, processor);
-             *
-             * SendProcessor sendProcessor =
-             * assertIsInstanceOf(SendProcessor.class,
-             * filterProcessor.getProcessor()); assertEquals("Endpoint URI",
-             * "seda:b", sendProcessor.getDestinationUri().getEndpointUri());
-             */
         }
     }
 
