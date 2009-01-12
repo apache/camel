@@ -26,6 +26,7 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -86,19 +87,28 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             return;
         }
 
+        boolean shouldLog = shouldLogNode(node) && shouldLogExchange(exchange);
+
         // okay this is a regular exchange being routed we might need to log and trace
         try {
+
             // before
-            if (shouldLogNode(node) && shouldLogExchange(exchange)) {
+            if (shouldLog) {
                 logExchange(exchange);
                 traceExchange(exchange);
+
+                // if traceable then register this as the previous node, now it has been logged
+                if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+                    TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+                    tuow.addInterceptedNode(node);
+                }
             }
 
             // process the exchange
             super.proceed(exchange);
 
             // after (trace out)
-            if (tracer.isTraceOutExchanges() && shouldLogNode(node) && shouldLogExchange(exchange)) {
+            if (shouldLog && tracer.isTraceOutExchanges()) {
                 logExchange(exchange);
                 traceExchange(exchange);
             }

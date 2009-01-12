@@ -17,13 +17,15 @@
 package org.apache.camel.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
+import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 
@@ -32,17 +34,19 @@ import org.apache.camel.util.UuidGenerator;
  *
  * @version $Revision$
  */
-public class DefaultUnitOfWork implements UnitOfWork, Service {
+public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private static final UuidGenerator DEFAULT_ID_GENERATOR = new UuidGenerator();
 
     private String id;
     private List<Synchronization> synchronizations;
     private List<AsyncCallback> asyncCallbacks;
+    private List<ProcessorType> routeList;
 
     public DefaultUnitOfWork() {
     }
 
     public void start() throws Exception {
+        id = null;
     }
 
     public void stop() throws Exception {
@@ -52,6 +56,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
         if (asyncCallbacks != null) {
             asyncCallbacks.clear();
+        }
+        if (routeList != null) {
+            routeList.clear();
         }
     }
 
@@ -90,6 +97,24 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             id = DEFAULT_ID_GENERATOR.generateId();
         }
         return id;
+    }
+
+    public synchronized void addInterceptedNode(ProcessorType node) {
+        if (routeList == null) {
+            routeList = new ArrayList<ProcessorType>();
+        }
+        routeList.add(node);
+    }
+
+    public synchronized ProcessorType getLastInterceptedNode() {
+        if (routeList == null) {
+            return null;
+        }
+        return routeList.get(routeList.size() - 1);
+    }
+
+    public List<ProcessorType> getInterceptedNodes() {
+        return Collections.unmodifiableList(routeList);
     }
 
     /**
