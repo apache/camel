@@ -152,8 +152,8 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
             // here we can transform the message how we like want it
             TraceEventMessage msg = exchange.getIn().getBody(TraceEventMessage.class);
 
-            // we want to store it as a CSV with fromEndpoint;node;exchangeId;body
-            String s = msg.getFromEndpointUri() + ";" + msg.getNode() + ";" + msg.getExchangeId() + ";" + msg.getBody();
+            // we want to store it as a CSV with from;to;exchangeId;body
+            String s = msg.getFromEndpointUri() + ";" + msg.getToNode() + ";" + msg.getExchangeId() + ";" + msg.getBody();
 
             // so we replace the IN body with our CSV string
             exchange.getIn().setBody(s);

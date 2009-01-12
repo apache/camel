@@ -21,6 +21,7 @@ import java.io.Serializable;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.model.ProcessorType;
+import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
 /**
@@ -31,7 +32,8 @@ import org.apache.camel.util.MessageHelper;
 public final class TraceEventMessage implements Serializable {
 
     private String fromEndpointUri;
-    private String node;
+    private String previousNode;
+    private String toNode;
     private String exchangeId;
     private String shortExchangeId;
     private String exchangePattern;
@@ -47,10 +49,10 @@ public final class TraceEventMessage implements Serializable {
      * Creates a {@link TraceEventMessage} based on the given node it was traced while processing
      * the current {@link Exchange}
      *
-     * @param node  the node where this trace is intercepted
+     * @param toNode the node where this trace is intercepted
      * @param exchange the current {@link Exchange}
      */
-    public TraceEventMessage(final ProcessorType node, final Exchange exchange) {
+    public TraceEventMessage(final ProcessorType toNode, final Exchange exchange) {
         Message in = exchange.getIn();
 
         // false because we don't want to introduce side effects
@@ -58,7 +60,8 @@ public final class TraceEventMessage implements Serializable {
 
         // need to use defensive copies to avoid Exchange altering after the point of interception
         this.fromEndpointUri = exchange.getFromEndpoint() != null ? exchange.getFromEndpoint().getEndpointUri() : null;
-        this.node = extractNode(node);
+        this.previousNode = extractPreviousNode(exchange);
+        this.toNode = extractNode(toNode);
         this.exchangeId = exchange.getExchangeId();
         this.shortExchangeId = extractShortExchangeId(exchange);
         this.exchangePattern = exchange.getPattern().toString();
@@ -81,21 +84,51 @@ public final class TraceEventMessage implements Serializable {
         return exchange.getExchangeId().substring(exchange.getExchangeId().indexOf("/") + 1);
     }
 
+    private String extractPreviousNode(Exchange exchange) {
+        if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+            ProcessorType last = tuow.getLastInterceptedNode();
+            return last != null ? extractNode(last) : null;
+        }
+        return null;
+    }
+
     // Properties
     //---------------------------------------------------------------
 
+    /**
+     * Uri of the endpoint that started the {@link Exchange} currently being traced.
+     */
     public String getFromEndpointUri() {
         return fromEndpointUri;
     }
 
-    public String getNode() {
-        return node;
+    /**
+     * Gets the previous node.
+     * <p/>
+     * Will return <tt>null</tt> if this is the first node, then you can use the from endpoint uri
+     * instread to indicate the start
+     */
+    public String getPreviousNode() {
+        return previousNode;
+    }
+
+    /**
+     * Gets the current node that just have been intercepted and processed
+     * <p/>
+     * Is never null.
+     */
+    public String getToNode() {
+        return toNode;
     }
 
     public String getExchangeId() {
         return exchangeId;
     }
 
+    /**
+     * Gets the exchange id without the leading hostname
+     */
     public String getShortExchangeId() {
         return shortExchangeId;
     }
@@ -134,6 +167,6 @@ public final class TraceEventMessage implements Serializable {
 
     @Override
     public String toString() {
-        return "TraceEventMessage[" + exchangeId + "] for node: " + node;
+        return "TraceEventMessage[" + exchangeId + "] to node: " + toNode;
     }
 }

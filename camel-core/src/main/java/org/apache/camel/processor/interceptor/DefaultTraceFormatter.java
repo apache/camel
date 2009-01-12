@@ -19,6 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.model.ProcessorType;
+import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
@@ -213,15 +214,15 @@ public class DefaultTraceFormatter implements TraceFormatter {
      * <br/>or
      * <br/><tt>ID-mojo/39713-1225468755256/2-0 -> transform(body)</tt>
      */
-    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorType node, Exchange exchange) {
+    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorType currentNode, Exchange exchange) {
         String id = "";
-        String nodeMsg = "";
         String result;
         
         if (!showBreadCrumb && !showExchangeId && !showShortExchangeId && !showNode) {
             return "";
         }
-        
+
+        // compute breadcrumb id
         if (showBreadCrumb) {
             id = getBreadCrumbID(exchange).toString();
         } else if (showExchangeId || showShortExchangeId) {
@@ -232,22 +233,38 @@ public class DefaultTraceFormatter implements TraceFormatter {
             }
         }
 
+        // compute from and to
+        String from = "";
+        if (showNode && exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
+            TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
+            ProcessorType prev = tuow.getLastInterceptedNode();
+            if (prev != null) {
+                from = getNodeMessage(prev);
+            } else if (exchange.getFromEndpoint() != null) {
+                from = exchange.getFromEndpoint().getEndpointUri();
+            }
+        }
+        String to = "";
         if (showNode) {
-            nodeMsg = getNodeMessage(node);
+            to = getNodeMessage(currentNode);
         }
 
-        if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
-            result = nodeMsg.trim() + " -> " + id.trim();
+        // assemble result with and without the to/from
+        if (showNode) {
+            result = id.trim() + " >>> " + from.toString() + " --> " + to.trim();
+            if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
+                result += " (OUT) ";
+            }
         } else {
-            result = id.trim() + " -> " + nodeMsg.trim();
+            result = id;
         }
 
         if (breadCrumbLength > 0) {
             // we want to ensure text coming after this is aligned for readability
-            return String.format("%1$-" + breadCrumbLength + "." + breadCrumbLength + "s", result).trim();
+            return String.format("%1$-" + breadCrumbLength + "." + breadCrumbLength + "s", result.trim());
         } else {
             return result.trim();
         }
-
     }
+
 }

@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CollectionStringBuffer;
 
 /**
  * Represents an XML &lt;otherwise/&gt; element
@@ -49,6 +51,11 @@ public class OtherwiseType extends OutputType<ProcessorType> implements Block {
 
     @Override
     public String getLabel() {
-        return "otherwise";
+        CollectionStringBuffer buffer = new CollectionStringBuffer();
+        List<ProcessorType> list = getOutputs();
+        for (ProcessorType type : list) {
+            buffer.append(type.getLabel());
+        }
+        return buffer.toString();
     }
 }

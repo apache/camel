@@ -66,11 +66,18 @@ public class Tracer implements InterceptStrategy {
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
         String id = processorType.idOrCreate();
-        return new TraceInterceptor(processorType, target, this);
+        return new TraceInterceptor(processorType, target, formatter, this);
     }
 
     public TraceFormatter getFormatter() {
         return formatter;
+    }
+
+    public DefaultTraceFormatter getDefaultTraceFormatter() {
+        if (formatter instanceof DefaultTraceFormatter) {
+            return (DefaultTraceFormatter) formatter;
+        }
+        return null;
     }
 
     public void setFormatter(TraceFormatter formatter) {
