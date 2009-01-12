@@ -26,7 +26,7 @@ import org.apache.camel.ExchangePattern;
 /**
  * Represents an XML &lt;inOnly/&gt; element
  *
- * @version $Revision: 725058 $
+ * @version $Revision$
  */
 @XmlRootElement(name = "inOnly")
 @XmlAccessorType(XmlAccessType.FIELD)
