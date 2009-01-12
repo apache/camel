@@ -107,7 +107,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     }
 
     public synchronized ProcessorType getLastInterceptedNode() {
-        if (routeList == null) {
+        if (routeList == null || routeList.isEmpty()) {
             return null;
         }
         return routeList.get(routeList.size() - 1);
