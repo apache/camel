@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.IOException;
-
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**

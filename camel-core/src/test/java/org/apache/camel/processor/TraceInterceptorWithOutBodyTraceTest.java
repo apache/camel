@@ -16,13 +16,9 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.processor.interceptor.DefaultTraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
-import org.apache.camel.util.ExchangeHelper;
 
 public class TraceInterceptorWithOutBodyTraceTest extends TraceInterceptorTest {
 
@@ -32,8 +28,15 @@ public class TraceInterceptorWithOutBodyTraceTest extends TraceInterceptorTest {
                 // START SNIPPET: tracingOutExchanges
                 Tracer tracer = new Tracer();
                 tracer.setTraceOutExchanges(true);
-                tracer.getFormatter().setShowOutBody(true);
-                tracer.getFormatter().setShowOutBodyType(true);
+
+                // we configure the default trace formatter where we can
+                // specify which fields we want in the output
+                DefaultTraceFormatter formatter = new DefaultTraceFormatter();
+                formatter.setShowOutBody(true);
+                formatter.setShowOutBodyType(true);
+
+                // set to use our formatter
+                tracer.setFormatter(formatter);
                 
                 getContext().addInterceptStrategy(tracer);
                 // END SNIPPET: tracingOutExchanges

@@ -16,13 +16,18 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.Date;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
@@ -31,7 +36,10 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
+    private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
+    private static final String TRACE_EVENT = "CamelTraceEvent";
     private Logger logger;
+    private Producer traceEventProducer;
     private final ProcessorType node;
     private final Tracer tracer;
     private TraceFormatter formatter;
@@ -70,14 +78,30 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     public void process(final Exchange exchange) throws Exception {
+        // interceptor will also trace routes supposed only for TraceEvents so we need to skip
+        // logging TraceEvents to avoid infinite looping
+        if (exchange instanceof TraceEvent || exchange.getProperty(TRACE_EVENT, Boolean.class) != null) {
+            // but we must still process to allow routing of TraceEvents to eg a JPA endpoint
+            super.process(exchange);
+            return;
+        }
+
+        // okay this is a regular exchange being routed we might need to log and trace
         try {
+            // before
             if (shouldLogNode(node) && shouldLogExchange(exchange)) {
                 logExchange(exchange);
+                traceExchange(exchange);
             }
+
+            // process the exchange
             super.proceed(exchange);
+
+            // after (trace out)
             if (tracer.isTraceOutExchanges() && shouldLogNode(node) && shouldLogExchange(exchange)) {
                 logExchange(exchange);
-            }            
+                traceExchange(exchange);
+            }
         } catch (Exception e) {
             if (shouldLogException(exchange)) {
                 logException(exchange, e);
@@ -87,7 +111,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     }
 
     public Object format(Exchange exchange) {
-        return formatter.format(this, exchange);
+        return formatter.format(this, this.getNode(), exchange);
     }
 
     // Properties
@@ -107,7 +131,34 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     // Implementation methods
     //-------------------------------------------------------------------------
     protected void logExchange(Exchange exchange) {
+        // process the exchange that formats and logs it
         logger.process(exchange);
+    }
+
+    protected void traceExchange(Exchange exchange) throws Exception {
+        // should we send a trace event to an optional destination?
+        if (traceEventProducer != null) {
+            // create event and add it as a property on the original exchange
+            TraceEvent event = new TraceEvent(exchange);
+            event.setNodeId(node.getId());
+            event.setTimestamp(new Date());
+            event.setTracedExchange(exchange);
+
+            // create event message to send in body
+            TraceEventMessage msg = new TraceEventMessage(node, exchange);
+            event.getIn().setBody(msg);
+            // marker property to indicate its a tracing event being routed in case
+            // new Exchange instances is created during trace routing so we can check
+            // for this marker when interceptor also kickins in during routing of trace events
+            event.setProperty(TRACE_EVENT, Boolean.TRUE);
+            // process the trace route
+            try {
+                traceEventProducer.process(event);
+            } catch (Exception e) {
+                // log and ignore this as the original Exchange should be allowed to continue
+                LOG.error("Error processing TraceEvent (original Exchange will be continued): " + event, e);
+            }
+        }
     }
 
     protected void logException(Exchange exchange, Throwable throwable) {
@@ -132,11 +183,11 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     /**
      * Returns whether exchanges coming out of processors should be traced
-     */   
+     */
     public boolean shouldTraceOutExchanges() {
         return tracer.isTraceOutExchanges();
     }
-    
+
     /**
      * Returns true if the given node should be logged in the trace list
      */
@@ -148,6 +199,24 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        // in case of destination then create a producer to send the TraceEvent to
+        if (tracer.getDestination() != null) {
+            traceEventProducer = tracer.getDestination().createProducer();
+            ServiceHelper.startService(traceEventProducer);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (traceEventProducer != null) {
+            ServiceHelper.stopService(traceEventProducer);
+        }
     }
 
 }

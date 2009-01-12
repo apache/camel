@@ -20,12 +20,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.Endpoint;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
@@ -58,9 +58,10 @@ public class DefaultExchange implements Exchange {
         this.pattern = pattern;
     }
 
-    public DefaultExchange(DefaultExchange parent) {
+    public DefaultExchange(Exchange parent) {
         this(parent.getContext(), parent.getPattern());
         this.unitOfWork = parent.getUnitOfWork();
+        this.fromEndpoint = parent.getFromEndpoint();
     }
 
     public DefaultExchange(Endpoint fromEndpoint) {
@@ -121,6 +122,7 @@ public class DefaultExchange implements Exchange {
     }
 
     private static Message safeCopy(Exchange exchange, Message message) {
+        // TODO: This method is not used
         if (message == null) {
             return null;
         }
