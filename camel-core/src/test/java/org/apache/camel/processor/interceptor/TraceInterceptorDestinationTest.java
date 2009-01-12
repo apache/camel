@@ -1,0 +1,156 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.processor.interceptor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.model.LoggingLevel;
+
+/**
+ * @version $Revision$
+ */
+public class TraceInterceptorDestinationTest extends ContextTestSupport {
+
+    private List<String> tracedBodies = new ArrayList<String>();
+    private List<String> tracedHeaders = new ArrayList<String>();
+
+    public void testSendingSomeMessagesBeingTraced() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived("Bye World", "Foo World");
+
+        MockEndpoint mock = getMockEndpoint("mock:traced");
+        mock.expectedMessageCount(6);
+        // should be in our CSV format (defined in bottom of this class)
+        mock.message(0).body().regex("^direct:start;.*;.*;Hello London");
+        mock.message(1).body().regex("^direct:start;.*;.*;Hello World");
+        mock.message(2).body().regex("^direct:start;.*;.*;Goodday World");
+        mock.message(3).body().regex("^direct:start;.*;.*;Bye World");
+        mock.message(4).body().regex("^direct:foo;.*;.*;Hello Copenhagen");
+        mock.message(5).body().regex("^direct:foo;.*;.*;Foo World");
+
+        template.sendBodyAndHeader("direct:start", "Hello London", "to", "James");
+        template.sendBody("direct:foo", "Hello Copenhagen");
+
+        assertMockEndpointsSatisfied();
+
+        // assert we received the correct bodies at the given time of interception
+        // and that the bodies haven't changed during the routing of the original
+        // exchange that changes its body over time (Hello London -> Bye World)
+        assertEquals("Hello London", tracedBodies.get(0));
+        assertEquals("Hello World", tracedBodies.get(1));
+        assertEquals("Goodday World", tracedBodies.get(2));
+        assertEquals("Bye World", tracedBodies.get(3));
+        assertEquals("Hello Copenhagen", tracedBodies.get(4));
+        assertEquals("Foo World", tracedBodies.get(5));
+
+        // assert headers as well
+        assertEquals("{to=James}", tracedHeaders.get(0));
+        assertEquals("{to=Hello}", tracedHeaders.get(1));
+        assertEquals("{to=Goodday}", tracedHeaders.get(2));
+        assertEquals("{to=Bye}", tracedHeaders.get(3));
+        assertEquals("{to=Foo}", tracedHeaders.get(4));
+    }
+
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: e1
+                // we create a tracer where we want to send TraveEvents to an endpoint
+                // "direct:traced" where we can do some custom processing such as storing
+                // it in a file or a database
+                Tracer tracer = new Tracer();
+                tracer.setDestination(context.getEndpoint("direct:traced"));
+                // we disable regular trace logging in the log file. You can omit this and
+                // have both.
+                tracer.setLogLevel(LoggingLevel.OFF);
+                // and we must remeber to add the tracer to Camel
+                getContext().addInterceptStrategy(tracer);
+                // END SNIPPET: e1
+
+                from("direct:start")
+                        .process(new MyProcessor("Hello World"))
+                        .process(new MyProcessor("Goodday World"))
+                        .process(new MyProcessor("Bye World"))
+                        .to("mock:result");
+
+                from("direct:foo")
+                        .process(new MyProcessor("Foo World"))
+                        .to("mock:result");
+
+                from("direct:traced")
+                        .process(new MyTraveAssertProcessor())
+                        .process(new MyTraceMessageProcessor())
+                        .to("mock:traced");
+            }
+        };
+    }
+
+    class MyProcessor implements Processor {
+
+        private String msg;
+
+        MyProcessor(String msg) {
+            this.msg = msg;
+        }
+
+        public void process(Exchange exchange) throws Exception {
+            exchange.getIn().setBody(msg);
+            exchange.getIn().setHeader("to", msg.split(" ")[0]);
+        }
+    }
+
+    class MyTraveAssertProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            TraceEvent event = (TraceEvent) exchange;
+            assertNotNull(event);
+            assertEquals(event.getExchangeId(), exchange.getExchangeId());
+            assertNotNull(event.getNodeId());
+            assertNotNull(event.getTimestamp());
+
+            // take a snapshot at current time for assertion later
+            // after mock assertions in unit test method
+            TraceEventMessage msg = exchange.getIn().getBody(TraceEventMessage.class);
+            tracedBodies.add(msg.getBody());
+            if (msg.getHeaders() != null) {
+                tracedHeaders.add(msg.getHeaders());
+            }
+        }
+    }
+
+    // START SNIPPET: e2
+    class MyTraceMessageProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // here we can transform the message how we like want it
+            TraceEventMessage msg = exchange.getIn().getBody(TraceEventMessage.class);
+
+            // we want to store it as a CSV with fromEndpoint;node;exchangeId;body
+            String s = msg.getFromEndpointUri() + ";" + msg.getNode() + ";" + msg.getExchangeId() + ";" + msg.getBody();
+
+            // so we replace the IN body with our CSV string
+            exchange.getIn().setBody(s);
+        }
+    }
+    // END SNIPPET: e2
+}

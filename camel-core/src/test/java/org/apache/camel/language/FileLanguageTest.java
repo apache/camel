@@ -26,8 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.component.file.FileExchange;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 
