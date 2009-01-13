@@ -27,6 +27,7 @@ import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Component for JavaMail.
@@ -56,15 +57,25 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
         if ("nntp".equalsIgnoreCase(url.getScheme())) {
             throw new UnsupportedOperationException("nntp protocol is not supported");
         }
-        
-        MailConfiguration config = new MailConfiguration();
+
+        // must use copy as each endpoint can have different options
+        ObjectHelper.notNull(configuration, "configuration");
+        MailConfiguration config = configuration.copy();
+
+        // only configure if we have a url with a known protocol
         config.configure(url);
         configureAdditionalJavaMailProperties(config, parameters);
 
-        // lets make sure we copy the configuration as each endpoint can customize its own version
         MailEndpoint endpoint = new MailEndpoint(uri, this, config);
-
         setProperties(endpoint.getConfiguration(), parameters);
+
+        // sanity check that we know the mail server
+        ObjectHelper.notEmpty(config.getHost(), "host");
+        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        if (config.getPort() <= 0) {
+            throw new IllegalArgumentException("port mut be specified");
+        }
+
         return endpoint;
     }
 
