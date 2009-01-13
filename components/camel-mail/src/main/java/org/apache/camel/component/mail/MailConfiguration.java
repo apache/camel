@@ -20,12 +20,12 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.mail.Authenticator;
 import javax.mail.Message;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 
+import org.apache.camel.RuntimeCamelException;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
@@ -33,7 +33,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision$
  */
-public class MailConfiguration {
+public class MailConfiguration implements Cloneable {
 
     public static final String DEFAULT_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_FROM = "camel@localhost";
@@ -63,6 +63,17 @@ public class MailConfiguration {
     public MailConfiguration() {
     }
 
+    /**
+     * Returns a copy of this configuration
+     */
+    public MailConfiguration copy() {
+        try {
+            return (MailConfiguration) clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
+
     public void configure(URI uri) {
         String value = uri.getHost();
         if (value != null) {
@@ -82,10 +93,10 @@ public class MailConfiguration {
         }
 
         int port = uri.getPort();
-        if (port >= 0) {
+        if (port > 0) {
             setPort(port);
-        } else {
-            // resolve default port if no port number was provided
+        } else if (port <= 0 && this.port <= 0) {
+            // resolve default port if no port number was provided, and not already configured with a port number
             setPort(MailUtils.getDefaultPortForProtocol(uri.getScheme()));
         }
     }
@@ -170,7 +181,7 @@ public class MailConfiguration {
         return properties;
     }
 
-   /**
+    /**
      * Is the used protocol to be secure or not
      */
     public boolean isSecureProtocol() {
