@@ -13,7 +13,7 @@
   <packaging>bundle</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.component.spring.javaconfig.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.spring.javaconfig.*</camel.osgi.export.pkg>
     <spring-javaconfig-version>1.0.0.BUILD-SNAPSHOT</spring-javaconfig-version>
     <!--<spring-javaconfig-version>1.0.0.M4</spring-javaconfig-version>-->
   </properties>
