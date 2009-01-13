@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * SFTP consumer
@@ -35,8 +36,12 @@ public class SftpConsumer extends RemoteFileConsumer {
             return;
         }
 
+        // fix filename
         if (fileName.endsWith("/")) {
             fileName = fileName.substring(0, fileName.length() - 1);
+        }
+        if (ObjectHelper.isEmpty(fileName)) {
+            fileName = ".";
         }
 
         if (log.isTraceEnabled()) {
@@ -92,7 +97,7 @@ public class SftpConsumer extends RemoteFileConsumer {
         remote.setFileLength(file.getAttrs().getSize());
         remote.setLastModified(file.getAttrs().getMTime() * 1000L);
         remote.setHostname(endpoint.getConfiguration().getHost());
-        String absoluteFileName = directory + "/" + file.getFilename();
+        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
         remote.setAbsolutelFileName(absoluteFileName);
 
         // the relative filename
