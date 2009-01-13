@@ -68,7 +68,13 @@ public class RenameRemoteFileProcessStrategy extends RemoteFileProcessStrategySu
 
     private static RemoteFile renameFile(RemoteFileOperations operations, RemoteFile from, RemoteFile to) throws IOException {
         // deleting any existing files before renaming
-        boolean deleted = operations.deleteFile(to.getAbsolutelFileName());
+        boolean deleted = false;
+        try {
+            deleted = operations.deleteFile(to.getAbsolutelFileName());
+        } catch (RemoteFileOperationFailedException e) {
+            // ignore the file does not exists
+        }
+
         if (!deleted) {
             // if we could not delete any existing file then maybe the folder is missing
             // build folder if needed
