@@ -20,8 +20,6 @@ import javax.mail.Message;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.mail.MailComponent;
-import org.apache.camel.component.mail.MailConfiguration;
 import org.jvnet.mock_javamail.Mailbox;
 
 /**
