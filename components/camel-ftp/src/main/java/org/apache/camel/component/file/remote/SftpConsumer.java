@@ -50,7 +50,8 @@ public class SftpConsumer extends RemoteFileConsumer {
             if (file.getAttrs().isDir()) {
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
-                    pollDirectory(file.getFilename(), fileList);
+                    String directory = fileName + "/" + file.getFilename();
+                    pollDirectory(directory, fileList);
                 }
             // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
             // just assuming its a file we should poll
