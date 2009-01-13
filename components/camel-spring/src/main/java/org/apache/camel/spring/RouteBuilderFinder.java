@@ -38,16 +38,16 @@ public class RouteBuilderFinder {
     private static final transient Log LOG = LogFactory.getLog(RouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
-    private ApplicationContext applicationContext;
-    private ResolverUtil resolver = new ResolverUtil();
+    private ResolverUtil resolver;
+    private ApplicationContext applicationContext;    
     private BeanPostProcessor beanPostProcessor;
 
-    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader, BeanPostProcessor postProcessor) {
+    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader, BeanPostProcessor postProcessor, ResolverUtil resolverUtil) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
         this.beanPostProcessor = postProcessor;
-
+        this.resolver = resolverUtil;
         // lets add all the available class loaders just in case of weirdness
         // we could make this more strict once we've worked out all the gremlins
         // in servicemix-camel
@@ -60,8 +60,7 @@ public class RouteBuilderFinder {
         set.add(getClass().getClassLoader());
 */
     }
-
-
+  
     public String[] getPackages() {
         return packages;
     }

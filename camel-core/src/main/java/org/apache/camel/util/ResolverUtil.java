@@ -285,48 +285,13 @@ public class ResolverUtil<T> {
 
         Set<ClassLoader> set = getClassLoaders();
 
-        ClassLoader osgiClassLoader = getOsgiClassLoader(set);
-
-        if (osgiClassLoader != null) {
-            // if we have an osgi bundle loader use this one only
-            LOG.debug("Using only osgi bundle classloader");
-            find(test, packageName, osgiClassLoader, true);
-        } else {
-            LOG.debug("Using only regular classloaders");
-            for (ClassLoader classLoader : set) {
-                if (!isOsgiClassloader(classLoader)) {
-                    find(test, packageName, classLoader, false);
-                }
-            }
+        LOG.debug("Using only regular classloaders");
+        for (ClassLoader classLoader : set) {            
+            find(test, packageName, classLoader);            
         }
     }
 
-    /**
-     * Gets the osgi classloader if any in the given set
-     */
-    private static ClassLoader getOsgiClassLoader(Set<ClassLoader> set) {
-        for (ClassLoader loader : set) {
-            if (isOsgiClassloader(loader)) {
-                return loader;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Is it an osgi classloader
-     */
-    private static boolean isOsgiClassloader(ClassLoader loader) {
-        try {
-            Method mth = loader.getClass().getMethod("getBundle", new Class[]{});
-            if (mth != null) {
-                return true;
-            }
-        } catch (NoSuchMethodException e) {
-            // ignore its not an osgi loader
-        }
-        return false;
-    }
+    
 
     /**
      * Tries to find the reosurce in the package using the class loader.
@@ -335,30 +300,13 @@ public class ResolverUtil<T> {
      *
      * @param test what to find
      * @param packageName the package to search in
-     * @param loader the class loader
-     * @param osgi true if its a osgi bundle loader, false if regular classloader
+     * @param loader the class loader     
      */
-    protected void find(Test test, String packageName, ClassLoader loader, boolean osgi) {
+    protected void find(Test test, String packageName, ClassLoader loader) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
-                    + loader.getClass().getName() + " osgi bundle classloader: " + osgi);
-        }
-
-        if (osgi) {
-            try {
-                Method mth = loader.getClass().getMethod("getBundle", new Class[]{});
-                if (mth != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Loading from osgi buindle using classloader: " + loader);
-                    }
-                    loadImplementationsInBundle(test, packageName, loader, mth);
-                    return;
-                }
-            } catch (NoSuchMethodException e) {
-                LOG.warn("It's not an osgi bundle classloader: " + loader);
-                return;
-            }
-        }
+                    + loader.getClass().getName());
+        }        
 
         Enumeration<URL> urls;
         try {
@@ -454,44 +402,7 @@ public class ResolverUtil<T> {
         return loader.getResources(packageName);
     }
 
-    private void loadImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
-        // Use an inner class to avoid a NoClassDefFoundError when used in a non-osgi env
-        Set<String> urls = OsgiUtil.getImplementationsInBundle(test, packageName, loader, mth);
-        if (urls != null) {
-            for (String url : urls) {
-                // substring to avoid leading slashes
-                addIfMatching(test, url);
-            }
-        }
-    }
-
-    private static final class OsgiUtil {
-        private OsgiUtil() {
-            // Helper class
-        }
-        static Set<String> getImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
-            try {
-                org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
-                org.osgi.framework.Bundle[] bundles = bundle.getBundleContext().getBundles();
-                Set<String> urls = new HashSet<String>();
-                for (org.osgi.framework.Bundle bd : bundles) {
-                    if (LOG.isTraceEnabled()) {
-                        LOG.trace("Searching in bundle:" + bd);
-                    }
-                    Enumeration<URL> paths = bd.findEntries("/" + packageName, "*.class", true);
-                    while (paths != null && paths.hasMoreElements()) {
-                        URL path = paths.nextElement();                        
-                        urls.add(path.getPath().substring(1));
-                    }
-                }
-                return urls;
-            } catch (Throwable t) {
-                LOG.error("Could not search osgi bundles for classes matching criteria: " + test
-                          + "due to an Exception: " + t.getMessage());
-                return null;
-            }
-        }
-    }
+    
 
 
     /**

@@ -49,6 +49,7 @@ import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -138,6 +139,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public boolean isSingleton() {
         return true;
+    }
+    
+    public ClassLoader getContextClassLoaderOnStart() {
+        return contextClassLoaderOnStart;
+    }
+    
+    public List<Routes> getAdditionalBuilders() {
+        return additionalBuilders;
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -253,7 +262,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (LOG.isDebugEnabled()) {
             LOG.debug("Found JAXB created routes: " + getRoutes());
         }
-        findRouteBuiders();
+        findRouteBuilders();
         installRoutes();
     }
 
@@ -534,11 +543,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy method to try find {@link RouteBuilder} instances on the
      * classpath
      */
-    protected void findRouteBuiders() throws Exception, InstantiationException {
-        if (packages != null && packages.length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), packages, contextClassLoaderOnStart, getBeanPostProcessor());
-            finder.appendBuilders(additionalBuilders);
+    protected void findRouteBuilders() throws Exception, InstantiationException {
+        if (getPackages() != null && getPackages().length > 0) {
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), getPackages(), getContextClassLoaderOnStart(), getBeanPostProcessor(), createResolverUtil());
+            finder.appendBuilders(getAdditionalBuilders());
         }
+    }
+    
+    /**
+     * The factory method for create the ResolverUtil
+     * @return a new instance of ResolverUtil
+     */
+    protected ResolverUtil createResolverUtil() {
+        return new ResolverUtil();
     }
 
     public void setDataFormats(DataFormatsType dataFormats) {
