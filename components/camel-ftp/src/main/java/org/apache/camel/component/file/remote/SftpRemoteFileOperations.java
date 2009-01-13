@@ -29,6 +29,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UserInfo;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -253,6 +254,11 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
     }
 
     public List listFiles(String path) throws RemoteFileOperationFailedException {
+        if (ObjectHelper.isEmpty(path)) {
+            // list current dirctory if file path is not given
+            path = ".";
+        }
+        
         try {
             final List list = new ArrayList();
             Vector files = channel.ls(path);

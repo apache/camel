@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTPClient;
@@ -189,6 +190,11 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
     }
 
     public List listFiles(String path) throws RemoteFileOperationFailedException {
+        // use current directory if path not given
+        if (ObjectHelper.isEmpty(path)) {
+            path = ".";
+        }
+
         try {
             final List list = new ArrayList();
             FTPFile[] files = client.listFiles(path);

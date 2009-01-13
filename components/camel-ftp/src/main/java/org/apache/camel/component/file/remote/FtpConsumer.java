@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
@@ -35,6 +36,7 @@ public class FtpConsumer extends RemoteFileConsumer {
             return;
         }
 
+        // fix filename
         if (fileName.endsWith("/")) {
             fileName = fileName.substring(0, fileName.length() - 1);
         }
@@ -89,7 +91,7 @@ public class FtpConsumer extends RemoteFileConsumer {
             remote.setLastModified(file.getTimestamp().getTimeInMillis());
         }
         remote.setHostname(endpoint.getConfiguration().getHost());
-        String absoluteFileName = directory + "/" + file.getName();
+        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
         remote.setAbsolutelFileName(absoluteFileName);
 
         // the relative filename
