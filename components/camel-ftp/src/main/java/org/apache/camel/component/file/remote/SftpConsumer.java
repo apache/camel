@@ -40,9 +40,6 @@ public class SftpConsumer extends RemoteFileConsumer {
         if (fileName.endsWith("/")) {
             fileName = fileName.substring(0, fileName.length() - 1);
         }
-        if (ObjectHelper.isEmpty(fileName)) {
-            fileName = ".";
-        }
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + fileName);
