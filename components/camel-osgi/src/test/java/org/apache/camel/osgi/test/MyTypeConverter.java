@@ -14,13 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.osgi.converter;
+package org.apache.camel.osgi.test;
 
 import java.util.Collection;
 
 import org.apache.camel.Converter;
 import org.apache.camel.util.ObjectHelper;
 
+@Converter
 public final class MyTypeConverter {
 
     /**
@@ -36,22 +37,18 @@ public final class MyTypeConverter {
      */
     @Converter
     public static boolean toBool(Object value) {
-        Boolean answer = toBoolean(value);
+        Boolean answer = null;    
+        if (value instanceof String) {
+            answer = Boolean.valueOf((String)value);
+        } 
+        if (value instanceof Boolean) {
+            answer = (Boolean) value;
+        }
         if (answer != null) {
             return answer.booleanValue();
         }
         return false;
-    }
+    }    
     
-    /**
-     * Converts the given value to a Boolean, handling strings or Boolean
-     * objects; otherwise returning null if the value cannot be converted to a
-     * boolean
-     */
-    @Converter
-    public static Boolean toBoolean(Object value) {
-        return ObjectHelper.toBoolean(value);
-    }
-
 
 }

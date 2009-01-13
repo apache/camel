@@ -74,6 +74,18 @@ public class CamelMockBundle extends MockBundle {
         }
 
         return result;
-
+    }
+    
+    public Enumeration findEntries(String path, String filePattern, boolean recurse) {
+        if (path.equals("/org/apache/camel/osgi/test") && filePattern.equals("*.class")) {
+            List<URL> urls = new ArrayList<URL>();
+            URL url = getClass().getClassLoader().getResource("org/apache/camel/osgi/test/MyTypeConverter.class");
+            urls.add(url);
+            url = getClass().getClassLoader().getResource("org/apache/camel/osgi/test/MyRouteBuilder.class");
+            urls.add(url);
+            return new ListEnumeration(urls);
+        } else {
+            return super.findEntries(path, filePattern, recurse);
+        }
     }
 }
