@@ -52,13 +52,13 @@ public class SftpConsumer extends RemoteFileConsumer {
                     // recursive scan and add the sub files and folders
                     pollDirectory(file.getFilename(), fileList);
                 }
-            } else if (!file.getAttrs().isLink()) {
+            // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
+            // just assuming its a file we should poll
+            } else {
                 if (isValidFile(remote, false)) {
                     // matched file so add
                     fileList.add(remote);
                 }
-            } else {
-                log.debug("Ignoring unsupported remote file type: " + file);
             }
         }
     }
