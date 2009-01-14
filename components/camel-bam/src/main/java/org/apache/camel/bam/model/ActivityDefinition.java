@@ -30,7 +30,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(
-    name = "ACTIVITYDEFINITION",
+    name = "CAMEL_ACTIVITYDEFINITION",
     uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
 )
 public class ActivityDefinition extends EntitySupport {

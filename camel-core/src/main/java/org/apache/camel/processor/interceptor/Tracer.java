@@ -42,6 +42,7 @@ public class Tracer implements InterceptStrategy {
     private boolean traceExceptions = true;
     private boolean traceOutExchanges;
     private String destinationUri;
+    private boolean useJpa;
 
     /**
      * A helper method to return the Tracer instance for a given {@link CamelContext} if one is enabled
@@ -174,4 +175,18 @@ public class Tracer implements InterceptStrategy {
         this.destinationUri = destinationUri;
     }
 
+    public boolean isUseJpa() {
+        return useJpa;
+    }
+
+    /**
+     * Sets whether we should use a JpaTraceEventMessage instead of
+     * an ordinary {@link org.apache.camel.processor.interceptor.DefaultTraceEventMessage}
+     * <p/>
+     * Use this to allow persistence of trace events into a database using JPA.
+     * This requires camel-jpa in the classpath.
+     */
+    public void setUseJpa(boolean useJpa) {
+        this.useJpa = useJpa;
+    }
 }

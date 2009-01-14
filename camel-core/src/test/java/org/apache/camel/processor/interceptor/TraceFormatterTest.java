@@ -102,7 +102,7 @@ public class TraceFormatterTest extends ContextTestSupport {
         public void process(Exchange exchange) throws Exception {
             // take a snapshot at current time for assertion later
             // after mock assertions in unit test method
-            TraceEventMessage event = exchange.getIn().getBody(TraceEventMessage.class);
+            TraceEventMessage event = exchange.getIn().getBody(DefaultTraceEventMessage.class);
             tracedBodies.add(new String(event.getBody()));
         }
     }
