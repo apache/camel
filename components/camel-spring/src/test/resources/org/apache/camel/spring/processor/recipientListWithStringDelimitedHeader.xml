@@ -22,17 +22,20 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-     from("direct:a").recipientList(header("recipientListHeader").tokenize(","));
-  -->
-  <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
-      <from uri="direct:a"/>
-      <!-- use comma as a delimiter for String based values -->
-      <recipientList delimiter=",">
-        <header>myHeader</header>
-      </recipientList>    
-    </route>
-  </camelContext>  
+    <!--
+       from("direct:a").recipientList(header("myHeader").tokenize(","));
+    -->
+
+    <!-- START SNIPPET: e1 -->
+    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+        <route>
+            <from uri="direct:a"/>
+            <!-- use comma as a delimiter for String based values -->
+            <recipientList delimiter=",">
+                <header>myHeader</header>
+            </recipientList>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
 
 </beans>
