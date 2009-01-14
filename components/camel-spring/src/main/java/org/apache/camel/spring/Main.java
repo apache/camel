@@ -28,6 +28,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.spring.handler.CamelNamespaceHandler;
 import org.apache.camel.util.MainSupport;
 import org.apache.camel.view.ModelFileGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -65,10 +67,35 @@ public class Main extends MainSupport {
         });
 
     }
+    
+    /**
+     * A class for intercepting the hang up signal and do a graceful shutdown of
+     * the Camel.
+     */
+    private class HangupInterceptor extends Thread {
+        Log log = LogFactory.getLog(this.getClass());
+        Main mainInstance;
+
+        public HangupInterceptor(Main main) {
+            mainInstance = main;
+        }
+
+        @Override
+        public void run() {
+            log.info("Recieved hang up - stopping the main instance.");
+            try {
+                mainInstance.stop();
+            } catch (Exception ex) {
+                log.warn(ex);
+            }
+        }
+    }
+
 
     public static void main(String... args) {
         Main main = new Main();
         instance = main;
+        main.enableHangupSupport();
         main.run(args);
     }
 
@@ -79,6 +106,15 @@ public class Main extends MainSupport {
      */
     public static Main getInstance() {
         return instance;
+    }
+    
+    /**
+     * Enables the hangup support. Gracefully stops by calling stop() on a
+     * Hangup signal.
+     */
+    public void enableHangupSupport() {
+        HangupInterceptor interceptor = new HangupInterceptor(this);
+        Runtime.getRuntime().addShutdownHook(interceptor);
     }
 
     @Override
