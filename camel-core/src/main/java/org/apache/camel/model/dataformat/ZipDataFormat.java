@@ -36,7 +36,6 @@ public class ZipDataFormat extends DataFormatType {
     private int compressionLevel = Deflater.BEST_SPEED;
     
     public ZipDataFormat() {
-        
     }
 
     public ZipDataFormat(int compressionLevel) {

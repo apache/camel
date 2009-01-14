@@ -26,10 +26,10 @@ import java.util.zip.InflaterInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ExchangeHelper;
 
 public class ZipDataFormat implements DataFormat {
 
-    private static final int INITIALBYTEARRAYSIZE = 1048576;
     private int compressionLevel;
 
     public ZipDataFormat() {
@@ -40,43 +40,31 @@ public class ZipDataFormat implements DataFormat {
         this.compressionLevel = compressionLevel;
     }
 
-    public void marshal(Exchange exchange, Object body, OutputStream stream)
+    public void marshal(Exchange exchange, Object graph, OutputStream stream)
         throws Exception {
-        InputStream is;
-        if (body instanceof InputStream) {
-            is = (InputStream)body;
-        }
-        is = exchange.getIn().getBody(InputStream.class);
-        if (is == null) {
-            throw new IllegalArgumentException("Can't get the inputstream for ZipDataFormat mashalling");
-        }
-       
-        DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
-        
-        // Compress the data
-        IOConverter.copy(is, zipOutput);
-        zipOutput.close();
 
+        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
+        if (is == null) {
+            throw new IllegalArgumentException("Cannot get the inputstream for ZipDataFormat mashalling");
+        }
+
+        DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
+        try {
+            IOConverter.copy(is, zipOutput);
+        } finally {
+            zipOutput.close();
+        }
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream)
         throws Exception {
-        
-        InputStream is = stream;
-        if (is == null) {           
-            exchange.getIn().getBody(InputStream.class);
-        }
-        if (is == null) {
-            throw new IllegalArgumentException("Can't get the inputStream for ZipDataFormat unmashalling");
-        }
-        
+
+        InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         InflaterInputStream unzipInput = new InflaterInputStream(is);
         
         // Create an expandable byte array to hold the inflated data
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        
-        IOConverter.copy(unzipInput, bos);        
-
+        IOConverter.copy(unzipInput, bos);
         return bos.toByteArray();
     }
 
