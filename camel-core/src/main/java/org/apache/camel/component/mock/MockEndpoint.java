@@ -341,7 +341,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                     assertTrue("No exchange received for counter: " + i, exchange != null);
 
                     Object expectedBody = expectedBodyValues.get(i);
-                    Object actualBody = actualBodyValues.get(i);
+                    Object actualBody = null;
+                    if (i < actualBodyValues.size()) {
+                        actualBody = actualBodyValues.get(i);
+                    }
 
                     assertEquals("Body of message: " + i, expectedBody, actualBody);
                 }
