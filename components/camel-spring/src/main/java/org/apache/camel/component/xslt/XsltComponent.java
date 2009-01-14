@@ -18,11 +18,14 @@ package org.apache.camel.component.xslt;
 
 import java.util.Map;
 
+import javax.xml.transform.TransformerFactory;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -51,7 +54,7 @@ public class XsltComponent extends ResourceBasedComponent {
 
         // lets allow the converter to be configured
         XmlConverter converter = null;
-        String converterName = getAndRemoveParameter(parameters, "converter", String.class);
+        String converterName = getAndRemoveParameter(parameters, "converter", String.class);        
         if (converterName != null) {
             converter = mandatoryLookup(converterName, XmlConverter.class);
         }
@@ -61,7 +64,26 @@ public class XsltComponent extends ResourceBasedComponent {
         if (converter != null) {
             xslt.setConverter(converter);
         }
-
+        
+        String transformerFactoryClassName = getAndRemoveParameter(parameters, "transformerFactoryClass", String.class);
+        TransformerFactory factory = null;
+        if (transformerFactoryClassName != null) {
+            Class factoryClass = ObjectHelper.loadClass(transformerFactoryClassName);
+            if (factoryClass != null) {
+                factory = (TransformerFactory) newInstance(factoryClass);
+            } else {
+                log.warn("Can't find the TransformerFactoryClass with the class name " + transformerFactoryClassName);
+            }
+        }
+        
+        String transformerFactoryName = getAndRemoveParameter(parameters, "transformerFactory", String.class);        
+        if (transformerFactoryName != null) {
+            factory = mandatoryLookup(transformerFactoryName, TransformerFactory.class);
+        }
+        
+        if (factory != null) {
+            xslt.getConverter().setTransformerFactory(factory);
+        }
         xslt.setTransformerInputStream(resource.getInputStream());
         configureXslt(xslt, uri, remaining, parameters);
         return new ProcessorEndpoint(uri, this, xslt);
