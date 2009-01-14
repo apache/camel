@@ -129,27 +129,15 @@
                   <classpath refid="cp"/>
                 </taskdef>
 
-                <mkdir dir="${basedir}/target/jpa-classes"/>
                 <mkdir dir="${basedir}/target/jpa-test-classes"/>
-
-                <openjpac directory="${basedir}/target/jpa-classes">
-                  <classpath refid="cp"/>
-                  <fileset dir="${basedir}/target/classes">
-                    <include name="org/apache/camel/processor/**/M*.class"/>
-                  </fileset>
-                  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
-                </openjpac>
                 <openjpac directory="${basedir}/target/jpa-test-classes">
                   <classpath refid="cp"/>
-                  <fileset dir="${basedir}/target/test-classes">
-                    <include name="org/apache/camel/examples/*.class"/>
-                  </fileset>
-                  <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
+                    <fileset dir="${basedir}/target/classes">
+                      <include name="org/apache/camel/processor/**/MessageProcessed.class"/>
+                    </fileset>
+                  <config propertiesFile="${basedir}/src/test/resources/META-INF/persistence.xml"/>
                 </openjpac>
 
-                <copy overwrite="true" todir="${basedir}/target/classes">
-                  <fileset dir="${basedir}/target/jpa-classes"/>
-                </copy>
                 <copy overwrite="true" todir="${basedir}/target/test-classes">
                   <fileset dir="${basedir}/target/jpa-test-classes"/>
                 </copy>
