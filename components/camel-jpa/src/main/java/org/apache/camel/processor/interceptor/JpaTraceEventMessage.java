@@ -175,7 +175,7 @@ public class JpaTraceEventMessage implements TraceEventMessage {
 
     @Override
     public String toString() {
-        return "TraceEventMessage[" + exchangeId + "] on node: " + toNode;
+        return "TraceEventMessage[" + getExchangeId() + "] on node: " + getToNode();   
     }
 
 }
