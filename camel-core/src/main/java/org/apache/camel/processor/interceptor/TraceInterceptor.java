@@ -17,6 +17,8 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,6 +29,8 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.TraceableUnitOfWork;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -38,12 +42,14 @@ import org.apache.commons.logging.LogFactory;
  */
 public class TraceInterceptor extends DelegateProcessor implements ExchangeFormatter {
     private static final transient Log LOG = LogFactory.getLog(TraceInterceptor.class);
+    private static final String JPA_TRACE_EVENT_MESSAGE = "org.apache.camel.processor.interceptor.JpaTraceEventMessage";
     private static final String TRACE_EVENT = "CamelTraceEvent";
     private Logger logger;
     private Producer traceEventProducer;
     private final ProcessorType node;
     private final Tracer tracer;
     private TraceFormatter formatter;
+    private Class jpaTraceEventMessageClass;
 
     public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
@@ -91,7 +97,6 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
         // okay this is a regular exchange being routed we might need to log and trace
         try {
-
             // before
             if (shouldLog) {
                 logExchange(exchange);
@@ -150,13 +155,43 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         if (tracer.getDestinationUri() != null) {
             // create event and add it as a property on the original exchange
             TraceEventExchange event = new TraceEventExchange(exchange);
+            Date timestamp = new Date();
             event.setNodeId(node.getId());
-            event.setTimestamp(new Date());
+            event.setTimestamp(timestamp);
             event.setTracedExchange(exchange);
 
             // create event message to send in body
-            TraceEventMessage msg = new TraceEventMessage(node, exchange);
-            event.getIn().setBody(msg);
+            TraceEventMessage msg = new DefaultTraceEventMessage(timestamp, node, exchange);
+
+            // should we use ordinay or jpa objects
+            if (tracer.isUseJpa()) {
+                LOG.trace("Using class: " + JPA_TRACE_EVENT_MESSAGE + " for tracing event messages");
+
+                // load the jpa event class
+                synchronized (this) {
+                    if (jpaTraceEventMessageClass == null) {
+                        jpaTraceEventMessageClass = ObjectHelper.loadClass(JPA_TRACE_EVENT_MESSAGE);
+                        if (jpaTraceEventMessageClass == null) {
+                            throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
+                                    + ". Make sure camel-jpa.jar is on the classpath.");
+                        }
+                    }
+                }
+
+                Object jpa = ObjectHelper.newInstance(jpaTraceEventMessageClass);
+
+                // copy options from event to jpa
+                Map options = new HashMap();
+                IntrospectionSupport.getProperties(msg, options, null);
+                IntrospectionSupport.setProperties(jpa, options);
+                // and set the timestamp as its not a String type
+                IntrospectionSupport.setProperty(jpa, "timestamp", msg.getTimestamp());
+
+                event.getIn().setBody(jpa);
+            } else {
+                event.getIn().setBody(msg);
+            }
+
             // marker property to indicate its a tracing event being routed in case
             // new Exchange instances is created during trace routing so we can check
             // for this marker when interceptor also kickins in during routing of trace events

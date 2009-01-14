@@ -35,7 +35,7 @@ import org.springframework.orm.jpa.JpaTemplate;
  */
 @Entity
 @Table(
-    name = "PROCESSDEFINITION",
+    name = "CAMEL_PROCESSDEFINITION",
     uniqueConstraints = @UniqueConstraint(columnNames = {"name"})
 )
 public class ProcessDefinition extends EntitySupport {

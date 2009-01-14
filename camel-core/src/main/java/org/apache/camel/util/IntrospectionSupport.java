@@ -126,7 +126,7 @@ public final class IntrospectionSupport {
     public static Map extractProperties(Map properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
-        HashMap rc = new HashMap(properties.size());
+        HashMap rc = new LinkedHashMap(properties.size());
 
         for (Iterator iter = properties.keySet().iterator(); iter.hasNext();) {
             String name = (String)iter.next();
@@ -189,8 +189,10 @@ public final class IntrospectionSupport {
                     } catch (IllegalArgumentException e) {
                         typeConvertionFailed = e;
                     }
-                    LOG.trace("Setter \"" + setter + "\" with parameter type \""
-                              + setter.getParameterTypes()[0] + "\" could not be used for type conversions of " + value);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Setter \"" + setter + "\" with parameter type \""
+                                  + setter.getParameterTypes()[0] + "\" could not be used for type conversions of " + value);
+                    }
                 }
             }
             // we did not find a setter method to use, and if we did try to use a type converter then throw

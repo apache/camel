@@ -35,7 +35,8 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.jpa.*,
-      org.apache.camel.processor.idempotent.jpa.*</camel.osgi.export.pkg>
+      org.apache.camel.processor.idempotent.jpa.*
+      org.apache.camel.processor.interceptor.*</camel.osgi.export.pkg>
   </properties>
 
   <dependencies>
@@ -135,7 +136,8 @@
                 <openjpac directory="${basedir}/target/jpa-classes">
                   <classpath refid="cp"/>
                   <fileset dir="${basedir}/target/classes">
-                    <include name="org/apache/camel/processor/**/M*.class"/>
+                    <include name="org/apache/camel/processor/**/MessageProcessed.class"/>
+                    <include name="org/apache/camel/processor/**/JpaTraceEventMessage.class"/>
                   </fileset>
                   <config propertiesFile="${basedir}/src/main/resources/META-INF/persistence.xml"/>
                 </openjpac>

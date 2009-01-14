@@ -137,7 +137,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
 
             // take a snapshot at current time for assertion later
             // after mock assertions in unit test method
-            TraceEventMessage msg = exchange.getIn().getBody(TraceEventMessage.class);
+            TraceEventMessage msg = exchange.getIn().getBody(DefaultTraceEventMessage.class);
             tracedBodies.add(msg.getBody());
             if (msg.getHeaders() != null) {
                 tracedHeaders.add(msg.getHeaders());
@@ -150,7 +150,7 @@ public class TraceInterceptorDestinationTest extends ContextTestSupport {
 
         public void process(Exchange exchange) throws Exception {
             // here we can transform the message how we like want it
-            TraceEventMessage msg = exchange.getIn().getBody(TraceEventMessage.class);
+            TraceEventMessage msg = exchange.getIn().getBody(DefaultTraceEventMessage.class);
 
             // we want to store it as a CSV with from;to;exchangeId;body
             String s = msg.getFromEndpointUri() + ";" + msg.getToNode() + ";" + msg.getExchangeId() + ";" + msg.getBody();

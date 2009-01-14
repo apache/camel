@@ -29,6 +29,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import javax.persistence.Table;
 
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.commons.logging.Log;
@@ -40,6 +41,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 @Entity
+@Table(
+    name = "CAMEL_PROCESSINSTANCE"
+)
 public class ProcessInstance  {
     private static final transient Log LOG = LogFactory.getLog(ProcessInstance.class);
     private ProcessDefinition processDefinition;

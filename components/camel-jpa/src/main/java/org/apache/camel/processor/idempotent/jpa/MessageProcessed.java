@@ -27,7 +27,7 @@ import javax.persistence.UniqueConstraint;
  */
 @Entity
 @Table(
-    name = "MESSAGEPROCESSED",
+    name = "CAMEL_MESSAGEPROCESSED",
     uniqueConstraints = @UniqueConstraint(columnNames = {"processorName", "messageId"})
 )
 public class MessageProcessed {

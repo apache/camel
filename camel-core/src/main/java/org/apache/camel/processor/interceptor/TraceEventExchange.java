@@ -26,7 +26,7 @@ import org.apache.camel.impl.DefaultExchange;
  * Represents a trace of an {@link org.apache.camel.Exchange}, intercepted at the given node
  * that occured during routing.
  * <p/>
- * The IN body contains {@link TraceEventMessage} with trace details of the original IN message.
+ * The IN body contains {@link DefaultTraceEventMessage} with trace details of the original IN message.
  */
 public class TraceEventExchange extends DefaultExchange {
     private String nodeId;
@@ -83,6 +83,6 @@ public class TraceEventExchange extends DefaultExchange {
 
     @Override
     public String toString() {
-        return "TraceEventExchange[" + tracedExchange.getExchangeId() + "] on node: " + nodeId;
+        return "TraceEventExchange[" + tracedExchange.getExchangeId() + "] on node id: " + nodeId;
     }
 }
