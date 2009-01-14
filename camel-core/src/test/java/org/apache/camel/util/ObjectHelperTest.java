@@ -132,4 +132,13 @@ public class ObjectHelperTest extends TestCase {
         Iterator<String> iterator = list.iterator();
         assertSame("Should return the same iterator", iterator, ObjectHelper.createIterator(iterator));
     }
+
+    public void testCreateIteratorWithStringAndCommaSeparator() {
+        String s = "a,b,c";
+        Iterator it = ObjectHelper.createIterator(s);
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("c", it.next());
+    }
+
 }
