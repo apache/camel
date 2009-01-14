@@ -76,6 +76,10 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     protected Endpoint resolveEndpoint(Exchange exchange, Object recipient) {
+        // trim strings as end users might have added spaces between separators
+        if (recipient instanceof String) {
+            recipient = ((String)recipient).trim();
+        }
         return ExchangeHelper.resolveEndpoint(exchange, recipient);
     }
 

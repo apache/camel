@@ -18,10 +18,12 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.processor.RecipientList;
@@ -35,6 +37,9 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "recipientList")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RecipientListType extends ExpressionNode {
+
+    @XmlAttribute(required = false)
+    private String delimiter;
 
     public RecipientListType() {
     }
@@ -59,7 +64,14 @@ public class RecipientListType extends ExpressionNode {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return new RecipientList(getExpression().createExpression(routeContext));
+        Expression expression = getExpression().createExpression(routeContext);
+
+        // add a tokenizer if we have a delimiter
+        if (delimiter != null) {
+            expression = ExpressionBuilder.tokenizeExpression(expression, delimiter);
+        }
+
+        return new RecipientList(expression);
     }
     
     // Fluent API
@@ -70,5 +82,16 @@ public class RecipientListType extends ExpressionNode {
      */
     public ExpressionClause<RecipientListType> expression() {
         return ExpressionClause.createAndSetExpression(this);
+    }
+
+    // Properties
+    //-------------------------------------------------------------------------
+
+    public String getDelimiter() {
+        return delimiter;
+    }
+
+    public void setDelimiter(String delimiter) {
+        this.delimiter = delimiter;
     }
 }

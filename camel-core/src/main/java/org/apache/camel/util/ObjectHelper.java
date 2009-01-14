@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Scanner;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -349,6 +350,11 @@ public final class ObjectHelper {
                     throw new UnsupportedOperationException();
                 }
             };
+        } else if (value instanceof String) {
+            Scanner scanner = new Scanner((String)value);
+            // use comma as delimiter for String values
+            scanner.useDelimiter(",");
+            return scanner;
         } else {
             return Collections.singletonList(value).iterator();
         }

@@ -19,21 +19,18 @@ package org.apache.camel.impl;
 import java.io.ByteArrayOutputStream;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-import org.apache.camel.CamelContext;
+
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
-
 
 /**
  * Unit test of the zip data format.
  */
-public class ZipDataFormatTest extends TestSupport {
+public class ZipDataFormatTest extends ContextTestSupport {
     private static final String TEXT = "The Cow in Apple Time \n" 
         + "by: Robert Frost \n\n" 
         + "Something inspires the only cow of late\n" 
@@ -48,24 +45,12 @@ public class ZipDataFormatTest extends TestSupport {
         + "She bellows on a knoll against the sky.\n" 
         + "Her udder shrivels and the milk goes dry.";
 
-    private CamelContext context;
-    private ProducerTemplate template;
-
-    
-    
-    protected void setUp() throws Exception {
-        context = new DefaultCamelContext();
-        template = context.createProducerTemplate();
-        template.start();
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
-    protected void tearDown() throws Exception {
-        template.stop();
-        context.stop();
-    }
-    
     private void sendText() throws Exception {
-        
         template.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // Set the property of the charset encoding
@@ -78,7 +63,6 @@ public class ZipDataFormatTest extends TestSupport {
     }
 
     public void testMarshalTextToZipBestCompression() throws Exception {
-       
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().zip(Deflater.BEST_COMPRESSION).process(new ZippedMessageProcessor());
@@ -90,7 +74,6 @@ public class ZipDataFormatTest extends TestSupport {
     }
     
     public void testMarshalTextToZipBestSpeed() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().zip(Deflater.BEST_SPEED).process(new ZippedMessageProcessor());
@@ -103,7 +86,6 @@ public class ZipDataFormatTest extends TestSupport {
     }
 
     public void testMarshalTextToZipDefaultCompression() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().zip(Deflater.DEFAULT_COMPRESSION).process(new ZippedMessageProcessor());
@@ -115,13 +97,13 @@ public class ZipDataFormatTest extends TestSupport {
     }
     
     public void testUnMarshalTextToZip() throws Exception {
-
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from("direct:start").marshal().zip().unmarshal().zip().to("mock:result");
             }
         });
         context.start();
+
         MockEndpoint result = (MockEndpoint)context.getEndpoint("mock:result");
         result.expectedBodiesReceived(TEXT);
         sendText();
