@@ -31,6 +31,7 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
+import org.apache.camel.rest.model.Camel;
 
 /**
  * @version $Revision$
@@ -51,7 +52,7 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     protected Class[] getJaxbClasses() {
         return new Class[]{RoutesType.class, RouteType.class,
-                           Endpoints.class, EndpointLink.class};
+                           Camel.class, Endpoints.class, EndpointLink.class};
     }
 
     public JAXBContext getContext(Class<?> objectType) {

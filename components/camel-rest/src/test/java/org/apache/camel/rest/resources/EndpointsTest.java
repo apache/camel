@@ -16,18 +16,24 @@
  */
 package org.apache.camel.rest.resources;
 
-import java.util.List;
-
-import com.sun.jersey.api.client.WebResource;
-
+import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
 
+import java.util.List;
 
 /**
  * @version $Revision$
  */
 public class EndpointsTest extends TestSupport {
+
+    public void testCamelAsXml() throws Exception {
+        Camel camel = resource("/").accept("application/xml").get(Camel.class);
+        assertValidCamel(camel);
+
+        camel = resource("/.xml").get(Camel.class);
+        assertValidCamel(camel);
+    }
 
     public void testEndpointsAsXml() throws Exception {
         Endpoints endpoints = resource("endpoints").accept("application/xml").get(Endpoints.class);
@@ -37,7 +43,15 @@ public class EndpointsTest extends TestSupport {
         assertValidEndpoints(endpoints);
     }
 
+
     // TODO test as JSON
+
+
+    protected void assertValidCamel(Camel camel) {
+        assertNotNull("Should have found camel", camel);
+
+        System.out.println("Found: " + camel);
+    }
 
     protected void assertValidEndpoints(Endpoints endpoints) {
         assertNotNull("Should have found endpoints", endpoints);
