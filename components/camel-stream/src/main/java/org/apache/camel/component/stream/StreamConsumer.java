@@ -48,6 +48,7 @@ public class StreamConsumer extends DefaultConsumer {
     private InputStream inputStream = System.in;
     private StreamEndpoint endpoint;
     private String uri;
+    private boolean initialPromptDone;
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -101,9 +102,18 @@ public class StreamConsumer extends DefaultConsumer {
      * Strategy method for prompting the prompt message
      */
     protected void doPromptMessage() {
-        if (endpoint.getPromptDelay() > 0) {
+        long delay = 0;
+
+        if (!initialPromptDone && endpoint.getInitialPromptDelay() > 0) {
+            initialPromptDone = true;
+            delay = endpoint.getInitialPromptDelay();
+        } else if (endpoint.getPromptDelay() > 0) {
+            delay = endpoint.getPromptDelay();
+        }
+
+        if (delay > 0) {
             try {
-                Thread.sleep(endpoint.getPromptDelay());
+                Thread.sleep(delay);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
