@@ -36,6 +36,7 @@ public class StreamEndpoint extends DefaultEndpoint {
     private String encoding;
     private String promptMessage;
     private long promptDelay;
+    private long initialPromptDelay = 2000;
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
@@ -100,6 +101,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setPromptDelay(long promptDelay) {
         this.promptDelay = promptDelay;
+    }
+
+    public long getInitialPromptDelay() {
+        return initialPromptDelay;
+    }
+
+    public void setInitialPromptDelay(long initialPromptDelay) {
+        this.initialPromptDelay = initialPromptDelay;
     }
 
     // Implementations
