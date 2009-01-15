@@ -24,7 +24,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpNoFilesTest extends FtpServerTestSupport {
     private int port = 20020;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=500";
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=2000";
 
     public int getPort() {
         return port;

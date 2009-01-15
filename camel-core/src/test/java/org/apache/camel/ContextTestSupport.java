@@ -85,9 +85,14 @@ public abstract class ContextTestSupport extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        log.debug("tearDown test: " + getName());
-        template.stop();
-        stopCamelContext();
+        try {
+            log.debug("tearDown test: " + getName());
+            template.stop();
+            stopCamelContext();
+        } catch (Exception e) {
+            log.debug("tearDown ignored exception while stopping: " + e.getMessage());
+            // ignore exceptions while stopping to avoid unit test failing totally
+        }
     }
 
     protected void stopCamelContext() throws Exception {
