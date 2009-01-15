@@ -58,18 +58,22 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * Invoked whenever we should be polled
      */
     public void run() {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Starting to poll: " + this.getEndpoint());
-        }
         try {
             if (isRunAllowed()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Starting to poll: " + this.getEndpoint());
+                }
                 poll();
             }
         } catch (Exception e) {
-            LOG.warn("An exception occured while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
+            LOG.warn("An exception occurred while polling: " + this.getEndpoint() + ": " + e.getMessage(), e);
             if (firstExceptionThrown == null) {
                 firstExceptionThrown = e;
-            } 
+            }
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finished polling: " + this.getEndpoint());
         }
     }
 
@@ -134,7 +138,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             future.cancel(false);
         }
         super.doStop();
-        
+
         if (firstExceptionThrown != null) {
             throw firstExceptionThrown;
         }

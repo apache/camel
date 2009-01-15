@@ -317,23 +317,20 @@ public abstract class RemoteFileConsumer extends ScheduledPollConsumer {
         return true;
     }
 
-    protected void doStart() throws Exception {
-        log.info("Starting");
-        super.doStart();
-    }
-
     protected void doStop() throws Exception {
-        log.info("Stopping");
+        super.doStop();
+
         // disconnect when stopping
         try {
-            loggedIn = false;
-            log.debug("Disconnecting from " + remoteServer());
-            operations.disconnect();
+            if (operations.isConnected()) {
+                loggedIn = false;
+                log.debug("Disconnecting from " + remoteServer());
+                operations.disconnect();
+            }
         } catch (RemoteFileOperationFailedException e) {
             // ignore just log a warning
             log.warn(e.getMessage());
         }
-        super.doStop();
     }
 
     protected void connectIfNecessary() throws IOException {

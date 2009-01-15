@@ -43,8 +43,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
         executor.execute(new Runnable() {
             public void run() {
                 for (int i = 0; i < 20; i++) {
-                    // TODO when this delay is removed, the seda endpoint has
-                    // ordering issues
+                    // when this delay is removed, the seda endpoint has ordering issues
                     try {
                         // do some random sleep to simulate spread in user activity
                         // range is 5-15
