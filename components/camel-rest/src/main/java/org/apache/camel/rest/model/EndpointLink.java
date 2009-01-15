@@ -70,6 +70,6 @@ public class EndpointLink {
 
     protected String createHref(String uri) {
         // TODO how to encode as a href?
-        return "/endpoints/" + uri;
+        return "/endpoint/" + uri;
     }
 }

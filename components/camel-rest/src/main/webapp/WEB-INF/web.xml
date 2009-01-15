@@ -78,6 +78,7 @@
       <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
       <param-value>true</param-value>
     </init-param>
+    <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
     <servlet-name>Jersey Spring</servlet-name>
