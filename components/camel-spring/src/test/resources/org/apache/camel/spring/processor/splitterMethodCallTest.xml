@@ -21,30 +21,19 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
-  <!-- 
-      from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
-      from("seda:b").delayer(3000).to("mock:result");
-  -->
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel"
-    xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <delay>      
-        <simple>header.JMSTimestamp</simple>
-        <delayTime>3000</delayTime>
-      </delay>
-      <to uri="mock:result"/>
-    </route>
-    <route>
-      <from uri="seda:b"/>
-      <delay>
-        <languageExpression/>
-        <delayTime>3000</delayTime>
-      </delay>
-      <to uri="mock:result"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+
+    <!-- START SNIPPET: e1 -->
+    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <split>
+                <method bean="splitWordsBean" method="splitWords"/>
+                <to uri="mock:result"/>
+            </split>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
+
+    <bean id="splitWordsBean" class="org.apache.camel.processor.SplitterMethodCallTest$SplitWordsBean"/>
 
 </beans>

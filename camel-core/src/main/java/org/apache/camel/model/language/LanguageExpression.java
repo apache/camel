@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "expression")
+@XmlRootElement(name = "languageExpression")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LanguageExpression extends ExpressionType {
     @XmlAttribute
