@@ -17,9 +17,9 @@
 package org.apache.camel.rest.resources;
 
 
+import com.sun.jersey.api.view.Viewable;
 import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
-import com.sun.jersey.api.view.Viewable;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.model.RouteType;
@@ -34,7 +34,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
-//import static org.apache.camel.rest.resources.Constants.*;
+
 
 /**
  * The resource for the CamelContext
@@ -43,7 +43,7 @@ import java.util.List;
  */
 @Path("/")
 @Singleton
-public class CamelContextResource {
+public class CamelContextResource extends ViewableResource {
 
     private final CamelContext camelContext;
 
@@ -59,15 +59,50 @@ public class CamelContextResource {
         return camelContext.getName();
     }
 
+
+
+    // HTML representations
+    //-------------------------------------------------------------------------
+
+    // Its a shame there's not an easier way to bind the explicit views...
+    //-------------------------------------------------------------------------
+
+
+    @GET
+    @Path("endpoints")
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable endpoints() {
+        return view("endpoints");
+    }
+
+    @GET
+    @Path("foo")
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable foo() {
+        return view("foo");
+    }
+
+/*
     @GET
     @Path("{view}")
     @Produces({MediaType.TEXT_HTML})
-    public Viewable get(@PathParam("view") String view) {
-        if (view == null || view.length() == 0) {
-            view = "index";
-        }
-        return new Viewable(view, this);
+    public Viewable genericView(@PathParam("view") String view) {
+        return view(view);
     }
+
+*/
+
+    @GET
+    @Path("routes")
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable routesView() {
+        return view("routes");
+    }
+
+
+    // XML / JSON representations
+    //-------------------------------------------------------------------------
+
 
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -104,7 +139,6 @@ public class CamelContextResource {
     /**
      * Looks up an individual endpoint
      */
-    @GET
     @Path("endpoint/{id}")
     public EndpointResource getEndpoint(@PathParam("id") String id) {
         // TODO lets assume the ID is the endpoint
@@ -123,6 +157,7 @@ public class CamelContextResource {
      */
     @GET
     @Path("routes")
+    @Produces({"application/xml", "application/json"})
     public RoutesType getRouteDefinitions() {
         RoutesType answer = new RoutesType();
         if (camelContext != null) {
@@ -131,5 +166,13 @@ public class CamelContextResource {
         }
         return answer;
     }
+
+    // Properties
+    //-------------------------------------------------------------------------
+    public List<RouteType> getRoutes() {
+        return getRouteDefinitions().getRoutes();
+    }
+
+
 
 }

@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,25 +17,30 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.rest.model.EndpointLink;
+import com.sun.jersey.api.view.Viewable;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
- * @version $Revision$
+ * A base class for any resource which is viewable in HTML
+ *
+ * @version $Revision: 1.1 $
  */
-public class EndpointResource extends ViewableResource {
+@Produces({MediaType.TEXT_HTML})
+public abstract class ViewableResource {
 
-    private final Endpoint endpoint;
-
-    public EndpointResource(Endpoint endpoint) {
-        this.endpoint = endpoint;
+    @GET
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable index() {
+        return view("index");
     }
 
-    public String getHref() {
-        return new EndpointLink(endpoint).getHref();
-    }
-
-    public String getUri() {
-        return endpoint.getEndpointUri();
+    protected Viewable view(String view) {
+        if (view == null || view.length() == 0) {
+            view = "index";
+        }
+        return new Viewable(view, this);
     }
 }
