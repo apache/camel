@@ -81,4 +81,9 @@ public class MethodCallExpression extends ExpressionType {
         }
         return getExpression();
     }
+
+    @Override
+    public String toString() {
+        return "bean{" + beanName() + (method != null ? ", method=" + method : "") + "}";
+    }
 }
