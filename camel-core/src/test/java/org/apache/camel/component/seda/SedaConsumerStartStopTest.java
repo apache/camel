@@ -43,9 +43,11 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
         executor.execute(new Runnable() {
             public void run() {
                 for (int i = 0; i < 20; i++) {
+                    // when this delay is removed, the seda endpoint has ordering issues
                     try {
                         // do some random sleep to simulate spread in user activity
-                        Thread.sleep(new Random().nextInt(10));
+                        // range is 5-15
+                        Thread.sleep(new Random().nextInt(10) + 5);
                     } catch (InterruptedException e) {
                         // ignore
                     }
@@ -74,7 +76,7 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
             if (i == 10) {
                 // stop while sending, and then start again to pickup what is left in the queue
                 consumer.stop();
-                Thread.sleep(1000);
+                Thread.sleep(900);
                 consumer.start();
             }
             // use 1000 as timeout otherwise we might get null if the consumer hasn't been started again
@@ -84,5 +86,4 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 }
