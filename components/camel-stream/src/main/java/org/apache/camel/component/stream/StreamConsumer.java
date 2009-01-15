@@ -81,10 +81,35 @@ public class StreamConsumer extends DefaultConsumer {
         Charset charset = endpoint.getCharset();
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
         String line;
-        while ((line = br.readLine()) != null) {
-            consumeLine(line);
+
+        boolean eos = false;
+        while (!eos) {
+            if (endpoint.getPromptMessage() != null) {
+                doPromptMessage();
+            }
+
+            line = br.readLine();
+            eos = line == null;
+            if (!eos) {
+                consumeLine(line);
+            }
         }
         // important: do not close the reader as it will close the standard system.in etc.
+    }
+
+    /**
+     * Strategy method for prompting the prompt message
+     */
+    protected void doPromptMessage() {
+        if (endpoint.getPromptDelay() > 0) {
+            try {
+                Thread.sleep(endpoint.getPromptDelay());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        System.out.print(endpoint.getPromptMessage());
     }
 
     private void consumeLine(Object line) throws Exception {
