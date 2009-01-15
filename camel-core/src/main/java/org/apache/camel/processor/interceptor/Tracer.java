@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.model.ProcessorType;
@@ -42,6 +43,7 @@ public class Tracer implements InterceptStrategy {
     private boolean traceExceptions = true;
     private boolean traceOutExchanges;
     private String destinationUri;
+    private Endpoint destination;
     private boolean useJpa;
 
     /**
@@ -173,6 +175,17 @@ public class Tracer implements InterceptStrategy {
      */
     public void setDestinationUri(String destinationUri) {
         this.destinationUri = destinationUri;
+    }
+
+    public Endpoint getDestination() {
+        return destination;
+    }
+
+    /**
+     * See {@link #setDestinationUri(String)}
+     */
+    public void setDestination(Endpoint destination) {
+        this.destination = destination;
     }
 
     public boolean isUseJpa() {

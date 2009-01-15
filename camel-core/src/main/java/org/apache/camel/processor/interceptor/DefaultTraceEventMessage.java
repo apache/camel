@@ -26,7 +26,7 @@ import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * Default JPA based {@link TraceEventMessage}.
+ * Default {@link TraceEventMessage}.
  */
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
 

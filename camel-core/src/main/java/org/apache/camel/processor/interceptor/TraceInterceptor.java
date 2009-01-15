@@ -23,6 +23,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.Endpoint;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
@@ -152,7 +153,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     protected void traceExchange(Exchange exchange) throws Exception {
         // should we send a trace event to an optional destination?
-        if (tracer.getDestinationUri() != null) {
+        if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {
             // create event and add it as a property on the original exchange
             TraceEventExchange event = new TraceEventExchange(exchange);
             Date timestamp = new Date();
@@ -163,7 +164,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
             // create event message to send in body
             TraceEventMessage msg = new DefaultTraceEventMessage(timestamp, node, exchange);
 
-            // should we use ordinay or jpa objects
+            // should we use ordinary or jpa objects
             if (tracer.isUseJpa()) {
                 LOG.trace("Using class: " + JPA_TRACE_EVENT_MESSAGE + " for tracing event messages");
 
@@ -173,7 +174,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                         jpaTraceEventMessageClass = ObjectHelper.loadClass(JPA_TRACE_EVENT_MESSAGE);
                         if (jpaTraceEventMessageClass == null) {
                             throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
-                                    + ". Make sure camel-jpa.jar is on the classpath.");
+                                    + ". Make sure camel-jpa.jar is in the classpath.");
                         }
                     }
                 }
@@ -249,7 +250,8 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private synchronized Producer getTraceEventProducer(Exchange exchange) throws Exception {
         if (traceEventProducer == null) {
             // create producer when we have access the the camel context (we dont in doStart)
-            traceEventProducer = exchange.getContext().getEndpoint(tracer.getDestinationUri()).createProducer();
+            Endpoint endpoint = tracer.getDestination() != null ? tracer.getDestination() : exchange.getContext().getEndpoint(tracer.getDestinationUri());
+            traceEventProducer = endpoint.createProducer();
             ServiceHelper.startService(traceEventProducer);
         }
         return traceEventProducer;
