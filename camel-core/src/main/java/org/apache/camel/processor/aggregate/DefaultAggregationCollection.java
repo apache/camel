@@ -56,6 +56,9 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     @Override
     public boolean add(Exchange exchange) {
         Object correlationKey = correlationExpression.evaluate(exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
+        }
         Exchange oldExchange = map.get(correlationKey);
         Exchange newExchange = exchange;
 
