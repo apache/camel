@@ -61,17 +61,6 @@ public final class Main {
         context.setContextPath(WEBAPP_CTX);
         context.setServer(server);
 
-        // lets find the class loader of JSTL
-/*
-        Class<?> stlVersion = Class.forName("org.apache.taglibs.standard.Version");
-        System.out.println("Found STL Version: " + stlVersion);
-        ClassLoader classLoader = stlVersion.getClassLoader();
-        context.setClassLoader(classLoader);
-*/
-
-
-        //Thread.currentThread().setContextClassLoader(classLoader);
-
         server.setHandlers(new Handler[] {context});
         server.setConnectors(new Connector[] {connector});
         server.start();
