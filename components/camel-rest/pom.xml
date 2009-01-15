@@ -33,8 +33,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.rest.*</camel.osgi.export.pkg>
-    <!--<jersey-version>1.0.1-ea-SNAPSHOT</jersey-version>-->
-    <!--<jersey-version>1.0.2-SNAPSHOT</jersey-version>-->
     <jersey-version>1.0.1</jersey-version>
     <jetty-port>8080</jetty-port>
   </properties>
@@ -57,18 +55,10 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
     <dependency>
-      <!--<groupId>com.sun.jersey</groupId>-->
       <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-spring</artifactId>
       <version>${jersey-version}</version>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-server</artifactId>
-          <version>${jersey-version}</version>
-        </dependency>
-    -->
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-json</artifactId>
@@ -119,20 +109,7 @@
         <version>1.1.2</version>
     </dependency>
 
-    <!-- enable commons-logging when inside jetty6:run -->
-    <!--
-    <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>jcl104-over-slf4j</artifactId>
-        <version>1.5.0</version>
-    </dependency>
-    -->
-    <!--
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-jcl</artifactId>
-        </dependency>
-    -->
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -141,14 +118,6 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
-
-    <!--
-        <dependency>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-web</artifactId>
-          <scope>test</scope>
-        </dependency>
-    -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -236,25 +205,6 @@
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
         </configuration>
-        <!--
-                <dependencies>
-                  <dependency>
-                    <groupId>log4j</groupId>
-                    <artifactId>log4j</artifactId>
-                    <version>${log4j-version}</version>
-                  </dependency>
-                  <dependency>
-                    <groupId>javax.servlet</groupId>
-                    <artifactId>jstl</artifactId>
-                    <version>1.2</version>
-                  </dependency>
-                  <dependency>
-                    <groupId>taglibs</groupId>
-                    <artifactId>standard</artifactId>
-                    <version>1.1.2</version>
-                  </dependency>
-                </dependencies>
-        -->
       </plugin>
 
       <plugin>
