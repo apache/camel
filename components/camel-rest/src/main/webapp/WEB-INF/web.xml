@@ -15,11 +15,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-
 <web-app xmlns="http://java.sun.com/xml/ns/j2ee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee
-         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd"
          version="2.4">
 
   <description>
@@ -62,23 +60,23 @@
       <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
       <param-value>org.apache.camel.rest.util.CamelResourceConfig</param-value>
     </init-param>
-<!--
-    <init-param>
-      <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
-      <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
-    </init-param>
--->
+    <!--
+        <init-param>
+          <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
+          <param-value>com.sun.jersey.api.core.PackagesResourceConfig</param-value>
+        </init-param>
+    -->
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
       <param-value>org.apache.camel.rest</param-value>
     </init-param>
     <init-param>
-        <param-name>com.sun.jersey.config.feature.Redirect</param-name>
-        <param-value>true</param-value>
+      <param-name>com.sun.jersey.config.feature.Redirect</param-name>
+      <param-value>true</param-value>
     </init-param>
     <init-param>
-        <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
-        <param-value>true</param-value>
+      <param-name>com.sun.jersey.config.feature.ImplicitViewables</param-name>
+      <param-value>true</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
@@ -86,4 +84,18 @@
     <url-pattern>/</url-pattern>
   </servlet-mapping>
 
+
+<!--
+  <welcome-file-list>
+    <welcome-file>index.html</welcome-file>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+-->
+
+  <jsp-config>
+    <jsp-property-group>
+      <url-pattern>*.jsp</url-pattern>
+      <include-prelude>/WEB-INF/jspf/header.jspf</include-prelude>
+    </jsp-property-group>
+  </jsp-config>
 </web-app>

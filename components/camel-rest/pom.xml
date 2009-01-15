@@ -33,7 +33,9 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.rest.*</camel.osgi.export.pkg>
-    <jersey-version>1.0-ea-SNAPSHOT</jersey-version>
+    <!--<jersey-version>1.0.1-ea-SNAPSHOT</jersey-version>-->
+    <!--<jersey-version>1.0.2-SNAPSHOT</jersey-version>-->
+    <jersey-version>1.0.1</jersey-version>
     <jetty-port>8080</jetty-port>
   </properties>
 
@@ -55,10 +57,18 @@
       <artifactId>camel-spring</artifactId>
     </dependency>
     <dependency>
-      <groupId>com.sun.jersey</groupId>
+      <!--<groupId>com.sun.jersey</groupId>-->
+      <groupId>com.sun.jersey.contribs</groupId>
       <artifactId>jersey-spring</artifactId>
       <version>${jersey-version}</version>
     </dependency>
+    <!--
+        <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-server</artifactId>
+          <version>${jersey-version}</version>
+        </dependency>
+    -->
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-json</artifactId>
@@ -77,6 +87,7 @@
       <version>${jersey-version}</version>
       <scope>test</scope>
     </dependency>
+
     <!-- web container -->
     <dependency>
       <groupId>org.mortbay.jetty</groupId>
@@ -96,6 +107,18 @@
       <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>javax.servlet</groupId>
+        <artifactId>jstl</artifactId>
+        <version>1.1.2</version>
+        <scope>compile</scope>
+    </dependency>
+    <dependency>
+        <groupId>taglibs</groupId>
+        <artifactId>standard</artifactId>
+        <version>1.1.2</version>
+    </dependency>
+
     <!-- enable commons-logging when inside jetty6:run -->
     <!--
     <dependency>
@@ -119,6 +142,13 @@
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
+    <!--
+        <dependency>
+          <groupId>org.springframework</groupId>
+          <artifactId>spring-web</artifactId>
+          <scope>test</scope>
+        </dependency>
+    -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
@@ -152,14 +182,17 @@
     <plugins>
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.4.3</version>
         <configuration>
-          <forkMode>pertest</forkMode>
+          <forkMode>once</forkMode>
+          <!-- these settings are mandatory to avoid SureFire giving a bogus system property to the web container -->
+          <useSystemClassLoader>false</useSystemClassLoader>
+          <useManifestOnlyJar>false</useManifestOnlyJar>
           <includes>
             <include>**/*Test.*</include>
           </includes>
           <excludes>
             <!-- TODO FIXME ASAP -->
-            <exclude>**/EndpointsHtmlTest.*</exclude>
             <exclude>**/RoutesTest.*</exclude>
           </excludes>
         </configuration>
@@ -203,25 +236,27 @@
           </systemProperties>
           <scanIntervalSeconds>10</scanIntervalSeconds>
         </configuration>
-        <dependencies>
-          <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>${log4j-version}</version>
-          </dependency>
-          <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-            <version>1.2</version>
-          </dependency>
-          <dependency>
-            <groupId>taglibs</groupId>
-            <artifactId>standard</artifactId>
-            <version>1.1.2</version>
-          </dependency>
-        </dependencies>
+        <!--
+                <dependencies>
+                  <dependency>
+                    <groupId>log4j</groupId>
+                    <artifactId>log4j</artifactId>
+                    <version>${log4j-version}</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>jstl</artifactId>
+                    <version>1.2</version>
+                  </dependency>
+                  <dependency>
+                    <groupId>taglibs</groupId>
+                    <artifactId>standard</artifactId>
+                    <version>1.1.2</version>
+                  </dependency>
+                </dependencies>
+        -->
       </plugin>
-      
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -245,7 +280,7 @@
           <doclet>com.sun.jersey.wadl.resourcedoc.ResourceDoclet</doclet>
           <docletArtifacts>
             <docletArtifact>
-              <groupId>com.sun.jersey</groupId>
+              <groupId>com.sun.jersey.contribs</groupId>
               <artifactId>maven-wadl-plugin</artifactId>
               <version>${jersey-version}</version>
             </docletArtifact>
@@ -310,50 +345,50 @@
         </executions>
       </plugin>
     </plugins>
-    
+
     <pluginManagement>
       <plugins>
-          <plugin>
-            <groupId>com.sun.tools.jxc.maven2</groupId>
-            <artifactId>maven-jaxb-schemagen-plugin</artifactId>
-            <executions>
-              <execution>
-                <phase>process-sources</phase>
-                <configuration>
-                  <destdir>${project.build.directory}/schema</destdir>
-                  <srcdir>src/main/java/org/apache/camel/rest/model</srcdir>
-                  <schemas>
-                    <schema>
-                      <namespace>http://activemq.apache.org/camel/schema/rest</namespace>
-                      <file>camel-rest.xsd</file>
-                    </schema>
-                  </schemas>
-                  <!--<verbose>false</verbose>-->
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-dependency-plugin</artifactId>
-            <configuration>
-              <artifactItems>
-                <artifactItem>
-                  <groupId>org.apache.camel</groupId>
-                  <artifactId>camel-rest</artifactId>
-                  <version>${pom.version}</version>
-                  <type>xsd</type>
-                  <overWrite>false</overWrite>
-                  <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                  <destFileName>camel-rest.xsd</destFileName>
-                </artifactItem>
-              </artifactItems>
-            </configuration>
-          </plugin>
+        <plugin>
+          <groupId>com.sun.tools.jxc.maven2</groupId>
+          <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+          <executions>
+            <execution>
+              <phase>process-sources</phase>
+              <configuration>
+                <destdir>${project.build.directory}/schema</destdir>
+                <srcdir>src/main/java/org/apache/camel/rest/model</srcdir>
+                <schemas>
+                  <schema>
+                    <namespace>http://activemq.apache.org/camel/schema/rest</namespace>
+                    <file>camel-rest.xsd</file>
+                  </schema>
+                </schemas>
+                <!--<verbose>false</verbose>-->
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-dependency-plugin</artifactId>
+          <configuration>
+            <artifactItems>
+              <artifactItem>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-rest</artifactId>
+                <version>${pom.version}</version>
+                <type>xsd</type>
+                <overWrite>false</overWrite>
+                <outputDirectory>${project.build.directory}/schema</outputDirectory>
+                <destFileName>camel-rest.xsd</destFileName>
+              </artifactItem>
+            </artifactItems>
+          </configuration>
+        </plugin>
       </plugins>
-    </pluginManagement>    
+    </pluginManagement>
   </build>
-  
+
   <profiles>
     <!-- The next three profiles are used to bypass the schemagen plugin on HP and IBM JDKs.
 
@@ -403,14 +438,14 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>                  
+          </plugin>
           <plugin>
             <groupId>com.sun.tools.jxc.maven2</groupId>
             <artifactId>maven-jaxb-schemagen-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
-    </profile>    
+    </profile>
     <profile>
       <id>on-hpjdk</id>
       <activation>
@@ -433,13 +468,13 @@
                 </goals>
               </execution>
             </executions>
-          </plugin>                          
+          </plugin>
           <plugin>
             <groupId>com.sun.tools.jxc.maven2</groupId>
             <artifactId>maven-jaxb-schemagen-plugin</artifactId>
           </plugin>
         </plugins>
       </build>
-    </profile>        
-  </profiles>  
+    </profile>
+  </profiles>
 </project>

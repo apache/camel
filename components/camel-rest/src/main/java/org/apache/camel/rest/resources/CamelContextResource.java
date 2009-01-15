@@ -17,21 +17,24 @@
 package org.apache.camel.rest.resources;
 
 
-import java.util.List;
+import com.sun.jersey.spi.inject.Inject;
+import com.sun.jersey.spi.resource.Singleton;
+import com.sun.jersey.api.view.Viewable;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.rest.model.Camel;
+import org.apache.camel.rest.model.EndpointLink;
+import org.apache.camel.rest.model.Endpoints;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
-import com.sun.jersey.spi.inject.Inject;
-import com.sun.jersey.spi.resource.Singleton;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
-import org.apache.camel.rest.model.Endpoints;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
+//import static org.apache.camel.rest.resources.Constants.*;
 
 /**
  * The resource for the CamelContext
@@ -40,7 +43,6 @@ import org.apache.camel.rest.model.Endpoints;
  */
 @Path("/")
 @Singleton
-@Produces({"text/html", "application/xml", "application/json"})
 public class CamelContextResource {
 
     private final CamelContext camelContext;
@@ -57,6 +59,46 @@ public class CamelContextResource {
         return camelContext.getName();
     }
 
+/*
+    @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML,
+            MediaType.WILDCARD, //MediaType.MEDIA_TYPE_WILDCARD,
+            MediaType.APPLICATION_OCTET_STREAM, MediaType.TEXT_PLAIN})
+*/
+
+
+    @GET
+    @Path("{view}")
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable get(@PathParam("view") String view) {
+        if (view == null || view.length() == 0) {
+            view = "index";
+        }
+        return new Viewable(view, this);
+    }
+
+/*
+    @GET
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable getIndexView() {
+        return new Viewable("index", this);
+    }
+
+    @GET
+    @Path("endpoints")
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable getEndpointsView() {
+        return new Viewable("endpoints", this);
+    }
+*/
+
+
+    @GET
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public Camel getCamel() {
+        return new Camel(camelContext);
+    }
+
+
     /**
      * Returns a list of endpoints available in this context
      *
@@ -64,9 +106,23 @@ public class CamelContextResource {
      */
     @GET
     @Path("endpoints")
-    public Endpoints getEndpoint() {
+    @Produces({"application/xml", "application/json"})
+    public Endpoints getEndpointsDTO() {
         return new Endpoints(camelContext);
     }
+
+    public List<EndpointLink> getEndpoints() {
+        return getEndpointsDTO().getEndpoints();
+    }
+
+/*
+    @GET
+    @Path("endpoints")
+    @Produces({"text/html"})
+    public List<EndpointLink> getEndpoints() {
+        return getEndpointsDTO().getEndpoints();
+    }
+*/
 
     /**
      * Looks up an individual endpoint
