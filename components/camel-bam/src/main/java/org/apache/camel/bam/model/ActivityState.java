@@ -24,11 +24,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.apache.camel.bam.processor.ProcessContext;
 import org.apache.camel.bam.rules.ActivityRules;
