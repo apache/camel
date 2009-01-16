@@ -62,7 +62,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     private Client client;
     private DataFormat dataFormat;
 
-    public CxfProducer(CxfEndpoint endpoint) throws CamelException {
+    public CxfProducer(CxfEndpoint endpoint) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
         dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
@@ -74,21 +74,14 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         }
     }
 
-    private Client createClientForStreamMessage() throws CamelException {
+    private Client createClientForStreamMessage() throws Exception {
         CxfClientFactoryBean cfb = new CxfClientFactoryBean();
         Class serviceClass = null;
-        if (endpoint.isSpringContextEndpoint()) {
-            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
-            serviceClass = cxfEndpointBean.getServiceClass();
-            CxfEndpointUtils.checkServiceClass(serviceClass);
-        } else {
-            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
-            try {
-                serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
-            } catch (ClassNotFoundException e) {
-                throw new CamelException(e);
-            }
-        }
+        try {
+            serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
+        } catch (ClassNotFoundException e) {
+            throw new CamelException(e);
+        }       
         
         boolean jsr181Enabled = CxfEndpointUtils.hasWebServiceAnnotation(serviceClass);
         cfb.setJSR181Enabled(jsr181Enabled);
@@ -98,7 +91,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
     }
 
     // If cfb is null, we will try to find the right cfb to use.
-    private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws CamelException {
+    private Client createClientFromClientFactoryBean(ClientProxyFactoryBean cfb) throws Exception {
         Bus bus = null;
         if (endpoint.getApplicationContext() != null) {            
             bus = endpoint.getCxfEndpointBean().getBus();
@@ -109,38 +102,29 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             // now we just use the default bus here
             bus = BusFactory.getThreadDefaultBus();
         }
-        if (endpoint.isSpringContextEndpoint()) {
-            CxfEndpointBean cxfEndpointBean = endpoint.getCxfEndpointBean();
-            CxfEndpointUtils.checkServiceClass(cxfEndpointBean.getServiceClass());
-            if (cfb == null) {
-                cfb = CxfEndpointUtils.getClientFactoryBean(cxfEndpointBean.getServiceClass());
-            }
+        
+        Class serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
+        // We need to choose the right front end to create the clientFactoryBean        
+        if (cfb == null) {
+            cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
+        }
+        
+        if (endpoint.isSpringContextEndpoint()) {            
             endpoint.configure(cfb);
-
         } else { // set up the clientFactoryBean by using URI information
-            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
-            try {
-                // We need to choose the right front end to create the
-                // clientFactoryBean
-                Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
-                if (cfb == null) {
-                    cfb = CxfEndpointUtils.getClientFactoryBean(serviceClass);
-                }
-                cfb.setAddress(endpoint.getAddress());
-                if (null != endpoint.getServiceClass()) {
-                    cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
-                }
-                if (null != endpoint.getWsdlURL()) {
-                    cfb.setWsdlURL(endpoint.getWsdlURL());
-                }
-            } catch (ClassNotFoundException e) {
-                throw new CamelException(e);
+            cfb.setAddress(endpoint.getAddress());
+            if (null != endpoint.getServiceClass()) {
+                cfb.setServiceClass(ObjectHelper.loadClass(endpoint.getServiceClass()));
             }
-            
+            if (null != endpoint.getWsdlURL()) {
+                cfb.setWsdlURL(endpoint.getWsdlURL());
+            }
+
             if (endpoint.getWsdlURL() != null) {
                 cfb.setWsdlURL(endpoint.getWsdlURL());
             }
         }
+        cfb.setServiceClass(serviceClass);
         
         if (CxfEndpointUtils.getServiceName(endpoint) != null) {
             cfb.setServiceName(CxfEndpointUtils.getServiceName(endpoint));

@@ -51,6 +51,9 @@
       	<entry key="endpointNamespace" value="http://www.example.com/test"/>
     </cxf:properties>
    </cxf:cxfEndpoint>
-
-
+   
+  <cxf:cxfEndpoint id="helloServiceEndpoint" address="http://localhost:9004/helloworld"
+  />
+    
+  <bean id="helloServiceImpl" class="org.apache.camel.component.cxf.HelloServiceImpl" />
 </beans>

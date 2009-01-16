@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
+import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class CxfEndpointUtilsTest extends TestCase {
@@ -60,7 +61,7 @@ public class CxfEndpointUtilsTest extends TestCase {
     protected CxfEndpoint createEndpoint(String uri) throws Exception {
         CamelContext context = getCamelContext();
         return (CxfEndpoint)new CxfComponent(context).createEndpoint(uri);
-    }
+    }      
 
     public void testGetProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI());
@@ -77,11 +78,11 @@ public class CxfEndpointUtilsTest extends TestCase {
     public void testCheckServiceClassWithTheEndpoint() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
-            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
+            CxfEndpointUtils.getServiceClass(endpoint);
             fail("Should get a CamelException here");
-        } catch (CamelException exception) {
-            assertNotNull("Should get a CamelException here", exception);
-            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        } catch (ClassNotFoundException exception) {
+            assertNotNull("Should get a ClassNotFoundExceptionException here", exception);
+            assertEquals("Can't find serviceClass from uri, please check the cxf endpoint configuration", exception.getMessage());
         }
     }
 
@@ -89,9 +90,9 @@ public class CxfEndpointUtilsTest extends TestCase {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
             endpoint.createProducer();
-        } catch (CamelException exception) {
-            assertNotNull("Should get a CamelException here", exception);
-            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        } catch (ClassNotFoundException exception) {
+            assertNotNull("Should get a ClassNotFoundException here", exception);
+            assertEquals("Can't find serviceClass from uri, please check the cxf endpoint configuration", exception.getMessage());
         }
     }
 
@@ -99,9 +100,9 @@ public class CxfEndpointUtilsTest extends TestCase {
         CxfEndpoint endpoint = createEndpoint(getNoServiceClassURI());
         try {
             endpoint.createConsumer(new NullProcessor());
-        } catch (CamelException exception) {
-            assertNotNull("Should get a CamelException here", exception);
-            assertEquals("serviceClass is required for CXF endpoint configuration", exception.getMessage());
+        } catch (ClassNotFoundException exception) {
+            assertNotNull("Should get a ClassNotFoundException here", exception);
+            assertEquals("Can't find serviceClass from uri, please check the cxf endpoint configuration", exception.getMessage());
         }
     }
 
