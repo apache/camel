@@ -39,7 +39,7 @@
     <route>
       <from uri="seda:b"/>
       <delay>
-        <languageExpression/>
+        <language/>  
         <delayTime>3000</delayTime>
       </delay>
       <to uri="mock:result"/>
