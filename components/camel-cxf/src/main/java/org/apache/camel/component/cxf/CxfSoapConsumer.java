@@ -26,9 +26,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.NullConduit;
 import org.apache.camel.component.cxf.util.NullDestinationFactory;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.InterceptorChain;
@@ -64,7 +66,10 @@ public class CxfSoapConsumer implements Consumer {
                     }
                 });
         this.consumer = endpoint.getInnerEndpoint().createConsumer(soapProcessor);
-        Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
+        Class sei = null; 
+        if (ObjectHelper.isNotEmpty(endpoint.getServiceClass())) {
+            sei = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+        }
         ServerFactoryBean sfb = CxfEndpointUtils.getServerFactoryBean(sei);
         sfb.setWsdlURL(endpoint.getWsdl().getURL().toString());
         if (endpoint.getServiceName() != null) {
