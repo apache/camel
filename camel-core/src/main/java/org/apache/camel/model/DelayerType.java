@@ -18,7 +18,7 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
@@ -37,7 +37,7 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DelayerType extends ExpressionNode {
-    @XmlElement
+    @XmlAttribute
     private Long delayTime = 0L;
 
     public DelayerType() {
@@ -51,19 +51,24 @@ public class DelayerType extends ExpressionNode {
         super(processAtExpression);
     }
 
-    public DelayerType(Expression processAtExpression, long delay) {
+    public DelayerType(Expression processAtExpression, long delayTime) {
         super(processAtExpression);
-        this.delayTime = delay;
+        this.delayTime = delayTime;
     }
 
     @Override
     public String toString() {
-        return "Delayer[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Delayer[on: " + getExpression() + " delay: " + delayTime + " -> " + getOutputs() + "]";
     }
     
     // Fluent API
     // -------------------------------------------------------------------------
-    
+
+    /**
+     * Sets the delay time in millis to delay
+     * @param delay delay time in millis
+     * @return the builder
+     */
     public DelayerType delayTime(Long delay) {
         setDelayTime(delay);
         return this;
@@ -86,8 +91,8 @@ public class DelayerType extends ExpressionNode {
         return delayTime;
     }
 
-    public void setDelayTime(Long delay) {
-        this.delayTime = delay;
+    public void setDelayTime(Long delayTime) {
+        this.delayTime = delayTime;
     }   
     
 
