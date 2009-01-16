@@ -7,8 +7,9 @@ It can be run using Maven or Ant.
 You will need to compile this example first:
   mvn compile
   
-For a background in BAM see
+For a background in tracer and JPA see
   http://activemq.apache.org/camel/tracer.html
+  http://activemq.apache.org/camel/jpa.html
 
 To run the example with Maven, type
   mvn camel:run
@@ -67,7 +68,7 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/tracer-example.html
+  http://activemq.apache.org/camel/tracer.html
 
 If you hit any problems please let us know on the Camel Forums
   http://activemq.apache.org/camel/discussion-forums.html

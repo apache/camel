@@ -42,12 +42,6 @@
             <artifactId>camel-stream</artifactId>
         </dependency>
 
-        <!-- JpaTraceEventMessage have been enhanced by openjpa so we reuse it -->
-        <!--dependency>
-            <groupId>org.apache.openjpa</groupId>
-            <artifactId>openjpa-persistence-jdbc</artifactId>
-        </dependency-->
-
         <!-- lets use log4j -->
         <dependency>
             <groupId>commons-logging</groupId>
@@ -83,7 +77,6 @@
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
         </dependency>
-
 
         <!-- testing -->
         <dependency>
