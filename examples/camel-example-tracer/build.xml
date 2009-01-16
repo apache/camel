@@ -30,6 +30,7 @@
   <path id="sample.build.classpath">
     <fileset dir="${camel.lib}">
       <include name="**/camel-jpa-*.jar"/>
+      <include name="**/camel-stream-*.jar"/>
       <include name="**/commons-collections-*.jar"/>
       <exclude name="**/*-tests.jar"/>
     </fileset>

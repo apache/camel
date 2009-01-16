@@ -19,11 +19,12 @@ package org.apache.camel.example.tracer;
 /**
  * To start the application from ANT
  */
-public class Main {
+public final class Main {
 
     private Main() {
         // do nothing here
     }
+    
     public static void main(String[] args) {
         org.apache.camel.spring.Main.main(args);
     }
