@@ -33,9 +33,11 @@ import org.apache.camel.component.cxf.util.Dummy;
 import org.apache.camel.component.cxf.util.NullConduit;
 import org.apache.camel.component.cxf.util.NullConduitSelector;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxy;
@@ -77,7 +79,10 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
                 });
 
         //create the endpoint and setup the interceptors
-        Class sei = CxfEndpointUtils.getSEIClass(endpoint.getServiceClass());
+        Class sei = null; 
+        if (ObjectHelper.isNotEmpty(endpoint.getServiceClass())) {
+            sei = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
+        }
         ClientProxyFactoryBean cfb = CxfEndpointUtils.getClientFactoryBean(sei);
         if (sei == null) {
             cfb.setServiceClass(Dummy.class);

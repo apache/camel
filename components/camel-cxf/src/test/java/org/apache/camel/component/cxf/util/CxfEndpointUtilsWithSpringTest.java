@@ -21,6 +21,7 @@ import javax.xml.namespace.QName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
+import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -59,6 +60,13 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
 
     protected String getNoServiceClassURI() {
         return "cxf:bean:noServiceClassEndpoint";
+    }
+    
+    public void testGetServiceClass() throws Exception {
+        CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClassInstance=helloServiceImpl");        
+        Class clazz = CxfEndpointUtils.getServiceClass(endpoint);
+        assertNotNull("The service calss should not be null ", clazz);
+        assertTrue("The service class should be the instance of HelloServiceImpl", clazz.equals(HelloServiceImpl.class));
     }
 
     public void testGetDataFormat() throws Exception {
