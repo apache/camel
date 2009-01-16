@@ -43,6 +43,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     private String serviceName;
     private String dataFormat;
     private String beanId;
+    private String serviceClassInstance;
     private boolean isWrapped;
     private boolean isSpringContextEndpoint;
     private boolean inOut = true;
@@ -124,11 +125,18 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
 
     public String getServiceClass() {
         return serviceClass;
-
     }
 
-    public void setServiceClass(String className) {
+    public void setServiceClass(String className) {        
         serviceClass = className;
+    }
+    
+    public String getServiceClassInstance() {
+        return serviceClassInstance;
+    }
+    
+    public void setServiceClassInstance(String classInstance) {
+        serviceClassInstance = classInstance;
     }
 
     public void setPortName(String port) {

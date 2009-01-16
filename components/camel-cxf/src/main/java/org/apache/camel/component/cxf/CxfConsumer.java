@@ -55,27 +55,22 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
             // now we just use the default bus here
             bus = BusFactory.getThreadDefaultBus();
         }
-        ServerFactoryBean svrBean = null;
-
+        
+        Class serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
+        ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
+        isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass,
+                                                              WebServiceProvider.class);
+        
         if (endpoint.isSpringContextEndpoint()) {
-            CxfEndpointBean endpointBean = endpoint.getCxfEndpointBean();
-            CxfEndpointUtils.checkServiceClass(endpointBean.getServiceClass());
-            svrBean = CxfEndpointUtils.getServerFactoryBean(endpointBean.getServiceClass());
-            isWebServiceProvider = CxfEndpointUtils.hasAnnotation(endpointBean.getServiceClass(),
-                                                                  WebServiceProvider.class);
             endpoint.configure(svrBean);
-
         } else { // setup the serverFactoryBean with the URI parameters
-            CxfEndpointUtils.checkServiceClassName(endpoint.getServiceClass());
-            Class serviceClass = ClassLoaderUtils.loadClass(endpoint.getServiceClass(), this.getClass());
-            svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
-            isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass, WebServiceProvider.class);
-            svrBean.setAddress(endpoint.getAddress());
-            svrBean.setServiceClass(serviceClass);            
+            svrBean.setAddress(endpoint.getAddress());                       
             if (endpoint.getWsdlURL() != null) {
                 svrBean.setWsdlURL(endpoint.getWsdlURL());
             }
         }
+        
+        svrBean.setServiceClass(serviceClass);
         
         if (CxfEndpointUtils.getServiceName(endpoint) != null) {
             svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));

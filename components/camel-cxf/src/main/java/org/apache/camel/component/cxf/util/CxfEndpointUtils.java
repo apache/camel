@@ -25,6 +25,7 @@ import javax.jws.WebService;
 import javax.xml.namespace.QName;
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.component.cxf.CxfConstants;
 import org.apache.camel.component.cxf.CxfEndpoint;
@@ -35,6 +36,7 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.i18n.Message;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -71,6 +73,31 @@ public final class CxfEndpointUtils {
             }
         }
         return qName;
+    }
+    
+    public static Class getServiceClass(CxfEndpoint cxfEndpoint) throws ClassNotFoundException {
+        Class<?> answer = null;
+        if (cxfEndpoint.isSpringContextEndpoint()) {
+            answer = cxfEndpoint.getCxfEndpointBean().getServiceClass();
+            if (answer != null) {
+                return answer;
+            }
+        }
+        if (cxfEndpoint.getServiceClassInstance() != null) {        
+            Object bean = cxfEndpoint.getCamelContext().getRegistry().lookup(cxfEndpoint.getServiceClassInstance());
+            if (bean != null) {
+                answer = ClassHelper.getRealClass(bean);
+            } else {
+                throw new ClassNotFoundException("Can't find serviceClass instace with name" + cxfEndpoint.getServiceClassInstance() + " from CamelContext registry.");
+            }
+        } else {
+            if (ObjectHelper.isNotEmpty(cxfEndpoint.getServiceClass())) {
+                answer = ClassLoaderUtils.loadClass(cxfEndpoint.getServiceClass(), CxfEndpointUtils.class);
+            } else {
+                throw new ClassNotFoundException("Can't find serviceClass from uri, please check the cxf endpoint configuration");
+            }
+        }
+        return answer;
     }
 
     public static QName getPortName(final CxfEndpoint endpoint) {
@@ -116,15 +143,7 @@ public final class CxfEndpointUtils {
         }
 
         return endpointInfo;
-    }
-
-    public static Class getSEIClass(String className) throws ClassNotFoundException {
-        if (className == null) {
-            return null;
-        } else {
-            return ClassLoaderUtils.loadClass(className, CxfEndpointUtils.class);
-        }
-    }
+    }   
 
     public static boolean hasWebServiceAnnotation(Class<?> cls) {
         return hasAnnotation(cls, WebService.class) || hasAnnotation(cls, WebServiceProvider.class);
@@ -255,19 +274,8 @@ public final class CxfEndpointUtils {
         } else { // return the default value false
             return false;
         }
-    }
+    }   
 
-    public static void checkServiceClass(Class clazz) throws CamelException {
-        if (clazz == null) {
-            throw new CamelException("serviceClass is required for CXF endpoint configuration");
-        }
-    }
-
-    public static void checkServiceClassName(String className) throws CamelException {
-        if (ObjectHelper.isNullOrBlank(className)) {
-            throw new CamelException("serviceClass is required for CXF endpoint configuration");
-        }
-    }
     
     public static String getCxfEndpointPropertyValue(CxfEndpoint endpoint, String property) {
         String result = null;

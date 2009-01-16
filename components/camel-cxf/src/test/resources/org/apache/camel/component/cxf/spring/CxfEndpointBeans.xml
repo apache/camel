@@ -31,5 +31,4 @@
   <cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
 
-
 </beans>
