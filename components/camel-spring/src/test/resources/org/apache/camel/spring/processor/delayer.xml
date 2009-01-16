@@ -21,30 +21,27 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
-  <!-- 
-      from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
-      from("seda:b").delayer(3000).to("mock:result");
-  -->
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel"
-    xmlns="http://activemq.apache.org/camel/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <delay>      
-        <simple>header.JMSTimestamp</simple>
-        <delayTime>3000</delayTime>
-      </delay>
-      <to uri="mock:result"/>
-    </route>
-    <route>
-      <from uri="seda:b"/>
-      <delay>
-        <language/>  
-        <delayTime>3000</delayTime>
-      </delay>
-      <to uri="mock:result"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!--
+        from("seda:a").delayer(header("JMSTimestamp"), 3000).to("mock:result");
+        from("seda:b").delayer(3000).to("mock:result");
+    -->
+    <!-- START SNIPPET: example -->
+    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <delay delayTime="3000">
+                <simple>header.JMSTimestamp</simple>
+            </delay>
+            <to uri="mock:result"/>
+        </route>
+        <route>
+            <from uri="seda:b"/>
+            <delay delayTime="3000">
+                <language/>
+            </delay>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>
