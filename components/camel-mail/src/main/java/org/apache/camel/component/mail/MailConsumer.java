@@ -109,8 +109,13 @@ public class MailConsumer extends ScheduledPollConsumer<MailExchange> {
             }
         } finally {
             // need to ensure we release resources
-            if (folder.isOpen()) {
-                folder.close(true);
+            try {
+                if (folder.isOpen()) {
+                    folder.close(true);
+                }
+            } catch (MessagingException e) {
+                // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
+                LOG.debug("Could not close mailbox folder: " + folder.getName(), e);
             }
         }
     }
