@@ -16,11 +16,11 @@
  */
 package org.apache.camel.rest.resources;
 
+import java.util.List;
+
 import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
-
-import java.util.List;
 
 /**
  * @version $Revision$

@@ -18,6 +18,7 @@ package org.apache.camel.rest.util;
 
 
 
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,9 +30,9 @@ import com.sun.jersey.api.json.JSONJAXBContext;
 
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
+import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
-import org.apache.camel.rest.model.Camel;
 
 /**
  * @version $Revision$
