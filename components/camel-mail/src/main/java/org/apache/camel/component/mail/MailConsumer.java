@@ -25,7 +25,6 @@ import javax.mail.Store;
 import javax.mail.search.FlagTerm;
 
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -110,8 +109,13 @@ public class MailConsumer extends ScheduledPollConsumer {
             }
         } finally {
             // need to ensure we release resources
-            if (folder.isOpen()) {
-                folder.close(true);
+            try {
+                if (folder.isOpen()) {
+                    folder.close(true);
+                }
+            } catch (MessagingException e) {
+                // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
+                LOG.debug("Could not close mailbox folder: " + folder.getName(), e);
             }
         }
     }
