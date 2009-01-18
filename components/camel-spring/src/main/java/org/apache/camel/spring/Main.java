@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
@@ -125,7 +124,6 @@ public class Main extends MainSupport {
 
     @Override
     public void enableTrace() {
-        // TODO
         super.enableTrace();
         setParentApplicationContextUri("/META-INF/services/org/apache/camel/spring/trace.xml");
     }
@@ -187,9 +185,18 @@ public class Main extends MainSupport {
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
+        LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
         applicationContext.start();
 
         postProcessContext();
+    }
+
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (applicationContext != null) {
+            LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
+            applicationContext.close();
+        }
     }
 
     protected ProducerTemplate findOrCreateCamelTemplate() {
@@ -215,7 +222,7 @@ public class Main extends MainSupport {
                 return new FileSystemXmlApplicationContext(args);
             }
         }
-        
+
         // default to classpath based
         String[] args = getApplicationContextUri().split(";");
         ApplicationContext parentContext = getParentApplicationContext();
@@ -223,14 +230,6 @@ public class Main extends MainSupport {
             return new ClassPathXmlApplicationContext(args, parentContext);
         } else {
             return new ClassPathXmlApplicationContext(args);
-        }
-    }
-
-    protected void doStop() throws Exception {
-        LOG.info("Apache Camel terminating");
-
-        if (applicationContext != null) {
-            applicationContext.close();
         }
     }
 
