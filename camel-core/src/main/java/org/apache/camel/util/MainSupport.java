@@ -187,8 +187,6 @@ public abstract class MainSupport extends ServiceSupport {
     /**
      * Sets the duration to run the application for in milliseconds until it
      * should be terminated. Defaults to -1. Any value <= 0 will run forever.
-     *
-     * @param duration
      */
     public void setDuration(long duration) {
         this.duration = duration;
@@ -266,6 +264,12 @@ public abstract class MainSupport extends ServiceSupport {
         return null;
     }
 
+    protected void doStop() throws Exception {
+        LOG.info("Apache Camel " + getVersion() + " stopping");
+        // call completed to properly stop as we count down the waiting latch
+        completed();
+    }
+
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " starting");
     }
@@ -282,7 +286,7 @@ public abstract class MainSupport extends ServiceSupport {
                     latch.await();
                 }
             } catch (InterruptedException e) {
-                LOG.debug("Caught: " + e);
+                Thread.currentThread().interrupt();
             }
         }
     }
