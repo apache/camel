@@ -19,7 +19,7 @@
   <route>
     <from uri="seda:a"/>
     <filter>
-      <expression language="juel">in.header.foo == 'bar'</expression>
+      <language language="juel">in.header.foo == 'bar'</language>
       <process ref="myProcessor"/>
     </filter>
   </route>
