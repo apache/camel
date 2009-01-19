@@ -116,11 +116,6 @@ public final class IOConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(String text) {
-        return toInputStream(text, null);
-    }
-    
-    @Converter
     public static InputStream toInputStream(String text, Exchange exchange) {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
@@ -135,11 +130,6 @@ public final class IOConverter {
         return toInputStream(text.getBytes());
     }
     
-    @Converter
-    public static InputStream toInputStream(BufferedReader buffer) throws IOException {
-        return toInputStream(toString(buffer), null);
-    }
-
     @Converter
     public static InputStream toInputStream(BufferedReader buffer, Exchange exchange) throws IOException {
         return toInputStream(toString(buffer), exchange);
