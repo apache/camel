@@ -110,7 +110,7 @@ public class JettyHttpComponent extends HttpComponent {
     public void connect(HttpConsumer consumer) throws Exception {
         // Make sure that there is a connector for the requested endpoint.
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint)consumer.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
+        String connectorKey = getConnectorKey(endpoint);
 
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);
@@ -167,8 +167,8 @@ public class JettyHttpComponent extends HttpComponent {
     public void disconnect(HttpConsumer consumer) throws Exception {
         // If the connector is not needed anymore then stop it
         HttpEndpoint endpoint = consumer.getEndpoint();
-        String connectorKey = endpoint.getProtocol() + ":" + endpoint.getPort();
-
+        String connectorKey = getConnectorKey(endpoint);
+        
         synchronized (connectors) {
             ConnectorRef connectorRef = connectors.get(connectorKey);
             if (connectorRef != null) {
@@ -180,6 +180,10 @@ public class JettyHttpComponent extends HttpComponent {
                 }
             }
         }
+    }
+    
+    private String getConnectorKey(HttpEndpoint endpoint) {
+        return endpoint.getProtocol() + ":" + endpoint.getHttpUri().getHost() + ":" + endpoint.getPort();
     }
 
     // Properties
@@ -270,7 +274,7 @@ public class JettyHttpComponent extends HttpComponent {
     @Override
     protected void doStop() throws Exception {
         for (ConnectorRef connectorRef : connectors.values()) {
-            connectorRef.connector.stop();
+            connectorRef.connector.stop();            
         }
         connectors.clear();
 
