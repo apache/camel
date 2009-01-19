@@ -59,6 +59,20 @@
       </releases>
     </repository>
   </repositories>
+  
+  <pluginRepositories>
+    <pluginRepository>
+      <id>apache.snapshot</id>
+      <name>IONA Open Source Community Release Repository</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </pluginRepository>
+  </pluginRepositories>
 
   <dependencies>
 
