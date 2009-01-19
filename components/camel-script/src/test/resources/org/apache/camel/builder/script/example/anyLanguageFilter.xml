@@ -27,7 +27,7 @@
         <route>
             <from uri="direct:start"/>
             <filter>
-                <expression language="javascript">request.headers.get('testCase') == 'testSendMatchingMessage'</expression>
+                <language language="javascript">request.headers.get('testCase') == 'testSendMatchingMessage'</language>
                 <to uri="mock:result"/>
             </filter>
         </route>
