@@ -26,9 +26,6 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class StreamComponent extends DefaultComponent {
 
-    // TODO: remove file and url support in this component. Will be removed in Camel 2.0
-    // (Should use other components for such needs.)
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters)
         throws Exception {

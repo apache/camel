@@ -31,8 +31,8 @@ import org.apache.camel.util.MessageHelper;
 public final class DefaultTraceEventMessage implements Serializable, TraceEventMessage {
 
     private Date timestamp;
-    private String previousNode;
     private String fromEndpointUri;
+    private String previousNode;
     private String toNode;
     private String exchangeId;
     private String shortExchangeId;
@@ -41,6 +41,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String headers;
     private String body;
     private String bodyType;
+    private String outHeaders;
     private String outBody;
     private String outBodyType;
     private String causedByException;
@@ -70,8 +71,11 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         this.headers = in.getHeaders().isEmpty() ? null : in.getHeaders().toString();
         this.body = MessageHelper.extractBodyAsString(in);
         this.bodyType = MessageHelper.getBodyTypeName(in);
-        this.outBody = MessageHelper.extractBodyAsString(out);
-        this.outBodyType = MessageHelper.getBodyTypeName(out);
+        if (out != null) {
+            this.outHeaders = out.getHeaders().isEmpty() ? null : out.getHeaders().toString();
+            this.outBody = MessageHelper.extractBodyAsString(out);
+            this.outBodyType = MessageHelper.getBodyTypeName(out);
+        }
         this.causedByException = exchange.getException() != null ? exchange.getException().toString() : null;
     }
 
@@ -147,6 +151,14 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     public String getOutBodyType() {
         return outBodyType;
+    }
+
+    public String getOutHeaders() {
+        return outHeaders;
+    }
+
+    public void setOutHeaders(String outHeaders) {
+        this.outHeaders = outHeaders;
     }
 
     public String getCausedByException() {
