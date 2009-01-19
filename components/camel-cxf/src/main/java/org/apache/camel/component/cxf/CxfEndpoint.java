@@ -16,58 +16,72 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.lang.reflect.Proxy;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.xml.ws.WebServiceProvider;
+
+import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
+import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
+import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.configuration.spring.ConfigurerImpl;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
+import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.ClientImpl;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.frontend.ClientFactoryBean;
+import org.apache.cxf.frontend.ClientProxy;
+import org.apache.cxf.frontend.ClientProxyFactoryBean;
+import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.headers.Header;
+import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
+import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.message.Message;
-import org.springframework.context.ApplicationContext;
-
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>
+ * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>.
+ * It contains a list of properties for CXF endpoint including {@link DataFormat}, 
+ * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat 
+ * mode is {@link DataFormat#POJO}.  
  *
  * @version $Revision$
  */
 public class CxfEndpoint extends DefaultEndpoint {
-    private final CxfComponent component;
-    private final String address;
+    
+    private static final Log LOG = LogFactory.getLog(CxfEndpoint.class);
+
     private String wsdlURL;
     private String serviceClass;
     private String portName;
     private String serviceName;
-    private String dataFormat;
-    private String beanId;
-    private String serviceClassInstance;
+    private DataFormat dataFormat = DataFormat.POJO;
     private boolean isWrapped;
-    private boolean isSpringContextEndpoint;
     private boolean inOut = true;
-    private Boolean isSetDefaultBus;
-    private ConfigurerImpl configurer;
-    private CxfEndpointBean cxfEndpointBean;
+    private Bus bus;
+    private CxfBinding cxfBinding;
+    private HeaderFilterStrategy headerFilterStrategy;
+    private boolean hasWSProviderAnnotation;
+    private boolean hasWebServiceAnnotation;
+    private AtomicBoolean cxfBindingInitialized = new AtomicBoolean(false);
+    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
+    private boolean isSetDefaultBus;
 
-    public CxfEndpoint(String uri, String address, CxfComponent component) {
-        super(uri, component);
-        this.component = component;
-        this.address = address;
-        if (address.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
-            isSpringContextEndpoint = true;
-            // Get the bean from the Spring context
-            beanId = address.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
-            if (beanId.startsWith("//")) {
-                beanId = beanId.substring(2);
-            }
-            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();
-            configurer = new ConfigurerImpl(context.getApplicationContext());
-            cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
-            assert cxfEndpointBean != null;
-        }
+    public CxfEndpoint(CxfComponent cxfComponent, String remaining) {
+        super(remaining, cxfComponent);
     }
 
     public Producer createProducer() throws Exception {
@@ -77,44 +91,189 @@ public class CxfEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         return new CxfConsumer(this, processor);
     }
-
-    public Exchange createExchange() {
-        return new CxfExchange(this, getExchangePattern());
-    }
-
+    
+    @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return new CxfExchange(this, pattern);
     }
-
-    public CxfExchange createExchange(Message inMessage) {
-        return new CxfExchange(this, getExchangePattern(), inMessage);
+    
+    public boolean isSingleton() {
+        return true;
     }
     
-    /* Override the defaultEndpoint exchange create method */
-    public Exchange createExchange(Exchange exchange) {
-        if (exchange instanceof CxfExchange) {
-            return exchange;
+    /**
+     * Populate server factory bean
+     */
+    protected void setupServerFactoryBean(ServerFactoryBean sfb, Class<?> cls) {
+        hasWSProviderAnnotation = CxfEndpointUtils.hasAnnotation(cls, 
+                WebServiceProvider.class);
+        
+        // address
+        sfb.setAddress(getEndpointUri());
+        
+        // service class
+        sfb.setServiceClass(cls); 
+
+        // wsdl url
+        if (getWsdlURL() != null) {
+            sfb.setWsdlURL(getWsdlURL());
+        }
+        
+        // service  name qname
+        if (getServiceName() != null) {
+            sfb.setServiceName(CxfEndpointUtils.getQName(getServiceName()));
+        }
+        
+        // port qname
+        if (getPortName() != null) {
+            sfb.setEndpointName(CxfEndpointUtils.getQName(getPortName()));
+        }
+
+        // apply feature here
+        if (!webServiceProviderAnnotated()) {
+            if (getDataFormat() == DataFormat.PAYLOAD) {
+                sfb.getFeatures().add(new PayLoadDataFormatFeature());
+            } else if (getDataFormat() == DataFormat.MESSAGE) {
+                sfb.getFeatures().add(new MessageDataFormatFeature());
+            }
         } else {
-            Exchange answer = createExchange();
-            answer.copyFrom(exchange);
-            return answer;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Ignore DataFormat mode " + getDataFormat() 
+                        + " since SEI class is annotated with WebServiceProvider");
+            }
+        }
+        
+        sfb.setBus(getBus());
+        sfb.setStart(false);
+    }
+    
+    /**
+     * 
+     * Create a client factory bean object.  Notice that the serviceClass <b>must</b> be
+     * an interface.
+     */
+    protected ClientProxyFactoryBean createClientFactoryBean(Class<?> cls) throws CamelException {
+        // quick null point check for serviceClass
+        ObjectHelper.notNull(cls, "Please provide endpoint service interface class");
+        
+        hasWebServiceAnnotation = CxfEndpointUtils.hasWebServiceAnnotation(cls);
+        if (hasWebServiceAnnotation) {
+            return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
+                @Override
+                protected void createClient(Endpoint ep) {
+                    setClient(new CamelCxfClientImpl(getBus(), ep));
+                }
+            });
+        } else {
+            return new ClientProxyFactoryBean(new ClientFactoryBean() {
+                @Override
+                protected void createClient(Endpoint ep) {
+                    setClient(new CamelCxfClientImpl(getBus(), ep));
+                }
+            });
         }
     }
 
-    public String getDataFormat() {
+    protected Bus doGetBus() {
+        return BusFactory.getThreadDefaultBus();
+    }
+    
+    /**
+     * 
+     * Populate a client factory bean
+     */
+    protected void setupClientFactoryBean(ClientProxyFactoryBean factoryBean, Class<?> cls) {
+        // quick null point check for serviceClass
+        ObjectHelper.notNull(cls, "Please provide endpoint service interface class");
+        
+        // service class
+        factoryBean.setServiceClass(cls);
+        
+        // address
+        factoryBean.setAddress(getEndpointUri());
+
+        // wsdl url
+        if (getWsdlURL() != null) {
+            factoryBean.setWsdlURL(getWsdlURL());
+        }
+        
+        // service name qname
+        if (getServiceName() != null) {
+            factoryBean.setServiceName(CxfEndpointUtils.getQName(getServiceName()));
+        }
+        
+        // port name qname
+        if (getPortName() != null) {
+            factoryBean.setEndpointName(CxfEndpointUtils.getQName(getPortName()));
+        }
+
+        // apply feature here
+        if (getDataFormat() == DataFormat.MESSAGE) {
+            factoryBean.getFeatures().add(new MessageDataFormatFeature());
+        } else if (getDataFormat() == DataFormat.PAYLOAD) {
+            factoryBean.getFeatures().add(new PayLoadDataFormatFeature());
+        }
+        
+        factoryBean.setBus(getBus());
+        
+    }
+    
+    // Package private methods
+    // -------------------------------------------------------------------------
+ 
+    /**
+     * Create a CXF client object
+     */
+    Client createClient() throws Exception {
+
+        // get service class
+        ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
+        Class<?> cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+
+        // create client factory bean
+        ClientProxyFactoryBean factoryBean = createClientFactoryBean(cls);
+        
+        // setup client factory bean
+        setupClientFactoryBean(factoryBean, cls);
+        
+        return ((ClientProxy)Proxy.getInvocationHandler(factoryBean.create())).getClient();
+    }
+
+
+    /**
+     * Create a CXF server factory bean
+     */
+    ServerFactoryBean createServerFactoryBean() throws Exception {
+ 
+        // get service class
+        ObjectHelper.notEmpty(getServiceClass(), CxfConstants.SERVICE_CLASS);      
+        Class<?> cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
+        
+        // create server factory bean
+        ServerFactoryBean answer = CxfEndpointUtils.getServerFactoryBean(cls);
+        
+        // setup server factory bean
+        setupServerFactoryBean(answer, cls);
+        return answer;
+    }
+    
+    boolean webServiceProviderAnnotated() {
+        return hasWSProviderAnnotation;
+    }
+    
+    boolean webServiceAnnotated() {
+        return hasWebServiceAnnotation;
+    }
+    
+    // Properties
+    // -------------------------------------------------------------------------
+
+    public DataFormat getDataFormat() {
         return dataFormat;
     }
 
-    public void setDataFormat(String format) {
+    public void setDataFormat(DataFormat format) {
         dataFormat = format;
-    }
-
-    public boolean isSpringContextEndpoint() {
-        return isSpringContextEndpoint;
-    }
-
-    public String getAddress() {
-        return address;
     }
 
     public String getWsdlURL() {
@@ -124,29 +283,17 @@ public class CxfEndpoint extends DefaultEndpoint {
     public void setWsdlURL(String url) {
         wsdlURL = url;
     }
-
-    public void setSetDefaultBus(Boolean set) {
-        isSetDefaultBus = set;
-    }
-
-    public Boolean isSetDefaultBus() {
-        return isSetDefaultBus;
-    }
-
+    
     public String getServiceClass() {
         return serviceClass;
     }
 
-    public void setServiceClass(String className) {        
+    public void setServiceClass(String className) {
         serviceClass = className;
     }
     
-    public String getServiceClassInstance() {
-        return serviceClassInstance;
-    }
-    
-    public void setServiceClassInstance(String classInstance) {
-        serviceClassInstance = classInstance;
+    public void setServiceClass(Object instance) {
+        serviceClass = instance.getClass().getName();
     }
 
     public void setPortName(String port) {
@@ -181,38 +328,93 @@ public class CxfEndpoint extends DefaultEndpoint {
         isWrapped = wrapped;
     }
 
-
-    public CxfComponent getComponent() {
-        return component;
+    public void setCxfBinding(CxfBinding cxfBinding) {
+        this.cxfBinding = cxfBinding;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public String getBeanId() {
-        return beanId;
-    }
-
-    public CxfEndpointBean getCxfEndpointBean() {
-        return cxfEndpointBean;
-    }
-
-    public void configure(Object beanInstance) {
-        configurer.configureBean(beanId, beanInstance);
-    }
-
-    public ApplicationContext getApplicationContext() {
-        if (getCamelContext() instanceof SpringCamelContext) {
-            SpringCamelContext context = (SpringCamelContext) getCamelContext();
-            return context.getApplicationContext();
-        } else {
-            return null;
+    public CxfBinding getCxfBinding() {
+        if (cxfBinding == null) {
+            cxfBinding = new DefaultCxfBinding();   
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create default CXF Binding " + cxfBinding);
+            }
         }
+        
+        if (!cxfBindingInitialized.getAndSet(true) 
+                && cxfBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)cxfBinding)
+                .setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
+        return cxfBinding;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return component.getHeaderFilterStrategy();
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new CxfHeaderFilterStrategy();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create CXF default header filter strategy " 
+                        + headerFilterStrategy);
+            }
+        }
+        return headerFilterStrategy;
+    }
+
+    public void setBus(Bus bus) {
+        this.bus = bus;
+    }
+
+    public Bus getBus() {
+        if (bus == null) {
+            bus = doGetBus();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using ThreadDefaultBus " + bus);
+            }
+        }
+        
+        if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
+            BusFactory.setThreadDefaultBus(bus);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Set bus " + bus + " as thread default bus");
+            }
+        }
+        return bus;
+    }
+
+    public void setSetDefaultBus(boolean isSetDefaultBus) {
+        this.isSetDefaultBus = isSetDefaultBus;
+    }
+
+    public boolean isSetDefaultBus() {
+        return isSetDefaultBus;
+    }
+    
+    /**
+     * We need to override the {@link ClientImpl#setParameters} method
+     * to insert parameters into CXF Message for {@link DataFormat#PAYLOAD}
+     * mode.
+     */
+    private class CamelCxfClientImpl extends ClientImpl {
+
+        public CamelCxfClientImpl(Bus bus, Endpoint ep) {
+            super(bus, ep);
+        }
+        
+        @Override
+        protected void setParameters(Object[] params, Message message) {
+            if (DataFormat.PAYLOAD == message.get(DataFormat.class)) {
+                CxfPayload<?> payload = (CxfPayload<?>)params[0];
+                message.put(List.class, payload.getBody());
+                message.put(Header.HEADER_LIST, payload.getHeaders());
+            } else {
+                super.setParameters(params, message);
+            }
+        }
+
+
     }
 
 }

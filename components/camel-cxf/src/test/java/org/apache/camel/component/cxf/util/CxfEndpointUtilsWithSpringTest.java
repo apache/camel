@@ -20,8 +20,8 @@ import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.CxfEndpoint;
+import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
-import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -61,36 +61,24 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
     protected String getNoServiceClassURI() {
         return "cxf:bean:noServiceClassEndpoint";
     }
-    
-    public void testGetServiceClass() throws Exception {
-        CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClassInstance=helloServiceImpl");        
-        Class clazz = CxfEndpointUtils.getServiceClass(endpoint);
-        assertNotNull("The service calss should not be null ", clazz);
-        assertTrue("The service class should be the instance of HelloServiceImpl", clazz.equals(HelloServiceImpl.class));
-    }
 
+    public void testGetServiceClass() throws Exception {
+        CxfEndpoint endpoint = createEndpoint("cxf:bean:helloServiceEndpoint?serviceClass=#helloServiceImpl");      
+        assertEquals("org.apache.camel.component.cxf.HelloServiceImpl", endpoint.getServiceClass());
+    }
+    
     public void testGetDataFormat() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=MESSAGE");
-        assertEquals("We should get the Message DataFormat", CxfEndpointUtils.getDataFormat(endpoint),
-                     DataFormat.MESSAGE);
-    }
-
-    public void testGetURIOverCxfEndpointProperties() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?setDefaultBus=false");
-        assertEquals("We should get the setDefaultBus value", CxfEndpointUtils.getSetDefaultBus(endpoint),
-                     false);
-
+        assertEquals("We should get the Message DataFormat", DataFormat.MESSAGE, endpoint.getDataFormat());
     }
 
     public void testGetProperties() throws Exception {
-        CxfEndpoint endpoint = createEndpoint(getEndpointURI());
-        QName service = endpoint.getCxfEndpointBean().getServiceName();
+        CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
+        QName service = endpoint.getBean().getServiceName();
         assertEquals("We should get the right service name", service, SERVICE_NAME);
-        assertEquals("We should get the setDefaultBus value", CxfEndpointUtils.getSetDefaultBus(endpoint),
-                     true);
-        assertEquals("The cxf endpoint's DataFromat should be MESSAGE", CxfEndpointUtils.getDataFormat(endpoint), DataFormat.MESSAGE);
+        assertEquals("The cxf endpoint's DataFromat should be MESSAGE", DataFormat.MESSAGE, endpoint.getDataFormat());
         
-        endpoint = createEndpoint("cxf:bean:testPropertiesEndpoint");
+        endpoint = (CxfSpringEndpoint)createEndpoint("cxf:bean:testPropertiesEndpoint");
         service = CxfEndpointUtils.getServiceName(endpoint);
         assertEquals("We should get the right service name", service, SERVICE_NAME);
         QName port = CxfEndpointUtils.getPortName(endpoint);
@@ -99,8 +87,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
 
     public void testGetDataFormatFromCxfEndpontProperties() throws Exception {
         CxfEndpoint endpoint = createEndpoint(getEndpointURI() + "?dataFormat=PAYLOAD");
-        assertEquals("We should get the PAYLOAD DataFormat", CxfEndpointUtils.getDataFormat(endpoint),
-                     DataFormat.PAYLOAD);
+        assertEquals("We should get the PAYLOAD DataFormat", DataFormat.PAYLOAD, endpoint.getDataFormat());
     }
 
 

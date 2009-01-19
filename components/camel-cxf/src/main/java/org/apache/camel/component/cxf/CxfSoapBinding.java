@@ -17,14 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
 
 import javax.xml.transform.Source;
 
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

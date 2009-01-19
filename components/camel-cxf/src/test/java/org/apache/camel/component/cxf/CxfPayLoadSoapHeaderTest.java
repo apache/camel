@@ -26,7 +26,6 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.pizza.Pizza;
@@ -37,13 +36,9 @@ import org.apache.camel.pizza.types.OrderPizzaType;
 import org.apache.camel.pizza.types.ToppingsListType;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.headers.Header;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-
 
 public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
     protected AbstractXmlApplicationContext applicationContext; 
@@ -53,6 +48,7 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
     private String routerEndpointURI = "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
     private String serviceEndpointURI = "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -60,18 +56,19 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
                 from(routerEndpointURI).process(new Processor() {
                     @SuppressWarnings("unchecked")
                     public void process(Exchange exchange) throws Exception {
-                        Message inMessage = exchange.getIn();
-                        CxfMessage message = (CxfMessage) inMessage;
-                        List<Element> elements = message.getMessage().get(List.class);
-                        assertNotNull("We should get the payload elements here" , elements);
-                        assertEquals("Get the wrong elements size" , elements.size(), 1);
-                        assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://camel.apache.org/pizza/types");
+                        CxfPayload<SoapHeader> payload = exchange.getIn().getBody(CxfPayload.class);
+                        List<Element> elements = payload.getBody();
+                        assertNotNull("We should get the elements here", elements);
+                        assertEquals("Get the wrong elements size", 1, elements.size());
+                        assertEquals("Get the wrong namespace URI", "http://camel.apache.org/pizza/types", 
+                                elements.get(0).getNamespaceURI());
                             
-                        List<SoapHeader> headers = CastUtils.cast((List<?>)message.getMessage().get(Header.HEADER_LIST));
+                        List<SoapHeader> headers = payload.getHeaders();
                         assertNotNull("We should get the headers here", headers);
                         assertEquals("Get the wrong headers size", headers.size(), 1);
-                        assertEquals("Get the wrong namespace URI" , ((Element)(headers.get(0).getObject())).getNamespaceURI(), "http://camel.apache.org/pizza/types");
-                        
+                        assertEquals("Get the wrong namespace URI", 
+                                ((Element)(headers.get(0).getObject())).getNamespaceURI(), 
+                                "http://camel.apache.org/pizza/types");         
                     }
                     
                 })
@@ -86,8 +83,6 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
         applicationContext = createApplicationContext();
         super.setUp();
         assertNotNull("Should have created a valid spring context", applicationContext);
-
-
     }
 
     @Override
@@ -97,7 +92,7 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
         }
         super.tearDown();
     }
-
+    
     @Override
     protected void startService() {
         Object implementor = new PizzaImpl();
@@ -105,7 +100,7 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
         EndpointImpl endpoint = (EndpointImpl) Endpoint.publish(address, implementor);
         server = endpoint.getServer();
     }
-    
+
     public void testPizzaService() {
         Pizza port = getPort();
 
@@ -137,7 +132,6 @@ public class CxfPayLoadSoapHeaderTest extends CxfRouterTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext);
     }
-
 
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/PizzaEndpoints.xml");

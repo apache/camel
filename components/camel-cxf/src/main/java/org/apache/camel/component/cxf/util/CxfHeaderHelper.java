@@ -40,7 +40,6 @@ public final class CxfHeaderHelper {
     private CxfHeaderHelper() {
     }
 
-
     /**
      * Progagates Camel headers to CXF message.
      *

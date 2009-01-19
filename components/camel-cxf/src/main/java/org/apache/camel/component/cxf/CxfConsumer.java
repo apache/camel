@@ -16,95 +16,95 @@
  */
 package org.apache.camel.component.cxf;
 
-import javax.xml.ws.WebServiceProvider;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
-import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
-import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.cxf.Bus;
-import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.interceptor.Fault;
+import org.apache.cxf.message.Exchange;
+import org.apache.cxf.service.invoker.Invoker;
 
 /**
- * A consumer of exchanges for a service in CXF
+ * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
+ * service to receive requests, convert them, and forward them to Camel 
+ * route for processing. It is also responsible for converting and sending
+ * back responses to CXF client.
  *
  * @version $Revision$
  */
 public class CxfConsumer extends DefaultConsumer {
-    private CxfEndpoint endpoint;
+    private static final Log LOG = LogFactory.getLog(CxfConsumer.class);
     private Server server;
 
     public CxfConsumer(CxfEndpoint endpoint, Processor processor) throws Exception {
-
         super(endpoint, processor);
-        Bus bus = null;
-        this.endpoint = endpoint;
-        boolean isWebServiceProvider = false;
-        if (endpoint.getApplicationContext() != null) {            
-            bus = endpoint.getCxfEndpointBean().getBus();
-            if (CxfEndpointUtils.getSetDefaultBus(endpoint)) {
-                BusFactory.setThreadDefaultBus(bus);
+        
+        // create server
+        ServerFactoryBean svrBean = endpoint.createServerFactoryBean();
+        svrBean.setInvoker(new Invoker() {
+
+            // we receive a CXF request when this method is called
+            public Object invoke(Exchange cxfExchange, Object o) {
+                
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Received CXF Request: " + cxfExchange);
+                }
+                
+                // get CXF binding
+                CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
+                CxfBinding binding = endpoint.getCxfBinding();
+
+                // create a Camel exchange
+                org.apache.camel.Exchange camelExchange = endpoint.createExchange();
+                
+                // set data format mode in Camel exchange
+                DataFormat dataFormat = endpoint.getDataFormat();
+                camelExchange.setProperty(DataFormat.class.getName(), dataFormat);   
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Set Exchange property: " + DataFormat.class.getName() 
+                            + "=" + dataFormat);
+                }
+                
+                // bind the CXF request into a Camel exchange
+                binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
+                                
+                // send Camel exchange to the target processor
+                try {
+                    getProcessor().process(camelExchange);
+                } catch (Exception e) {
+                    throw new Fault(e);
+                }
+                
+                // check failure
+                if (camelExchange.isFailed()) {
+                    Throwable t = (Throwable)camelExchange.getFault().getBody();
+                    if (t instanceof Fault) {
+                        throw (Fault)t;
+                    } else if (t == null) {
+                        t = camelExchange.getException();
+                    }
+                    throw new Fault(t);
+                }
+                
+                // bind the Camel response into a CXF response
+                if (camelExchange.getPattern().isOutCapable()) {
+                    binding.populateCxfResponseFromExchange(camelExchange, cxfExchange);
+                } 
+                
+                // response should have been set in outMessage's content
+                return null;
             }
-        } else {
-            // now we just use the default bus here
-            bus = BusFactory.getThreadDefaultBus();
-        }
-        
-        Class serviceClass = CxfEndpointUtils.getServiceClass(endpoint);
-        ServerFactoryBean svrBean = CxfEndpointUtils.getServerFactoryBean(serviceClass);
-        isWebServiceProvider = CxfEndpointUtils.hasAnnotation(serviceClass,
-                                                              WebServiceProvider.class);
-        
-        if (endpoint.isSpringContextEndpoint()) {
-            endpoint.configure(svrBean);
-        } else { // setup the serverFactoryBean with the URI parameters
-            svrBean.setAddress(endpoint.getAddress());                       
-            if (endpoint.getWsdlURL() != null) {
-                svrBean.setWsdlURL(endpoint.getWsdlURL());
-            }
-        }
-        
-        svrBean.setServiceClass(serviceClass);
-        
-        if (CxfEndpointUtils.getServiceName(endpoint) != null) {
-            svrBean.setServiceName(CxfEndpointUtils.getServiceName(endpoint));
-        }
-        if (CxfEndpointUtils.getServiceName(endpoint) != null) {
-            svrBean.setEndpointName(CxfEndpointUtils.getPortName(endpoint));
-        }
-        
-        DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
-
-        svrBean.setInvoker(new CamelInvoker(this));
-
-        // apply feature here
-        if (!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
-
-            if (dataFormat.equals(DataFormat.PAYLOAD)) {
-                svrBean.getFeatures().add(new PayLoadDataFormatFeature());
-                // adding the logging feature here for debug
-                //features.add(new LoggingFeature());
-            } else if (dataFormat.equals(DataFormat.MESSAGE)) {
-                svrBean.getFeatures().add(new MessageDataFormatFeature());
-                //features.add(new LoggingFeature());
-            }
-        }
-        svrBean.setBus(bus);
-        svrBean.setStart(false);
-        server = svrBean.create();
-
+            
+        });
+        server = svrBean.create();        
     }
-
+    
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
         server.start();
     }
 
@@ -113,9 +113,5 @@ public class CxfConsumer extends DefaultConsumer {
         server.stop();
         super.doStop();
     }
-
-    public CxfEndpoint getEndpoint() {
-        return endpoint;
-    }
-
+    
 }

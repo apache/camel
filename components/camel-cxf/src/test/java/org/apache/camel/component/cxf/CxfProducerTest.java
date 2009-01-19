@@ -37,7 +37,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.interceptor.Fault;
 import org.apache.hello_world_soap_http.GreeterImpl;
 
 /**
@@ -61,7 +60,6 @@ public class CxfProducerTest extends TestCase {
 
     @Override
     protected void setUp() throws Exception {
-
         // start a simple front service
         ServerFactoryBean svrBean = new ServerFactoryBean();
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
@@ -89,7 +87,7 @@ public class CxfProducerTest extends TestCase {
 
 
     public void testInvokingSimpleServerWithParams() throws Exception {
-        CxfExchange exchange = sendSimpleMessage();
+        Exchange exchange = sendSimpleMessage();
 
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);
@@ -108,12 +106,10 @@ public class CxfProducerTest extends TestCase {
         } catch (RuntimeCamelException ex) {
             // only catch the RuntimeCamelException
         }
-
     }
 
-
     public void testInvokingJaxWsServerWithParams() throws Exception {
-        CxfExchange exchange = sendJaxWsMessage();
+        Exchange exchange = sendJaxWsMessage();
 
         org.apache.camel.Message out = exchange.getOut();
         String result = out.getBody(String.class);
@@ -137,12 +133,12 @@ public class CxfProducerTest extends TestCase {
         return "cxf://" + WRONG_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
-    protected CxfExchange sendSimpleMessage() {
+    protected Exchange sendSimpleMessage() {
         return sendSimpleMessage(getSimpleEndpointUri());
     }
 
-    private CxfExchange sendSimpleMessage(String endpointUri) {
-        CxfExchange exchange = (CxfExchange)template.send(endpointUri, new Processor() {
+    private Exchange sendSimpleMessage(String endpointUri) {
+        Exchange exchange = template.send(endpointUri, new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
@@ -153,8 +149,8 @@ public class CxfProducerTest extends TestCase {
         return exchange;
 
     }
-    protected CxfExchange sendJaxWsMessage() {
-        CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), new Processor() {
+    protected Exchange sendJaxWsMessage() {
+        Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);

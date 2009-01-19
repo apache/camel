@@ -17,8 +17,12 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.message.Message;
 
 /**
+ * The default CXF header filter strategy.
+ * 
  * @version $Revision$
  */
 public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
@@ -30,6 +34,18 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add(CxfConstants.OPERATION_NAME);
         getOutFilter().add(CxfConstants.OPERATION_NAMESPACE);
+        
+        // Request and response context Maps will be passed to CXF Client APIs
+        getOutFilter().add(Client.REQUEST_CONTEXT);
+        getOutFilter().add(Client.RESPONSE_CONTEXT);
+
+        // protocol headers are stored as a Map.  DefaultCxfBinding
+        // read the Map and send each entry to the filter.  Therefore,
+        // we need to filter the header of this name.
+        getOutFilter().add(Message.PROTOCOL_HEADERS);
+        getInFilter().add(Message.PROTOCOL_HEADERS);
+
+
     }
 
 }

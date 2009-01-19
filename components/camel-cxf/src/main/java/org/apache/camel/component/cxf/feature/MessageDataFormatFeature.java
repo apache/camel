@@ -28,16 +28,27 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.phase.Phase;
 
 /**
- * This feature just setting up the CXF endpoint interceptor for handling the
- * Message in Message data format
+ * <p> 
+ * MessageDataFormatFeature sets up the CXF endpoint interceptor for handling the
+ * Message in Message data format.  Only the interceptors of these phases are 
+ * <b>preserved</b>:
+ * </p>
+ * <p>
+ * In phases: {Phase.RECEIVE , Phase.INVOKE, Phase.POST_INVOKE}
+ * </p>
+ * <p>
+ * Out phases: {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING}
+ * </p>
  */
 public class MessageDataFormatFeature extends AbstractDataFormatFeature {
+    
     private static final Logger LOG = LogUtils.getL7dLogger(MessageDataFormatFeature.class);
-    // interceptor filiter
-    // filiter the unused phase interceptor
-    private static final String[] REMAINING_IN_PHASES = {Phase.RECEIVE , Phase.POST_INVOKE};
-    private static final String[] REMAINING_OUT_PHASES = {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING};
-
+    // filter the unused in phase interceptor
+    private static final String[] REMAINING_IN_PHASES = {Phase.RECEIVE , Phase.INVOKE,
+        Phase.POST_INVOKE};
+    // filter the unused in phase interceptor
+    private static final String[] REMAINING_OUT_PHASES = {Phase.PREPARE_SEND, Phase.WRITE, 
+        Phase.SEND, Phase.PREPARE_SEND_ENDING};
 
     @Override
     public void initialize(Client client, Bus bus) {
@@ -56,22 +67,20 @@ public class MessageDataFormatFeature extends AbstractDataFormatFeature {
 
     @Override
     public void initialize(Server server, Bus bus) {
-        // currently we do not filiter the bus
+        // currently we do not filter the bus
         // remove the interceptors
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES);
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES);
+        
         // Do not using the binding interceptor any more
         server.getEndpoint().getBinding().getInInterceptors().clear();
 
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getOutInterceptors(), REMAINING_OUT_PHASES);
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getOutInterceptors(), REMAINING_OUT_PHASES);
+        
         // Do not use the binding interceptor any more
         server.getEndpoint().getBinding().getOutInterceptors().clear();
-
         server.getEndpoint().getBinding().getOutFaultInterceptors().add(new FaultOutInterceptor());
-
-
-        resetServiceInvokerInterceptor(server);
         server.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
     }
 

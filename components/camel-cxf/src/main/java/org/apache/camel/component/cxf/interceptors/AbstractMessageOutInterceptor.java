@@ -17,8 +17,7 @@
 package org.apache.camel.component.cxf.interceptors;
 
 import java.util.List;
-//import java.util.ResourceBundle;
-//import java.util.logging.Level;
+
 import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
@@ -27,7 +26,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-//import org.apache.cxf.common.i18n.BundleUtils;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;

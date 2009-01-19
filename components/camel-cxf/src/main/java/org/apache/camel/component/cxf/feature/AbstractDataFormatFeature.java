@@ -20,10 +20,8 @@ package org.apache.camel.component.cxf.feature;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.feature.AbstractFeature;
 import org.apache.cxf.interceptor.Interceptor;
-import org.apache.cxf.phase.Phase;
 import org.apache.cxf.phase.PhaseInterceptor;
 
 /**
@@ -31,14 +29,7 @@ import org.apache.cxf.phase.PhaseInterceptor;
  */
 public abstract class AbstractDataFormatFeature extends AbstractFeature {
 
-
     protected abstract Logger getLogger();
-
-    protected void resetServiceInvokerInterceptor(Server server) {
-        List<Interceptor> serviceInterceptor = server.getEndpoint().getService().getInInterceptors();
-        removeInterceptorWhichIsInThePhases(serviceInterceptor, new String[]{Phase.INVOKE});
-        serviceInterceptor.add(new MessageInvokerInterceptor());
-    }
 
     protected void removeInterceptorWhichIsInThePhases(List<Interceptor> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {

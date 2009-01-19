@@ -29,7 +29,6 @@ import org.apache.cxf.message.Message;
 import org.apache.cxf.message.XMLMessage;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.apache.cxf.service.model.BindingOperationInfo;
 
 public class FaultOutInterceptor extends AbstractPhaseInterceptor<Message> {
     private static final Logger LOG = LogUtils.getL7dLogger(FaultOutInterceptor.class);
@@ -40,8 +39,6 @@ public class FaultOutInterceptor extends AbstractPhaseInterceptor<Message> {
 
     @SuppressWarnings("unchecked")
     public void handleMessage(Message message) throws Fault {
-        // To walk around the FaultOutInterceptor NPE issue of CXF 2.0.4
-        checkBindingOperationInfor(message);
 
         Throwable ex = message.getContent(Throwable.class);
 
@@ -67,19 +64,4 @@ public class FaultOutInterceptor extends AbstractPhaseInterceptor<Message> {
         }
     }
 
-    /*
-     * This method is used to walk around the NPE issue of CXF 2.0.4
-     * org.apache.cxf.interceptor.FaultOutInterceptor.
-     * This issue was fixed in CXF 2.0.5 and CXF 2.1, when we upgrade CXF to that version
-     * we could remove this method from the interceptor
-     */
-    private void checkBindingOperationInfor(Message message) {
-        BindingOperationInfo bop = message.getExchange().get(BindingOperationInfo.class);
-        if (bop == null) {
-            bop = new FakeBindingOperationInfo();
-            message.getExchange().put(BindingOperationInfo.class, bop);
-        }
-
-
-    }
 }

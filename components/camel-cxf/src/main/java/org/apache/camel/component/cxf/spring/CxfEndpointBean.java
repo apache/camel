@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.spring;
 
-
 import java.util.List;
 
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;

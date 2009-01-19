@@ -20,18 +20,16 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
+import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Component</a>
-
+ * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Component</a> 
+ * 
  * @version $Revision$
  */
-public class CxfComponent extends DefaultComponent implements HeaderFilterStrategyAware {
-
-    private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
+public class CxfComponent extends DefaultComponent {
 
     public CxfComponent() {
     }
@@ -39,23 +37,36 @@ public class CxfComponent extends DefaultComponent implements HeaderFilterStrate
     public CxfComponent(CamelContext context) {
         super(context);
     }
-
+    
+    /**
+     * Create a {@link CxfEndpoint} which, can be a Spring bean endpoint having 
+     * URI format cxf:bean:<i>beanId</i> or transport address endpoint having URI format
+     * cxf://<i>transportAddress</i>. 
+     */
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        // Now we need to add the address, endpoint name, WSDL url or the SEI to build up an endpoint
-        CxfEndpoint result = new CxfEndpoint(uri, remaining, this);
-        setProperties(result, parameters);
-        // We can check the endpoint integration here
+    protected Endpoint createEndpoint(String uri, String remaining, 
+            Map parameters) throws Exception {
+        
+        CxfEndpoint result = null;
+        
+        if (remaining.startsWith(CxfConstants.SPRING_CONTEXT_ENDPOINT)) {
+            // Get the bean from the Spring context
+            String beanId = remaining.substring(CxfConstants.SPRING_CONTEXT_ENDPOINT.length());
+            if (beanId.startsWith("//")) {
+                beanId = beanId.substring(2);
+            }
+
+            CxfEndpointBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
+                    CxfEndpointBean.class);
+
+            result = new CxfSpringEndpoint(this, beanId, bean);
+            
+        } else {
+            // endpoint URI does not specify a bean
+            result = new CxfEndpoint(this, remaining);
+        }
+        
         return result;
     }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-    }
-
-
+    
 }
