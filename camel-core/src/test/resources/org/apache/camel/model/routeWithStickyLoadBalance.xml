@@ -20,7 +20,9 @@
     <from uri="seda:a"/>
     <loadBalance>
        <sticky>
-          <language language="juel">in.header.foo == 'bar'</language>
+           <expression>
+               <language language="juel">in.header.foo == 'bar'</language>
+           </expression>
        </sticky>
        <to uri="seda:b"/>      
        <to uri="seda:c"/>      
