@@ -37,8 +37,7 @@ public class SplitterMethodCallTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
-    @Override
+    
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());
@@ -58,7 +57,10 @@ public class SplitterMethodCallTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e2
-    public static class SplitWordsBean {
+    public static final class SplitWordsBean {
+        private SplitWordsBean() {
+            // Helper Class
+        }
 
         public static List<String> splitWords(String body) {
             // here we split the payload using java code
