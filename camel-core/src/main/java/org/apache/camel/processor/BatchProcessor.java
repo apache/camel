@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -49,6 +50,8 @@ public class BatchProcessor extends ServiceSupport implements Processor {
     private BatchSender sender;
     
     public BatchProcessor(Processor processor, Collection<Exchange> collection) {
+        ObjectHelper.notNull(processor, "processor");
+        ObjectHelper.notNull(collection, "collection");
         this.processor = processor;
         this.collection = collection;
         this.sender = new BatchSender();

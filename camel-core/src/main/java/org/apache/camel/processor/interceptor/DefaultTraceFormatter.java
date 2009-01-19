@@ -38,6 +38,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showHeaders = true;
     private boolean showBody = true;
     private boolean showBodyType = true;
+    private boolean showOutHeaders;
     private boolean showOutBody;
     private boolean showOutBodyType;
     private boolean showException = true;
@@ -65,6 +66,9 @@ public class DefaultTraceFormatter implements TraceFormatter {
         }
         if (showBody) {
             sb.append(", Body:").append(MessageHelper.extractBodyAsString(in));
+        }
+        if (showOutHeaders && out != null) {
+            sb.append(", OutHeaders:").append(out.getHeaders());
         }
         if (showOutBodyType && out != null) {
             sb.append(", OutBodyType:").append(MessageHelper.getBodyTypeName(out));
@@ -133,6 +137,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
     public void setShowHeaders(boolean showHeaders) {
         this.showHeaders = showHeaders;
+    }
+
+    public boolean isShowOutHeaders() {
+        return showOutHeaders;
+    }
+
+    public void setShowOutHeaders(boolean showOutHeaders) {
+        this.showOutHeaders = showOutHeaders;
     }
 
     public boolean isShowProperties() {

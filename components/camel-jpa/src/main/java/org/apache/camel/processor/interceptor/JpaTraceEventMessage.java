@@ -34,8 +34,8 @@ public class JpaTraceEventMessage implements TraceEventMessage {
 
     protected Long id;
     protected Date timestamp;
-    protected String previousNode;
     protected String fromEndpointUri;
+    protected String previousNode;
     protected String toNode;
     protected String exchangeId;
     protected String shortExchangeId;
@@ -44,6 +44,7 @@ public class JpaTraceEventMessage implements TraceEventMessage {
     protected String headers;
     protected String body;
     protected String bodyType;
+    protected String outHeaders;
     protected String outBody;
     protected String outBodyType;
     protected String causedByException;
@@ -163,6 +164,14 @@ public class JpaTraceEventMessage implements TraceEventMessage {
 
     public void setOutBodyType(String outBodyType) {
         this.outBodyType = outBodyType;
+    }
+
+    public String getOutHeaders() {
+        return outHeaders;
+    }
+
+    public void setOutHeaders(String outHeaders) {
+        this.outHeaders = outHeaders;
     }
 
     public String getCausedByException() {
