@@ -26,6 +26,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.ExchangeImpl;
@@ -56,7 +57,7 @@ public final class CxfSoapBinding {
         } else {
             message = exchange.getIn();
         }
-        assert message != null;
+        ObjectHelper.notNull(message, "message");
         if (cxfExchange == null) {
             cxfExchange = new ExchangeImpl();
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
@@ -87,7 +88,7 @@ public final class CxfSoapBinding {
     public static org.apache.cxf.message.Message getCxfOutMessage(HeaderFilterStrategy headerFilterStrategy,
             org.apache.camel.Exchange exchange, boolean isClient) {
         org.apache.cxf.message.Exchange cxfExchange = exchange.getProperty(CxfConstants.CXF_EXCHANGE, org.apache.cxf.message.Exchange.class);
-        assert cxfExchange != null;
+        ObjectHelper.notNull(cxfExchange, "cxfExchange");
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = cxfExchange.get(org.apache.cxf.endpoint.Endpoint.class);
         org.apache.cxf.message.Message outMessage = cxfEndpoint.getBinding().createMessage();
         outMessage.setExchange(cxfExchange);

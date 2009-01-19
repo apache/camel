@@ -24,6 +24,7 @@ import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.message.Message;
 import org.springframework.context.ApplicationContext;
@@ -67,7 +68,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
             SpringCamelContext context = (SpringCamelContext) this.getCamelContext();
             configurer = new ConfigurerImpl(context.getApplicationContext());
             cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
-            assert cxfEndpointBean != null;
+            ObjectHelper.notNull(cxfEndpointBean, "cxfEndpointBean");
         }
     }
 
