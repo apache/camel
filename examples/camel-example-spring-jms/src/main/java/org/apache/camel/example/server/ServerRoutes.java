@@ -42,7 +42,10 @@ public class ServerRoutes extends RouteBuilder {
         //from("jms:queue:numbers").beanRef("multiplier", "multiply");
 
         // the same as above but expressed as a URI configuration
-        //from("jms:queue:numbers").to("bean:multiplier?methodName=multiply");
+        //from("activemq:queue:numbers").to("bean:multiplier?methodName=multiply");
+
+        // the STOP command
+        from("jms:queue:stop").to("shutdown");
     }
 
 }
