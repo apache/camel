@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.ClientImpl;
@@ -54,7 +55,7 @@ public class CxfClient extends ClientImpl {
 
         Object retval = null;
         InvokingContext invokingContext = exchange.get(InvokingContext.class);
-        assert invokingContext != null;
+        ObjectHelper.notNull(invokingContext, "invokingContext");
 
         // get InBound binding operation info from the exchange object
         BindingOperationInfo inBoundOp = exchange.get(BindingOperationInfo.class);

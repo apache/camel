@@ -96,8 +96,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         getLogger().log(Level.FINE, "CamelDestination activate().... ");
 
         try {
-            getLogger().log(Level.FINE, "establishing Camel connection");
-            distinationEndpoint = camelContext.getEndpoint(camelDestinationUri);
+            getLogger().log(Level.FINE, "establishing Camel connection");            
+            distinationEndpoint = getCamelContext().getEndpoint(camelDestinationUri);
             consumer = distinationEndpoint.createConsumer(new ConsumerProcessor());
             consumer.start();
 
@@ -122,9 +122,8 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public ProducerTemplate<Exchange> getCamelTemplate() {
-        if (camelTemplate == null) {
-            CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
-            camelTemplate = ctx.createProducerTemplate();
+        if (camelTemplate == null) {            
+            camelTemplate = getCamelContext().createProducerTemplate();
         }
         return camelTemplate;
     }
@@ -138,6 +137,9 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     public CamelContext getCamelContext() {
+        if (camelContext == null) {
+            camelContext = new DefaultCamelContext();
+        }
         return camelContext;
     }
 
@@ -150,9 +152,9 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         ((MessageImpl)inMessage).setDestination(this);
 
         // Handling the incoming message
-        // The response message will be send back by the outgoingchain
+        // The response message will be send back by the outgoingchain        
         incomingObserver.onMessage(inMessage);
-
+        
     }
 
     public String getBeanName() {
