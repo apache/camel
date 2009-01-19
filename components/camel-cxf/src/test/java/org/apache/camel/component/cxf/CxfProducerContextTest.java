@@ -26,7 +26,6 @@ import javax.xml.ws.BindingProvider;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Message;
 
 // We use context to change the producer's endpoint address here
@@ -39,26 +38,31 @@ public class CxfProducerContextTest extends CxfProducerTest {
     private static final String TEST_VALUE = "exchange property value should get passed through request context";
 
     public void testExchangePropertyPropagation() throws Exception {
-        CxfExchange exchange = sendSimpleMessage();
+        Exchange exchange = sendSimpleMessage();
 
+        // No direct access to native CXF Message but we can verify the 
+        // request context from the Camel exchange
         assertNotNull(exchange);
-        assertNotNull(exchange.getInMessage());
-        assertNotNull(exchange.getInMessage().get(Client.REQUEST_CONTEXT));
-        Map<String, Object> requestContext = CastUtils.cast((Map)exchange.getInMessage().get(Client.REQUEST_CONTEXT));
+        Map<String, Object> requestContext = (Map)exchange.getProperty(Client.REQUEST_CONTEXT);
+        assertNotNull(requestContext);
         String actualValue = (String)requestContext.get(TEST_KEY);
         assertEquals("exchange property should get propagated to the request context", TEST_VALUE, actualValue);
+
     }
 
+    @Override   
     protected String getSimpleEndpointUri() {
         return "cxf://http://localhost:9000/simple?serviceClass=org.apache.camel.component.cxf.HelloService";
     }
 
+    @Override   
     protected String getJaxwsEndpointUri() {
         return "cxf://http://localhost:9000/jaxws?serviceClass=org.apache.hello_world_soap_http.Greeter";
-
     }
-    protected CxfExchange sendSimpleMessage() {
-        CxfExchange exchange = (CxfExchange)template.send(getSimpleEndpointUri(), new Processor() {
+    
+    @Override   
+    protected Exchange sendSimpleMessage() {
+        Exchange exchange = template.send(getSimpleEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
@@ -73,8 +77,10 @@ public class CxfProducerContextTest extends CxfProducerTest {
         return exchange;
 
     }
-    protected CxfExchange sendJaxWsMessage() {
-        CxfExchange exchange = (CxfExchange)template.send(getJaxwsEndpointUri(), new Processor() {
+    
+    @Override   
+    protected Exchange sendJaxWsMessage() {
+        Exchange exchange = (Exchange)template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {
                 final List<String> params = new ArrayList<String>();
                 params.add(TEST_MESSAGE);
@@ -86,5 +92,10 @@ public class CxfProducerContextTest extends CxfProducerTest {
             }
         });
         return exchange;
+    }
+    
+    @Override
+    public void testInvokingJaxWsServerWithParams() throws Exception {
+        super.testInvokingJaxWsServerWithParams();
     }
 }

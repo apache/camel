@@ -16,145 +16,38 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
+
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.cxf.message.Exchange;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.transport.Conduit;
-import org.apache.cxf.transport.Destination;
 
 /**
- * An {@link Exchange} for working with Apache CXF which exposes the underlying
- * CXF messages via {@link #getInMessage()} and {@link #getOutMessage()} along with the
- * {@link #getExchange()}
- *
+ * 
  * @version $Revision$
  */
 public class CxfExchange extends DefaultExchange {
-    public static final String DATA_FORMAT = "DATA_FORMAT";
-    private Exchange exchange;
-
-    public CxfExchange(CamelContext context, ExchangePattern pattern, Exchange exchange) {
-        super(context, pattern);
-        this.exchange = exchange;
-        // TO avoid the NPE here
-        if (exchange != null) {
-            if (exchange.getOutMessage() != null) {
-                setOut(new CxfMessage(exchange.getOutMessage()));
-            }
-            if (exchange.getInMessage() != null) {
-                setIn(new CxfMessage(exchange.getInMessage()));
-            }
-            if (exchange.getInFaultMessage() != null) {
-                setFault(new CxfMessage(exchange.getInFaultMessage()));
-            }
-        }
-    }
-
-    public CxfExchange(CxfEndpoint endpoint, ExchangePattern pattern) {
-        super(endpoint, pattern);
-    }
-    
-    public CxfExchange(CxfExchange exchange) {
-        super(exchange);
-        this.exchange = exchange.getExchange();      
-    }
-
-    public CxfExchange(CxfEndpoint endpoint, ExchangePattern pattern, Message inMessage) {
-        this(endpoint, pattern);
-        this.exchange = inMessage.getExchange();
-
-        setIn(new CxfMessage(inMessage));
-        if (exchange != null) {
-            if (exchange.getOutMessage() != null) {
-                setOut(new CxfMessage(exchange.getOutMessage()));
-            }
-            if (exchange.getInFaultMessage() != null) {
-                setFault(new CxfMessage(exchange.getInFaultMessage()));
-            }
-        }
-    }
-
-    @Override
-    public org.apache.camel.Exchange newInstance() {
-        return new CxfExchange(this);
-    }
-
-    @Override
-    public CxfMessage getIn() {
-        return (CxfMessage) super.getIn();
-    }
-
-    @Override
-    public CxfMessage getOut() {
-        return (CxfMessage) super.getOut();
-    }
-
-    @Override
-    public CxfMessage getOut(boolean lazyCreate) {
-        return (CxfMessage) super.getOut(lazyCreate);
-    }
-
-    @Override
-    public CxfMessage getFault() {
-        return (CxfMessage) super.getFault();
-    }
-
-    @Override
-    protected org.apache.camel.Message createFaultMessage() {
-        return new CxfMessage();
-    }
-
-
-    public void setExchange(Exchange exchange) {
-        this.exchange = exchange;
-    }
-
-    // Expose CXF APIs directly on the exchange
-    //-------------------------------------------------------------------------
 
     /**
-     * Returns the underlying CXF message exchange for an inbound exchange
-     * or null for outbound messages
-     *
-     * @return the inbound message exchange
+     * @param cxfEndpoint
+     * @param pattern
      */
-    public Exchange getExchange() {
-        return exchange;
-    }
-
-    public Message getInMessage() {
-        return getIn().getMessage();
-    }
-
-    public Message getOutMessage() {
-        return getOut().getMessage();
-    }
-
-    public Message getOutFaultMessage() {
-        return getExchange().getOutFaultMessage();
-    }
-
-    public Message getInFaultMessage() {
-        return getExchange().getInFaultMessage();
-    }
-
-    public Destination getDestination() {
-        return getExchange().getDestination();
-    }
-
-    public Conduit getConduit(Message message) {
-        return getExchange().getConduit(message);
+    public CxfExchange(CxfEndpoint cxfEndpoint, ExchangePattern pattern) {
+        super(cxfEndpoint, pattern);
     }
 
     @Override
-    protected CxfMessage createInMessage() {
+    protected Message createInMessage() {
         return new CxfMessage();
     }
 
     @Override
-    protected CxfMessage createOutMessage() {
+    protected Message createOutMessage() {
         return new CxfMessage();
     }
+    
+    @Override
+    protected Message createFaultMessage() {
+        return new CxfMessage();
+    }
+    
 }

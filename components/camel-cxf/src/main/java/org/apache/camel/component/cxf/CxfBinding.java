@@ -16,177 +16,101 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
-import javax.xml.ws.BindingProvider;
-import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.MessageContext.Scope;
-
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.component.cxf.util.CxfHeaderHelper;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.cxf.endpoint.Client;
-import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.jaxws.context.WrappedMessageContext;
-import org.apache.cxf.message.Message;
+import org.apache.cxf.message.Exchange;
 
 /**
- * The binding/mapping of Camel messages to Apache CXF and back again
- *
+ * An strategy interface for implementing binding between CXF {@link Exchange} 
+ * and Camel {@link org.apache.camel.Exchange}.  
+ * 
  * @version $Revision$
+ * @since 2.0
  */
-public final class CxfBinding {
-    private CxfBinding() {
-        // Helper class
-    }
-    public static Object extractBodyFromCxf(CxfExchange exchange, Message message) {
-        // TODO how do we choose a format?
-        return getBody(message);
-    }
+public interface CxfBinding {
+    
+    /**
+     * <p>
+     * Populate a CXF Exchange from a Camel Exchange.  The resulted CXF Exchange is an 
+     * <b>outgoing request</b> to be sent to CXF server.  This method is called by 
+     * {@link CxfProducer#process(org.apache.camel.Exchange)} to process a Camel Exchange
+     * for invoking an CXF web service operation.  Note that information is populated
+     * to CXF Exchange and the request context, which are passed as arguments to the 
+     * CXF API's Client.invoke() method.  The arguments to the web service operation
+     * are extracted from the Camel IN message body by CxfProducer.
+     * </p>
+     * 
+     * <p>
+     * Exchange is passed in this direction: Camel route => CxfProducer => <b>apply this
+     * binding method </b>=> CXF server
+     * </p>
+     * 
+     * @param cxfExchange exchange to be populated
+     * @param camelExchange exchange that contains a request
+     * @param requestContext a map contains request contexts.  <b>This parameter must not
+     * be null</b>.  The Client.invoke() method does not allow caller to
+     * pass in a CXF Message.  The request context are copied to the CXF Message by the
+     * Client.invoke() method.  This is how caller can set properties on the CXF message.  
+     * 
+     */
+    void populateCxfRequestFromExchange(Exchange cxfExchange,
+            org.apache.camel.Exchange camelExchange,
+            Map<String, Object> requestContext);
 
-    protected static Object getBody(Message message) {
-        Set<Class<?>> contentFormats = message.getContentFormats();
-        if (contentFormats != null) {
-            for (Class<?> contentFormat : contentFormats) {
-                Object answer = message.getContent(contentFormat);
-                if (answer != null) {
-                    return answer;
-                }
-            }
-        }
-        return null;
-    }
+    /**
+     * <p>
+     * Populate a Camel Exchange from a CXF Exchange, which is a an <b>incoming response</b>
+     * from a CXF server.  This method is called by {@link CxfProducer} after it makes an 
+     * invocation to the Client.invoke() method.  It calls this method to translate the 
+     * CXF response message to Camel message. 
+     * </p>
+     * 
+     * <p>
+     * Exchange is passed in this direction: Camel route <= <b>apply this binding method</b>
+     * <= CxfProducer <= CXF Server
+     * </p>
+     * @param camelExchange exchanged to be populated 
+     * @param cxfExchange exchange that contains a response
+     * @param responseContext map contains response context from CXF
+     */
+    void populateExchangeFromCxfResponse(org.apache.camel.Exchange camelExchange,
+            Exchange cxfExchange, Map<String, Object> responseContext);
+  
+    /**
+     * <p>
+     * Populate a Camel Exchange from a CXF Exchange, which is an <b>incoming request</b> 
+     * from a CXF client.  This method is called by {@link CxfConsumer} to handle a 
+     * CXF request arrives at an endpoint.  It translates a CXF request to a Camel
+     * Exchange for Camel route to process the exchange.
+     * </p>  
+     * 
+     * <p>
+     * Exchange is passed in this direction: CXF Endpoint => CxfConsumer => <b>apply this
+     * binding method </b> => Camel route
+     * </p>
+     * @param cxfExchange CXF exchange that contains a request
+     * @param camelExchange Camel exchange to be populated
+     */
+    void populateExchangeFromCxfRequest(Exchange cxfExchange,
+            org.apache.camel.Exchange camelExchange);
+    
 
-    public static Message createCxfMessage(HeaderFilterStrategy strategy, CxfExchange exchange) {
+    /**
+     * <p>
+     * Populate a CXF Exchange from a Camel Exchange.  The resulted CXF Exchange is an 
+     * <b>outgoing response</b> to be sent back to the CXF client.  This method is called 
+     * by {@link CxfConsumer} to translate a Camel Exchange to a CXF response Exchange.
+     * </p>
+     * 
+     * <p>
+     * Exchange is passed in this direction: CXF Endpoint <= <b>apply this binding method</b>
+     * <= CxfConsumer <= Camel route
+     * </p>
+     * @param camelExchange Camel exchange that contains an out message
+     * @param cxfExchange CXF exchange to be populated
+     */
+    void populateCxfResponseFromExchange(org.apache.camel.Exchange camelExchange,
+            Exchange cxfExchange);
 
-        Message answer = exchange.getInMessage();
-        CxfMessage in = exchange.getIn();
-
-        // Check the body if the POJO parameter list first
-        try {
-            List body = in.getBody(List.class);
-            // just set the operation's parameter
-            answer.setContent(List.class, body);
-            CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
-        } catch (NoTypeConversionAvailableException ex) {
-            // CXF uses StAX which is based on the stream API to parse the XML,
-            // so the CXF transport is also based on the stream API.
-            // And the interceptors are also based on the stream API,
-            // so let's use an InputStream to host the CXF on wire message.
-            try {
-                InputStream body = in.getBody(InputStream.class);
-                answer.setContent(InputStream.class, body);
-            } catch (NoTypeConversionAvailableException ex2) {
-                // ignore
-            }
-            // TODO do we propagate header the same way in non-POJO mode?
-            // CxfHeaderHelper.propagateCamelToCxf(strategy, in.getHeaders(), answer);
-        }
-
-        //Ensure there is a request context, which is needed by propogateContext() below
-        Map<String, Object> requestContext = CastUtils.cast((Map)answer.get(Client.REQUEST_CONTEXT));
-        if (requestContext == null) {
-            requestContext = new HashMap<String, Object>();
-        }
-        if (exchange.getExchange() != null) {
-            requestContext.putAll(exchange.getExchange());
-        }
-        if (exchange.getProperties() != null) {
-            //Allows other components to pass properties into cxf request context
-            requestContext.putAll(exchange.getProperties());
-        }
-        answer.put(Client.REQUEST_CONTEXT, requestContext);
-
-        return answer;
-    }
-
-    public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange,
-            Message response) {
-        CxfMessage out = exchange.getOut();
-        if (response != null) {
-            CxfHeaderHelper.propagateCxfToCamel(strategy, response, out.getHeaders());
-            out.setMessage(response);
-            DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfExchange.DATA_FORMAT);
-            if (dataFormat.equals(DataFormat.MESSAGE)) {
-                out.setBody(response.getContent(InputStream.class));
-            }
-            if (dataFormat.equals(DataFormat.PAYLOAD)) {
-                out.setBody(response);
-            }
-        }
-    }  
-
-    // Copy the Camel message to CXF message
-    public static void copyMessage(HeaderFilterStrategy strategy,
-            org.apache.camel.Message camelMessage, org.apache.cxf.message.Message cxfMessage) {
-
-        CxfHeaderHelper.propagateCamelToCxf(strategy, camelMessage.getHeaders(), cxfMessage);
-        try {
-            InputStream is = camelMessage.getBody(InputStream.class);
-            if (is != null) {
-                cxfMessage.setContent(InputStream.class, is);
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            Object result = camelMessage.getBody();
-            if (result instanceof InputStream) {
-                cxfMessage.setContent(InputStream.class, result);
-            } else {
-                cxfMessage.setContent(result.getClass(), result);
-            }
-        }
-    }
-
-    public static void storeCXfResponseContext(Message response, Map<String, Object> context) {
-        if (context != null) {
-            MessageContext messageContext = new WrappedMessageContext(context, null, Scope.HANDLER);
-            response.put(Client.RESPONSE_CONTEXT, messageContext);
-
-        }
-    }
-
-    public static void storeCxfResponse(CxfExchange exchange, Object response) {
-        CxfMessage out = exchange.getOut();
-        if (response != null) {
-            out.setBody(response);
-        }
-    }
-
-    public static void storeCxfFault(CxfExchange exchange, Message message) {
-        CxfMessage fault = exchange.getFault();
-        if (fault != null) {
-            fault.setBody(getBody(message));
-        }
-    }
-
-
-    public static Map<String, Object> propogateContext(Message message, Map<String, Object> context) {
-        Map<String, Object> requestContext = CastUtils.cast((Map)message.get(Client.REQUEST_CONTEXT));
-        Map<String, Object> responseContext = CastUtils.cast((Map)message.get(Client.RESPONSE_CONTEXT));
-        // TODO map the JAXWS properties to cxf
-        if (requestContext != null) {
-            Map<String, Object> realMap = new HashMap<String, Object>();
-            WrappedMessageContext ctx = new WrappedMessageContext(realMap,
-                                                                  null,
-                                                                  Scope.APPLICATION);
-            ctx.putAll(requestContext);
-            requestContext = realMap;
-
-        }
-
-        if (responseContext == null) {
-            responseContext = new HashMap<String, Object>();
-        } else {
-            // clear the response context
-            responseContext.clear();
-        }
-        context.put(Client.REQUEST_CONTEXT, requestContext);
-        context.put(Client.RESPONSE_CONTEXT, responseContext);
-        return responseContext;
-
-    }
 
 }

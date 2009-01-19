@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.interceptors;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.cxf.interceptor.Fault;
@@ -41,7 +42,8 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
             }
         }
 
-        InputStream is = message.getContent(InputStream.class);
+        List<?> params = message.getContent(List.class);
+        InputStream is = (InputStream)params.get(0);
         OutputStream os = message.getContent(OutputStream.class);
 
         try {

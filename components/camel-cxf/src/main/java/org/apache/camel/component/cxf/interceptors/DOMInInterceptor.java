@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.cxf.interceptors;
 
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.interceptor.CheckFaultInterceptor;
-import org.apache.cxf.binding.soap.interceptor.SoapActionInInterceptor;
-import org.apache.cxf.common.i18n.BundleUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
@@ -37,10 +34,6 @@ public class DOMInInterceptor extends AbstractPhaseInterceptor<Message> {
     public DOMInInterceptor() {
         super(Phase.POST_PROTOCOL);
         this.addAfter(CheckFaultInterceptor.class.getName());
-    }
-
-    public boolean isRequestor(Message message) {
-        return Boolean.TRUE.equals(message.get(Message.REQUESTOR_ROLE));
     }
 
     public void handleMessage(Message message) throws Fault {

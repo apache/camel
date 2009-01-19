@@ -17,18 +17,14 @@
 package org.apache.camel.component.cxf.converter;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Map;
 
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Endpoint;
+import org.apache.camel.component.cxf.DataFormat;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.MessageContentsList;
-
 
 /**
  * The <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
@@ -72,8 +68,9 @@ public final class CxfConverter {
         return baos.toString();
     }
 
-
-
-
+    @Converter
+    public static DataFormat toDataFormat(final String name) {
+        return DataFormat.valueOf(name.toUpperCase());
+    }
 
 }

@@ -19,7 +19,10 @@ package org.apache.camel.component.cxf;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * The Greeter Payload mode test that is configured with CXF features.
+ * A unit test for testing a CXF client invoking a CXF server via route 
+ * in PAYLOAD mode and with CXF features specified in the Spring config.
+ * 
+ * @version $Revision$
  */
 public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest {
 
@@ -31,8 +34,10 @@ public class CxfGreeterPayLoadWithFeatureRouterTest extends CXFGreeterRouterTest
         CxfEndpoint endpoint = getMandatoryEndpoint("cxf:bean:serviceEndpoint?dataFormat=PAYLOAD", 
                 CxfEndpoint.class);
         
-        assertEquals(TestCxfFeature.class, endpoint.getCxfEndpointBean().getFeatures().get(0).getClass());
-        assertEquals(DataFormat.PAYLOAD.toString(), endpoint.getDataFormat());
+        assertEquals(TestCxfFeature.class, ((CxfSpringEndpoint)endpoint).getBean()
+                .getFeatures().get(0).getClass());
+        
+        assertEquals(DataFormat.PAYLOAD, endpoint.getDataFormat());
     }   
 
     @Override

@@ -14,35 +14,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.invoker;
+package org.apache.camel.component.cxf;
 
 import java.util.List;
+
 import org.w3c.dom.Element;
-import org.apache.cxf.binding.soap.SoapHeader;
 
-
-
-public class PayloadMessage {
-    private List<Element> payload;
-    private List<SoapHeader> headers;
+/**
+ * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
+ * 
+ * @version $Revision$
+ */
+public class CxfPayload<T> {
     
-    public PayloadMessage(List<Element> payload, List<SoapHeader> headers) {
-        this.payload = payload;
+    private List<Element> body;
+    private List<T> headers;
+
+    public CxfPayload(List<T> headers, List<Element> body) {
         this.headers = headers;
+        this.body = body;
     }
     
-    public List<Element> getPayload() {
-        return payload;
+    public List<Element> getBody() {
+        return body;
     }
     
-    public List<SoapHeader> getHeaders() {
+    public List<T> getHeaders() {
         return headers;
     }
     
     public String toString() {
         StringBuffer buf = new StringBuffer();
-        buf.append("payload: " + payload);
+        buf.append(getClass().getName());
         buf.append(" headers: " + headers);
+        buf.append("body: " + body);
         return buf.toString();
     }
+
 }

@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.interceptors;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,7 +33,6 @@ import org.w3c.dom.NodeList;
 import org.apache.cxf.binding.xml.XMLConstants;
 import org.apache.cxf.binding.xml.XMLFault;
 import org.apache.cxf.bindings.xformat.XMLBindingMessageFormat;
-import org.apache.cxf.common.i18n.BundleUtils;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.interceptor.Fault;

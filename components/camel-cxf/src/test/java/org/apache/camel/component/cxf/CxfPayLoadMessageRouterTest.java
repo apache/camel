@@ -21,10 +21,14 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+/**
+ * A unit test for testing reading SOAP body in PAYLOAD mode.
+ * 
+ * @version $Revision$
+ */
 public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
     private String serviceEndpointURI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=PAYLOAD";
@@ -34,14 +38,11 @@ public class CxfPayLoadMessageRouterTest extends CxfSimpleRouterTest {
                 // START SNIPPET: payload
                 from(routerEndpointURI).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        Message inMessage = exchange.getIn();
-                        if (inMessage instanceof CxfMessage) {
-                            CxfMessage message = (CxfMessage) inMessage;
-                            List<Element> elements = message.getMessage().get(List.class);
-                            assertNotNull("We should get the elements here" , elements);
-                            assertEquals("Get the wrong elements size" , elements.size(), 1);
-                            assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
-                        }                        
+                        CxfPayload<?> payload = exchange.getIn().getBody(CxfPayload.class);
+                        List<Element> elements = payload.getBody();
+                        assertNotNull("We should get the elements here" , elements);
+                        assertEquals("Get the wrong elements size" , elements.size(), 1);
+                        assertEquals("Get the wrong namespace URI" , elements.get(0).getNamespaceURI(), "http://cxf.component.camel.apache.org/");
                     }
                     
                 })
