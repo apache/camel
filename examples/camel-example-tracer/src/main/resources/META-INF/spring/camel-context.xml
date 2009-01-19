@@ -25,9 +25,11 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
 
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
-        <endpoint id="traced"
-                  uri="jpa://org.apache.camel.processor.interceptor.JpaTraceEventMessage?persistenceUnit=tracer"/>
+        <!-- START SNIPPET: e3 -->
+        <endpoint id="traced" uri="jpa://org.apache.camel.processor.interceptor.JpaTraceEventMessage?persistenceUnit=tracer"/>
+        <!-- END SNIPPET: e3 -->
 
+        <!-- START SNIPPET: e4 -->
         <route>
             <!-- in stream to allow you to enter some text in the console -->
             <from uri="stream:in?initialPromptDelay=4000&amp;promptDelay=2000&amp;promptMessage=Enter some words:"/>
@@ -52,6 +54,7 @@
                 </aggregate>
             </split>
         </route>
+        <!-- END SNIPPET: e4 -->
 
     </camelContext>
 
@@ -82,6 +85,7 @@
         </property>
     </bean>
 
+    <!-- START SNIPPET: e1 -->
     <!-- use camel jpa trace so we can see all the traced exchanges in a database -->
     <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
         <!-- turn on jpa tracing, otherwise the TraceEventMessage is a non JPA Entity class -->
@@ -92,7 +96,9 @@
              but you can have both if you like -->
         <property name="logLevel" value="OFF"/>
     </bean>
+    <!-- END SNIPPET: e1 -->
 
+    <!-- START SNIPPET: e2 -->
     <!-- this is ordinary JPA spring configuration -->
     <bean id="transactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
         <property name="transactionManager">
@@ -112,6 +118,7 @@
         <!-- we have named our presistence unit tracer in the META-INF/persistence.xml file -->
         <property name="persistenceUnitName" value="tracer"/>
     </bean>
+    <!-- END SNIPPET: e2 -->
 
     <!-- let's show a simple UI to browse the database -->
     <bean id="databaseExplorer" class="org.apache.camel.spring.util.MainRunner" lazy-init="false">
