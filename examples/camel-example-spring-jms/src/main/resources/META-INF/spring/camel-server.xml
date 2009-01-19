@@ -55,14 +55,9 @@
     <!-- END SNIPPET: e4 -->
 
     <!-- START SNIPPET: e5 -->
-    <!-- lets configure the Camel JMS consumer to use the ActiveMQ broker declared above -->
-    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">
-        <property name="connectionFactory">
-            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
-                <!-- use the vm protocol as the JMS broker is running in the same jvm as Camel -->
-                <property name="brokerURL" value="vm://localhost"/>
-            </bean>
-        </property>
+    <!-- lets configure the Camel ActiveMQ to use the ActiveMQ broker declared above -->
+    <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="brokerURL" value="tcp://localhost:61616"/>
     </bean>
     <!-- END SNIPPET: e5 -->
 
