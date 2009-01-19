@@ -40,6 +40,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
@@ -284,16 +285,16 @@ public class CxfEndpoint extends DefaultEndpoint {
         wsdlURL = url;
     }
     
-    public String getServiceClass() {
+    public String getServiceClass() {        
         return serviceClass;
     }
-
-    public void setServiceClass(String className) {
-        serviceClass = className;
-    }
-    
+      
     public void setServiceClass(Object instance) {
-        serviceClass = instance.getClass().getName();
+        if (instance instanceof String) {
+            serviceClass = (String) instance;
+        } else {
+            serviceClass = ClassHelper.getRealClass(instance).getName();
+        }
     }
 
     public void setPortName(String port) {

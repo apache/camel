@@ -45,6 +45,18 @@
       <url>http://download.java.net/maven/1</url>
       <!--<url>https://maven-repository.dev.java.net/nonav/repository</url>-->
       <layout>legacy</layout>
+    </repository>    
+    <!--  for CXF snapshot -->
+    <repository>
+      <id>apache.snapshot</id>
+      <name>Apache Snapshot Maven Repo</name>
+      <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
     </repository>
   </repositories>
 

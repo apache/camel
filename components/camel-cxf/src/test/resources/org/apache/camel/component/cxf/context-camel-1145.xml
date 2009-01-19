@@ -44,7 +44,7 @@
     	<property name="logLevel" value="INFO"/>
 	</bean>
 	
-	<bean id="traceFormatter" class="org.apache.camel.processor.interceptor.TraceFormatter">
+	<bean id="traceFormatter" class="org.apache.camel.processor.interceptor.DefaultTraceFormatter">
     	<property name="showBody" value="true"/>
     	<property name="showBodyType" value="true"/>
     	<property name="showProperties" value="true"/>
