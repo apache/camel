@@ -16,7 +16,7 @@ of the business service and uses Camel for mediation of the storage of the audit
 
 And for the Client we have a total of three flavors:
 - Normal use the ProducerTemplate ala Spring Template style
-- Using Spring Remoting for powefull "Client doesnt know at all its a remote call"
+- Using Spring Remoting for powerful "Client doesn't know at all its a remote call"
 - And using the Message Endpoint pattern using the neutral Camel API
 
 For the latest & greatest documentation on how to use this example please see:
@@ -32,6 +32,7 @@ The example should run if you type:
   mvn exec:java -PCamelClient
   mvn exec:java -PCamelClientRemoting
   mvn exec:java -PCamelClientEndpoint
+  mvn exec:java -PCamelClientStop
   
 You can stack the maven goals so you can compile and execute it in one command:
   mvn compile exec:java -PCamelServer
