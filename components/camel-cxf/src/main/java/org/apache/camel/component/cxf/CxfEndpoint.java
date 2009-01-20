@@ -289,28 +289,28 @@ public class CxfEndpoint extends DefaultEndpoint {
         return serviceClass;
     }
       
-    public void setServiceClass(Object instance) {
-        if (instance instanceof String) {
-            serviceClass = (String) instance;
-        } else {
-            serviceClass = ClassHelper.getRealClass(instance).getName();
-        }
+    public void setServiceClass(String className) {
+        serviceClass = className;
     }
-
-    public void setPortName(String port) {
-        portName = port;
+    
+    public void setServiceClass(Object instance) {
+        serviceClass = ClassHelper.getRealClass(instance).getName();
     }
 
     public void setServiceName(String service) {
         serviceName = service;
     }
 
+    public String getServiceName() {
+        return serviceName;
+    }
+    
     public String getPortName() {
         return portName;
     }
-
-    public String getServiceName() {
-        return serviceName;
+    
+    public void setPortName(String port) {
+        portName = port;
     }
 
     public boolean isInOut() {
