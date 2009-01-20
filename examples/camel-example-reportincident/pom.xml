@@ -17,10 +17,6 @@
     </description>
     <packaging>war</packaging>
 
-    <properties>
-        <jetty-version>6.1.11</jetty-version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>

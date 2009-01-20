@@ -57,6 +57,7 @@
     <module>camel-example-jms-file</module>
     <module>camel-example-loan-broker</module>
     <module>camel-example-osgi</module>
+    <module>camel-example-reportincident</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-jms</module>
     <module>camel-example-spring-xquery</module>
