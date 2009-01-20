@@ -30,7 +30,7 @@ public class AbstractCamelContextBeanDefinitionParser extends AbstractBeanDefini
     private static final String DEFAULT_CAMEL_CONTEXT_NAME = "camelContext";
 
     private String getContextId(String contextId) {
-        if (ObjectHelper.isNullOrBlank(contextId)) {
+        if (ObjectHelper.isEmpty(contextId)) {
             //Set the contextId default value here
             return DEFAULT_CAMEL_CONTEXT_NAME;
         } else {

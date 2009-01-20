@@ -28,6 +28,8 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.configuration.Configurer;
+import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
@@ -46,7 +48,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
         Bus bus = null;
         this.endpoint = endpoint;
         boolean isWebServiceProvider = false;
-        if (endpoint.getApplicationContext() != null) {
+        if (endpoint.getApplicationContext() != null) {            
             if (endpoint.getCxfEndpointBean() != null) {
                 bus = endpoint.getCxfEndpointBean().getBus();
             } else {
@@ -109,8 +111,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        server.start();
+        server.start();       
     }
 
     @Override
@@ -121,6 +122,10 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
 
     public CxfEndpoint getEndpoint() {
         return endpoint;
+    }
+    
+    public Server getServer() {
+        return server;
     }
 
 }

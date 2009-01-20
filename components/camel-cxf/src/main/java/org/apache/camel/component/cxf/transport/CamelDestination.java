@@ -138,6 +138,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     public CamelContext getCamelContext() {
         if (camelContext == null) {
+            getLogger().log(Level.INFO, "No CamelContext injected, create a default one");
             camelContext = new DefaultCamelContext();
         }
         return camelContext;
@@ -160,13 +161,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     public String getBeanName() {
         if (endpointInfo == null || endpointInfo.getName() == null) {
             return "default" + BASE_BEAN_NAME_SUFFIX;
-        }
+        }        
         return endpointInfo.getName().toString() + BASE_BEAN_NAME_SUFFIX;
     }
 
     private void initConfig() {
         //we could configure the camel context here
-        if (bus != null) {
+        if (bus != null) {            
             Configurer configurer = bus.getExtension(Configurer.class);
             if (null != configurer) {
                 configurer.configureBean(this);

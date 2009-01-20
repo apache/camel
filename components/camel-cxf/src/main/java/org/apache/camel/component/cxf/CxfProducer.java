@@ -41,6 +41,8 @@ import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
+import org.apache.cxf.configuration.Configurer;
+import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
@@ -95,7 +97,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         Bus bus = null;
         if (endpoint.getApplicationContext() != null) {            
             if (endpoint.getCxfEndpointBean() != null) {
-                bus = endpoint.getCxfEndpointBean().getBus();
+                bus = endpoint.getCxfEndpointBean().getBus();                
             } else {
                 SpringBusFactory busFactory = new SpringBusFactory(endpoint.getApplicationContext());
                 bus = busFactory.createBus();
@@ -272,6 +274,10 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
         Object[] result = client.invoke(op, parameters.toArray(), context);
 
         return result;
+    }
+    
+    public Client getClient() {
+        return client;
     }
 
 }
