@@ -86,7 +86,7 @@ public final class MailConverters {
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s);
+        return IOConverter.toInputStream(s, null);
     }
 
     /**
@@ -99,7 +99,7 @@ public final class MailConverters {
         if (s == null) {
             return null;
         }
-        return IOConverter.toInputStream(s);
+        return IOConverter.toInputStream(s, null);
     }
 
 }
