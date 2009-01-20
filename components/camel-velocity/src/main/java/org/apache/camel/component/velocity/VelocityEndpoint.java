@@ -40,6 +40,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
     private final VelocityComponent component;
     private VelocityEngine velocityEngine;
     private boolean loaderCache = true;
+    private String encoding;
 
     public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri, Map parameters) {
         super(uri, component, resourceUri, null);
@@ -84,13 +85,21 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         this.loaderCache = loaderCache;
     }
 
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         Resource resource = getResource();
 
         // getResourceAsInputStream also considers the content cache
-        Reader reader = new InputStreamReader(getResourceAsInputStream());
+        Reader reader = encoding != null ? new InputStreamReader(getResourceAsInputStream(), encoding) : new InputStreamReader(getResourceAsInputStream());
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
         Map variableMap = ExchangeHelper.createVariableMap(exchange);
