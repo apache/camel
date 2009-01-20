@@ -27,11 +27,8 @@ import org.apache.camel.component.file.FileComponent;
  */
 public class FtpLoginTest extends FtpServerTestSupport {
 
-    private int port = 20077;
-    private String ftpUrl = "ftp://dummy@localhost:" + port;
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://dummy@localhost:" + getPort();
     }
 
     @Override
@@ -76,12 +73,12 @@ public class FtpLoginTest extends FtpServerTestSupport {
         config.setPassword(password);
         config.setDirectory(true);
         config.setHost("localhost");
-        config.setPort(port);
+        config.setPort(getPort());
         config.setProtocol("ftp");
         config.setFile("login");
 
         FtpRemoteFileOperations remoteFileOperations = new FtpRemoteFileOperations();
-        RemoteFileEndpoint endpoint = new RemoteFileEndpoint(ftpUrl, component, remoteFileOperations, config);
+        RemoteFileEndpoint endpoint = new RemoteFileEndpoint(getFtpUrl(), component, remoteFileOperations, config);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

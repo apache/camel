@@ -23,11 +23,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  * Unit test to verify polling a server with no files to poll.
  */
 public class FromFtpNoFilesTest extends FtpServerTestSupport {
-    private int port = 20020;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=2000";
 
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&binary=false&readLock=rename&consumer.delay=2000";
     }
 
     public void testPoolIn3SecondsButNoFiles() throws Exception {
@@ -44,7 +42,7 @@ public class FromFtpNoFilesTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

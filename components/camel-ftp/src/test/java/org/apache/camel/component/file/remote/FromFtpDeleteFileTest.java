@@ -30,11 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
-    private int port = 20022;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/deletefile?password=admin&binary=false&delete=true";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true";
     }
 
     @Override
@@ -46,7 +43,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World this file will be deleted");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -65,7 +62,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be deleted");
-        
+
         mock.assertIsSatisfied();
 
         Thread.sleep(500);
@@ -79,7 +76,7 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

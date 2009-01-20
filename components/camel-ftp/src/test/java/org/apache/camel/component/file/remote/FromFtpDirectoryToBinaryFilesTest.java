@@ -32,10 +32,16 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
 
-    private int port = 20034;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&directory=true"
+                + "&binary=true&consumer.useFixedDelay=false&setNames=true&recursive=false&consumer.delay=5000";
+    }
 
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming/?password=admin&directory=true"
-        + "&binary=true&consumer.useFixedDelay=false&setNames=true&recursive=false&consumer.delay=5000";
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -59,22 +65,12 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         assertTrue("Logo size wrong", file.length() > 10000);
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
-    }
-
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/incoming/?password=admin&binary=true"
-            + "&consumer.delay=2000&recursive=false";
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&binary=true"
+                + "&consumer.delay=2000&recursive=false";
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo.jpeg");
@@ -83,7 +79,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         producer.process(exchange);
         producer.stop();
 
-        endpoint = context.getEndpoint(ftpUrl);
+        endpoint = context.getEndpoint(getFtpUrl());
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo1.jpeg");
@@ -97,7 +93,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?noop=true";
-                from(ftpUrl).to(fileUrl, "mock:result");
+                from(getFtpUrl()).to(fileUrl, "mock:result");
             }
         };
     }

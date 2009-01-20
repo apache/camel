@@ -32,11 +32,17 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSupport {
 
-    private int port = 20016;
-
     // must user "consumer." prefix on the parameters to the file component
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/incoming?password=admin&binary=true"
-        + "&consumer.delay=2000&recursive=true&setNames=true";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
+                + "&consumer.delay=2000&recursive=true&setNames=true";
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -63,20 +69,10 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         Thread.sleep(1000);
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
-    }
-
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/incoming/data1/?password=admin&binary=true";
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/data1/?password=admin&binary=true";
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
@@ -86,7 +82,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         producer.process(exchange);
         producer.stop();
 
-        ftpUrl = "ftp://admin@localhost:" + port + "/incoming/data2/?password=admin&binary=true";
+        ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/data2/?password=admin&binary=true";
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo2.png"));
@@ -101,7 +97,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftpsetnamestest/?noop=true";
-                from(ftpUrl).to(fileUrl, "mock:result");
+                from(getFtpUrl()).to(fileUrl, "mock:result");
             }
         };
     }

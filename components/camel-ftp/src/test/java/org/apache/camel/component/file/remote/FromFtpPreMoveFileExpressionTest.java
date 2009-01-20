@@ -31,12 +31,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
 
-    private int port = 20030;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false&consumer.delay=5000"
-        + "&preMoveExpression=../inprogress/${file:name.noext}.bak";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&consumer.delay=5000"
+                + "&preMoveExpression=../inprogress/${file:name.noext}.bak";
     }
 
     @Override
@@ -49,7 +46,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World this file will be moved");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -75,7 +72,7 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).process(new Processor() {
+                from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // assert the file is pre moved
                         File file = new File("./res/home/inprogress/hello.bak");

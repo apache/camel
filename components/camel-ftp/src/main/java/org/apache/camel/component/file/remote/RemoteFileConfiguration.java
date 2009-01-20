@@ -53,7 +53,7 @@ public class RemoteFileConfiguration {
      * Returns human readable server information for logging purpose
      */
     public String remoteServerInformation() {
-        return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + port;
+        return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + getPort();
     }
 
     public void configure(URI uri) {

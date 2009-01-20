@@ -28,18 +28,15 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
 
-    private int port = 20028;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/fileonly/report.txt?password=admin&directory=false";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/fileonly/report.txt?password=admin&directory=false";
+    }
 
     public void testPollFileOnly() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World from FTPServer");
 
         mock.assertIsSatisfied();
-    }
-
-    public int getPort() {
-        return port;
     }
 
     @Override
@@ -51,7 +48,7 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + port + "/fileonly/?password=admin&binary=false");
+        Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin&binary=false");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "report.txt");
@@ -64,7 +61,7 @@ public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

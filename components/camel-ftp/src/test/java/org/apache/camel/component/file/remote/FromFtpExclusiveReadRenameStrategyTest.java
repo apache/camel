@@ -34,11 +34,8 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadRenameStrategyTest.class);
     private static final boolean ON_WINDOWS = System.getProperty("os.name").startsWith("Windows");
 
-    private int port = 20090;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin&readLock=rename&consumer.delay=500";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin&readLock=rename&consumer.delay=500";
     }
 
     @Override
@@ -56,7 +53,7 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
             @Override
             public void configure() throws Exception {
                 from("seda:start").process(new MySlowFileProcessor());
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         });
         context.start();
@@ -84,7 +81,7 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
             @Override
             public void configure() throws Exception {
                 from("seda:start").process(new MySlowFileProcessor());
-                from(ftpUrl + "&readLockTimeout=1000").to("mock:result");
+                from(getFtpUrl() + "&readLockTimeout=1000").to("mock:result");
             }
         });
         context.start();

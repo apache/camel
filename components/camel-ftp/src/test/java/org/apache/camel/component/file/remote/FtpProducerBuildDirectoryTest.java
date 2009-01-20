@@ -26,17 +26,14 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
 
-    private int port = 20089;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/upload/user/claus?binary=false&password=admin";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin";
     }
 
     public void testProduceAndBuildFullRemotFolderTest() throws Exception {
         deleteDirectory("./res/home/");
 
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
 
         File file = new File("./res/home/upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();

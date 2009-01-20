@@ -30,12 +30,8 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
-    private int port = 20062;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/filelanguage?password=admin";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin";
     }
 
     @Override
@@ -53,21 +49,21 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProduceBeanByExpression() throws Exception {
-        template.sendBody(ftpUrl + "&expression=${bean:myguidgenerator}.bak", "Hello World");
+        template.sendBody(getFtpUrl() + "&expression=${bean:myguidgenerator}.bak", "Hello World");
 
         Thread.sleep(500);
         assertFileExists("res/home/filelanguage/123.bak");
     }
 
     public void testProduceBeanByHeader() throws Exception {
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
 
         Thread.sleep(500);
         assertFileExists("res/home/filelanguage/123.bak");
     }
 
     public void testProducerDateByHeader() throws Exception {
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -75,7 +71,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProducerDateByExpression() throws Exception {
-        template.sendBody(ftpUrl + "&expression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
+        template.sendBody(getFtpUrl() + "&expression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -84,7 +80,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
-        template.sendBody(ftpUrl + "&expression=" + expression, "Hello World");
+        template.sendBody(getFtpUrl() + "&expression=" + expression, "Hello World");
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
@@ -92,7 +88,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader(ftpUrl + "&expression=myfile-${in.header.foo}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&expression=myfile-${in.header.foo}.txt",
                 "Hello World", "foo", "abc");
 
         Thread.sleep(500);
@@ -104,7 +100,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(ftpUrl + "&expression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&expression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
                 "Hello World", "birthday", date);
 
         Thread.sleep(500);

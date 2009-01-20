@@ -17,8 +17,11 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.util.Random;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.converter.IOConverter;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManager;
@@ -28,10 +31,14 @@ import org.apache.ftpserver.usermanager.PropertiesUserManager;
  */
 public abstract class FtpServerTestSupport extends ContextTestSupport {
     protected FtpServer ftpServer;
+    private int port;
 
-    public abstract int getPort();
+    public int getPort() {
+        return port;
+    }
 
     protected void setUp() throws Exception {
+        initPort();
         super.setUp();
         initFtpServer();
         ftpServer.start();
@@ -41,6 +48,7 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
         super.tearDown();
         ftpServer.stop();
         ftpServer = null;
+        port = 0;
     }
 
     protected void initFtpServer() throws Exception {
@@ -54,6 +62,30 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
         uman.configure();
         ftpServer.setUserManager(uman);
 
-        ftpServer.getListener("default").setPort(getPort());
+        if (port < 21000) {
+            throw new IllegalArgumentException("Port number is not initialized in an expected range: " + getPort());
+        }
+        ftpServer.getListener("default").setPort(port);
+    }
+
+    protected void initPort() throws Exception {
+        File file = new File("./target/ftpport.txt");
+        file = file.getAbsoluteFile();
+
+        if (!file.exists()) {
+            // start from somewhere in the 21xxx range
+            port = 21000 + new Random().nextInt(900);
+        } else {
+            // read port number from file
+            String s = IOConverter.toString(file);
+            port = Integer.parseInt(s);
+            // use next number
+            port++;
+        }
+
+        // save to file, do not append
+        FileOutputStream fos = new FileOutputStream(file, false);
+        fos.write(("" + getPort()).getBytes());
+        fos.close();
     }
 }

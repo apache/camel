@@ -28,9 +28,9 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
 
-    private int port = 20095;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/sorter?password=admin&sorter=#mySorter";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -46,10 +46,6 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public int getPort() {
-        return port;
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -59,16 +55,16 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + port + "/sorter/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sorter/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

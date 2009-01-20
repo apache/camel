@@ -26,9 +26,9 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
 
-    private int port = 20096;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/filefilter?password=admin&filter=#myFilter";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filefilter?password=admin&filter=#myFilter";
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -44,10 +44,6 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
-    public int getPort() {
-        return port;
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -57,17 +53,17 @@ public class FromFtpRemoteFileFilterTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + port + "/filefilter/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(ftpUrl, "Report 1", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(ftpUrl, "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/filefilter/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Report 1", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

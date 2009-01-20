@@ -27,15 +27,12 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
 
-    private int port = 20077;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
     }
 
     public void testCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
 
         String fileName = "somepath/someuser/claus.txt";
@@ -44,7 +41,7 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
     }
 
     public void testNoPathCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
 
         String fileName = "claus.txt";
@@ -55,7 +52,7 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
     public void testProduceTempPrefixTest() throws Exception {
         deleteDirectory("./res/home/");
 
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
 
         File file = new File("./res/home/upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();

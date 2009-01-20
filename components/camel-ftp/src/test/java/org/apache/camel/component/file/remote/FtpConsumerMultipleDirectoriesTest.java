@@ -25,11 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
-    private int port = 20044;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/multidir/?password=admin&recursive=true&consumer.delay=5000&sortBy=file:path";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&consumer.delay=5000&sortBy=file:path";
     }
 
     @Override
@@ -40,9 +37,9 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(ftpUrl, "Godday World", FileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Godday World", FileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");
     }
 
     public void testMultiDir() throws Exception {
@@ -73,7 +70,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

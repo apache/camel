@@ -24,8 +24,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFileToFtpTest extends FtpServerTestSupport {
 
-    private int port = 20011;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp2/camel?password=admin&consumer.initialDelay=5000";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=5000";
+    }
 
     public void testFromFileToFtp() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -34,16 +35,12 @@ public class FromFileToFtpTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public int getPort() {
-        return port;
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file:src/main/data?noop=true&consumer.delay=5000").to(ftpUrl);
+                from("file:src/main/data?noop=true&consumer.delay=5000").to(getFtpUrl());
 
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }
