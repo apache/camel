@@ -88,6 +88,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
 
     public CamelContext getCamelContext() {
         if (camelContext == null) {
+            getLogger().log(Level.INFO, "No CamelContext injected, create a default one");
             camelContext = new DefaultCamelContext();
         }
         return camelContext;
