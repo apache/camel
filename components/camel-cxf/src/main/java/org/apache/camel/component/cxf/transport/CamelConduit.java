@@ -86,6 +86,10 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public CamelContext getCamelContext() {
+        if (camelContext == null) {
+            getLogger().log(Level.INFO, "No CamelContext injected, create a default one");
+            camelContext = new DefaultCamelContext();
+        }
         return camelContext;
     }
 
@@ -122,9 +126,8 @@ public class CamelConduit extends AbstractConduit implements Configurable {
     }
 
     public ProducerTemplate getCamelTemplate() {
-        if (camelTemplate == null) {
-            CamelContext ctx = camelContext != null ? camelContext : new DefaultCamelContext();
-            camelTemplate = ctx.createProducerTemplate();
+        if (camelTemplate == null) {            
+            camelTemplate = getCamelContext().createProducerTemplate();
         }
         return camelTemplate;
     }

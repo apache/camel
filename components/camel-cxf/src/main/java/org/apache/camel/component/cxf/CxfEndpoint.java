@@ -176,7 +176,7 @@ public class CxfEndpoint extends DefaultEndpoint {
     }
 
     protected Bus doGetBus() {
-        return BusFactory.getThreadDefaultBus();
+        return BusFactory.getDefaultBus();
     }
     
     /**
@@ -372,12 +372,12 @@ public class CxfEndpoint extends DefaultEndpoint {
         if (bus == null) {
             bus = doGetBus();
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Using ThreadDefaultBus " + bus);
+                LOG.debug("Using DefaultBus " + bus);
             }
         }
         
         if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
-            BusFactory.setThreadDefaultBus(bus);
+            BusFactory.setDefaultBus(bus);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Set bus " + bus + " as thread default bus");
             }
