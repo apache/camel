@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.CxfConstants;
+import org.apache.cxf.BusFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
@@ -37,6 +38,7 @@ public class CxfEndpointBeanTest extends TestCase {
 
     protected void tearDown() throws Exception {
         ctx.close();
+        BusFactory.setDefaultBus(null);
     }
 
     public void testCxfEndpointBeanDefinitionParser() {

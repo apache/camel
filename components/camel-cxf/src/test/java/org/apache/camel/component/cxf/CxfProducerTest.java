@@ -32,6 +32,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.CXFBusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ServerImpl;
@@ -83,6 +84,7 @@ public class CxfProducerTest extends TestCase {
         if (jaxwsEndpoint != null) {
             jaxwsEndpoint.stop();
         }
+        BusFactory.setDefaultBus(null);
     }
 
 

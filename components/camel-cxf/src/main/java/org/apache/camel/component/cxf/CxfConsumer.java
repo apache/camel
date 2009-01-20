@@ -114,4 +114,7 @@ public class CxfConsumer extends DefaultConsumer {
         super.doStop();
     }
     
+    public Server getServer() {
+        return server;
+    }
 }

@@ -216,5 +216,9 @@ public class CxfProducer extends DefaultProducer {
         }
         return answer;
     }
+    
+    public Client getClient() {
+        return client;
+    }
 
 }

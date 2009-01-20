@@ -35,6 +35,7 @@ import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.ServerImpl;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -71,8 +72,9 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     protected void tearDown() throws Exception {
         if (server != null) {
             server.stop();
-        }
+        }        
         super.tearDown();
+        BusFactory.setDefaultBus(null);
     }
 
     protected RouteBuilder createRouteBuilder() {
