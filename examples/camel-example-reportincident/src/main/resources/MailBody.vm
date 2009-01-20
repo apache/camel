@@ -1,0 +1,12 @@
+Incident $body.incidentId has been reported on the $body.incidentDate by $body.givenName $body.familyName.
+
+The person can be contact by:
+- email: $body.email
+- phone: $body.phone
+
+Summary: $body.summary
+
+Details:
+$body.details
+
+This is an auto generated email. You can not reply.
