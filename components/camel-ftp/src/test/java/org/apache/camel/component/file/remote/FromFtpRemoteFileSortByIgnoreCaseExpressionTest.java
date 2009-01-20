@@ -25,12 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTestSupport {
 
-    private int port = 20093;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/sortbyignore?password=admin&consumer.delay=5000";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/sortbyignore?password=admin&consumer.delay=5000";
     }
 
     @Override
@@ -48,7 +44,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(ftpUrl + "&sortBy=file:name").to("mock:result");
+                from(getFtpUrl() + "&sortBy=file:name").to("mock:result");
             }
         });
         context.start();
@@ -63,7 +59,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(ftpUrl + "&sortBy=ignoreCase:file:name").to("mock:nocase");
+                from(getFtpUrl() + "&sortBy=ignoreCase:file:name").to("mock:nocase");
             }
         });
         context.start();
@@ -78,7 +74,7 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(ftpUrl + "&sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
+                from(getFtpUrl() + "&sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
             }
         });
         context.start();
@@ -92,10 +88,10 @@ public class FromFtpRemoteFileSortByIgnoreCaseExpressionTest extends FtpServerTe
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + port + "/sortbyignore/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello Paris", FileComponent.HEADER_FILE_NAME, "report-3.dat");
-        template.sendBodyAndHeader(ftpUrl, "Hello London", FileComponent.HEADER_FILE_NAME, "REPORT-2.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "Report-1.xml");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sortbyignore/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", FileComponent.HEADER_FILE_NAME, "report-3.dat");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello London", FileComponent.HEADER_FILE_NAME, "REPORT-2.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "Report-1.xml");
     }
 
 }

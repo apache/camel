@@ -30,8 +30,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
 
-    private int port = 20013;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp3/camel?password=admin&binary=false";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/tmp3/camel?password=admin&binary=false";
+    }
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -51,10 +52,6 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         Thread.sleep(1000);
     }
 
-    public int getPort() {
-        return port;
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -64,7 +61,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -78,7 +75,7 @@ public class FromFtpToAsciiFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?append=false&noop=true";
-                from(ftpUrl).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.txt")).
+                from(getFtpUrl()).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.txt")).
                         convertBodyTo(String.class).to(fileUrl).to("mock:result");
             }
         };

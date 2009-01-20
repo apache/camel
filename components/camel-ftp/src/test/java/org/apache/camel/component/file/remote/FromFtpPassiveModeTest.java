@@ -27,11 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  * @version $Revision$
  */
 public class FromFtpPassiveModeTest extends FtpServerTestSupport {
-    protected int port = 2434;
-    protected String ftpUrl = "ftp://admin@localhost:" + port + "/passive/?password=admin&passiveMode=true";
 
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/passive/?password=admin&passiveMode=true";
     }
 
     @Override
@@ -43,7 +41,7 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -56,7 +54,7 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

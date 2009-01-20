@@ -25,19 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
 
-    private int port = 20055;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/dirnotmatched/?password=admin"
-            + "&recursive=true&regexPattern=.*txt$";
-
-    public void testSkipDirectories() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
-        mock.assertIsSatisfied();
-    }
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/dirnotmatched/?password=admin"
+                + "&recursive=true&regexPattern=.*txt$";
     }
 
     @Override
@@ -46,26 +36,32 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
+    public void testSkipDirectories() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(3);
+        mock.assertIsSatisfied();
+    }
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/dirnotmatched";
-        template.sendBodyAndHeader(ftpUrl + "/?password=admin", "This is a dot file",
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/dirnotmatched";
+        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a dot file",
                 FileComponent.HEADER_FILE_NAME, ".skipme");
-        template.sendBodyAndHeader(ftpUrl + "/?password=admin", "This is a web file",
+        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a web file",
                 FileComponent.HEADER_FILE_NAME, "index.html");
-        template.sendBodyAndHeader(ftpUrl + "/?password=admin", "This is a readme file",
+        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a readme file",
                 FileComponent.HEADER_FILE_NAME, "readme.txt");
-        template.sendBodyAndHeader(ftpUrl + "/2007/?password=admin", "2007 report",
+        template.sendBodyAndHeader(getFtpUrl() + "/2007/?password=admin", "2007 report",
                 FileComponent.HEADER_FILE_NAME, "report2007.txt");
-        template.sendBodyAndHeader(ftpUrl + "/2008/?password=admin", "2008 report",
+        template.sendBodyAndHeader(getFtpUrl() + "/2008/?password=admin", "2008 report",
                 FileComponent.HEADER_FILE_NAME, "report2008.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

@@ -25,13 +25,19 @@ import org.apache.camel.component.file.FileComponent;
  */
 public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport {
 
-    private int port = 20087;
+    private String getFtpUrl() {
+        return "ftp://dummy@localhost:" + getPort() + "/deletenoperm?password=foo"
+                + "&delete=true&consumer.delay=5000";
+    }
 
-    private String ftpUrl = "ftp://dummy@localhost:" + port + "/deletenoperm?password=foo"
-            + "&delete=true&consumer.delay=5000";
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
 
-    public void testExludePreAndPostfixes() throws Exception {
-        PollingConsumer consumer = context.getEndpoint(ftpUrl).createPollingConsumer();
+    public void testConsumerDeleteNoWritePermission() throws Exception {
+        PollingConsumer consumer = context.getEndpoint(getFtpUrl()).createPollingConsumer();
         consumer.start();
         Exchange out = consumer.receive(3000);
         assertNotNull("Should get the file", out);
@@ -45,20 +51,10 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
         }
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
-    }
-
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/deletenoperm/?password=admin";
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/deletenoperm/?password=admin";
         template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
     }
 

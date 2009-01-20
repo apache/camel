@@ -31,10 +31,18 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
 
-    private int port = 20014;
     // must user "consumer." prefix on the parameters to the file component
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp4/camel?password=admin&binary=true"
-        + "&consumer.delay=5000&recursive=false";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&binary=true"
+                + "&consumer.delay=5000&recursive=false";
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteDirectory("./res/home");
+        prepareFtpServer();
+    }
 
     public void testFtpRoute() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -56,21 +64,10 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         Thread.sleep(1000);
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        deleteDirectory("./res/home");
-        prepareFtpServer();
-    }
-
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo.jpeg");
@@ -84,8 +81,8 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?noop=true&append=false";
-                from(ftpUrl).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.jpg"))
-                    .to(fileUrl, "mock:result");
+                from(getFtpUrl()).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.jpg"))
+                        .to(fileUrl, "mock:result");
             }
         };
     }

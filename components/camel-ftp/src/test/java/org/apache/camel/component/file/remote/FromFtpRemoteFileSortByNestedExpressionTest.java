@@ -25,12 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSupport {
 
-    private int port = 20092;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/sortbynested?password=admin&consumer.delay=5000";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/sortbynested?password=admin&consumer.delay=5000";
     }
 
     @Override
@@ -48,7 +44,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(ftpUrl + "&sortBy=file:name.ext;file:name").to("mock:result");
+                from(getFtpUrl() + "&sortBy=file:name.ext;file:name").to("mock:result");
             }
         });
         context.start();
@@ -63,7 +59,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(ftpUrl + "&sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
+                from(getFtpUrl() + "&sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
             }
         });
         context.start();
@@ -77,11 +73,11 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + port + "/sortbynested/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
-        template.sendBodyAndHeader(ftpUrl, "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
-        template.sendBodyAndHeader(ftpUrl, "Hello Dublin", FileComponent.HEADER_FILE_NAME, "dublin.txt");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sortbynested/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Dublin", FileComponent.HEADER_FILE_NAME, "dublin.txt");
     }
 
 }

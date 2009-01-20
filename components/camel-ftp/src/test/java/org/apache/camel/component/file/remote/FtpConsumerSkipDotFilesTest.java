@@ -25,19 +25,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
 
-    private int port = 20096;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/dotfiles?password=admin";
-
-    public void testSkipDotFiles() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Reports", "Reports");
-        mock.assertIsSatisfied();
-    }
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/dotfiles?password=admin";
     }
 
     @Override
@@ -46,20 +35,27 @@ public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
+    public void testSkipDotFiles() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceived("Reports", "Reports");
+        mock.assertIsSatisfied();
+    }
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/dotfiles/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, ".skipme");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, ".camel");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/dotfiles/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, ".camel");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

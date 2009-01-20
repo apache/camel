@@ -30,11 +30,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpNoopTest extends FtpServerTestSupport {
 
-    private int port = 20066;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/noop?password=admin&binary=false&noop=true";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/noop?password=admin&binary=false&noop=true";
     }
 
     @Override
@@ -46,7 +43,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -60,7 +57,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // we should not be able to poll the file more than once since its noop and idempotent
         mock.expectedMessageCount(1);
-        
+
         mock.assertIsSatisfied();
 
         // assert the file is still there
@@ -72,7 +69,7 @@ public class FromFtpNoopTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

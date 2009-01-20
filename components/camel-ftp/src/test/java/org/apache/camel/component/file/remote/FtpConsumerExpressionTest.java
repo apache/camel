@@ -30,14 +30,10 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FtpConsumerExpressionTest extends FtpServerTestSupport {
 
-    private int port = 20063;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/filelanguage?password=admin&consumer.delay=5000";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&consumer.delay=5000";
     }
-    
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -57,7 +53,7 @@ public class FtpConsumerExpressionTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Reports");
 
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -74,8 +70,8 @@ public class FtpConsumerExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl + "&expression=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
-                    + "-${file:name.noext}.bak").to("mock:result");
+                from(getFtpUrl() + "&expression=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
+                        + "-${file:name.noext}.bak").to("mock:result");
             }
         };
     }

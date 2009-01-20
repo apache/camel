@@ -25,20 +25,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
 
-    private int port = 20095;
-
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/excludename?password=admin"
-        + "&excludedNamePrefix=secret&excludedNamePostfix=xml";
-
-    public void testExludePreAndPostfixes() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Reports", "Reports");
-        mock.assertIsSatisfied();
-    }
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/excludename?password=admin"
+                + "&excludedNamePrefix=secret&excludedNamePostfix=xml";
     }
 
     @Override
@@ -47,20 +36,27 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
+    public void testExludePreAndPostfixes() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(2);
+        mock.expectedBodiesReceived("Reports", "Reports");
+        mock.assertIsSatisfied();
+    }
+
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        String ftpUrl = "ftp://admin@localhost:" + port + "/excludename/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/excludename/?password=admin";
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

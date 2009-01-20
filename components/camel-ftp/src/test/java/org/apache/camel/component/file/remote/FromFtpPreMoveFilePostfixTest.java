@@ -30,12 +30,9 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
 
-    private int port = 20031;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
-        + "&preMoveNamePostfix=.old";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
+                + "&preMoveNamePostfix=.old";
     }
 
     @Override
@@ -48,7 +45,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World this file will be moved");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -79,7 +76,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

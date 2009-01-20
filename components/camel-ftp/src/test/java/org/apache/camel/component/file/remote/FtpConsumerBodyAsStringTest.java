@@ -29,11 +29,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
 
-    private int port = 20012;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/tmp4/camel?password=admin&consumer.delay=5000";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&consumer.delay=5000";
     }
 
     @Override
@@ -45,7 +42,7 @@ public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool
-        Endpoint endpoint = context.getEndpoint(ftpUrl);
+        Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -66,7 +63,7 @@ public class FtpConsumerBodyAsStringTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).process(new Processor() {
+                from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         assertNotNull(body);

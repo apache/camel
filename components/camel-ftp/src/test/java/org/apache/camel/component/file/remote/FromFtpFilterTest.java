@@ -26,11 +26,8 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FromFtpFilterTest extends FtpServerTestSupport {
 
-    private int port = 20077;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/filter?password=admin&binary=false&filter=#myFilter";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter";
     }
 
     @Override
@@ -44,7 +41,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader(ftpUrl, "This is a file to be filtered",
+        template.sendBodyAndHeader(getFtpUrl(), "This is a file to be filtered",
                 FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(3000);
@@ -56,10 +53,10 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(ftpUrl, "This is a file to be filtered",
+        template.sendBodyAndHeader(getFtpUrl(), "This is a file to be filtered",
                 FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader(ftpUrl, "Hello World",
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World",
                 FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
@@ -68,7 +65,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

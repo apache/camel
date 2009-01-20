@@ -27,11 +27,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
 
-    private int port = 20045;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "?password=admin&consumer.delay=5000";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&consumer.delay=5000";
     }
 
     @Override
@@ -43,7 +40,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
     }
 
     public void testWithNoFileInOption() throws Exception {
@@ -62,7 +59,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

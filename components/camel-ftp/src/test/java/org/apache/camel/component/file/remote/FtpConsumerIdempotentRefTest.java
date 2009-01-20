@@ -29,12 +29,9 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
 
-    private int port = 20078;
-    private String ftpUrl = "ftp://admin@localhost:" + port
-            + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort()
+                + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
     }
 
     @Override
@@ -49,7 +46,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }
@@ -60,7 +57,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -71,7 +68,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         Thread.sleep(2000);

@@ -23,13 +23,19 @@ import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
 /**
- * Unit test for ftpClientConfig option. 
+ * Unit test for ftpClientConfig option.
  */
 public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
 
-    private int port = 20066;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/clientconfig?password=admin&ftpClientConfig=#myConfig";
+    }
 
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/clientconfig?password=admin&ftpClientConfig=#myConfig";
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        prepareFtpServer();
+    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -52,26 +58,16 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public int getPort() {
-        return port;
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        prepareFtpServer();
-    }
-
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         };
     }

@@ -30,19 +30,18 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
 
-    private int port = 20034;
-    private String storeUrl = "ftp://admin@localhost:" + port + "/getme?password=admin&binary=false";
-
     // START SNIPPET: e1
     // we use directory=false to indicate we only want to consume a single file
     // we use delay=5000 to use 5 sec delay between pools to avoid polling a second time before we stop the consumer
     // this is because we only want to run a single poll and get the file
     // file=getme/ is the path to the folder where the file is
-    private String getUrl = "ftp://admin@localhost:" + port + "?password=admin&binary=false&directory=false&consumer.delay=5000&file=getme/";
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "?password=admin&binary=false&directory=false&consumer.delay=5000&file=getme/";
+    }
     // END SNIPPET: e1
 
-    public int getPort() {
-        return port;
+    private String getStoreUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/getme?password=admin&binary=false";
     }
 
     @Override
@@ -55,7 +54,7 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
         // test that we can pool once
-        Endpoint endpoint = context.getEndpoint(storeUrl);
+        Endpoint endpoint = context.getEndpoint(getStoreUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Bye World");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
@@ -84,7 +83,7 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
                         String filename = exchange.getIn().getHeader("myfile", String.class);
 
                         // construct the total url for the ftp consumer
-                        String url = getUrl + filename;
+                        String url = getFtpUrl() + filename;
 
                         // create a ftp endpoint
                         Endpoint ftp = context.getEndpoint(url);

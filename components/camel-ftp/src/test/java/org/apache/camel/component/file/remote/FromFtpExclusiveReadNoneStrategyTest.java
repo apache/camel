@@ -34,12 +34,9 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
 
     private static final Log LOG = LogFactory.getLog(FromFtpExclusiveReadRenameStrategyTest.class);
 
-    private int port = 20027;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/slowfile?password=admin"
-            + "&readLock=none&consumer.delay=500";
-
-    public int getPort() {
-        return port;
+    private String getFtpUrl() {
+        return "ftp://admin@localhost:" + getPort() + "/slowfile?password=admin"
+                + "&readLock=none&consumer.delay=500";
     }
 
     @Override
@@ -53,7 +50,7 @@ public class FromFtpExclusiveReadNoneStrategyTest extends FtpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("seda:start").process(new MySlowFileProcessor());
-                from(ftpUrl).to("mock:result");
+                from(getFtpUrl()).to("mock:result");
             }
         });
         context.start();
