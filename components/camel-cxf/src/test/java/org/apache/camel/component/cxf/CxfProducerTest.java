@@ -85,7 +85,8 @@ public class CxfProducerTest extends TestCase {
         if (jaxwsEndpoint != null) {
             jaxwsEndpoint.stop();
         }
-    }
+        CXFBusFactory.setDefaultBus(null);
+    };
 
 
     public void testInvokingSimpleServerWithParams() throws Exception {

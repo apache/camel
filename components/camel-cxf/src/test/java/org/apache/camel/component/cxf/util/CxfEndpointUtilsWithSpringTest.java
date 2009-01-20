@@ -23,6 +23,7 @@ import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.component.cxf.HelloServiceImpl;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.BusFactory;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -43,6 +44,7 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
             applicationContext.destroy();
         }
         super.tearDown();
+        BusFactory.setDefaultBus(null);
     }
 
     @Override

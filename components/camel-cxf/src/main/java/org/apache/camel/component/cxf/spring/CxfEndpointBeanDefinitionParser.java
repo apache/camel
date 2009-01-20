@@ -109,10 +109,10 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
             if (getBus() == null) {
-                Bus bus = BusFactory.getThreadDefaultBus();                
+                Bus bus = BusFactory.getDefaultBus();                
                 setBus(bus);
             }
-            BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(bus, ctx);
+            BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);
         }
         
     }
