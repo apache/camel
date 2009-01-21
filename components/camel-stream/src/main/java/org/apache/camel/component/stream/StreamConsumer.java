@@ -33,13 +33,14 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Consumer that can read from streams
  */
-public class StreamConsumer extends DefaultConsumer {
+public class StreamConsumer extends DefaultConsumer implements Runnable {
 
     private static final transient Log LOG = LogFactory.getLog(StreamConsumer.class);
     private static final String TYPES = "in,file,url";
@@ -49,6 +50,7 @@ public class StreamConsumer extends DefaultConsumer {
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
+    private Thread scanThread;
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -69,13 +71,32 @@ public class StreamConsumer extends DefaultConsumer {
             inputStream = resolveStreamFromUrl();
         }
 
-        readFromStream();
+        scanThread = new Thread(this, getThreadName(endpoint.getEndpointUri()));
+        scanThread.setDaemon(true);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting thread: " + scanThread.getName());
+        }
+        scanThread.start();
     }
 
     @Override
     public void doStop() throws Exception {
         // important: do not close the stream as it will close the standard system.in etc.
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Stopping thread: " + scanThread.getName());
+        }
+        // must use timeout to let this thread die
+        scanThread.join(1000);
+        scanThread = null;
         super.doStop();
+    }
+
+    public void run() {
+        try {
+            readFromStream();
+        } catch (Exception e) {
+            getExceptionHandler().handleException(e);
+        }
     }
 
     private void readFromStream() throws Exception {
@@ -83,19 +104,56 @@ public class StreamConsumer extends DefaultConsumer {
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream, charset));
         String line;
 
-        boolean eos = false;
-        while (!eos) {
-            if (endpoint.getPromptMessage() != null) {
-                doPromptMessage();
+        if (endpoint.isScanStream()) {
+            // repeat scanning from stream
+            while (isRunAllowed()) {
+                line = br.readLine();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Read line: " + line);
+                }
+                boolean eos = line == null;
+                if (!eos && isRunAllowed()) {
+                    processLine(line);
+                }
+                try {
+                    Thread.sleep(endpoint.getScanStreamDelay());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
             }
+        } else {
+            // regular read stream once until end of stream
+            boolean eos = false;
+            while (!eos && isRunAllowed()) {
+                if (endpoint.getPromptMessage() != null) {
+                    doPromptMessage();
+                }
 
-            line = br.readLine();
-            eos = line == null;
-            if (!eos) {
-                consumeLine(line);
+                line = br.readLine();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Read line: " + line);
+                }
+                eos = line == null;
+                if (!eos && isRunAllowed()) {
+                    processLine(line);
+                }
             }
         }
         // important: do not close the reader as it will close the standard system.in etc.
+    }
+
+    /**
+     * Strategy method for processing the line
+     */
+    protected void processLine(Object line) throws Exception {
+        Exchange exchange = endpoint.createExchange();
+
+        Message msg = new DefaultMessage();
+        msg.setBody(line);
+        exchange.setIn(msg);
+
+        getProcessor().process(exchange);
     }
 
     /**
@@ -122,31 +180,27 @@ public class StreamConsumer extends DefaultConsumer {
         System.out.print(endpoint.getPromptMessage());
     }
 
-    private void consumeLine(Object line) throws Exception {
-        Exchange exchange = endpoint.createExchange();
-
-        Message msg = new DefaultMessage();
-        msg.setBody(line);
-        exchange.setIn(msg);
-
-        getProcessor().process(exchange);
-    }
-
     private InputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
+        ObjectHelper.notEmpty(u, "url");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("About to read from url: " + u);
+        }
+
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getInputStream();
     }
 
     private InputStream resolveStreamFromFile() throws IOException {
-        String fileName = endpoint.getFile() != null ? endpoint.getFile().trim() : "_file";
-        File f = new File(fileName);
+        String fileName = endpoint.getFileName();
+        ObjectHelper.notEmpty(fileName, "fileName");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("About to read from file: " + f);
+            LOG.debug("About to read from file: " + fileName);
         }
-        f.createNewFile();
-        return new FileInputStream(f);
+
+        File file = new File(fileName);
+        return new FileInputStream(file);
     }
 
     private void validateUri(String uri) throws IllegalArgumentException {

@@ -29,8 +29,9 @@ import org.apache.commons.logging.LogFactory;
 public class StreamEndpoint extends DefaultEndpoint {
     private static final transient Log LOG = LogFactory.getLog(StreamEndpoint.class);
 
-    private String uri;
-    private String file;
+    private String fileName;
+    private boolean scanStream;
+    private long scanStreamDelay;
     private String url;
     private long delay;
     private String encoding;
@@ -40,20 +41,18 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public StreamEndpoint(String endpointUri, Component component) throws Exception {
         super(endpointUri, component);
-        this.uri = endpointUri;
     }
 
     public StreamEndpoint(String endpointUri) {
         super(endpointUri);
-        this.uri = endpointUri;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new StreamConsumer(this, processor, uri);
+        return new StreamConsumer(this, processor, getEndpointUri());
     }
 
     public Producer createProducer() throws Exception {
-        return new StreamProducer(this, uri);
+        return new StreamProducer(this, getEndpointUri());
     }
 
     public boolean isSingleton() {
@@ -63,12 +62,20 @@ public class StreamEndpoint extends DefaultEndpoint {
     // Properties
     //-------------------------------------------------------------------------
 
-    public String getFile() {
-        return file;
-    }   
-    
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     public String getUrl() {
         return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public long getDelay() {
@@ -109,6 +116,22 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public void setInitialPromptDelay(long initialPromptDelay) {
         this.initialPromptDelay = initialPromptDelay;
+    }
+
+    public boolean isScanStream() {
+        return scanStream;
+    }
+
+    public void setScanStream(boolean scanStream) {
+        this.scanStream = scanStream;
+    }
+
+    public long getScanStreamDelay() {
+        return scanStreamDelay;
+    }
+
+    public void setScanStreamDelay(long scanStreamDelay) {
+        this.scanStreamDelay = scanStreamDelay;
     }
 
     // Implementations
