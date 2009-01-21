@@ -31,6 +31,7 @@ import com.sun.jersey.api.view.Viewable;
  */
 public abstract class ResourceSupport {
 
+
     @GET
     @Path("{view:\\w*}")
     @Produces({MediaType.TEXT_HTML})
@@ -39,5 +40,21 @@ public abstract class ResourceSupport {
             view = "index";
         }
         return new Viewable(view, this);
+    }
+
+    // TODO remove redunant non-DRY code ASAP
+    //
+    // The following redundant methods are here
+    // until there is a way to specify a higher priority for HTML views
+    //
+    // for more details see these issues
+    //
+    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=65
+    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=46
+
+    @GET
+    @Produces({MediaType.TEXT_HTML})
+    public Viewable index() {
+        return view("index");
     }
 }
