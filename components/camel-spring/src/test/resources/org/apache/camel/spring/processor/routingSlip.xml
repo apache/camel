@@ -23,7 +23,7 @@
     ">
 
   <!--
-    from("direct:a").routingSlip().to("mock:end");
+    from("direct:a").routingSlip("myHeader").to("mock:end");
     from("direct:b").routingSlip("aRoutingSlipHeader");
     from("direct:c").routingSlip("aRoutingSlipHeader", "#");
   -->
@@ -31,7 +31,7 @@
     xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:a" />
-      <routingSlip />
+      <routingSlip headerName="myHeader"/>
       <to uri="mock:end" />
     </route>
     <route>

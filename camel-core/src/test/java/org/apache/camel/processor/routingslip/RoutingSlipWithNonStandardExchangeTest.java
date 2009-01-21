@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RoutingSlipWithNonStandardExchangeTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
-    protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
+    protected static final String ROUTING_SLIP_HEADER = "myDestinations";
     
     public void testRoutingSlipPreservesDifferentExchange()
         throws Exception {
@@ -57,7 +57,7 @@ public class RoutingSlipWithNonStandardExchangeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {    
                 // START SNIPPET: e1
-                from("direct:a").routingSlip();
+                from("direct:a").routingSlip("myDestinations");
                 // END SNIPPET: e1
             }
         };

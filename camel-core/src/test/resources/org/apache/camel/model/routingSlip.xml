@@ -18,6 +18,6 @@
 <routes id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
   <route>
     <from uri="seda:a"/>
-    <routingSlip/>
+    <routingSlip headerName="destinations"/>
   </route>
 </routes>

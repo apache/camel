@@ -735,23 +735,6 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
-     * Creates a routing slip allowing you to route a message consecutively through a series of processing
-     * steps where the sequence of steps is not known at design time and can vary for each message.
-     * <p>
-     * The header will use the default header {@link RoutingSlipType#DEFAULT_DELIMITER}
-     * The list of URIs will be split based on the default delimiter {@link RoutingSlipType#DEFAULT_DELIMITER}
-     *
-     * @return the builder
-     * @deprecated will be removed in Camel 2.0
-     */
-    public Type routingSlip() {
-        RoutingSlipType answer = new RoutingSlipType();
-        addOutput(answer);
-        return (Type) this;
-    }
-
-    /**
      * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
