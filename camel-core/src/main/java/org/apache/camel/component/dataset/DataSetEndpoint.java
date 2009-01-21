@@ -46,6 +46,9 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private long startTime;
     private long preloadSize;
 
+    public DataSetEndpoint() {
+    }
+
     public DataSetEndpoint(String endpointUri, Component component, DataSet dataSet) {
         super(endpointUri, component);
         this.dataSet = dataSet;

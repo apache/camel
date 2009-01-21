@@ -63,7 +63,7 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private boolean noop;
     private boolean append = true;
     private boolean recursive;
-    private String regexPattern = "";
+    private String regexPattern;
     private String moveNamePrefix;
     private String moveNamePostfix;
     private String preMoveNamePrefix;

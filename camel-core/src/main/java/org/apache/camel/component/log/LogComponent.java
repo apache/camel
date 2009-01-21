@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.ThroughputLogger;
@@ -50,7 +49,9 @@ public class LogComponent extends DefaultComponent {
             logger.setFormatter(formatter);
         }
 
-        return new ProcessorEndpoint(uri, this, logger);
+        LogEndpoint endpoint = new LogEndpoint(uri, this);
+        setProperties(endpoint, parameters);
+        return new LogEndpoint(uri, this, logger);
     }
 
     /**

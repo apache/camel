@@ -36,6 +36,9 @@ public class DirectEndpoint extends DefaultEndpoint {
     private boolean allowMultipleConsumers = true;
     private final CopyOnWriteArrayList<DefaultConsumer> consumers = new CopyOnWriteArrayList<DefaultConsumer>();
 
+    public DirectEndpoint() {
+    }
+
     public DirectEndpoint(String uri, DirectComponent component) {
         super(uri, component);
     }
