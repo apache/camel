@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -75,41 +76,44 @@ public class StreamProducer extends DefaultProducer {
         } else if ("url".equals(uri)) {
             outputStream = resolveStreamFromUrl();
         }
+
         writeToStream(exchange);
     }
 
     private OutputStream resolveStreamFromUrl() throws IOException {
         String u = endpoint.getUrl();
+        ObjectHelper.notEmpty(u, "url");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("About to write to url: " + u);
+        }
+
         URL url = new URL(u);
         URLConnection c = url.openConnection();
         return c.getOutputStream();
     }
 
     private OutputStream resolveStreamFromFile() throws IOException {
-        String fileName = endpoint.getFile() != null ? endpoint.getFile().trim() : "_file";
-        File f = new File(fileName);
+        String fileName = endpoint.getFileName();
+        ObjectHelper.notEmpty(fileName, "fileName");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("About to write to file: " + f);
+            LOG.debug("About to write to file: " + fileName);
         }
+        File f = new File(fileName);
+        // will create a new file if missing or append to existing
         f.createNewFile();
         return new FileOutputStream(f);
     }
 
     private OutputStream resolveStreamFromHeader(Object o, Exchange exchange) throws CamelExchangeException {
-        if (o != null && o instanceof OutputStream) {
-            return (OutputStream)o;
-        } else {
-            throw new CamelExchangeException("Expected OutputStream in header('stream'), found: " + o,
-                exchange);
-        }
+        return exchange.getContext().getTypeConverter().convertTo(OutputStream.class, o);
     }
 
     private void delay(long ms) throws InterruptedException {
         if (ms == 0) {
             return;
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Delaying " + ms + " millis");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Delaying " + ms + " millis");
         }
         Thread.sleep(ms);
     }
@@ -129,7 +133,7 @@ public class StreamProducer extends DefaultProducer {
             // important: do not close the writer as it will close the standard system.out etc.
         } else if (body instanceof byte[]) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Writing as text: " + body + " to " + outputStream);
+                LOG.debug("Writing as byte[]: " + body + " to " + outputStream);
             }
             outputStream.write((byte[])body);
         } else {
