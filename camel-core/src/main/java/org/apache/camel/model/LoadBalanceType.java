@@ -156,6 +156,9 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
         return this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0, use multicast instead
+     */
     public LoadBalanceType topic() {
         loadBalancerType = new LoadBalancerType(new TopicLoadBalancer());
         return this;
