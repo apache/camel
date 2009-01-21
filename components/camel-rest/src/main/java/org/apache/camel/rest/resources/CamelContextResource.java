@@ -45,7 +45,7 @@ import org.apache.camel.rest.model.Endpoints;
  */
 @Path("/")
 @Singleton
-public class CamelContextResource extends ViewableResource {
+public class CamelContextResource extends ResourceSupport {
 
     private final CamelContext camelContext;
 
@@ -61,15 +61,16 @@ public class CamelContextResource extends ViewableResource {
         return camelContext.getName();
     }
 
-
-
-    // HTML representations
-    //-------------------------------------------------------------------------
-
-    // Its a shame there's not an easier way to bind the explicit views...
-    //-------------------------------------------------------------------------
-
-
+    // TODO remove redunant non-DRY code ASAP
+    //
+    // The following redundant methods are here
+    // until there is a way to specify a higher priority for HTML views
+    //
+    // for more details see these issues
+    //
+    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=65
+    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=46
+    
     @GET
     @Path("endpoints")
     @Produces({MediaType.TEXT_HTML})
@@ -78,33 +79,14 @@ public class CamelContextResource extends ViewableResource {
     }
 
     @GET
-    @Path("foo")
-    @Produces({MediaType.TEXT_HTML})
-    public Viewable foo() {
-        return view("foo");
-    }
-
-/*
-    @GET
-    @Path("{view}")
-    @Produces({MediaType.TEXT_HTML})
-    public Viewable genericView(@PathParam("view") String view) {
-        return view(view);
-    }
-
-*/
-
-    @GET
     @Path("routes")
     @Produces({MediaType.TEXT_HTML})
     public Viewable routesView() {
         return view("routes");
     }
 
-
     // XML / JSON representations
     //-------------------------------------------------------------------------
-
 
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
@@ -128,15 +110,6 @@ public class CamelContextResource extends ViewableResource {
     public List<EndpointLink> getEndpoints() {
         return getEndpointsDTO().getEndpoints();
     }
-
-/*
-    @GET
-    @Path("endpoints")
-    @Produces({"text/html"})
-    public List<EndpointLink> getEndpoints() {
-        return getEndpointsDTO().getEndpoints();
-    }
-*/
 
     /**
      * Looks up an individual endpoint

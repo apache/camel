@@ -18,6 +18,8 @@ package org.apache.camel.rest.resources;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 
 import com.sun.jersey.api.view.Viewable;
@@ -27,16 +29,12 @@ import com.sun.jersey.api.view.Viewable;
  *
  * @version $Revision: 1.1 $
  */
-@Produces({MediaType.TEXT_HTML})
-public abstract class ViewableResource {
+public abstract class ResourceSupport {
 
     @GET
+    @Path("{view:\\w*}")
     @Produces({MediaType.TEXT_HTML})
-    public Viewable index() {
-        return view("index");
-    }
-
-    protected Viewable view(String view) {
+    public Viewable view(@PathParam("view") String view) {
         if (view == null || view.length() == 0) {
             view = "index";
         }
