@@ -148,7 +148,7 @@ public class XmlParseTest extends XmlTestSupport {
         RouteType route = assertOneRoute("routingSlip.xml");
         assertFrom(route, "seda:a");
         RoutingSlipType node = assertOneProcessorInstanceOf(RoutingSlipType.class, route);
-        assertEquals(RoutingSlipType.ROUTING_SLIP_HEADER, node.getHeaderName());
+        assertEquals("destinations", node.getHeaderName());
         assertEquals(RoutingSlipType.DEFAULT_DELIMITER, node.getUriDelimiter());
     }
 

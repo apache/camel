@@ -30,7 +30,7 @@ import org.apache.camel.util.jndi.JndiContext;
 public class RoutingSlipWithExceptionTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
-    protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
+    protected static final String ROUTING_SLIP_HEADER = "destinations";
     protected MyBean myBean = new MyBean();
     private MockEndpoint endEndpoint;
     private MockEndpoint exceptionEndpoint;
@@ -141,7 +141,7 @@ public class RoutingSlipWithExceptionTest extends ContextTestSupport {
             public void configure() {
                 from("direct:start").
                     tryBlock().
-                        routingSlip().to("mock:noexception").
+                        routingSlip(ROUTING_SLIP_HEADER).to("mock:noexception").
                         handle(Exception.class).
                     to("mock:exception");
             }

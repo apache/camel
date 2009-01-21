@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RoutingSlipTest extends ContextTestSupport {
 
     protected static final String ANSWER = "answer";
-    protected static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
+    protected static final String ROUTING_SLIP_HEADER = "myHeader";
 
     public void testUpdatingOfRoutingSlipAllDefaults()
         throws Exception {
@@ -118,7 +118,7 @@ public class RoutingSlipTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:a").routingSlip().to("mock:end");
+                from("direct:a").routingSlip("myHeader").to("mock:end");
                 // END SNIPPET: e1
 
                 // START SNIPPET: e2

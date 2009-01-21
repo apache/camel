@@ -35,7 +35,6 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "routingSlip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutingSlipType extends ProcessorType<ProcessorType> {
-    public static final String ROUTING_SLIP_HEADER = "routingSlipHeader";
     public static final String DEFAULT_DELIMITER = ",";
 
     @XmlAttribute
@@ -44,7 +43,7 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
     private String uriDelimiter;
 
     public RoutingSlipType() {
-        this(ROUTING_SLIP_HEADER, DEFAULT_DELIMITER);
+        this(null, DEFAULT_DELIMITER);
     }
 
     public RoutingSlipType(String headerName) {
@@ -68,7 +67,8 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        ObjectHelper.notNull(getHeaderName(), "headerName");
+        ObjectHelper.notEmpty(getHeaderName(), "headerName", this);
+        ObjectHelper.notEmpty(getUriDelimiter(), "uriDelimiter", this);
         return new RoutingSlip(getHeaderName(), getUriDelimiter());
     }
 
