@@ -41,7 +41,6 @@ public class JMXComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-
         JMXEndpoint result = new JMXEndpoint(remaining, this);
         setProperties(result, parameters);
         result.setMbeanServer(getMbeanServer());

@@ -80,6 +80,10 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         return processor;
     }
 
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
+    }
+
     protected Processor createProcessor() throws Exception {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {

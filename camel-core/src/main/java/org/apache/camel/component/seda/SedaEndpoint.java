@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -28,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * An implementation of the <a
@@ -39,6 +39,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
+    private int size = 1000;
+
+    public SedaEndpoint() {
+    }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
         super(endpointUri, component);
@@ -51,7 +55,6 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue) {
         super(endpointUri);
-        ObjectHelper.notNull(queue, "queue");
         this.queue = queue;
     }
 
@@ -63,8 +66,23 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         return new SedaConsumer(this, processor);
     }
 
-    public BlockingQueue<Exchange> getQueue() {
+    public synchronized BlockingQueue<Exchange> getQueue() {
+        if (queue == null) {
+            queue = new LinkedBlockingQueue<Exchange>(size);
+        }
         return queue;
+    }
+
+    public void setQueue(BlockingQueue<Exchange> queue) {
+        this.queue = queue;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public boolean isSingleton() {

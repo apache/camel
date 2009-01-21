@@ -23,11 +23,10 @@ import javax.management.monitor.CounterMonitor;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -39,7 +38,6 @@ import org.apache.commons.logging.LogFactory;
 public class JMXEndpoint extends DefaultEndpoint {
     private static final transient Log LOG = LogFactory.getLog(JMXEndpoint.class);
     private String name;
-    private ObjectName ourName;
     private String observedObjectName;
     private String attributeName;
     private long granularityPeriod = 5000;
@@ -48,7 +46,10 @@ public class JMXEndpoint extends DefaultEndpoint {
     private MBeanServer mbeanServer;
     private CounterMonitor counterMonitor = new CounterMonitor();
 
-    protected JMXEndpoint(String endpointUri, JMXComponent component) {
+    public JMXEndpoint() {
+    }
+
+    public JMXEndpoint(String endpointUri, JMXComponent component) {
         super(endpointUri, component);
         observedObjectName = endpointUri;
     }
@@ -62,6 +63,8 @@ public class JMXEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor proc) throws Exception {
+        ObjectHelper.notNull(mbeanServer, "mbeanServer");
+
         ObjectName observedName = new ObjectName(observedObjectName);
         if (name == null) {
             String type = observedName.getKeyProperty("type");
@@ -70,7 +73,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         }
 
         JMXConsumer result = new JMXConsumer(this, proc);
-        ourName = new ObjectName(name);
+        ObjectName ourName = new ObjectName(name);
         counterMonitor.setNotify(true);
         counterMonitor.addObservedObject(observedName);
         counterMonitor.setObservedAttribute(attributeName);

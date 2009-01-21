@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Timer;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -39,6 +38,9 @@ public class TimerEndpoint extends DefaultEndpoint {
     private boolean fixedRate;
     private boolean daemon = true;
     private Timer timer;
+
+    public TimerEndpoint() {
+    }
 
     public TimerEndpoint(String fullURI, TimerComponent component, String timerName) {
         super(fullURI, component);

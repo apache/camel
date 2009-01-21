@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultComponent;
  * @version $Revision$
  */
 public class TimerComponent extends DefaultComponent {
-    private Map<String, Timer> timers = new HashMap<String, Timer>();
+    private final Map<String, Timer> timers = new HashMap<String, Timer>();
 
     public Timer getTimer(TimerEndpoint endpoint) {
         String key = endpoint.getTimerName();
@@ -39,10 +39,13 @@ public class TimerComponent extends DefaultComponent {
             key = "nonDaemon:" + key;
         }
 
-        Timer answer = timers.get(key);
-        if (answer == null) {
-            answer = new Timer(endpoint.getTimerName(), endpoint.isDaemon());
-            timers.put(key, answer);
+        Timer answer;
+        synchronized (timers) {
+            answer = timers.get(key);
+            if (answer == null) {
+                answer = new Timer(endpoint.getTimerName(), endpoint.isDaemon());
+                timers.put(key, answer);
+            }
         }
         return answer;
     }
