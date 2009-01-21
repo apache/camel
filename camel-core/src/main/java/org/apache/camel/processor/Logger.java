@@ -257,4 +257,8 @@ public class Logger implements Processor {
     public void setFormatter(ExchangeFormatter formatter) {
         this.formatter = formatter;
     }
+
+    public void setLogName(String logName) {
+        this.log = LogFactory.getLog(logName);
+    }
 }
