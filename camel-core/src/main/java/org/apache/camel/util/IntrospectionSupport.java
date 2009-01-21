@@ -270,15 +270,23 @@ public final class IntrospectionSupport {
         // Build the method name.
         name = "set" + ObjectHelper.capitalize(name);
         while (clazz != Object.class) {
+            // Since Object.class.isInstance all the objects,
+            // Here we just make sure it will be add to the bottom of the set.
+            Method objectSetMethod = null;
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
                 Class params[] = method.getParameterTypes();
                 if (method.getName().equals(name) && params.length == 1) {
                     Class paramType = params[0];
-                    if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
+                    if (paramType.equals(Object.class)) {                        
+                        objectSetMethod = method;
+                    } else if (typeConverter != null || isSettableType(paramType) || paramType.isInstance(value)) {
                         candidates.add(method);
                     }
                 }
+            }
+            if (objectSetMethod != null) {
+                candidates.add(objectSetMethod);
             }
             clazz = clazz.getSuperclass();
         }
@@ -293,8 +301,8 @@ public final class IntrospectionSupport {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Found " + candidates.size() + " suitable setter methods for setting " + name);
             }
-            // perfer to use the one with the same instance if any exists
-            for (Method method : candidates) {
+            // prefer to use the one with the same instance if any exists
+            for (Method method : candidates) {                               
                 if (method.getParameterTypes()[0].isInstance(value)) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Method " + method + " is the best candidate as it has parameter with same instance type");
