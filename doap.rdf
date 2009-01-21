@@ -25,32 +25,40 @@
 <!--
   =======================================================================
 
-   Copyright (c) 2006 The Apache Software Foundation.  
+   Copyright (c) 2008 The Apache Software Foundation.  
    All rights reserved.
 
   =======================================================================
 -->
-  <Project rdf:about="http://ActiveMQ.rdf.apache.org/">
-    <created>2007-03-19</created>
+  <Project rdf:about="http://camel.rdf.apache.org/">
+    <created>2008-12-17</created>
     <license rdf:resource="http://usefulinc.com/doap/licenses/asl20" />
     <name>Apache Camel</name>
-    <homepage rdf:resource="http://activemq.apache.org/camel" />
-    <asfext:pmc rdf:resource="http://activemq.apache.org/camel" />
-    <shortdesc>Apache Camel is a powerful rule based routing and mediation engine.</shortdesc>
-    <description>Apache Camel is a powerful rule based routing and mediation engine which provides a POJO based implementation of the Enterprise Integration Patterns using an extremely powerful fluent API (or declarative Java Domain Specific Language) to configure routing and mediation rules. The Domain Specific Language means that Apache Camel can support type-safe smart completion of routing rules in your IDE using regular Java code without huge amounts of XML configuration files; though Xml Configuration inside Spring is also supported.</description>
+    <homepage rdf:resource="http://camel.apache.org/" />
+    <asfext:pmc rdf:resource="http://camel.apache.org/" />
+    <shortdesc>Apache Camel is a powerful open source integration framework based on known Enterprise Integration Patterns.</shortdesc>
+    <description>Apache Camel is a powerful open source integration framework based on known Enterprise Integration Patterns.
+Rules for Camel's routing and mediation engine can be defined in either a Java based DSL, XML or using DSLs for dynamic languages such as Groovy or Scala.</description>
     <bug-database rdf:resource="http://issues.apache.org/activemq/browse/CAMEL" />
-    <mailing-list rdf:resource="http://activemq.apache.org/camel/mailing-lists.html" />
-    <download-page rdf:resource="http://activemq.apache.org/camel/download.html" />
+    <mailing-list rdf:resource="http://camel.apache.org/mailing-lists.html" />
+    <download-page rdf:resource="http://camel.apache.org/download.html" />
 
     <programming-language>Java</programming-language>
+    <programming-language>XML</programming-language>
+    <programming-language>Python</programming-language>
+    <programming-language>Groovy</programming-language>
+    <programming-language>JavaScript</programming-language>
+    <programming-language>Ruby</programming-language>
+    <programming-language>SQL</programming-language>
+    <programming-language>Scala</programming-language>
+    <programming-language>PHP</programming-language>
 
+    <category rdf:resource="http://projects.apache.org/category/network-server" />
     <category rdf:resource="http://projects.apache.org/category/network-client" />
-    <category rdf:resource="http://projects.apache.org/category/library" />
-
     <maintainer>
       <foaf:Person>
-        <foaf:name>Hiram Chirino</foaf:name>
-          <foaf:mbox rdf:resource="mailto:chirino@apache.org"/>
+        <foaf:name>Hadrian Zbarcea</foaf:name>
+          <foaf:mbox rdf:resource="mailto:hadrian@apache.org"/>
       </foaf:Person>
     </maintainer>
   </Project>
