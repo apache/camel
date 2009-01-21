@@ -22,7 +22,7 @@ import org.apache.camel.rest.model.EndpointLink;
 /**
  * @version $Revision$
  */
-public class EndpointResource extends ViewableResource {
+public class EndpointResource extends ResourceSupport {
 
     private final Endpoint endpoint;
 
