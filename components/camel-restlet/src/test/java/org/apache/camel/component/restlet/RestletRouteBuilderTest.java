@@ -29,9 +29,10 @@ import org.restlet.data.Request;
 import org.restlet.data.Response;
 import org.restlet.data.Status;
 
-public class RestRouteBuilderTest extends ContextTestSupport {
+public class RestletRouteBuilderTest extends ContextTestSupport {
     private static final String ID = "89531";
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -45,7 +46,7 @@ public class RestRouteBuilderTest extends ContextTestSupport {
                 from("restlet:http://localhost:8080/orders?restletMethod=post").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
-                                "received [" + exchange.getIn().getBody()
+                                "received [" + exchange.getIn().getBody(String.class)
                                 + "] as an order id = "
                                 + exchange.getIn().getHeader("id"));
                     }

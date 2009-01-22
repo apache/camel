@@ -42,7 +42,6 @@ import org.restlet.data.Response;
  */
 public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(DefaultRestletBinding.class);
-    private static final String CAMEL_REQUEST = "camel.request";
     private HeaderFilterStrategy headerFilterStrategy;
 
     /**
@@ -68,13 +67,13 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
             }
         }
-
-        // extract our header and body
+        
         Form form = new Form(request.getEntity());
         if (form != null) {
             for (Map.Entry<String, String> entry : form.getValuesMap().entrySet()) {
-                if (CAMEL_REQUEST.equals(entry.getKey())) {
-                    exchange.getIn().setBody(entry.getValue());
+                // extract body added to the form as the key which has null value
+                if (entry.getValue() == null) {
+                    exchange.getIn().setBody(entry.getKey());
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Populate exchange from Restlet request body: " + entry.getValue());
                     }
@@ -91,6 +90,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 }
             }
         }
+        
     }   
 
     /**
@@ -104,7 +104,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         request.setReferrerRef("camel-restlet");
         String body = exchange.getIn().getBody(String.class);
         Form form = new Form();
-        form.add(CAMEL_REQUEST, body);
+        // add the body as the key in the form with null value
+        form.add(body, null);
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet request from exchange body: " + body);
