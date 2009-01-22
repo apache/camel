@@ -16,21 +16,21 @@
  */
 package org.apache.camel.component.event;
 
-import java.util.ArrayList;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 
 /**
@@ -40,7 +40,7 @@ import org.springframework.context.ApplicationEvent;
  * @version $Revision$
  */
 public class EventEndpoint extends DefaultEndpoint implements ApplicationContextAware {
-    private MulticastProcessor processor;
+    private LoadBalancer loadBalancer;
     private ApplicationContext applicationContext;
 
     public EventEndpoint(String endpointUri, EventComponent component) {
@@ -82,27 +82,35 @@ public class EventEndpoint extends DefaultEndpoint implements ApplicationContext
         Exchange exchange = createExchange();
         exchange.getIn().setBody(event);
         try {
-            getMulticastProcessor().process(exchange);
+            getLoadBalancer().process(exchange);
         } catch (Exception e) {
             throw wrapRuntimeCamelException(e);
         }
     }
 
-    protected synchronized MulticastProcessor getMulticastProcessor() {
-        if (processor == null) {
-            processor = new MulticastProcessor(new ArrayList<Processor>());
+    public LoadBalancer getLoadBalancer() {
+        if (loadBalancer == null) {
+            loadBalancer = createLoadBalancer();
         }
-        return processor;
+        return loadBalancer;
+    }
+
+    public void setLoadBalancer(LoadBalancer loadBalancer) {
+        this.loadBalancer = loadBalancer;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(EventConsumer consumer) {
-        getMulticastProcessor().getProcessors().add(consumer.getProcessor());
+        getLoadBalancer().addProcessor(consumer.getProcessor());
     }
 
     public synchronized void consumerStopped(EventConsumer consumer) {
-        getMulticastProcessor().getProcessors().remove(consumer.getProcessor());
+        getLoadBalancer().removeProcessor(consumer.getProcessor());
+    }
+
+    protected LoadBalancer createLoadBalancer() {
+        return new TopicLoadBalancer();
     }
 
     protected ApplicationEvent toApplicationEvent(Exchange exchange) {
