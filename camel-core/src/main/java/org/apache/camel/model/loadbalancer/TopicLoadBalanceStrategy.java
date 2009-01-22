@@ -23,7 +23,7 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;topic/&gt; element
- * @deprecated
+ * 
  */
 @XmlRootElement(name = "topic")
 public class TopicLoadBalanceStrategy extends LoadBalancerType {

@@ -25,11 +25,9 @@ import org.apache.camel.Processor;
 /**
  * A {@link LoadBalancer} implementations which sends to all destinations
  * (rather like JMS Topics). 
- *  It is deprecated in Camel 2.0, you need to move to use multicast, 
- *  if you want to send the message to all destinations.
  * 
  * @version $Revision$
- * @deprecated
+ *
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 
