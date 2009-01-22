@@ -71,6 +71,7 @@
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-msv</include>
+        <include>org.apache.camel:camel-mvel</include>
         <include>org.apache.camel:camel-ognl</include>
         <include>org.apache.camel:camel-osgi</include>
         <include>org.apache.camel:camel-quartz</include>
