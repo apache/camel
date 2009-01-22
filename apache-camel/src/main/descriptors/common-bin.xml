@@ -48,6 +48,7 @@
         <include>org.apache.camel:camel-csv</include>
         <include>org.apache.camel:camel-cxf</include>
         <include>org.apache.camel:camel-flatpack</include>
+        <include>org.apache.camel:camel-freemarker</include>
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guice</include>

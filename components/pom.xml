@@ -40,6 +40,7 @@
     <module>camel-csv</module>
     <module>camel-cxf</module>
     <module>camel-flatpack</module>
+    <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-guice</module>
     <module>camel-groovy</module>
