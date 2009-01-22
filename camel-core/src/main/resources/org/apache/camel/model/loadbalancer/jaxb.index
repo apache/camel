@@ -18,3 +18,4 @@ LoadBalancerType
 RandomLoadBalanceStrategy
 RoundRobinLoadBalanceStrategy
 StickyLoadBalanceStrategy
+TopicLoadBalanceStrategy

@@ -38,6 +38,7 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
@@ -90,6 +91,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("roundRobin", RoundRobinLoadBalanceStrategy.class);
         addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
         addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
+        addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
 
         // jmx agent
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentType.class);

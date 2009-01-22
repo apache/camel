@@ -34,11 +34,13 @@ import org.apache.camel.model.loadbalancer.LoadBalancerType;
 import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
+import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.processor.loadbalancer.StickyLoadBalancer;
+import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CollectionStringBuffer;
 
@@ -54,7 +56,8 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     @XmlElements({
         @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalanceStrategy.class),
         @XmlElement(required = false, name = "random", type = RandomLoadBalanceStrategy.class),
-        @XmlElement(required = false, name = "sticky", type = StickyLoadBalanceStrategy.class)}
+        @XmlElement(required = false, name = "sticky", type = StickyLoadBalanceStrategy.class),
+        @XmlElement(required = false, name = "topic", type = TopicLoadBalanceStrategy.class)}
         )
     private LoadBalancerType loadBalancerType;
 
@@ -170,6 +173,16 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
      */
     public LoadBalanceType sticky(Expression correlationExpression) {
         loadBalancerType = new LoadBalancerType(new StickyLoadBalancer(correlationExpression));
+        return this;
+    }
+
+    /**
+     * Uses topic load balancer
+     * 
+     * @return the builder
+     */
+    public LoadBalanceType topic() {
+        loadBalancerType = new LoadBalancerType(new TopicLoadBalancer());
         return this;
     }
 
