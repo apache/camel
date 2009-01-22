@@ -23,9 +23,7 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;topic/&gt; element
- * @deprecated
- *  It is deprecated in Camel 2.0, you can move to use multicast, 
- *  if you want to send the message to all destinations.
+ * 
  */
 @XmlRootElement(name = "topic")
 public class TopicLoadBalanceStrategy extends LoadBalancerType {
