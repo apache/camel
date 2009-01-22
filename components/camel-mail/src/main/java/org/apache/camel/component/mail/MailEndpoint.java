@@ -24,6 +24,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -35,6 +36,10 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     private MailConfiguration configuration;
+
+    public MailEndpoint() {
+        this.binding = new MailBinding();
+    }
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
@@ -116,11 +121,15 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.binding = binding;
     }
 
-    public boolean isSingleton() {
-        return false;
-    }
-
     public MailConfiguration getConfiguration() {
         return configuration;
+    }
+
+    public void setConfiguration(MailConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 }
