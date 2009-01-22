@@ -119,4 +119,7 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
         this.resourceLoader = resourceLoader;
     }
 
+    public String getResourceUri() {
+        return resourceUri;
+    }
 }
