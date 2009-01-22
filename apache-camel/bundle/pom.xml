@@ -79,6 +79,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-freemarker</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
     </dependency>
     <dependency>
@@ -156,6 +160,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-msv</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mvel</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
