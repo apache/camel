@@ -255,7 +255,7 @@ public final class IntrospectionSupport {
         name = "set" + ObjectHelper.capitalize(name);
         while (clazz != Object.class) {
             // Since Object.class.isInstance all the objects,
-            // Here we just make sure it will be add to the bottom of the set.
+            // here we just make sure it will be add to the bottom of the set.
             Method objectSetMethod = null;
             Method[] methods = clazz.getMethods();
             for (Method method : methods) {
