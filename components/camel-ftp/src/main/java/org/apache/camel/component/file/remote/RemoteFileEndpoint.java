@@ -71,6 +71,9 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     private String readLock = "none";
     private long readLockTimeout;
 
+    public RemoteFileEndpoint() {
+    }
+
     public RemoteFileEndpoint(String uri, RemoteFileComponent component, RemoteFileOperations operations, RemoteFileConfiguration configuration) {
         super(uri, component);
         this.operations = operations;
@@ -90,13 +93,23 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
     }
 
     public RemoteFileConsumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(configuration, "remoteFileConfiguration");
         String protocol = getConfiguration().getProtocol();
         ObjectHelper.notEmpty(protocol, "protocol");
+        ObjectHelper.notEmpty(configuration.getHost(), "host");
 
         RemoteFileConsumer consumer;
         if ("ftp".equals(protocol)) {
+            // create operations for this protocol if not already set
+            // for instance if using spring bean configured endpoints instead of URI parameters
+            if (operations == null) {
+                operations = new FtpRemoteFileOperations();
+            }
             consumer = new FtpConsumer(this, processor, operations);
         } else if ("sftp".equals(protocol)) {
+            if (operations == null) {
+                operations = new SftpRemoteFileOperations();
+            }
             consumer = new SftpConsumer(this, processor, operations);
         } else {
             throw new IllegalArgumentException("Unsupported protocol: " + protocol);
@@ -149,6 +162,10 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
 
     public void setRemoteFileProcessStrategy(RemoteFileProcessStrategy remoteFileProcessStrategy) {
         this.processStrategy = remoteFileProcessStrategy;
+    }
+
+    public void setRemoteFileOperations(RemoteFileOperations operations) {
+        this.operations = operations;
     }
 
     public boolean isNoop() {
@@ -387,6 +404,7 @@ public class RemoteFileEndpoint extends ScheduledPollEndpoint {
      * A strategy method to lazily create the file strategy
      */
     protected RemoteFileProcessStrategy createRemoteFileStrategy() {
+        ObjectHelper.notNull(getCamelContext(), "camelContext");
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
