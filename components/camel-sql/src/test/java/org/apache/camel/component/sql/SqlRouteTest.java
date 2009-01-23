@@ -23,9 +23,12 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -63,15 +66,26 @@ public class SqlRouteTest extends ContextTestSupport {
         assertEquals(1, row.get("ID"));
     }
 
-    public void testBadNumberOfParameter() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        template.sendBody("direct:list", "ASF");
-        mock.assertIsSatisfied();
-        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
-        assertEquals(0, received.size());
+    public void testLowNumberOfParameter() throws Exception {
+        try {
+            template.sendBody("direct:list", "ASF");
+            fail();
+        } catch (RuntimeCamelException e) {
+            // should have DataAccessException thrown
+            assertTrue("Exception thrown is wrong", e.getCause() instanceof DataAccessException);
+        }
     }
 
+    public void testHighNumberOfParameter() throws Exception {
+        try {
+            template.sendBody("direct:simple", new Object[] {"ASF", "Foo"});
+            fail();
+        } catch (RuntimeCamelException e) {
+            // should have DataAccessException thrown
+            assertTrue("Exception thrown is wrong", e.getCause() instanceof DataAccessException);
+        }
+    }
+    
     public void testListResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
@@ -119,6 +133,16 @@ public class SqlRouteTest extends ContextTestSupport {
         assertEquals((Integer)1, actualUpdateCount);
     }
 
+    public void testNoBody() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:no-param", null);
+        mock.assertIsSatisfied();
+        List received = assertIsInstanceOf(List.class, mock.getReceivedExchanges().get(0).getIn().getBody());
+        Map row = assertIsInstanceOf(Map.class, received.get(0));
+        assertEquals("Camel", row.get("PROJECT"));
+    }
+    
     protected void setUp() throws Exception {
         Class.forName(driverClass);
         super.setUp();
@@ -145,6 +169,8 @@ public class SqlRouteTest extends ContextTestSupport {
 
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(ds);
 
+                errorHandler(noErrorHandler());
+                
                 from("direct:simple").to("sql:select * from projects where license = # order by id")
                     .to("mock:result");
 
@@ -157,6 +183,8 @@ public class SqlRouteTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:insert").to("sql:insert into projects values (#, #, #)").to("mock:result");
+                
+                from("direct:no-param").to("sql:select * from projects order by id").to("mock:result");
             }
         };
     }
