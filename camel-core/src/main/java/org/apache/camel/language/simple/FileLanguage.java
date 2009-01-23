@@ -44,7 +44,7 @@ import org.apache.camel.util.ObjectHelper;
  * @see org.apache.camel.language.simple.SimpleLanguage
  * @see org.apache.camel.language.bean.BeanLanguage
  */
-public class FileLanguage extends AbstractSimpleLanguage {
+public class FileLanguage extends SimpleLanguageSupport {
 
     public static Expression file(String expression) {
         FileLanguage language = new FileLanguage();

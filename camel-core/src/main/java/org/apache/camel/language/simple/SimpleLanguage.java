@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.simple;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.IllegalSyntaxException;
@@ -46,7 +45,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class SimpleLanguage extends AbstractSimpleLanguage {
+public class SimpleLanguage extends SimpleLanguageSupport {
 
     public static Expression simple(String expression) {
         SimpleLanguage language = new SimpleLanguage();

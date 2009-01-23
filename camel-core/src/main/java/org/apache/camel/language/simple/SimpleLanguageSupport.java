@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -29,7 +28,7 @@ import org.apache.camel.spi.Language;
 /**
  * Abstract base class for Simple languages.
  */
-public abstract class AbstractSimpleLanguage implements Language {
+public abstract class SimpleLanguageSupport implements Language {
     
     public Predicate createPredicate(String expression) {
         return PredicateBuilder.toPredicate(createExpression(expression));
