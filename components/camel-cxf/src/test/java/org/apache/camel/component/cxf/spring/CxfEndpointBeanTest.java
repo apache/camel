@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 
 public class CxfEndpointBeanTest extends TestCase {
-    private ClassPathXmlApplicationContext ctx;
+    protected ClassPathXmlApplicationContext ctx;
     protected void setUp() throws Exception {
         ctx =  new ClassPathXmlApplicationContext(new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"});
     }
