@@ -48,7 +48,7 @@ public class MinaConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
         this.address = endpoint.getAddress();
         this.acceptor = endpoint.getAcceptor();
-        this.sync = endpoint.isSync();
+        this.sync = endpoint.getConfiguration().isSync();
     }
 
     @Override
@@ -96,8 +96,8 @@ public class MinaConsumer extends DefaultConsumer {
 
             Exchange exchange = endpoint.createExchange(session, object);
             //Set the exchange charset property for converting
-            if (endpoint.getCharsetName() != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getCharsetName());
+            if (endpoint.getConfiguration().getCharsetName() != null) {
+                exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getConfiguration().getCharsetName());
             }
             getProcessor().process(exchange);
 
@@ -110,7 +110,7 @@ public class MinaConsumer extends DefaultConsumer {
                     body = MinaPayloadHelper.getIn(endpoint, exchange);
                 }
                 boolean failed = exchange.isFailed();
-                if (failed && !endpoint.isTransferExchange()) {
+                if (failed && !endpoint.getConfiguration().isTransferExchange()) {
                     if (exchange.getException() != null) {
                         body = exchange.getException();
                     } else {

@@ -34,7 +34,7 @@ public final class MinaPayloadHelper {
     }
 
     public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
-        if (endpoint.isTransferExchange()) {
+        if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return MinaPayloadHolder.marshal(exchange);
         } else {
@@ -44,7 +44,7 @@ public final class MinaPayloadHelper {
     }
 
     public static Object getOut(MinaEndpoint endpoint, Exchange exchange) {
-        if (endpoint.isTransferExchange()) {
+        if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
             return MinaPayloadHolder.marshal(exchange);
         } else {
