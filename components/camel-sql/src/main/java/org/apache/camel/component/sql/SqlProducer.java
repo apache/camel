@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -45,10 +46,20 @@ public class SqlProducer extends DefaultProducer {
             public Object doInPreparedStatement(PreparedStatement ps) throws SQLException,
                 DataAccessException {
                 int argNumber = 1;
-                for (Iterator<?> i = exchange.getIn().getBody(Iterator.class); i.hasNext();) {
-                    ps.setObject(argNumber++, i.next());
+                try {
+                    Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
+                    while (iterator != null && iterator.hasNext()) {
+                        ps.setObject(argNumber++, iterator.next());
+                    }
+                } catch (NoTypeConversionAvailableException e) {
+                    // ignored - assumed no parameters have to be used
                 }
+                if (argNumber - 1 != ps.getParameterMetaData().getParameterCount()) {
+                    throw new SQLException("To less parameters set");
+                }
+                
                 boolean isResultSet = ps.execute();
+                
                 if (isResultSet) {
                     RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
                     List<?> result = (List<?>) mapper.extractData(ps.getResultSet());
