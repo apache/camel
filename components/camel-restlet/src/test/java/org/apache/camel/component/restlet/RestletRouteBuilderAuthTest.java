@@ -53,6 +53,7 @@ public class RestletRouteBuilderAuthTest extends SpringTestSupport {
         assertTrue(response.contains("requires user authentication"));
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "org/apache/camel/component/restlet/camel-context.xml");
