@@ -54,8 +54,11 @@ public class SqlProducer extends DefaultProducer {
                 } catch (NoTypeConversionAvailableException e) {
                     // ignored - assumed no parameters have to be used
                 }
-                if (argNumber - 1 != ps.getParameterMetaData().getParameterCount()) {
-                    throw new SQLException("To less parameters set");
+
+                // number of parameters must match
+                int expected = ps.getParameterMetaData().getParameterCount();
+                if (argNumber - 1 != expected) {
+                    throw new SQLException("Number of parameters mismatch. Expected: " + expected + ", was:" + (argNumber - 1));
                 }
                 
                 boolean isResultSet = ps.execute();
@@ -64,9 +67,13 @@ public class SqlProducer extends DefaultProducer {
                     RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
                     List<?> result = (List<?>) mapper.extractData(ps.getResultSet());
                     exchange.getOut().setBody(result);
+                    // preserve headers
+                    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
                 } else {
                     exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
                 }
+
+                // data is set on exchange so return null
                 return null;
             }
         });
