@@ -27,6 +27,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.spi.IdempotentRepository;
@@ -39,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Generic Endpoint
  */
-public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
+public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     protected static final transient String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final transient int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
@@ -50,6 +51,13 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
     protected GenericFileOperations operations;
     protected GenericFileConfiguration configuration;
 
+    // TODO: Consider remove setNames
+    // TODO: Consider filename should always be specified when producing (to get rid of auto generating with id as filename)
+    // TODO: bufferSize & append can be moved to NewFileEndpoint as FTP does not support it
+    protected boolean directory = true;
+    protected boolean autoCreate = true;
+    protected int bufferSize = 128 * 1024;
+    protected boolean append = true;
     protected boolean noop;
     protected String tempPrefix;
     protected String moveNamePrefix;
@@ -67,7 +75,7 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
     protected boolean idempotent;
     protected IdempotentRepository idempotentRepository;
     protected GenericFileFilter filter;
-    protected Comparator<GenericFile> sorter;
+    protected Comparator<GenericFile<T>> sorter;
     protected Comparator<GenericFileExchange> sortBy;
     protected String readLock = "none";
     protected long readLockTimeout;
@@ -93,13 +101,12 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
         return true;
     }
 
-    public abstract GenericFileConsumer createConsumer(Processor processor) throws Exception;
+    public abstract GenericFileConsumer<T> createConsumer(Processor processor) throws Exception;
 
-    public abstract GenericFileProducer createProducer() throws Exception;
+    public abstract GenericFileProducer<T> createProducer() throws Exception;
 
-    public abstract GenericFileExchange createExchange(GenericFile file);
+    public abstract GenericFileExchange<T> createExchange(GenericFile<T> file);
 
-    public abstract GenericFileExchange createExchange();
 
     /**
      * Returns the first portion of the "protocol" in use. We use this so we can
@@ -136,12 +143,15 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
-            factory = finder.findClass("ftp", "strategy.factory.");
+            factory = finder.findClass(getUriProtocol(), "strategy.factory.");
         } catch (ClassNotFoundException e) {
             log.debug("'strategy.factory.class' not found", e);
         } catch (IOException e) {
             log.debug("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
         }
+
+        // TODO: remove me this new factory is listed in the MET-INF file
+        factory = GenericFileProcessStrategyFactory.class;
 
         if (factory == null) {
             // use default
@@ -307,11 +317,11 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
         this.filter = filter;
     }
 
-    public Comparator<GenericFile> getSorter() {
+    public Comparator<GenericFile<T>> getSorter() {
         return sorter;
     }
 
-    public void setSorter(Comparator<GenericFile> sorter) {
+    public void setSorter(Comparator<GenericFile<T>> sorter) {
         this.sorter = sorter;
     }
 
@@ -373,6 +383,38 @@ public abstract class GenericFileEndpoint extends ScheduledPollEndpoint {
 
     public void setReadLockTimeout(long readLockTimeout) {
         this.readLockTimeout = readLockTimeout;
+    }
+
+    public int getBufferSize() {
+        return bufferSize;
+    }
+
+    public void setBufferSize(int bufferSize) {
+        this.bufferSize = bufferSize;
+    }
+
+    public boolean isAppend() {
+        return append;
+    }
+
+    public void setAppend(boolean append) {
+        this.append = append;
+    }
+
+    public boolean isDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(boolean directory) {
+        this.directory = directory;
+    }
+
+    public boolean isAutoCreate() {
+        return autoCreate;
+    }
+
+    public void setAutoCreate(boolean autoCreate) {
+        this.autoCreate = autoCreate;
     }
 
     /**

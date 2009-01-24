@@ -16,3 +16,4 @@
 #
 
 org.apache.camel.converter
+org.apache.camel.component.file

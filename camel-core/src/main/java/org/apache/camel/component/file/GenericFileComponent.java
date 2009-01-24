@@ -28,7 +28,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * Base class file component. To be extended.
  */
-public abstract class GenericFileComponent extends DefaultComponent {
+public abstract class GenericFileComponent<T> extends DefaultComponent {
 
     public GenericFileComponent() {
     }
@@ -37,14 +37,13 @@ public abstract class GenericFileComponent extends DefaultComponent {
         super(context);
     }
 
-    protected GenericFileEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         // create the correct endpoint based on the protocol
-        final GenericFileEndpoint endpoint;
-
+        final GenericFileEndpoint<T> endpoint;
 
         // call to subclasses to build their custom version of a GenericFileEndpoint
-        endpoint = buildFileEndpoint(uri);
+        endpoint = buildFileEndpoint(uri, remaining, parameters);
 
         // sort by using file language
         String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
@@ -58,16 +57,22 @@ public abstract class GenericFileComponent extends DefaultComponent {
         setProperties(endpoint.getConfiguration(), parameters);
         setProperties(endpoint, parameters);
 
+        afterPropertiesSet(endpoint);
+
         return endpoint;
     }
 
     /**
      * File Components implements this method
-     *
-     * @param uri uri we are building from
-     * @return GenericFileEndpoint
      */
-    protected abstract GenericFileEndpoint buildFileEndpoint(String uri) throws Exception;
+    protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception;
+
+    /**
+     * File Components implements this method
+     *
+     * @param endpoint the newly created endpoint to do some custom post configuration
+     */
+    protected abstract void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception;
 
     /**
      * Helper to create a sort comparator

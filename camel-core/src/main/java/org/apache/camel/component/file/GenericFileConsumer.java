@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -33,13 +31,13 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Base class for remote file consumers.
  */
-public abstract class GenericFileConsumer extends ScheduledPollConsumer {
+public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
     protected final transient Log log = LogFactory.getLog(getClass());
-    protected GenericFileEndpoint endpoint;
-    protected GenericFileOperations operations;
+    protected GenericFileEndpoint<T> endpoint;
+    protected GenericFileOperations<T> operations;
     protected boolean loggedIn;
 
-    public GenericFileConsumer(GenericFileEndpoint endpoint, Processor processor, GenericFileOperations operations) {
+    public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.operations = operations;
@@ -55,7 +53,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
         prePollCheck();
 
         // gather list of files to process
-        List<GenericFile> files = new ArrayList<GenericFile>();
+        List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
 
         String name = endpoint.getConfiguration().getFile();
         boolean isDirectory = endpoint.getConfiguration().isDirectory();
@@ -73,9 +71,9 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
         // sort using build in sorters that is expression based
         // first we need to convert to RemoteFileExchange objects so we can sort
         // using expressions
-        List<GenericFileExchange> exchanges = new ArrayList<GenericFileExchange>(files.size());
-        for (GenericFile file : files) {
-            GenericFileExchange exchange = endpoint.createExchange(file);
+        List<GenericFileExchange<T>> exchanges = new ArrayList<GenericFileExchange<T>>(files.size());
+        for (GenericFile<T> file : files) {
+            GenericFileExchange<T> exchange = endpoint.createExchange(file);
             endpoint.configureMessage(file, exchange.getIn());
             exchanges.add(exchange);
         }
@@ -90,7 +88,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
             log.debug("Total " + total + " files to consume");
         }
         for (int index = 0; index < total; index++) {
-            GenericFileExchange exchange = exchanges.get(index);
+            GenericFileExchange<T> exchange = exchanges.get(index);
             // add current index and total as headers
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
@@ -111,7 +109,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      * @param fileName current directory or file
      * @param fileList current list of files gathered
      */
-    protected abstract void pollDirectory(String fileName, List<GenericFile> fileList);
+    protected abstract void pollDirectory(String fileName, List<GenericFile<T>> fileList);
 
     /**
      * Polls the given file
@@ -119,14 +117,22 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      * @param fileName the file name
      * @param fileList current list of files gathered
      */
-    protected abstract void pollFile(String fileName, List<GenericFile> fileList);
+    protected abstract void pollFile(String fileName, List<GenericFile<T>> fileList);
+
+    /**
+     * Creates a GenericFile based on the given type T.
+     *
+     * @param file the concrete file type
+     * @return a new generic file representing the type
+     */
+    protected abstract GenericFile<T> asGenericFile(T file);
 
     /**
      * Processes the exchange
      *
      * @param exchange the exchange
      */
-    protected void processExchange(final GenericFileExchange exchange) {
+    protected void processExchange(final GenericFileExchange<T> exchange) {
         if (log.isTraceEnabled()) {
             log.trace("Processing remote file: " + exchange.getGenericFile());
         }
@@ -138,7 +144,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
 
                 // must use file from exchange as it can be updated due the
                 // preMoveNamePrefix/preMoveNamePostfix options
-                final GenericFile target = exchange.getGenericFile();
+                final GenericFile<T> target = exchange.getGenericFile();
                 // must use full name when downloading so we have the correct path
                 final String name = target.getAbsoluteFileName();
 
@@ -147,9 +153,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
                     log.trace("Retreiving file: " + name + " from: " + endpoint);
                 }
 
-                OutputStream os = new ByteArrayOutputStream();
-                target.setBody(os);
-                operations.retrieveFile(name, os);
+                operations.retrieveFile(target.getFile(), name, exchange);
 
                 if (log.isTraceEnabled()) {
                     log.trace("Retrieved file: " + name + " from: " + endpoint);
@@ -162,10 +166,9 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
                 // the exchange can happen asynchronously
                 getAsyncProcessor().process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
-                        final GenericFile file = exchange.getGenericFile();
+                        final GenericFile<T> file = exchange.getGenericFile();
                         boolean failed = exchange.isFailed();
-                        boolean handled = DeadLetterChannel
-                                .isFailureHandled(exchange);
+                        boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
                         if (log.isDebugEnabled()) {
                             log.debug("Done processing file: " + file.getAbsoluteFileName() + ". Status is: "
@@ -175,14 +178,11 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
                         boolean committed = false;
                         try {
                             if (!failed || handled) {
-                                // commit the file strategy if there was no
-                                // failure or already handled by the
-                                // DeadLetterChannel
+                                // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
                                 processStrategyCommit(processStrategy, exchange, file, handled);
                                 committed = true;
                             } else {
-                                // there was an exception but it was not handled
-                                // by the DeadLetterChannel
+                                // there was an exception but it was not handled by the DeadLetterChannel
                                 handleException(exchange.getException());
                             }
                         } finally {
@@ -212,7 +212,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      *                        was handled by the failure processor (usually the DeadLetterChannel).
      */
     protected void processStrategyCommit(GenericFileProcessStrategy processStrategy,
-                                         GenericFileExchange exchange, GenericFile file, boolean failureHandled) {
+                                         GenericFileExchange exchange, GenericFile<T> file, boolean failureHandled) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
             // use file.getAbsoluteFileName as key for the idempotent repository
@@ -241,7 +241,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      * @param file            the file processed
      */
     protected void processStrategyRollback(GenericFileProcessStrategy processStrategy,
-                                           GenericFileExchange exchange, GenericFile file) {
+                                           GenericFileExchange exchange, GenericFile<T> file) {
         if (log.isDebugEnabled()) {
             log.debug("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }
@@ -256,7 +256,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      * @param isDirectory wether the file is a directory or a file
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
-    protected boolean isValidFile(GenericFile file, boolean isDirectory) {
+    protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
             if (log.isTraceEnabled()) {
                 log.trace("Remote file did not match. Will skip this remote file: " + file);
@@ -290,7 +290,7 @@ public abstract class GenericFileConsumer extends ScheduledPollConsumer {
      * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if
      *         not
      */
-    protected boolean isMatched(GenericFile file, boolean isDirectory) {
+    protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
         String name = file.getFileName();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")

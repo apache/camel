@@ -16,8 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -31,11 +30,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * Generic file producer
  */
-public class GenericFileProducer extends DefaultProducer {
+public class GenericFileProducer<T> extends DefaultProducer {
     private final transient Log log = LogFactory.getLog(GenericFileProducer.class);
-    private GenericFileOperations operations;
+    private GenericFileOperations<T> operations;
 
-    protected GenericFileProducer(GenericFileEndpoint endpoint, GenericFileOperations operations) {
+    protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.operations = operations;
     }
@@ -43,12 +42,12 @@ public class GenericFileProducer extends DefaultProducer {
     /**
      * Convenience method
      */
-    protected GenericFileEndpoint getGenericFileEndpoint() {
-        return (GenericFileEndpoint) getEndpoint();
+    protected GenericFileEndpoint<T> getGenericFileEndpoint() {
+        return (GenericFileEndpoint<T>) getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
-        GenericFileExchange fileExchange = (GenericFileExchange) getEndpoint().createExchange(exchange);
+        GenericFileExchange<T> fileExchange = (GenericFileExchange<T>) getGenericFileEndpoint().createExchange(exchange);
         processExchange(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }
@@ -59,7 +58,7 @@ public class GenericFileProducer extends DefaultProducer {
      * @param exchange fileExchange
      * @throws Exception is thrown if some error
      */
-    protected void processExchange(GenericFileExchange exchange) throws Exception {
+    protected void processExchange(GenericFileExchange<T> exchange) throws Exception {
         if (log.isTraceEnabled()) {
             log.trace("Processing " + exchange);
         }
@@ -101,22 +100,17 @@ public class GenericFileProducer extends DefaultProducer {
     }
 
     protected void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
-        InputStream payload = exchange.getIn().getBody(InputStream.class);
-        try {
-            // build directory
-            int lastPathIndex = fileName.lastIndexOf('/');
-            if (lastPathIndex != -1) {
-                String directory = fileName.substring(0, lastPathIndex);
-                if (!operations.buildDirectory(directory)) {
-                    log.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
-                }
+        // build directory
+        int lastPathIndex = fileName.lastIndexOf('/');
+        if (lastPathIndex != -1) {
+            String directory = fileName.substring(0, lastPathIndex);
+            if (!operations.buildDirectory(directory)) {
+                log.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
             }
-            boolean success = operations.storeFile(fileName, payload);
-            if (!success) {
-                throw new GenericFileOperationFailedException("Error writing file: " + fileName);
-            }
-        } finally {
-            ObjectHelper.close(payload, "Closing payload", log);
+        }
+        boolean success = operations.storeFile(fileName, exchange);
+        if (!success) {
+            throw new GenericFileOperationFailedException("Error writing file: " + fileName);
         }
     }
 
@@ -146,15 +140,20 @@ public class GenericFileProducer extends DefaultProducer {
         }
 
         String endpointFile = getGenericFileEndpoint().getConfiguration().getFile();
-        if (getGenericFileEndpoint().getConfiguration().isDirectory()) {
-            // If the path isn't empty, we need to add a trailing / if it isn't
-            // already there
+        if (getGenericFileEndpoint().isDirectory() || getGenericFileEndpoint().getConfiguration().isDirectory()) {
+            // Its a directory so we should use it as a basepath for the filename
+            // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
             if (endpointFile.length() > 0) {
+                // TODO windows or unix slashes. Maybe we should replace all \ to /
                 baseDir = endpointFile + (endpointFile.endsWith("/") ? "" : "/");
             }
-            String fileName = (name != null) ? name : getGenericFileEndpoint().getGeneratedFileName(exchange.getIn());
-            answer = baseDir + fileName;
+            if (name != null) {
+                answer = baseDir + name;
+            } else {
+                // use a generated filename if no name provided
+                answer = baseDir + getGenericFileEndpoint().getGeneratedFileName(exchange.getIn());
+            }
         } else {
             answer = endpointFile;
         }
