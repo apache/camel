@@ -67,7 +67,6 @@ public class CxfEndpointBeanTest extends TestCase {
             assertTrue("Should get the fault here ", ex.getCause() instanceof org.apache.cxf.interceptor.Fault);
             // do nothing here;
         }
-
-    }
-
+    }    
+   
 }

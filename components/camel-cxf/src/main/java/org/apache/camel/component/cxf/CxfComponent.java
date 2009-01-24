@@ -63,7 +63,7 @@ public class CxfComponent extends DefaultComponent {
             
         } else {
             // endpoint URI does not specify a bean
-            result = new CxfEndpoint(this, remaining);
+            result = new CxfEndpoint(remaining, this);
         }
         
         return result;
