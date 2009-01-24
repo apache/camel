@@ -22,9 +22,11 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
 
-public class GenericFileExchange extends DefaultExchange {
+public class GenericFileExchange<T> extends DefaultExchange {
 
-    private GenericFile genericFile;
+    private GenericFile<T> genericFile;
+
+    // TODO: Consider removing some of he constructors
 
     public GenericFileExchange(CamelContext context) {
         super(context);
@@ -42,14 +44,14 @@ public class GenericFileExchange extends DefaultExchange {
         super(fromEndpoint);
     }
 
-    public GenericFileExchange(GenericFileEndpoint endpoint, ExchangePattern pattern, GenericFile genericFile) {
+    public GenericFileExchange(GenericFileEndpoint endpoint, ExchangePattern pattern, GenericFile<T> genericFile) {
         super(endpoint, pattern);
-        setRemoteFile(genericFile);
+        setGenericFile(genericFile);
     }
 
-    public GenericFileExchange(DefaultExchange parent, GenericFile genericFile) {
+    public GenericFileExchange(DefaultExchange parent, GenericFile<T> genericFile) {
         super(parent);
-        setRemoteFile(genericFile);
+        setGenericFile(genericFile);
     }
 
     public GenericFileExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
@@ -57,7 +59,7 @@ public class GenericFileExchange extends DefaultExchange {
     }
 
 
-    protected void populateHeaders(GenericFile genericFile) {
+    protected void populateHeaders(GenericFile<T> genericFile) {
         if (genericFile != null) {
             getIn().setHeader("file.absoluteName", genericFile.getAbsoluteFileName());
             getIn().setHeader("file.relativeName", genericFile.getRelativeFileName());
@@ -77,11 +79,11 @@ public class GenericFileExchange extends DefaultExchange {
         }
     }
 
-    public GenericFile getGenericFile() {
+    public GenericFile<T> getGenericFile() {
         return genericFile;
     }
 
-    public void setRemoteFile(GenericFile genericFile) {
+    public void setGenericFile(GenericFile<T> genericFile) {
         setIn(new GenericFileMessage(genericFile));
         this.genericFile = genericFile;
         populateHeaders(genericFile);

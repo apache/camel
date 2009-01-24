@@ -20,7 +20,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -62,8 +61,7 @@ public final class GenericFileConverter {
 
     @Converter
     public static String toString(GenericFile file, Exchange exchange) throws IOException {
-        OutputStream os = file.getBody();
-        return os != null ? os.toString() : null;
+        return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
     }
 
 }

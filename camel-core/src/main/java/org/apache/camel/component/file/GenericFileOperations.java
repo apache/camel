@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.List;
+
+import org.apache.camel.Exchange;
 
 public interface GenericFileOperations<T> {
 
@@ -59,23 +59,23 @@ public interface GenericFileOperations<T> {
      * Retrieves the remote file (download)
      *
      * @param name name of the file
-     * @param out  stream to write the content of the file into
+     * @param exchange  stream to write the content of the file into
      * @return true if file has been retrieved, false if not
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    boolean retrieveFile(String name, OutputStream out) throws GenericFileOperationFailedException;
+    boolean retrieveFile(T file, String name, Exchange exchange) throws GenericFileOperationFailedException;
 
     /**
      * Stores the content as a new remote file (upload)
      *
      * @param name name of new file
-     * @param body content of the file
+     * @param exchange with the content content of the file
      * @return true if the file was stored, false if not
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    boolean storeFile(String name, InputStream body) throws GenericFileOperationFailedException;
+    boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException;
 
     /**
      * Gets the current remote directory
@@ -84,7 +84,7 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    String getCurrentDirectory() throws GenericFileOperationFailedException;
+    String getCurrentDirectory(T file) throws GenericFileOperationFailedException;
 
     /**
      * Change the current remote directory
@@ -93,7 +93,7 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    void changeCurrentDirectory(String path) throws GenericFileOperationFailedException;
+    T changeCurrentDirectory(T file, String path) throws GenericFileOperationFailedException;
 
     /**
      * List the files in the current remote directory
@@ -102,7 +102,7 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    List listFiles() throws GenericFileOperationFailedException;
+    List<T> listFiles(T file) throws GenericFileOperationFailedException;
 
     /**
      * List the files in the given remote directory
@@ -112,6 +112,6 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    List listFiles(String path) throws GenericFileOperationFailedException;
+    List<T> listFiles(T file, String path) throws GenericFileOperationFailedException;
 
 }

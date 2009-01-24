@@ -16,15 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.OutputStream;
-
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
-public abstract class GenericFile<T> {
+public class GenericFile<T> {
 
     private String absoluteFileName;
     private String relativeFileName;
@@ -32,11 +30,7 @@ public abstract class GenericFile<T> {
     private long fileLength;
     private long lastModified;
     private T file;
-    private OutputStream body;
-
-    public GenericFile() {
-        super();
-    }
+    private Object body;
 
     @Override
     public GenericFile<T> clone() {
@@ -50,7 +44,7 @@ public abstract class GenericFile<T> {
      * @return a clone of the source
      */
     public GenericFile<T> copyFrom(GenericFile<T> source) {
-        GenericFile<T> result = null;
+        GenericFile<T> result;
         try {
             result = source.getClass().newInstance();
         } catch (Exception e) {
@@ -123,11 +117,11 @@ public abstract class GenericFile<T> {
         this.file = file;
     }
 
-    public OutputStream getBody() {
+    public Object getBody() {
         return body;
     }
 
-    public void setBody(OutputStream os) {
+    public void setBody(Object os) {
         this.body = os;
     }
 
