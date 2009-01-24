@@ -15,7 +15,7 @@
     <description>An example based on real life use case for reporting incidents using webservice that are transformed
         and send as emails to a backing system
     </description>
-    <packaging>war</packaging>
+    
 
     <dependencies>
         <dependency>
@@ -56,17 +56,11 @@
         </dependency>
 
         <!-- regular http transport -->
-        <!--dependency>
+        <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf-version}</version>
-        </dependency-->
-        <!-- use jetty http transport if you use CXF in Jetty -->
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>${cxf-version}</version>
-        </dependency>
+        </dependency>       
 
         <!-- logging -->
         <dependency>
@@ -79,8 +73,7 @@
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
-            <version>${cxf-version}</version>
-            <scope>test</scope>
+            <version>${cxf-version}</version>            
         </dependency>
 
         <dependency>
