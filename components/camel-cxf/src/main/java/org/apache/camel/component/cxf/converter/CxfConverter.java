@@ -21,7 +21,11 @@ import java.io.ByteArrayOutputStream;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Endpoint;
+import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
+import org.apache.camel.component.cxf.spring.CxfEndpointBeanDefinitionParser.CxfSpringEndpointBean;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.MessageContentsList;
@@ -66,6 +70,17 @@ public final class CxfConverter {
             LOG.error("Get the exception when converting the SOAPMessage into String, the exception is " + e);
         }
         return baos.toString();
+    }
+    
+    @Converter
+    public static Endpoint toEndpoint(final CxfSpringEndpointBean endpointBean) throws Exception {
+        if (endpointBean == null) {
+            throw new IllegalArgumentException("The CxfEndpoint instance is null");
+        }
+        //CamelContext 
+        SpringCamelContext context = SpringCamelContext.springCamelContext(endpointBean.getApplicationContext());
+        Endpoint answer = new CxfSpringEndpoint(context, endpointBean);        
+        return answer;
     }
 
     @Converter

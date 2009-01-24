@@ -99,6 +99,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     // To make the CxfEndpointBean clear without touching any Spring relates class 
     // , we implements the ApplicationContextAware here
     public static class CxfSpringEndpointBean extends CxfEndpointBean implements ApplicationContextAware {
+        private ApplicationContext applicationContext;
+        
         public CxfSpringEndpointBean() {
             super();
         }
@@ -108,11 +110,16 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         }
         
         public void setApplicationContext(ApplicationContext ctx) throws BeansException {
+            applicationContext = ctx;
             if (getBus() == null) {
                 Bus bus = BusFactory.getThreadDefaultBus();                
                 setBus(bus);
             }
             BusWiringBeanFactoryPostProcessor.updateBusReferencesInContext(getBus(), ctx);
+        }
+        
+        public ApplicationContext getApplicationContext() {
+            return applicationContext;
         }
         
     }

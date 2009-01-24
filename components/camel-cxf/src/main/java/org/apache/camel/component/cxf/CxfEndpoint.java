@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.ws.WebServiceProvider;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -81,8 +82,12 @@ public class CxfEndpoint extends DefaultEndpoint {
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
 
-    public CxfEndpoint(CxfComponent cxfComponent, String remaining) {
+    public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
+    }
+    
+    public CxfEndpoint(String remaining, CamelContext context) {
+        super(remaining, context);
     }
 
     public Producer createProducer() throws Exception {

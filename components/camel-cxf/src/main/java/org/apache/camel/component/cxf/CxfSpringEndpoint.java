@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.xml.namespace.QName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.spring.SpringCamelContext;
@@ -50,10 +51,10 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     private String endpointLocalName;
     private String endpointNamespace;
     
-    public CxfSpringEndpoint(CxfComponent cxfComponent, String beanId,
+    public CxfSpringEndpoint(CamelContext context, String beanId,
             CxfEndpointBean bean) throws Exception {
         
-        super(cxfComponent, bean.getAddress());
+        super(bean.getAddress(), context);
         this.beanId = beanId;
         this.bean = bean;
         
@@ -63,6 +64,15 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         // create configurer
         configurer = new ConfigurerImpl(((SpringCamelContext)getCamelContext())
             .getApplicationContext());
+    }
+    
+    public CxfSpringEndpoint(CxfComponent component, String beanId,
+            CxfEndpointBean bean) throws Exception {
+        this(component.getCamelContext(), beanId, bean);
+    }
+    
+    public CxfSpringEndpoint(CamelContext context, CxfEndpointBean bean) throws Exception {
+        this(context, "", bean);
     }
 
     /**
