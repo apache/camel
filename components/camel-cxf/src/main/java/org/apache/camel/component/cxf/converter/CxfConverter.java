@@ -77,8 +77,9 @@ public final class CxfConverter {
         if (endpointBean == null) {
             throw new IllegalArgumentException("The CxfEndpoint instance is null");
         }
-        //CamelContext 
+        // CamelContext 
         SpringCamelContext context = SpringCamelContext.springCamelContext(endpointBean.getApplicationContext());
+        // The beanId will be set from endpointBean's property        
         Endpoint answer = new CxfSpringEndpoint(context, endpointBean);        
         return answer;
     }
