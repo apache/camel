@@ -49,8 +49,7 @@ public class ActivatorTest extends CamelOsgiTestSupport {
     
     public void testFindTypeConverterPackageNames() throws Exception {
         String[] packages = Activator.findTypeConverterPackageNames();
-        assertEquals("We should find three converter package here", 3, packages.length);
-        
+        assertTrue("We should find some converter packages here", packages.length > 0);        
         assertTrue("Here should contains org.apache.camel.osgi.test", containsPackageName("org.apache.camel.osgi.test", packages));
     }
 
