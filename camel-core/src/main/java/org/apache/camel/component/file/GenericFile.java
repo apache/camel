@@ -68,12 +68,30 @@ public class GenericFile<T> {
      */
     public void changeFileName(String newName) {
         setAbsoluteFileName(getParent() + "/" + newName);
+
+        // relative name is a bit more complex to set as newName itself can contain
+        // folders we need to consider as well
+        String baseNewName = null;
+        if (newName.indexOf("/") != -1) {
+            baseNewName = newName.substring(0, newName.lastIndexOf("/"));
+            newName = newName.substring(newName.lastIndexOf("/") + 1);
+        }
+
         if (relativeFileName.indexOf("/") != -1) {
             String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf("/"));
-            setRelativeFileName(relative + newName);
+            if (baseNewName != null) {
+                setRelativeFileName(relative + "/" + baseNewName + "/" + newName);
+            } else {
+                setRelativeFileName(relative + "/" + newName);
+            }
         } else {
-            setRelativeFileName(newName);
+            if (baseNewName != null) {
+                setRelativeFileName(baseNewName + "/" + newName);
+            } else {
+                setRelativeFileName(newName);
+            }
         }
+
         setFileName(newName);
     }
 

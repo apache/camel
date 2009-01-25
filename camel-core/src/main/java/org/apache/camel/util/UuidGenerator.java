@@ -61,12 +61,12 @@ public class UuidGenerator {
             hostName = "localhost";
             stub = "-1-" + System.currentTimeMillis() + "-";
         }
-        UNIQUE_STUB = stub;
+        UNIQUE_STUB = generateSanitizedId(stub);
     }
 
     public UuidGenerator(String prefix) {
         synchronized (UNIQUE_STUB) {
-            this.seed = prefix + UNIQUE_STUB + (instanceCount++) + "-";
+            this.seed = generateSanitizedId(prefix + UNIQUE_STUB + (instanceCount++) + "-");
         }
     }
 
@@ -110,6 +110,8 @@ public class UuidGenerator {
         id = id.replace(':', '-');
         id = id.replace('_', '-');
         id = id.replace('.', '-');
+        id = id.replace('/', '-');
+        id = id.replace('\\', '-');
         return id;
     }
 

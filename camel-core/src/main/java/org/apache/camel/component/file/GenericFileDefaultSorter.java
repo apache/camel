@@ -23,11 +23,11 @@ import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Default remote file sorter.
+ * Default file sorter.
  */
-public final class GenericDefaultFileSorter {
+public final class GenericFileDefaultSorter {
 
-    private GenericDefaultFileSorter() {
+    private GenericFileDefaultSorter() {
     }
 
     /**

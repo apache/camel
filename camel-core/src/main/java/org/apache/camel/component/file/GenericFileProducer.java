@@ -105,7 +105,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         if (lastPathIndex != -1) {
             String directory = fileName.substring(0, lastPathIndex);
             if (!operations.buildDirectory(directory)) {
-                log.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
+                log.warn("Can not build directory: " + directory + " (could be because of denied permissions)");
             }
         }
         boolean success = operations.storeFile(fileName, exchange);

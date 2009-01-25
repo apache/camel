@@ -251,8 +251,7 @@ public class FileConsumer extends ScheduledPollConsumer {
                 LOG.trace("File did not match. Will skip this file: " + file);
             }
             return false;
-        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getPath())) {
-            // use file.getPath as key for the idempotent repository to support files with same name but in different folders
+        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getName())) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("FileConsumer is idempotent and the file has been consumed before. Will skip this file: " + file);
             }
