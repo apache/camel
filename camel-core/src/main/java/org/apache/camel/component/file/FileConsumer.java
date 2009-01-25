@@ -209,8 +209,7 @@ public class FileConsumer extends ScheduledPollConsumer {
                                          File file, boolean failureHandled) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
-            // use file.getPath as key for the idempotent repository to support files with same name but in different folders
-            endpoint.getIdempotentRepository().add(file.getPath());
+            endpoint.getIdempotentRepository().add(file.getName());
         }
 
         try {
