@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.spring;
 
+import java.util.HashMap;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
@@ -28,6 +29,7 @@ import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
@@ -45,7 +47,8 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
 
     @Override
     protected void mapAttribute(BeanDefinitionBuilder bean, Element e, String name, String val) {
-        if ("endpointName".equals(name) || "serviceName".equals(name)) {
+                
+        if ("endpointName".equals(name) || "serviceName".equals(name)) {           
             QName q = parseQName(e, val);
             bean.addPropertyValue(name, q);
         } else {
@@ -76,6 +79,14 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);
         bean.setLazyInit(false);
+        // put the id into the properies
+        Map map = (Map) bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
+        String id = resolveId(element, bean.getBeanDefinition(), ctx);
+        if (map == null) {
+            map = new HashMap();
+            bean.addPropertyValue("properties", map);
+        }
+        map.put("beanId", id);        
     }
 
     @Override
@@ -83,11 +94,11 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
                                AbstractBeanDefinition definition,
                                ParserContext ctx)
         throws BeanDefinitionStoreException {
-        String id = super.resolveId(elem, definition, ctx);
+        String id = super.resolveId(elem, definition, ctx);        
+        
         if (StringUtils.isEmpty(id)) {
             throw new BeanDefinitionStoreException("The bean id is needed.");
-        }
-
+        }       
         return id;
     }
 
@@ -100,6 +111,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     // , we implements the ApplicationContextAware here
     public static class CxfSpringEndpointBean extends CxfEndpointBean implements ApplicationContextAware {
         private ApplicationContext applicationContext;
+        private String beanId;
         
         public CxfSpringEndpointBean() {
             super();
@@ -120,6 +132,14 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         
         public ApplicationContext getApplicationContext() {
             return applicationContext;
+        }
+        
+        public void setId(String id) {
+            beanId = id;
+        }
+        
+        public String getId() {
+            return beanId;
         }
         
     }

@@ -85,7 +85,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         if (bean.getProperties() != null) {
             Map<String, Object> copy = new HashMap<String, Object>();
             copy.putAll(bean.getProperties());
-
+            
             // pass the copy the method modifies the properties map
             IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), 
                     this, copy);      
@@ -199,7 +199,10 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     
     // Properties
     // -------------------------------------------------------------------------
-
+    public void setBeanId(String id) {        
+        this.beanId = id;
+    }
+    
     public void setServiceNamespace(String serviceNamespace) {
         this.serviceNamespace = serviceNamespace;
     }
