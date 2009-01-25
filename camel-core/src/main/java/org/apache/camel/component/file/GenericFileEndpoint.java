@@ -150,9 +150,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             log.debug("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
         }
 
-        // TODO: remove me this new factory is listed in the MET-INF file
-        factory = GenericFileProcessStrategyFactory.class;
-
         if (factory == null) {
             // use default
             factory = ObjectHelper.loadClass(DEFAULT_STRATEGYFACTORY_CLASS);
