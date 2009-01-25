@@ -215,9 +215,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                                          GenericFileExchange exchange, GenericFile<T> file, boolean failureHandled) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
-            // use file.getAbsoluteFileName as key for the idempotent repository
-            // to support files with same name but in different folders
-            endpoint.getIdempotentRepository().add(file.getAbsoluteFileName());
+            // only use the filename as the key as the file could be moved into a done folder
+            endpoint.getIdempotentRepository().add(file.getFileName());
         }
 
         try {
@@ -262,9 +261,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                 log.trace("Remote file did not match. Will skip this remote file: " + file);
             }
             return false;
-        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getAbsoluteFileName())) {
-            // use file.getAbsoluteFileName as key for the idempotent repository
-            // to support files with same name but in different folders
+        } else if (endpoint.isIdempotent() && endpoint.getIdempotentRepository().contains(file.getFileName())) {
+            // only use the filename as the key as the file could be moved into a done folder
             if (log.isTraceEnabled()) {
                 log.trace("RemoteFileConsumer is idempotent and the file has been consumed before. Will skip this remote file: " + file);
             }

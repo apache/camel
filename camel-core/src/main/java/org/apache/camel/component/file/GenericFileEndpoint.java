@@ -27,7 +27,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.spi.IdempotentRepository;
@@ -335,7 +334,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     public void setSortBy(String expression, boolean reverse) {
-        setSortBy(GenericDefaultFileSorter.sortByFileLanguage(expression, reverse));
+        setSortBy(GenericFileDefaultSorter.sortByFileLanguage(expression, reverse));
     }
 
     public String getTempPrefix() {

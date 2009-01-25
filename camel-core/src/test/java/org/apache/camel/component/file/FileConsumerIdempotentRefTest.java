@@ -92,7 +92,7 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
         }
 
         public boolean contains(String key) {
-            return false;
+            return invoked;
         }
     }
     

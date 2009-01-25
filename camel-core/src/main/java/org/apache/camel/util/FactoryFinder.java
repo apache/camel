@@ -115,8 +115,7 @@ public class FactoryFinder {
         return findClasses(key, null);
     }
 
-    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException,
-        IOException {
+    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         // TODO change to support finding multiple classes on the classpath!
         Class type = findClass(key, propertyPrefix);
         return Collections.singletonList(type);
@@ -126,15 +125,17 @@ public class FactoryFinder {
         return path;
     }
 
-    private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException,
-        IOException {
-
+    private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
         String className = properties.getProperty(propertyPrefix + "class");
         if (className == null) {
             throw new IOException("Expected property is missing: " + propertyPrefix + "class");
         }
 
-        return ObjectHelper.loadClass(className);
+        Class clazz = ObjectHelper.loadClass(className);
+        if (clazz == null) {
+            throw new ClassNotFoundException(className);
+        }
+        return clazz;
     }
 
     private Properties doFindFactoryProperties(String key) throws IOException {

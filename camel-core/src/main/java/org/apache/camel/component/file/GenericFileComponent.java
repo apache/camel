@@ -96,7 +96,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         ObjectHelper.notEmpty(reminder, "sortBy expression", this);
 
         // recursive add nested sorters
-        return GenericDefaultFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
+        return GenericFileDefaultSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
     }
 
 }

@@ -53,7 +53,8 @@ public class NewFileOperations implements GenericFileOperations<File> {
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         File file = new File(from);
-        return file.exists() && file.renameTo(new File(to));
+        File target = new File(to);
+        return file.renameTo(target);
     }
 
     public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
@@ -61,7 +62,7 @@ public class NewFileOperations implements GenericFileOperations<File> {
         if (dir.exists()) {
             return true;
         }
-        return endpoint.isAutoCreate() && dir.mkdirs();
+        return dir.mkdirs();
     }
 
     public String getCurrentDirectory(File file) throws GenericFileOperationFailedException {

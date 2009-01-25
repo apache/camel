@@ -28,7 +28,7 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("target/idempotent");
+        deleteDirectory("target/file-batch");
         template.sendBodyAndHeader("file://target/file-batch/", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/file-batch/", "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
     }
