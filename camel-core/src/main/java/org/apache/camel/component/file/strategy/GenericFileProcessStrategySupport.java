@@ -40,11 +40,15 @@ public abstract class GenericFileProcessStrategySupport implements GenericFilePr
     }
 
     public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
-        // nothing
+        if (exclusiveReadLockStrategy != null) {
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file);
+        }
     }
 
     public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) {
-        // nothing
+        if (exclusiveReadLockStrategy != null) {
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file);
+        }
     }
 
     public GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy() {

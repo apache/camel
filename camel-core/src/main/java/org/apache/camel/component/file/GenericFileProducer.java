@@ -105,7 +105,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         if (lastPathIndex != -1) {
             String directory = fileName.substring(0, lastPathIndex);
             if (!operations.buildDirectory(directory)) {
-                log.warn("Can not build directory: " + directory + " (could be because of denied permissions)");
+                log.debug("Can not build directory: " + directory + " (could be because of denied permissions)");
             }
         }
         boolean success = operations.storeFile(fileName, exchange);
@@ -152,6 +152,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 answer = baseDir + name;
             } else {
                 // use a generated filename if no name provided
+                // TODO: Consider to require end user to always provide a filename instead of generating a new name
                 answer = baseDir + getGenericFileEndpoint().getGeneratedFileName(exchange.getIn());
             }
         } else {

@@ -37,6 +37,9 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class FileProcessStrategySupport implements FileProcessStrategy {
+
+    // TODO: Should be suppored by NewFile
+
     private static final transient Log LOG = LogFactory.getLog(FileProcessStrategySupport.class);
     private boolean lockFile;
     private FileRenamer lockFileRenamer;

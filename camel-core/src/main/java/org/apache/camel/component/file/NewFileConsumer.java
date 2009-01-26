@@ -81,6 +81,8 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
 
     protected GenericFile<File> asGenericFile(File file) {
         GenericFile<File> answer = new GenericFile<File>();
+        // use file specific binding
+        answer.setBinding(new NewFileBinding());
         answer.setFile(file);
         answer.setFileLength(file.length());
         answer.setFileName(file.getName());
