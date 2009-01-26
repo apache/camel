@@ -38,7 +38,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/movefile");
+        deleteDirectory(FTP_ROOT_DIR + "movefile");
         prepareFtpServer();
     }
 
@@ -55,7 +55,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File("./res/home/movefile/hello.txt");
+        File file = new File(FTP_ROOT_DIR + "movefile/hello.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
@@ -71,7 +71,7 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         Thread.sleep(1000);
 
         // assert the file is deleted
-        File file = new File("./res/home/movefile/done/sub2/hello.txt.old");
+        File file = new File(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
         file = file.getAbsoluteFile();
         assertTrue("The file should have been moved", file.exists());
     }

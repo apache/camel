@@ -47,7 +47,7 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/getme");
+        deleteDirectory(FTP_ROOT_DIR + "getme");
         prepareFtpServer();
     }
 

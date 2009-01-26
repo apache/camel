@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.file.remote;
 
-/**
- * A filter for {@link RemoteFile}.
- */
-public interface RemoteFileFilter {
+import java.net.URI;
 
-    /**
-     * Tests whether or not the specified remote file should be included
-     *
-     * @param  file  the remote file to be tested
-     * @return  <code>true</code> if and only if <code>file</code> should be included
-     */
-    boolean accept(RemoteFile file);
+public class SftpRemoteFileConfiguration extends RemoteFileConfiguration {
+
+    public static final int DEFAULT_SFTP_PORT = 22;
+
+    public SftpRemoteFileConfiguration() {
+    }
+
+    public SftpRemoteFileConfiguration(URI uri) {
+        super(uri);
+    }
+
+    @Override
+    protected void setDefaultPort() {
+        setPort(DEFAULT_SFTP_PORT);
+    }
 
 }

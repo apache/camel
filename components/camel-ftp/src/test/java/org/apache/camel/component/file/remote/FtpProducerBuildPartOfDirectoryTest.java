@@ -31,12 +31,12 @@ public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
     }
 
     public void testProduceAndBuildPartOfRemotFolderTest() throws Exception {
-        deleteDirectory("./res/home/");
-        createDirectory("./res/home/upload/user/superman");
+        deleteDirectory(FTP_ROOT_DIR + "");
+        createDirectory(FTP_ROOT_DIR + "upload/user/superman");
 
         template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "claus.txt");
 
-        File file = new File("./res/home/upload/user/claus/claus.txt");
+        File file = new File(FTP_ROOT_DIR + "upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();
         assertTrue("The uploaded file should exists", file.exists());
         assertEquals("Bye World", IOConverter.toString(file));

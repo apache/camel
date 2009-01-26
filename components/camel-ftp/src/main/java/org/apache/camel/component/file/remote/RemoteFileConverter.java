@@ -32,7 +32,7 @@ import org.apache.camel.Exchange;
  */
 @Converter
 public final class RemoteFileConverter {
-    
+
     private RemoteFileConverter() {
         // Helper Class
     }
@@ -64,7 +64,7 @@ public final class RemoteFileConverter {
 
     @Converter
     public static String toString(RemoteFile file, Exchange exchange) throws IOException {
-        OutputStream os = file.getBody();
+        OutputStream os = (OutputStream) file.getBody();
         return os != null ? os.toString() : null;
     }
 

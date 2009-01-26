@@ -32,7 +32,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/multidir");
+        deleteDirectory(FTP_ROOT_DIR + "multidir");
         prepareFtpServer();
     }
 
@@ -49,20 +49,20 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         RemoteFileExchange exchange = (RemoteFileExchange) mock.getExchanges().get(0);
-        RemoteFile file = exchange.getRemoteFile();
-        assertEquals("multidir/bye.txt", file.getAbsolutelFileName());
+        RemoteFile file = (RemoteFile) exchange.getGenericFile();
+        assertEquals("multidir/bye.txt", file.getAbsoluteFileName());
         assertEquals("bye.txt", file.getRelativeFileName());
         assertEquals("bye.txt", file.getFileName());
 
         exchange = (RemoteFileExchange) mock.getExchanges().get(1);
-        file = exchange.getRemoteFile();
-        assertEquals("multidir/sub/hello.txt", file.getAbsolutelFileName());
+        file = (RemoteFile) exchange.getGenericFile();
+        assertEquals("multidir/sub/hello.txt", file.getAbsoluteFileName());
         assertEquals("sub/hello.txt", file.getRelativeFileName());
         assertEquals("hello.txt", file.getFileName());
 
         exchange = (RemoteFileExchange) mock.getExchanges().get(2);
-        file = exchange.getRemoteFile();
-        assertEquals("multidir/sub/sub2/godday.txt", file.getAbsolutelFileName());
+        file = (RemoteFile) exchange.getGenericFile();
+        assertEquals("multidir/sub/sub2/godday.txt", file.getAbsoluteFileName());
         assertEquals("sub/sub2/godday.txt", file.getRelativeFileName());
         assertEquals("godday.txt", file.getFileName());
     }

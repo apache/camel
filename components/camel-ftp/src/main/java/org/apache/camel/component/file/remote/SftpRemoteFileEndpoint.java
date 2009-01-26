@@ -14,8 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.strategy;
+package org.apache.camel.component.file.remote;
 
-public class NoOpRemoteFileProcessStrategy extends RemoteFileProcessStrategySupport {
+import com.jcraft.jsch.ChannelSftp;
+import org.apache.camel.Processor;
 
+
+public class SftpRemoteFileEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
+
+    public SftpRemoteFileEndpoint(String uri, SftpRemoteFileComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,
+                                  RemoteFileConfiguration configuration) {
+        super(uri, component, operations, configuration);
+    }
+
+    @Override
+    protected RemoteFileConsumer buildConsumer(Processor processor, RemoteFileOperations operations) {
+        return new SftpConsumer(this, processor, operations);
+    }
+
+    @Override
+    public String getScheme() {
+        return "sftp";
+    }
 }

@@ -16,29 +16,41 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.URI;
+import java.util.Map;
+
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.GenericFileComponent;
 import org.apache.camel.component.file.GenericFileEndpoint;
+import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * Base class for remote file components. Polling and consuming files from
- * (logically) remote locations
- *
- * @param <T> the type of file that these remote endpoints provide
+ * Standard FTP Remote File Component
  */
-public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
+public class FtpRemoteFileComponent extends RemoteFileComponent<FTPFile> {
 
-    public RemoteFileComponent() {
+    public FtpRemoteFileComponent() {
         super();
     }
 
-    public RemoteFileComponent(CamelContext context) {
+    public FtpRemoteFileComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception {
-        // noop
+    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        // get the uri part before the options as they can be non URI valid such
+        // as the expression using $ chars
+        if (uri.indexOf("?") != -1) {
+            uri = uri.substring(0, uri.indexOf("?"));
+        }
+
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
+        FtpRemoteFileConfiguration config = new FtpRemoteFileConfiguration(new URI(uri));
+
+        FtpRemoteFileOperations operations = new FtpRemoteFileOperations();
+        return new FtpRemoteFileEndpoint(uri, this, operations, config);
     }
 
 }
+

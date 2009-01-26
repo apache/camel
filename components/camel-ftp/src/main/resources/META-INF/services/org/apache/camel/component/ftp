@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.file.remote.RemoteFileComponent
-strategy.factory.class=org.apache.camel.component.file.remote.strategy.RemoteFileProcessStrategyFactory
+class=org.apache.camel.component.file.remote.FtpRemoteFileComponent
+strategy.factory.class=org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory

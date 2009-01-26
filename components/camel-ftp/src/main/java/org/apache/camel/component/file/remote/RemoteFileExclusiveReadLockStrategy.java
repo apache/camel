@@ -23,7 +23,7 @@ package org.apache.camel.component.file.remote;
  * <p/>
  * Camel supports out of the box the following strategies:
  * <ul>
- *   <li>RemoteFileRenameExclusiveReadLockStrategy waiting until its possible to rename the file.</li>
+ * <li>RemoteFileRenameExclusiveReadLockStrategy waiting until its possible to rename the file.</li>
  * </ul>
  */
 public interface RemoteFileExclusiveReadLockStrategy {
@@ -32,7 +32,7 @@ public interface RemoteFileExclusiveReadLockStrategy {
      * Acquires exclusive read lock to the file.
      *
      * @param operations remote file operations
-     * @param file the remote file
+     * @param file       the remote file
      * @return <tt>true</tt> if read lock was acquired. If <tt>false</tt> Camel will skip the file and
      *         try it on the next poll
      */

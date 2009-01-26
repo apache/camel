@@ -19,19 +19,20 @@ package org.apache.camel.component.file.remote;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 /**
  * FTP consumer
  */
-public class FtpConsumer extends RemoteFileConsumer {
+public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
-    public FtpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations ftp) {
-        super(endpoint, processor, ftp);
+    public FtpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations fileOperations) {
+        super(endpoint, processor, fileOperations);
     }
 
-    protected void pollDirectory(String fileName, List<RemoteFile> fileList) {
+    protected void pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
         if (fileName == null) {
             return;
         }
@@ -64,7 +65,7 @@ public class FtpConsumer extends RemoteFileConsumer {
         }
     }
 
-    protected void pollFile(String fileName, List<RemoteFile> fileList) {
+    protected void pollFile(String fileName, List<GenericFile<FTPFile>> fileList) {
         String directory = ".";
         int index = fileName.lastIndexOf("/");
         if (index > -1) {
@@ -72,12 +73,18 @@ public class FtpConsumer extends RemoteFileConsumer {
         }
         // list the files in the fold and poll the first file
         List<FTPFile> list = operations.listFiles(fileName);
-        FTPFile file = list.get(0);
-        if (file != null) {
-            RemoteFile remoteFile = asRemoteFile(directory, file);
-            if (isValidFile(remoteFile, false)) {
-                // matched file so add
-                fileList.add(remoteFile);
+        if (list.size() > 0) {
+            FTPFile file = list.get(0);
+            if (file != null) {
+                RemoteFile<FTPFile> remoteFile = asRemoteFile(directory, file);
+                if (isValidFile(remoteFile, false)) {
+                    // matched file so add
+                    fileList.add(remoteFile);
+                }
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace("Polled [" + fileName + "]. No files found");
             }
         }
     }
@@ -90,9 +97,9 @@ public class FtpConsumer extends RemoteFileConsumer {
         if (file.getTimestamp() != null) {
             remote.setLastModified(file.getTimestamp().getTimeInMillis());
         }
-        remote.setHostname(endpoint.getConfiguration().getHost());
+        remote.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
-        remote.setAbsolutelFileName(absoluteFileName);
+        remote.setAbsoluteFileName(absoluteFileName);
 
         // the relative filename
         String ftpBasePath = endpoint.getConfiguration().getFile();

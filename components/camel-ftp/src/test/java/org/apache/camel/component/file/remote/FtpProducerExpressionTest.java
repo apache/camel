@@ -37,7 +37,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("res/home/filelanguage");
+        deleteDirectory(FTP_ROOT_DIR + "filelanguage");
         deleteDirectory("target/filelanguage");
     }
 
@@ -52,14 +52,14 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         template.sendBody(getFtpUrl() + "&expression=${bean:myguidgenerator}.bak", "Hello World");
 
         Thread.sleep(500);
-        assertFileExists("res/home/filelanguage/123.bak");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
     public void testProduceBeanByHeader() throws Exception {
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
 
         Thread.sleep(500);
-        assertFileExists("res/home/filelanguage/123.bak");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
     public void testProducerDateByHeader() throws Exception {
@@ -67,7 +67,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("res/home/filelanguage/myfile-" + date + ".txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
     public void testProducerDateByExpression() throws Exception {
@@ -75,7 +75,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("res/home/filelanguage/myfile-" + date + ".txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
     public void testProducerComplexByExpression() throws Exception {
@@ -84,7 +84,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-        assertFileExists("res/home/filelanguageinbox/myfile-123-" + date + ".txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
@@ -92,7 +92,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
                 "Hello World", "foo", "abc");
 
         Thread.sleep(500);
-        assertFileExists("res/home/filelanguage/myfile-abc.txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-abc.txt");
     }
 
     public void testProducerWithDateHeader() throws Exception {
@@ -104,7 +104,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
                 "Hello World", "birthday", date);
 
         Thread.sleep(500);
-        assertFileExists("res/home/filelanguage/mybirthday-19740420.txt");
+        assertFileExists(FTP_ROOT_DIR + "filelanguage/mybirthday-19740420.txt");
     }
 
     private static void assertFileExists(String filename) {

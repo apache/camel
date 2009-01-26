@@ -34,8 +34,8 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/");
-        createDirectory("./res/home/");
+        deleteDirectory(FTP_ROOT_DIR);
+        createDirectory(FTP_ROOT_DIR);
         prepareFtpServer();
     }
 
@@ -50,8 +50,8 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
 
         RemoteFileExchange exchange = (RemoteFileExchange) mock.getExchanges().get(0);
-        RemoteFile file = exchange.getRemoteFile();
-        assertEquals("hello.txt", file.getAbsolutelFileName());
+        RemoteFile file = (RemoteFile) exchange.getGenericFile();
+        assertEquals("hello.txt", file.getAbsoluteFileName());
         assertEquals("hello.txt", file.getRelativeFileName());
         assertEquals("hello.txt", file.getFileName());
     }

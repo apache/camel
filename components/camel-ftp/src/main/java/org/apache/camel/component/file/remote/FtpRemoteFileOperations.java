@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -31,9 +35,11 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP remote file operations
  */
-public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> {
-    private static final Log LOG = LogFactory.getLog(FtpRemoteFileOperations.class);
-    private FTPClient client;
+public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
+
+    private static final transient Log LOG = LogFactory.getLog(FtpRemoteFileOperations.class);
+
+    private final FTPClient client;
 
     public FtpRemoteFileOperations() {
         this.client = new FTPClient();
@@ -43,13 +49,13 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         this.client = client;
     }
 
-    public boolean connect(RemoteFileConfiguration config) throws RemoteFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration config) throws GenericFileOperationFailedException {
         String host = config.getHost();
         int port = config.getPort();
         String username = config.getUsername();
 
         if (config.getFtpClientConfig() != null) {
-            LOG.trace("Configuring FTPClient with config: " + config.getFtpClientConfig());
+            LOG.trace("Configuring FTPFile with config: " + config.getFtpClientConfig());
             client.configure(config.getFtpClientConfig());
         }
 
@@ -72,7 +78,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
                 LOG.trace("Attempting to login user: " + username);
                 login = client.login(username, config.getPassword());
             } else {
-                LOG.trace("Attempting to login anonymous");
+                LOG.trace("Attempting to login anonymousl");
                 login = client.login("anonymous", null);
             }
             if (LOG.isTraceEnabled()) {
@@ -89,11 +95,11 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         return true;
     }
 
-    public boolean isConnected() throws RemoteFileOperationFailedException {
+    public boolean isConnected() throws GenericFileOperationFailedException {
         return client.isConnected();
     }
 
-    public void disconnect() throws RemoteFileOperationFailedException {
+    public void disconnect() throws GenericFileOperationFailedException {
         try {
             client.disconnect();
         } catch (IOException e) {
@@ -101,7 +107,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public boolean deleteFile(String name) throws RemoteFileOperationFailedException {
+    public boolean deleteFile(FTPClient client, String name) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
@@ -112,7 +118,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public boolean renameFile(String from, String to) throws RemoteFileOperationFailedException {
+    public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + from + " to: " + to);
         }
@@ -123,7 +129,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public boolean buildDirectory(String directory) throws RemoteFileOperationFailedException {
+    public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
         try {
             String originalDirectory = client.printWorkingDirectory();
 
@@ -137,7 +143,8 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
                     }
                     success = client.makeDirectory(directory);
                     if (!success) {
-                        // we are here if the server side doesn't create intermediate folders
+                        // we are here if the server side doesn't create
+                        // intermediate folders
                         // so create the folder one by one
                         buildDirectoryChunks(directory);
                     }
@@ -153,23 +160,26 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public boolean retrieveFile(String name, OutputStream out) throws RemoteFileOperationFailedException {
+    public boolean retrieveFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
         try {
-            return client.retrieveFile(name, out);
+            GenericFile<FTPFile> target = exchange.getGenericFile();
+            OutputStream os = new ByteArrayOutputStream();
+            target.setBody(os);
+            return client.retrieveFile(name, os);
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
-    public boolean storeFile(String name, InputStream body) throws RemoteFileOperationFailedException {
+    public boolean storeFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
         try {
-            return client.storeFile(name, body);
+            return client.storeFile(name, exchange.getIn().getBody(InputStream.class));
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
-    public String getCurrentDirectory() throws RemoteFileOperationFailedException {
+    public String getCurrentDirectory() throws GenericFileOperationFailedException {
         try {
             return client.printWorkingDirectory();
         } catch (IOException e) {
@@ -177,7 +187,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public void changeCurrentDirectory(String newDirectory) throws RemoteFileOperationFailedException {
+    public void changeCurrentDirectory(String newDirectory) throws GenericFileOperationFailedException {
         try {
             client.changeWorkingDirectory(newDirectory);
         } catch (IOException e) {
@@ -185,11 +195,11 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
     }
 
-    public List listFiles() throws RemoteFileOperationFailedException {
+    public List listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public List listFiles(String path) throws RemoteFileOperationFailedException {
+    public List listFiles(String path) throws GenericFileOperationFailedException {
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
@@ -223,6 +233,23 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPClient> 
         }
 
         return success;
+    }
+
+    public FTPClient changeCurrentDirectory(FTPClient client, String path) throws GenericFileOperationFailedException {
+        try {
+            client.changeWorkingDirectory(path);
+            return client;
+        } catch (IOException e) {
+            throw new RemoteFileOperationFailedException("Failed to delete [" + path + "]", e);
+        }
+    }
+
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+        try {
+            return this.client.deleteFile(name);
+        } catch (IOException e) {
+            throw new RemoteFileOperationFailedException("Failed to delete [" + name + "]", e);
+        }
     }
 
 }

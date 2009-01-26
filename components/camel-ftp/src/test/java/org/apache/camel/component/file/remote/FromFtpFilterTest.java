@@ -18,6 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -71,8 +73,8 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter implements RemoteFileFilter {
-        public boolean accept(RemoteFile file) {
+    public class MyFileFilter implements GenericFileFilter {
+        public boolean accept(GenericFile file) {
             // we dont accept any files starting with skip in the name
             return !file.getFileName().startsWith("skip");
         }

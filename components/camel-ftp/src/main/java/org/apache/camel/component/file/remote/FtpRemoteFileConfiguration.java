@@ -14,23 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file.remote.strategy;
+package org.apache.camel.component.file.remote;
 
-import org.apache.camel.component.file.remote.RemoteFile;
-import org.apache.camel.component.file.remote.RemoteFileExchange;
+import java.net.URI;
 
-/**
- * Used for renaming files.
- */
-public interface RemoteFileRenamer {
+public class FtpRemoteFileConfiguration extends RemoteFileConfiguration {
 
-    /**
-     * Renames the given file
-     *
-     * @param exchange  the exchange
-     * @param file      the original file.
-     * @return the renamed file name.
-     */
-    RemoteFile renameFile(RemoteFileExchange exchange, RemoteFile file);
+    public static final int DEFAULT_FTP_PORT = 21;
+
+    public FtpRemoteFileConfiguration() {
+    }
+
+    public FtpRemoteFileConfiguration(URI uri) {
+        super(uri);
+    }
+
+    @Override
+    protected void setDefaultPort() {
+        setPort(DEFAULT_FTP_PORT);
+    }
 
 }
