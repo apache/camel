@@ -42,7 +42,7 @@ public class NewFileComponent extends GenericFileComponent<File> {
 
         result.setConfiguration(config);
 
-        NewFileOperations operations = new NewFileOperations(result);
+        NewFileOperations operations = new NewFileOperations(result, file);
         result.setOperations(operations);
 
         return result;

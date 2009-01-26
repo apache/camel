@@ -30,8 +30,7 @@ public class GenericFile<T> {
     private long fileLength;
     private long lastModified;
     private T file;
-    private Object body;
-    private GenericFileBinding<T> binding = new GenericFileDefaultBinding();
+    private GenericFileBinding<T> binding;
 
     @Override
     public GenericFile<T> clone() {
@@ -138,18 +137,25 @@ public class GenericFile<T> {
     }
 
     public Object getBody() {
-        return binding.getBody(this);
+        return getBinding().getBody(this);
     }
 
     public void setBody(Object os) {
-        binding.setBody(this, os);
+        getBinding().setBody(this, os);
     }
 
     public String getParent() {
-        return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf("/"));
+        if (getAbsoluteFileName().lastIndexOf("/") > 0) {
+            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf("/"));
+        } else {
+            return "";
+        }
     }
 
     public GenericFileBinding<T> getBinding() {
+        if (binding == null) {
+            binding = new GenericFileDefaultBinding();
+        }
         return binding;
     }
 

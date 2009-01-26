@@ -100,7 +100,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * Override if required. Perform some checks (and perhaps actions) before we
      * poll
      */
-    protected void prePollCheck() {
+    protected void prePollCheck() throws Exception {
     }
 
     /**
@@ -153,7 +153,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                     log.trace("Retreiving file: " + name + " from: " + endpoint);
                 }
 
-                operations.retrieveFile(target.getFile(), name, exchange);
+                operations.retrieveFile(name, exchange);
 
                 if (log.isTraceEnabled()) {
                     log.trace("Retrieved file: " + name + " from: " + endpoint);

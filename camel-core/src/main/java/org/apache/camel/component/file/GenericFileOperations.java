@@ -18,12 +18,10 @@ package org.apache.camel.component.file;
 
 import java.util.List;
 
-import org.apache.camel.Exchange;
-
 public interface GenericFileOperations<T> {
 
     /**
-     * Deletes the file from the remote server
+     * Deletes the file name by name, relative to the current directory
      *
      * @param name name of the file
      * @return true if deleted, false if not
@@ -33,7 +31,7 @@ public interface GenericFileOperations<T> {
     boolean deleteFile(String name) throws GenericFileOperationFailedException;
 
     /**
-     * Renames the file on the remote server
+     * Renames the file
      *
      * @param from original name
      * @param to   the new name
@@ -44,7 +42,7 @@ public interface GenericFileOperations<T> {
     boolean renameFile(String from, String to) throws GenericFileOperationFailedException;
 
     /**
-     * Builds the directory structure on the remote server. Will test if the
+     * Builds the directory structure. Will test if the
      * folder already exists.
      *
      * @param directory the directory path to build
@@ -56,26 +54,26 @@ public interface GenericFileOperations<T> {
     boolean buildDirectory(String directory) throws GenericFileOperationFailedException;
 
     /**
-     * Retrieves the remote file (download)
+     * Retrieves the file
      *
-     * @param name name of the file
-     * @param exchange  stream to write the content of the file into
+     * @param name     name of the file
+     * @param exchange stream to write the content of the file into
      * @return true if file has been retrieved, false if not
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    boolean retrieveFile(T file, String name, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean retrieveFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
     /**
      * Stores the content as a new remote file (upload)
      *
-     * @param name name of new file
+     * @param name     name of new file
      * @param exchange with the content content of the file
      * @return true if the file was stored, false if not
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException;
+    boolean storeFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
     /**
      * Gets the current remote directory
@@ -84,7 +82,7 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    String getCurrentDirectory(T file) throws GenericFileOperationFailedException;
+    String getCurrentDirectory() throws GenericFileOperationFailedException;
 
     /**
      * Change the current remote directory
@@ -93,16 +91,16 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    T changeCurrentDirectory(T file, String path) throws GenericFileOperationFailedException;
+    void changeCurrentDirectory(String path) throws GenericFileOperationFailedException;
 
     /**
-     * List the files in the current remote directory
+     * List the files in the current directory
      *
      * @return a list of backing objects representing the files
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    List<T> listFiles(T file) throws GenericFileOperationFailedException;
+    List<T> listFiles() throws GenericFileOperationFailedException;
 
     /**
      * List the files in the given remote directory
@@ -112,6 +110,6 @@ public interface GenericFileOperations<T> {
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    List<T> listFiles(T file, String path) throws GenericFileOperationFailedException;
+    List<T> listFiles(String path) throws GenericFileOperationFailedException;
 
 }

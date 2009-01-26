@@ -27,7 +27,6 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -42,8 +41,12 @@ public class NewFileOperations implements GenericFileOperations<File> {
     private static final transient Log LOG = LogFactory.getLog(NewFileOperations.class);
     private final NewFileEndpoint endpoint;
 
-    public NewFileOperations(final NewFileEndpoint endpoint) {
+    // this is our filehandle to the filesystem
+    private File currentFile;
+
+    public NewFileOperations(final NewFileEndpoint endpoint, File fileHandle) {
         this.endpoint = endpoint;
+        this.currentFile = fileHandle;
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -73,6 +76,15 @@ public class NewFileOperations implements GenericFileOperations<File> {
         return new File(path);
     }
 
+
+    public List<File> listFiles() throws GenericFileOperationFailedException {
+        return Arrays.asList(this.currentFile.listFiles());
+    }
+
+    public List<File> listFiles(String path) throws GenericFileOperationFailedException {
+        return Arrays.asList(new File(this.currentFile, path).listFiles());
+    }
+
     public List<File> listFiles(File file) throws GenericFileOperationFailedException {
         return Arrays.asList(file.listFiles());
     }
@@ -81,11 +93,11 @@ public class NewFileOperations implements GenericFileOperations<File> {
         return listFiles(new File(path));
     }
 
-    public boolean retrieveFile(File file, String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean retrieveFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         return false;
     }
 
-    public boolean storeFile(String name, Exchange exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         File file = new File(name);
         try {
             boolean fileSource = exchange.getIn().getBody() instanceof File;
@@ -163,6 +175,14 @@ public class NewFileOperations implements GenericFileOperations<File> {
             out = new FileOutputStream(target).getChannel();
         }
         return out;
+    }
+
+    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        this.currentFile = new File(this.currentFile, path).getAbsoluteFile();
+    }
+
+    public String getCurrentDirectory() throws GenericFileOperationFailedException {
+        return currentFile.getAbsolutePath();
     }
 
 }
