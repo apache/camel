@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
+import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -63,55 +63,85 @@ public class GenericFileProducer<T> extends DefaultProducer {
             log.trace("Processing " + exchange);
         }
 
-        String target = createFileName(exchange);
+        try {
+            String target = createFileName(exchange);
 
-        // should we write to a temporary name and then afterwards rename to real target
-        boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(getGenericFileEndpoint().getTempPrefix());
-        String tempTarget = null;
-        if (writeAsTempAndRename) {
-            // compute temporary name with the temp prefix
-            tempTarget = createTempFileName(target);
-        }
+            preWriteCheck();
 
-        // upload the file
-        writeFile(exchange, tempTarget != null ? tempTarget : target);
-
-        // if we did write to a temporary name then rename it to the real
-        // name after we have written the file
-        if (tempTarget != null) {
-            if (log.isTraceEnabled()) {
-                log.trace("Renaming file: " + tempTarget + " to: " + target);
+            // should we write to a temporary name and then afterwards rename to real target
+            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(getGenericFileEndpoint().getTempPrefix());
+            String tempTarget = null;
+            if (writeAsTempAndRename) {
+                // compute temporary name with the temp prefix
+                tempTarget = createTempFileName(target);
             }
-            boolean renamed = operations.renameFile(tempTarget, target);
-            if (!renamed) {
-                throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
-            }
-        }
 
-        // lets store the name we really used in the header, so end-users can retrieve it
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
+            // upload the file
+            writeFile(exchange, tempTarget != null ? tempTarget : target);
+
+            // if we did write to a temporary name then rename it to the real
+            // name after we have written the file
+            if (tempTarget != null) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Renaming file: [" + tempTarget + "] to: [" + target + "]");
+                }
+                boolean renamed = getOperations().renameFile(tempTarget, target);
+                if (!renamed) {
+                    throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
+                }
+            }
+
+            // lets store the name we really used in the header, so end-users
+            // can retrieve it
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
+        } catch (Exception e) {
+            handleFailedWrite(exchange, e);
+        }
+    }
+
+    /**
+     * If we fail writing out a file, we will call this method. This hook is
+     * provided to disconnect from servers or clean up files we created (if needed).
+     */
+    protected void handleFailedWrite(GenericFileExchange<T> exchange, Exception exception) throws Exception {
+        throw exception;
     }
 
     /**
      * Perform any actions that need to occur before we write Such as connecting
      * to an FTP server etc.
      */
-    protected void preWriteCheck() {
+    protected void preWriteCheck() throws Exception {
     }
 
-    protected void writeFile(Exchange exchange, String fileName) throws GenericFileOperationFailedException {
-        // build directory
-        int lastPathIndex = fileName.lastIndexOf('/');
-        if (lastPathIndex != -1) {
-            String directory = fileName.substring(0, lastPathIndex);
-            if (!operations.buildDirectory(directory)) {
-                log.debug("Can not build directory: " + directory + " (could be because of denied permissions)");
+    protected void writeFile(GenericFileExchange<T> exchange, String fileName) throws GenericFileOperationFailedException {
+        InputStream payload = exchange.getIn().getBody(InputStream.class);
+        try {
+            // build directory
+            int lastPathIndex = fileName.lastIndexOf('/');
+            if (lastPathIndex != -1) {
+                String directory = fileName.substring(0, lastPathIndex);
+                if (!getOperations().buildDirectory(directory)) {
+                    log.debug("Couldn't build directory [" + directory + "] (could be because of denied permissions)");
+                }
             }
+            // upload
+            if (log.isTraceEnabled()) {
+                log.trace("About to write [" + fileName + "] to [" + getEndpoint() + "] from exchange [" + exchange + "]");
+            }
+
+            boolean success = getOperations().storeFile(fileName, exchange);
+            if (!success) {
+                throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
+            }
+            if (log.isDebugEnabled()) {
+                log.debug("Wrote [" + fileName + "] to [" + getEndpoint() + "]");
+            }
+
+        } finally {
+            ObjectHelper.close(payload, "Closing payload", log);
         }
-        boolean success = operations.storeFile(fileName, exchange);
-        if (!success) {
-            throw new GenericFileOperationFailedException("Error writing file: " + fileName);
-        }
+
     }
 
     protected String createFileName(Exchange exchange) {
@@ -174,20 +204,12 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Starting");
-        }
-        super.doStart();
+    /**
+     * @return the operations
+     */
+    public GenericFileOperations<T> getOperations() {
+        return operations;
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Stopping");
-        }
-        super.doStop();
-    }
 
 }

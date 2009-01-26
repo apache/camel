@@ -21,7 +21,19 @@ package org.apache.camel.component.file;
  */
 public interface GenericFileBinding<T> {
 
-    public Object getBody(GenericFile<T> file);
+    /**
+     * Gets the body of the file
+     *
+     * @param file the file
+     * @return the body
+     */
+    Object getBody(GenericFile<T> file);
 
-    public void setBody(GenericFile<T> file, Object body);
+    /**
+     * Sets the body from the given file
+     *
+     * @param file the file
+     * @param body the body
+     */
+    void setBody(GenericFile<T> file, Object body);
 }

@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -38,6 +39,9 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public NewFileConsumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(operations, "operations");
+        ObjectHelper.notNull(file, "file");
+
         NewFileConsumer result = new NewFileConsumer(this, processor, operations);
 
         if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
@@ -61,6 +65,7 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
     }
 
     public GenericFileProducer<File> createProducer() throws Exception {
+        ObjectHelper.notNull(operations, "operations");
         return new GenericFileProducer<File>(this, operations);
     }
 
@@ -72,11 +77,6 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
 
     public GenericFileExchange createExchange() {
         return new GenericFileExchange(getCamelContext());
-    }
-
-    protected String getUriProtocol() {
-        // TODO: should be "file" when its ready
-        return "newfile";
     }
 
     public NewFileOperations getOperations() {
@@ -93,5 +93,11 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    @Override
+    public String getScheme() {
+        // TODO change to file when this is ready
+        return "newfile";
     }
 }

@@ -106,13 +106,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public abstract GenericFileExchange<T> createExchange(GenericFile<T> file);
 
-
-    /**
-     * Returns the first portion of the "protocol" in use. We use this so we can
-     * look back into the META-INF protocol file to locate the default strategy
-     */
-    protected abstract String getUriProtocol();
-
+    public abstract String getScheme();
+    
     /**
      * Return the file name that will be auto-generated for the given message if
      * none is provided
@@ -142,7 +137,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
-            factory = finder.findClass(getUriProtocol(), "strategy.factory.");
+            factory = finder.findClass(getScheme(), "strategy.factory.");
         } catch (ClassNotFoundException e) {
             log.debug("'strategy.factory.class' not found", e);
         } catch (IOException e) {
@@ -426,7 +421,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * Configures the given message with the file which sets the body to the
      * file object and sets the {@link FileComponent#HEADER_FILE_NAME} header.
      */
-    public void configureMessage(GenericFile file, Message message) {
+    public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
         message.setHeader(FileComponent.HEADER_FILE_NAME, file.getRelativeFileName());
     }
