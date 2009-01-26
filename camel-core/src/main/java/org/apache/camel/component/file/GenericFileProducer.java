@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * Generic file producer
  */
 public class GenericFileProducer<T> extends DefaultProducer {
-    private final transient Log log = LogFactory.getLog(GenericFileProducer.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
     private GenericFileOperations<T> operations;
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
