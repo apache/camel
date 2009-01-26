@@ -19,8 +19,11 @@ package org.apache.camel.component.stream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -28,15 +31,19 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class StreamFileTest extends ContextTestSupport {
 
-    private File file;
     private FileOutputStream fos;
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("./target/stream");
         createDirectory("./target/stream");
 
-        file = new File("./target/stream/streamfile.txt");
+        File file = new File("./target/stream/streamfile.txt");
         file = file.getAbsoluteFile();
         file.createNewFile();
 
@@ -47,20 +54,25 @@ public class StreamFileTest extends ContextTestSupport {
     }
 
     public void testFile() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello");
+        try {
+            MockEndpoint mock = getMockEndpoint("mock:result");
+            mock.expectedBodiesReceived("Hello");
 
-        assertMockEndpointsSatisfied();
+            // can not use route builder as we need to have the file created in the setup before route builder starts
+            Endpoint endpoint = context.getEndpoint("stream:file?fileName=./target/stream/streamfile.txt&delay=100");
+            Consumer consumer = endpoint.createConsumer(new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    template.send("mock:result", exchange);
+                }
+            });
+            consumer.start();
 
-        fos.close();
-    }
+            assertMockEndpointsSatisfied();
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("stream:file?fileName=./target/stream/streamfile.txt").to("mock:result");
-            }
-        };
+            consumer.stop();
+        } finally {
+            fos.close();
+        }
     }
 
 }

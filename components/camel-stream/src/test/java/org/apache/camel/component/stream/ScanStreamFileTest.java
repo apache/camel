@@ -35,7 +35,7 @@ public class ScanStreamFileTest extends ContextTestSupport {
         deleteDirectory("./target/stream");
         createDirectory("./target/stream");
 
-        file = new File("./target/stream/streamfile.txt");
+        file = new File("./target/stream/scanstreamfile.txt");
         file = file.getAbsoluteFile();
         file.createNewFile();
 
@@ -59,7 +59,7 @@ public class ScanStreamFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stream:file?fileName=./target/stream/streamfile.txt&scanStream=true&scanStreamDelay=100").to("mock:result");
+                from("stream:file?fileName=./target/stream/scanstreamfile.txt&scanStream=true&scanStreamDelay=100").to("mock:result");
             }
         };
     }
