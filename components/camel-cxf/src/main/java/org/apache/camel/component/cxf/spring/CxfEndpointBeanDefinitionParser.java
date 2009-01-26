@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.spring;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.namespace.QName;
 import org.w3c.dom.Element;
@@ -28,20 +29,18 @@ import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.spring.AbstractBeanDefinitionParser;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.PropertyValue;
 import org.springframework.beans.factory.BeanDefinitionStoreException;
-import org.springframework.beans.factory.parsing.BeanComponentDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-
-
 public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParser {
 
     @Override
-    protected Class getBeanClass(Element arg0) {
+    protected Class<?> getBeanClass(Element arg0) {
         return CxfSpringEndpointBean.class;
     }
 
@@ -59,7 +58,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name)) {
-            Map map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
+            Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
             bean.addPropertyValue("properties", map);
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
@@ -67,7 +66,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
             || "outInterceptors".equals(name) || "outFaultInterceptors".equals(name)
             || "features".equals(name) || "schemaLocations".equals(name)
             || "handlers".equals(name)) {
-            java.util.List list = (java.util.List)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
+            List<?> list = (List<?>)ctx.getDelegate().parseListElement(el, bean.getBeanDefinition());
             bean.addPropertyValue(name, list);
         } else {
             setFirstChildAsProperty(el, ctx, bean, name);
@@ -79,13 +78,19 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);
         bean.setLazyInit(false);
-        // put the id into the properies
-        Map map = (Map) bean.getBeanDefinition().getPropertyValues().getPropertyValue("properties");
-        String id = resolveId(element, bean.getBeanDefinition(), ctx);
-        if (map == null) {
-            map = new HashMap();
+        
+        // put the id into the properties
+        PropertyValue propertyValue = (PropertyValue)bean.getBeanDefinition().getPropertyValues()
+            .getPropertyValue("properties");
+        
+        Map<String, Object> map = null;
+        if (propertyValue == null) {
+            map = new HashMap<String, Object>();
             bean.addPropertyValue("properties", map);
+        } else {
+            map = (Map<String, Object>)propertyValue.getValue();
         }
+        String id = resolveId(element, bean.getBeanDefinition(), ctx);
         map.put("beanId", id);        
     }
 
