@@ -69,11 +69,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         assertMockEndpointsSatisfied();
-        if (System.getProperty("os.name").startsWith("Windows")) {
-            assertTrue(repo.contains("target\\fileidempotent\\report.txt"));
-        } else {
-            assertTrue(repo.contains("target/fileidempotent/report.txt"));
-        }
+        assertTrue(repo.contains("report.txt"));
     }
 
 }
