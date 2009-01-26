@@ -16,29 +16,41 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.net.URI;
+import java.util.Map;
+
+import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.file.GenericFileComponent;
 import org.apache.camel.component.file.GenericFileEndpoint;
 
 /**
- * Base class for remote file components. Polling and consuming files from
- * (logically) remote locations
- *
- * @param <T> the type of file that these remote endpoints provide
+ * SFTP Remote File Component
  */
-public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
+public class SftpRemoteFileComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
 
-    public RemoteFileComponent() {
+    public SftpRemoteFileComponent() {
         super();
     }
 
-    public RemoteFileComponent(CamelContext context) {
+    public SftpRemoteFileComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception {
-        // noop
-    }
+    protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
+        // get the uri part before the options as they can be non URI valid such
+        // as the expression using $ chars
+        if (uri.indexOf("?") != -1) {
+            uri = uri.substring(0, uri.indexOf("?"));
+        }
+
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
+        SftpRemoteFileConfiguration config = new SftpRemoteFileConfiguration(new URI(uri));
+
+        SftpRemoteFileOperations operations = new SftpRemoteFileOperations();
+        return new SftpRemoteFileEndpoint(uri, this, operations, config);
+    }
 }
+

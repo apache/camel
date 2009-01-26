@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,6 +30,9 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UserInfo;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,12 +41,12 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * SFTP remote file operations
  */
-public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSftp> {
+public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final Log LOG = LogFactory.getLog(SftpRemoteFileOperations.class);
     private ChannelSftp channel;
     private Session session;
 
-    public boolean connect(RemoteFileConfiguration configuration) throws RemoteFileOperationFailedException {
+    public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         try {
             if (isConnected()) {
                 // already connected
@@ -114,11 +118,11 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         return session;
     }
 
-    public boolean isConnected() throws RemoteFileOperationFailedException {
+    public boolean isConnected() throws GenericFileOperationFailedException {
         return session != null && session.isConnected() && channel != null && channel.isConnected();
     }
 
-    public void disconnect() throws RemoteFileOperationFailedException {
+    public void disconnect() throws GenericFileOperationFailedException {
         if (session != null && session.isConnected()) {
             session.disconnect();
         }
@@ -127,7 +131,7 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public boolean deleteFile(String name) throws RemoteFileOperationFailedException {
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
@@ -139,7 +143,7 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public boolean renameFile(String from, String to) throws RemoteFileOperationFailedException {
+    public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + from + " to: " + to);
         }
@@ -151,7 +155,7 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public boolean buildDirectory(String dirName) throws RemoteFileOperationFailedException {
+    public boolean buildDirectory(String dirName) throws GenericFileOperationFailedException {
         boolean success = false;
 
         String originalDirectory = getCurrentDirectory();
@@ -215,25 +219,7 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         return success;
     }
 
-    public boolean retrieveFile(String name, OutputStream out) throws RemoteFileOperationFailedException {
-        try {
-            channel.get(name, out);
-        } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot get file: " + name, e);
-        }
-        return true;
-    }
-
-    public boolean storeFile(String name, InputStream body) throws RemoteFileOperationFailedException {
-        try {
-            channel.put(body, name);
-        } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot put file: " + name, e);
-        }
-        return true;
-    }
-
-    public String getCurrentDirectory() throws RemoteFileOperationFailedException {
+    public String getCurrentDirectory() throws GenericFileOperationFailedException {
         try {
             return channel.pwd();
         } catch (SftpException e) {
@@ -241,7 +227,7 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public void changeCurrentDirectory(String path) throws RemoteFileOperationFailedException {
+    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         try {
             channel.cd(path);
         } catch (SftpException e) {
@@ -249,16 +235,16 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public List listFiles() throws RemoteFileOperationFailedException {
+    public List listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public List listFiles(String path) throws RemoteFileOperationFailedException {
+    public List listFiles(String path) throws GenericFileOperationFailedException {
         if (ObjectHelper.isEmpty(path)) {
             // list current dirctory if file path is not given
             path = ".";
         }
-        
+
         try {
             final List list = new ArrayList();
             Vector files = channel.ls(path);
@@ -268,6 +254,27 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
             return list;
         } catch (SftpException e) {
             throw new RemoteFileOperationFailedException("Cannot list directory: " + path, e);
+        }
+    }
+
+    public boolean retrieveFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+        try {
+            GenericFile<ChannelSftp.LsEntry> target = exchange.getGenericFile();
+            OutputStream os = new ByteArrayOutputStream();
+            target.setBody(os);
+            channel.get(name, os);
+            return true;
+        } catch (SftpException e) {
+            throw new RemoteFileOperationFailedException("Could not retrieve the file [" + name + "]", e);
+        }
+    }
+
+    public boolean storeFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+        try {
+            channel.put((InputStream) exchange.getIn().getBody(InputStream.class), name);
+            return true;
+        } catch (SftpException e) {
+            throw new RemoteFileOperationFailedException("Could not write the file [" + name + "]", e);
         }
     }
 

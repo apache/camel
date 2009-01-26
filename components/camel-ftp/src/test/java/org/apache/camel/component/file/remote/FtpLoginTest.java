@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.file.FileComponent;
@@ -27,14 +28,10 @@ import org.apache.camel.component.file.FileComponent;
  */
 public class FtpLoginTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
-        return "ftp://dummy@localhost:" + getPort();
-    }
-
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/login");
+        deleteDirectory(FTP_ROOT_DIR + "login");
     }
 
     public void testBadLogin() throws Exception {
@@ -47,7 +44,7 @@ public class FtpLoginTest extends FtpServerTestSupport {
         }
 
         // assert file NOT created
-        File file = new File("./res/home/login/report.txt");
+        File file = new File(FTP_ROOT_DIR + "login/report.txt");
         file = file.getAbsoluteFile();
         assertFalse("The file should NOT exists", file.exists());
     }
@@ -59,26 +56,13 @@ public class FtpLoginTest extends FtpServerTestSupport {
         Thread.sleep(2000);
 
         // assert file created
-        File file = new File("./res/home/login/report.txt");
+        File file = new File(FTP_ROOT_DIR + "login/report.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 
     private void uploadFile(String username, String password) throws Exception {
-        RemoteFileComponent component = new RemoteFileComponent(context);
-
-        RemoteFileConfiguration config = new RemoteFileConfiguration();
-        config.setBinary(false);
-        config.setUsername(username);
-        config.setPassword(password);
-        config.setDirectory(true);
-        config.setHost("localhost");
-        config.setPort(getPort());
-        config.setProtocol("ftp");
-        config.setFile("login");
-
-        FtpRemoteFileOperations remoteFileOperations = new FtpRemoteFileOperations();
-        RemoteFileEndpoint endpoint = new RemoteFileEndpoint(getFtpUrl(), component, remoteFileOperations, config);
+        Endpoint endpoint = context.getEndpoint("ftp://" + username + "@localhost:" + getPort() + "/login?password=" + password);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");

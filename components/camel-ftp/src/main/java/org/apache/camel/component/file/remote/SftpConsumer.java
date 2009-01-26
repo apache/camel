@@ -20,18 +20,19 @@ import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * SFTP consumer
  */
-public class SftpConsumer extends RemoteFileConsumer {
+public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
     public SftpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations operations) {
         super(endpoint, processor, operations);
     }
 
-    protected void pollDirectory(String fileName, List<RemoteFile> fileList) {
+    protected void pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
         if (fileName == null) {
             return;
         }
@@ -53,8 +54,8 @@ public class SftpConsumer extends RemoteFileConsumer {
                     String directory = fileName + "/" + file.getFilename();
                     pollDirectory(directory, fileList);
                 }
-            // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
-            // just assuming its a file we should poll
+                // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
+                // just assuming its a file we should poll
             } else {
                 if (isValidFile(remote, false)) {
                     // matched file so add
@@ -67,10 +68,10 @@ public class SftpConsumer extends RemoteFileConsumer {
     /**
      * Polls the given file
      *
-     * @param fileName  the file name
-     * @param fileList  current list of files gathered
+     * @param fileName the file name
+     * @param fileList current list of files gathered
      */
-    protected void pollFile(String fileName, List<RemoteFile> fileList) {
+    protected void pollFile(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
         String directory = ".";
         int index = fileName.lastIndexOf("/");
         if (index > -1) {
@@ -94,9 +95,9 @@ public class SftpConsumer extends RemoteFileConsumer {
         remote.setFileName(file.getFilename());
         remote.setFileLength(file.getAttrs().getSize());
         remote.setLastModified(file.getAttrs().getMTime() * 1000L);
-        remote.setHostname(endpoint.getConfiguration().getHost());
+        remote.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
-        remote.setAbsolutelFileName(absoluteFileName);
+        remote.setAbsoluteFileName(absoluteFileName);
 
         // the relative filename
         String ftpBasePath = endpoint.getConfiguration().getFile();

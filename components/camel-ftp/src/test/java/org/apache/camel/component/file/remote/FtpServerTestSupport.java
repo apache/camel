@@ -30,7 +30,12 @@ import org.apache.ftpserver.usermanager.PropertiesUserManager;
  * Base class for unit testing using a FTPServer
  */
 public abstract class FtpServerTestSupport extends ContextTestSupport {
+
+    // TODO: Figure out to set the home dir of the ftpServer from java
+    public static final String FTP_ROOT_DIR = "./res/home/";
+
     protected FtpServer ftpServer;
+
     private int port;
 
     public int getPort() {

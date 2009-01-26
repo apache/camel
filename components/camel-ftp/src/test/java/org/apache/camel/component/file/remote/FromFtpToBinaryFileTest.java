@@ -40,7 +40,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home");
+        deleteDirectory(FTP_ROOT_DIR);
         prepareFtpServer();
     }
 

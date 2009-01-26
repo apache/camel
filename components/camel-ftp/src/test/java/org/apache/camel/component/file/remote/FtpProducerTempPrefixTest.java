@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.converter.IOConverter;
 
@@ -31,30 +30,12 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
     }
 
-    public void testCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
-
-        String fileName = "somepath/someuser/claus.txt";
-        String tempFileName = producer.createTempFileName(fileName);
-        assertEquals("somepath/someuser/.uploadingclaus.txt", tempFileName);
-    }
-
-    public void testNoPathCreateTempFileName() throws Exception {
-        Endpoint endpoint = context.getEndpoint(getFtpUrl());
-        RemoteFileProducer producer = (RemoteFileProducer) endpoint.createProducer();
-
-        String fileName = "claus.txt";
-        String tempFileName = producer.createTempFileName(fileName);
-        assertEquals(".uploadingclaus.txt", tempFileName);
-    }
-
     public void testProduceTempPrefixTest() throws Exception {
-        deleteDirectory("./res/home/");
+        deleteDirectory(FTP_ROOT_DIR + "");
 
         template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
 
-        File file = new File("./res/home/upload/user/claus/claus.txt");
+        File file = new File(FTP_ROOT_DIR + "upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();
         assertTrue("The uploaded file should exists", file.exists());
         assertEquals("Hello World", IOConverter.toString(file));

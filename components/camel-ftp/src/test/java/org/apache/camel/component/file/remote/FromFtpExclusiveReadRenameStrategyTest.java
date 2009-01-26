@@ -58,8 +58,8 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
         });
         context.start();
 
-        deleteDirectory("./res/home");
-        createDirectory("./res/home/slowfile");
+        deleteDirectory(FTP_ROOT_DIR);
+        createDirectory(FTP_ROOT_DIR + "slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello WorldLine #0Line #1Line #2Bye World");
@@ -86,8 +86,8 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
         });
         context.start();
 
-        deleteDirectory("./res/home");
-        createDirectory("./res/home/slowfile");
+        deleteDirectory(FTP_ROOT_DIR);
+        createDirectory(FTP_ROOT_DIR + "slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         mock.setMinimumResultWaitTime(2000);
@@ -104,7 +104,7 @@ public class FromFtpExclusiveReadRenameStrategyTest extends FtpServerTestSupport
 
         public void process(Exchange exchange) throws Exception {
             LOG.info("Creating a slow file ...");
-            File file = new File("./res/home/slowfile/hello.txt");
+            File file = new File(FTP_ROOT_DIR + "slowfile/hello.txt");
             FileOutputStream fos = new FileOutputStream(file);
             FileLock lock = fos.getChannel().lock();
             fos.write("Hello World".getBytes());

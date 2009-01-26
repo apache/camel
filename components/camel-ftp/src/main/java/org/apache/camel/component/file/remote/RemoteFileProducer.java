@@ -17,179 +17,68 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
- * Remote file producer
+ * Remote file producer. Handles connecting and disconnecting if we are not.
+ * Generic type F is the remote system implementation of a file.
  */
-public class RemoteFileProducer extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(RemoteFileProducer.class);
-    private RemoteFileEndpoint endpoint;
-    private RemoteFileOperations operations;
+public class RemoteFileProducer<F> extends GenericFileProducer<F> {
+
     private boolean loggedIn;
 
-    protected RemoteFileProducer(RemoteFileEndpoint endpoint, RemoteFileOperations operations) {
-        super(endpoint);
-        this.endpoint = endpoint;
-        this.operations = operations;
+    protected RemoteFileProducer(RemoteFileEndpoint<F> endpoint, RemoteFileOperations<F> operations) {
+        super(endpoint, operations);
     }
 
     public void process(Exchange exchange) throws Exception {
-        RemoteFileExchange remoteExchange = (RemoteFileExchange) endpoint.createExchange(exchange);
+        GenericFileExchange remoteExchange = (GenericFileExchange) getEndpoint().createExchange(exchange);
         processExchange(remoteExchange);
         ExchangeHelper.copyResults(exchange, remoteExchange);
     }
 
-    protected void processExchange(RemoteFileExchange exchange) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Processing " + exchange);
-        }
-
-        try {
-            connectIfNecessary();
-
-            if (!loggedIn) {
-                // must be logged in to be able to upload the file
-                String message = "Could not connect/login to: " + endpoint.remoteServerInformation();
-                throw new RemoteFileOperationFailedException(message);
-            }
-
-            String target = createFileName(exchange);
-
-            // should we write to a temporary name and then afterwards rename to real target
-            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempPrefix());
-            String tempTarget = null;
-            if (writeAsTempAndRename) {
-                // compute temporary name with the temp prefix
-                tempTarget = createTempFileName(target);
-            }
-
-            // upload the file
-            writeFile(exchange, tempTarget != null ? tempTarget : target);
-
-            // if we did write to a temporary name then rename it to the real name after we have written the file
-            if (tempTarget != null) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Renaming file: " + tempTarget + " to: " + target);
-                }
-                boolean renamed = operations.renameFile(tempTarget, target);
-                if (!renamed) {
-                    throw new RemoteFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
-                }
-            }
-
-            // lets store the name we really used in the header, so end-users can retrieve it
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
-
-        } catch (Exception e) {
-            loggedIn = false;
-            if (isStopping() || isStopped()) {
-                // if we are stopping then ignore any exception during a poll
-                LOG.debug("Exception occurd during stopping. " + e.getMessage());
-            } else {
-                LOG.debug("Exception occurd during processing.", e);
-                disconnect();
-                // Rethrow to signify that we didn't poll
-                throw e;
-            }
-        }
-    }
-
-    protected void writeFile(Exchange exchange, String fileName) throws RemoteFileOperationFailedException, IOException {
-        InputStream payload = exchange.getIn().getBody(InputStream.class);
-        try {
-            // build directory
-            int lastPathIndex = fileName.lastIndexOf('/');
-            if (lastPathIndex != -1) {
-                String directory = fileName.substring(0, lastPathIndex);
-                if (!operations.buildDirectory(directory)) {
-                    LOG.warn("Couldn't build directory: " + directory + " (could be because of denied permissions)");
-                }
-            }
-
-            // upload
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("About to send: " + fileName + " to: " + remoteServer() + " from exchange: " + exchange);
-            }
-
-            boolean success = operations.storeFile(fileName, payload);
-            if (!success) {
-                throw new RemoteFileOperationFailedException("Error sending file: " + fileName + " to: " + remoteServer());
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sent: " + fileName + " to: " + remoteServer());
-            }
-        } finally {
-            ObjectHelper.close(payload, "Closing payload", LOG);
-        }
-    }
-
-    protected String createFileName(Exchange exchange) {
-        String answer;
-
-        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
-
-        // expression support
-        Expression expression = endpoint.getExpression();
-        if (name != null) {
-            // the header name can be an expression too, that should override whatever configured on the endpoint
-            if (name.indexOf("${") > -1) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug(FileComponent.HEADER_FILE_NAME + " contains a FileLanguage expression: " + name);
-                }
-                expression = FileLanguage.file(name);
-            }
-        }
-        if (expression != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Filename evaluated as expression: " + expression);
-            }
-            Object result = expression.evaluate(exchange);
-            name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
-        }
-
-        String endpointFile = endpoint.getConfiguration().getFile();
-        if (endpoint.getConfiguration().isDirectory()) {
-            // If the path isn't empty, we need to add a trailing / if it isn't already there
-            String baseDir = "";
-            if (endpointFile.length() > 0) {
-                baseDir = endpointFile + (endpointFile.endsWith("/") ? "" : "/");
-            }
-            String fileName = (name != null) ? name : endpoint.getGeneratedFileName(exchange.getIn());
-            answer = baseDir + fileName;
+    /**
+     * The file could not be written. We need to disconnect from the remote server.
+     */
+    protected void handleFailedWrite(GenericFileExchange exchange, Exception exception) throws Exception {
+        loggedIn = false;
+        if (isStopping() || isStopped()) {
+            // if we are stopping then ignore any exception during a poll
+            log.debug("Exception occured during stopping. " + exception.getMessage());
         } else {
-            answer = endpointFile;
+            log.debug("Exception occured during processing.", exception);
+            disconnect();
+            // Rethrow to signify that we didn't poll
+            throw exception;
         }
-
-        return answer;
     }
 
-    protected String createTempFileName(String fileName) {
-        int path = fileName.lastIndexOf("/");
-        if (path == -1) {
-            // no path
-            return endpoint.getTempPrefix() + fileName;
-        } else {
-            StringBuilder sb = new StringBuilder(fileName);
-            sb.insert(path + 1, endpoint.getTempPrefix());
-            return sb.toString();
+    public void disconnect() throws IOException {
+        loggedIn = false;
+        if (log.isDebugEnabled()) {
+            log.debug("Disconnecting from " + getEndpoint());
+        }
+        ((RemoteFileOperations) getOperations()).disconnect();
+    }
+
+    @Override
+    protected void preWriteCheck() throws Exception {
+        connectIfNecessary();
+        if (!loggedIn) {
+            // must be logged in to be able to upload the file
+            String message = "Could not connect/login to: " + ((RemoteFileEndpoint) getEndpoint()).remoteServerInformation();
+            throw new GenericFileOperationFailedException(message);
         }
     }
 
     @Override
     protected void doStart() throws Exception {
-        LOG.debug("Starting");
+        log.debug("Starting");
         // do not connect when component starts, just wait until we process as we will
         // connect at that time if needed
         super.doStart();
@@ -197,38 +86,27 @@ public class RemoteFileProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        LOG.debug("Stopping");
         try {
             disconnect();
         } catch (Exception e) {
-            // ignore by logging it
-            LOG.debug("Exception occured during disconnecting from " + remoteServer() + " " + e.getMessage());
+            log.debug("Exception occured during disconnecting from " + getEndpoint() + " " + e.getMessage());
         }
         super.doStop();
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!operations.isConnected() || !loggedIn) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Not connected/logged in, connecting to " + remoteServer());
+        if (!((RemoteFileOperations) getOperations()).isConnected() || !loggedIn) {
+            if (log.isDebugEnabled()) {
+                log.debug("Not connected/logged in, connecting to " + getEndpoint());
             }
-            loggedIn = operations.connect(endpoint.getConfiguration());
+            RemoteFileOperations rfo = (RemoteFileOperations) getOperations();
+            RemoteFileConfiguration conf = (RemoteFileConfiguration) getGenericFileEndpoint().getConfiguration();
+            loggedIn = rfo.connect(conf);
             if (!loggedIn) {
                 return;
             }
-            LOG.info("Connected and logged in to " + remoteServer());
+            log.info("Connected and logged in to " + getEndpoint());
         }
     }
 
-    public void disconnect() throws IOException {
-        loggedIn = false;
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Disconnecting from " + remoteServer());
-        }
-        operations.disconnect();
-    }
-
-    protected String remoteServer() {
-        return endpoint.remoteServerInformation();
-    }
 }

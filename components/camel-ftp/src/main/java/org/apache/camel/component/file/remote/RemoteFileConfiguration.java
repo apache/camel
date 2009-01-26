@@ -18,19 +18,18 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
+import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.commons.net.ftp.FTPClientConfig;
 
 /**
  * Configuration of the FTP server
  */
-public class RemoteFileConfiguration {
+public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private String protocol;
     private String username;
     private String host;
     private int port;
     private String password;
-    private String file;
-    private boolean directory = true;
     private boolean binary;
     private boolean passiveMode;
     private String knownHostsFile;
@@ -45,8 +44,14 @@ public class RemoteFileConfiguration {
         configure(uri);
     }
 
-    public String toString() {
-        return remoteServerInformation() + "/" + file;
+    @Override
+    public void configure(URI uri) {
+        super.configure(uri);
+        setProtocol(uri.getScheme());
+        setDefaultPort();
+        setUsername(uri.getUserInfo());
+        setHost(uri.getHost());
+        setPort(uri.getPort());
     }
 
     /**
@@ -56,35 +61,7 @@ public class RemoteFileConfiguration {
         return protocol + "://" + (username != null ? username : "anonymous") + "@" + host + ":" + getPort();
     }
 
-    public void configure(URI uri) {
-        setProtocol(uri.getScheme());
-        setDefaultPort();
-        setUsername(uri.getUserInfo());
-        setHost(uri.getHost());
-        setPort(uri.getPort());
-        setFile(uri.getPath());
-    }
-
-    protected void setDefaultPort() {
-        if ("ftp".equalsIgnoreCase(protocol)) {
-            setPort(21);
-        } else if ("sftp".equalsIgnoreCase(protocol)) {
-            setPort(22);
-        }
-    }
-
-    public String getFile() {
-        return file;
-    }
-
-    public void setFile(String file) {
-        // Avoid accidentally putting everything in root on
-        // servers that expose the full filesystem
-        if (file.startsWith("/")) {
-            file = file.substring(1);
-        }
-        this.file = file;
-    }
+    protected abstract void setDefaultPort();
 
     public String getHost() {
         return host;
@@ -134,14 +111,6 @@ public class RemoteFileConfiguration {
 
     public void setBinary(boolean binary) {
         this.binary = binary;
-    }
-
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(boolean directory) {
-        this.directory = directory;
     }
 
     public boolean isPassiveMode() {
