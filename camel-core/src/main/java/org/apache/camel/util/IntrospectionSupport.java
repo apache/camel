@@ -50,6 +50,26 @@ public final class IntrospectionSupport {
     private IntrospectionSupport() {
     }
 
+    /**
+     * Copies the properties from the source to the target
+     * @param source source object
+     * @param target target object
+     * @param optionPrefix optional option preifx (can be null)
+     * @return true if properties is copied, false if something went wrong
+     */
+    public static boolean copyProperties(Object source, Object target, String optionPrefix) {
+        Map properties = new LinkedHashMap();
+        if (!getProperties(source, properties, optionPrefix)) {
+            return false;
+        }
+        try {
+            return setProperties(target, properties, optionPrefix);
+        } catch (Exception e) {
+            LOG.debug("Can not copy properties to target: " + target, e);
+            return false;
+        }
+    }
+
     public static boolean getProperties(Object target, Map properties, String optionPrefix) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");

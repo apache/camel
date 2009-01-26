@@ -98,9 +98,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
 
     /**
      * Override if required. Perform some checks (and perhaps actions) before we
-     * poll
+     * poll.
+     *
+     * @return true to poll, false to skip this poll.
      */
-    protected void prePollCheck() throws Exception {
+    protected boolean prePollCheck() throws Exception {
+        return true;
     }
 
     /**
@@ -118,14 +121,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * @param fileList current list of files gathered
      */
     protected abstract void pollFile(String fileName, List<GenericFile<T>> fileList);
-
-    /**
-     * Creates a GenericFile based on the given type T.
-     *
-     * @param file the concrete file type
-     * @return a new generic file representing the type
-     */
-    protected abstract GenericFile<T> asGenericFile(T file);
 
     /**
      * Processes the exchange
