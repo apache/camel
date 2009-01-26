@@ -28,15 +28,34 @@ package org.apache.camel.component.file;
  * rename the file.</li>
  * </ul>
  */
-public interface GenericFileExclusiveReadLockStrategy {
+public interface GenericFileExclusiveReadLockStrategy<T> {
 
     /**
      * Acquires exclusive read lock to the file.
      *
      * @param operations generic file operations
-     * @param file       the remote file
+     * @param file       the file
      * @return <tt>true</tt> if read lock was acquired. If <tt>false</tt> Camel
      *         will skip the file and try it on the next poll
      */
-    boolean acquireExclusiveReadLock(GenericFileOperations operations, GenericFile file);
+    boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file);
+
+    /**
+     * Releases the exclusive read lock granted by the <tt>acquireExclusiveReadLock</tt> method.
+     *
+     * @param operations generic file operations
+     * @param file       the file
+     */
+    void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file);
+
+    /**
+     * Sets an optional timeout period.
+     * <p/>
+     * If the readlock could not be granted within the timeperiod then the wait is stopped and the
+     * <tt>acquireExclusiveReadLock</tt> method returns <tt>false</tt>.
+     *
+     * @param timeout period in millis
+     */
+    void setTimeout(long timeout);
+
 }

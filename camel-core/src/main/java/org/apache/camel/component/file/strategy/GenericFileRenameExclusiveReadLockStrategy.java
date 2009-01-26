@@ -73,6 +73,10 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
         return true;
     }
 
+    public void releaseExclusiveReadLock(GenericFileOperations genericFileOperations, GenericFile genericFile) {
+        // noop
+    }
+
     private void sleep() {
         LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
         try {
