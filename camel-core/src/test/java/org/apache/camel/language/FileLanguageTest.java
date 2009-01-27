@@ -17,7 +17,6 @@
 package org.apache.camel.language;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,12 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.file.FileEndpoint;
-import org.apache.camel.component.file.FileExchange;
-import org.apache.camel.component.file.NewFileEndpoint;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.NewFileConsumer;
+import org.apache.camel.component.file.NewFileEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 

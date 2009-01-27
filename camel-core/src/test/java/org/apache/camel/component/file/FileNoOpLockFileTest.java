@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.strategy.NewMarkerFileExclusiveReadLockStrategy;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -74,9 +75,10 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
     private static void checkLockFile(boolean expected) {
         String filename = "target/reports/";
         filename += expected ? "locked/" : "notlocked/";
-        filename += "report.txt" + FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX;
+        filename += "report.txt" + NewMarkerFileExclusiveReadLockStrategy.DEFAULT_LOCK_FILE_POSTFIX;
 
         File file = new File(filename);
+        file = file.getAbsoluteFile();
         assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
     }
 
