@@ -45,25 +45,29 @@ import org.quartz.Trigger;
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint {
-    public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
     private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
+
+    public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
+    public static final String CONTEXT_KEY = "org.apache.camel.CamelContext";
+
     private Scheduler scheduler;
     private LoadBalancer loadBalancer;
     private Trigger trigger;
     private JobDetail jobDetail;
     private boolean started;
+    private boolean stateful;
 
-    public QuartzEndpoint(String endpointUri, QuartzComponent component, Scheduler scheduler) {
+    public QuartzEndpoint(final String endpointUri, final QuartzComponent component, final Scheduler scheduler) {
         super(endpointUri, component);
         this.scheduler = scheduler;
     }
 
-    public QuartzEndpoint(String endpointUri, Scheduler scheduler) {
+    public QuartzEndpoint(final String endpointUri, final Scheduler scheduler) {
         super(endpointUri);
         this.scheduler = scheduler;
     }
 
-    public void addTriggers(Map<Trigger, JobDetail> triggerMap) throws SchedulerException {
+    public void addTriggers(final Map<Trigger, JobDetail> triggerMap) throws SchedulerException {
         if (triggerMap != null) {
             Set<Map.Entry<Trigger, JobDetail>> entries = triggerMap.entrySet();
             for (Map.Entry<Trigger, JobDetail> entry : entries) {
@@ -77,7 +81,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    public void addTrigger(Trigger trigger, JobDetail detail) throws SchedulerException {
+    public void addTrigger(final Trigger trigger, final JobDetail detail) throws SchedulerException {
         // lets default the trigger name to the job name
         if (trigger.getName() == null) {
             trigger.setName(detail.getName());
@@ -90,10 +94,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (trigger.getStartTime() == null) {
             trigger.setStartTime(new Date());
         }
-        detail.getJobDataMap().put(ENDPOINT_KEY, this);
-        Class jobClass = detail.getJobClass();
-        if (jobClass == null) {
-            detail.setJobClass(CamelJob.class);
+        detail.getJobDataMap().put(ENDPOINT_KEY, isStateful() ? getEndpointUri() : this);
+        if (null == detail.getJobClass()) {
+            detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
         if (detail.getName() == null) {
             detail.setName(getEndpointUri());
@@ -101,7 +104,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         getScheduler().scheduleJob(detail, trigger);
     }
 
-    public void removeTrigger(Trigger trigger, JobDetail jobDetail) throws SchedulerException {
+    public void removeTrigger(final Trigger trigger, final JobDetail jobDetail) throws SchedulerException {
         getScheduler().unscheduleJob(trigger.getName(), trigger.getGroup());
     }
 
@@ -110,7 +113,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
      *
      * @param jobExecutionContext the Quartz Job context
      */
-    public void onJobExecute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
+    public void onJobExecute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Firing Quartz Job with context: " + jobExecutionContext);
         }
@@ -124,7 +127,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Exchange createExchange(JobExecutionContext jobExecutionContext) {
+    public Exchange createExchange(final JobExecutionContext jobExecutionContext) {
         Exchange exchange = createExchange();
         exchange.setIn(new QuartzMessage(exchange, jobExecutionContext));
         return exchange;
@@ -161,7 +164,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return loadBalancer;
     }
 
-    public void setLoadBalancer(LoadBalancer loadBalancer) {
+    public void setLoadBalancer(final LoadBalancer loadBalancer) {
         this.loadBalancer = loadBalancer;
     }
 
@@ -172,7 +175,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return jobDetail;
     }
 
-    public void setJobDetail(JobDetail jobDetail) {
+    public void setJobDetail(final JobDetail jobDetail) {
         this.jobDetail = jobDetail;
     }
 
@@ -183,13 +186,27 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return trigger;
     }
 
-    public void setTrigger(Trigger trigger) {
+    public void setTrigger(final Trigger trigger) {
         this.trigger = trigger;
+    }
+ 
+    /**
+     * @return the stateful mode
+     */
+    public boolean isStateful() {
+        return this.stateful;
+    }
+
+    /**
+     * @param stateful sets the stateful mode
+     */
+    public void setStateful(final boolean stateful) {
+        this.stateful = stateful;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    public synchronized void consumerStarted(QuartzConsumer consumer) throws SchedulerException {
+    public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
         getLoadBalancer().addProcessor(consumer.getProcessor());
 
         // if we have not yet added our default trigger, then lets do it
@@ -199,7 +216,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
     }
 
-    public synchronized void consumerStopped(QuartzConsumer consumer) throws SchedulerException {
+    public synchronized void consumerStopped(final QuartzConsumer consumer) throws SchedulerException {
         getLoadBalancer().removeProcessor(consumer.getProcessor());
         if (getLoadBalancer().getProcessors().isEmpty() && started) {
             removeTrigger(getTrigger(), getJobDetail());
