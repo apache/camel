@@ -16,14 +16,13 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;

@@ -41,8 +41,7 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
     private static final transient Log LOG = LogFactory.getLog(NewFileLockExclusiveReadLockStrategy.class);
     private long timeout;
 
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
-            throws Exception {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         File target = new File(file.getAbsoluteFileName());
 
         if (LOG.isTraceEnabled()) {
@@ -111,8 +110,7 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
         Channel channel = lock.channel();
         try {
             lock.release();
-        }
-        finally {
+        } finally {
             // must close channel
             ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
         }

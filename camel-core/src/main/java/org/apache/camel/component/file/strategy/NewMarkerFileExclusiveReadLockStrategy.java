@@ -36,9 +36,10 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
+    public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
     private static final transient Log LOG = LogFactory.getLog(NewMarkerFileExclusiveReadLockStrategy.class);
 
-    private GenericFileRenamer lockFileRenamer = new GenericFileDefaultRenamer("", ".camellock");
+    private GenericFileRenamer lockFileRenamer = new GenericFileDefaultRenamer("", DEFAULT_LOCK_FILE_POSTFIX);
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {

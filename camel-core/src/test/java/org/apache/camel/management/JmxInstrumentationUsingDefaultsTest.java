@@ -137,7 +137,9 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").to("mock:end");
+                // need a little delay for fast computers being able to process
+                // the exchange in 0 millis and we need to simulate a little computation time
+                from("direct:start").delay(10).to("mock:end");
             }
         };
     }
