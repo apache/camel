@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Processor;
@@ -41,6 +42,11 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
             log.trace("Polling directory: " + fileOrDirectory.getPath());
         }
         File[] files = fileOrDirectory.listFiles();
+
+        if (files == null || files.length == 0) {
+            // no files in this directory to poll
+            return;
+        }
         for (File file : files) {
             // createa a generic file
             GenericFile<File> gf = asGenericFile(file);
@@ -79,7 +85,13 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
 
     }
 
-    protected GenericFile<File> asGenericFile(File file) {
+    /**
+     * Creates a new GenericFile<File> based on the given file.
+     *
+     * @param file the source file
+     * @return wrapped as a GenericFile
+     */
+    public static GenericFile<File> asGenericFile(File file) {
         GenericFile<File> answer = new GenericFile<File>();
         // use file specific binding
         answer.setBinding(new NewFileBinding());
@@ -87,6 +99,11 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
         answer.setFileLength(file.length());
         answer.setFileName(file.getName());
         answer.setAbsoluteFileName(file.getAbsolutePath());
+        try {
+            answer.setCanonicalFileName(file.getCanonicalPath());
+        } catch (IOException e) {
+            // ignore
+        }
         answer.setLastModified(file.lastModified());
         if (file.getParent() != null) {
             answer.setRelativeFileName(file.getParent() + "/" + file.getName());

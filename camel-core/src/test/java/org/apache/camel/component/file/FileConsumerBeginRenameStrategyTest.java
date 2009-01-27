@@ -38,7 +38,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         Thread.sleep(100);
 
@@ -60,7 +60,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("newfile:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
 
         Thread.sleep(100);
 
@@ -70,12 +70,11 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMoveNamePrefix=../inprogress/&consumer.delay=5000")
+                from("newfile://target/reports?preMoveNamePrefix=../inprogress/&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                FileExchange fe = (FileExchange) exchange;
-                                assertEquals("The file should have been move to inprogress", 
-                                        "inprogress", fe.getFile().getParentFile().getName());
+                                GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;
+                                assertTrue(fe.getGenericFile().getRelativeFileName().indexOf("inprogress") > -1);
                             }
                         })
                         .to("mock:report");

@@ -60,22 +60,31 @@ public class NewFileOperations implements GenericFileOperations<File> {
         return file.renameTo(target);
     }
 
-    public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
-        File dir = new File(directory);
-        if (dir.exists()) {
-            return true;
+    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        // always create endpoint defined directory
+        if (endpoint.isAutoCreate() && endpoint.isDirectory() && !endpoint.getFile().exists()) {
+            endpoint.getFile().mkdirs();
         }
-        return dir.mkdirs();
-    }
 
-    public String getCurrentDirectory(File file) throws GenericFileOperationFailedException {
-        return file.getPath();
-    }
+        File path;
+        if (absolute) {
+            path = new File(directory);
+        } else {
+            // skip trailing endpoint configued filename as we always start with the endoint file
+            // for creating relative directories
+            if (directory.startsWith(endpoint.getFile().getPath())) {
+                directory = directory.substring(endpoint.getFile().getPath().length());
+            }
+            path = new File(endpoint.getFile(), directory);
+        }
 
-    public File changeCurrentDirectory(File file, String path) throws GenericFileOperationFailedException {
-        return new File(path);
+        if (path.isDirectory() && path.exists()) {
+            // the directory already exists
+            return true;
+        } else {
+            return path.mkdirs();
+        }
     }
-
 
     public List<File> listFiles() throws GenericFileOperationFailedException {
         return Arrays.asList(this.currentFile.listFiles());
@@ -85,12 +94,12 @@ public class NewFileOperations implements GenericFileOperations<File> {
         return Arrays.asList(new File(this.currentFile, path).listFiles());
     }
 
-    public List<File> listFiles(File file) throws GenericFileOperationFailedException {
-        return Arrays.asList(file.listFiles());
+    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
+        this.currentFile = new File(this.currentFile, path).getAbsoluteFile();
     }
 
-    public List<File> listFiles(File file, String path) throws GenericFileOperationFailedException {
-        return listFiles(new File(path));
+    public String getCurrentDirectory() throws GenericFileOperationFailedException {
+        return currentFile.getAbsolutePath();
     }
 
     public boolean retrieveFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
@@ -175,14 +184,6 @@ public class NewFileOperations implements GenericFileOperations<File> {
             out = new FileOutputStream(target).getChannel();
         }
         return out;
-    }
-
-    public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        this.currentFile = new File(this.currentFile, path).getAbsoluteFile();
-    }
-
-    public String getCurrentDirectory() throws GenericFileOperationFailedException {
-        return currentFile.getAbsolutePath();
     }
 
 }

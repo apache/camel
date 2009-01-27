@@ -121,8 +121,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                if (!getOperations().buildDirectory(directory)) {
-                    log.debug("Couldn't build directory [" + directory + "] (could be because of denied permissions)");
+                if (!getOperations().buildDirectory(directory, false)) {
+                    log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
                 }
             }
             // upload
@@ -170,7 +170,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         String endpointFile = getGenericFileEndpoint().getConfiguration().getFile();
-        if (getGenericFileEndpoint().isDirectory() || getGenericFileEndpoint().getConfiguration().isDirectory()) {
+        if (getGenericFileEndpoint().isDirectory()) {
             // Its a directory so we should use it as a basepath for the filename
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";

@@ -56,7 +56,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
 
         String name = endpoint.getConfiguration().getFile();
-        boolean isDirectory = endpoint.getConfiguration().isDirectory();
+        boolean isDirectory = endpoint.isDirectory();
         if (isDirectory) {
             pollDirectory(name, files);
         } else {
@@ -239,7 +239,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (log.isDebugEnabled()) {
             log.debug("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }
-        processStrategy.rollback(operations, endpoint, exchange, file);
+        try {
+            processStrategy.rollback(operations, endpoint, exchange, file);
+        } catch (Exception e) {
+            log.warn("Error rolling back remote file strategy: " + processStrategy, e);
+            handleException(e);
+        }
     }
 
     /**

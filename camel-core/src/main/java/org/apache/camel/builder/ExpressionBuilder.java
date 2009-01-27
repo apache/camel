@@ -58,7 +58,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Object header = exchange.getIn().getHeader(headerName);
                 if (header == null) {
-                    // lets try the exchange header
+                    // fall back on a property
                     header = exchange.getProperty(headerName);
                 }
                 return header;

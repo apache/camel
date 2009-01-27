@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/multidir/?recursive=true&delete=true&consumer.delay=5000&sortBy=file:path";
+    private String fileUrl = "newfile://target/multidir/?recursive=true&delete=true&consumer.delay=5000&sortBy=file:path";
 
     @Override
     protected void setUp() throws Exception {
@@ -44,18 +44,18 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        FileExchange exchange = (FileExchange) mock.getExchanges().get(0);
-        File file = exchange.getFile();
+        GenericFileExchange<File> exchange = (GenericFileExchange<File>) mock.getExchanges().get(0);
+        File file = exchange.getGenericFile().getFile();
         assertFilePath("target/multidir/bye.txt", file.getPath());
         assertEquals("bye.txt", file.getName());
 
-        exchange = (FileExchange) mock.getExchanges().get(1);
-        file = exchange.getFile();
+        exchange = (GenericFileExchange<File>) mock.getExchanges().get(1);
+        file = exchange.getGenericFile().getFile();
         assertFilePath("target/multidir/sub/hello.txt", file.getPath());
         assertEquals("hello.txt", file.getName());
 
-        exchange = (FileExchange) mock.getExchanges().get(2);
-        file = exchange.getFile();
+        exchange = (GenericFileExchange<File>) mock.getExchanges().get(2);
+        file = exchange.getGenericFile().getFile();
         assertFilePath("target/multidir/sub/sub2/godday.txt", file.getPath());
         assertEquals("godday.txt", file.getName());
     }

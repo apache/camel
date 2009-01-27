@@ -129,7 +129,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public boolean buildDirectory(String directory) throws GenericFileOperationFailedException {
+    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         try {
             String originalDirectory = client.printWorkingDirectory();
 

@@ -39,7 +39,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
 
@@ -53,7 +53,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("file://target?expression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("newfile://target?expression=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -66,12 +66,11 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&expression=../done/${file:name}&consumer.delay=5000")
+                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&expression=../done/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                FileExchange fe = (FileExchange) exchange;
-                                assertEquals("The file should have been move to inprogress",
-                                        "inprogress", fe.getFile().getParentFile().getName());
+                                GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;
+                                assertTrue(fe.getGenericFile().getRelativeFileName().indexOf("inprogress") > -1);
                             }
                         })
                         .to("mock:report");

@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
+import java.util.Date;
+
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -25,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 public class GenericFile<T> {
 
     private String absoluteFileName;
+    private String canonicalFileName;
     private String relativeFileName;
     private String fileName;
     private long fileLength;
@@ -51,6 +55,7 @@ public class GenericFile<T> {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         result.setAbsoluteFileName(source.getAbsoluteFileName());
+        result.setCanonicalFileName(source.getCanonicalFileName());
         result.setRelativeFileName(source.getRelativeFileName());
         result.setFileName(source.getFileName());
         result.setFileLength(source.getFileLength());
@@ -163,11 +168,6 @@ public class GenericFile<T> {
         this.binding = binding;
     }
 
-    @Override
-    public String toString() {
-        return getAbsoluteFileName();
-    }
-
     /**
      * @param absoluteFileName the absoluteFileName to set
      */
@@ -182,4 +182,16 @@ public class GenericFile<T> {
         return absoluteFileName;
     }
 
+    public String getCanonicalFileName() {
+        return canonicalFileName;
+    }
+
+    public void setCanonicalFileName(String canonicalFileName) {
+        this.canonicalFileName = canonicalFileName;
+    }
+
+    @Override
+    public String toString() {
+        return "GenericFile[" + fileName + "]";
+    }
 }

@@ -31,7 +31,7 @@ public class FileRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
     protected String targetdir = "target/test-default-inbox";
     protected String params = "?recursive=true";
-    protected String uri = "file:" + targetdir + params;
+    protected String uri = "newfile:" + targetdir + params;
     protected LockRecorderProcessor recorder = new LockRecorderProcessor();
 
     public void testFileRoute() throws Exception {
@@ -47,7 +47,7 @@ public class FileRouteTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         deleteDirectory(targetdir);
-        uri = "file:" + targetdir + params;
+        uri = "newfile:" + targetdir + params;
         super.setUp();
     }
 
@@ -68,7 +68,7 @@ public class FileRouteTest extends ContextTestSupport {
         }
 
         public void process(Exchange exchange) {
-            locks.add(exchange.getProperty("org.apache.camel.file.lock.name", String.class));
+            locks.add(exchange.getProperty("org.apache.camel.file.marker.filename", String.class));
         }
     }
 }

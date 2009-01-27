@@ -19,13 +19,15 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.Channel;
 import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
-import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -39,17 +41,17 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
     private static final transient Log LOG = LogFactory.getLog(NewFileLockExclusiveReadLockStrategy.class);
     private long timeout;
 
-    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file) {
+    public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange)
+            throws Exception {
         File target = new File(file.getAbsoluteFileName());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + target);
         }
 
-        FileChannel channel = null;
         try {
             // try to acquire rw lock on the file before we can consume it
-            channel = new RandomAccessFile(target, "rw").getChannel();
+            FileChannel channel = new RandomAccessFile(target, "rw").getChannel();
 
             long start = System.currentTimeMillis();
             boolean exclusive = false;
@@ -70,15 +72,17 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
                 try {
                     lock = timeout > 0 ? channel.tryLock() : channel.lock();
                 } catch (IllegalStateException ex) {
-                    // Also catch the OverlappingFileLockException here
-                    // Do nothing here
+                    // Also catch the OverlappingFileLockException here. Do nothing here
                 }
                 if (lock != null) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Acquired exclusive read lock: " + lock + " to file: " + target);
                     }
-                    // just release it now we dont want to hold it during the rest of the processing
-                    lock.release();
+
+                    // store lock so we can release it later
+                    exchange.setProperty("org.apache.camel.file.lock", lock);
+                    exchange.setProperty("org.apache.camel.file.lock.fileName", target.getName());
+
                     exclusive = true;
                 } else {
                     sleep();
@@ -89,22 +93,29 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
             // such as AntiVirus or MS Office that has special locks for it's supported files
             if (timeout == 0) {
                 // if not using timeout, then we cant retry, so rethrow
-                throw new RuntimeCamelException(e);
+                throw e;
             }
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot acquire read lock. Will try again.", e);
             }
             sleep();
-        } finally {
-            // must close channel
-            ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + target, LOG);
         }
 
         return true;
     }
 
-    public void releaseExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations, GenericFile<File> fileGenericFile) {
-        // TODO: release read lock from above, as we should hold id during processing
+    public void releaseExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
+                                         GenericFile<File> fileGenericFile, Exchange exchange) throws Exception {
+        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock", FileLock.class);
+        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.filename", String.class);
+        Channel channel = lock.channel();
+        try {
+            lock.release();
+        }
+        finally {
+            // must close channel
+            ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+        }
     }
 
     private void sleep() {

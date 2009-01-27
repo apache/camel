@@ -39,7 +39,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
 
@@ -53,7 +53,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("file://target?moveNamePrefix=../done/&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("newfile://target?moveNamePrefix=../done/&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -63,7 +63,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         }
 
         try {
-            context.getEndpoint("file://target?expression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("newfile://target?expression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -76,12 +76,11 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?preMoveNamePrefix=../inprogress/&moveNamePrefix=../done/&consumer.delay=5000")
+                from("newfile://target/reports?preMoveNamePrefix=../inprogress/&moveNamePrefix=../done/&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                FileExchange fe = (FileExchange) exchange;
-                                assertEquals("The file should have been move to inprogress",
-                                        "inprogress", fe.getFile().getParentFile().getName());
+                                GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;
+                                assertTrue(fe.getGenericFile().getRelativeFileName().indexOf("inprogress") > -1);
                             }
                         })
                         .to("mock:report");

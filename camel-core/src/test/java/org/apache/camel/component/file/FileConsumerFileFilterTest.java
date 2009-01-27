@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-import java.io.FileFilter;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,7 +26,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
+    private String fileUrl = "newfile://target/filefilter/?filter=#myFilter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -48,7 +45,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("newfile:target/filefilter/", "This is a file to be filtered",
             FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(2000);
@@ -60,10 +57,10 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("newfile:target/filefilter/", "This is a file to be filtered",
             FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
+        template.sendBodyAndHeader("newfile:target/filefilter/", "Hello World",
             FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
@@ -78,10 +75,10 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileFilter implements FileFilter {
-        public boolean accept(File pathname) {
+    public class MyFileFilter implements GenericFileFilter {
+        public boolean accept(GenericFile pathname) {
             // we dont accept any files starting with skip in the name
-            return !pathname.getName().startsWith("skip");
+            return !pathname.getFileName().startsWith("skip");
         }
     }
     // END SNIPPET: e1

@@ -33,6 +33,10 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
+    public RemoteFileEndpoint() {
+        // no args constructor for spring bean endpoint configuration
+    }
+
     public RemoteFileEndpoint(String uri, RemoteFileComponent<T> component, RemoteFileOperations<T> operations,
                               RemoteFileConfiguration configuration) {
         super(uri, component);

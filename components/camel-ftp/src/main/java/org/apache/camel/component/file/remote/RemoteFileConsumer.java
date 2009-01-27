@@ -28,8 +28,6 @@ import org.apache.commons.logging.LogFactory;
  * Base class for remote file consumers.
  */
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
-
-    protected final transient Log log = LogFactory.getLog(getClass());
     protected boolean loggedIn;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations) {
