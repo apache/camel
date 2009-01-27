@@ -38,15 +38,17 @@ public class FtpRemoteFileComponent extends RemoteFileComponent<FTPFile> {
 
     @Override
     protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        // get the uri part before the options as they can be non URI valid such
-        // as the expression using $ chars
+        // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
+        // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
+        // to espace the $ for the expression (file language)
+        String baseUri = uri;
         if (uri.indexOf("?") != -1) {
-            uri = uri.substring(0, uri.indexOf("?"));
+            baseUri = uri.substring(0, uri.indexOf("?"));
         }
 
-        // lets make sure we create a new configuration as each endpoint can
-        // customize its own version
-        FtpRemoteFileConfiguration config = new FtpRemoteFileConfiguration(new URI(uri));
+        // lets make sure we create a new configuration as each endpoint can customize its own version
+        // must pass on baseUri to the configuration (see above)
+        FtpRemoteFileConfiguration config = new FtpRemoteFileConfiguration(new URI(baseUri));
 
         FtpRemoteFileOperations operations = new FtpRemoteFileOperations();
         return new FtpRemoteFileEndpoint(uri, this, operations, config);
