@@ -40,7 +40,7 @@ public class UriConfigurationTest extends TestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(true, config.isDirectory());
+        assertEquals(true, ftpEndpoint.isDirectory());
     }
 
     public void testSftpConfigurationDefaults() {
@@ -55,7 +55,7 @@ public class UriConfigurationTest extends TestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(true, config.isDirectory());
+        assertEquals(true, sftpEndpoint.isDirectory());
     }
 
     public void testFtpExplicitConfiguration() {
@@ -70,7 +70,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, config.isDirectory());
+        assertEquals(false, ftpEndpoint.isDirectory());
     }
 
     public void testSftpExplicitConfiguration() {
@@ -85,18 +85,18 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, config.isDirectory());
+        assertEquals(false, sftpEndpoint.isDirectory());
     }
 
     public void testRemoteFileEndpointFiles() {
-        assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "foo/bar");
-        assertRemoteFileEndpointFile("ftp://hostname/foo/", "foo/");
-        assertRemoteFileEndpointFile("ftp://hostname/foo", "foo");
-        assertRemoteFileEndpointFile("ftp://hostname/", "");
+        assertRemoteFileEndpointFile("ftp://hostname/foo/bar", "/foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname/foo/", "/foo/");
+        assertRemoteFileEndpointFile("ftp://hostname/foo", "/foo");
+        assertRemoteFileEndpointFile("ftp://hostname/", "/");
         assertRemoteFileEndpointFile("ftp://hostname", "");
-        assertRemoteFileEndpointFile("ftp://hostname//", "/");
-        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "/foo/bar");
-        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "/foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname//", "//");
+        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "//foo/bar");
+        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "//foo/bar");
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
@@ -119,7 +119,7 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, config.isDirectory());
+        assertEquals(false, sftpEndpoint.isDirectory());
         assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHostsFile());
     }
 }
