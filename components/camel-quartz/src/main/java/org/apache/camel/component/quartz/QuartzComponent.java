@@ -46,12 +46,12 @@ public class QuartzComponent extends DefaultComponent {
     public QuartzComponent() {
     }
 
-    public QuartzComponent(CamelContext context) {
+    public QuartzComponent(final CamelContext context) {
         super(context);
     }
 
     @Override
-    protected QuartzEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected QuartzEndpoint createEndpoint(final String uri, final String remaining, final Map parameters) throws Exception {
         QuartzEndpoint answer = new QuartzEndpoint(uri, this, getScheduler());
 
         // lets split the remaining into a group/name
@@ -126,7 +126,7 @@ public class QuartzComponent extends DefaultComponent {
         return factory;
     }
 
-    public void setFactory(SchedulerFactory factory) {
+    public void setFactory(final SchedulerFactory factory) {
         this.factory = factory;
     }
 
@@ -137,7 +137,7 @@ public class QuartzComponent extends DefaultComponent {
         return scheduler;
     }
 
-    public void setScheduler(Scheduler scheduler) {
+    public void setScheduler(final Scheduler scheduler) {
         this.scheduler = scheduler;
     }
 
@@ -145,7 +145,7 @@ public class QuartzComponent extends DefaultComponent {
         return triggers;
     }
 
-    public void setTriggers(Map triggers) {
+    public void setTriggers(final Map triggers) {
         this.triggers = triggers;
     }
 
@@ -156,6 +156,8 @@ public class QuartzComponent extends DefaultComponent {
     }
 
     protected Scheduler createScheduler() throws SchedulerException {
-        return getFactory().getScheduler();
+    	Scheduler scheduler = getFactory().getScheduler();
+    	scheduler.getContext().put(QuartzEndpoint.CONTEXT_KEY, getCamelContext());
+        return scheduler;
     }
 }
