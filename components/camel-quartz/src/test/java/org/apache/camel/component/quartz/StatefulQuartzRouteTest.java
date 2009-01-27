@@ -49,19 +49,18 @@ public class StatefulQuartzRouteTest extends ContextTestSupport {
     }
 
 
-	/* (non-Javadoc)
-	 * @see org.apache.camel.ContextTestSupport#createRouteBuilder()
-	 */
-	@Override
-	protected RouteBuilder createRouteBuilder() throws Exception {
-		return new RouteBuilder() {
+    /* (non-Javadoc)
+     * @see org.apache.camel.ContextTestSupport#createRouteBuilder()
+     */
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             @Override
-			public void configure() {
+            public void configure() {
                 // START SNIPPET: example
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1&stateful=true").to("mock:result");
                 // END SNIPPET: example
             }
         };
-	}
-
+    }
 }
