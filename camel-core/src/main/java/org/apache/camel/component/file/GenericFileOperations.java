@@ -20,6 +20,8 @@ import java.util.List;
 
 public interface GenericFileOperations<T> {
 
+    // TODO: setEndpoint method so we have access to it
+
     /**
      * Deletes the file name by name, relative to the current directory
      *
@@ -45,13 +47,14 @@ public interface GenericFileOperations<T> {
      * Builds the directory structure. Will test if the
      * folder already exists.
      *
-     * @param directory the directory path to build
+     * @param directory the directory path to build as a relative string name
+     * @param absolute wether the directory is an absolute or relative path
      * @return true if build or already exists, false if not possbile (could be
      *         lack of permissions)
      * @throws GenericFileOperationFailedException
      *          can be thrown
      */
-    boolean buildDirectory(String directory) throws GenericFileOperationFailedException;
+    boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException;
 
     /**
      * Retrieves the file

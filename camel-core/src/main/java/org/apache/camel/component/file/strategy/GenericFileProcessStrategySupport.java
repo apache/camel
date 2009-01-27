@@ -23,13 +23,13 @@ import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 
-public abstract class GenericFileProcessStrategySupport implements GenericFileProcessStrategy {
+public abstract class GenericFileProcessStrategySupport<T> implements GenericFileProcessStrategy<T> {
     private GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy;
 
-    public boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         // is we use excluse read then acquire the exclusive read (waiting until we got it)
         if (exclusiveReadLockStrategy != null) {
-            boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file);
+            boolean lock = exclusiveReadLockStrategy.acquireExclusiveReadLock(operations, file, exchange);
             if (!lock) {
                 // do not begin sice we could not get the exclusive read lcok
                 return false;
@@ -39,15 +39,15 @@ public abstract class GenericFileProcessStrategySupport implements GenericFilePr
         return true;
     }
 
-    public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         if (exclusiveReadLockStrategy != null) {
-            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file);
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
     }
 
-    public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) {
+    public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         if (exclusiveReadLockStrategy != null) {
-            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file);
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
     }
 

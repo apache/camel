@@ -46,7 +46,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("newfile://target/filelanguage/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -62,7 +62,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -78,7 +78,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Big World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", FileComponent.HEADER_FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bye Big World", FileComponent.HEADER_FILE_NAME, "report3.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -93,7 +93,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Big World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", FileComponent.HEADER_FILE_NAME, "report4.txt");
+        template.sendBodyAndHeader("newfile://target/filelanguage/", "Hello Big World", FileComponent.HEADER_FILE_NAME, "report4.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -108,7 +108,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bean Language Rules The World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bean Language Rules The World",
+        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bean Language Rules The World",
                 FileComponent.HEADER_FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
 
@@ -124,24 +124,28 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/filelanguage/report.txt?autoCreate=false"
+                from("newfile://target/filelanguage/report.txt?directory=false&autoCreate=false"
                      + "&expression=${id}.bak").to("mock:result");
 
-                from("file://target/filelanguage/report2.txt?autoCreate=false"
+                from("newfile://target/filelanguage/report2.txt?directory=false&autoCreate=false"
                      + "&expression=backup-${id}-${file:name.noext}.bak").to("mock:result");
 
-                from("file://target/filelanguage/report3.txt?autoCreate=false"
+                from("newfile://target/filelanguage/report3.txt?directory=false&autoCreate=false"
                      + "&expression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
 
-                from("file://target/filelanguage/report4.txt?autoCreate=false"
+                from("newfile://target/filelanguage/report4.txt?directory=false&autoCreate=false"
                      + "&expression=../backup/${file:name}.bak").to("mock:result");
 
                 // configured by java using java beans setters
-                FileEndpoint endpoint = new FileEndpoint();
+                NewFileEndpoint endpoint = new NewFileEndpoint();
                 endpoint.setCamelContext(context);
+                endpoint.getConfiguration().setFile("target/filelanguage/report5.txt");
                 endpoint.setFile(new File("target/filelanguage/report5.txt"));
+                endpoint.setOperations(new NewFileOperations(endpoint, endpoint.getFile()));
+                endpoint.setDirectory(false);
                 endpoint.setAutoCreate(false);
                 endpoint.setExpression(BeanLanguage.bean("myguidgenerator"));
+
                 from(endpoint).to("mock:result");
             }
         };

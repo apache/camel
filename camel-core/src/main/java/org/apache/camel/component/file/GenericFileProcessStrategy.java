@@ -19,7 +19,7 @@ package org.apache.camel.component.file;
 /**
  * Represents a strategy for marking that a remote file is processed.
  */
-public interface GenericFileProcessStrategy {
+public interface GenericFileProcessStrategy<T> {
 
     /**
      * Called when work is about to begin on this file. This method may attempt
@@ -34,8 +34,8 @@ public interface GenericFileProcessStrategy {
      *         be obtained)
      * @throws Exception can be thrown in case of errors
      */
-    boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint,
-                  GenericFileExchange exchange, GenericFile file) throws Exception;
+    boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
+                  GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file after
@@ -47,8 +47,8 @@ public interface GenericFileProcessStrategy {
      * @param file       the remote file
      * @throws Exception can be thrown in case of errors
      */
-    void commit(GenericFileOperations operations, GenericFileEndpoint endpoint,
-                GenericFileExchange exchange, GenericFile file) throws Exception;
+    void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
+                GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception;
 
     /**
      * Releases any file locks and possibly deletes or moves the file after
@@ -58,8 +58,9 @@ public interface GenericFileProcessStrategy {
      * @param endpoint   the endpoint
      * @param exchange   the exchange
      * @param file       the remote file
+     * @throws Exception can be thrown in case of errors
      */
-    void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint,
-                  GenericFileExchange exchange, GenericFile file);
+    void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint,
+                  GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception;
 
 }

@@ -21,14 +21,9 @@ import java.net.URI;
 public class GenericFileConfiguration {
 
     private String file;
-    private boolean directory = true;
 
     public GenericFileConfiguration() {
         super();
-    }
-
-    public String toString() {
-        return "/" + file;
     }
 
     public void configure(URI uri) {
@@ -40,20 +35,11 @@ public class GenericFileConfiguration {
     }
 
     public void setFile(String file) {
-        // Avoid accidentally putting everything in root on
-        // servers that expose the full filesystem
-        if (file.startsWith("/")) {
-            file = file.substring(1);
-        }
         this.file = file;
     }
 
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(boolean directory) {
-        this.directory = directory;
+    public String toString() {
+        return file;
     }
 
 }

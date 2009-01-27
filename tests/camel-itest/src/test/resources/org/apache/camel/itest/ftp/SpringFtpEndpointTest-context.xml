@@ -22,12 +22,15 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myFTPEndpoint" class="org.apache.camel.component.file.remote.RemoteFileEndpoint">
+    <bean id="myFTPEndpoint" class="org.apache.camel.component.file.remote.FtpRemoteFileEndpoint">
         <property name="camelContext" ref="camel"/>
         <property name="configuration" ref="ftpConfig"/>
+        <property name="operations" ref="ftpOperations"/>
     </bean>
 
-    <bean id="ftpConfig" class="org.apache.camel.component.file.remote.RemoteFileConfiguration">
+    <bean id="ftpOperations" class="org.apache.camel.component.file.remote.FtpRemoteFileOperations"/>
+
+    <bean id="ftpConfig" class="org.apache.camel.component.file.remote.FtpRemoteFileConfiguration">
         <property name="host" value="localhost"/>
         <property name="port" value="20124"/>
         <property name="username" value="admin"/>
@@ -42,6 +45,7 @@
 
         <route>
             <from ref="myFTPEndpoint"/>
+            <!--<from uri="ftp://admin@localhost:20124/helloftp?password=admin"/>-->
             <to uri="mock:result"/>
         </route>
     </camelContext>

@@ -26,6 +26,9 @@ public class GenericFileDeleteProcessStrategy extends GenericFileProcessStrategy
 
     @Override
     public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+        // must invoke super
+        super.commit(operations, endpoint, exchange, file);
+
         boolean deleted = operations.deleteFile(file.getAbsoluteFileName());
         if (!deleted) {
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);

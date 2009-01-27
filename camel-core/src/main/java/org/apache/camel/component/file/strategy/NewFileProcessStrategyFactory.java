@@ -75,9 +75,10 @@ public final class NewFileProcessStrategyFactory {
             }
             return strategy;
         } else {
-            // default strategy will do nothing
-            GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
+            // default strategy will move files in a .camel/ subfolder
+            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
+            strategy.setCommitRenamer(new GenericFileDefaultRenamer(".camel/", ""));
             return strategy;
         }
     }
@@ -108,7 +109,6 @@ public final class NewFileProcessStrategyFactory {
                 }
                 return readLockStrategy;
             } else if ("markerFile".equals(readLock)) {
-                // TODO: marker file that is the stuff with the .camel file
                 GenericFileExclusiveReadLockStrategy readLockStrategy = new NewMarkerFileExclusiveReadLockStrategy();
                 return readLockStrategy;
             }

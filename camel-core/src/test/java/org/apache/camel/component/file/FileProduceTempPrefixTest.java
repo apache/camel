@@ -27,24 +27,22 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FileProduceTempPrefixTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
+    private String fileUrl = "newfile://target/tempandrename/?tempPrefix=inprogress.";
 
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        FileProducer producer = (FileProducer) endpoint.createProducer();
+        GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
 
-        File fileName = new File("target/tempandrename/claus.txt");
-        File tempFileName = producer.createTempFileName(fileName);
-        assertEquals("target" + File.separatorChar + "tempandrename" + File.separatorChar + "inprogress.claus.txt", tempFileName.getPath());
+        String tempFileName = producer.createTempFileName("target/tempandrename/claus.txt");
+        assertEquals("target" + File.separatorChar + "tempandrename" + File.separatorChar + "inprogress.claus.txt", tempFileName);
     }
 
     public void testNoPathCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);
-        FileProducer producer = (FileProducer) endpoint.createProducer();
+        GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
 
-        File fileName = new File("claus.txt");
-        File tempFileName = producer.createTempFileName(fileName);
-        assertEquals("inprogress.claus.txt", tempFileName.getPath());
+        String tempFileName = producer.createTempFileName("claus.txt");
+        assertEquals("inprogress.claus.txt", tempFileName);
     }
 
     public void testTempPrefix() throws Exception {

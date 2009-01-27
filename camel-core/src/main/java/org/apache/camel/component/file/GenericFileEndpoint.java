@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.IOException;
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -53,6 +54,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     // TODO: Consider remove setNames
     // TODO: Consider filename should always be specified when producing (to get rid of auto generating with id as filename)
     // TODO: bufferSize & append can be moved to NewFileEndpoint as FTP does not support it
+    // TODO: configuration.getfile/setfile is a bit cumbersome setting endpoint using spring bean (see FileConsumerExpressionTest)
+
     protected boolean directory = true;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
@@ -80,20 +83,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected long readLockTimeout;
     protected GenericFileExclusiveReadLockStrategy exclusiveReadLockStrategy;
 
+    public GenericFileEndpoint() {
+    }
+
     public GenericFileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
-    }
-
-    public GenericFileEndpoint(String endpointUri, CamelContext context) {
-        super(endpointUri, context);
-    }
-
-    public GenericFileEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
-    public GenericFileEndpoint() {
-        super();
     }
 
     public boolean isSingleton() {
@@ -345,6 +339,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     public GenericFileConfiguration getConfiguration() {
+        if (configuration == null) {
+            configuration = new GenericFileConfiguration();
+        }
         return configuration;
     }
 
@@ -408,6 +405,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.autoCreate = autoCreate;
     }
 
+    public GenericFileOperations getOperations() {
+        return operations;
+    }
+
+    public void setOperations(GenericFileOperations operations) {
+        this.operations = operations;
+    }
+
+    public GenericFileProcessStrategy getProcessStrategy() {
+        return processStrategy;
+    }
+
+    public void setProcessStrategy(GenericFileProcessStrategy processStrategy) {
+        this.processStrategy = processStrategy;
+    }
+
     /**
      * Should the file be moved after consuming?
      */
@@ -423,7 +436,18 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
-        message.setHeader(FileComponent.HEADER_FILE_NAME, file.getRelativeFileName());
+
+        // compute the name that was written, it should be relative to the endpoint configuraion
+        String name = file.getRelativeFileName();
+        if (name.startsWith(getConfiguration().getFile())) {
+            name = name.substring(getConfiguration().getFile().length());
+        }
+        if (name.startsWith(File.separator) || name.startsWith("/")) {
+            // skip trailing /
+            name = name.substring(1);
+        }
+
+        message.setHeader(FileComponent.HEADER_FILE_NAME, name);
     }
 
     protected Map<String, Object> getParamsAsMap() {

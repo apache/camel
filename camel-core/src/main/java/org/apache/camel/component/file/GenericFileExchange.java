@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.util.Date;
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -58,23 +61,23 @@ public class GenericFileExchange<T> extends DefaultExchange {
         super(fromEndpoint, pattern);
     }
 
-
     protected void populateHeaders(GenericFile<T> genericFile) {
         if (genericFile != null) {
-            getIn().setHeader("file.absoluteName", genericFile.getAbsoluteFileName());
-            getIn().setHeader("file.relativeName", genericFile.getRelativeFileName());
-            getIn().setHeader("file.name", genericFile.getFileName());
-
             getIn().setHeader("CamelFileName", genericFile.getFileName());
-            getIn().setHeader("CamelFilePath", genericFile.getAbsoluteFileName());
+            getIn().setHeader("CamelFileAbsolutePath", genericFile.getAbsoluteFileName());
             // set the parent if there is a parent folder
-            int lastSlash = genericFile.getAbsoluteFileName().lastIndexOf("/");
-            if (genericFile.getAbsoluteFileName() != null && lastSlash != -1) {
-                String parent = genericFile.getAbsoluteFileName().substring(0, lastSlash);
+            if (genericFile.getRelativeFileName().lastIndexOf("/") != -1) {
+                String parent = genericFile.getRelativeFileName().substring(0, genericFile.getRelativeFileName().lastIndexOf("/"));
                 getIn().setHeader("CamelFileParent", parent);
             }
+            getIn().setHeader("CamelFilePath", genericFile.getRelativeFileName());
+            getIn().setHeader("CamelFileCanonicalPath", genericFile.getCanonicalFileName());
+
             if (genericFile.getFileLength() > 0) {
                 getIn().setHeader("CamelFileLength", genericFile.getFileLength());
+            }
+            if (genericFile.getLastModified() > 0) {
+                getIn().setHeader("CamelFileLastModified", new Date(genericFile.getLastModified()));
             }
         }
     }

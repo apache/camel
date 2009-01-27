@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileAsyncRouteTest extends ContextTestSupport {
     protected Object expectedBody = "Hello there!";
-    protected String uri = "file:target/test-async-inbox?delete=true&consumer.delay=10000&recursive=true";
+    protected String uri = "newfile:target/test-async-inbox?delete=true&consumer.delay=10000&recursive=true";
 
     private CountDownLatch receivedLatch = new CountDownLatch(1);
     private CountDownLatch processingLatch = new CountDownLatch(1);
@@ -83,7 +83,8 @@ public class FileAsyncRouteTest extends ContextTestSupport {
                 from(uri).thread(1).to("direct:a");
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        file.set((File)exchange.getIn().getBody());
+                        Object body = exchange.getIn().getBody(GenericFile.class).getFile();
+                        file.set((File) body);
                         // Simulate a processing delay..
                         receivedLatch.countDown();
                         processingLatch.await();

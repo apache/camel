@@ -32,10 +32,14 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
     private File file;
 
     public NewFileEndpoint() {
+        // use marker file as default exclusive read locks
+        this.readLock = "markerFile";
     }
 
     public NewFileEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+        // use marker file as default exclusive read locks
+        this.readLock = "markerFile";
     }
 
     public NewFileConsumer createConsumer(Processor processor) throws Exception {
@@ -100,4 +104,10 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
         // TODO change to file when this is ready
         return "newfile";
     }
+
+    @Override
+    protected String createEndpointUri() {
+        return "file://" + getFile().getAbsolutePath();
+    }
+
 }

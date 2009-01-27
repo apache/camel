@@ -41,7 +41,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Locked");
 
-        template.sendBodyAndHeader("file:target/reports/locked", "Hello Locked",
+        template.sendBodyAndHeader("newfile:target/reports/locked", "Hello Locked",
             FileComponent.HEADER_FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
@@ -59,7 +59,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Not Locked");
 
-        template.sendBodyAndHeader("file:target/reports/notlocked", "Hello Not Locked",
+        template.sendBodyAndHeader("newfile:target/reports/notlocked", "Hello Not Locked",
             FileComponent.HEADER_FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
@@ -84,11 +84,11 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/reports/locked/?noop=true").process(new MyNoopProcessor()).
+                from("newfile://target/reports/locked/?noop=true").process(new MyNoopProcessor()).
                     to("mock:report");
 
                 // for no locks
-                from("file://target/reports/notlocked/?noop=true&lock=false").process(new MyNoopProcessor()).
+                from("newfile://target/reports/notlocked/?noop=true&readLock=false").process(new MyNoopProcessor()).
                     to("mock:report");
             }
         };

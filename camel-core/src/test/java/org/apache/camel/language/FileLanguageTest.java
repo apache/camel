@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,6 +29,10 @@ import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.component.file.NewFileEndpoint;
+import org.apache.camel.component.file.GenericFileExchange;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.NewFileConsumer;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 
@@ -106,13 +111,16 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         // create the file
-        String uri = "file://target/filelanguage";
+        String uri = "newfile://target/filelanguage";
         template.sendBodyAndHeader(uri, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         // get the file handle
         file = new File("target/filelanguage/hello.txt");
-        FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
-        Exchange answer = new FileExchange(endpoint, ExchangePattern.InOut, file);
+        GenericFile<File> gf = NewFileConsumer.asGenericFile(file);
+
+        NewFileEndpoint endpoint = getMandatoryEndpoint(uri, NewFileEndpoint.class);
+        GenericFileExchange<File> answer = new GenericFileExchange<File>(endpoint, ExchangePattern.InOut);
+        answer.setGenericFile(gf);
 
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
@@ -124,7 +132,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     public class MyFileNameGenerator {
-        public String generateFilename(FileExchange exchange) {
+        public String generateFilename(Exchange exchange) {
             return "generatorbybean";
         }
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
@@ -31,7 +32,8 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
     private static final transient Log LOG = LogFactory.getLog(GenericFileRenameExclusiveReadLockStrategy.class);
     private long timeout;
 
-    public boolean acquireExclusiveReadLock(GenericFileOperations operations, GenericFile file) {
+    public boolean acquireExclusiveReadLock(GenericFileOperations operations, GenericFile file,
+                                            Exchange exchange) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + file);
         }
@@ -73,7 +75,8 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
         return true;
     }
 
-    public void releaseExclusiveReadLock(GenericFileOperations genericFileOperations, GenericFile genericFile) {
+    public void releaseExclusiveReadLock(GenericFileOperations opeations, GenericFile file,
+                                         Exchange exchange) throws Exception {
         // noop
     }
 
@@ -94,8 +97,7 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
      * Sets an optional timeout period.
      * <p/>
      * If the readlock could not be granted within the timeperiod then the wait is stopped and the
-     * {@link #acquireExclusiveReadLock(org.apache.camel.component.file.GenericFileOperations, org.apache.camel.component.file.GenericFile)}
-     *  acquireExclusiveReadLock} returns <tt>false</tt>.
+     * <tt>acquireExclusiveReadLock</tt> returns <tt>false</tt>.
      *
      * @param timeout period in millis
      */

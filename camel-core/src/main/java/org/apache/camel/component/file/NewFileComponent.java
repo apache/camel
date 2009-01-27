@@ -31,15 +31,7 @@ public class NewFileComponent extends GenericFileComponent<File> {
         result.setFile(file);
 
         GenericFileConfiguration config = new GenericFileConfiguration();
-
-        // TODO: This code should be looked at, the parent stuff is might not needed
-        File parent = file.getParentFile();
-        if (parent != null) {
-            file = new File(parent, file.getName());
-        }
         config.setFile(file.getPath());
-        config.setDirectory(file.isDirectory());
-
         result.setConfiguration(config);
 
         NewFileOperations operations = new NewFileOperations(result, file);
@@ -50,6 +42,5 @@ public class NewFileComponent extends GenericFileComponent<File> {
 
     protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
         // noop
-        // TODO: Could be a noop in parent and only override if needed
     }
 }

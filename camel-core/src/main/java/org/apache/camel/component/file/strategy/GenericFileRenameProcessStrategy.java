@@ -26,7 +26,7 @@ import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class GenericFileRenameProcessStrategy extends GenericFileProcessStrategySupport {
+public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private static final transient Log LOG = LogFactory.getLog(org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy.class);
     private GenericFileRenamer beginRenamer;
     private GenericFileRenamer commitRenamer;
@@ -48,7 +48,13 @@ public class GenericFileRenameProcessStrategy extends GenericFileProcessStrategy
     }
 
     @Override
-    public boolean begin(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+    public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+        // must invoke super
+        boolean result = super.begin(operations, endpoint, exchange, file);
+        if (!result) {
+            return false;
+        }
+
         if (beginRenamer != null) {
             GenericFile newName = beginRenamer.renameFile(exchange, file);
             GenericFile to = renameFile(operations, file, newName);
@@ -59,7 +65,10 @@ public class GenericFileRenameProcessStrategy extends GenericFileProcessStrategy
     }
 
     @Override
-    public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
+        // must invoke super
+        super.commit(operations, endpoint, exchange, file);
+
         if (commitRenamer != null) {
             GenericFile newName = commitRenamer.renameFile(exchange, file);
             renameFile(operations, file, newName);
@@ -75,10 +84,9 @@ public class GenericFileRenameProcessStrategy extends GenericFileProcessStrategy
         }
 
         // make parent folder if missing
-        String parent = to.getParent();
-        boolean mkdir = operations.buildDirectory(parent);
+        boolean mkdir = operations.buildDirectory(to.getParent(), true);
         if (!mkdir) {
-            throw new GenericFileOperationFailedException("Cannot create directory: " + parent + " (could be because of denied permissions)");
+            throw new GenericFileOperationFailedException("Can not create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
         if (LOG.isDebugEnabled()) {

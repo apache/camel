@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import java.util.Comparator;
 
 import org.apache.camel.ContextTestSupport;
@@ -29,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/?sorter=#mySorter";
+    private String fileUrl = "newfile://target/filesorter/?sorter=#mySorter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -43,13 +42,13 @@ public class FileSorterRefTest extends ContextTestSupport {
         super.setUp();
         deleteDirectory("target/filesorter");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
     }
 
@@ -68,9 +67,9 @@ public class FileSorterRefTest extends ContextTestSupport {
     }
 
     // START SNIPPET: e1
-    public class MyFileSorter implements Comparator<File> {
-        public int compare(File o1, File o2) {
-            return o1.getName().compareTo(o2.getName());
+    public class MyFileSorter implements Comparator<GenericFile> {
+        public int compare(GenericFile o1, GenericFile o2) {
+            return o1.getFileName().compareTo(o2.getFileName());
         }
     }
     // END SNIPPET: e1

@@ -360,7 +360,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             return endpointType.cast(endpoint);
         } else {
             throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: "
-                    + endpoint);
+                    + endpoint.getClass().getCanonicalName());
         }
     }
 

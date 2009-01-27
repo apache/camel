@@ -155,14 +155,16 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public boolean buildDirectory(String dirName) throws GenericFileOperationFailedException {
+    public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        // ignore absolute as all dirs are relative with FTP
+
         boolean success = false;
 
         String originalDirectory = getCurrentDirectory();
         try {
             // maybe the full directory already exsits
             try {
-                channel.cd(dirName);
+                channel.cd(directory);
                 success = true;
             } catch (SftpException e) {
                 // ignore, we could not change directory so try to create it instead
@@ -170,22 +172,22 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
 
             if (!success) {
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Trying to build remote directory: " + dirName);
+                    LOG.debug("Trying to build remote directory: " + directory);
                 }
 
                 try {
-                    channel.mkdir(dirName);
+                    channel.mkdir(directory);
                     success = true;
                 } catch (SftpException e) {
                     // we are here if the server side doesn't create intermediate folders
                     // so create the folder one by one
-                    success = buildDirectoryChunks(dirName);
+                    success = buildDirectoryChunks(directory);
                 }
             }
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory " + dirName, e);
+            throw new RemoteFileOperationFailedException("Cannot build directory " + directory, e);
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory " + dirName, e);
+            throw new RemoteFileOperationFailedException("Cannot build directory " + directory, e);
         } finally {
             // change back to original directory
             if (originalDirectory != null) {

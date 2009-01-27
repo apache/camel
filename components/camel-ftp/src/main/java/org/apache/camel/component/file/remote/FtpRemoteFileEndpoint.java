@@ -22,10 +22,12 @@ import org.apache.commons.net.ftp.FTPFile;
 
 public class FtpRemoteFileEndpoint extends RemoteFileEndpoint<FTPFile> {
 
+    public FtpRemoteFileEndpoint() {
+    }
+
     public FtpRemoteFileEndpoint(String uri, FtpRemoteFileComponent component, FtpRemoteFileOperations operations,
                                  RemoteFileConfiguration configuration) {
         super(uri, component, operations, configuration);
-
     }
 
     @Override
