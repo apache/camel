@@ -31,7 +31,7 @@ public class SftpRemoteFileEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEnt
     }
 
     @Override
-    protected RemoteFileConsumer buildConsumer(Processor processor, RemoteFileOperations operations) {
+    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         return new SftpConsumer(this, processor, operations);
     }
 

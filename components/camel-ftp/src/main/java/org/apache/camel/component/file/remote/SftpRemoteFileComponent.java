@@ -38,7 +38,6 @@ public class SftpRemoteFileComponent extends RemoteFileComponent<ChannelSftp.LsE
 
     @Override
     protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
-
         // get the uri part before the options as they can be non URI valid such
         // as the expression using $ chars
         if (uri.indexOf("?") != -1) {
@@ -52,5 +51,10 @@ public class SftpRemoteFileComponent extends RemoteFileComponent<ChannelSftp.LsE
         SftpRemoteFileOperations operations = new SftpRemoteFileOperations();
         return new SftpRemoteFileEndpoint(uri, this, operations, config);
     }
+
+    protected void afterPropertiesSet(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) throws Exception {
+        // noop
+    }
+
 }
 

@@ -34,15 +34,17 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
+import org.apache.camel.InvalidPayloadException;
 
 /**
  * SFTP remote file operations
  */
 public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
-    private static final Log LOG = LogFactory.getLog(SftpRemoteFileOperations.class);
+    private static final transient Log LOG = LogFactory.getLog(SftpRemoteFileOperations.class);
     private ChannelSftp channel;
     private Session session;
 
@@ -237,21 +239,21 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
         }
     }
 
-    public List listFiles() throws GenericFileOperationFailedException {
+    public List<ChannelSftp.LsEntry> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public List listFiles(String path) throws GenericFileOperationFailedException {
+    public List<ChannelSftp.LsEntry> listFiles(String path) throws GenericFileOperationFailedException {
         if (ObjectHelper.isEmpty(path)) {
             // list current dirctory if file path is not given
             path = ".";
         }
 
         try {
-            final List list = new ArrayList();
+            final List<ChannelSftp.LsEntry> list = new ArrayList<ChannelSftp.LsEntry>();
             Vector files = channel.ls(path);
             for (Object file : files) {
-                list.add(file);
+                list.add((ChannelSftp.LsEntry)file);
             }
             return list;
         } catch (SftpException e) {
@@ -273,9 +275,12 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
 
     public boolean storeFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
         try {
-            channel.put((InputStream) exchange.getIn().getBody(InputStream.class), name);
+            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            channel.put(in, name);
             return true;
         } catch (SftpException e) {
+            throw new RemoteFileOperationFailedException("Could not write the file [" + name + "]", e);
+        } catch (InvalidPayloadException e) {
             throw new RemoteFileOperationFailedException("Could not write the file [" + name + "]", e);
         }
     }

@@ -54,5 +54,9 @@ public class FtpRemoteFileComponent extends RemoteFileComponent<FTPFile> {
         return new FtpRemoteFileEndpoint(uri, this, operations, config);
     }
 
+    protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
+        // noop
+    }
+
 }
 

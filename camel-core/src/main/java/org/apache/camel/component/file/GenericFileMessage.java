@@ -22,12 +22,12 @@ import org.apache.camel.impl.DefaultMessage;
  * Remote file message
  */
 public class GenericFileMessage<T> extends DefaultMessage {
-    private GenericFile genericFile;
+    private GenericFile<T> genericFile;
 
     public GenericFileMessage() {
     }
 
-    public GenericFileMessage(GenericFile genericFile) {
+    public GenericFileMessage(GenericFile<T> genericFile) {
         this.genericFile = genericFile;
     }
 
@@ -45,7 +45,7 @@ public class GenericFileMessage<T> extends DefaultMessage {
         return genericFile;
     }
 
-    public void setRemoteFile(GenericFile genericFile) {
+    public void setRemoteFile(GenericFile<T> genericFile) {
         this.genericFile = genericFile;
     }
 

@@ -47,7 +47,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected final transient Log log = LogFactory.getLog(getClass());
 
     protected GenericFileProcessStrategy processStrategy;
-    protected GenericFileOperations operations;
+    protected GenericFileOperations<T> operations;
     protected GenericFileConfiguration configuration;
 
     // TODO: Consider remove setNames
@@ -404,11 +404,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.autoCreate = autoCreate;
     }
 
-    public GenericFileOperations getOperations() {
+    public GenericFileOperations<T> getOperations() {
         return operations;
     }
 
-    public void setOperations(GenericFileOperations operations) {
+    public void setOperations(GenericFileOperations<T> operations) {
         this.operations = operations;
     }
 

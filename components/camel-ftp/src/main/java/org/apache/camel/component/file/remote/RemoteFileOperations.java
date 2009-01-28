@@ -30,8 +30,7 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      *
      * @param configuration configuraiton
      * @return true if connected
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException;
 
@@ -39,16 +38,14 @@ public interface RemoteFileOperations<T> extends GenericFileOperations<T> {
      * Returns whether we are connected to the remote server or not
      *
      * @return true if connected, false if not
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean isConnected() throws GenericFileOperationFailedException;
 
     /**
      * Discconects from the remote server
      *
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     void disconnect() throws GenericFileOperationFailedException;
 

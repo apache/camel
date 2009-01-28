@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Arrays;
 
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
@@ -143,9 +144,7 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
                     }
                     success = client.makeDirectory(directory);
                     if (!success) {
-                        // we are here if the server side doesn't create
-                        // intermediate folders
-                        // so create the folder one by one
+                        // we are here if the server side doesn't create intermediate folders so create the folder one by one
                         buildDirectoryChunks(directory);
                     }
                 }
@@ -195,22 +194,20 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public List listFiles() throws GenericFileOperationFailedException {
+    public List<FTPFile> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
-    public List listFiles(String path) throws GenericFileOperationFailedException {
+    public List<FTPFile> listFiles(String path) throws GenericFileOperationFailedException {
         // use current directory if path not given
         if (ObjectHelper.isEmpty(path)) {
             path = ".";
         }
 
         try {
-            final List list = new ArrayList();
+            final List<FTPFile> list = new ArrayList<FTPFile>();
             FTPFile[] files = client.listFiles(path);
-            for (FTPFile file : files) {
-                list.add(file);
-            }
+            list.addAll(Arrays.asList(files));
             return list;
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);

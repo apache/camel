@@ -23,15 +23,11 @@ import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Remote file endpoint.
  */
 public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
-
-    protected final transient Log log = LogFactory.getLog(getClass());
 
     public RemoteFileEndpoint() {
         // no args constructor for spring bean endpoint configuration
@@ -50,8 +46,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
-    public GenericFileExchange createExchange(GenericFile<T> file) {
-        return new RemoteFileExchange(this, getExchangePattern(), (RemoteFile<T>) file);
+    public GenericFileExchange<T> createExchange(GenericFile<T> file) {
+        return new RemoteFileExchange<T>(this, getExchangePattern(), (RemoteFile<T>) file);
     }
 
     @Override
@@ -60,11 +56,11 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
-    public RemoteFileConsumer createConsumer(Processor processor) throws Exception {
+    public RemoteFileConsumer<T> createConsumer(Processor processor) throws Exception {
         String protocol = ((RemoteFileConfiguration) getConfiguration()).getProtocol();
         ObjectHelper.notEmpty(protocol, "protocol");
 
-        RemoteFileConsumer consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
+        RemoteFileConsumer<T> consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
 
         if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
             throw new IllegalArgumentException("You cannot set delete=true and a moveNamePrefix, moveNamePostfix or expression option");
@@ -92,7 +88,7 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      * @param operations the operations
      * @return the created consumer
      */
-    protected abstract RemoteFileConsumer buildConsumer(Processor processor, RemoteFileOperations<T> operations);
+    protected abstract RemoteFileConsumer<T> buildConsumer(Processor processor, RemoteFileOperations<T> operations);
 
     /**
      * Returns human readable server information for logging purpose

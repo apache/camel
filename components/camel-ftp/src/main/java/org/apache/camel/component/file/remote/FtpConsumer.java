@@ -28,7 +28,7 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
-    public FtpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations fileOperations) {
+    public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
     }
 

@@ -28,8 +28,6 @@ public class GenericFileExchange<T> extends DefaultExchange {
 
     private GenericFile<T> genericFile;
 
-    // TODO: Consider removing some of he constructors
-
     public GenericFileExchange(CamelContext context) {
         super(context);
     }
@@ -92,7 +90,7 @@ public class GenericFileExchange<T> extends DefaultExchange {
     }
 
     public Exchange newInstance() {
-        return new GenericFileExchange(this, genericFile);
+        return new GenericFileExchange<T>(this, genericFile);
     }
 
 }

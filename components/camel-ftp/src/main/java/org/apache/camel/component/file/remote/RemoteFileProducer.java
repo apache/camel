@@ -28,11 +28,11 @@ import org.apache.camel.util.ExchangeHelper;
  * Remote file producer. Handles connecting and disconnecting if we are not.
  * Generic type F is the remote system implementation of a file.
  */
-public class RemoteFileProducer<F> extends GenericFileProducer<F> {
+public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     private boolean loggedIn;
 
-    protected RemoteFileProducer(RemoteFileEndpoint<F> endpoint, RemoteFileOperations<F> operations) {
+    protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
     }
 
@@ -45,7 +45,7 @@ public class RemoteFileProducer<F> extends GenericFileProducer<F> {
     /**
      * The file could not be written. We need to disconnect from the remote server.
      */
-    protected void handleFailedWrite(GenericFileExchange exchange, Exception exception) throws Exception {
+    protected void handleFailedWrite(GenericFileExchange<T> exchange, Exception exception) throws Exception {
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
