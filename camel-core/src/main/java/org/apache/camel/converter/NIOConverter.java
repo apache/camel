@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -58,6 +59,11 @@ public final class NIOConverter {
     @Converter
     public static ByteBuffer toByteBuffer(byte[] data) {
         return ByteBuffer.wrap(data);
+    }
+
+    @Converter
+    public static ByteBuffer toByteBuffer(GenericFile<File> file) throws IOException {
+        return toByteBuffer(file.getFile());
     }
 
     @Converter

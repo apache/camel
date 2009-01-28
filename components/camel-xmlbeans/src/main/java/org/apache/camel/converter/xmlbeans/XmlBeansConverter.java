@@ -32,6 +32,7 @@ import org.xml.sax.SAXException;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
@@ -48,6 +49,11 @@ import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 @Converter
 public class XmlBeansConverter {
     private XmlConverter xmlConverter = new XmlConverter();
+
+    @Converter
+    public static XmlObject toXmlObject(GenericFile<File> value) throws IOException, XmlException {
+        return toXmlObject(value.getFile());
+    }
 
     @Converter
     public static XmlObject toXmlObject(File value) throws IOException, XmlException {
