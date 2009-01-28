@@ -23,6 +23,7 @@ import org.apache.camel.Processor;
 public class SftpRemoteFileEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     public SftpRemoteFileEndpoint() {
+        this.operations = new SftpRemoteFileOperations();
     }
 
     public SftpRemoteFileEndpoint(String uri, SftpRemoteFileComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,

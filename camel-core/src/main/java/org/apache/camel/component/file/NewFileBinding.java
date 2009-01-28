@@ -19,21 +19,27 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 /**
- *
+ * File binding with the {@link java.io.File} type.
  */
 public class NewFileBinding implements GenericFileBinding<File> {
 
     private File body;
 
     public Object getBody(GenericFile<File> file) {
-        // TODO: comment why I do this
-        // TODO: consider storing object and only create new if changed
-        // TODO: Consider callback from changeName to binding so we change
-        // change it at that time
-        return new File(file.getAbsoluteFileName());
+        // as we use java.io.File itself as the body (not loading its content into a OutputStream etc.)
+        // we just store a java.io.File handle to the actual file denoted by the
+        // file.getAbsoluteFileName. We must do this as the original file consumed can be renamed before
+        // being processed (preMove) and thus it points to an invalid file location.
+        // GenericFile#getAbsoluteFileName() is always up-to-date and thus we use it to create a file
+        // handle that is correct
+        if (body == null || !file.getAbsoluteFileName().equals(body.getAbsolutePath())) {
+            body = new File(file.getAbsoluteFileName());
+        }
+        return body;
     }
 
     public void setBody(GenericFile<File> file, Object body) {
         // noop
     }
+
 }

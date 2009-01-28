@@ -43,7 +43,7 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
 
     public void testMocksAreValid() throws Exception {
         // lets check that our injected endpoint is valid
-        FileEndpoint fileEndpoint = Assertions.assertInstanceOf(inputFile, FileEndpoint.class);
+        NewFileEndpoint fileEndpoint = Assertions.assertInstanceOf(inputFile, NewFileEndpoint.class);
         assertEquals("File", new File("target/test-default-inbox"), fileEndpoint.getFile());
 
         result.expectedBodiesReceived(expectedBody);

@@ -19,7 +19,7 @@ package org.apache.camel.component.file;
 /**
  * A filter for {@link GenericFile}.
  */
-public interface GenericFileFilter {
+public interface GenericFileFilter<T> {
 
     /**
      * Tests whether or not the specified generic file should be included
@@ -27,6 +27,6 @@ public interface GenericFileFilter {
      * @param file the generic file to be tested
      * @return <code>true</code> if and only if <code>file</code> should be included
      */
-    boolean accept(GenericFile file);
+    boolean accept(GenericFile<T> file);
 
 }

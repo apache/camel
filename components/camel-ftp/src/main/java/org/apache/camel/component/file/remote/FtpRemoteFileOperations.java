@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ObjectHelper;
@@ -37,9 +38,7 @@ import org.apache.commons.net.ftp.FTPFile;
  * FTP remote file operations
  */
 public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
-
     private static final transient Log LOG = LogFactory.getLog(FtpRemoteFileOperations.class);
-
     private final FTPClient client;
 
     public FtpRemoteFileOperations() {
@@ -48,6 +47,10 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
 
     public FtpRemoteFileOperations(FTPClient client) {
         this.client = client;
+    }
+
+    public void setEndpoint(GenericFileEndpoint endpoint) {
+        // noop
     }
 
     public boolean connect(RemoteFileConfiguration config) throws GenericFileOperationFailedException {

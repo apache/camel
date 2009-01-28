@@ -39,8 +39,10 @@ public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
 
     @Autowired
     protected ProducerTemplate template;
+
     @EndpointInject(name = "myFTPEndpoint")
     protected Endpoint inputFTP;
+
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
@@ -75,7 +77,7 @@ public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
         uman.configure();
         ftpServer.setUserManager(uman);
 
-        ftpServer.getListener("default").setPort(20124);
+        ftpServer.getListener("default").setPort(20125);
     }
 
 }

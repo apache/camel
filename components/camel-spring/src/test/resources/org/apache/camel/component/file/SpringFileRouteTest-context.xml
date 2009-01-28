@@ -22,19 +22,19 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
-    <template id="camelTemplate"/>
-    
-    <route>
-      <from ref="inputFile"/>
-        <to uri="mock:result"/>
-    </route>
-  </camelContext>
+    <!-- START SNIPPET: example -->
+    <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+        <template id="camelTemplate"/>
 
-  <bean id="inputFile" class="org.apache.camel.component.file.FileEndpoint">
-    <property name="file" value="target/test-default-inbox"/>
-  </bean>
-  <!-- END SNIPPET: example -->
+        <route>
+            <from ref="inputFile"/>
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+
+    <bean id="inputFile" class="org.apache.camel.component.file.NewFileEndpoint">
+        <property name="file" value="target/test-default-inbox"/>
+    </bean>
+    <!-- END SNIPPET: example -->
 
 </beans>

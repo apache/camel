@@ -32,6 +32,7 @@ import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UserInfo;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
@@ -47,6 +48,10 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
     private static final transient Log LOG = LogFactory.getLog(SftpRemoteFileOperations.class);
     private ChannelSftp channel;
     private Session session;
+
+    public void setEndpoint(GenericFileEndpoint endpoint) {
+        // noop
+    }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
         try {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.converter.jaxp;
+
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,7 +23,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.apache.camel.Converter;
-
 
 /**
  * Converts from some DOM types to Java types
@@ -43,30 +43,20 @@ public final class DomConverter {
         return buffer.toString();
     }
 
-/*
-    @Converter
-    public static String toString(Node node) {
-        StringBuffer buffer = new StringBuffer();
-        append(buffer, node);
-        return buffer.toString();
-    }
-*/
-
-    protected static void append(StringBuffer buffer, NodeList nodeList) {
+    private static void append(StringBuffer buffer, NodeList nodeList) {
         int size = nodeList.getLength();
         for (int i = 0; i < size; i++) {
             append(buffer, nodeList.item(i));
         }
     }
 
-    protected static void append(StringBuffer buffer, Node node) {
+    private static void append(StringBuffer buffer, Node node) {
         if (node instanceof Text) {
             Text text = (Text) node;
             buffer.append(text.getTextContent());
         } else if (node instanceof Attr) {
             Attr attribute = (Attr) node;
             buffer.append(attribute.getTextContent());
-
         } else if (node instanceof Element) {
             Element element = (Element) node;
             append(buffer, element.getChildNodes());

@@ -53,6 +53,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.Converter;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.NIOConverter;
 import org.apache.camel.util.ObjectHelper;
@@ -309,6 +310,11 @@ public class XmlConverter {
     }
 
     @Converter
+    public StreamSource toStreamSource(GenericFile<File> in) throws TransformerException {
+        return toStreamSource(in.getFile());
+    }
+
+    @Converter
     public StreamSource toStreamSource(byte[] in) throws TransformerException {
         if (in != null) {
             return new StreamSource(IOConverter.toInputStream(in));
@@ -526,6 +532,17 @@ public class XmlConverter {
     public Document toDOMDocument(File file) throws IOException, SAXException, ParserConfigurationException {
         DocumentBuilder documentBuilder = getDocumentBuilderFactory().newDocumentBuilder();
         return documentBuilder.parse(file);
+    }
+
+    /**
+     * Converts the given {@link File} to a DOM document
+     *
+     * @param file is the data to be parsed
+     * @return the parsed document
+     */
+    @Converter
+    public Document toDOMDocument(GenericFile<File> file) throws IOException, SAXException, ParserConfigurationException {
+        return toDOMDocument(file.getFile());
     }
 
 

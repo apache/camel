@@ -32,22 +32,18 @@ import org.apache.commons.logging.LogFactory;
  */
 public class GenericFileProducer<T> extends DefaultProducer {
     protected final transient Log log = LogFactory.getLog(getClass());
-    private GenericFileOperations<T> operations;
+    protected final GenericFileEndpoint<T> endpoint;
+    protected final GenericFileOperations<T> operations;
 
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
+        this.endpoint = endpoint;
         this.operations = operations;
     }
 
-    /**
-     * Convenience method
-     */
-    protected GenericFileEndpoint<T> getGenericFileEndpoint() {
-        return (GenericFileEndpoint<T>) getEndpoint();
-    }
-
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
-        GenericFileExchange<T> fileExchange = (GenericFileExchange<T>) getGenericFileEndpoint().createExchange(exchange);
+        GenericFileExchange<T> fileExchange = (GenericFileExchange<T>) endpoint.createExchange(exchange);
         processExchange(fileExchange);
         ExchangeHelper.copyResults(exchange, fileExchange);
     }
@@ -69,7 +65,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             preWriteCheck();
 
             // should we write to a temporary name and then afterwards rename to real target
-            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(getGenericFileEndpoint().getTempPrefix());
+            boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempPrefix());
             String tempTarget = null;
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
@@ -85,7 +81,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 if (log.isTraceEnabled()) {
                     log.trace("Renaming file: [" + tempTarget + "] to: [" + target + "]");
                 }
-                boolean renamed = getOperations().renameFile(tempTarget, target);
+                boolean renamed = operations.renameFile(tempTarget, target);
                 if (!renamed) {
                     throw new GenericFileOperationFailedException("Cannot rename file from: " + tempTarget + " to: " + target);
                 }
@@ -121,7 +117,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             int lastPathIndex = fileName.lastIndexOf('/');
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
-                if (!getOperations().buildDirectory(directory, false)) {
+                if (!operations.buildDirectory(directory, false)) {
                     log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
                 }
             }
@@ -130,7 +126,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 log.trace("About to write [" + fileName + "] to [" + getEndpoint() + "] from exchange [" + exchange + "]");
             }
 
-            boolean success = getOperations().storeFile(fileName, exchange);
+            boolean success = operations.storeFile(fileName, exchange);
             if (!success) {
                 throw new GenericFileOperationFailedException("Error writing file [" + fileName + "]");
             }
@@ -150,7 +146,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
 
         // expression support
-        Expression expression = getGenericFileEndpoint().getExpression();
+        Expression expression = endpoint.getExpression();
         if (name != null) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
@@ -169,8 +165,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }
 
-        String endpointFile = getGenericFileEndpoint().getConfiguration().getFile();
-        if (getGenericFileEndpoint().isDirectory()) {
+        String endpointFile = endpoint.getConfiguration().getFile();
+        if (endpoint.isDirectory()) {
             // Its a directory so we should use it as a basepath for the filename
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
@@ -183,7 +179,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             } else {
                 // use a generated filename if no name provided
                 // TODO: Consider to require end user to always provide a filename instead of generating a new name
-                answer = baseDir + getGenericFileEndpoint().getGeneratedFileName(exchange.getIn());
+                answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
             }
         } else {
             answer = endpointFile;
@@ -196,20 +192,12 @@ public class GenericFileProducer<T> extends DefaultProducer {
         int path = fileName.lastIndexOf("/");
         if (path == -1) {
             // no path
-            return getGenericFileEndpoint().getTempPrefix() + fileName;
+            return endpoint.getTempPrefix() + fileName;
         } else {
             StringBuilder sb = new StringBuilder(fileName);
-            sb.insert(path + 1, getGenericFileEndpoint().getTempPrefix());
+            sb.insert(path + 1, endpoint.getTempPrefix());
             return sb.toString();
         }
     }
-
-    /**
-     * @return the operations
-     */
-    public GenericFileOperations<T> getOperations() {
-        return operations;
-    }
-
 
 }

@@ -27,7 +27,7 @@ import static org.apache.camel.util.CollectionHelper.collectionAsCommaDelimitedS
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
 public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
-    private static final String ANTPATHMATCHER_CLASSNAME = "org.apache.camel.component.file.AntPathMatcherGenericFileFilter";
+    private static final String ANTPATHMATCHER_CLASSNAME = "org.apache.camel.component.file.AntPathMatcherFileFilter";
     private String[] excludes;
     private String[] includes;
 

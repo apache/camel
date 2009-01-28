@@ -17,12 +17,12 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Processor;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
 public class FtpRemoteFileEndpoint extends RemoteFileEndpoint<FTPFile> {
 
     public FtpRemoteFileEndpoint() {
+        this.operations = new FtpRemoteFileOperations();
     }
 
     public FtpRemoteFileEndpoint(String uri, FtpRemoteFileComponent component, FtpRemoteFileOperations operations,
@@ -31,15 +31,8 @@ public class FtpRemoteFileEndpoint extends RemoteFileEndpoint<FTPFile> {
     }
 
     @Override
-    protected RemoteFileConsumer buildConsumer(Processor processor, RemoteFileOperations<FTPFile> operations) {
+    protected RemoteFileConsumer<FTPFile> buildConsumer(Processor processor, RemoteFileOperations<FTPFile> operations) {
         return new FtpConsumer(this, processor, operations);
-    }
-
-    @Override
-    public RemoteFileConsumer createConsumer(Processor processor) throws Exception {
-        RemoteFileConsumer rfc = super.createConsumer(processor);
-        ObjectHelper.notEmpty(((FtpRemoteFileConfiguration) configuration).getHost(), "host");
-        return rfc;
     }
 
     @Override

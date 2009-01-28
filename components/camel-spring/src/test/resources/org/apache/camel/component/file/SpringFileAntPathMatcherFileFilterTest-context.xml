@@ -27,7 +27,7 @@
         <template id="camelTemplate"/>
 
         <!-- use myFilter as filter to allow setting ANT paths for which files to scan for -->
-        <endpoint id="myFileEndpoint" uri="file://target/antpathmatcher?recursive=true&amp;filter=#myAntFilter"/>
+        <endpoint id="myFileEndpoint" uri="newfile://target/antpathmatcher?recursive=true&amp;filter=#myAntFilter"/>
 
         <route>
             <from ref="myFileEndpoint"/>
@@ -36,7 +36,7 @@
     </camelContext>
 
     <!-- we use the AntPathMatcherFileFilter to use ant paths for includes and exlucde -->
-    <bean id="myAntFilter" class="org.apache.camel.component.file.AntPathMatcherFileFilter">
+    <bean id="myAntFilter" class="org.apache.camel.component.file.AntPathMatcherGenericFileFilter">
         <!-- include and file in the subfolder that has day in the name -->
         <property name="includes" value="**/subfolder/**/*day*"/>
         <!-- exclude all files with bad in name or .xml files. Use comma to seperate multiple excludes -->
