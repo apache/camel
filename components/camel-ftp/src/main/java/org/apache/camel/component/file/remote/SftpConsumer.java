@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
-    public SftpConsumer(RemoteFileEndpoint endpoint, Processor processor, RemoteFileOperations operations) {
+    public SftpConsumer(RemoteFileEndpoint<ChannelSftp.LsEntry> endpoint, Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         super(endpoint, processor, operations);
     }
 
@@ -81,7 +81,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         List<ChannelSftp.LsEntry> list = operations.listFiles(fileName);
         ChannelSftp.LsEntry file = list.get(0);
         if (file != null) {
-            RemoteFile remoteFile = asRemoteFile(directory, file);
+            RemoteFile<ChannelSftp.LsEntry> remoteFile = asRemoteFile(directory, file);
             if (isValidFile(remoteFile, false)) {
                 // matched file so add
                 fileList.add(remoteFile);

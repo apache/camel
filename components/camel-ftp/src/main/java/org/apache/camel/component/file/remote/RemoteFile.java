@@ -20,8 +20,10 @@ import org.apache.camel.component.file.GenericFile;
 
 /**
  * Represents a remote file of some sort of backing object
+ *
+ * @param <T> the type of file that these remote endpoints provide
  */
-public class RemoteFile<F> extends GenericFile<F> implements Cloneable {
+public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     private String hostname;
 
@@ -33,8 +35,8 @@ public class RemoteFile<F> extends GenericFile<F> implements Cloneable {
         this.hostname = hostname;
     }
 
-    public RemoteFile<F> copyFrom(RemoteFile<F> source) {
-        RemoteFile<F> result = (RemoteFile<F>) source.clone();
+    public RemoteFile<T> copyFrom(RemoteFile<T> source) {
+        RemoteFile<T> result = (RemoteFile<T>) source.clone();
         result.setAbsoluteFileName(source.getAbsoluteFileName());
         result.setRelativeFileName(source.getRelativeFileName());
         result.setFileName(source.getFileName());

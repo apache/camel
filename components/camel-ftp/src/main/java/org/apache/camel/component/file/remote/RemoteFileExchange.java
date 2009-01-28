@@ -58,7 +58,7 @@ public class RemoteFileExchange<T> extends GenericFileExchange<T> {
     protected void populateHeaders(GenericFile<T> remoteFile) {
         super.populateHeaders(remoteFile);
         if (remoteFile != null) {
-            getIn().setHeader("file.remote.host", ((RemoteFile<T>) remoteFile).getHostname());
+            getIn().setHeader("CamelFileHost", ((RemoteFile<T>) remoteFile).getHostname());
         }
     }
 

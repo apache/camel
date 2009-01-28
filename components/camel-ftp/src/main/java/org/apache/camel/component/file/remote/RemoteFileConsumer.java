@@ -21,8 +21,6 @@ import java.io.IOException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConsumer;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class for remote file consumers.

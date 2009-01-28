@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileComponent;
-import org.apache.camel.component.file.GenericFileEndpoint;
 
 /**
  * Base class for remote file components. Polling and consuming files from
@@ -34,11 +33,6 @@ public abstract class RemoteFileComponent<T> extends GenericFileComponent<T> {
 
     public RemoteFileComponent(CamelContext context) {
         super(context);
-    }
-
-    @Override
-    protected void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception {
-        // noop
     }
 
 }
