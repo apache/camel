@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.spring.util;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -29,8 +29,8 @@ import org.springframework.util.StringUtils;
  * <p/>
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
-public class AntPathMatcherFileFilter implements FileFilter {
-    private static final transient Log LOG = LogFactory.getLog(AntPathMatcherFileFilter.class);
+public class SpringAntPathMatcherFileFilter implements FileFilter {
+    private static final transient Log LOG = LogFactory.getLog(SpringAntPathMatcherFileFilter.class);
 
     private AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;
