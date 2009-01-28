@@ -16,13 +16,16 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.camel.Converter;
-import org.apache.camel.Exchange;
+import org.apache.camel.converter.IOConverter;
 
 /**
  * A set of converter methods for working with remote file types
@@ -35,33 +38,33 @@ public final class GenericFileConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(ByteArrayOutputStream os) {
-        return os.toByteArray();
+    public static InputStream toInputStream(GenericFile<File> file) throws FileNotFoundException {
+        return IOConverter.toInputStream(file.getFile());
     }
 
     @Converter
-    public static String toString(ByteArrayOutputStream os) {
-        return os.toString();
+    public static BufferedReader toReader(GenericFile<File> file) throws FileNotFoundException {
+        return IOConverter.toReader(file.getFile());
     }
 
     @Converter
-    public static InputStream toInputStream(ByteArrayOutputStream os) {
-        return new ByteArrayInputStream(os.toByteArray());
+    public static OutputStream toOutputStream(GenericFile<File> file) throws FileNotFoundException {
+        return IOConverter.toOutputStream(file.getFile());
     }
 
     @Converter
-    public static InputStream toInputStream(GenericFile file, Exchange exchange) {
-        return exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
+    public static BufferedWriter toWriter(GenericFile<File> file) throws IOException {
+        return IOConverter.toWriter(file.getFile());
     }
 
     @Converter
-    public static byte[] toByteArray(GenericFile file, Exchange exchange) throws IOException {
-        return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, file.getBody());
+    public static byte[] toByteArray(GenericFile<File> file) throws IOException {
+        return IOConverter.toByteArray(file.getFile());
     }
 
     @Converter
-    public static String toString(GenericFile file, Exchange exchange) throws IOException {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
+    public static String toString(GenericFile<File> file) throws IOException {
+        return IOConverter.toString(file.getFile());
     }
 
 }

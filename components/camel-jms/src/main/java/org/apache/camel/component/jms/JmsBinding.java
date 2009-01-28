@@ -43,8 +43,8 @@ import org.w3c.dom.Node;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -322,7 +322,7 @@ public class JmsBinding {
         if (body instanceof String) {
             return session.createTextMessage((String)body);
         }
-        if (body instanceof File || body instanceof Reader || body instanceof InputStream || body instanceof ByteBuffer) {
+        if (body instanceof GenericFile || body instanceof File || body instanceof Reader || body instanceof InputStream || body instanceof ByteBuffer) {
             BytesMessage result = session.createBytesMessage();
             byte[] bytes = context.getTypeConverter().convertTo(byte[].class, body);
             result.writeBytes(bytes);

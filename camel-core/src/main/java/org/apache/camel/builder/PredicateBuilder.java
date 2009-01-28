@@ -223,7 +223,7 @@ public final class PredicateBuilder {
 
             @Override
             public String toString() {
-                return expression + " instanceof " + type.getName();
+                return expression + " instanceof " + type.getCanonicalName();
             }
 
             @Override

@@ -101,12 +101,12 @@ public final class IOConverter {
     }
 
     @Converter
-    public static Reader toReader(InputStream in) throws FileNotFoundException {
+    public static Reader toReader(InputStream in) {
         return new InputStreamReader(in);
     }
 
     @Converter
-    public static Writer toWriter(OutputStream out) throws FileNotFoundException {
+    public static Writer toWriter(OutputStream out) {
         return new OutputStreamWriter(out);
     }
 

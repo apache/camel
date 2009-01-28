@@ -35,7 +35,7 @@
         </route>
     </camelContext>
 
-    <!-- we use the AntPathMatcherFileFilter to use ant paths for includes and exlucde -->
+    <!-- we use the antpath file filter to use ant paths for includes and exlucde -->
     <bean id="myAntFilter" class="org.apache.camel.component.file.AntPathMatcherGenericFileFilter">
         <!-- include and file in the subfolder that has day in the name -->
         <property name="includes" value="**/subfolder/**/*day*"/>
