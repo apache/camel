@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * The policy used to decide how many times to redeliver and the time between
  * the redeliveries before being sent to a <a
- * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
+ * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
  * Channel</a>
  * <p>
  * The default values are:

@@ -26,7 +26,7 @@ import org.apache.camel.processor.aggregate.PredicateAggregationCollection;
 
 /**
  * An implementation of the <a
- * href="http://activemq.apache.org/camel/aggregator.html">Aggregator</a>
+ * href="http://camel.apache.org/aggregator.html">Aggregator</a>
  * pattern where a batch of messages are processed (up to a maximum amount or
  * until some timeout is reached) and messages for the same correlation key are
  * combined together using some kind of {@link AggregationStrategy}

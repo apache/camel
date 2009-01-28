@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 
 /**
  * Used to inject a constant expression into a field, property, method or parameter when using
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>.
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>.
  *
  */
 @Retention(RetentionPolicy.RUNTIME)

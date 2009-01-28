@@ -33,7 +33,7 @@ import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- * Represents a <a href="http://activemq.apache.org/camel/http.html">HTTP
+ * Represents a <a href="http://camel.apache.org/http.html">HTTP
  * endpoint</a>
  *
  * @version $Revision$

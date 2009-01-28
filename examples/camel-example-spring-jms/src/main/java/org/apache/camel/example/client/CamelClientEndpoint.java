@@ -25,7 +25,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Client that uses the <a href="http://activemq.apache.org/camel/message-endpoint.html">Mesage Endpoint</a>
+ * Client that uses the <a href="http://camel.apache.org/message-endpoint.html">Mesage Endpoint</a>
  * pattern to easily exchange messages with the Server.
  * <p/>
  * Notice this very same API can use for all components in Camel, so if we were using TCP communication instead

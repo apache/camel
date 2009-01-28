@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 
 /**
  * The processor which implements the
- * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter</a> EIP pattern.
+ * <a href="http://camel.apache.org/message-filter.html">Message Filter</a> EIP pattern.
  *
  * @version $Revision$
  */

@@ -67,7 +67,7 @@ import org.apache.maven.reporting.MavenReportException;
  */
 public class ConvertersMojo extends AbstractMavenReport {
 
-    private static final String WIKI_TYPECONVERER_URL = "http://activemq.apache.org/camel/type-converter.html";
+    private static final String WIKI_TYPECONVERER_URL = "http://camel.apache.org/type-converter.html";
     private static final String CONVERTER_TYPE_STATIC = "org.apache.camel.impl.converter.StaticMethodTypeConverter";
     private static final String CONVERTER_TYPE_INSTANCE = "org.apache.camel.impl.converter.InstanceMethodTypeConverter";
     private static final String REPORT_METHOD_STATIC = "STATIC";

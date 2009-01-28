@@ -34,7 +34,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
- * href="http://activemq.apache.org/camel/recipient-list.html">Recipient List</a>
+ * href="http://camel.apache.org/recipient-list.html">Recipient List</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
  *

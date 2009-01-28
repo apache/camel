@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.integration.core.MessageChannel;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/springIntergration.html">Spring Intergration Endpoint</a>
+ * Defines the <a href="http://camel.apache.org/springIntergration.html">Spring Intergration Endpoint</a>
  *
  * @version $Revision$
  */

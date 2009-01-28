@@ -27,7 +27,7 @@ import org.apache.camel.component.seda.SedaComponent;
 import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
- * An implementation of the <a href="http://activemq.apache.org/camel/vm.html">VM components</a>
+ * An implementation of the <a href="http://camel.apache.org/vm.html">VM components</a>
  * for asynchronous SEDA exchanges on a {@link BlockingQueue} within the classloader tree containing
  * the camel-core.jar. i.e. to handle communicating across CamelContext instances and possibly across
  * web application contexts, providing that camel-core.jar is on the system classpath.

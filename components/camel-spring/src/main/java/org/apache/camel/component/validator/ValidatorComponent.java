@@ -24,7 +24,7 @@ import org.apache.camel.impl.ProcessorEndpoint;
 import org.springframework.core.io.Resource;
 
 /**
- * The <a href="http://activemq.apache.org/camel/validator.html">Validator Component</a>
+ * The <a href="http://camel.apache.org/validator.html">Validator Component</a>
  * for validating XML against some schema
  *
  * @version $Revision$

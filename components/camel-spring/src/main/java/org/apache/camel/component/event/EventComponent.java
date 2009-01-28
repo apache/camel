@@ -27,7 +27,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
- * An <a href="http://activemq.apache.org/camel/event.html">Event Component</a>
+ * An <a href="http://camel.apache.org/event.html">Event Component</a>
  * for working with Spring ApplicationEvents
  * 
  * @version $Revision$

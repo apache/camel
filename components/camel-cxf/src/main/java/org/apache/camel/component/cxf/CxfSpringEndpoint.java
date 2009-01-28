@@ -38,7 +38,7 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>
+ * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>
  *
  * @version $Revision$
  */

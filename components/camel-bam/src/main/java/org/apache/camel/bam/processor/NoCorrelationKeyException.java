@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 /**
  * An exception thrown if no correlation key could be found for a message
  * exchange preventing any particular orchestration or
- * <a href="http://activemq.apache.org/camel/bam.html">BAM</a>
+ * <a href="http://camel.apache.org/bam.html">BAM</a>
  *
  * @version $Revision$
  */

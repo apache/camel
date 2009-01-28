@@ -26,7 +26,7 @@ import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
- * The <a href="http://activemq.apache.org/camel/log.html">Log Component</a>
+ * The <a href="http://camel.apache.org/log.html">Log Component</a>
  * to log message exchanges to the underlying logging mechanism.
  *
  * @version $Revision$

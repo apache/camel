@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.MessageContentsList;
 
 /**
- * The <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * The <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * for CXF related types' converting .
  *
  * @version $Revision$

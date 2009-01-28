@@ -35,7 +35,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An <a href="http://activemq.apache.org/camel/rss.html">RSS Endpoint</a>.
+ * An <a href="http://camel.apache.org/rss.html">RSS Endpoint</a>.
  * 
  */
 public class RssEndpoint extends FeedEndpoint {

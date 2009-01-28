@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Represents the <a href="http://activemq.apache.org/camel/artix-data-services.html">Artix Data Services</a>
+ * Represents the <a href="http://camel.apache.org/artix-data-services.html">Artix Data Services</a>
  * {@link DataFormat}
  *
  * @version $Revision$

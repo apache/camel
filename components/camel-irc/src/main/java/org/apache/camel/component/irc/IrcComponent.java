@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.schwering.irc.lib.IRCConnection;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Component</a>
+ * Defines the <a href="http://camel.apache.org/irc.html">IRC Component</a>
  *
  * @version $Revision$
  */

@@ -25,7 +25,7 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.xmlbeans.XmlObject;
 
 /**
- * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using XmlBeans to marshal to and from XML
  *
  * @version $Revision$

@@ -25,7 +25,7 @@ import org.springframework.core.io.Resource;
 
 
 /**
- * An <a href="http://activemq.apache.org/camel/xquery.html">XQuery Component</a>
+ * An <a href="http://camel.apache.org/xquery.html">XQuery Component</a>
  * for performing transforming messages
  *
  * @version $Revision$

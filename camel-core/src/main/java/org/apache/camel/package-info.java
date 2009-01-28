@@ -17,7 +17,7 @@
 
 /**
  * The JAXB POJOs for the
- * <a href="http://activemq.apache.org/camel/xml-configuration.html">XML Configuration</a>
+ * <a href="http://camel.apache.org/xml-configuration.html">XML Configuration</a>
  * of the routing rules.
  */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)

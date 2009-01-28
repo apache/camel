@@ -55,7 +55,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Some core java.io based <a
- * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  *
  * @version $Revision$
  */

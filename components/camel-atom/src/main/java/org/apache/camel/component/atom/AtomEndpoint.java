@@ -31,7 +31,7 @@ import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * An <a href="http://activemq.apache.org/camel/atom.html">Atom Endpoint</a>.
+ * An <a href="http://camel.apache.org/atom.html">Atom Endpoint</a>.
  *
  * @version $Revision$
  */

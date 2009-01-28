@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Testing http://activemq.apache.org/camel/dsl.html
+ * Testing http://camel.apache.org/dsl.html
  */
 public class InterceptorPredicateProceedAndStopTest extends ContextTestSupport {
 

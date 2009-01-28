@@ -27,7 +27,7 @@ import org.iso_relax.verifier.VerifierConfigurationException;
 import org.iso_relax.verifier.jaxp.validation.RELAXNGSchemaFactoryImpl;
 
 /**
- * The <a href="http://activemq.apache.org/camel/msv.html">MSV Component</a> uses the
+ * The <a href="http://camel.apache.org/msv.html">MSV Component</a> uses the
  * <a href="https://msv.dev.java.net/">MSV library</a> to perform XML validation using pluggable XML schema languages.
  *
  * @version $Revision$

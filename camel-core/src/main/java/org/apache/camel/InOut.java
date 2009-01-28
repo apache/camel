@@ -25,8 +25,8 @@ import java.lang.annotation.Target;
 /**
  * Marks a method as being {@link ExchangePattern#InOut} when a class or interface has been annotated with
  * {@link InOnly} when using
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a> or
- * <a href="http://activemq.apache.org/camel/spring-remoting.html">Spring Remoting</a>.
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> or
+ * <a href="http://camel.apache.org/spring-remoting.html">Spring Remoting</a>.
  *
  * This annotation is only intended to be used on methods which the class or interface has been annotated with
  * a default exchange pattern annotation such as {@link InOnly} or {@link Pattern}

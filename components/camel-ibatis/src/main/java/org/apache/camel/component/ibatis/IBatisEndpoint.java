@@ -36,7 +36,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * An <a href="http://activemq.apache.org/camel/ibatis.html>iBatis Endpoint</a>
+ * An <a href="http://camel.apache.org/ibatis.html>iBatis Endpoint</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  *
  * @version $Revision$

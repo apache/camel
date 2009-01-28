@@ -35,7 +35,7 @@ import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.DeadLetterChannel;
 
 /**
- * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a>.
+ * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
  *
  * @version $Revision$
  */

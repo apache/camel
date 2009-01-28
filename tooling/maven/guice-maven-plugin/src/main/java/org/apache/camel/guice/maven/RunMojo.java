@@ -55,7 +55,7 @@ import org.codehaus.mojo.exec.Property;
 /**
  * Runs a Camel using the
  * <code>jndi.properties</code> file on the classpath as the
- * way to <a href="http://activemq.apache.org/camel/guice.html">bootstrap Camel using Guice</a>
+ * way to <a href="http://camel.apache.org/guice.html">bootstrap Camel using Guice</a>
  *
  * @goal run
  * @requiresDependencyResolution runtime

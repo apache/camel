@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
- * An <a href="http://activemq.apache.org/camel/xslt.html">XSLT Component</a>
+ * An <a href="http://camel.apache.org/xslt.html">XSLT Component</a>
  * for performing XSLT transforms of messages
  *
  * @version $Revision$

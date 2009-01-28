@@ -22,7 +22,7 @@ import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/simple.html">simple language</a>
+ * A <a href="http://camel.apache.org/simple.html">simple language</a>
  * which maps simple property style notations to access headers and bodies.
  * Examples of supported expressions are:
  * <ul>

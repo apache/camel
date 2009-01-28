@@ -24,7 +24,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 /**
  * Test case derived from:
- * http://activemq.apache.org/camel/transactional-client.html and Martin
+ * http://camel.apache.org/transactional-client.html and Martin
  * Krasser's sample:
  * http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  * NOTE: had to split into separate test classes as I was unable to fully tear

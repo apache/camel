@@ -41,7 +41,7 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.piccolo.xml.XMLStreamReader;
 
 /**
- * A <a href="http://activemq.apache.org/camel/type-coverter.html">Type Converter</a>
+ * A <a href="http://camel.apache.org/type-coverter.html">Type Converter</a>
  * of XMLBeans objects
  *
  * @version $Revision$

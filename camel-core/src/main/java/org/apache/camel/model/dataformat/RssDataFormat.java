@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * Represents a <a href="http://activemq.apache.org/camel/rss.html">RSS</a> {@link org.apache.camel.spi.DataFormat}.
+ * Represents a <a href="http://camel.apache.org/rss.html">RSS</a> {@link org.apache.camel.spi.DataFormat}.
  *
  */
 @XmlRootElement(name = "rss")

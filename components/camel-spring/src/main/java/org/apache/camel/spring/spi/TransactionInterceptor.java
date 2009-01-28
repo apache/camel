@@ -35,7 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
- * The <a href="http://activemq.apache.org/camel/transactional-client.html">Transactional Client</a>
+ * The <a href="http://camel.apache.org/transactional-client.html">Transactional Client</a>
  * EIP pattern.
  *
  * @version $Revision$

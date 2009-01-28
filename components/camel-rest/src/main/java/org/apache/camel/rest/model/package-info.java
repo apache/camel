@@ -17,7 +17,7 @@
 
 /**
  * The JAXB POJOs for the
- * <a href="http://activemq.apache.org/camel/rest.html">Camel REST Support</a>
+ * <a href="http://camel.apache.org/rest.html">Camel REST Support</a>
  */
 @javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/rest", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.rest.model;

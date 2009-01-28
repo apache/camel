@@ -32,7 +32,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/http.html">HTTP
+ * Defines the <a href="http://camel.apache.org/http.html">HTTP
  * Component</a>
  *
  * @version $Revision$

@@ -246,7 +246,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
 
     /**
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the ExchangePattern {@link ExchangePattern} into the exchange
      *
      * @param exchangePattern  instance of {@link ExchangePattern}
@@ -258,7 +258,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOnly
      *
      *
@@ -270,8 +270,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoint using an
-     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
@@ -282,8 +282,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoint using an
-     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or 
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or 
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
@@ -295,8 +295,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      *
      * @param uris  list of endpoints to send to
      * @return the builder
@@ -308,8 +308,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -320,8 +320,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/event-message.html">Event Message</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOnly exchange pattern</a>
+     * <a href="http://camel.apache.org/event-message.html">Event Message</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOnly exchange pattern</a>
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -332,7 +332,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
 
     /**
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">ExchangePattern:</a>
+     * <a href="http://camel.apache.org/exchange-pattern.html">ExchangePattern:</a>
      * set the exchange's ExchangePattern {@link ExchangePattern} to be InOut
      *
      *
@@ -344,8 +344,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoint using an
-     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      *
      * @param uri The endpoint uri which is used for sending the exchange
      * @return the builder
@@ -357,8 +357,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoint using an
-     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      *
      * @param endpoint The endpoint which is used for sending the exchange
      * @return the builder
@@ -369,8 +369,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      *
      * @param uris  list of endpoints to send to
      * @return the builder
@@ -382,8 +382,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -394,8 +394,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Sends the message to the given endpoints using an
-     * <a href="http://activemq.apache.org/camel/request-reply.html">Request Reply</a> or
-     * <a href="http://activemq.apache.org/camel/exchange-pattern.html">InOut exchange pattern</a>
+     * <a href="http://camel.apache.org/request-reply.html">Request Reply</a> or
+     * <a href="http://camel.apache.org/exchange-pattern.html">InOut exchange pattern</a>
      *
      * @param endpoints  list of endpoints to send to
      * @return the builder
@@ -406,7 +406,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
 
     /**
-     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -420,7 +420,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -439,7 +439,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/multicast.html">Multicast EIP:</a>
+     * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
      * Multicasts messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors
      * interfering with each other.
@@ -456,7 +456,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -469,7 +469,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -482,7 +482,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/pipes-nd-filters.html">Pipes and Filters EIP:</a>
+     * <a href="http://camel.apache.org/pipes-nd-filters.html">Pipes and Filters EIP:</a>
      * Creates a {@link Pipeline} of the list of endpoints so that the message
      * will get processed by each endpoint in turn and for request/response the
      * output of one endpoint will be the input of the next endpoint
@@ -539,7 +539,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
     
     /**
-     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *      
@@ -552,7 +552,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
@@ -568,7 +568,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent consumer EIP:</a>
+     * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages
      *
@@ -583,7 +583,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -596,7 +596,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate which is applied and only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -610,7 +610,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -625,7 +625,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-filter.html">Message Filter EIP:</a>
+     * <a href="http://camel.apache.org/message-filter.html">Message Filter EIP:</a>
      * Creates a predicate language expression which only if it is <tt>true</tt> then the
      * exchange is forwarded to the destination
      *
@@ -638,7 +638,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/load-balancer.html">Load Balancer EIP:</a>
+     * <a href="http://camel.apache.org/load-balancer.html">Load Balancer EIP:</a>
      * Creates a loadbalance
      *
      * @return  the builder
@@ -651,7 +651,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
 
     /**
-     * <a href="http://activemq.apache.org/camel/content-based-router.html">Content Based Router EIP:</a>
+     * <a href="http://camel.apache.org/content-based-router.html">Content Based Router EIP:</a>
      * Creates a choice of one or more predicates with an otherwise clause
      *
      * @return the builder for a choice expression
@@ -674,7 +674,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List EIP:</a>
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
      * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
      *
      * @param recipients expression to decide the destinations
@@ -687,7 +687,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/recipient-list.html">Recipient List EIP:</a>
+     * <a href="http://camel.apache.org/recipient-list.html">Recipient List EIP:</a>
      * Creates a dynamic recipient list allowing you to route messages to a number of dynamically specified recipients
      *
      * @return the expression clause to configure the expression to decide the destinations
@@ -701,7 +701,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
+     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
      *
@@ -718,7 +718,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip EIP:</a>
+     * <a href="http://camel.apache.org/routing-slip.html">Routing Slip EIP:</a>
      * Creates a routing slip allowing you to route a message consecutively through a series of processing
      * steps where the sequence of steps is not known at design time and can vary for each message.
      * <p>
@@ -735,7 +735,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * This splitter responds with the latest message returned from destination
@@ -750,7 +750,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * This splitter responds with the latest message returned from destination
@@ -766,7 +766,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -783,7 +783,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -800,7 +800,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -818,7 +818,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -839,7 +839,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -857,7 +857,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      /**
-      * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+      * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
       * Creates a splitter allowing you split a message into a number of pieces and process them individually.
       * <p>
       * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -876,7 +876,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -897,7 +897,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -920,7 +920,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }    
     
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -939,7 +939,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/splitter.html">Splitter EIP:</a>
+     * <a href="http://camel.apache.org/splitter.html">Splitter EIP:</a>
      * Creates a splitter allowing you split a message into a number of pieces and process them individually.
      * <p>
      * The splitter responds with the answer produced by the given {@link AggregationStrategy}.
@@ -961,7 +961,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }   
     
     /**
-     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
      * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @return the expression clause for the expressions on which to compare messages in order
@@ -975,7 +975,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
      * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @param expression the expression on which to compare messages in order
@@ -986,7 +986,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
      * Creates a resequencer allowing you to reorganize messages based on some comparator.
      *
      * @param expressions the list of expressions on which to compare messages in order
@@ -999,7 +999,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer EIP:</a>
+     * <a href="http://camel.apache.org/resequencer.html">Resequencer EIP:</a>
      * Creates a splitter allowing you to reorganise messages based on some comparator.
      *
      * @param expressions the list of expressions on which to compare messages in order
@@ -1012,7 +1012,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @return the expression clause to be used as builder to configure the correlation expression
@@ -1024,7 +1024,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param aggregationStrategy the strategy used for the aggregation
@@ -1038,7 +1038,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param aggregationCollection the collection used to perform the aggregation
@@ -1052,7 +1052,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param correlationExpression the expression used to calculate the
@@ -1068,7 +1068,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/aggregator.html">Aggregator EIP:</a>
+     * <a href="http://camel.apache.org/aggregator.html">Aggregator EIP:</a>
      * Creates an aggregator allowing you to combine a number of messages together into a single message.
      *
      * @param correlationExpression the expression used to calculate the
@@ -1085,7 +1085,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
      * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
@@ -1097,7 +1097,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
      * @param processAtExpression  an expression to calculate the time at which the messages should be processed,
@@ -1112,7 +1112,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
      * @return the expression clause to create the expression
@@ -1124,7 +1124,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/delayer.html">Delayer EIP:</a>
+     * <a href="http://camel.apache.org/delayer.html">Delayer EIP:</a>
      * Creates a delayer allowing you to delay the delivery of messages to some destination.
      *
      * @param delay  the default delay in millis
@@ -1135,7 +1135,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/throttler.html">Throttler EIP:</a>
+     * <a href="http://camel.apache.org/throttler.html">Throttler EIP:</a>
      * Creates a throttler allowing you to ensure that a specific endpoint does not get overloaded,
      * or that we don't exceed an agreed SLA with some external service.
      * <p/>
@@ -1152,7 +1152,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
      * in a different way. Useful mostly for testing.
      *
@@ -1165,7 +1165,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
      * in a different way. Useful mostly for testing.
      *
@@ -1180,7 +1180,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/loop.html">Loop EIP:</a>
+     * <a href="http://camel.apache.org/loop.html">Loop EIP:</a>
      * Creates a loop allowing to process the a message a number of times and possibly process them
      * in a different way. Useful mostly for testing.
      *
@@ -1377,7 +1377,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
      * for cathing certain exceptions and handling them.
      *
      * @param exceptionType  the exception to catch
@@ -1439,7 +1439,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Installs the given <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a> builder.
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder.
      *
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
@@ -1450,7 +1450,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * Configures whether or not the <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Configures whether or not the <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * is inherited by every processing node (or just the top most one)
      *
      * @param condition the flag as to whether error handlers should be inherited or not
@@ -1465,7 +1465,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // -------------------------------------------------------------------------
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
@@ -1479,7 +1479,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds the custom processor reference to this destination which could be a final
      * destination, or could be a transformation in a pipeline
      *
@@ -1494,7 +1494,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
@@ -1508,7 +1508,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param bean  the bean to invoke
@@ -1524,7 +1524,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
@@ -1538,7 +1538,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
@@ -1554,7 +1554,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
@@ -1567,7 +1567,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
      *
      * @param ref  reference to a bean to lookup in the registry
@@ -1581,7 +1581,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the IN message
      *
      * @return a expression builder clause to set the body
@@ -1594,7 +1594,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the IN message
      *
      * @param expression   the expression used to set the body
@@ -1607,7 +1607,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the OUT message
      *
      * @param expression   the expression used to set the body
@@ -1620,7 +1620,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/message-translator.html">Message Translator EIP:</a>
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the OUT message
      *
      * @return a expression builder clause to set the body
@@ -1792,7 +1792,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // -------------------------------------------------------------------------
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Unmarshals the in body using a {@link DataFormat} expression to define
      * the format of the input message and the output will be set on the out message body.
      *
@@ -1803,7 +1803,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1816,7 +1816,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1828,7 +1828,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Unmarshals the in body using the specified {@link DataFormat}
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.
@@ -1842,7 +1842,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Marshals the in body using a {@link DataFormat} expression to define
      * the format of the output which will be added to the out body.
      *
@@ -1853,7 +1853,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1866,7 +1866,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Marshals the in body using the specified {@link DataFormat}
      * and sets the output on the out message body.
      *
@@ -1878,7 +1878,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/data-format.html">DataFormat:</a>
+     * <a href="http://camel.apache.org/data-format.html">DataFormat:</a>
      * Marshals the in body the specified {@link DataFormat}
      * reference in the {@link org.apache.camel.spi.Registry} and sets
      * the output on the out message body.

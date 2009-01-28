@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 
 /**
  * Represents a
- * <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * <a href="http://camel.apache.org/data-format.html">data format</a>
  * used to marshal objects to and from streams
  * such as Java Serialization or using JAXB2 to encode/decode objects using XML
  * or using SOAP encoding.

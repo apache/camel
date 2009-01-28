@@ -19,7 +19,7 @@ package org.apache.camel;
 
 /**
  * A pluggable strategy to be able to convert objects <a
- * href="http://activemq.apache.org/camel/type-converter.html">to different
+ * href="http://camel.apache.org/type-converter.html">to different
  * types</a> such as to and from String, InputStream/OutputStream,
  * Reader/Writer, Document, byte[], ByteBuffer etc
  * 

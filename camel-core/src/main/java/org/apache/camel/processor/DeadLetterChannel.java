@@ -37,7 +37,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Implements a <a
- * href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter
+ * href="http://camel.apache.org/dead-letter-channel.html">Dead Letter
  * Channel</a> after attempting to redeliver the message using the
  * {@link RedeliveryPolicy}
  *

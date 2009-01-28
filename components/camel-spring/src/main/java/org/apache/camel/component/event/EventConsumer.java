@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
- * An <a href="http://activemq.apache.org/camel/event.html">Event Consumer</a>
+ * An <a href="http://camel.apache.org/event.html">Event Consumer</a>
  * for working with Spring ApplicationEvents
  *
  * @version $Revision$

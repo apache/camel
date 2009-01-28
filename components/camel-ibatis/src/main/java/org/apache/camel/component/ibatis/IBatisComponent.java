@@ -32,7 +32,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
- * An <a href="http://activemq.apache.org/camel/ibatis.html>iBatis Component</a>
+ * An <a href="http://camel.apache.org/ibatis.html>iBatis Component</a>
  * for performing SQL operations using an XML mapping file to abstract away the SQL
  *
  * @version $Revision$

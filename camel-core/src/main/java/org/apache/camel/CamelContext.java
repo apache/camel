@@ -263,7 +263,7 @@ public interface CamelContext extends Service {
     /**
      * Creates a new ProducerTemplate.
      * <p/>
-     * See this FAQ before use: <a href="http://activemq.apache.org/camel/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
      * Why does Camel use too many threads with ProducerTemplate?</a>
      *
      * @return the template

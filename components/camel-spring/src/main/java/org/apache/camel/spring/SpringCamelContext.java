@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * A Spring aware implementation of {@link org.apache.camel.CamelContext} which
  * will automatically register itself with Springs lifecycle methods plus allows
  * spring to be used to customize a any <a
- * href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  * as well as supporting accessing components and beans via the Spring
  * {@link ApplicationContext}
  *

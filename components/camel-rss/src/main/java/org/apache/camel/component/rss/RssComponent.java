@@ -24,7 +24,7 @@ import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * An <a href="http://activemq.apache.org/camel/rss.html">RSS Component</a>.
+ * An <a href="http://camel.apache.org/rss.html">RSS Component</a>.
  * <p/>
  * Camel uses <a href="https://rome.dev.java.net/">ROME</a> as the RSS implementation.  
  *

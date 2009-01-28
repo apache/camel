@@ -24,13 +24,13 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/bean-language.html">bean language</a>
+ * A <a href="http://camel.apache.org/bean-language.html">bean language</a>
  * which uses a simple text notation to invoke methods on beans to evaluate predicates or expressions
  * <p/>
  * The notation is essentially <code>beanName.methodName</code> which is then invoked using the
- * beanName to lookup in the <a href="http://activemq.apache.org/camel/registry.html>registry</a>
+ * beanName to lookup in the <a href="http://camel.apache.org/registry.html>registry</a>
  * then the method is invoked to evaluate the expression using the
- * <a href="http://activemq.apache.org/camel/bean-integration.html">bean integration</a> to bind the
+ * <a href="http://camel.apache.org/bean-integration.html">bean integration</a> to bind the
  * {@link Exchange} to the method arguments.
  * <p/>
  * As of Camel 1.5 the bean language also supports invoking a provided bean by

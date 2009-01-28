@@ -34,7 +34,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 
 /**
- * An <a href="http://activemq.apache.org/camel/event.html">Event Endpoint</a>
+ * An <a href="http://camel.apache.org/event.html">Event Endpoint</a>
  * for working with Spring ApplicationEvents
  *
  * @version $Revision$
