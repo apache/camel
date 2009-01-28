@@ -5,7 +5,7 @@ Welcome to the Camel XMPP transport for communicating with Jabber servers.
 
 For more details see
 
-  http://activemq.apache.org/camel/xmpp.html
+  http://camel.apache.org/xmpp.html
 
 
 Using Spring based xml configuration in 'activemq.xml'

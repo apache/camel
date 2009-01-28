@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * For MVEL expressions and predicates
  *
- * @version $Revision:$
+ * @version $Revision$
  */
 @XmlRootElement(name = "mvel")
 public class MvelExpression extends ExpressionType {
