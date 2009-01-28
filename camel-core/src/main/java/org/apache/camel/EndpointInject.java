@@ -28,7 +28,7 @@ import org.apache.camel.spi.Registry;
  * Used to indicate an injection point of an {@link Endpoint}, {@link Producer} or
  * {@link ProducerTemplate} into a POJO.
  *
- * A <a href="http://activemq.apache.org/camel/uris.html">URI</a> for an endpoint
+ * A <a href="http://camel.apache.org/uris.html">URI</a> for an endpoint
  * can be specified on this annotation, or a name can be specified which is resolved in the
  * {@link Registry} such as in your Spring ApplicationContext.
  *

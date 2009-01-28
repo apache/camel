@@ -22,8 +22,8 @@ import java.io.Serializable;
  * The base policy used when a fixed delay is needed.
  * <p/>
  * This policy is used by
- * <a href="http://activemq.apache.org/camel/transactional-client.html">Transactional client</a>
- * and <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel</a>.
+ * <a href="http://camel.apache.org/transactional-client.html">Transactional client</a>
+ * and <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel</a>.
  *
  * The default values is:
  * <ul>

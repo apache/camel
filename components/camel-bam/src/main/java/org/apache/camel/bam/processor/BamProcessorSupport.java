@@ -33,7 +33,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A base {@link Processor} for working on <a
- * href="http://activemq.apache.org/camel/bam.html">BAM</a> which a derived
+ * href="http://camel.apache.org/bam.html">BAM</a> which a derived
  * class would do the actual persistence such as the {@link JpaBamProcessor}
  *
  * @version $Revision$

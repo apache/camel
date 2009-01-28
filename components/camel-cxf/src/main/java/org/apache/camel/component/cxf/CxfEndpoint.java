@@ -56,7 +56,7 @@ import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Message;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>.
+ * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>.
  * It contains a list of properties for CXF endpoint including {@link DataFormat}, 
  * {@link CxfBinding}, and {@link HeaderFilterStrategy}.  The default DataFormat 
  * mode is {@link DataFormat#POJO}.  

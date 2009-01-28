@@ -32,7 +32,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 
 /**
  * An implementation of the <a
- * href="http://activemq.apache.org/camel/queue.html">Queue components</a> for
+ * href="http://camel.apache.org/queue.html">Queue components</a> for
  * asynchronous SEDA exchanges on a {@link BlockingQueue} within a CamelContext
  *
  * @version $Revision$

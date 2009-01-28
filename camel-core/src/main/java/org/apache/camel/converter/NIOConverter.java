@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Some core java.nio based
- * <a href="http://activemq.apache.org/camel/type-converter.html">Type Converters</a>
+ * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  *
  * @version $Revision$
  */

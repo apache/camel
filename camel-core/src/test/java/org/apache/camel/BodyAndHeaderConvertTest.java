@@ -71,6 +71,6 @@ public class BodyAndHeaderConvertTest extends TestCase {
         Message message = exchange.getIn();
         message.setBody("<hello>world!</hello>");
         message.setHeader("bar", 567);
-        message.addAttachment("att", new DataHandler(new URLDataSource(new URL("http://activemq.apache.org/camel/message.html"))));
+        message.addAttachment("att", new DataHandler(new URLDataSource(new URL("http://camel.apache.org/message.html"))));
     }
 }

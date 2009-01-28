@@ -17,11 +17,11 @@
 package org.apache.camel;
 
 /**
- * An <a href="http://activemq.apache.org/camel/expression.html">expression</a>
+ * An <a href="http://camel.apache.org/expression.html">expression</a>
  * provides a plugin strategy for evaluating expressions on a message exchange to support things like
- * <a href="http://activemq.apache.org/camel/scripting-languages.html">scripting languages</a>,
- * <a href="http://activemq.apache.org/camel/xquery.html">XQuery</a>
- * or <a href="http://activemq.apache.org/camel/sql.html">SQL</a> as well
+ * <a href="http://camel.apache.org/scripting-languages.html">scripting languages</a>,
+ * <a href="http://camel.apache.org/xquery.html">XQuery</a>
+ * or <a href="http://camel.apache.org/sql.html">SQL</a> as well
  * as any arbitrary Java expression.
  *
  *

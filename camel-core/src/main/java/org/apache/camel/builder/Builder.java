@@ -21,9 +21,9 @@ import org.apache.camel.Expression;
 
 /**
  * A helper class for including portions of the <a
- * href="http://activemq.apache.org/camel/expression.html">expression</a> and
- * <a href="http://activemq.apache.org/camel/predicate.html">predicate</a> <a
- * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
+ * href="http://camel.apache.org/expression.html">expression</a> and
+ * <a href="http://camel.apache.org/predicate.html">predicate</a> <a
+ * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
  * @version $Revision$
  */
@@ -36,7 +36,7 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
      * @param beanRef  reference to bean to lookup in the Registry
@@ -48,7 +48,7 @@ public final class Builder {
     }
 
     /**
-     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
      * @param beanRef  reference to bean to lookup in the Registry

@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * A <a href="http://activemq.apache.org/camel/component.html">component</a> is
+ * A <a href="http://camel.apache.org/component.html">component</a> is
  * a factory of {@link Endpoint} objects.
  * 
  * @version $Revision$

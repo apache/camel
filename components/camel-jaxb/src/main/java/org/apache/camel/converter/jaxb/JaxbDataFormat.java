@@ -31,7 +31,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a> ({@link DataFormat})
+ * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using JAXB2 to marshal to and from XML
  *
  * @version $Revision$

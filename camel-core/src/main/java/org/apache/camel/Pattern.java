@@ -24,8 +24,8 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a method as having a specific kind of {@link ExchangePattern} for use with
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a> or
- * <a href="http://activemq.apache.org/camel/spring-remoting.html">Spring Remoting</a>
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a> or
+ * <a href="http://camel.apache.org/spring-remoting.html">Spring Remoting</a>
  * to overload the default value which is {@link ExchangePattern#InOut} for request/reply if no annotations are used.
  *
  * There are abbreviation annotations like {@link InOnly} or {@link InOut} which are typically used for

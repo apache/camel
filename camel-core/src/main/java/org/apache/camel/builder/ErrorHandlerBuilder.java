@@ -23,7 +23,7 @@ import org.apache.camel.model.ExceptionType;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * A builder of a <a href="http://activemq.apache.org/camel/error-handler.html">Error Handler</a>
+ * A builder of a <a href="http://camel.apache.org/error-handler.html">Error Handler</a>
  *
  * @version $Revision$
  */

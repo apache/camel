@@ -26,7 +26,7 @@ import java.lang.annotation.Target;
  * Used to indicate a method on a POJO which is used as a {@link Consumer} of
  * {@link Exchange} instances to process {@link Message} instances.
  * 
- * Either a <a href="http://activemq.apache.org/camel/uris.html">URI</a> for an
+ * Either a <a href="http://camel.apache.org/uris.html">URI</a> for an
  * endpoint should be configured, or a name of an endpoint which refers to a
  * Spring bean name in your Spring ApplicationContext.
  * 

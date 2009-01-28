@@ -27,7 +27,7 @@ import org.apache.camel.language.LanguageAnnotation;
 /**
  * An annotation used to inject a <a href="http://commons.apache.org/jxpath/">JXPath</a>
  * expression into a method parameter when using
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  *
  * @version $Revision$
  */

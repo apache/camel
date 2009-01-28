@@ -30,8 +30,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A <a href="http://activemq.apache.org/camel/test.html">Test Endpoint</a> is a
- * <a href="http://activemq.apache.org/camel/mock.html">Mock Endpoint</a> for testing but it will
+ * A <a href="http://camel.apache.org/test.html">Test Endpoint</a> is a
+ * <a href="http://camel.apache.org/mock.html">Mock Endpoint</a> for testing but it will
  * pull all messages from the nested endpoint and use those as expected message body assertions.
  *
  * @version $Revision$

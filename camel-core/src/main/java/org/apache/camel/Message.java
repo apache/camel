@@ -23,7 +23,7 @@ import javax.activation.DataHandler;
 
 /**
  * Implements the <a
- * href="http://activemq.apache.org/camel/message.html">Message</a> pattern and
+ * href="http://camel.apache.org/message.html">Message</a> pattern and
  * represents an inbound or outbound message as part of an {@link Exchange}
  *
  * @version $Revision$

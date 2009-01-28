@@ -27,7 +27,7 @@ import org.apache.camel.Service;
 
 /**
  * A {@link Route} which starts with an
- * <a href="http://activemq.apache.org/camel/event-driven-consumer.html">Event Driven Consumer</a>
+ * <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>
  *
  * @version $Revision$
  */

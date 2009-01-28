@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Component</a> 
+ * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a> 
  * 
  * @version $Revision$
  */

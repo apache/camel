@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * A <a href="http://activemq.apache.org/camel/routes.html">Route</a>
+ * A <a href="http://camel.apache.org/routes.html">Route</a>
  * defines the processing used on an inbound message exchange
  * from a specific {@link Endpoint} within a {@link CamelContext}
  *

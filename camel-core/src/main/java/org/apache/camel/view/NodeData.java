@@ -67,13 +67,13 @@ public class NodeData {
             FromType fromType = (FromType)node;
             this.tooltop = fromType.getLabel();
             this.label = removeQueryString(this.tooltop);
-            this.url = "http://activemq.apache.org/camel/message-endpoint.html";
+            this.url = "http://camel.apache.org/message-endpoint.html";
         } else if (node instanceof ToType) {
             ToType toType = (ToType)node;
             this.tooltop = toType.getLabel();
             this.label = removeQueryString(this.tooltop);
             this.edgeLabel = "";
-            this.url = "http://activemq.apache.org/camel/message-endpoint.html";
+            this.url = "http://camel.apache.org/message-endpoint.html";
         } else if (node instanceof FilterType) {
             this.image = imagePrefix + "MessageFilterIcon.png";
             this.label = "Filter";
@@ -82,11 +82,11 @@ public class NodeData {
             this.image = imagePrefix + "MessageFilterIcon.png";
             this.nodeType = "When Filter";
             this.label = "When";
-            this.url = "http://activemq.apache.org/camel/content-based-router.html";
+            this.url = "http://camel.apache.org/content-based-router.html";
         } else if (node instanceof OtherwiseType) {
             this.nodeType = "Otherwise";
             this.edgeLabel = "";
-            this.url = "http://activemq.apache.org/camel/content-based-router.html";
+            this.url = "http://camel.apache.org/content-based-router.html";
             this.tooltop = "Otherwise";
         } else if (node instanceof ChoiceType) {
             this.image = imagePrefix + "ContentBasedRouterIcon.png";
@@ -106,7 +106,7 @@ public class NodeData {
         } else if (node instanceof RoutingSlipType) {
             this.image = imagePrefix + "RoutingTableIcon.png";
             this.nodeType = "Routing Slip";
-            this.url = "http://activemq.apache.org/camel/routing-slip.html";
+            this.url = "http://camel.apache.org/routing-slip.html";
             this.tooltop = ((RoutingSlipType) node).getHeaderName();
         } else if (node instanceof SplitterType) {
             this.image = imagePrefix + "SplitterIcon.png";
@@ -159,7 +159,7 @@ public class NodeData {
             }
         }
         if (isEmpty(this.url) && isNotEmpty(this.nodeType)) {
-            this.url = "http://activemq.apache.org/camel/" + this.nodeType.toLowerCase().replace(' ', '-')
+            this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase().replace(' ', '-')
                        + ".html";
         }
         if (node instanceof ProcessorType && this.outputs == null) {

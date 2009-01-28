@@ -30,7 +30,7 @@ import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Implements a <a href="http://activemq.apache.org/camel/routing-slip.html">Routing Slip</a>
+ * Implements a <a href="http://camel.apache.org/routing-slip.html">Routing Slip</a>
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on the value of a message header.
  */

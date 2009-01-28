@@ -30,7 +30,7 @@ import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * An abstract class which implement <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
  *
  * @version $Revision$

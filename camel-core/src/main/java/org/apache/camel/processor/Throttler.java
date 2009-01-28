@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * A <a href="http://activemq.apache.org/camel/throttler.html">Throttler</a>
+ * A <a href="http://camel.apache.org/throttler.html">Throttler</a>
  * will set a limit on the maximum number of message exchanges which can be sent
  * to a processor within a specific time period. <p/> This pattern can be
  * extremely useful if you have some external system which meters access; such

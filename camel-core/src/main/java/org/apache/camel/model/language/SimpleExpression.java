@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * For expressions and predicates using the
- * <a href="http://activemq.apache.org/camel/simple.html>simple language</a>
+ * <a href="http://camel.apache.org/simple.html>simple language</a>
  *
  * @version $Revision$
  */

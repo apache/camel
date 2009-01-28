@@ -37,7 +37,7 @@ import java.util.Map;
  * </ul>
  * <p/>
  * <b>Important note on usage:</b> See this
- * <a href="http://activemq.apache.org/camel/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
+ * <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">FAQ entry</a>
  * before using.
  *
  * @version $Revision$

@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * An implementation of the <a
- * href="http://activemq.apache.org/camel/idempotent-consumer.html">Idempotent
+ * href="http://camel.apache.org/idempotent-consumer.html">Idempotent
  * Consumer</a> pattern.
  * 
  * @version $Revision$

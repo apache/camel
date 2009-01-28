@@ -22,7 +22,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ExpressionHelper;
 
 /**
- * A <a href="http://activemq.apache.org/camel/delayer.html">Delayer</a> which
+ * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which
  * delays processing the exchange until the correct amount of time has elapsed
  * using an expression to determine the delivery time. <p/> For example if you
  * wish to delay JMS messages by 25 seconds from their publish time you could

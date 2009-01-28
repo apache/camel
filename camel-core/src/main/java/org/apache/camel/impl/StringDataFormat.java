@@ -26,7 +26,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * The text based <a href="http://activemq.apache.org/camel/data-format.html">data format</a> supporting
+ * The text based <a href="http://camel.apache.org/data-format.html">data format</a> supporting
  * charset encoding.
  *
  * @version $Revision$

@@ -27,7 +27,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 
 /**
- * The <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * The <a href="http://camel.apache.org/data-format.html">data format</a>
  * using Java Serialiation.
  *
  * @version $Revision$

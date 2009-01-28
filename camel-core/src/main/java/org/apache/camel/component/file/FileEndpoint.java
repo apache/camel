@@ -42,7 +42,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A <a href="http://activemq.apache.org/camel/file.html">File Endpoint</a> for
+ * A <a href="http://camel.apache.org/file.html">File Endpoint</a> for
  * working with file systems
  *
  * @version $Revision$

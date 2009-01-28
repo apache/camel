@@ -31,7 +31,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * Base class for implementation inheritance for different clauses in the <a
- * href="http://activemq.apache.org/camel/dsl.html">Java DSL</a>
+ * href="http://camel.apache.org/dsl.html">Java DSL</a>
  *
  * @version $Revision$
  */
@@ -131,7 +131,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
      * @param beanRef  reference to bean to lookup in the Registry
@@ -142,7 +142,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Returns a <a href="http://activemq.apache.org/camel/bean-language.html">bean expression</a>
+     * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder
      *
      * @param beanRef  reference to bean to lookup in the Registry
@@ -221,7 +221,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates a disabled <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Creates a disabled <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * for removing the default error handler
      *
      * @return the builder
@@ -231,7 +231,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * which just logs errors
      *
      * @return the builder
@@ -241,7 +241,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * which just logs errors
      *
      * @return the builder
@@ -251,7 +251,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * which just logs errors
      *
      * @return the builder
@@ -261,7 +261,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * Creates an <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Creates an <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * which just logs errors
      *
      * @return the builder
@@ -271,7 +271,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
      * is a error handler for handling messages that could not be delivered to it's intented destination.
      *
      * @return the builder
@@ -281,7 +281,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
      * is a error handler for handling messages that could not be delivered to it's intented destination.
      *
      * @param deadLetterUri  uri to the dead letter endpoint storing dead messages
@@ -292,7 +292,7 @@ public abstract class BuilderSupport {
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/dead-letter-channel.html">Dead Letter Channel EIP:</a>
+     * <a href="http://camel.apache.org/dead-letter-channel.html">Dead Letter Channel EIP:</a>
      * is a error handler for handling messages that could not be delivered to it's intented destination.
      *
      * @param deadLetterEndpoint  dead letter endpoint storing dead messages

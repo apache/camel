@@ -36,7 +36,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
- * A <a href="http://activemq.apache.org/camel/dsl.html">Java DSL</a> which is
+ * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
  * used to build {@link Route} instances in a {@link CamelContext} for smart routing.
  *
  * @version $Revision$
@@ -94,7 +94,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Installs the given <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a> builder
+     * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
      * @param errorHandlerBuilder  the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
@@ -105,7 +105,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Configures whether or not the <a href="http://activemq.apache.org/camel/error-handler.html">error handler</a>
+     * Configures whether or not the <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * is inherited by every processing node (or just the top most one)
      *
      * @param inherit  whether error handlers should be inherited or not
@@ -148,7 +148,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
      * for catching certain exceptions and handling them.
      *
      * @param exception exception to catch
@@ -159,7 +159,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * <a href="http://activemq.apache.org/camel/exception-clause.html">Exception clause</a>
+     * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
      * for catching certain exceptions and handling them.
      *
      * @param exceptions list of exceptions to catch

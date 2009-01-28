@@ -27,7 +27,7 @@ import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.language.constant.ConstantLanguage;
 
 /**
- * A helper class for working with <a href="http://activemq.apache.org/camel/expression.html">expressions</a> based
+ * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a> based
  * on files.
  * <p/>
  * This expression expects the headers from the {@link FileLanguage} on the <b>IN</b> message.

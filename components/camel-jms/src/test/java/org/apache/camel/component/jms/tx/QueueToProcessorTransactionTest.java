@@ -23,7 +23,7 @@ import org.apache.log4j.Logger;
 
 /**
  * Test case derived from:
- *      http://activemq.apache.org/camel/transactional-client.html
+ *      http://camel.apache.org/transactional-client.html
  *  and
  *      Martin Krasser's sample: http://www.nabble.com/JMS-Transactions---How-To-td15168958s22882.html#a15198803
  *

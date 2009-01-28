@@ -28,7 +28,7 @@ import org.apache.camel.util.ExpressionComparator;
 import org.apache.camel.util.ExpressionListComparator;
 
 /**
- * An implementation of the <a href="http://activemq.apache.org/camel/resequencer.html">Resequencer</a>
+ * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
  *
  * @version $Revision$

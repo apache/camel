@@ -40,7 +40,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Default implementation of a type converter registry used for
- * <a href="http://activemq.apache.org/camel/type-converter.html">type converters</a> in Camel.
+ * <a href="http://camel.apache.org/type-converter.html">type converters</a> in Camel.
  *
  * @version $Revision$
  */

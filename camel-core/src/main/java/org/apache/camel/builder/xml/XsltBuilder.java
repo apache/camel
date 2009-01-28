@@ -42,7 +42,7 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
- * Creates a <a href="http://activemq.apache.org/camel/processor.html">Processor</a>
+ * Creates a <a href="http://camel.apache.org/processor.html">Processor</a>
  * which performs an XSLT transformation of the IN message body
  *
  * @version $Revision$

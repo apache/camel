@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
- * The <a href="http://activemq.apache.org/camel/file.html">File Component</a>
+ * The <a href="http://camel.apache.org/file.html">File Component</a>
  * for working with file systems
  *
  * @version $Revision$

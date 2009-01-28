@@ -28,7 +28,7 @@ import org.apache.camel.util.URISupport;
 
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/cxf.html">SOAP Component</a>
+ * Defines the <a href="http://camel.apache.org/cxf.html">SOAP Component</a>
  *
  * @version $Revision$
  */

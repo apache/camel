@@ -24,7 +24,7 @@ import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * An <a href="http://activemq.apache.org/camel/atom.html">Atom Component</a>.
+ * An <a href="http://camel.apache.org/atom.html">Atom Component</a>.
  * <p/>
  * Camel uses Apache Abdera as the Atom implementation. 
  *

@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.CamelContextHelper;
 
 /**
- * Component for <a href="http://activemq.apache.org/camel/dataset.html">DataSet</a>.
+ * Component for <a href="http://camel.apache.org/dataset.html">DataSet</a>.
  *
  * @version $Revision$
  */

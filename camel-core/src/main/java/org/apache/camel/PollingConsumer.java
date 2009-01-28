@@ -18,7 +18,7 @@ package org.apache.camel;
 
 /**
  * Represents a <a
- * href="http://activemq.apache.org/camel/polling-consumer.html">Polling
+ * href="http://camel.apache.org/polling-consumer.html">Polling
  * Consumer</a> where the caller polls for messages when it is ready.
  * 
  * @version $Revision$

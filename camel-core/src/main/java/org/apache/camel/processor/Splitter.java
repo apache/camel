@@ -36,7 +36,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Implements a dynamic <a
- * href="http://activemq.apache.org/camel/splitter.html">Splitter</a> pattern
+ * href="http://camel.apache.org/splitter.html">Splitter</a> pattern
  * where an expression is evaluated to iterate through each of the parts of a
  * message and then each part is then send to some endpoint.
  *

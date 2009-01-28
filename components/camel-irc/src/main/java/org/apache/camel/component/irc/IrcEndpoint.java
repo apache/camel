@@ -24,7 +24,7 @@ import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 
 /**
- * Defines the <a href="http://activemq.apache.org/camel/irc.html">IRC Endpoint</a>
+ * Defines the <a href="http://camel.apache.org/irc.html">IRC Endpoint</a>
  *
  * @version $Revision$
  */

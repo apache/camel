@@ -48,7 +48,7 @@ public abstract class GraphGeneratorSupport {
     protected String extension;
 
     //private String imagePrefix = "http://www.enterpriseintegrationpatterns.com/img/";
-    private String imagePrefix = "http://activemq.apache.org/camel/images/eip/";
+    private String imagePrefix = "http://camel.apache.org/images/eip/";
     private Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private boolean makeParentDirs = true;
     private Map<String, List<RouteType>> routeGroupMap;

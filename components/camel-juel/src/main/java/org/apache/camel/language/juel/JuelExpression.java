@@ -35,8 +35,8 @@ import org.apache.camel.impl.ExpressionSupport;
 
 
 /**
- * The <a href="http://activemq.apache.org/camel/el.html">EL Language from JSP and JSF</a>
- * using the <a href="http://activemq.apache.org/camel/juel.html">JUEL library</a>
+ * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
+ * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
  *
  * @version $Revision$
  */

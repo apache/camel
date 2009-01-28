@@ -33,7 +33,7 @@ import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
- * A <a href="http://activemq.apache.org/camel/quartz.html">Quartz Component</a>
+ * A <a href="http://camel.apache.org/quartz.html">Quartz Component</a>
  *
  * @version $Revision:520964 $
  */

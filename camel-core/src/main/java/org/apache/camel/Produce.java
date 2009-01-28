@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 
 /**
  * Marks a field or property as being a producer to an {@link org.apache.camel.Endpoint} either via its
- * <a href="http://activemq.apache.org/camel/uris.html">URI</a> or via the name of the endpoint reference
+ * <a href="http://camel.apache.org/uris.html">URI</a> or via the name of the endpoint reference
  * which is then resolved in a registry such as the Spring Application Context.
  *
  * Methods invoked on the producer object are then converted to a message {@link org.apache.camel.Exchange} via the
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  * mechanism.
  *
  * @see InOnly

@@ -24,11 +24,11 @@ import java.lang.annotation.Target;
 
 /**
  * Subscribes a method to an {@link Endpoint} either via its
- * <a href="http://activemq.apache.org/camel/uris.html">URI</a> or via the name of the endpoint reference
+ * <a href="http://camel.apache.org/uris.html">URI</a> or via the name of the endpoint reference
  * which is then resolved in a registry such as the Spring Application Context.
  *
  * When a message {@link Exchange} is received from the {@link Endpoint} then the
- * <a href="http://activemq.apache.org/camel/bean-integration.html">Bean Integration</a>
+ * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
  * mechanism is used to map the incoming {@link Message} to the method parameters.
  * 
  * @version $Revision$
