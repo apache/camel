@@ -8,5 +8,5 @@ or to run the route from within maven try
 
 For more help see the Apache Camel documentation
 
-    http://activemq.apache.org/camel/
+    http://camel.apache.org/
     

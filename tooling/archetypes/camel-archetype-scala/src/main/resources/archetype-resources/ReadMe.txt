@@ -12,5 +12,5 @@ OSGi runtime.
 
 For more help see the Apache Camel documentation
 
-    http://activemq.apache.org/camel/
+    http://camel.apache.org/
 

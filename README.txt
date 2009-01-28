@@ -32,20 +32,20 @@ Getting Started
 To help you get started, try the following links:
 
 Getting Started
-  http://activemq.apache.org/camel/getting-started.html
+  http://camel.apache.org/getting-started.html
 
 Building
-  http://activemq.apache.org/camel/building.html
+  http://camel.apache.org/building.html
 
 We welcome contributions of all kinds, for details of how you can help
-  http://activemq.apache.org/contributing.html
+  http://camel.apache.org/contributing.html
 
 Please refer to the website for details of finding the issue tracker, 
 email lists, wiki or IRC channel
-  http://activemq.apache.org/camel/
+  http://camel.apache.org/
 
 If you hit any problems please talk to us on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback 
 you may have.

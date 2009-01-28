@@ -75,12 +75,12 @@ public class EndpointMessageListener implements MessageListener {
             JmsMessage body = null;
             if (exchange.isFailed()) {
                 if (exchange.getException() != null) {
-                    // an exception occured while processing
+                    // an exception occurred while processing
                     // TODO: Camel-585 somekind of flag to determine if we should send the exchange back to the client
                     // or do as now where we wrap as runtime exception to be thrown back to spring so it can do rollback
                     rce = wrapRuntimeCamelException(exchange.getException());
                 } else if (exchange.getFault().getBody() != null) {
-                    // a fault occured while processing
+                    // a fault occurred while processing
                     body = exchange.getFault();
                 }
             } else {
