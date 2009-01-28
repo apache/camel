@@ -3,11 +3,11 @@ Documentation Example
 
 This example creates a bunch of routes to show how the Maven reporting
 tools can visualise routes
-  http://activemq.apache.org/camel/docs-example.html
+  http://camel.apache.org/docs-example.html
 
 This example also acts as an integration test case for the GraphViz
 visualisation feature 
-  http://activemq.apache.org/camel/visualisation.html
+  http://camel.apache.org/visualisation.html
   
 You will need to compile this example first:
   mvn compile
@@ -15,7 +15,7 @@ You will need to compile this example first:
 NOTE before you run this example you MUST install GraphViz so that
 the 'dot' executable is available on your path. 
 See the camel:dot documentation for more information
-  http://activemq.apache.org/camel/camel-dot-maven-goal.html
+  http://camel.apache.org/camel-dot-maven-goal.html
 
 To run the example using Maven and generate the documentation type
   mvn camel:dot
@@ -35,7 +35,7 @@ src/main/java directory and the Spring XML configuration file in
 src/main/resources/META-INF/spring
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.  Enjoy!

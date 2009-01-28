@@ -24,10 +24,10 @@ it out online such as SoapUI.
 This project uses log4j as the logging and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/tutorial-axis-camel.html
+  http://camel.apache.org/tutorial-axis-camel.html
 
 If you hit any problems please talk to us on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.  Enjoy!

@@ -8,7 +8,7 @@ You will need to compile this example first:
   mvn compile
   
 For a background in BAM see
-  http://activemq.apache.org/camel/bam.html
+  http://camel.apache.org/bam.html
 
 To run the example with Maven, type
   mvn camel:run
@@ -54,10 +54,10 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/bam-example.html
+  http://camel.apache.org/bam-example.html
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

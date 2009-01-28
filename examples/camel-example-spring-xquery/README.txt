@@ -47,10 +47,10 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/spring-xquery-example.html
+  http://camel.apache.org/spring-xquery-example.html
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
