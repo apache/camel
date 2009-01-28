@@ -20,6 +20,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 
+//START SNIPPET: ex
 public class SendFileRecordsToQueueBean {
     @EndpointInject(uri="activemq:personnel.records")
     ProducerTemplate producer;
@@ -29,3 +30,4 @@ public class SendFileRecordsToQueueBean {
         producer.sendBody(body);
     }
 }
+//END SNIPPET: ex

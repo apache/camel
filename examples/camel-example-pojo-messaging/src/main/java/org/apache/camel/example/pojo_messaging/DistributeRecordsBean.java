@@ -20,6 +20,7 @@ import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;
 import org.apache.camel.language.XPath;
 
+//START SNIPPET: ex
 public class DistributeRecordsBean {
     @Consume(uri = "activemq:personnel.records")
     @RecipientList
@@ -33,3 +34,4 @@ public class DistributeRecordsBean {
         }
     }
 }
+//END SNIPPET: ex
