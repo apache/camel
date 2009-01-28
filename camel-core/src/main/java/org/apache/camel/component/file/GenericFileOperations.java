@@ -20,15 +20,19 @@ import java.util.List;
 
 public interface GenericFileOperations<T> {
 
-    // TODO: setEndpoint method so we have access to it
+    /**
+     * Sets the endpoint as some implementations need access to the endpoint and how its configured.
+     *
+     * @param endpoint the endpoint
+     */
+    void setEndpoint(GenericFileEndpoint endpoint);
 
     /**
      * Deletes the file name by name, relative to the current directory
      *
      * @param name name of the file
      * @return true if deleted, false if not
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean deleteFile(String name) throws GenericFileOperationFailedException;
 
@@ -38,8 +42,7 @@ public interface GenericFileOperations<T> {
      * @param from original name
      * @param to   the new name
      * @return true if renamed, false if not
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean renameFile(String from, String to) throws GenericFileOperationFailedException;
 
@@ -49,10 +52,8 @@ public interface GenericFileOperations<T> {
      *
      * @param directory the directory path to build as a relative string name
      * @param absolute wether the directory is an absolute or relative path
-     * @return true if build or already exists, false if not possbile (could be
-     *         lack of permissions)
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @return true if build or already exists, false if not possbile (could be lack of permissions)
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException;
 
@@ -62,8 +63,7 @@ public interface GenericFileOperations<T> {
      * @param name     name of the file
      * @param exchange stream to write the content of the file into
      * @return true if file has been retrieved, false if not
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean retrieveFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
@@ -73,8 +73,7 @@ public interface GenericFileOperations<T> {
      * @param name     name of new file
      * @param exchange with the content content of the file
      * @return true if the file was stored, false if not
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     boolean storeFile(String name, GenericFileExchange<T> exchange) throws GenericFileOperationFailedException;
 
@@ -82,8 +81,7 @@ public interface GenericFileOperations<T> {
      * Gets the current remote directory
      *
      * @return the current directory path
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     String getCurrentDirectory() throws GenericFileOperationFailedException;
 
@@ -91,8 +89,7 @@ public interface GenericFileOperations<T> {
      * Change the current remote directory
      *
      * @param path the path to change to
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     void changeCurrentDirectory(String path) throws GenericFileOperationFailedException;
 
@@ -100,8 +97,7 @@ public interface GenericFileOperations<T> {
      * List the files in the current directory
      *
      * @return a list of backing objects representing the files
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     List<T> listFiles() throws GenericFileOperationFailedException;
 
@@ -110,8 +106,7 @@ public interface GenericFileOperations<T> {
      *
      * @param path the remote directory
      * @return a list of backing objects representing the files
-     * @throws GenericFileOperationFailedException
-     *          can be thrown
+     * @throws GenericFileOperationFailedException can be thrown
      */
     List<T> listFiles(String path) throws GenericFileOperationFailedException;
 

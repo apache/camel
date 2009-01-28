@@ -23,6 +23,7 @@ public class FtpRemoteFileConfiguration extends RemoteFileConfiguration {
     public static final int DEFAULT_FTP_PORT = 21;
 
     public FtpRemoteFileConfiguration() {
+        setProtocol("ftp");
     }
 
     public FtpRemoteFileConfiguration(URI uri) {

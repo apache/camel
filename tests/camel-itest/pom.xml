@@ -167,8 +167,6 @@
                     <excludes>
                       <!-- TODO FIXME ASAP -->
                       <exclude>**/XXXTest.*</exclude>
-                      <exclude>**/SpringFtpEndpointTest.*</exclude>
-                      <exclude>**/SpringFileAntPathMatcherRemoteFileFilterTest.*</exclude>
                     </excludes>
                 </configuration>
             </plugin>

@@ -63,7 +63,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         if (log.isDebugEnabled()) {
             log.debug("Disconnecting from " + getEndpoint());
         }
-        ((RemoteFileOperations) getOperations()).disconnect();
+        ((RemoteFileOperations) operations).disconnect();
     }
 
     @Override
@@ -95,12 +95,13 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     }
 
     protected void connectIfNecessary() throws IOException {
-        if (!((RemoteFileOperations) getOperations()).isConnected() || !loggedIn) {
+        if (!((RemoteFileOperations) operations).isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
                 log.debug("Not connected/logged in, connecting to " + getEndpoint());
             }
-            RemoteFileOperations rfo = (RemoteFileOperations) getOperations();
-            RemoteFileConfiguration conf = (RemoteFileConfiguration) getGenericFileEndpoint().getConfiguration();
+            RemoteFileOperations rfo = (RemoteFileOperations) operations;
+            RemoteFileEndpoint rfe = (RemoteFileEndpoint) getEndpoint();
+            RemoteFileConfiguration conf = (RemoteFileConfiguration) rfe.getConfiguration();
             loggedIn = rfo.connect(conf);
             if (!loggedIn) {
                 return;

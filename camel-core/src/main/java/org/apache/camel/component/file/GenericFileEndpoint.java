@@ -75,7 +75,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected Expression preMoveExpression;
     protected boolean idempotent;
     protected IdempotentRepository idempotentRepository;
-    protected GenericFileFilter filter;
+    protected GenericFileFilter<T> filter;
     protected Comparator<GenericFile<T>> sorter;
     protected Comparator<GenericFileExchange> sortBy;
     protected String readLock = "none";
@@ -106,11 +106,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * none is provided
      */
     public String getGeneratedFileName(Message message) {
-        return getFileFriendlyMessageId(message.getMessageId());
-    }
-
-    protected String getFileFriendlyMessageId(String id) {
-        return UuidGenerator.generateSanitizedId(id);
+        return UuidGenerator.generateSanitizedId(message.getMessageId());
     }
 
     public GenericFileProcessStrategy getGenericFileProcessStrategy() {
@@ -293,11 +289,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.idempotentRepository = idempotentRepository;
     }
 
-    public GenericFileFilter getFilter() {
+    public GenericFileFilter<T> getFilter() {
         return filter;
     }
 
-    public void setFilter(GenericFileFilter filter) {
+    public void setFilter(GenericFileFilter<T> filter) {
         this.filter = filter;
     }
 

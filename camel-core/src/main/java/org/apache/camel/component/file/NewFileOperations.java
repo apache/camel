@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.InvalidPayloadException;
@@ -34,19 +33,21 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * File operations for {@link java.io.File}.
  */
 public class NewFileOperations implements GenericFileOperations<File> {
-
     private static final transient Log LOG = LogFactory.getLog(NewFileOperations.class);
-    private final NewFileEndpoint endpoint;
+    private NewFileEndpoint endpoint;
 
-    // this is our filehandle to the filesystem
-    private File currentFile;
+    public NewFileOperations() {
+    }
 
-    public NewFileOperations(final NewFileEndpoint endpoint, File fileHandle) {
+    public NewFileOperations(NewFileEndpoint endpoint) {
         this.endpoint = endpoint;
-        this.currentFile = fileHandle;
+    }
+
+    public void setEndpoint(GenericFileEndpoint endpoint) {
+        this.endpoint = (NewFileEndpoint) endpoint;
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
@@ -61,6 +62,8 @@ public class NewFileOperations implements GenericFileOperations<File> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        ObjectHelper.notNull(endpoint, "endpoint");
+
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && endpoint.isDirectory() && !endpoint.getFile().exists()) {
             endpoint.getFile().mkdirs();
@@ -87,26 +90,32 @@ public class NewFileOperations implements GenericFileOperations<File> {
     }
 
     public List<File> listFiles() throws GenericFileOperationFailedException {
-        return Arrays.asList(this.currentFile.listFiles());
+        // noop
+        return null;
     }
 
     public List<File> listFiles(String path) throws GenericFileOperationFailedException {
-        return Arrays.asList(new File(this.currentFile, path).listFiles());
+        // noop
+        return null;
     }
 
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
-        this.currentFile = new File(this.currentFile, path).getAbsoluteFile();
+        // noop
     }
 
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
-        return currentFile.getAbsolutePath();
+        // noop
+        return null;
     }
 
     public boolean retrieveFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
-        return false;
+        // noop as we use type converters to read the body content for java.io.File
+        return true;
     }
 
     public boolean storeFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
+        ObjectHelper.notNull(endpoint, "endpoint");
+
         File file = new File(name);
         try {
             boolean fileSource = exchange.getIn().getBody() instanceof File;

@@ -52,14 +52,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
     @Override
     public GenericFileProducer<T> createProducer() throws Exception {
+        afterPropertiesSet();
         return new RemoteFileProducer<T>(this, (RemoteFileOperations<T>) this.operations);
     }
 
     @Override
     public RemoteFileConsumer<T> createConsumer(Processor processor) throws Exception {
-        String protocol = ((RemoteFileConfiguration) getConfiguration()).getProtocol();
-        ObjectHelper.notEmpty(protocol, "protocol");
-
+        afterPropertiesSet();
         RemoteFileConsumer<T> consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
 
         if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
@@ -79,6 +78,21 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
 
         configureConsumer(consumer);
         return consumer;
+    }
+
+    /**
+     * Validates this endpoint if its configured properly.
+     *
+     * @throws Exception is thrown if endpoint is invalid configured for its mandatory options
+     */
+    protected void afterPropertiesSet() throws Exception {
+        ObjectHelper.notNull(operations, "operations");
+        RemoteFileConfiguration config = (RemoteFileConfiguration) getConfiguration();
+        ObjectHelper.notEmpty(config.getHost(), "host");
+        ObjectHelper.notEmpty(config.getProtocol(), "protocol");
+        if (config.getPort() <= 0) {
+            throw new IllegalArgumentException("port is not assigned to a positive value");
+        }
     }
 
     /**

@@ -28,7 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class NewFileEndpoint extends GenericFileEndpoint<File> {
 
-    private NewFileOperations operations;
+    private NewFileOperations operations = new NewFileOperations(this);
     private File file;
 
     public NewFileEndpoint() {
@@ -97,6 +97,8 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
 
     public void setFile(File file) {
         this.file = file;
+        // update configuration as well
+        getConfiguration().setFile(file.getPath());
     }
 
     @Override

@@ -34,7 +34,8 @@ public class NewFileComponent extends GenericFileComponent<File> {
         config.setFile(file.getPath());
         result.setConfiguration(config);
 
-        NewFileOperations operations = new NewFileOperations(result, file);
+        NewFileOperations operations = new NewFileOperations();
+        operations.setEndpoint(result);
         result.setOperations(operations);
 
         return result;

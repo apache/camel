@@ -141,7 +141,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
                 endpoint.setCamelContext(context);
                 endpoint.getConfiguration().setFile("target/filelanguage/report5.txt");
                 endpoint.setFile(new File("target/filelanguage/report5.txt"));
-                endpoint.setOperations(new NewFileOperations(endpoint, endpoint.getFile()));
+                endpoint.setOperations(new NewFileOperations(endpoint));
                 endpoint.setDirectory(false);
                 endpoint.setAutoCreate(false);
                 endpoint.setExpression(BeanLanguage.bean("myguidgenerator"));

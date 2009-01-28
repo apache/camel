@@ -23,6 +23,7 @@ public class SftpRemoteFileConfiguration extends RemoteFileConfiguration {
     public static final int DEFAULT_SFTP_PORT = 22;
 
     public SftpRemoteFileConfiguration() {
+        setProtocol("sftp");
     }
 
     public SftpRemoteFileConfiguration(URI uri) {
