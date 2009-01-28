@@ -59,7 +59,7 @@ public class CxfComponent extends DefaultComponent {
             CxfEndpointBean bean = CamelContextHelper.mandatoryLookup(getCamelContext(), beanId, 
                     CxfEndpointBean.class);
 
-            result = new CxfSpringEndpoint(this, beanId, bean);
+            result = new CxfSpringEndpoint(this, bean);
             
         } else {
             // endpoint URI does not specify a bean

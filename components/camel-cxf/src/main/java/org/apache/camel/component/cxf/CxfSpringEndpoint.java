@@ -35,6 +35,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 
 /**
  * Defines the <a href="http://activemq.apache.org/camel/cxf.html">CXF Endpoint</a>
@@ -51,11 +52,18 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     private String endpointLocalName;
     private String endpointNamespace;
     
-    public CxfSpringEndpoint(CamelContext context, String beanId,
-            CxfEndpointBean bean) throws Exception {
-        
+    public CxfSpringEndpoint(CamelContext context, CxfEndpointBean bean) throws Exception {
         super(bean.getAddress(), context);
-        this.beanId = beanId;
+        init(bean);
+    }
+    
+    public CxfSpringEndpoint(CxfComponent component, CxfEndpointBean bean) throws Exception {
+        super(bean.getAddress(), component);
+        init(bean);
+    }
+    
+
+    private void init(CxfEndpointBean bean) throws Exception {
         this.bean = bean;
         
         // set properties from bean which can be overridden by endpoint URI
@@ -64,15 +72,6 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         // create configurer
         configurer = new ConfigurerImpl(((SpringCamelContext)getCamelContext())
             .getApplicationContext());
-    }
-    
-    public CxfSpringEndpoint(CxfComponent component, String beanId,
-            CxfEndpointBean bean) throws Exception {
-        this(component.getCamelContext(), beanId, bean);
-    }
-    
-    public CxfSpringEndpoint(CamelContext context, CxfEndpointBean bean) throws Exception {
-        this(context, "", bean);
     }
 
     /**
@@ -174,7 +173,15 @@ public class CxfSpringEndpoint extends CxfEndpoint {
         ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
         
         // create server factory bean
-        ServerFactoryBean answer = CxfEndpointUtils.getServerFactoryBean(cls);
+        // create server factory bean
+        // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
+        // CxfSoapComponent
+        ServerFactoryBean answer = null;
+        if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
+            answer = new JaxWsServerFactoryBean();
+        } else {
+            answer = new ServerFactoryBean();
+        }
 
         // configure server factory bean by CXF configurer
         configure(answer);

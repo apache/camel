@@ -241,7 +241,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         if (outBody != null) {
             if (dataFormat == DataFormat.PAYLOAD) {
-                CxfPayload<?> payload = (CxfPayload)outBody;
+                CxfPayload<?> payload = (CxfPayload<?>)outBody;
                 outMessage.put(List.class, payload.getBody());
                 outMessage.put(Header.HEADER_LIST, payload.getHeaders());
             } else {
@@ -249,7 +249,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 if (outBody instanceof MessageContentsList) {
                     resList = (MessageContentsList)outBody;
                 } else if (outBody instanceof List) {
-                    resList = new MessageContentsList((List)outBody);
+                    resList = new MessageContentsList((List<?>)outBody);
                 } else if (outBody.getClass().isArray()) {
                     resList = new MessageContentsList((Object[])outBody);
                 } else {
@@ -339,8 +339,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
     protected void propagateHeadersFromCxfToCamel(Message cxfMessage,
             org.apache.camel.Message camelMessage) {
         
-        Map<String, List<String>> cxfHeaders =
-            CastUtils.cast((Map)cxfMessage.get(Message.PROTOCOL_HEADERS));
+        Map<String, List<String>> cxfHeaders = (Map)cxfMessage.get(Message.PROTOCOL_HEADERS);
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
 
         if (cxfHeaders != null) {

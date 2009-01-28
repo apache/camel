@@ -52,6 +52,7 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.jaxws.JaxWsClientFactoryBean;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
+import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
 import org.apache.cxf.message.Message;
 
 /**
@@ -76,8 +77,6 @@ public class CxfEndpoint extends DefaultEndpoint {
     private Bus bus;
     private CxfBinding cxfBinding;
     private HeaderFilterStrategy headerFilterStrategy;
-    private boolean hasWSProviderAnnotation;
-    private boolean hasWebServiceAnnotation;
     private AtomicBoolean cxfBindingInitialized = new AtomicBoolean(false);
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
     private boolean isSetDefaultBus;
@@ -111,8 +110,6 @@ public class CxfEndpoint extends DefaultEndpoint {
      * Populate server factory bean
      */
     protected void setupServerFactoryBean(ServerFactoryBean sfb, Class<?> cls) {
-        hasWSProviderAnnotation = CxfEndpointUtils.hasAnnotation(cls, 
-                WebServiceProvider.class);
         
         // address
         sfb.setAddress(getEndpointUri());
@@ -136,7 +133,7 @@ public class CxfEndpoint extends DefaultEndpoint {
         }
 
         // apply feature here
-        if (!webServiceProviderAnnotated()) {
+        if (!CxfEndpointUtils.hasAnnotation(cls, WebServiceProvider.class)) {
             if (getDataFormat() == DataFormat.PAYLOAD) {
                 sfb.getFeatures().add(new PayLoadDataFormatFeature());
             } else if (getDataFormat() == DataFormat.MESSAGE) {
@@ -162,8 +159,7 @@ public class CxfEndpoint extends DefaultEndpoint {
         // quick null point check for serviceClass
         ObjectHelper.notNull(cls, "Please provide endpoint service interface class");
         
-        hasWebServiceAnnotation = CxfEndpointUtils.hasWebServiceAnnotation(cls);
-        if (hasWebServiceAnnotation) {
+        if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             return new JaxWsProxyFactoryBean(new JaxWsClientFactoryBean() {
                 @Override
                 protected void createClient(Endpoint ep) {
@@ -256,19 +252,18 @@ public class CxfEndpoint extends DefaultEndpoint {
         Class<?> cls = ClassLoaderUtils.loadClass(getServiceClass(), getClass());
         
         // create server factory bean
-        ServerFactoryBean answer = CxfEndpointUtils.getServerFactoryBean(cls);
+        // Shouldn't use CxfEndpointUtils.getServerFactoryBean(cls) as it is for
+        // CxfSoapComponent
+        ServerFactoryBean answer = null;
+        if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
+            answer = new JaxWsServerFactoryBean();
+        } else {
+            answer = new ServerFactoryBean();
+        }
         
         // setup server factory bean
         setupServerFactoryBean(answer, cls);
         return answer;
-    }
-    
-    boolean webServiceProviderAnnotated() {
-        return hasWSProviderAnnotation;
-    }
-    
-    boolean webServiceAnnotated() {
-        return hasWebServiceAnnotation;
     }
     
     // Properties
