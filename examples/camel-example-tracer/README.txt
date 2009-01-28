@@ -8,8 +8,8 @@ You will need to compile this example first:
   mvn compile
   
 For a background in tracer and JPA see
-  http://activemq.apache.org/camel/tracer.html
-  http://activemq.apache.org/camel/jpa.html
+  http://camel.apache.org/tracer.html
+  http://camel.apache.org/jpa.html
 
 To run the example with Maven, type
   mvn camel:run
@@ -68,10 +68,10 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/tracer-example.htmls
+  http://camel.apache.org/tracer-example.htmls
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

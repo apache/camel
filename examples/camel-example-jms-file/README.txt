@@ -9,7 +9,7 @@ system.
 
 For the latest & greatest documentation on how to use this example
 please see 
-  http://activemq.apache.org/camel/walk-through-an-example.html
+  http://camel.apache.org/walk-through-an-example.html
   
 You will need to compile this example first:
   mvn compile
@@ -41,7 +41,7 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 If you hit an problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!

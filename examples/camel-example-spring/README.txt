@@ -27,7 +27,7 @@ To run the example with Ant
   c. To Run the example using Ant, type
     ant
   or to run the example and generate visualization graphs (refer to
-  http://activemq.apache.org/camel/visualisation.html), type
+  http://camel.apache.org/visualisation.html), type
     ant camel.dot
 
 You can see the routing rules by looking at the java code in the
@@ -44,10 +44,10 @@ To use log4j as the logging framework add this to the pom.xml:
 and log4j.properties is located in src/main/resources 
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/spring-example.html
+  http://camel.apache.org/spring-example.html
 
 If you hit any problems please talk to us on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.  Enjoy!

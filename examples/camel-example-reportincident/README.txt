@@ -58,7 +58,7 @@ For the latest & greatest documentation on how to use this example please see
   http://camel.apache.org/tutorial-example-reportincident.html
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you may
 have.  Enjoy!
