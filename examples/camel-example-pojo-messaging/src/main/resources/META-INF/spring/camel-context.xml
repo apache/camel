@@ -17,7 +17,7 @@
 -->
 
 <!-- Configures the Camel Context-->
-
+<!-- START SNIPPET: activemq -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:amq="http://activemq.apache.org/schema/core"
@@ -39,11 +39,14 @@
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="tcp://localhost:61616"/>
   </bean>
-
-  <bean class="org.apache.camel.example.pojo_messaging.SendFileRecordsToQueueBean"/>
   
+  <!-- END SNIPPET: activemq -->
+  
+  <!-- START SNIPPET: ex -->  
+  <bean class="org.apache.camel.example.pojo_messaging.SendFileRecordsToQueueBean"/>
   <bean class="org.apache.camel.example.pojo_messaging.DistributeRecordsBean"/>
  
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring"/>
+  <!-- END SNIPPET: activemq -->
 
 </beans>
