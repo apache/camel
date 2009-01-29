@@ -47,6 +47,6 @@
   <bean class="org.apache.camel.example.pojo_messaging.DistributeRecordsBean"/>
  
   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring"/>
-  <!-- END SNIPPET: activemq -->
+  <!-- END SNIPPET: ex -->
 
 </beans>
