@@ -17,7 +17,9 @@
 package org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
+import org.apache.camel.dataformat.bindy.annotation.Link;
 
+@Link
 public class Client {
 
     @DataField(pos = 1)

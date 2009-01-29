@@ -22,12 +22,13 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.util.ClassHelper;
+import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,23 +43,21 @@ public class BindyCsvFactory implements BindyFactory {
 
     private static final transient Log LOG = LogFactory.getLog(BindyCsvFactory.class);
 
-    private List<Class<?>> models;
+    private AnnotationModelLoader modelsLoader;
+    private Set<Class<?>> models;
 
     private Map<Integer, DataField> mapDataField = new LinkedHashMap<Integer, DataField>();
-
     private Map<Integer, Field> mapAnnotedField = new LinkedHashMap<Integer, Field>();
-
     private Map<String, Field> mapAnnotedLinkField = new LinkedHashMap<String, Field>();
 
     private String separator;
-
     private boolean skipFirstLine;
-
     private String packageName;
 
     public BindyCsvFactory(String packageName) throws Exception {
+        modelsLoader = new AnnotationModelLoader();
         this.packageName = packageName;
-        this.initModel();
+        initModel();
     }
 
     /**
@@ -72,7 +71,7 @@ public class BindyCsvFactory implements BindyFactory {
     public void initModel() throws Exception {
 
         // Find classes defined as Model
-        initModelClasses(this.packageName);
+        initModelClasses(packageName);
 
         // Find annotated fields declared in the Model classes
         initAnnotedFields();
@@ -85,25 +84,19 @@ public class BindyCsvFactory implements BindyFactory {
 
     /**
      * Find all the classes defined as model
-     * 
-     * @param packageName
-     * @throws Exception
      */
     private void initModelClasses(String packageName) throws Exception {
-        models = ClassHelper.getClasses(packageName);
+        models = modelsLoader.loadModels(packageName);
     }
 
     /**
      * Find fields annoted in each class of the model
-     * 
-     * @throws Exception
      */
     private void initAnnotedFields() throws Exception {
 
         for (Class<?> cl : models) {
 
             for (Field field : cl.getDeclaredFields()) {
-
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     mapDataField.put(dataField.pos(), dataField);
@@ -115,19 +108,11 @@ public class BindyCsvFactory implements BindyFactory {
                 if (linkField != null) {
                     mapAnnotedLinkField.put(cl.getName(), field);
                 }
-
             }
 
         }
-
     }
 
-    /**
-     * Bind the data of a record to their fields of the model
-     * 
-     * @param data
-     * @throws Exception
-     */
     public void bind(List<String> data, Map<String, Object> model) throws Exception {
 
         int pos = 0;
@@ -160,13 +145,6 @@ public class BindyCsvFactory implements BindyFactory {
 
     }
 
-    /**
-     * Unbind data from model objects and copy them to csv record
-     * 
-     * @return String representing a csv record created
-     * @param model
-     * @throws Exception
-     */
     public String unbind(Map<String, Object> model) throws Exception {
 
         StringBuilder builder = new StringBuilder();
@@ -208,17 +186,12 @@ public class BindyCsvFactory implements BindyFactory {
 
     /**
      * Link objects together (Only 1to1 relation is allowed)
-     * 
-     * @param model
-     * @throws Exception
      */
     public void link(Map<String, Object> model) throws Exception {
 
-        Iterator<?> it = mapAnnotedLinkField.keySet().iterator();
+        for (String link : mapAnnotedLinkField.keySet()) {
 
-        while (it.hasNext()) {
-
-            Field field = mapAnnotedLinkField.get(it.next());
+            Field field = mapAnnotedLinkField.get(link);
             field.setAccessible(true);
 
             // Retrieve linked object
@@ -237,7 +210,7 @@ public class BindyCsvFactory implements BindyFactory {
      * 
      * @return Map is a collection of the objects used to bind data from csv
      *         records
-     * @throws Exception
+     * @throws Exception can be thrown
      */
     public Map<String, Object> factory() throws Exception {
 
@@ -257,24 +230,15 @@ public class BindyCsvFactory implements BindyFactory {
 
     /**
      * Find the separator used to delimit the CSV fields
-     * 
-     * @return String separator to split the content of a csv record into tokens
-     * @throws Exception
      */
-    public String getSeparator() throws Exception {
-
+    public String getSeparator() {
         return separator;
     }
 
     /**
      * Get the parameter skipFirstLine
-     * 
-     * @return String indicates if the first line of the CSV file must be
-     *         skipped. Values are Y (for Yes) or N (for No)
-     * @throws Exception
      */
-    public boolean getSkipFirstLine() throws Exception {
-
+    public boolean getSkipFirstLine() {
         return skipFirstLine;
     }
 
