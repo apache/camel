@@ -71,11 +71,11 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl + "a/?sortBy=file:name").to("mock:result");
+                from(fileUrl + "a/?sortBy=file:name&initialDelay=250&delay=1000").to("mock:result");
 
-                from(fileUrl + "b/?sortBy=ignoreCase:file:name").to("mock:nocase");
+                from(fileUrl + "b/?sortBy=ignoreCase:file:name&initialDelay=500&delay=1000").to("mock:nocase");
 
-                from(fileUrl + "c/?sortBy=reverse:ignoreCase:file:name").to("mock:nocasereverse");
+                from(fileUrl + "c/?sortBy=reverse:ignoreCase:file:name&initialDelay=750&delay=1000").to("mock:nocasereverse");
             }
         };
     }

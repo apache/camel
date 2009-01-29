@@ -26,21 +26,20 @@ import javax.management.remote.JMXServiceURL;
  * a client.
  *
  * @version $Revision$
- *
  */
 public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsingDefaultsTest {
 
     protected static final String JMXSERVICEURL =
-        "service:jmx:rmi:///jndi/rmi://localhost:2000/jmxrmi/camel";
+        "service:jmx:rmi:///jndi/rmi://localhost:2123/jmxrmi/camel";
     protected JMXConnector clientConnector;
 
     @Override
     protected void setUp() throws Exception {
-        sleepForConnection = 2000;
-        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "True");
+        sleepForConnection = 3000;
+        System.setProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR, "true");
         // need to explicit set it to false to use non-platform mbs
-        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "False");
-        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "2000");
+        System.setProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS, "false");
+        System.setProperty(JmxSystemPropertyKeys.REGISTRY_PORT, "2123");
         super.setUp();
     }
 
@@ -65,8 +64,7 @@ public class JmxInstrumentationWithConnectorTest extends JmxInstrumentationUsing
     protected MBeanServerConnection getMBeanConnection() throws Exception {
         if (mbsc == null) {
             if (clientConnector == null) {
-                clientConnector = JMXConnectorFactory.connect(
-                        new JMXServiceURL(JMXSERVICEURL), null);
+                clientConnector = JMXConnectorFactory.connect(new JMXServiceURL(JMXSERVICEURL), null);
             }
             mbsc = clientConnector.getMBeanServerConnection();
         }
