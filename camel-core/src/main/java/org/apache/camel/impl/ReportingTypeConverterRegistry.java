@@ -41,6 +41,12 @@ public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
         }
     }
 
+    public void addFallbackTypeConverter(TypeConverter typeConverter) {
+        if (errors.size() == 0) {
+            errors.add("Method should not be invoked.");
+        }
+    }
+
     public TypeConverter lookup(Class toType, Class fromType) {
         if (errors.size() == 0) {
             errors.add("Method should not be invoked.");
