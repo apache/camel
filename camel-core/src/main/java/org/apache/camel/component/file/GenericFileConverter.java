@@ -33,7 +33,7 @@ public final class GenericFileConverter {
     }
 
     @FallbackConverter
-    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
             GenericFile file = (GenericFile) value;
