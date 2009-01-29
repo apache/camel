@@ -353,10 +353,12 @@ public class MinaComponent extends DefaultComponent {
 
     private static LineDelimiter getLineDelimiterParameter(TextLineDelimiter delimiter) {
         if (delimiter == null) {
-            return LineDelimiter.AUTO;
+            return LineDelimiter.DEFAULT;
         }
 
         switch (delimiter) {
+        case DEFAULT:
+            return LineDelimiter.DEFAULT;
         case AUTO:
             return LineDelimiter.AUTO;
         case UNIX:
