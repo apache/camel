@@ -22,9 +22,13 @@ import javax.xml.soap.SOAPMessage;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.component.cxf.CxfSpringEndpoint;
 import org.apache.camel.component.cxf.DataFormat;
 import org.apache.camel.component.cxf.spring.CxfEndpointBeanDefinitionParser.CxfSpringEndpointBean;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -89,4 +93,41 @@ public final class CxfConverter {
         return DataFormat.valueOf(name.toUpperCase());
     }
 
+    /**
+     * Use a fallback type converter so we can convert the embedded list element 
+     * if the value is MessageContentsList.  The algorithm of this converter
+     * finds the first non-null list element from the list and applies convertion
+     * to the list element.
+     * 
+     * @param type the desired type to be converted to
+     * @param exchange optional exchange which can be null
+     * @param value the object to be converted
+     * @param registry type converter registry
+     * @return the converted value of the desired type or null if no suitable converter found
+     */
+    @FallbackConverter
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, 
+            TypeConverterRegistry registry) {
+        
+        if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
+            MessageContentsList list = (MessageContentsList)value;
+            
+            for (int i = 0; i < list.size(); i++) {
+                Object embedded = list.get(i);
+                
+                if (embedded != null) {
+                    if (type.isInstance(embedded)) {
+                        return (T)embedded;
+                    } else {
+                        TypeConverter tc = registry.lookup(type, embedded.getClass());
+                        if (tc != null) {
+                            return tc.convertTo(type, exchange, embedded);
+                        }
+                    }
+                }
+            }
+        }
+        
+        return null;
+    }
 }

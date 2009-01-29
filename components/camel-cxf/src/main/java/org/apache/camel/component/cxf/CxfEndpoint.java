@@ -25,8 +25,6 @@ import javax.xml.ws.WebServiceProvider;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -95,11 +93,6 @@ public class CxfEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         return new CxfConsumer(this, processor);
-    }
-    
-    @Override
-    public Exchange createExchange(ExchangePattern pattern) {
-        return new CxfExchange(this, pattern);
     }
     
     public boolean isSingleton() {
