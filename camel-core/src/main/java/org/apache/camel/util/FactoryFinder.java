@@ -103,7 +103,7 @@ public class FactoryFinder {
             propertyPrefix = "";
         }
 
-        Class clazz = (Class)classMap.get(propertyPrefix + key);
+        Class clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
             clazz = newInstance(doFindFactoryProperties(key), propertyPrefix);
             classMap.put(propertyPrefix + key, clazz);
