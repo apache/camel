@@ -160,6 +160,51 @@ public class ResolverUtil<T> {
     }
 
     /**
+     * A Test that checks to see if each class is annotated with a specific
+     * annotation. If it is, then the test returns true, otherwise false.
+     */
+    public static class AnnotatedWithAny implements Test {
+        private Set<Class<? extends Annotation>> annotations;
+        private boolean checkMetaAnnotations;
+
+        /**
+         * Constructs an AnnotatedWithAny test for any of the specified annotation types.
+         */
+        public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations) {
+            this(annotations, false);
+        }
+
+        /**
+         * Constructs an AnnotatedWithAny test for any of the specified annotation types.
+         */
+        public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
+            this.annotations = annotations;
+            this.checkMetaAnnotations = checkMetaAnnotations;
+        }
+
+        /**
+         * Returns true if the type is annotated with the class provided to the
+         * constructor.
+         */
+        public boolean matches(Class type) {
+            if (type == null) {
+                return false;
+            }
+            for (Class annotation : annotations) {
+                if (ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        @Override
+        public String toString() {
+            return "annotated with any @[" + annotations + "]";
+        }
+    }
+
+    /**
      * The set of matches being accumulated.
      */
     private Set<Class<? extends T>> matches = new HashSet<Class<? extends T>>();
@@ -260,6 +305,34 @@ public class ResolverUtil<T> {
         }
 
         Test test = new AnnotatedWith(annotation, true);
+        for (String pkg : packageNames) {
+            find(test, pkg);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found: " + getClasses());
+        }
+    }
+
+    /**
+     * Attempts to discover classes that are annotated with any of the annotation.
+     * Accumulated classes can be accessed by calling {@link #getClasses()}.
+     *
+     * @param annotations  the annotations that should be present on matching
+     *                     classes
+     * @param packageNames one or more package names to scan (including
+     *                     subpackages) for classes
+     */
+    public void findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
+        if (packageNames == null) {
+            return;
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
+        }
+
+        Test test = new AnnotatedWithAny(annotations, true);
         for (String pkg : packageNames) {
             find(test, pkg);
         }

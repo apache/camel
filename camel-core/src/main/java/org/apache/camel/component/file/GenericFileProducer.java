@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.InputStream;
+import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -114,7 +115,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
             // build directory
-            int lastPathIndex = fileName.lastIndexOf('/');
+            int lastPathIndex = fileName.lastIndexOf(File.separator);
             if (lastPathIndex != -1) {
                 String directory = fileName.substring(0, lastPathIndex);
                 if (!operations.buildDirectory(directory, false)) {
@@ -171,8 +172,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
             if (endpointFile.length() > 0) {
-                // TODO windows or unix slashes. Maybe we should replace all \ to /
-                baseDir = endpointFile + (endpointFile.endsWith("/") ? "" : "/");
+                baseDir = endpointFile + (endpointFile.endsWith(File.separator) ? "" : File.separator);
             }
             if (name != null) {
                 answer = baseDir + name;
@@ -189,7 +189,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     protected String createTempFileName(String fileName) {
-        int path = fileName.lastIndexOf("/");
+        int path = fileName.lastIndexOf(File.separator);
         if (path == -1) {
             // no path
             return endpoint.getTempPrefix() + fileName;
