@@ -17,12 +17,12 @@
 package org.apache.camel.example.pojo_messaging;
 
 import org.apache.camel.Consume;
-import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 
 //START SNIPPET: ex
 public class SendFileRecordsToQueueBean {
-    @EndpointInject(uri="activemq:personnel.records")
+    @Produce(uri="activemq:personnel.records")
     ProducerTemplate producer;
 
     @Consume(uri = "file:src/data?noop=true")
