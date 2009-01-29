@@ -346,10 +346,12 @@ public class MinaComponent extends DefaultComponent<MinaExchange> {
 
     private LineDelimiter getLineDelimiterParameter() {
         if (textlineDelimiter == null) {
-            return LineDelimiter.AUTO;
+            return LineDelimiter.DEFAULT;
         }
 
         switch (textlineDelimiter) {
+        case DEFAULT:
+            return LineDelimiter.DEFAULT;
         case AUTO:
             return LineDelimiter.AUTO;
         case UNIX:
