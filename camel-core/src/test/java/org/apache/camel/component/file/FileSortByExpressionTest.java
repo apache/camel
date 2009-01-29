@@ -63,9 +63,9 @@ public class FileSortByExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl + "a/?sortBy=file:name.ext").to("mock:result");
+                from(fileUrl + "a/?sortBy=file:name.ext&initialDelay=1000").to("mock:result");
 
-                from(fileUrl + "b/?sortBy=reverse:file:name.ext").to("mock:reverse");
+                from(fileUrl + "b/?sortBy=reverse:file:name.ext&initialDelay=1000").to("mock:reverse");
             }
         };
     }

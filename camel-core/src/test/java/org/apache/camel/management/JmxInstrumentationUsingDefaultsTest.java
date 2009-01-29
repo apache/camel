@@ -51,26 +51,20 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":name=context,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":name=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processors,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 1 processor: " + s, 1, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=routes,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());
-
     }
 
     public void testCounters() throws Exception {
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
@@ -79,7 +73,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
         verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,*"));
-
     }
 
     protected void verifyCounter(MBeanServerConnection beanServer, ObjectName name) throws Exception {
@@ -93,17 +86,17 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumExchanges);
-        assertTrue(valueofNumExchanges == 1);
+        assertEquals(Long.valueOf(1), valueofNumExchanges);
         Long valueofNumCompleted = (Long)beanServer.getAttribute(pcob, "NumCompleted");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumCompleted);
-        assertTrue(valueofNumCompleted == 1);
+        assertEquals(Long.valueOf(1), valueofNumCompleted);
         Long valueofNumFailed = (Long)beanServer.getAttribute(pcob, "NumFailed");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
                       valueofNumFailed);
-        assertTrue(valueofNumFailed == 0);
+        assertEquals(Long.valueOf(0), valueofNumFailed);
         Double valueofMinProcessingTime = (Double)beanServer.getAttribute(pcob, "MinProcessingTimeMillis");
         assertNotNull("Expected attribute found. MBean registered under a "
                       + "'<domain>:name=Stats,*' key must be of type PerformanceCounter.class",
@@ -131,7 +124,6 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
 
         assertNotNull("Expected last completion time to be available",
                 beanServer.getAttribute(pcob, "LastExchangeCompletionTime"));
-
     }
 
     protected RouteBuilder createRouteBuilder() {

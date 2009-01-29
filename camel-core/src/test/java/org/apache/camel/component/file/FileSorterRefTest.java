@@ -28,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/filesorter/?sorter=#mySorter";
+    private String fileUrl = "newfile://target/filesorter/?sorter=#mySorter&initialDelay=1000";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
