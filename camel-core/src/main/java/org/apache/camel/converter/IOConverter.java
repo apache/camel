@@ -279,13 +279,29 @@ public final class IOConverter {
         return bos.toByteArray();
     }
 
+    @Converter
+    public static byte[] toByteArray(ByteArrayOutputStream os) {
+        return os.toByteArray();
+    }
+
+    @Converter
+    public static String toString(ByteArrayOutputStream os) {
+        return os.toString();
+    }
+
+    @Converter
+    public static InputStream toInputStream(ByteArrayOutputStream os) {
+        return new ByteArrayInputStream(os.toByteArray());
+    }
+
     public static void copy(InputStream stream, OutputStream os) throws IOException {
         byte[] data = new byte[4096];
-        int read = stream.read(data);        
-        while (read != -1) {            
+        int read = stream.read(data);
+        while (read != -1) {
             os.write(data, 0, read);
             read = stream.read(data);
         }
         os.flush();
     }
+
 }

@@ -16,19 +16,14 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import org.apache.camel.Converter;
-import org.apache.camel.converter.IOConverter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 
 /**
- * A set of converter methods for working with remote file types
+ * A set of converter methods for working with generic file types
  */
 @Converter
 public final class GenericFileConverter {
@@ -37,34 +32,20 @@ public final class GenericFileConverter {
         // Helper Class
     }
 
-    @Converter
-    public static InputStream toInputStream(GenericFile<File> file) throws FileNotFoundException {
-        return IOConverter.toInputStream(file.getFile());
-    }
-
-    @Converter
-    public static BufferedReader toReader(GenericFile<File> file) throws FileNotFoundException {
-        return IOConverter.toReader(file.getFile());
-    }
-
-    @Converter
-    public static OutputStream toOutputStream(GenericFile<File> file) throws FileNotFoundException {
-        return IOConverter.toOutputStream(file.getFile());
-    }
-
-    @Converter
-    public static BufferedWriter toWriter(GenericFile<File> file) throws IOException {
-        return IOConverter.toWriter(file.getFile());
-    }
-
-    @Converter
-    public static byte[] toByteArray(GenericFile<File> file) throws IOException {
-        return IOConverter.toByteArray(file.getFile());
-    }
-
-    @Converter
-    public static String toString(GenericFile<File> file) throws IOException {
-        return IOConverter.toString(file.getFile());
+    @FallbackConverter
+    public static <T> T convertTo(Class<T> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        // use a fallback type converter so we can convert the embedded body if the value is GenericFile
+        if (GenericFile.class.isAssignableFrom(value.getClass())) {
+            GenericFile file = (GenericFile) value;
+            Class from = file.getBody().getClass();
+            TypeConverter tc = registry.lookup(type, from);
+            if (tc != null) {
+                Object body = file.getBody();
+                return tc.convertTo(type, exchange, body);
+            }
+        }
+        
+        return null;
     }
 
 }

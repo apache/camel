@@ -34,7 +34,6 @@ import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 
@@ -55,11 +54,13 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     public DefaultTypeConverter(Injector injector) {
         typeConverterLoaders.add(new AnnotationTypeConverterLoader());
         this.injector = injector;
-        addFallbackConverter(new AsyncProcessorTypeConverter());
-        addFallbackConverter(new PropertyEditorTypeConverter());
-        addFallbackConverter(new ToStringTypeConverter());
-        addFallbackConverter(new ArrayTypeConverter());
-        addFallbackConverter(new EnumTypeConverter());
+        // add to string first as it will then be last in the last as to string can nearly
+        // always convert something to a string so we want it only as the last resort
+        addFallbackTypeConverter(new ToStringTypeConverter());
+        addFallbackTypeConverter(new EnumTypeConverter());
+        addFallbackTypeConverter(new ArrayTypeConverter());
+        addFallbackTypeConverter(new PropertyEditorTypeConverter());
+        addFallbackTypeConverter(new AsyncProcessorTypeConverter());
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {
@@ -123,6 +124,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding type converter: " + typeConverter);
+        }
         TypeMapping key = new TypeMapping(toType, fromType);
         synchronized (typeMappings) {
             TypeConverter converter = typeMappings.get(key);
@@ -133,10 +137,15 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         }
     }
 
-    public void addFallbackConverter(TypeConverter converter) {
-        fallbackConverters.add(converter);
-        if (converter instanceof TypeConverterAware) {
-            TypeConverterAware typeConverterAware = (TypeConverterAware)converter;
+    public void addFallbackTypeConverter(TypeConverter typeConverter) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Adding fallback type converter: " + typeConverter);
+        }
+
+        // add in top of fallback as the toString() fallback will nearly always be able to convert
+        fallbackConverters.add(0, typeConverter);
+        if (typeConverter instanceof TypeConverterAware) {
+            TypeConverterAware typeConverterAware = (TypeConverterAware)typeConverter;
             typeConverterAware.setTypeConverter(this);
         }
     }
@@ -268,7 +277,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(),
                                                              TypeConverter.class);
         for (TypeConverter converter : converters) {
-            addFallbackConverter(converter);
+            addFallbackTypeConverter(converter);
         }
     }
 

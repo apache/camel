@@ -35,6 +35,13 @@ public interface TypeConverterRegistry {
     void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter);
 
     /**
+     * Registers a new fallback type converter
+     *
+     * @param typeConverter the type converter to use
+     */
+    void addFallbackTypeConverter(TypeConverter typeConverter);
+
+    /**
      * Performs a lookup for a given type converter.
      *
      * @param toType        the type to convert to

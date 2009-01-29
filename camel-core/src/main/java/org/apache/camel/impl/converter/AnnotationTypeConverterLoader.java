@@ -19,7 +19,6 @@ package org.apache.camel.impl.converter;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import java.lang.reflect.Method;
 
 import java.net.URL;
@@ -33,6 +32,7 @@ import static java.lang.reflect.Modifier.isStatic;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
-    private ResolverUtil resolver;
+    protected ResolverUtil resolver;
     private Set<Class> visitedClasses = new HashSet<Class>();
 
     public AnnotationTypeConverterLoader() {
@@ -62,7 +62,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
             resolver = new ResolverUtil();
         }
     }
-    
+
     public AnnotationTypeConverterLoader(ResolverUtil resolverUtil) {
         this.resolver = resolverUtil;
     }
@@ -122,7 +122,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      * Tokenizes the line from the META-IN/services file using commas and
      * ignoring whitespace between packages
      */
-    protected void tokenize(Set<String> packages, String line) {
+    private void tokenize(Set<String> packages, String line) {
         StringTokenizer iter = new StringTokenizer(line, ",");
         while (iter.hasMoreTokens()) {
             String name = iter.nextToken().trim();
@@ -148,34 +148,9 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 // this may be prone to ClassLoader or packaging problems when the same class is defined
                 // in two different jars (as is the case sometimes with specs).
                 if (ObjectHelper.hasAnnotation(method, Converter.class, true)) {
-                    if (isValidConverterMethod(method)) {
-                        int modifiers = method.getModifiers();
-                        if (isAbstract(modifiers) || !isPublic(modifiers)) {
-                            LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
-                                    + " as a converter method is not a public and concrete method");
-                        } else {
-                            Class<?> toType = method.getReturnType();
-                            if (toType.equals(Void.class)) {
-                                LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: "
-                                        + method + " as a converter method returns a void method");
-                            } else {
-                                Class<?> fromType = method.getParameterTypes()[0];
-                                if (isStatic(modifiers)) {
-                                    registerTypeConverter(registry, method, toType, fromType,
-                                            new StaticMethodTypeConverter(method));
-                                } else {
-                                    if (injector == null) {
-                                        injector = new CachingInjector(registry, type);
-                                    }
-                                    registerTypeConverter(registry, method, toType, fromType,
-                                            new InstanceMethodTypeConverter(injector, method));
-                                }
-                            }
-                        }
-                    } else {
-                        LOG.warn("Ignoring bad converter on type: " + type.getName() + " method: " + method
-                                + " as a converter method should have one parameter");
-                    }
+                    injector = handleHasConverterAnnotation(registry, type, injector, method);
+                } else if (ObjectHelper.hasAnnotation(method, FallbackConverter.class, true)) {
+                    injector = handleHasFallbackConverterAnnotation(registry, type, injector, method);
                 }
             }
 
@@ -188,15 +163,86 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
+    private CachingInjector handleHasConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
+        if (isValidConverterMethod(method)) {
+            int modifiers = method.getModifiers();
+            if (isAbstract(modifiers) || !isPublic(modifiers)) {
+                LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
+                        + " as a converter method is not a public and concrete method");
+            } else {
+                Class<?> toType = method.getReturnType();
+                if (toType.equals(Void.class)) {
+                    LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: "
+                            + method + " as a converter method returns a void method");
+                } else {
+                    Class<?> fromType = method.getParameterTypes()[0];
+                    if (isStatic(modifiers)) {
+                        registerTypeConverter(registry, method, toType, fromType,
+                                new StaticMethodTypeConverter(method));
+                    } else {
+                        if (injector == null) {
+                            injector = new CachingInjector(registry, type);
+                        }
+                        registerTypeConverter(registry, method, toType, fromType,
+                                new InstanceMethodTypeConverter(injector, method));
+                    }
+                }
+            }
+        } else {
+            LOG.warn("Ignoring bad converter on type: " + type.getCanonicalName() + " method: " + method
+                    + " as a converter method should have one parameter");
+        }
+        return injector;
+    }
+
+    private CachingInjector handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
+        if (isValidFallbackConverterMethod(method)) {
+            int modifiers = method.getModifiers();
+            if (isAbstract(modifiers) || !isPublic(modifiers)) {
+                LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
+                        + " as a fallback converter method is not a public and concrete method");
+            } else {
+                Class<?> toType = method.getReturnType();
+                if (toType.equals(Void.class)) {
+                    LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: "
+                            + method + " as a fallback converter method returns a void method");
+                } else {
+                    if (isStatic(modifiers)) {
+                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry));
+                    } else {
+                        if (injector == null) {
+                            injector = new CachingInjector(registry, type);
+                        }
+                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry));
+                    }
+                }
+            }
+        } else {
+            LOG.warn("Ignoring bad fallback converter on type: " + type.getCanonicalName() + " method: " + method
+                    + " as a fallback converter method should have one parameter");
+        }
+        return injector;
+    }
+
     protected void registerTypeConverter(TypeConverterRegistry registry,
                                          Method method, Class toType, Class fromType, TypeConverter typeConverter) {
-
         registry.addTypeConverter(toType, fromType, typeConverter);
     }
 
     protected boolean isValidConverterMethod(Method method) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         return (parameterTypes != null) && (parameterTypes.length == 1
-            || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
+                || (parameterTypes.length == 2 && Exchange.class.isAssignableFrom(parameterTypes[1])));
+    }
+
+    protected void registerFallbackTypeConverter(TypeConverterRegistry registry, TypeConverter typeConverter) {
+        registry.addFallbackTypeConverter(typeConverter);
+    }
+
+    protected boolean isValidFallbackConverterMethod(Method method) {
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        return (parameterTypes != null) && (parameterTypes.length == 3
+                || (parameterTypes.length == 4 && Exchange.class.isAssignableFrom(parameterTypes[1]))
+                && (TypeConverterRegistry.class.isAssignableFrom(parameterTypes[parameterTypes.length - 1])));
     }
 }
