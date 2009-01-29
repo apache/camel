@@ -59,7 +59,12 @@
       <include name="**/geronimo-j2ee-management_*_spec-*.jar"/>
       <include name="**/geronimo-jms_*_spec-*.jar"/>
       <include name="**/activemq-core-*.jar"/>
+      <include name="**/activemq-camel-*.jar"/>
       <include name="**/backport-util-concurrent-*.jar"/>
+      <include name="**/optional/spring-tx-*.jar"/>
+      <include name="**/optional/spring-jms-*.jar"/>
+      <include name="**/optional/activemq-pool-*.jar"/>
+      <include name="**/optional/commons-pool-*.jar"/>
       <include name="**/optional/xbean-*.jar"/>
     </fileset>
   </path>
@@ -122,6 +127,7 @@
     <path refid="camel.core.classpath"/>
     <fileset dir="${camel.lib}">
       <include name="**/camel-spring-*.jar"/>
+      <exclude name="**/camel-spring-integration*.jar"/>
       <include name="**/activation-*.jar"/>
       <include name="**/jaxb-impl-*.jar"/>
       <include name="**/stax-api-*.jar"/>
