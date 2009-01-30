@@ -41,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * A number of useful helper methods for working with Objects
- * 
+ *
  * @version $Revision$
  */
 public final class ObjectHelper {
@@ -260,7 +260,7 @@ public final class ObjectHelper {
     /**
      * Removes any starting characters on the given text which match the given
      * character
-     * 
+     *
      * @param text the string
      * @param ch the initial characters to remove
      * @return either the original string or the new substring
@@ -364,7 +364,7 @@ public final class ObjectHelper {
      * Returns the predicate matching boolean on a {@link List} result set where
      * if the first element is a boolean its value is used otherwise this method
      * returns true if the collection is not empty
-     * 
+     *
      * @return <tt>true</tt> if the first element is a boolean and its value
      *         is true or if the list is non empty
      */
@@ -385,7 +385,7 @@ public final class ObjectHelper {
     /**
      * A helper method to access a system property, catching any security
      * exceptions
-     * 
+     *
      * @param name the name of the system property required
      * @param defaultValue the default value to use if the property is not
      *                available or a security exception prevents access
@@ -407,7 +407,7 @@ public final class ObjectHelper {
     /**
      * A helper method to access a boolean system property, catching any
      * security exceptions
-     * 
+     *
      * @param name the name of the system property required
      * @param defaultValue the default value to use if the property is not
      *                available or a security exception prevents access
@@ -449,7 +449,7 @@ public final class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the class loader used to load this class
-     * 
+     *
      * @param name the name of the class to load
      * @return the class or null if it could not be loaded
      */
@@ -460,24 +460,51 @@ public final class ObjectHelper {
     /**
      * Attempts to load the given class name using the thread context class
      * loader or the given class loader
-     * 
+     *
      * @param name the name of the class to load
      * @param loader the class loader to use after the thread context class
      *                loader
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            try {
-                return contextClassLoader.loadClass(name);
-            } catch (ClassNotFoundException e) {
-                try {
-                    return loader.loadClass(name);
-                } catch (ClassNotFoundException e1) {
-                    LOG.debug("Could not find class: " + name + ". Reason: " + e);
-                }
+        // try context class loader first
+        Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
+        if (clazz == null) {
+            // then the provided loader
+            clazz = doLoadClass(name, loader);
+        }
+        if (clazz == null) {
+            // and fallback to the loader the loaded the ObjectHelper class
+            clazz = doLoadClass(name, ObjectHelper.class.getClassLoader());
+        }
+
+        if (clazz == null) {
+            LOG.warn("Could not find class: " + name);
+        }
+
+        return clazz;
+    }
+
+    /**
+     * Loads the given class with the provided classloader (may be null).
+     * Will ignore any class not found and return null.
+     *
+     * @param name    the name of the class to load
+     * @param loader  a provided loader (may be null)
+     * @return the class, or null if it could not be loaded
+     */
+    private static Class<?> doLoadClass(String name, ClassLoader loader) {
+        ObjectHelper.notEmpty(name, "name");
+        if (loader == null) {
+            return null;
+        }
+        try {
+            return loader.loadClass(name);
+        } catch (ClassNotFoundException e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Can not load class: " + name + " using classloader: " + loader, e);
             }
+
         }
         return null;
     }
@@ -485,7 +512,7 @@ public final class ObjectHelper {
     /**
      * Attempts to load the given resource as a stream using the thread context
      * class loader or the class loader used to load this class
-     * 
+     *
      * @param name the name of the resource to load
      * @return the stream or null if it could not be loaded
      */
@@ -506,7 +533,7 @@ public final class ObjectHelper {
     /**
      * A helper method to invoke a method via reflection and wrap any exceptions
      * as {@link RuntimeCamelException} instances
-     * 
+     *
      * @param method the method to invoke
      * @param instance the object instance (or null for static methods)
      * @param parameters the parameters to the method
@@ -524,7 +551,7 @@ public final class ObjectHelper {
 
     /**
      * Returns a list of methods which are annotated with the given annotation
-     * 
+     *
      * @param type the type to reflect on
      * @param annotationType the annotation type
      * @return a list of the methods found
@@ -536,7 +563,7 @@ public final class ObjectHelper {
 
     /**
      * Returns a list of methods which are annotated with the given annotation
-     * 
+     *
      * @param type the type to reflect on
      * @param annotationType the annotation type
      * @param checkMetaAnnotations check for meta annotations
@@ -560,7 +587,7 @@ public final class ObjectHelper {
 
     /**
      * Checks if a Class or Method are annotated with the given annotation
-     * 
+     *
      * @param elem the Class or Method to reflect on
      * @param annotationType the annotation type
      * @param checkMetaAnnotations check for meta annotations
@@ -585,7 +612,7 @@ public final class ObjectHelper {
 
     /**
      * Turns the given object arrays into a meaningful string
-     * 
+     *
      * @param objects an array of objects or null
      * @return a meaningful string
      */
@@ -682,7 +709,7 @@ public final class ObjectHelper {
     /**
      * Closes the given resource if it is available, logging any closing
      * exceptions to the given log
-     * 
+     *
      * @param closeable the object to close
      * @param name the name of the resource
      * @param log the log to use when reporting closure warnings
@@ -799,7 +826,7 @@ public final class ObjectHelper {
     /**
      * Wraps the caused exception in a {@link RuntimeCamelException} if its not
      * already such an exception.
-     * 
+     *
      * @param e the caused exception
      * @return the wrapper exception
      */
