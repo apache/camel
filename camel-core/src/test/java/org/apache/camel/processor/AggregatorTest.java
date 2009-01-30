@@ -115,6 +115,8 @@ public class AggregatorTest extends ContextTestSupport {
         for (int i = 1; i <= messageCount; i++) {
             String body = "message:" + i;
             template.sendBodyAndHeader(endpointUri, body, "cheese", 123);
+            // need a little sleep when sending large batches
+            Thread.sleep(2);
         }
 
         resultEndpoint.assertIsSatisfied();
