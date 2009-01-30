@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.InputStream;
 import java.io.File;
+import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
