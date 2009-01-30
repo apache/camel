@@ -44,8 +44,8 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 /**
  * SFTP remote file operations
  */
-public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
-    private static final transient Log LOG = LogFactory.getLog(SftpRemoteFileOperations.class);
+public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
+    private static final transient Log LOG = LogFactory.getLog(SftpOperations.class);
     private ChannelSftp channel;
     private Session session;
 
@@ -81,18 +81,20 @@ public class SftpRemoteFileOperations implements RemoteFileOperations<ChannelSft
     protected Session createSession(final RemoteFileConfiguration configuration) throws JSchException {
         final JSch jsch = new JSch();
 
-        if (isNotEmpty(configuration.getPrivateKeyFile())) {
-            LOG.debug("Using private keyfile: " + configuration.getPrivateKeyFile());
-            if (isNotEmpty(configuration.getPrivateKeyFilePassphrase())) {
-                jsch.addIdentity(configuration.getPrivateKeyFile(), configuration.getPrivateKeyFilePassphrase());
+        SftpConfiguration sftpConfig = (SftpConfiguration) configuration;
+
+        if (isNotEmpty(sftpConfig.getPrivateKeyFile())) {
+            LOG.debug("Using private keyfile: " + sftpConfig.getPrivateKeyFile());
+            if (isNotEmpty(sftpConfig.getPrivateKeyFilePassphrase())) {
+                jsch.addIdentity(sftpConfig.getPrivateKeyFile(), sftpConfig.getPrivateKeyFilePassphrase());
             } else {
-                jsch.addIdentity(configuration.getPrivateKeyFile());
+                jsch.addIdentity(sftpConfig.getPrivateKeyFile());
             }
         }
 
-        if (isNotEmpty(configuration.getKnownHostsFile())) {
-            LOG.debug("Using knownhosts file: " + configuration.getKnownHostsFile());
-            jsch.setKnownHosts(configuration.getKnownHostsFile());
+        if (isNotEmpty(sftpConfig.getKnownHostsFile())) {
+            LOG.debug("Using knownhosts file: " + sftpConfig.getKnownHostsFile());
+            jsch.setKnownHosts(sftpConfig.getKnownHostsFile());
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());

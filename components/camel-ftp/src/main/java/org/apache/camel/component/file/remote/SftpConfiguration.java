@@ -18,15 +18,21 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
-public class SftpRemoteFileConfiguration extends RemoteFileConfiguration {
+/**
+ * Secure FTP configuration
+ */
+public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
+    private String knownHostsFile;
+    private String privateKeyFile;
+    private String privateKeyFilePassphrase;
 
-    public SftpRemoteFileConfiguration() {
+    public SftpConfiguration() {
         setProtocol("sftp");
     }
 
-    public SftpRemoteFileConfiguration(URI uri) {
+    public SftpConfiguration(URI uri) {
         super(uri);
     }
 
@@ -35,4 +41,27 @@ public class SftpRemoteFileConfiguration extends RemoteFileConfiguration {
         setPort(DEFAULT_SFTP_PORT);
     }
 
+    public String getKnownHostsFile() {
+        return knownHostsFile;
+    }
+
+    public void setKnownHostsFile(String knownHostsFile) {
+        this.knownHostsFile = knownHostsFile;
+    }
+
+    public String getPrivateKeyFile() {
+        return privateKeyFile;
+    }
+
+    public void setPrivateKeyFile(String privateKeyFile) {
+        this.privateKeyFile = privateKeyFile;
+    }
+
+    public String getPrivateKeyFilePassphrase() {
+        return privateKeyFilePassphrase;
+    }
+
+    public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
+        this.privateKeyFilePassphrase = privateKeyFilePassphrase;
+    }
 }

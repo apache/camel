@@ -35,7 +35,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
-                + "&consumer.delay=2000&recursive=true&setNames=true";
+                + "&consumer.delay=2000&recursive=true";
     }
 
     @Override

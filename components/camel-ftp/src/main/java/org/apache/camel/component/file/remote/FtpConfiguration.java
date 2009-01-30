@@ -18,21 +18,35 @@ package org.apache.camel.component.file.remote;
 
 import java.net.URI;
 
-public class FtpRemoteFileConfiguration extends RemoteFileConfiguration {
+import org.apache.commons.net.ftp.FTPClientConfig;
+
+/**
+ * FTP configuration
+ */
+public class FtpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_FTP_PORT = 21;
+    private FTPClientConfig ftpClientConfig;
 
-    public FtpRemoteFileConfiguration() {
+    public FtpConfiguration() {
         setProtocol("ftp");
     }
 
-    public FtpRemoteFileConfiguration(URI uri) {
+    public FtpConfiguration(URI uri) {
         super(uri);
     }
 
     @Override
     protected void setDefaultPort() {
         setPort(DEFAULT_FTP_PORT);
+    }
+
+    public FTPClientConfig getFtpClientConfig() {
+        return ftpClientConfig;
+    }
+
+    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
+        this.ftpClientConfig = ftpClientConfig;
     }
 
 }
