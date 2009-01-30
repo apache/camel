@@ -81,6 +81,17 @@ public interface ProducerTemplate extends Service {
     Object sendBodyAndHeader(Object body, String header, Object headerValue);
 
     /**
+     * Sends the body to the default endpoint with a specified property and property
+     * value
+     *
+     * @param body          the payload to send
+     * @param property      the property name
+     * @param propertyValue the property value
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndProperty(Object body, String property, Object propertyValue);    
+    
+    /**
      * Sends the body to the default endpoint with the specified headers and
      * header values
      *
@@ -269,7 +280,59 @@ public interface ProducerTemplate extends Service {
      */
     Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, Object body, String header,
                                     Object headerValue);
+   
+    /**
+     * Sends the body to an endpoint with a specified property and property value
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload to send
+     * @param property the property name
+     * @param propertyValue the property value
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndProperty(String endpointUri, Object body, String property,
+                                    Object propertyValue);
 
+    /**
+     * Sends the body to an endpoint with a specified property and property value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param body the payload to send
+     * @param property the property name
+     * @param propertyValue the property value
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndProperty(Endpoint endpoint, Object body, String property,
+                                    Object propertyValue);
+
+    /**
+     * Sends the body to an endpoint with a specified property and property value
+     *
+     * @param endpoint the Endpoint to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param property the property name
+     * @param propertyValue the property value
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, Object body, String property,
+                                    Object propertyValue);
+
+    /**
+     * Sends the body to an endpoint with a specified property and property value
+     *
+     * @param endpoint the Endpoint URI to send to
+     * @param pattern the message {@link ExchangePattern} such as
+     *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
+     * @param body the payload to send
+     * @param property the property name
+     * @param propertyValue the property value
+     * @return the result (see class javadoc)
+     */
+    Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, Object body, String property,
+                                    Object propertyValue);       
+    
     /**
      * Sends the body to an endpoint with the specified headers and header
      * values
