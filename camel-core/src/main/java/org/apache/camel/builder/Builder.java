@@ -77,6 +77,14 @@ public final class Builder {
     }
 
     /**
+     * Returns a predicate and value builder for properties on an exchange
+     */
+    public static ValueBuilder property(String name) {
+        Expression expression = ExpressionBuilder.propertyExpression(name);
+        return new ValueBuilder(expression);
+    }    
+    
+    /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
     public static ValueBuilder body() {

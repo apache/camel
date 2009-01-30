@@ -73,8 +73,8 @@ public interface ProducerTemplate extends Service {
      * Sends the body to the default endpoint with a specified header and header
      * value
      *
-     * @param body        the payload to send
-     * @param header      the header name
+     * @param body the payload to send
+     * @param header the header name
      * @param headerValue the header value
      * @return the result (see class javadoc)
      */

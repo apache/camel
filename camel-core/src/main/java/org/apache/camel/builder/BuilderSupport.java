@@ -63,6 +63,13 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Returns a value builder for the given property
+     */
+    public ValueBuilder property(String name) {
+        return Builder.property(name);
+    }   
+    
+    /**
      * Returns a predicate and value builder for the inbound body on an exchange
      */
     public ValueBuilder body() {

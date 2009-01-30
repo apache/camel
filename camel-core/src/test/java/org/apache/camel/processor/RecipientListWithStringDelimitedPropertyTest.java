@@ -19,36 +19,43 @@ package org.apache.camel.processor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import static org.apache.camel.language.property.PropertyLanguage.property;
 
 /**
  * @version $Revision: 736555 $
  */
 public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSupport {
 
+    private static final String BODY = "answer";
+    private static final String PROPERTY_NAME = "myProperty";
+    private static final String PROPERTY_VALUE = "mock:x, mock:y, mock:z";
+
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
 
-        x.expectedBodiesReceived("answer");
-        y.expectedBodiesReceived("answer");
-        z.expectedBodiesReceived("answer");
-
+        x.expectedBodiesReceived(BODY);
+        y.expectedBodiesReceived(BODY);
+        z.expectedBodiesReceived(BODY);
+        
+        x.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);
+        y.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);
+        z.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);      
+        
         sendBody();
 
         assertMockEndpointsSatisfied();
     }
 
     protected void sendBody() {
-        template.sendBodyAndProperty("direct:a", "answer", "myProperty", "mock:x, mock:y, mock:z");
+        template.sendBodyAndProperty("direct:a", BODY, PROPERTY_NAME, PROPERTY_VALUE);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(property("myProperty"));
+                from("direct:a").recipientList(property(PROPERTY_NAME));
                 // END SNIPPET: example
             }
         };
