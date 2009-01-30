@@ -478,17 +478,44 @@ public final class ObjectHelper {
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
-        ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
-        if (contextClassLoader != null) {
-            try {
-                return contextClassLoader.loadClass(name);
-            } catch (ClassNotFoundException e) {
-                try {
-                    return loader.loadClass(name);
-                } catch (ClassNotFoundException e1) {
-                    LOG.debug("Could not find class: " + name + ". Reason: " + e);
-                }
+        // try context class loader first
+        Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
+        if (clazz == null) {
+            // then the provided loader
+            clazz = doLoadClass(name, loader);
+        }
+        if (clazz == null) {
+            // and fallback to the loader the loaded the ObjectHelper class
+            clazz = doLoadClass(name, ObjectHelper.class.getClassLoader());
+        }
+
+        if (clazz == null) {
+            LOG.warn("Could not find class: " + name);
+        }
+
+        return clazz;
+    }
+
+    /**
+     * Loads the given class with the provided classloader (may be null).
+     * Will ignore any class not found and return null.
+     *
+     * @param name    the name of the class to load
+     * @param loader  a provided loader (may be null)
+     * @return the class, or null if it could not be loaded
+     */
+    private static Class<?> doLoadClass(String name, ClassLoader loader) {
+        ObjectHelper.notEmpty(name, "name");
+        if (loader == null) {
+            return null;
+        }
+        try {
+            return loader.loadClass(name);
+        } catch (ClassNotFoundException e) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Can not load class: " + name + " using classloader: " + loader, e);
             }
+
         }
         return null;
     }
