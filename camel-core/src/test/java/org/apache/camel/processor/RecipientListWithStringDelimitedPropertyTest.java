@@ -26,7 +26,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSupport {
 
     private static final String BODY = "answer";
-    private static final String PROPERTY_NAME = "myProperty";
     private static final String PROPERTY_VALUE = "mock:x, mock:y, mock:z";
 
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchange() throws Exception {
@@ -38,9 +37,9 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         y.expectedBodiesReceived(BODY);
         z.expectedBodiesReceived(BODY);
         
-        x.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);
-        y.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);
-        z.message(0).property(PROPERTY_NAME).isEqualTo(PROPERTY_VALUE);      
+        x.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);
+        y.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);
+        z.message(0).property("myProperty").isEqualTo(PROPERTY_VALUE);      
         
         sendBody();
 
@@ -48,14 +47,14 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
     }
 
     protected void sendBody() {
-        template.sendBodyAndProperty("direct:a", BODY, PROPERTY_NAME, PROPERTY_VALUE);
+        template.sendBodyAndProperty("direct:a", BODY, "myProperty", PROPERTY_VALUE);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").recipientList(property(PROPERTY_NAME));
+                from("direct:a").recipientList(property("myProperty"));
                 // END SNIPPET: example
             }
         };
