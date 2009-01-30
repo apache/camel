@@ -25,15 +25,15 @@
     from("direct:a").recipientList(property("myProperty"));
   -->
 
-  <!-- START SNIPPET: e1 -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <!-- START SNIPPET: e1 -->
     <route>
       <from uri="direct:a" />
       <recipientList>
         <property>myProperty</property>
       </recipientList>
     </route>
+    <!-- END SNIPPET: e1 -->    
   </camelContext>
-  <!-- END SNIPPET: e1 -->
 
 </beans>
