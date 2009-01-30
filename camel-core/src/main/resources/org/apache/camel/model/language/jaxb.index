@@ -26,6 +26,7 @@ MethodCallExpression
 MvelExpression
 OgnlExpression
 PhpExpression
+PropertyExpression
 PythonExpression
 RubyExpression
 SimpleExpression

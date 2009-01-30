@@ -143,6 +143,29 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return extractResultBody(result, pattern);
     }
 
+    public Object sendBodyAndProperty(String endpointUri, final Object body, final String property,
+            final Object propertyValue) {
+        return sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
+    }    
+    
+    public Object sendBodyAndProperty(Endpoint endpoint, final Object body, final String property,
+            final Object propertyValue) {
+        Exchange result = send(endpoint, createBodyAndPropertyProcessor(body, property, propertyValue));
+        return extractResultBody(result);
+    }    
+    
+    public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body, final String property,
+            final Object propertyValue) {
+        Exchange result = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
+        return extractResultBody(result, pattern);
+    }
+
+    public Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, final Object body, final String property,
+            final Object propertyValue) {
+        Exchange result = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
+        return extractResultBody(result, pattern);
+    }    
+    
     public Object sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
         return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
@@ -231,6 +254,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return sendBodyAndHeader(getMandatoryDefaultEndpoint(), body, header, headerValue);
     }
 
+    public Object sendBodyAndProperty(Object body, String property, Object propertyValue) {
+        return sendBodyAndProperty(getMandatoryDefaultEndpoint(), body, property, propertyValue);
+    }    
+    
     public Object sendBodyAndHeaders(Object body, Map<String, Object> headers) {
         return sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
@@ -292,6 +319,17 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         };
     }
 
+    protected Processor createBodyAndPropertyProcessor(final Object body, final String property, final Object propertyValue) {
+        return new Processor() {
+            public void process(Exchange exchange) {
+                exchange.setProperty(property, propertyValue);
+                
+                Message in = exchange.getIn();
+                in.setBody(body);
+            }
+        };
+    }    
+    
     protected Processor createSetBodyProcessor(final Object body) {
         return new Processor() {
             public void process(Exchange exchange) {
