@@ -27,10 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @author martin.gilday
- *
+ * 
  */
 public class StatefulQuartzRouteTest extends ContextTestSupport {
-	protected MockEndpoint resultEndpoint;
+    protected MockEndpoint resultEndpoint;
 
     public void testSendAndReceiveMails() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
@@ -48,8 +48,9 @@ public class StatefulQuartzRouteTest extends ContextTestSupport {
         }
     }
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see org.apache.camel.ContextTestSupport#createRouteBuilder()
      */
     @Override

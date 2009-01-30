@@ -26,13 +26,15 @@ import org.quartz.StatefulJob;
 
 /**
  * @author martin.gilday
- *
+ * 
  */
 public class StatefulCamelJob implements StatefulJob {
 
-	/* (non-Javadoc)
-	 * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-	 */
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
+     */
     public void execute(final JobExecutionContext context) throws JobExecutionException {
 
         SchedulerContext schedulerContext;
@@ -44,7 +46,7 @@ public class StatefulCamelJob implements StatefulJob {
 
         CamelContext camelContext = (CamelContext) schedulerContext.get(QuartzEndpoint.CONTEXT_KEY);
         String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzEndpoint.ENDPOINT_KEY);
-        QuartzEndpoint quartzEndpoint =    (QuartzEndpoint) camelContext.getEndpoint(endpointUri);
+        QuartzEndpoint quartzEndpoint = (QuartzEndpoint) camelContext.getEndpoint(endpointUri);
         quartzEndpoint.onJobExecute(context);
     }
 }

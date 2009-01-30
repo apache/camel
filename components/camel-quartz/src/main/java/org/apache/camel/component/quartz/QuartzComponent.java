@@ -34,7 +34,7 @@ import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * A <a href="http://camel.apache.org/quartz.html">Quartz Component</a>
- *
+ * 
  * @version $Revision:520964 $
  */
 public class QuartzComponent extends DefaultComponent {
@@ -156,8 +156,8 @@ public class QuartzComponent extends DefaultComponent {
     }
 
     protected Scheduler createScheduler() throws SchedulerException {
-    	Scheduler scheduler = getFactory().getScheduler();
-    	scheduler.getContext().put(QuartzEndpoint.CONTEXT_KEY, getCamelContext());
+        Scheduler scheduler = getFactory().getScheduler();
+        scheduler.getContext().put(QuartzEndpoint.CONTEXT_KEY, getCamelContext());
         return scheduler;
     }
 }

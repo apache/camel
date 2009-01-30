@@ -23,7 +23,7 @@
     ">
 
     <!--
-      from("direct:a").recipientList(header("myHeader"));
+      from("direct:a").recipientList(header("myHeader").tokenize(","));
     -->
 
     <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
