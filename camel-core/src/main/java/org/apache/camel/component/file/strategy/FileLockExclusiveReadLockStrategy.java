@@ -37,8 +37,6 @@ public class FileLockExclusiveReadLockStrategy implements ExclusiveReadLockStrat
     private static final transient Log LOG = LogFactory.getLog(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
 
-    // TODO: We shall keep this with the GenericFileXX to support FileLock for java.io.File
-    
     public boolean acquireExclusiveReadLock(File file) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + file);

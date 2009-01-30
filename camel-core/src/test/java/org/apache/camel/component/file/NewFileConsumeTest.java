@@ -48,8 +48,11 @@ public class NewFileConsumeTest extends ContextTestSupport {
         // create a file to consume
         createDirectory("target/consumefile");
         FileOutputStream fos = new FileOutputStream(new File("target/consumefile/hello.txt"));
-        fos.write("Hello World".getBytes());
-        fos.close();
+        try {
+            fos.write("Hello World".getBytes());
+        } finally {
+            fos.close();
+        }
 
         Endpoint endpoint = comp.createEndpoint("newfile://target/consumefile", "target/consumefile", new HashMap());
         Consumer consumer = endpoint.createConsumer(new Processor() {

@@ -50,16 +50,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected GenericFileOperations<T> operations;
     protected GenericFileConfiguration configuration;
 
-    // TODO: Consider remove setNames
-    // TODO: Consider filename should always be specified when producing (to get rid of auto generating with id as filename)
-    // TODO: bufferSize & append can be moved to NewFileEndpoint as FTP does not support it
-    // TODO: configuration.getfile/setfile is a bit cumbersome setting endpoint using spring bean (see FileConsumerExpressionTest)
-
     protected boolean directory = true;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
     protected boolean append = true;
     protected boolean noop;
+    protected boolean recursive;
+    protected boolean delete;
     protected String tempPrefix;
     protected String moveNamePrefix;
     protected String moveNamePostfix;
@@ -67,10 +64,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String preMoveNamePostfix;
     protected String excludedNamePrefix;
     protected String excludedNamePostfix;
-    protected boolean recursive;
     protected String regexPattern;
-    protected boolean setNames = true;
-    protected boolean delete;
     protected Expression expression;
     protected Expression preMoveExpression;
     protected boolean idempotent;
@@ -224,14 +218,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setRegexPattern(String regexPattern) {
         this.regexPattern = regexPattern;
-    }
-
-    public boolean isSetNames() {
-        return setNames;
-    }
-
-    public void setSetNames(boolean setNames) {
-        this.setNames = setNames;
     }
 
     public boolean isDelete() {

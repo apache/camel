@@ -53,9 +53,12 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
         File file = new File("target/inprogress");
         file.mkdirs();
         FileWriter fw = new FileWriter("./target/inprogress/london.bak");
-        fw.write("I was there once in London");
-        fw.flush();
-        fw.close();
+        try {
+            fw.write("I was there once in London");
+            fw.flush();
+        } finally {
+            fw.close();
+        }
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");

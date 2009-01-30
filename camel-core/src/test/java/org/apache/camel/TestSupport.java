@@ -30,7 +30,6 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.util.StringUtils;
 
 /**
  * A bunch of useful testing methods
@@ -367,7 +366,7 @@ public abstract class TestSupport extends TestCase {
      * To be used for folder/directory comparision that works across different platforms such
      * as Window, Mac and Linux.
      */
-    public static void assertDirectoryEquals(String expected, String actual) throws Exception {
+    public static void assertDirectoryEquals(String expected, String actual) {
         assertDirectoryEquals(null, expected, actual);
     }
 
@@ -375,10 +374,10 @@ public abstract class TestSupport extends TestCase {
      * To be used for folder/directory comparision that works across different platforms such
      * as Window, Mac and Linux.
      */
-    public static void assertDirectoryEquals(String message, String expected, String actual) throws Exception {
+    public static void assertDirectoryEquals(String message, String expected, String actual) {
         // must use single / as path seperators
-        String expectedPath = StringUtils.replace(expected, File.separator, "/");
-        String acutalPath = StringUtils.replace(actual, File.separator, "/");
+        String expectedPath = expected.replaceAll("\\\\", File.separator);
+        String acutalPath = actual.replaceAll("\\\\", File.separator);
 
         if (message != null) {
             assertEquals(message, expectedPath, acutalPath);

@@ -46,23 +46,18 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
         GenericFileExchange<File> exchange = (GenericFileExchange<File>) mock.getExchanges().get(0);
         File file = exchange.getGenericFile().getFile();
-        assertFilePath("target/multidir/bye.txt", file.getPath());
+        assertDirectoryEquals("target/multidir/bye.txt", file.getPath());
         assertEquals("bye.txt", file.getName());
 
         exchange = (GenericFileExchange<File>) mock.getExchanges().get(1);
         file = exchange.getGenericFile().getFile();
-        assertFilePath("target/multidir/sub/hello.txt", file.getPath());
+        assertDirectoryEquals("target/multidir/sub/hello.txt", file.getPath());
         assertEquals("hello.txt", file.getName());
 
         exchange = (GenericFileExchange<File>) mock.getExchanges().get(2);
         file = exchange.getGenericFile().getFile();
-        assertFilePath("target/multidir/sub/sub2/godday.txt", file.getPath());
+        assertDirectoryEquals("target/multidir/sub/sub2/godday.txt", file.getPath());
         assertEquals("godday.txt", file.getName());
-    }
-
-    private static void assertFilePath(String expected, String actual) {
-        actual = actual.replaceAll("\\\\", "/");
-        assertEquals(expected, actual);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
