@@ -34,7 +34,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
 
         String tempFileName = producer.createTempFileName("target/tempandrename/claus.txt");
-        assertEquals("target" + File.separatorChar + "tempandrename" + File.separatorChar + "inprogress.claus.txt", tempFileName);
+        assertDirectoryEquals("target/tempandrename/inprogress.claus.txt", tempFileName);
     }
 
     public void testNoPathCreateTempFileName() throws Exception {
@@ -42,7 +42,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
         GenericFileProducer producer = (GenericFileProducer) endpoint.createProducer();
 
         String tempFileName = producer.createTempFileName("claus.txt");
-        assertEquals("inprogress.claus.txt", tempFileName);
+        assertDirectoryEquals("inprogress.claus.txt", tempFileName);
     }
 
     public void testTempPrefix() throws Exception {

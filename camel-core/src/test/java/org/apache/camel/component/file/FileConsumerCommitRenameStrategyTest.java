@@ -63,9 +63,12 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         File file = new File("target/done");
         file.mkdirs();
         FileWriter fw = new FileWriter("./target/done/london.txt");
-        fw.write("I was there once in London");
-        fw.flush();
-        fw.close();
+        try {
+            fw.write("I was there once in London");
+            fw.flush();
+        } finally {
+            fw.close();
+        }
 
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");

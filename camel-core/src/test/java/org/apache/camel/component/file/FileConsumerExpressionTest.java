@@ -139,7 +139,6 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
                 // configured by java using java beans setters
                 NewFileEndpoint endpoint = new NewFileEndpoint();
                 endpoint.setCamelContext(context);
-                endpoint.getConfiguration().setFile("target/filelanguage/report5.txt");
                 endpoint.setFile(new File("target/filelanguage/report5.txt"));
                 endpoint.setOperations(new NewFileOperations(endpoint));
                 endpoint.setDirectory(false);

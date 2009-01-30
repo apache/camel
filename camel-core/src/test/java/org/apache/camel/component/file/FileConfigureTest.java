@@ -32,11 +32,13 @@ import org.apache.camel.impl.DefaultMessage;
 public class FileConfigureTest extends ContextTestSupport {
     private static final String EXPECT_PATH = "target" + File.separator + "foo" + File.separator + "bar";
     private static final String EXPECT_FILE = "some" + File.separator + "nested" + File.separator + "filename.txt";
+
     private static final Processor DUMMY_PROCESSOR = new Processor() {
         public void process(Exchange exchange) throws Exception {
             // Do nothing here
         }
     };
+
     public void testUriConfigurations() throws Exception {
         assertFileEndpoint("newfile://target/foo/bar", EXPECT_PATH);
         assertFileEndpoint("newfile://target/foo/bar?delete=true", EXPECT_PATH);
@@ -80,10 +82,10 @@ public class FileConfigureTest extends ContextTestSupport {
 
         File file = endpoint.getFile();
         String path = file.getPath();
-        assertEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
+        assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
 
         file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
-        GenericFile consumedFile = NewFileConsumer.asGenericFile(file);
+        GenericFile<File> consumedFile = NewFileConsumer.asGenericFile(file);
 
         Message message = new DefaultMessage();
         endpoint.configureMessage(consumedFile, message);
