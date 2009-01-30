@@ -63,11 +63,11 @@ public class DefaultComponentResolver<E extends Exchange> implements ComponentRe
             throw new IllegalArgumentException("Invalid URI, no Component registered for scheme : "
                     + name, e);
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found component: " + name + " via type: " + type.getName() + " via " + COMPONENT_FACTORY.getPath() + name);
-        }
         if (type == null) {
             return null;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found component: " + name + " via type: " + type.getName() + " via " + COMPONENT_FACTORY.getPath() + name);
         }
         if (Component.class.isAssignableFrom(type)) {
             return (Component<E>) context.getInjector().newInstance(type);
