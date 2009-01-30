@@ -73,26 +73,26 @@ public class GenericFile<T> {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        setAbsoluteFileName(getParent() + "/" + newName);
+        setAbsoluteFileName(getParent() + File.separator + newName);
 
         // relative name is a bit more complex to set as newName itself can contain
         // folders we need to consider as well
         String baseNewName = null;
-        if (newName.indexOf("/") != -1) {
-            baseNewName = newName.substring(0, newName.lastIndexOf("/"));
-            newName = newName.substring(newName.lastIndexOf("/") + 1);
+        if (newName.indexOf(File.separator) != -1) {
+            baseNewName = newName.substring(0, newName.lastIndexOf(File.separator));
+            newName = newName.substring(newName.lastIndexOf(File.separator) + 1);
         }
 
-        if (relativeFileName.indexOf("/") != -1) {
-            String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf("/"));
+        if (relativeFileName.indexOf(File.separator) != -1) {
+            String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(File.separator));
             if (baseNewName != null) {
-                setRelativeFileName(relative + "/" + baseNewName + "/" + newName);
+                setRelativeFileName(relative + File.separator + baseNewName + File.separator + newName);
             } else {
-                setRelativeFileName(relative + "/" + newName);
+                setRelativeFileName(relative + File.separator + newName);
             }
         } else {
             if (baseNewName != null) {
-                setRelativeFileName(baseNewName + "/" + newName);
+                setRelativeFileName(baseNewName + File.separator + newName);
             } else {
                 setRelativeFileName(newName);
             }
@@ -150,8 +150,8 @@ public class GenericFile<T> {
     }
 
     public String getParent() {
-        if (getAbsoluteFileName().lastIndexOf("/") > 0) {
-            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf("/"));
+        if (getAbsoluteFileName().lastIndexOf(File.separator) > 0) {
+            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(File.separator));
         } else {
             return "";
         }

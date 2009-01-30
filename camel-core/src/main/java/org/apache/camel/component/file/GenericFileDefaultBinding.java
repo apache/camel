@@ -23,11 +23,11 @@ public class GenericFileDefaultBinding implements GenericFileBinding {
 
     private Object body;
 
-    public Object getBody(GenericFile genericFile) {
+    public Object getBody(GenericFile file) {
         return body;
     }
 
-    public void setBody(GenericFile genericFile, Object body) {
+    public void setBody(GenericFile file, Object body) {
         this.body = body;
     }
 }

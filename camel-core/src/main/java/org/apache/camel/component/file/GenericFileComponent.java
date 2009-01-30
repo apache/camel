@@ -63,14 +63,23 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
     }
 
     /**
-     * File Components implements this method
+     * A factory method for derived file components to create the endpoint
+     *
+     * @param uri the full URI of the endpoint
+     * @param remaining the remaining part of the URI without the query
+     *                parameters or component prefix
+     * @param parameters the optional parameters passed in
+     * @return a newly created endpoint or null if the endpoint cannot be
+     *         created based on the inputs
+     * @throws Exception can be thrown
      */
     protected abstract GenericFileEndpoint<T> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception;
 
     /**
-     * File Components implements this method
+     * A factory method for derived file components to perform validation of properties
      *
-     * @param endpoint the newly created endpoint to do some custom post configuration
+     * @param endpoint the endpoint
+     * @throws Exception can be thrown in case of validation errors
      */
     protected abstract void afterPropertiesSet(GenericFileEndpoint<T> endpoint) throws Exception;
 

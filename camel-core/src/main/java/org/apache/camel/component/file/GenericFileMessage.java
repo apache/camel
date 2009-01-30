@@ -19,34 +19,35 @@ package org.apache.camel.component.file;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
- * Remote file message
+ * Generic file message
  */
 public class GenericFileMessage<T> extends DefaultMessage {
-    private GenericFile<T> genericFile;
+    private GenericFile<T> file;
 
     public GenericFileMessage() {
     }
 
-    public GenericFileMessage(GenericFile<T> genericFile) {
-        this.genericFile = genericFile;
+    public GenericFileMessage(GenericFile<T> file) {
+        this.file = file;
     }
 
     @Override
-    public GenericFileExchange getExchange() {
-        return (GenericFileExchange) super.getExchange();
+    @SuppressWarnings("unchecked")
+    public GenericFileExchange<T> getExchange() {
+        return (GenericFileExchange<T>) super.getExchange();
     }
 
     @Override
     protected Object createBody() {
-        return genericFile.getBody();
+        return file.getBody();
     }
 
     public GenericFile<T> getGenericFile() {
-        return genericFile;
+        return file;
     }
 
-    public void setRemoteFile(GenericFile<T> genericFile) {
-        this.genericFile = genericFile;
+    public void setGenericFile(GenericFile<T> file) {
+        this.file = file;
     }
 
     @Override
@@ -56,6 +57,6 @@ public class GenericFileMessage<T> extends DefaultMessage {
 
     @Override
     public String toString() {
-        return "GenericFileMessage: " + genericFile;
+        return "GenericFileMessage: " + file;
     }
 }
