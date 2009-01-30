@@ -82,7 +82,6 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
             // matched file so add
             fileList.add(gf);
         }
-
     }
 
     /**
@@ -106,7 +105,7 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
         }
         answer.setLastModified(file.lastModified());
         if (file.getParent() != null) {
-            answer.setRelativeFileName(file.getParent() + "/" + file.getName());
+            answer.setRelativeFileName(file.getParent() + File.separator + file.getName());
         } else {
             answer.setRelativeFileName(file.getName());
         }

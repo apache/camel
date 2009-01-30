@@ -22,10 +22,6 @@ public class GenericFileConfiguration {
 
     private String file;
 
-    public GenericFileConfiguration() {
-        super();
-    }
-
     public void configure(URI uri) {
         setFile(uri.getPath());
     }

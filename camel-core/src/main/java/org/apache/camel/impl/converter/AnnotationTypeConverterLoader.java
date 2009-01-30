@@ -159,7 +159,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 loadConverterMethods(registry, superclass);
             }
         } catch (NoClassDefFoundError e) {
-            LOG.warn("Ignoring converter type: " + type.getName() + " as a dependent class could not be found: " + e, e);
+            LOG.warn("Ignoring converter type: " + type.getCanonicalName() + " as a dependent class could not be found: " + e, e);
         }
     }
 

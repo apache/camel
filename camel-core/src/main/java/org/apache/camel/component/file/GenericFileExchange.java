@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.util.Date;
 
 import org.apache.camel.CamelContext;
@@ -26,7 +27,7 @@ import org.apache.camel.impl.DefaultExchange;
 
 public class GenericFileExchange<T> extends DefaultExchange {
 
-    private GenericFile<T> genericFile;
+    private GenericFile<T> file;
 
     public GenericFileExchange(CamelContext context) {
         super(context);
@@ -44,53 +45,53 @@ public class GenericFileExchange<T> extends DefaultExchange {
         super(fromEndpoint);
     }
 
-    public GenericFileExchange(GenericFileEndpoint endpoint, ExchangePattern pattern, GenericFile<T> genericFile) {
+    public GenericFileExchange(GenericFileEndpoint endpoint, ExchangePattern pattern, GenericFile<T> file) {
         super(endpoint, pattern);
-        setGenericFile(genericFile);
+        setGenericFile(file);
     }
 
-    public GenericFileExchange(DefaultExchange parent, GenericFile<T> genericFile) {
+    public GenericFileExchange(DefaultExchange parent, GenericFile<T> file) {
         super(parent);
-        setGenericFile(genericFile);
+        setGenericFile(file);
     }
 
     public GenericFileExchange(Endpoint fromEndpoint, ExchangePattern pattern) {
         super(fromEndpoint, pattern);
     }
 
-    protected void populateHeaders(GenericFile<T> genericFile) {
-        if (genericFile != null) {
-            getIn().setHeader("CamelFileName", genericFile.getFileName());
-            getIn().setHeader("CamelFileAbsolutePath", genericFile.getAbsoluteFileName());
+    protected void populateHeaders(GenericFile<T> file) {
+        if (file != null) {
+            getIn().setHeader("CamelFileName", file.getFileName());
+            getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFileName());
             // set the parent if there is a parent folder
-            if (genericFile.getRelativeFileName().lastIndexOf("/") != -1) {
-                String parent = genericFile.getRelativeFileName().substring(0, genericFile.getRelativeFileName().lastIndexOf("/"));
+            if (file.getRelativeFileName().lastIndexOf(File.separator) != -1) {
+                String parent = file.getRelativeFileName().substring(0, file.getRelativeFileName().lastIndexOf(File.separator));
                 getIn().setHeader("CamelFileParent", parent);
             }
-            getIn().setHeader("CamelFilePath", genericFile.getRelativeFileName());
-            getIn().setHeader("CamelFileCanonicalPath", genericFile.getCanonicalFileName());
+            getIn().setHeader("CamelFilePath", file.getRelativeFileName());
+            getIn().setHeader("CamelFileCanonicalPath", file.getCanonicalFileName());
 
-            if (genericFile.getFileLength() > 0) {
-                getIn().setHeader("CamelFileLength", genericFile.getFileLength());
+            if (file.getFileLength() > 0) {
+                getIn().setHeader("CamelFileLength", file.getFileLength());
             }
-            if (genericFile.getLastModified() > 0) {
-                getIn().setHeader("CamelFileLastModified", new Date(genericFile.getLastModified()));
+            if (file.getLastModified() > 0) {
+                getIn().setHeader("CamelFileLastModified", new Date(file.getLastModified()));
             }
         }
     }
 
     public GenericFile<T> getGenericFile() {
-        return genericFile;
+        return file;
     }
 
-    public void setGenericFile(GenericFile<T> genericFile) {
-        setIn(new GenericFileMessage(genericFile));
-        this.genericFile = genericFile;
-        populateHeaders(genericFile);
+    public void setGenericFile(GenericFile<T> file) {
+        setIn(new GenericFileMessage<T>(file));
+        this.file = file;
+        populateHeaders(file);
     }
 
     public Exchange newInstance() {
-        return new GenericFileExchange<T>(this, genericFile);
+        return new GenericFileExchange<T>(this, file);
     }
 
 }

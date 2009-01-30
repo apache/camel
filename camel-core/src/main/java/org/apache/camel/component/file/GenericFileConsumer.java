@@ -50,7 +50,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
 
         // before we poll is there anything we need to check ? Such as are we
         // connected to the FTP Server Still ?
-        prePollCheck();
+        if (!prePollCheck()) {
+            log.debug("Skipping pool as pre poll check returned false");
+        }
 
         // gather list of files to process
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
@@ -133,7 +135,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         try {
-            final GenericFileProcessStrategy processStrategy = endpoint.getGenericFileProcessStrategy();
+            final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
             if (processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile())) {
 
@@ -206,8 +208,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      *                        <tt>true</tt> if an exception occured during processing but it
      *                        was handled by the failure processor (usually the DeadLetterChannel).
      */
-    protected void processStrategyCommit(GenericFileProcessStrategy processStrategy,
-                                         GenericFileExchange exchange, GenericFile<T> file, boolean failureHandled) {
+    protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
+                                         GenericFileExchange<T> exchange, GenericFile<T> file, boolean failureHandled) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
             // only use the filename as the key as the file could be moved into a done folder
@@ -234,8 +236,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * @param exchange        the exchange
      * @param file            the file processed
      */
-    protected void processStrategyRollback(GenericFileProcessStrategy processStrategy,
-                                           GenericFileExchange exchange, GenericFile<T> file) {
+    protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
+                                           GenericFileExchange<T> exchange, GenericFile<T> file) {
         if (log.isDebugEnabled()) {
             log.debug("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }
@@ -330,13 +332,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         return true;
-    }
-
-    /**
-     * Override if required
-     */
-    protected void doStop() throws Exception {
-        super.doStop();
     }
 
 }

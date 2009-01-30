@@ -37,7 +37,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Generic Endpoint
+ * Generic FileEndpoint
  */
 public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
@@ -46,7 +46,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     protected final transient Log log = LogFactory.getLog(getClass());
 
-    protected GenericFileProcessStrategy processStrategy;
+    protected GenericFileProcessStrategy<T> processStrategy;
     protected GenericFileOperations<T> operations;
     protected GenericFileConfiguration configuration;
 
@@ -109,7 +109,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         return UuidGenerator.generateSanitizedId(message.getMessageId());
     }
 
-    public GenericFileProcessStrategy getGenericFileProcessStrategy() {
+    public GenericFileProcessStrategy<T> getGenericFileProcessStrategy() {
         if (processStrategy == null) {
             processStrategy = createGenericFileStrategy();
             if (log.isDebugEnabled()) {
@@ -122,7 +122,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     /**
      * A strategy method to lazily create the file strategy
      */
-    protected GenericFileProcessStrategy createGenericFileStrategy() {
+    @SuppressWarnings("unchecked")
+    protected GenericFileProcessStrategy<T> createGenericFileStrategy() {
         Class<?> factory = null;
         try {
             FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
@@ -143,13 +144,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
         try {
             Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", Map.class);
-            return (GenericFileProcessStrategy) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsMap());
+            return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsMap());
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy(GenericFileEndpoint endpoint) method not found", e);
         }
     }
 
-    public void setGenericFileProcessStrategy(GenericFileProcessStrategy genericFileProcessStrategy) {
+    public void setGenericFileProcessStrategy(GenericFileProcessStrategy<T> genericFileProcessStrategy) {
         this.processStrategy = genericFileProcessStrategy;
     }
 
@@ -408,11 +409,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.operations = operations;
     }
 
-    public GenericFileProcessStrategy getProcessStrategy() {
+    public GenericFileProcessStrategy<T> getProcessStrategy() {
         return processStrategy;
     }
 
-    public void setProcessStrategy(GenericFileProcessStrategy processStrategy) {
+    public void setProcessStrategy(GenericFileProcessStrategy<T> processStrategy) {
         this.processStrategy = processStrategy;
     }
 
@@ -479,7 +480,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             params.put("readLock", readLock);
         }
         if (readLockTimeout > 0) {
-            params.put("readLockTimeout", Long.valueOf(readLockTimeout));
+            params.put("readLockTimeout", readLockTimeout);
         }
         return params;
     }
