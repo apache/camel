@@ -37,15 +37,15 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP remote file operations
  */
-public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
-    private static final transient Log LOG = LogFactory.getLog(FtpRemoteFileOperations.class);
+public class FtpOperations implements RemoteFileOperations<FTPFile> {
+    private static final transient Log LOG = LogFactory.getLog(FtpOperations.class);
     private final FTPClient client;
 
-    public FtpRemoteFileOperations() {
+    public FtpOperations() {
         this.client = new FTPClient();
     }
 
-    public FtpRemoteFileOperations(FTPClient client) {
+    public FtpOperations(FTPClient client) {
         this.client = client;
     }
 
@@ -58,9 +58,11 @@ public class FtpRemoteFileOperations implements RemoteFileOperations<FTPFile> {
         int port = config.getPort();
         String username = config.getUsername();
 
-        if (config.getFtpClientConfig() != null) {
-            LOG.trace("Configuring FTPFile with config: " + config.getFtpClientConfig());
-            client.configure(config.getFtpClientConfig());
+        FtpConfiguration ftpConfig = (FtpConfiguration) config;
+
+        if (ftpConfig.getFtpClientConfig() != null) {
+            LOG.trace("Configuring FTPFile with config: " + ftpConfig.getFtpClientConfig());
+            client.configure(ftpConfig.getFtpClientConfig());
         }
 
         LOG.trace("Connecting to " + config.remoteServerInformation());

@@ -34,7 +34,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&directory=true"
-                + "&binary=true&consumer.useFixedDelay=false&setNames=true&recursive=false&consumer.delay=5000";
+                + "&binary=true&consumer.useFixedDelay=false&recursive=false&consumer.delay=5000";
     }
 
     @Override

@@ -30,8 +30,8 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testFtpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("ftp://hostname");
-        assertIsInstanceOf(FtpRemoteFileEndpoint.class, endpoint);
-        FtpRemoteFileEndpoint ftpEndpoint = (FtpRemoteFileEndpoint) endpoint;
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -45,8 +45,8 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testSftpConfigurationDefaults() {
         Endpoint endpoint = context.getEndpoint("sftp://hostname");
-        assertIsInstanceOf(SftpRemoteFileEndpoint.class, endpoint);
-        SftpRemoteFileEndpoint sftpEndpoint = (SftpRemoteFileEndpoint) endpoint;
+        assertIsInstanceOf(SftpEndpoint.class, endpoint);
+        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
@@ -60,8 +60,8 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testFtpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
-        assertIsInstanceOf(FtpRemoteFileEndpoint.class, endpoint);
-        FtpRemoteFileEndpoint ftpEndpoint = (FtpRemoteFileEndpoint) endpoint;
+        assertIsInstanceOf(FtpEndpoint.class, endpoint);
+        FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
 
         assertEquals("ftp", config.getProtocol());
@@ -75,8 +75,8 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testSftpExplicitConfiguration() {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
-        assertIsInstanceOf(SftpRemoteFileEndpoint.class, endpoint);
-        SftpRemoteFileEndpoint sftpEndpoint = (SftpRemoteFileEndpoint) endpoint;
+        assertIsInstanceOf(SftpEndpoint.class, endpoint);
+        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
@@ -109,9 +109,9 @@ public class UriConfigurationTest extends TestSupport {
 
     public void testSftpKnownHostsFileConfiguration() {
         Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false&knownHostsFile=/home/janstey/.ssh/known_hosts");
-        assertIsInstanceOf(SftpRemoteFileEndpoint.class, endpoint);
-        SftpRemoteFileEndpoint sftpEndpoint = (SftpRemoteFileEndpoint) endpoint;
-        RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
+        assertIsInstanceOf(SftpEndpoint.class, endpoint);
+        SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
+        SftpConfiguration config = (SftpConfiguration) sftpEndpoint.getConfiguration();
 
         assertEquals("sftp", config.getProtocol());
         assertEquals("hostname", config.getHost());

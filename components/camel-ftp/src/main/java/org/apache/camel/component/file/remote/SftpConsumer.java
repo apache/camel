@@ -24,7 +24,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * SFTP consumer
+ * Secure FTP consumer
  */
 public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 

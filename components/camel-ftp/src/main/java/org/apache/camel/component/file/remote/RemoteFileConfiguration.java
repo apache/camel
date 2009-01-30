@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
-import org.apache.commons.net.ftp.FTPClientConfig;
 
 /**
  * Configuration of the FTP server
@@ -32,10 +31,6 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private String password;
     private boolean binary;
     private boolean passiveMode;
-    private String knownHostsFile;
-    private String privateKeyFile;
-    private String privateKeyFilePassphrase;
-    private FTPClientConfig ftpClientConfig;
 
     public RemoteFileConfiguration() {
     }
@@ -76,7 +71,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     }
 
     public void setPort(int port) {
-        if (port != -1) { // use default
+        // only set port if provided with a positive number
+        if (port > 0) {
             this.port = port;
         }
     }
@@ -126,35 +122,4 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         this.passiveMode = passiveMode;
     }
 
-    public String getKnownHostsFile() {
-        return knownHostsFile;
-    }
-
-    public void setKnownHostsFile(String knownHostsFile) {
-        this.knownHostsFile = knownHostsFile;
-    }
-
-    public String getPrivateKeyFile() {
-        return privateKeyFile;
-    }
-
-    public void setPrivateKeyFile(String privateKeyFile) {
-        this.privateKeyFile = privateKeyFile;
-    }
-
-    public String getPrivateKeyFilePassphrase() {
-        return privateKeyFilePassphrase;
-    }
-
-    public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
-        this.privateKeyFilePassphrase = privateKeyFilePassphrase;
-    }
-
-    public FTPClientConfig getFtpClientConfig() {
-        return ftpClientConfig;
-    }
-
-    public void setFtpClientConfig(FTPClientConfig ftpClientConfig) {
-        this.ftpClientConfig = ftpClientConfig;
-    }
 }

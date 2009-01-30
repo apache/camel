@@ -31,7 +31,6 @@ import org.apache.ftpserver.usermanager.PropertiesUserManager;
  */
 public abstract class FtpServerTestSupport extends ContextTestSupport {
 
-    // TODO: Figure out to set the home dir of the ftpServer from java
     public static final String FTP_ROOT_DIR = "./res/home/";
 
     protected FtpServer ftpServer;
@@ -90,7 +89,10 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
 
         // save to file, do not append
         FileOutputStream fos = new FileOutputStream(file, false);
-        fos.write(("" + getPort()).getBytes());
-        fos.close();
+        try {
+            fos.write(("" + getPort()).getBytes());
+        } finally {
+            fos.close();
+        }
     }
 }

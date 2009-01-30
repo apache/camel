@@ -20,13 +20,16 @@ import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
 
 
-public class SftpRemoteFileEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
+/**
+ * Secure FTP endpoint
+ */
+public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
-    public SftpRemoteFileEndpoint() {
-        this.operations = new SftpRemoteFileOperations();
+    public SftpEndpoint() {
+        this.operations = new SftpOperations();
     }
 
-    public SftpRemoteFileEndpoint(String uri, SftpRemoteFileComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,
+    public SftpEndpoint(String uri, SftpComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,
                                   RemoteFileConfiguration configuration) {
         super(uri, component, operations, configuration);
     }

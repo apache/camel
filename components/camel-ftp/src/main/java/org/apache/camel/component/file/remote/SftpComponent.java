@@ -19,25 +19,24 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 import java.util.Map;
 
+import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.file.GenericFileEndpoint;
-import org.apache.commons.net.ftp.FTPFile;
 
 /**
- * Standard FTP Remote File Component
+ * Secure FTP Component
  */
-public class FtpRemoteFileComponent extends RemoteFileComponent<FTPFile> {
+public class SftpComponent extends RemoteFileComponent<ChannelSftp.LsEntry> {
 
-    public FtpRemoteFileComponent() {
-        super();
+    public SftpComponent() {
     }
 
-    public FtpRemoteFileComponent(CamelContext context) {
+    public SftpComponent(CamelContext context) {
         super(context);
     }
 
     @Override
-    protected GenericFileEndpoint<FTPFile> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<ChannelSftp.LsEntry> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
         // get the base uri part before the options as they can be non URI valid such as the expression using $ chars
         // and the URI constructor will regard $ as an illegal character and we dont want to enforce end users to
         // to espace the $ for the expression (file language)
@@ -46,15 +45,15 @@ public class FtpRemoteFileComponent extends RemoteFileComponent<FTPFile> {
             baseUri = uri.substring(0, uri.indexOf("?"));
         }
 
-        // lets make sure we create a new configuration as each endpoint can customize its own version
-        // must pass on baseUri to the configuration (see above)
-        FtpRemoteFileConfiguration config = new FtpRemoteFileConfiguration(new URI(baseUri));
+        // lets make sure we create a new configuration as each endpoint can
+        // customize its own version
+        SftpConfiguration config = new SftpConfiguration(new URI(baseUri));
 
-        FtpRemoteFileOperations operations = new FtpRemoteFileOperations();
-        return new FtpRemoteFileEndpoint(uri, this, operations, config);
+        SftpOperations operations = new SftpOperations();
+        return new SftpEndpoint(uri, this, operations, config);
     }
 
-    protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {
+    protected void afterPropertiesSet(GenericFileEndpoint<ChannelSftp.LsEntry> endpoint) throws Exception {
         // noop
     }
 

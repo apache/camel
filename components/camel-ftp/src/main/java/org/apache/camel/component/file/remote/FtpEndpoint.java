@@ -19,13 +19,16 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.Processor;
 import org.apache.commons.net.ftp.FTPFile;
 
-public class FtpRemoteFileEndpoint extends RemoteFileEndpoint<FTPFile> {
+/**
+ * FTP endpoint
+ */
+public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
 
-    public FtpRemoteFileEndpoint() {
-        this.operations = new FtpRemoteFileOperations();
+    public FtpEndpoint() {
+        this.operations = new FtpOperations();
     }
 
-    public FtpRemoteFileEndpoint(String uri, FtpRemoteFileComponent component, FtpRemoteFileOperations operations,
+    public FtpEndpoint(String uri, FtpComponent component, FtpOperations operations,
                                  RemoteFileConfiguration configuration) {
         super(uri, component, operations, configuration);
     }
