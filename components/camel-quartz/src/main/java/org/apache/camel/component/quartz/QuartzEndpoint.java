@@ -41,14 +41,14 @@ import org.quartz.Trigger;
 
 /**
  * A <a href="http://activemq.apache.org/quartz.html">Quartz Endpoint</a>
- *
+ * 
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint {
-    private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
-
     public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
     public static final String CONTEXT_KEY = "org.apache.camel.CamelContext";
+    
+    private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
 
     private Scheduler scheduler;
     private LoadBalancer loadBalancer;
@@ -110,7 +110,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     /**
      * This method is invoked when a Quartz job is fired.
-     *
+     * 
      * @param jobExecutionContext the Quartz Job context
      */
     public void onJobExecute(final JobExecutionContext jobExecutionContext) throws JobExecutionException {
@@ -146,7 +146,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     public QuartzComponent getComponent() {
-        return (QuartzComponent)super.getComponent();
+        return (QuartzComponent) super.getComponent();
     }
 
     public boolean isSingleton() {
@@ -189,7 +189,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public void setTrigger(final Trigger trigger) {
         this.trigger = trigger;
     }
- 
+
     /**
      * @return the stateful mode
      */
@@ -198,7 +198,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * @param stateful sets the stateful mode
+     * @param stateful
+     *            sets the stateful mode
      */
     public void setStateful(final boolean stateful) {
         this.stateful = stateful;
