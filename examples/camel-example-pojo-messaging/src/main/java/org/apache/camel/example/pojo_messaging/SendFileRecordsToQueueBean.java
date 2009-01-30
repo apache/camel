@@ -22,7 +22,7 @@ import org.apache.camel.ProducerTemplate;
 
 //START SNIPPET: ex
 public class SendFileRecordsToQueueBean {
-    @Produce(uri="activemq:personnel.records")
+    @Produce(uri = "activemq:personnel.records")
     ProducerTemplate producer;
 
     @Consume(uri = "file:src/data?noop=true")
