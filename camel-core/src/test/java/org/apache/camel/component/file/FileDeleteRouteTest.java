@@ -42,10 +42,10 @@ public class FileDeleteRouteTest extends FileRouteTest {
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
         result.assertIsSatisfied();
 
-        Thread.sleep(100);
+        Thread.sleep(1000);
 
-        for (String lockName : recorder.getLocks()) {
-            File lock = new File(lockName);
+        for (String lockName : recorder.getLocks()) {            
+            File lock = new File(lockName);            
             lock = lock.getAbsoluteFile();
             assertFalse(lock.exists());
         }

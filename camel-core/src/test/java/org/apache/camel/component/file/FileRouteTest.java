@@ -54,7 +54,7 @@ public class FileRouteTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() {                
                 from(uri).process(recorder).to("mock:result");
             }
         };

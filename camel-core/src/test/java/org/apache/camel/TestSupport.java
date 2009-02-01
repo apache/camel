@@ -370,7 +370,7 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * To be used for folder/directory comparision that works across different platforms such
+     * To be used for folder/directory comparison that works across different platforms such
      * as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String expected, String actual) {
@@ -378,18 +378,24 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
-     * To be used for folder/directory comparision that works across different platforms such
+     * To be used for folder/directory comparison that works across different platforms such
      * as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String message, String expected, String actual) {
-        // must use single / as path seperators
-        String expectedPath = expected.replaceAll("\\\\", File.separator);
-        String acutalPath = actual.replaceAll("\\\\", File.separator);
-
+        String expectedPath = expected;
+        String actualPath = actual;
+        // must use single / as path separators
+        if (expected.indexOf("\\") >= 0) {
+            expectedPath = expected.replaceAll("\\\\", "/");
+        }
+        if (actual.indexOf("\\") >= 0) {
+            actualPath = actual.replaceAll("\\\\", "/");            
+        }
+        
         if (message != null) {
-            assertEquals(message, expectedPath, acutalPath);
+            assertEquals(message, expectedPath, actualPath);
         } else {
-            assertEquals(expectedPath, acutalPath);
+            assertEquals(expectedPath, actualPath);
         }
     }
 }
