@@ -68,15 +68,7 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging-api</artifactId>
-    </dependency>
-
-    <dependency>
-       <!-- this is only needed for OSGi environments -->
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
-    </dependency>
+    </dependency>    
 
     <!-- to allow Spring annotations to be used -->
     <dependency>
