@@ -50,7 +50,7 @@ public class NewFileOperations implements GenericFileOperations<File> {
         this.endpoint = (NewFileEndpoint) endpoint;
     }
 
-    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {        
         File file = new File(name);
         return file.exists() && file.delete();
     }
@@ -62,7 +62,7 @@ public class NewFileOperations implements GenericFileOperations<File> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
-        ObjectHelper.notNull(endpoint, "endpoint");
+        ObjectHelper.notNull(endpoint, "endpoint");       
 
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && endpoint.isDirectory() && !endpoint.getFile().exists()) {
@@ -79,7 +79,7 @@ public class NewFileOperations implements GenericFileOperations<File> {
                 directory = directory.substring(endpoint.getFile().getPath().length());
             }
             path = new File(endpoint.getFile(), directory);
-        }
+        }       
 
         if (path.isDirectory() && path.exists()) {
             // the directory already exists
@@ -113,10 +113,10 @@ public class NewFileOperations implements GenericFileOperations<File> {
         return true;
     }
 
-    public boolean storeFile(String name, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
+    public boolean storeFile(String fileName, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
-
-        File file = new File(name);
+        
+        File file = new File(fileName);
         try {
             boolean fileSource = exchange.getIn().getBody() instanceof File;
             if (fileSource) {
@@ -126,7 +126,7 @@ public class NewFileOperations implements GenericFileOperations<File> {
                 InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
                 writeFileByStream(in, file);
             }
-        } catch (IOException e) {
+        } catch (IOException e) {            
             throw new GenericFileOperationFailedException("Can not store file: " + file, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Can not store file: " + file, e);

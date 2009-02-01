@@ -56,8 +56,8 @@ public class GenericFile<T> {
         }
         result.setAbsoluteFileName(source.getAbsoluteFileName());
         result.setCanonicalFileName(source.getCanonicalFileName());
-        result.setRelativeFileName(source.getRelativeFileName());
-        result.setFileName(source.getFileName());
+        result.setRelativeFileName(source.getRelativeFileName());              
+        result.setFileName(source.getFileName());        
         result.setFileLength(source.getFileLength());
         result.setLastModified(source.getLastModified());
         result.setFile(source.getFile());
@@ -73,8 +73,11 @@ public class GenericFile<T> {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
+        if (System.getProperty("os.name").startsWith("Windows") && newName.indexOf("/") >= 0) {
+            newName = newName.replaceAll("/", "\\\\");
+        }
         setAbsoluteFileName(getParent() + File.separator + newName);
-
+        
         // relative name is a bit more complex to set as newName itself can contain
         // folders we need to consider as well
         String baseNewName = null;
@@ -149,7 +152,7 @@ public class GenericFile<T> {
         getBinding().setBody(this, os);
     }
 
-    public String getParent() {
+    public String getParent() {       
         if (getAbsoluteFileName().lastIndexOf(File.separator) > 0) {
             return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(File.separator));
         } else {
@@ -172,7 +175,12 @@ public class GenericFile<T> {
      * @param absoluteFileName the absoluteFileName to set
      */
     public void setAbsoluteFileName(String absoluteFileName) {
-        this.absoluteFileName = absoluteFileName;
+        // should replace the "/" with "\\" in windows
+        if (absoluteFileName != null && System.getProperty("os.name").startsWith("Windows") && absoluteFileName.indexOf("/") >= 0) {
+            this.absoluteFileName = absoluteFileName.replaceAll("/", "\\\\");
+        } else {
+            this.absoluteFileName = absoluteFileName;
+        }
     }
 
     /**

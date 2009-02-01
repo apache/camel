@@ -144,7 +144,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String answer;
 
         String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
-
+                
         // expression support
         Expression expression = endpoint.getExpression();
         if (name != null) {
@@ -164,10 +164,15 @@ public class GenericFileProducer<T> extends DefaultProducer {
             Object result = expression.evaluate(exchange);
             name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }
+        
+        // replace the "/" with the "\\" for Windows
+        if (name != null && System.getProperty("os.name").startsWith("Windows") && name.indexOf("/") >= 0) {           
+            name = name.replaceAll("/", "\\\\");            
+        }
 
         String endpointFile = endpoint.getConfiguration().getFile();
         if (endpoint.isDirectory()) {
-            // Its a directory so we should use it as a basepath for the filename
+            // Its a directory so we should use it as a base path for the filename
             // If the path isn't empty, we need to add a trailing / if it isn't already there
             String baseDir = "";
             if (endpointFile.length() > 0) {
@@ -188,6 +193,10 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     protected String createTempFileName(String fileName) {
+        if (fileName != null && System.getProperty("os.name").startsWith("Windows") && fileName.indexOf("/") >= 0) {
+            fileName = fileName.replaceAll("/", "\\\\");
+        }
+        
         int path = fileName.lastIndexOf(File.separator);
         if (path == -1) {
             // no path
