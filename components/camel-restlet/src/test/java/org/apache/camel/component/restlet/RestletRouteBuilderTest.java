@@ -40,10 +40,10 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
                 // Restlet producer to use POST method. The RestletMethod=post will be stripped
                 // before request is sent.
                 from("direct:start").setHeader("id", constant(ID))
-                    .to("restlet:http://localhost:8080/orders?restletMethod=post&foo=bar");
+                    .to("restlet:http://localhost:9080/orders?restletMethod=post&foo=bar");
 
                 // Restlet consumer to handler POST method
-                from("restlet:http://localhost:8080/orders?restletMethod=post").process(new Processor() {
+                from("restlet:http://localhost:9080/orders?restletMethod=post").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
                                 "received [" + exchange.getIn().getBody(String.class)
@@ -53,7 +53,7 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
                 });
 
                 // Restlet consumer default to handle GET method
-                from("restlet:http://localhost:8080/orders/{id}/{x}").process(new Processor() {
+                from("restlet:http://localhost:9080/orders/{id}/{x}").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut().setBody(
                                 "received GET request with id="
@@ -75,7 +75,7 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
     public void testConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.GET, 
-                "http://localhost:8080/orders/99991/6"));
+                "http://localhost:9080/orders/99991/6"));
         assertEquals("received GET request with id=99991 and x=6",
                 response.getEntity().getText());
     }
@@ -83,7 +83,7 @@ public class RestletRouteBuilderTest extends ContextTestSupport {
     public void testUnhandledConsumer() throws IOException {
         Client client = new Client(Protocol.HTTP);
         Response response = client.handle(new Request(Method.POST, 
-                "http://localhost:8080/orders/99991/6"));
+                "http://localhost:9080/orders/99991/6"));
         // expect error status as no Restlet consumer to handle POST method
         assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
         assertNotNull(response.getEntity().getText());
