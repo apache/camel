@@ -31,7 +31,7 @@ public class TestRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
 
         // START SNIPPET: consumer_route
-        from("restlet:http://localhost:8080/securedOrders?restletMethod=post&restletRealmRef=realm").process(new Processor() {
+        from("restlet:http://localhost:9080/securedOrders?restletMethod=post&restletRealmRef=realm").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody(
                         "received [" + exchange.getIn().getBody()
@@ -45,7 +45,7 @@ public class TestRouteBuilder extends RouteBuilder {
         // Note: restletMethod and restletRealmRef are stripped 
         // from the query before a request is sent as they are 
         // only processed by Camel.
-        from("direct:start-auth").to("restlet:http://localhost:8080/securedOrders?restletMethod=post");
+        from("direct:start-auth").to("restlet:http://localhost:9080/securedOrders?restletMethod=post");
         // END SNIPPET: producer_route
       
     }
