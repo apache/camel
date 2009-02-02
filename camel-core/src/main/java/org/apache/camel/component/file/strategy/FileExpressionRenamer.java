@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,7 +41,11 @@ public class FileExpressionRenamer implements FileRenamer {
         Object result = expression.evaluate(exchange);
         String name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
 
-        if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("//"))) {
+        // must normalize path to cater for Windows and other OS
+        name = FileUtil.normalizePath(name);
+
+        // special handling for Windows \\ paths
+        if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("\\\\"))) {
             return new File(name);
         }
 
