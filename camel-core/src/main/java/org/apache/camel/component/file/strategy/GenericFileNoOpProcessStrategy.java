@@ -16,6 +16,6 @@
  */
 package org.apache.camel.component.file.strategy;
 
-public class GenericFileNoOpProcessStrategy extends GenericFileProcessStrategySupport {
+public class GenericFileNoOpProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
 }
