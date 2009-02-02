@@ -17,8 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.Date;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -73,9 +73,9 @@ public class GenericFile<T> {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        if (System.getProperty("os.name").startsWith("Windows") && newName.indexOf("/") >= 0) {
-            newName = newName.replaceAll("/", "\\\\");
-        }
+        // must normalize path to cater for Windows and other OS
+        newName = FileUtil.normalizePath(newName);
+
         setAbsoluteFileName(getParent() + File.separator + newName);
         
         // relative name is a bit more complex to set as newName itself can contain
@@ -175,12 +175,8 @@ public class GenericFile<T> {
      * @param absoluteFileName the absoluteFileName to set
      */
     public void setAbsoluteFileName(String absoluteFileName) {
-        // should replace the "/" with "\\" in windows
-        if (absoluteFileName != null && System.getProperty("os.name").startsWith("Windows") && absoluteFileName.indexOf("/") >= 0) {
-            this.absoluteFileName = absoluteFileName.replaceAll("/", "\\\\");
-        } else {
-            this.absoluteFileName = absoluteFileName;
-        }
+        // must normalize path to cater for Windows and other OS
+        this.absoluteFileName = FileUtil.normalizePath(absoluteFileName);
     }
 
     /**

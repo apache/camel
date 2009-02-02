@@ -19,6 +19,7 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 
 import org.apache.camel.component.file.FileExchange;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Camel default file renamer.
@@ -44,7 +45,9 @@ public class DefaultFileRenamer implements FileRenamer {
         File parent = file.getParentFile();
         String name = renameFileName(file);
 
-        if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("//"))) {
+        name = FileUtil.normalizePath(name);
+
+        if (ON_WINDOWS && (name.indexOf(":") >= 0 || name.startsWith("\\\\"))) {
             return new File(name);
         }
         return new File(parent, name);

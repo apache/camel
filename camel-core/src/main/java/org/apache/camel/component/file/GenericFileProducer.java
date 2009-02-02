@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -164,11 +165,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
             Object result = expression.evaluate(exchange);
             name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }
-        
-        // replace the "/" with the "\\" for Windows
-        if (name != null && System.getProperty("os.name").startsWith("Windows") && name.indexOf("/") >= 0) {           
-            name = name.replaceAll("/", "\\\\");            
-        }
+
+        // must normalize path to cater for Windows and other OS
+        name = FileUtil.normalizePath(name);
 
         String endpointFile = endpoint.getConfiguration().getFile();
         if (endpoint.isDirectory()) {
@@ -182,7 +181,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 answer = baseDir + name;
             } else {
                 // use a generated filename if no name provided
-                // TODO: Consider to require end user to always provide a filename instead of generating a new name
                 answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
             }
         } else {
@@ -193,10 +191,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
     }
 
     protected String createTempFileName(String fileName) {
-        if (fileName != null && System.getProperty("os.name").startsWith("Windows") && fileName.indexOf("/") >= 0) {
-            fileName = fileName.replaceAll("/", "\\\\");
-        }
-        
+        // must normalize path to cater for Windows and other OS
+        fileName = FileUtil.normalizePath(fileName);
+
         int path = fileName.lastIndexOf(File.separator);
         if (path == -1) {
             // no path
