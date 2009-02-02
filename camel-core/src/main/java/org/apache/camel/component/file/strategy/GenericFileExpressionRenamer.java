@@ -21,10 +21,10 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.util.ObjectHelper;
 
-public class GenericFileExpressionRenamer implements GenericFileRenamer {
+public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
     private Expression expression;
 
-    public GenericFile renameFile(GenericFileExchange exchange, GenericFile file) {
+    public GenericFile renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
         ObjectHelper.notNull(expression, "expression");
 
         Object eval = expression.evaluate(exchange);

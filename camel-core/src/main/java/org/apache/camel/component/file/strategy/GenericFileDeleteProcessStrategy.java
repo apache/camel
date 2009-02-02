@@ -22,10 +22,10 @@ import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
 
-public class GenericFileDeleteProcessStrategy extends GenericFileProcessStrategySupport {
+public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
 
     @Override
-    public void commit(GenericFileOperations operations, GenericFileEndpoint endpoint, GenericFileExchange exchange, GenericFile file) throws Exception {
+    public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         // must invoke super
         super.commit(operations, endpoint, exchange, file);
 

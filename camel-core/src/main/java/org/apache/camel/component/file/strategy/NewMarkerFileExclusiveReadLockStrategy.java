@@ -41,10 +41,11 @@ public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclus
 
     private GenericFileRenamer lockFileRenamer = new GenericFileDefaultRenamer("", DEFAULT_LOCK_FILE_POSTFIX);
 
+    @SuppressWarnings("unchecked")
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 
-        GenericFile newFile = lockFileRenamer.renameFile((GenericFileExchange) exchange, file);
+        GenericFile newFile = lockFileRenamer.renameFile((GenericFileExchange<File>) exchange, file);
         String lockFileName = newFile.getAbsoluteFileName();
         if (LOG.isTraceEnabled()) {
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);

@@ -22,7 +22,7 @@ import org.apache.camel.component.file.GenericFileExchange;
 /**
  * Used for renaming files.
  */
-public interface GenericFileRenamer {
+public interface GenericFileRenamer<T> {
 
     /**
      * Renames the given file
@@ -31,6 +31,6 @@ public interface GenericFileRenamer {
      * @param file      the original file.
      * @return the renamed file name.
      */
-    GenericFile renameFile(GenericFileExchange exchange, GenericFile file);
+    GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file);
 
 }

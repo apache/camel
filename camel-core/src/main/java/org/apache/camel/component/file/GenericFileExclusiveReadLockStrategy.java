@@ -28,6 +28,10 @@ import org.apache.camel.Exchange;
  * <ul>
  * <li>GenericFileRenameExclusiveReadLockStrategy waiting until its possible to
  * rename the file.</li>
+ * <li>NewFileLockExclusiveReadLockStrategy acquiring a RW file lock for the duration
+ * of the processing.</li>
+ * <li>NewMarkerFileExclusiveReadLockStrategy using a marker file for acquiring
+ * read lock.</li>
  * </ul>
  */
 public interface GenericFileExclusiveReadLockStrategy<T> {
