@@ -21,6 +21,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.language.XPath;
 
+//START SNIPPET: e1
 public class MyVendor {
     private int beerPrice;
     
@@ -40,3 +41,4 @@ public class MyVendor {
         }
     }
 }
+//END SNIPPET: e1

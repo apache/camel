@@ -30,12 +30,16 @@ public class ScatterGatherTest extends ContextTestSupport {
     public void testScatterAndGather() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
+        // START SNIPPET: e1
         result.expectedBodiesReceived(1); // expect the lowest quote
-        
+        // END SNIPPET: e1
+
+        // START SNIPPET: e2
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put("listOfVendors", "bean:vendor1, bean:vendor2, bean:vendor3");
         headers.put("quoteRequestId", "quoteRequest-1");
         template.sendBodyAndHeaders("direct:start", "<quote_request item=\"beer\"/>", headers);
+        // END SNIPPET: e2
         
         result.assertIsSatisfied();
     }

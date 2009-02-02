@@ -22,7 +22,7 @@
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
+  <!-- START SNIPPET: e1 -->
   <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
     <route>
       <from uri="direct:start"/>
@@ -40,7 +40,9 @@
       </aggregate>
     </route>
   </camelContext>
+  <!-- END SNIPPET: e1 -->
 
+  <!-- START SNIPPET: e2 -->
   <bean id="aggregatorStrategy" class="org.apache.camel.spring.processor.scattergather.LowestQuoteAggregationStrategy"/>
 
   <bean id="vendor1" class="org.apache.camel.spring.processor.scattergather.MyVendor">
@@ -60,5 +62,5 @@
       <value>3</value>
     </constructor-arg>
   </bean>
-  <!-- END SNIPPET: example -->
+  <!-- END SNIPPET: e2 -->
 </beans>

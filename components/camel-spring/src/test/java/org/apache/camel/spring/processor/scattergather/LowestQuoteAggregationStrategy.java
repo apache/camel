@@ -19,6 +19,7 @@ package org.apache.camel.spring.processor.scattergather;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 
+// START SNIPPET: e1
 public class LowestQuoteAggregationStrategy implements AggregationStrategy {
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange.getIn().getBody(int.class) < newExchange.getIn().getBody(int.class)) {
@@ -28,3 +29,4 @@ public class LowestQuoteAggregationStrategy implements AggregationStrategy {
         }
     }
 }
+// END SNIPPET: e1
