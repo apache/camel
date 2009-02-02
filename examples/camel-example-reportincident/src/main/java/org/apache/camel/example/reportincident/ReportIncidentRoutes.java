@@ -33,7 +33,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
         ok.setCode("0");
 
         // endpoint to our CXF webservice
-        String cxfEndpoint = "cxf://http://localhost:8080/reportincident/webservices/incident"
+        String cxfEndpoint = "cxf://http://localhost:9080/reportincident/webservices/incident"
                 + "?serviceClass=org.apache.camel.example.reportincident.ReportIncidentEndpoint"
                 + "&wsdlURL=report_incident.wsdl";
 

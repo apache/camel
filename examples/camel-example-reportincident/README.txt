@@ -14,7 +14,7 @@ To run the example type
   mvn jetty:run
 
 The webservice is exposed at:
-  http://localhost:8080/reportincident/webservice/incident
+  http://localhost:9080/reportincident/webservice/incident
 
 
 To run the example with Ant
@@ -42,7 +42,7 @@ To run the example with Ant
     ant run
 
 The webservice is exposed at:
-  http://localhost:8080/reportincident/webservice/incident
+  http://localhost:9080/reportincident/webservice/incident
 
 
 To stop the example hit ctrl + c
