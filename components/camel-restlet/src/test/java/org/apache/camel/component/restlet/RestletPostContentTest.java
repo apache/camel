@@ -41,7 +41,7 @@ public class RestletPostContentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:8080/users/{username}?restletMethod=POST")
+                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST")
                     .process(new SetUserProcessor());
                 
             }
@@ -57,7 +57,7 @@ public class RestletPostContentTest extends ContextTestSupport {
     }
     
     public void testPostBody() throws Exception {
-        HttpMethod method = new PostMethod("http://localhost:8080/users/homer");
+        HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         RequestEntity requestEntity = new StringRequestEntity(MSG_BODY, null, null);
         ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
         HttpClient client = new HttpClient();
