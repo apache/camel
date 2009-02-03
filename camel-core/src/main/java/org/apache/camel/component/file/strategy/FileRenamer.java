@@ -24,6 +24,7 @@ import org.apache.camel.component.file.FileExchange;
  * Used for renaming files.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public interface FileRenamer {
 

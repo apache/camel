@@ -30,11 +30,15 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSupport {
 
-    public void testRenameSuccess() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/inprogress");
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
+        super.setUp();
+    }
 
+    public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");

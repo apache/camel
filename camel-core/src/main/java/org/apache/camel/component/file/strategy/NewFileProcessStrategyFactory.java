@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.Expression;
@@ -43,47 +44,48 @@ public final class NewFileProcessStrategyFactory {
         boolean preMove = preMoveNamePrefix != null || preMoveNamePostfix != null;
 
         if (isNoop) {
-            GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
+            GenericFileNoOpProcessStrategy<File> strategy = new GenericFileNoOpProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (isDelete) {
-            GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
+            GenericFileDeleteProcessStrategy<File> strategy = new GenericFileDeleteProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             return strategy;
         } else if (move || preMove) {
-            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (move) {
-                strategy.setCommitRenamer(new GenericFileDefaultRenamer(moveNamePrefix, moveNamePostfix));
+                strategy.setCommitRenamer(new GenericFileDefaultRenamer<File>(moveNamePrefix, moveNamePostfix));
             }
             if (preMove) {
-                strategy.setBeginRenamer(new GenericFileDefaultRenamer(preMoveNamePrefix, preMoveNamePostfix));
+                strategy.setBeginRenamer(new GenericFileDefaultRenamer<File>(preMoveNamePrefix, preMoveNamePostfix));
             }
             return strategy;
         } else if (expression != null || preMoveExpression != null) {
-            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
             if (expression != null) {
-                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(expression);
                 strategy.setCommitRenamer(renamer);
             }
             if (preMoveExpression != null) {
-                GenericFileExpressionRenamer renamer = new GenericFileExpressionRenamer();
+                GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
                 renamer.setExpression(preMoveExpression);
                 strategy.setBeginRenamer(renamer);
             }
             return strategy;
         } else {
             // default strategy will move files in a .camel/ subfolder
-            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
+            GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            strategy.setCommitRenamer(new GenericFileDefaultRenamer(".camel/", ""));
+            strategy.setCommitRenamer(new GenericFileDefaultRenamer<File>(".camel/", ""));
             return strategy;
         }
     }
 
-    private static GenericFileExclusiveReadLockStrategy getExclusiveReadLockStrategy(Map<String, Object> params) {
+    @SuppressWarnings("unchecked")
+    private static GenericFileExclusiveReadLockStrategy<File> getExclusiveReadLockStrategy(Map<String, Object> params) {
         GenericFileExclusiveReadLockStrategy strategy = (GenericFileExclusiveReadLockStrategy) params.get("exclusiveReadLockStrategy");
         if (strategy != null) {
             return strategy;
@@ -95,22 +97,21 @@ public final class NewFileProcessStrategyFactory {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
             } else if ("fileLock".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new NewFileLockExclusiveReadLockStrategy();
+                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new NewFileLockExclusiveReadLockStrategy();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
                 return readLockStrategy;
             } else if ("rename".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy();
+                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new GenericFileRenameExclusiveReadLockStrategy<File>();
                 Long timeout = (Long) params.get("readLockTimeout");
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
                 return readLockStrategy;
             } else if ("markerFile".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy readLockStrategy = new NewMarkerFileExclusiveReadLockStrategy();
-                return readLockStrategy;
+                return new NewMarkerFileExclusiveReadLockStrategy();
             }
         }
 

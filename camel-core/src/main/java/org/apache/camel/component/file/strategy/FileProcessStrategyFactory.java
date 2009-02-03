@@ -25,6 +25,7 @@ import org.apache.camel.util.ObjectHelper;
 
 /**
  * Factory to provide the {@link org.apache.camel.component.file.FileProcessStrategy} to use.
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public final class FileProcessStrategyFactory {
 

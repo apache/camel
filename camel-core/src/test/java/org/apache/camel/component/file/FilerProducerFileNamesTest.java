@@ -60,7 +60,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:report").to("newfile:target/reports/report.txt");
 
-                from("direct:report2").to("newfile:target/report2.txt?autoCreate=false");
+                from("direct:report2").to("newfile:target/report2.txt?autoCreate=false&directory=false");
 
                 from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, constant("report-super.txt")).to("newfile:target/");
             }

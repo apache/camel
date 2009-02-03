@@ -20,6 +20,7 @@ package org.apache.camel.component.file.strategy;
  * A simple strategy which does not move or delete the processed files in any way.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class NoOpFileProcessStrategy extends FileProcessStrategySupport {
 

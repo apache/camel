@@ -35,6 +35,7 @@ import org.apache.commons.logging.LogFactory;
  * Base class for {@link org.apache.camel.component.file.FileProcessStrategy} implementation to extend.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public abstract class FileProcessStrategySupport implements FileProcessStrategy {
 

@@ -46,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
  * working with file systems
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileEndpoint extends ScheduledPollEndpoint {
     public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";

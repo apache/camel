@@ -27,6 +27,7 @@ import org.apache.camel.util.ObjectHelper;
  * Default file sorter.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public final class DefaultFileSorter {
 

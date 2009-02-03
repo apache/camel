@@ -91,6 +91,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
             // lets store the name we really used in the header, so end-users
             // can retrieve it
+            exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME_PRODUCED, target);
+            // @deprecated will be removed later
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
         } catch (Exception e) {
             handleFailedWrite(exchange, e);
@@ -114,14 +116,21 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected void writeFile(GenericFileExchange<T> exchange, String fileName) throws GenericFileOperationFailedException {
         InputStream payload = exchange.getIn().getBody(InputStream.class);
         try {
-            // build directory
-            int lastPathIndex = fileName.lastIndexOf(File.separator);
-            if (lastPathIndex != -1) {
-                String directory = fileName.substring(0, lastPathIndex);
-                if (!operations.buildDirectory(directory, false)) {
-                    log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
+            // build directory if auto create is enabled
+            if (endpoint.isAutoCreate()) {
+                int lastPathIndex = fileName.lastIndexOf(File.separator);
+                if (lastPathIndex != -1) {
+                    String directory = fileName.substring(0, lastPathIndex);
+                    if (directory.startsWith(File.separator)) {
+                        // skip trailing /
+                        directory = directory.substring(1);
+                    }
+                    if (!operations.buildDirectory(directory, false)) {
+                        log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
+                    }
                 }
             }
+
             // upload
             if (log.isTraceEnabled()) {
                 log.trace("About to write [" + fileName + "] to [" + getEndpoint() + "] from exchange [" + exchange + "]");
@@ -144,8 +153,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected String createFileName(Exchange exchange) {
         String answer;
 
-        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
-                
+        String name = exchange.getIn().getHeader(NewFileComponent.HEADER_FILE_NAME, String.class);
+
         // expression support
         Expression expression = endpoint.getExpression();
         if (name != null) {
@@ -153,7 +162,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // whatever configured on the endpoint
             if (name.indexOf("${") > -1) {
                 if (log.isDebugEnabled()) {
-                    log.debug(FileComponent.HEADER_FILE_NAME + " contains a FileLanguage expression: " + name);
+                    log.debug(NewFileComponent.HEADER_FILE_NAME + " contains a FileLanguage expression: " + name);
                 }
                 expression = FileLanguage.file(name);
             }

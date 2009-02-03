@@ -29,8 +29,8 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/dirnotmatched");
+        super.setUp();
 
         template.sendBodyAndHeader("file:target/dirnotmatched/", "This is a dot file",
             FileComponent.HEADER_FILE_NAME, ".skipme");

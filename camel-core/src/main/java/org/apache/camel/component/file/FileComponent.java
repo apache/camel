@@ -32,29 +32,30 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * for working with file systems
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileComponent extends DefaultComponent {
 
     /**
      * Header key holding the value: the fixed filename to use for producing files.
      */
-    public static final String HEADER_FILE_NAME = "org.apache.camel.file.name";
+    public static final String HEADER_FILE_NAME = NewFileComponent.HEADER_FILE_NAME;
 
     /**
      * Header key holding the value: absolute filepath for the actual file produced (by file producer).
      * Value is set automatically by Camel
      */
-    public static final String HEADER_FILE_NAME_PRODUCED = "org.apache.camel.file.name.produced";
+    public static final String HEADER_FILE_NAME_PRODUCED = NewFileComponent.HEADER_FILE_NAME_PRODUCED;
 
     /**
      * Header key holding the value: current index of total in the batch being consumed
      */
-    public static final String HEADER_FILE_BATCH_INDEX = "org.apache.camel.file.index";
+    public static final String HEADER_FILE_BATCH_INDEX = NewFileComponent.HEADER_FILE_BATCH_INDEX;
 
     /**
      * Header key holding the value: total in the batch being consumed
      */
-    public static final String HEADER_FILE_BATCH_TOTAL = "org.apache.camel.file.total";
+    public static final String HEADER_FILE_BATCH_TOTAL = NewFileComponent.HEADER_FILE_BATCH_TOTAL;
 
     public FileComponent() {
     }

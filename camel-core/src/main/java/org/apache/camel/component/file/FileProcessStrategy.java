@@ -22,6 +22,7 @@ import java.io.File;
  * Represents a strategy for marking that a file is processed.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public interface FileProcessStrategy {
 

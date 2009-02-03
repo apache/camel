@@ -28,11 +28,11 @@ import org.apache.commons.logging.LogFactory;
  * After granting the read lock it is realeased, we just want to make sure that when we start
  * consuming the file its not currently in progress of being written by third party.
  */
-public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy {
+public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFileExclusiveReadLockStrategy<T> {
     private static final transient Log LOG = LogFactory.getLog(GenericFileRenameExclusiveReadLockStrategy.class);
     private long timeout;
 
-    public boolean acquireExclusiveReadLock(GenericFileOperations operations, GenericFile file,
+    public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                             Exchange exchange) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + file);
@@ -43,7 +43,7 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
         String newName = file.getFileName() + ".camelExclusiveReadLock";
 
         // clone and change the name
-        GenericFile newFile = file.clone();
+        GenericFile<T> newFile = file.clone();
         newFile.changeFileName(newName);
 
         long start = System.currentTimeMillis();
@@ -75,7 +75,7 @@ public class GenericFileRenameExclusiveReadLockStrategy implements GenericFileEx
         return true;
     }
 
-    public void releaseExclusiveReadLock(GenericFileOperations opeations, GenericFile file,
+    public void releaseExclusiveReadLock(GenericFileOperations<T> opeations, GenericFile<T> file,
                                          Exchange exchange) throws Exception {
         // noop
     }

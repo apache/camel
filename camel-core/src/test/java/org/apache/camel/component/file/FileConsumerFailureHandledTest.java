@@ -34,13 +34,11 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        super.tearDown();
         deleteDirectory("target/messages");
+        super.tearDown();
     }
 
     public void testParis() throws Exception {
-        deleteDirectory("target/messages");
-
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
@@ -54,8 +52,6 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     }
 
     public void testLondon() throws Exception {
-        deleteDirectory("target/messages");
-
         MockEndpoint mock = getMockEndpoint("mock:invalid");
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
@@ -70,8 +66,6 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
     }
     
     public void testMadrid() throws Exception {
-        deleteDirectory("target/messages");
-
         MockEndpoint mock = getMockEndpoint("mock:error");
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");

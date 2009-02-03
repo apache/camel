@@ -27,8 +27,8 @@ public class FileConsumeFileOnlyTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/fileonly");
+        super.setUp();
         template.sendBodyAndHeader("newfile://target/fileonly", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
         template.sendBodyAndHeader("newfile://target/fileonly", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
         template.sendBodyAndHeader("newfile://target/fileonly/2008", "2008 Report", FileComponent.HEADER_FILE_NAME, "report2008.txt");

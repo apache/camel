@@ -28,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * If most cases the {@link org.apache.camel.language.simple.FileLanguage FileLanguage} is used to
  * create the expressions.
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileExpressionRenamer implements FileRenamer {
 

@@ -23,12 +23,16 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
 /**
  * Base class file component. To be extended.
  */
 public abstract class GenericFileComponent<T> extends DefaultComponent {
+
+    protected Log log = LogFactory.getLog(getClass());
 
     public GenericFileComponent() {
     }
@@ -37,6 +41,7 @@ public abstract class GenericFileComponent<T> extends DefaultComponent {
         super(context);
     }
 
+    @SuppressWarnings("unchecked")
     protected GenericFileEndpoint<T> createEndpoint(String uri, String remaining, Map parameters) throws Exception {
 
         // create the correct endpoint based on the protocol

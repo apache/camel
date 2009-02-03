@@ -94,6 +94,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             // add current index and total as headers
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
+            exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_BATCH_INDEX, index);
+            exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_BATCH_TOTAL, total);
             processExchange(exchange);
         }
     }
@@ -168,7 +170,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                         boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Done processing file: " + file.getAbsoluteFileName() + ". Status is: "
+                            log.debug("Done processing file: " + file + ". Status is: "
                                     + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "processed OK"));
                         }
 
@@ -208,6 +210,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      *                        <tt>true</tt> if an exception occured during processing but it
      *                        was handled by the failure processor (usually the DeadLetterChannel).
      */
+    @SuppressWarnings("unchecked")
     protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
                                          GenericFileExchange<T> exchange, GenericFile<T> file, boolean failureHandled) {
         if (endpoint.isIdempotent()) {
@@ -257,6 +260,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * @param isDirectory wether the file is a directory or a file
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
+    @SuppressWarnings("unchecked")
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory) {
         if (!isMatched(file, isDirectory)) {
             if (log.isTraceEnabled()) {
@@ -299,7 +303,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         // lock files should be skipped
-        if (name.endsWith(FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX)) {
+        if (name.endsWith(NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
             return false;
         }
 

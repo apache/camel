@@ -40,8 +40,8 @@ public class FileConsumerIdempotentRefTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/idempotent");
+        super.setUp();
         template.sendBodyAndHeader("file://target/idempotent/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
     }
 

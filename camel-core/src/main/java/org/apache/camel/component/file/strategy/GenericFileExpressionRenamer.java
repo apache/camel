@@ -24,14 +24,14 @@ import org.apache.camel.util.ObjectHelper;
 public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
     private Expression expression;
 
-    public GenericFile renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
+    public GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
         ObjectHelper.notNull(expression, "expression");
 
         Object eval = expression.evaluate(exchange);
         String newName = exchange.getContext().getTypeConverter().convertTo(String.class, eval);
 
         // clone and change the name
-        GenericFile result = file.clone();
+        GenericFile<T> result = file.clone();
         result.changeFileName(newName);
         return result;
     }

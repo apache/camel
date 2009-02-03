@@ -28,21 +28,21 @@ import org.apache.commons.logging.LogFactory;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
     private static final transient Log LOG = LogFactory.getLog(org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy.class);
-    private GenericFileRenamer beginRenamer;
-    private GenericFileRenamer commitRenamer;
+    private GenericFileRenamer<T> beginRenamer;
+    private GenericFileRenamer<T> commitRenamer;
 
     public GenericFileRenameProcessStrategy() {
     }
 
     public GenericFileRenameProcessStrategy(String namePrefix, String namePostfix) {
-        this(new GenericFileDefaultRenamer(namePrefix, namePostfix), null);
+        this(new GenericFileDefaultRenamer<T>(namePrefix, namePostfix), null);
     }
 
     public GenericFileRenameProcessStrategy(String namePrefix, String namePostfix, String preNamePrefix, String preNamePostfix) {
-        this(new GenericFileDefaultRenamer(namePrefix, namePostfix), new GenericFileDefaultRenamer(preNamePrefix, preNamePostfix));
+        this(new GenericFileDefaultRenamer<T>(namePrefix, namePostfix), new GenericFileDefaultRenamer<T>(preNamePrefix, preNamePostfix));
     }
 
-    public GenericFileRenameProcessStrategy(GenericFileRenamer commitRenamer, GenericFileRenamer beginRenamer) {
+    public GenericFileRenameProcessStrategy(GenericFileRenamer<T> commitRenamer, GenericFileRenamer<T> beginRenamer) {
         this.commitRenamer = commitRenamer;
         this.beginRenamer = beginRenamer;
     }
@@ -56,8 +56,8 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         }
 
         if (beginRenamer != null) {
-            GenericFile newName = beginRenamer.renameFile(exchange, file);
-            GenericFile to = renameFile(operations, file, newName);
+            GenericFile<T> newName = beginRenamer.renameFile(exchange, file);
+            GenericFile<T> to = renameFile(operations, file, newName);
             exchange.setGenericFile(to);
         }
 
@@ -70,12 +70,12 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         super.commit(operations, endpoint, exchange, file);
 
         if (commitRenamer != null) {
-            GenericFile newName = commitRenamer.renameFile(exchange, file);
+            GenericFile<T> newName = commitRenamer.renameFile(exchange, file);
             renameFile(operations, file, newName);
         }
     }
 
-    private static GenericFile renameFile(GenericFileOperations operations, GenericFile from, GenericFile to) throws IOException {
+    private GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
         // deleting any existing files before renaming
         try {
             operations.deleteFile(to.getAbsoluteFileName());
@@ -87,7 +87,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         boolean mkdir = operations.buildDirectory(to.getParent(), true);
         
         if (!mkdir) {
-            throw new GenericFileOperationFailedException("Can not create directory: " + to.getParent() + " (could be because of denied permissions)");
+            throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
         if (LOG.isDebugEnabled()) {
@@ -101,19 +101,19 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         return to;
     }
 
-    public GenericFileRenamer getBeginRenamer() {
+    public GenericFileRenamer<T> getBeginRenamer() {
         return beginRenamer;
     }
 
-    public void setBeginRenamer(GenericFileRenamer beginRenamer) {
+    public void setBeginRenamer(GenericFileRenamer<T> beginRenamer) {
         this.beginRenamer = beginRenamer;
     }
 
-    public GenericFileRenamer getCommitRenamer() {
+    public GenericFileRenamer<T> getCommitRenamer() {
         return commitRenamer;
     }
 
-    public void setCommitRenamer(GenericFileRenamer commitRenamer) {
+    public void setCommitRenamer(GenericFileRenamer<T> commitRenamer) {
         this.commitRenamer = commitRenamer;
     }
 
