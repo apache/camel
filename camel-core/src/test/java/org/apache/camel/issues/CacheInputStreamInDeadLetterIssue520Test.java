@@ -19,6 +19,7 @@ package org.apache.camel.issues;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -68,23 +69,22 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                streamCaching();
                 errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3));
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         count++;
                         // Read the in stream from cache
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", result, "<hello>Willem</hello>");
+                        assertEquals("Should read the inputstream out again", "<hello>Willem</hello>", result);
                         throw new Exception("Forced exception by unit test");
                     }
                 });
 
                 //Need to set the streamCaching for the deadLetterChannel
-                from("direct:errorHandler").streamCaching().process(new Processor() {
+                from("direct:errorHandler").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String result = exchange.getIn().getBody(String.class);
-                        assertEquals("Should read the inputstream out again", result, "<hello>Willem</hello>");
+                        assertEquals("Should read the inputstream out again", "<hello>Willem</hello>", result);
                     }
                 }).to("mock:error");
 
