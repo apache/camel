@@ -99,16 +99,36 @@ public class StringSource extends StreamSource implements Externalizable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(text);
-        out.writeUTF(encoding);
-        out.writeUTF(getPublicId());
-        out.writeUTF(getSystemId());
+        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00)
+                + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
+        out.writeByte(b);
+        if ((b & 0x01) != 0) {
+            out.writeUTF(text);
+        }
+        if ((b & 0x02) != 0) {
+            out.writeUTF(encoding);
+        }
+        if ((b & 0x04) != 0) {
+            out.writeUTF(getPublicId());
+        }
+        if ((b & 0x08) != 0) {
+            out.writeUTF(getSystemId());
+        }
     }
 
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        text = in.readUTF();
-        encoding = in.readUTF();
-        setPublicId(in.readUTF());
-        setSystemId(in.readUTF());
+        int b = in.readByte();
+        if ((b & 0x01) != 0) {
+            text = in.readUTF();
+        }
+        if ((b & 0x02) != 0) {
+            encoding = in.readUTF();
+        }
+        if ((b & 0x04) != 0) {
+            setPublicId(in.readUTF());
+        }
+        if ((b & 0x08) != 0) {
+            setSystemId(in.readUTF());
+        }
     }
 }
