@@ -31,6 +31,7 @@ import org.apache.camel.model.ExceptionType;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -174,6 +175,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 if (exchange.getException() != null) {
                     exchange.setException(null);
                 }
+
+                // reset cached streams so they can be read again
+                MessageHelper.resetStreamCache(exchange.getIn());
 
                 // wait until we should redeliver
                 data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);

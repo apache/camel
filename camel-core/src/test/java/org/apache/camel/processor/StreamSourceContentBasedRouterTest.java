@@ -37,7 +37,7 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     public void testSendStreamSource() throws Exception {
         x.expectedMessageCount(1);
         y.expectedMessageCount(1);
-     
+        
         sendBody("direct:start", new StreamSource(new StringReader("<message>xx</message>")));
         sendBody("direct:start", new StreamSource(new StringReader("<message>yy</message>")));
         
@@ -65,7 +65,7 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").convertBodyTo(String.class).choice()
+                from("direct:start").choice()
                   .when().xpath("/message/text() = 'xx'").to("mock:x")
                   .when().xpath("/message/text() = 'yy'").to("mock:y");
             }

@@ -25,6 +25,7 @@ import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.InterceptorType;
 import org.apache.camel.processor.Interceptor;
+import org.apache.camel.util.MessageHelper;
 
 /**
  * {@link Interceptor} that converts a message into a re-readable format
@@ -38,9 +39,9 @@ public class StreamCachingInterceptor extends Interceptor {
                 try {
                     StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
                     if (newBody != null) {
-                        newBody.reset();
                         exchange.getIn().setBody(newBody);
                     }
+                    MessageHelper.resetStreamCache(exchange.getIn());
                 } catch (NoTypeConversionAvailableException ex) {
                     // ignore if in is not of StreamCache type
                 }
