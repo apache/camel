@@ -150,12 +150,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                     success = client.makeDirectory(directory);
                     if (!success) {
                         // we are here if the server side doesn't create intermediate folders so create the folder one by one
-                        buildDirectoryChunks(directory);
+                        success = buildDirectoryChunks(directory);
                     }
                 }
             } finally {
                 // change back to original directory
-                client.changeWorkingDirectory(originalDirectory);
+                if (originalDirectory != null) {
+                    client.changeWorkingDirectory(originalDirectory);
+                }
             }
 
             return success;
@@ -227,11 +229,15 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         for (String dir : dirs) {
             sb.append(dir).append('/');
             String directory = sb.toString();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Trying to build remote directory: " + directory);
-            }
 
-            success = client.makeDirectory(directory);
+            // do not try to build root / folder
+            if (!directory.equals("/")) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Trying to build remote directory by chunk: " + directory);
+                }
+
+                success = client.makeDirectory(directory);
+            }
         }
 
         return success;
