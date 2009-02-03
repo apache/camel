@@ -37,8 +37,8 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/filefilter");
+        super.setUp();
     }
 
     public void testFilterFiles() throws Exception {

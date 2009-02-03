@@ -27,6 +27,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -36,10 +37,9 @@ import org.apache.commons.logging.LogFactory;
  *
  */
 public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
-    public static final transient String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
     private static final transient Log LOG = LogFactory.getLog(NewMarkerFileExclusiveReadLockStrategy.class);
 
-    private GenericFileRenamer lockFileRenamer = new GenericFileDefaultRenamer("", DEFAULT_LOCK_FILE_POSTFIX);
+    private GenericFileRenamer<File> lockFileRenamer = new GenericFileDefaultRenamer<File>("", NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX);
 
     @SuppressWarnings("unchecked")
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,

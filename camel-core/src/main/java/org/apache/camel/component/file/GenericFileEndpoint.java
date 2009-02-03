@@ -421,15 +421,21 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
         // compute the name that was written, it should be relative to the endpoint configuraion
         String name = file.getRelativeFileName();
-        if (name.startsWith(getConfiguration().getFile())) {
+
+        if (isDirectory() && name.startsWith(getConfiguration().getFile())) {
+            // remove the file path configured on the endpoint for directory=true
             name = name.substring(getConfiguration().getFile().length());
+        } else if (!isDirectory()) {
+            // use the filename for directory=false
+            name = file.getFileName();
         }
+
         if (name.startsWith(File.separator) || name.startsWith("/")) {
             // skip trailing /
             name = name.substring(1);
         }
 
-        message.setHeader(FileComponent.HEADER_FILE_NAME, name);
+        message.setHeader(NewFileComponent.HEADER_FILE_NAME, name);
     }
 
     protected Map<String, Object> getParamsAsMap() {

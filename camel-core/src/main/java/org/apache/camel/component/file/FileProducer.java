@@ -38,6 +38,7 @@ import org.apache.commons.logging.LogFactory;
  * For producing files.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(FileProducer.class);

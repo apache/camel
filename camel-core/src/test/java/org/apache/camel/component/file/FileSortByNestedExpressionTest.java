@@ -29,8 +29,8 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/filesorter");
+        super.setUp();
     }
 
     private void prepareFolder(String folder) {

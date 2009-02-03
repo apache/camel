@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.builder.RouteBuilder;
+
 /**
- * Default binding for generic file.
+ * Unit test for consuming the same filename only.
  */
-public class GenericFileDefaultBinding<T> implements GenericFileBinding<T> {
+public class FileConsumeFileOnlyNoDirectoryOptionTest extends FileConsumeFileOnlyTest {
 
-    private Object body;
-
-    public Object getBody(GenericFile<T> file) {
-        return body;
-    }
-
-    public void setBody(GenericFile<T> file, Object body) {
-        this.body = body;
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                // directory=false is not set but Camel so figure out report.txt is a file and consume
+                // the file anyway
+                from("newfile://target/fileonly/report.txt?recursive=false&delete=true&initialDelay=1000").to("mock:result");
+            }
+        };
     }
 }

@@ -30,16 +30,13 @@ import org.apache.camel.converter.IOConverter;
 public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
 
     @Override
-    protected void tearDown() throws Exception {
-        super.tearDown();
+    protected void setUp() throws Exception {
         deleteDirectory("target/done");
         deleteDirectory("target/reports");
+        super.setUp();
     }
 
     public void testRenameSuccess() throws Exception {
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
-
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
 
@@ -56,9 +53,6 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testRenameFileExists() throws Exception {
-        deleteDirectory("target/done");
-        deleteDirectory("target/reports");
-
         // create a file in done to let there be a duplicate file
         File file = new File("target/done");
         file.mkdirs();

@@ -29,6 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
  * A {@link Exchange} for File
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileExchange extends DefaultExchange {
     private File file;

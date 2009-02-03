@@ -85,8 +85,8 @@ public class StringSource extends StreamSource implements Externalizable {
     }
 
     public void writeExternal(ObjectOutput out) throws IOException {
-        int b = ((text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00)
-                + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00));
+        int b = (text != null ? 0x01 : 0x00) + (encoding != null ? 0x02 : 0x00)
+                + (getPublicId() != null ? 0x04 : 0x00) + (getSystemId() != null ? 0x08 : 0x00);
         out.writeByte(b);
         if ((b & 0x01) != 0) {
             out.writeUTF(text);

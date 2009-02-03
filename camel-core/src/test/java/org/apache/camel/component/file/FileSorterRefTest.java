@@ -39,8 +39,8 @@ public class FileSorterRefTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/filesorter");
+        super.setUp();
 
         template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.txt");

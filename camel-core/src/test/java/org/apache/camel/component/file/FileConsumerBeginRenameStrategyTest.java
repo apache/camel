@@ -30,10 +30,14 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
 
-    public void testRenameSuccess() throws Exception {
+    @Override
+    protected void setUp() throws Exception {
         deleteDirectory("target/inprogress");
         deleteDirectory("target/reports");
+        super.setUp();
+    }
 
+    public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
@@ -46,9 +50,6 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     }
 
     public void testRenameFileExists() throws Exception {
-        deleteDirectory("target/inprogress");
-        deleteDirectory("target/reports");
-
         // create a file in inprogress to let there be a duplicate file
         File file = new File("target/inprogress");
         file.mkdirs();

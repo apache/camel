@@ -24,7 +24,7 @@ import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- *
+ * File endpoint.
  */
 public class NewFileEndpoint extends GenericFileEndpoint<File> {
 
@@ -62,6 +62,14 @@ public class NewFileEndpoint extends GenericFileEndpoint<File> {
         if (isIdempotent() && idempotentRepository == null) {
             log.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
+        }
+
+        // fix wrong directory option if its a file
+        if (isDirectory() && file.isFile()) {
+            if (log.isDebugEnabled()) {
+                log.debug(file + " is not a directory so setting option directory=false");
+            }
+            setDirectory(false);
         }
 
         configureConsumer(result);

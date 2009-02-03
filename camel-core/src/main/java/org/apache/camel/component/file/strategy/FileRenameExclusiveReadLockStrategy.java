@@ -27,6 +27,7 @@ import org.apache.commons.logging.LogFactory;
  * Acquires exclusive read lock to the given file. Will wait until the lock is granted.
  * After granting the read lock it is realeased, we just want to make sure that when we start
  * consuming the file its not currently in progress of being written by third party.
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileRenameExclusiveReadLockStrategy implements ExclusiveReadLockStrategy {
     private static final transient Log LOG = LogFactory.getLog(FileRenameExclusiveReadLockStrategy.class);

@@ -19,7 +19,7 @@ package org.apache.camel.component.file.strategy;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
 
-public class GenericFileDefaultRenamer implements GenericFileRenamer {
+public class GenericFileDefaultRenamer<T> implements GenericFileRenamer<T> {
 
     private String namePrefix;
     private String namePostfix;
@@ -32,11 +32,11 @@ public class GenericFileDefaultRenamer implements GenericFileRenamer {
         this.namePostfix = namePostfix;
     }
 
-    public GenericFile renameFile(GenericFileExchange exchange, GenericFile file) {
+    public GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
         String newName = renameFileName(file.getFileName());
 
         // clone and change the name
-        GenericFile result = file.clone();
+        GenericFile<T> result = file.clone();
         result.changeFileName(newName);
         return result;
     }

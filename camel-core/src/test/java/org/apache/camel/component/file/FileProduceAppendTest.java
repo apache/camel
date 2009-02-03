@@ -56,8 +56,8 @@ public class FileProduceAppendTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/test-file-append");
+        super.setUp();
         template.sendBodyAndHeader("file://target/test-file-append", "Hello", FileComponent.HEADER_FILE_NAME, "hello.txt");
         template.sendBodyAndHeader("file://target/test-file-append", " World", FileComponent.HEADER_FILE_NAME, "world.txt");
     }

@@ -31,8 +31,8 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/filelanguage");
+        super.setUp();
     }
 
     @Override

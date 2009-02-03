@@ -25,6 +25,7 @@ import org.apache.camel.util.FileUtil;
  * Camel default file renamer.
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class DefaultFileRenamer implements FileRenamer {
 

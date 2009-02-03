@@ -24,6 +24,7 @@ import org.apache.camel.impl.DefaultMessage;
  * A {@link org.apache.camel.Message Message} for File
  *
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class FileMessage extends DefaultMessage {
     private File file;

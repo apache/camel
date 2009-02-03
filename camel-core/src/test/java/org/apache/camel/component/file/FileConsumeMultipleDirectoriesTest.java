@@ -31,8 +31,8 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/multidir");
+        super.setUp();
         template.sendBodyAndHeader(fileUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
         template.sendBodyAndHeader(fileUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "sub/hello.txt");
         template.sendBodyAndHeader(fileUrl, "Godday World", FileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");

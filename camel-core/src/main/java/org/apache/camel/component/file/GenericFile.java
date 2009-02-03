@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.Serializable;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -25,7 +26,7 @@ import org.apache.camel.util.ObjectHelper;
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
-public class GenericFile<T> {
+public class GenericFile<T> implements Serializable {
 
     private String absoluteFileName;
     private String canonicalFileName;
@@ -162,7 +163,7 @@ public class GenericFile<T> {
 
     public GenericFileBinding<T> getBinding() {
         if (binding == null) {
-            binding = new GenericFileDefaultBinding();
+            binding = new GenericFileDefaultBinding<T>();
         }
         return binding;
     }
@@ -171,17 +172,11 @@ public class GenericFile<T> {
         this.binding = binding;
     }
 
-    /**
-     * @param absoluteFileName the absoluteFileName to set
-     */
     public void setAbsoluteFileName(String absoluteFileName) {
         // must normalize path to cater for Windows and other OS
         this.absoluteFileName = FileUtil.normalizePath(absoluteFileName);
     }
 
-    /**
-     * @return the absoluteFileName
-     */
     public String getAbsoluteFileName() {
         return absoluteFileName;
     }
@@ -196,6 +191,6 @@ public class GenericFile<T> {
 
     @Override
     public String toString() {
-        return "GenericFile[" + fileName + "]";
+        return "GenericFile[" + relativeFileName + "]";
     }
 }

@@ -29,6 +29,7 @@ import java.io.File;
  *   <li>FileRenameExclusiveReadLockStrategy waiting until its possible to rename the file. Can be used on file
  *   systems where the FileLock isn't supported.</li>
  * </ul>
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public interface ExclusiveReadLockStrategy {
 

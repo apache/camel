@@ -29,8 +29,8 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory("target/dotfiles");
+        super.setUp();
     }
 
     public void testSkipDotFiles() throws Exception {

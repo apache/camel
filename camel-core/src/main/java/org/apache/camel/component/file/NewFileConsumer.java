@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.Processor;
 
 /**
- *
+ * File consumer.
  */
 public class NewFileConsumer extends GenericFileConsumer<File> {
 
@@ -35,6 +35,14 @@ public class NewFileConsumer extends GenericFileConsumer<File> {
         File fileOrDirectory = new File(fileName);
 
         if (!fileOrDirectory.exists()) {
+            return;
+        }
+
+        // could be a file and not a directory so delegate to poll file instead
+        // this happens if end user has specified a filename in the URI but have not
+        // set directory=false as an option
+        if (fileOrDirectory.isFile()) {
+            pollFile(fileName, fileList);
             return;
         }
 

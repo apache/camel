@@ -28,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * A strategy to rename a file
  * 
  * @version $Revision$
+ * @deprecated will be replaced with NewFile in Camel 2.0
  */
 public class RenameFileProcessStrategy extends FileProcessStrategySupport {
     private static final transient Log LOG = LogFactory.getLog(RenameFileProcessStrategy.class);
