@@ -23,8 +23,10 @@ import javax.xml.bind.UnmarshalException;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -63,5 +65,14 @@ public class JAXBConvertTest extends TestCase {
         }
         assertEquals(-1, is.read());
     }
-
+    
+    public void testNoConversionForStreamCache() throws Exception {
+        PurchaseOrder order = new PurchaseOrder();
+        try {
+            converter.convertTo(StreamCache.class, order);
+            fail("We should not use the JAXB FallbackTypeConverter for stream caching");
+        } catch (NoTypeConversionAvailableException e) {
+            //this is OK
+        }
+    }
 }
