@@ -46,10 +46,10 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/regexp/?password=admin";
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

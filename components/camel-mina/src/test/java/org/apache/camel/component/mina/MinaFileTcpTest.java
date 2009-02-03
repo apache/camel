@@ -36,10 +36,10 @@ public class MinaFileTcpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("mina:tcp://localhost:9123").to("mock:results");
+                from("mina:tcp://localhost:9123?sync=false").to("mock:results");
 
                 from("file:src/test/data?noop=true").
-                        to("mina:tcp://localhost:9123");
+                        to("mina:tcp://localhost:9123?sync=false");
             }
         };
     }

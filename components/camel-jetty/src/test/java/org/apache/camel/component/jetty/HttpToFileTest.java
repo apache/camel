@@ -35,7 +35,7 @@ public class HttpToFileTest extends ContextTestSupport {
         assertEquals("Response from Jetty", "We got the file", response);
 
         // give file some time to save
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         File file = new File("./target/myworld/hello.txt");
         file = file.getAbsoluteFile();
@@ -47,6 +47,7 @@ public class HttpToFileTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory("target/myworld");
         disableJMX();
         super.setUp();
     }
@@ -60,6 +61,7 @@ public class HttpToFileTest extends ContextTestSupport {
                 // store the content from the queue as a file
                 from("seda:in")
                     .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
+                    .convertBodyTo(String.class)
                     .to("file://target/myworld?append=false");
             }
         };
