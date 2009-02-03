@@ -117,7 +117,7 @@ public final class CxfConverter {
                 
                 if (embedded != null) {
                     if (type.isInstance(embedded)) {
-                        return (T)embedded;
+                        return type.cast(embedded);
                     } else {
                         TypeConverter tc = registry.lookup(type, embedded.getClass());
                         if (tc != null) {
