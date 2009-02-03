@@ -16,8 +16,11 @@
  */
 package org.apache.camel.converter.jaxb;
 
-import java.io.*;
-
+import java.io.Closeable;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -30,6 +33,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -61,7 +65,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
                 return unmarshall(type, value);
             }
             if (value != null) {
-                if (isJaxbType(value.getClass())) {
+                if (isJaxbType(value.getClass()) && isNotStreamCacheType(type)) {
                     return marshall(type, value);
                 }
             }
@@ -69,6 +73,10 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         } catch (JAXBException e) {
             throw new RuntimeCamelException(e);
         }
+    }
+
+    private <T> boolean isNotStreamCacheType(Class<T> type) {
+        return !StreamCache.class.isAssignableFrom(type);
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
