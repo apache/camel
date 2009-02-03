@@ -30,12 +30,14 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.model.loadbalancer.FailOverLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.LoadBalancerType;
 import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RandomLoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
@@ -54,6 +56,7 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     private String ref;
 
     @XmlElements({
+        @XmlElement(required = false, name = "failOver", type = FailOverLoadBalanceStrategy.class),
         @XmlElement(required = false, name = "roundRobin", type = RoundRobinLoadBalanceStrategy.class),
         @XmlElement(required = false, name = "random", type = RandomLoadBalanceStrategy.class),
         @XmlElement(required = false, name = "sticky", type = StickyLoadBalanceStrategy.class),
@@ -143,6 +146,27 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
      */
     public LoadBalanceType setLoadBalancer(LoadBalancer loadBalancer) {
         loadBalancerType = new LoadBalancerType(loadBalancer);
+        return this;
+    }
+    
+    /**
+     * Uses fail over load balancer
+     * 
+     * @retrun the builder
+     */
+    public LoadBalanceType failOver() {
+        loadBalancerType = new LoadBalancerType(new FailOverLoadBalancer());
+        return this;
+    }
+    
+    /**
+     * Uses fail over load balancer
+     * 
+     * @param the exception Class which we want to catch
+     * @retrun the builder
+     */
+    public LoadBalanceType failOver(Class throwable) {
+        loadBalancerType = new LoadBalancerType(new FailOverLoadBalancer(throwable));
         return this;
     }
 
