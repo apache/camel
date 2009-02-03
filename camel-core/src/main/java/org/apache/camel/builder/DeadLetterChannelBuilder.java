@@ -25,6 +25,7 @@ import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -66,6 +67,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         Processor deadLetter = getDeadLetterFactory().createProcessor();
         DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
+        StreamCaching.enable(routeContext);
         configure(answer);
         return answer;
     }

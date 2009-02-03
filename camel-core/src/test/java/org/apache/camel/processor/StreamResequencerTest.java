@@ -104,8 +104,12 @@ public class StreamResequencerTest extends ContextTestSupport {
             outputProcessor = interceptor.getProcessor();
         }
 
+        // we are not interested in any other delegate processors in the route (e.g. stream caching)
+        while (outputProcessor instanceof DelegateProcessor) {
+            outputProcessor = ((DelegateProcessor) outputProcessor).getProcessor();
+        }
+
         assertIsInstanceOf(StreamResequencer.class, outputProcessor);
     }
-
 }
 

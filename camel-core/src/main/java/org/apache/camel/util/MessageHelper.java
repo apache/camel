@@ -90,4 +90,19 @@ public final class MessageHelper {
         }
         return answer;
     }
+    
+    /**
+     * If the message body contains a {@link StreamCache} instance, reset the cache to 
+     * enable reading from it again.
+     * 
+     * @param message the message for which to reset the body
+     */
+    public static void resetStreamCache(Message message) {
+        if (message == null) {
+            return;
+        }
+        if (message.getBody() instanceof StreamCache) {
+            ((StreamCache) message.getBody()).reset();
+        }
+    }
 }
