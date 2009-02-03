@@ -57,10 +57,11 @@ public final class FileExpressionBuilder {
         return new Expression<E>() {
             public Object evaluate(E exchange) {
                 String name = exchange.getIn().getHeader("CamelFileName", String.class);
-                if (name != null) {
+                if (name.lastIndexOf(".") != -1) {
                     return name.substring(0, name.lastIndexOf('.'));
                 } else {
-                    return null;
+                    // name does not have extension
+                    return name;
                 }
             }
 
