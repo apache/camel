@@ -33,10 +33,8 @@ public class MinaUdpTest extends ContextTestSupport {
 
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
-        endpoint.expectedMessageCount(messageCount);
         endpoint.expectedBodiesReceived("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");
 
-        Thread.sleep(1000);
         sendUdpMessages();
 
         assertMockEndpointsSatisfied();
@@ -44,14 +42,18 @@ public class MinaUdpTest extends ContextTestSupport {
 
     protected void sendUdpMessages() throws Exception {
         DatagramSocket socket = new DatagramSocket();
-        InetAddress address = InetAddress.getByName("127.0.0.1");
-        for (int i = 0; i < messageCount; i++) {
-            String text = "Hello Message: " + i;
-            byte[] data = text.getBytes();
+        try {
+            InetAddress address = InetAddress.getByName("127.0.0.1");
+            for (int i = 0; i < messageCount; i++) {
+                String text = "Hello Message: " + i;
+                byte[] data = text.getBytes();
 
-            DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
-            socket.send(packet);
-            Thread.sleep(1000);
+                DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+                socket.send(packet);
+                Thread.sleep(100);
+            }
+        } finally {
+            socket.close();
         }
     }
 
@@ -59,6 +61,7 @@ public class MinaUdpTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("mina:udp://127.0.0.1:" + port + "?sync=false").to("mina:udp://127.0.0.1:9000?sync=false");
+
                 from("mina:udp://127.0.0.1:9000?sync=false").to("mock:result");
             }
         };
