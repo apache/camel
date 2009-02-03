@@ -83,6 +83,9 @@ public class StreamCacheConverter {
 
         private static final long serialVersionUID = 4147248494104812945L;
 
+        public SourceCache() {
+        }
+
         public SourceCache(String text) {
             super(text);
         }
