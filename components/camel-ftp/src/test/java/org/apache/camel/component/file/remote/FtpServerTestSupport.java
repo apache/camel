@@ -23,8 +23,12 @@ import java.util.Random;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.converter.IOConverter;
 import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
+import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.PropertiesUserManager;
+import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
 
 /**
  * Base class for unit testing using a FTPServer
@@ -56,20 +60,26 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     }
 
     protected void initFtpServer() throws Exception {
-        ftpServer = new FtpServer();
-
-        // setup user management to read our users.properties and use clear text passwords
-        PropertiesUserManager uman = new PropertiesUserManager();
-        uman.setFile(new File("./src/test/resources/users.properties").getAbsoluteFile());
-        uman.setPasswordEncryptor(new ClearTextPasswordEncryptor());
-        uman.setAdminName("admin");
-        uman.configure();
-        ftpServer.setUserManager(uman);
-
         if (port < 21000) {
             throw new IllegalArgumentException("Port number is not initialized in an expected range: " + getPort());
         }
-        ftpServer.getListener("default").setPort(port);
+
+        FtpServerFactory serverFactory = new FtpServerFactory();
+
+        // setup user management to read our users.properties and use clear text passwords
+        File file = new File("./src/test/resources/users.properties").getAbsoluteFile();
+        UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
+        serverFactory.setUserManager(uman);
+
+        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
+        fsf.setCreateHome(true);
+        serverFactory.setFileSystem(fsf);
+
+        ListenerFactory factory = new ListenerFactory();
+        factory.setPort(port);
+        serverFactory.addListener("default", factory.createListener());
+
+        ftpServer = serverFactory.createServer();
     }
 
     protected void initPort() throws Exception {

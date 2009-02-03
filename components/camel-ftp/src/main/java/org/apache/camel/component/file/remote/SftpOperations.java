@@ -216,14 +216,17 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             sb.append(dir).append('/');
             String directory = sb.toString();
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Trying to build remote directory: " + directory);
+                LOG.trace("Trying to build remote directory by chunk: " + directory);
             }
 
-            try {
-                channel.mkdir(directory);
-                success = true;
-            } catch (SftpException e) {
-                // ignore keep trying to create the rest of the path
+            // do not try to build root / folder
+            if (!directory.equals("/")) {
+                try {
+                    channel.mkdir(directory);
+                    success = true;
+                } catch (SftpException e) {
+                    // ignore keep trying to create the rest of the path
+                }
             }
         }
 
