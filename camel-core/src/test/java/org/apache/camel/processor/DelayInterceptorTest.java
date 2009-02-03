@@ -35,8 +35,8 @@ public class DelayInterceptorTest extends ContextTestSupport {
             template.sendBody("direct:start", "Message #" + i);
         }
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Should be slower to run: " + delta, delta > 4000);
-        assertTrue("Should not take that long to run: " + delta, delta < 7000);
+        assertTrue("Should not be that fast to run: " + delta, delta > 4000);
+        assertTrue("Should not take that long to run: " + delta, delta < 9000);
     }
 
     @Override
