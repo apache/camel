@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -45,17 +44,12 @@ public class FtpConsumerDirectoriesNotMatchedTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        //String ftpUrl = "ftp://admin@localhost:" + getPort() + "/dirnotmatched";
-        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a dot file",
-                NewFileComponent.HEADER_FILE_NAME, ".skipme");
-        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a web file",
-                NewFileComponent.HEADER_FILE_NAME, "index.html");
-        template.sendBodyAndHeader(getFtpUrl() + "/?password=admin", "This is a readme file",
-                NewFileComponent.HEADER_FILE_NAME, "readme.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "/2007/?password=admin", "2007 report",
-                NewFileComponent.HEADER_FILE_NAME, "report2007.txt");
-        template.sendBodyAndHeader(getFtpUrl() + "/2008/?password=admin", "2008 report",
-                NewFileComponent.HEADER_FILE_NAME, "report2008.txt");
+        
+        sendFile(getFtpUrl() + "/?password=admin", "This is a dot file", ".skipme");
+        sendFile(getFtpUrl() + "/?password=admin", "This is a web file", "index.html");
+        sendFile(getFtpUrl() + "/?password=admin", "This is a readme file", "readme.txt");
+        sendFile(getFtpUrl() + "/2007/?password=admin", "2007 report", "report2007.txt");
+        sendFile(getFtpUrl() + "/2008/?password=admin", "2008 report", "report2008.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

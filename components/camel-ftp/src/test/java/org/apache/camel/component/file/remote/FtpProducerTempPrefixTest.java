@@ -33,7 +33,7 @@ public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
     public void testProduceTempPrefixTest() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "");
 
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "claus.txt");
+        sendFile(getFtpUrl(), "Hello World", "claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();

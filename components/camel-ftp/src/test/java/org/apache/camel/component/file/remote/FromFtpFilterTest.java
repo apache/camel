@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -42,9 +41,8 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     public void testFilterFiles() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
-
-        template.sendBodyAndHeader(getFtpUrl(), "This is a file to be filtered",
-                NewFileComponent.HEADER_FILE_NAME, "skipme.txt");
+        
+        sendFile(getFtpUrl(), "This is a file to be filtered", "skipme.txt");
 
         mock.setResultWaitTime(3000);
         mock.assertIsSatisfied();
@@ -55,11 +53,9 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(getFtpUrl(), "This is a file to be filtered",
-                NewFileComponent.HEADER_FILE_NAME, "skipme.txt");
+        sendFile(getFtpUrl(), "This is a file to be filtered", "skipme.txt");
 
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World",
-                NewFileComponent.HEADER_FILE_NAME, "hello.txt");
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
 
         mock.assertIsSatisfied();
     }
@@ -75,7 +71,7 @@ public class FromFtpFilterTest extends FtpServerTestSupport {
     // START SNIPPET: e1
     public class MyFileFilter implements GenericFileFilter {
         public boolean accept(GenericFile file) {
-            // we dont accept any files starting with skip in the name
+            // we don't accept any files starting with skip in the name
             return !file.getFileName().startsWith("skip");
         }
     }

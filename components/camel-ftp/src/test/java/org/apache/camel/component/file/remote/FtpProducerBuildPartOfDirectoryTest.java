@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.converter.IOConverter;
 
 /**
@@ -34,7 +33,7 @@ public class FtpProducerBuildPartOfDirectoryTest extends FtpServerTestSupport {
         deleteDirectory(FTP_ROOT_DIR + "");
         createDirectory(FTP_ROOT_DIR + "upload/user/superman");
 
-        template.sendBodyAndHeader(getFtpUrl(), "Bye World", NewFileComponent.HEADER_FILE_NAME, "claus.txt");
+        sendFile(getFtpUrl(), "Bye World", "claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();

@@ -17,7 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -61,7 +60,7 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "hello.txt");
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

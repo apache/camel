@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.util.Comparator;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -54,11 +53,10 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sorter/?password=admin";
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", NewFileComponent.HEADER_FILE_NAME, "paris.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello London", NewFileComponent.HEADER_FILE_NAME, "london.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", NewFileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+        // test that we can pool        
+        sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
+        sendFile(getFtpUrl(), "Hello London", "london.txt");
+        sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

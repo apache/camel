@@ -17,8 +17,6 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -41,7 +39,7 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "hello.txt");
+        sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
     public void testWithNoFileInOption() throws Exception {

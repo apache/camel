@@ -21,7 +21,7 @@ import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to verify remotefile sortby option.
+ * Unit test to verify remotefile sort by option.
  */
 public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSupport {
 
@@ -72,12 +72,11 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool
-        String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sortbynested/?password=admin";
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", NewFileComponent.HEADER_FILE_NAME, "paris.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello London", NewFileComponent.HEADER_FILE_NAME, "london.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", NewFileComponent.HEADER_FILE_NAME, "copenhagen.xml");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Dublin", NewFileComponent.HEADER_FILE_NAME, "dublin.txt");
+        // test that we can pool        
+        sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
+        sendFile(getFtpUrl(), "Hello London", "london.txt");
+        sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.xml");
+        sendFile(getFtpUrl(), "Hello Dublin", "dublin.txt");
     }
 
 }

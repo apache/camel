@@ -67,9 +67,7 @@ public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating a file on the server that we want to unit
-        // test that we can pool and store as a local file
-        /*String ftpUrl = "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&binary=true"
-                + "&consumer.delay=2000&recursive=false";*/
+        // test that we can pool and store as a local file        
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
