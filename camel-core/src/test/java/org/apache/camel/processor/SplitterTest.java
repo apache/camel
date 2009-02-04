@@ -58,7 +58,7 @@ public class SplitterTest extends ContextTestSupport {
         }
     }
 
-    public void testSpliterWithAggregationStrategy() throws Exception {
+    public void testSplitterWithAggregationStrategy() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedBodiesReceived("James", "Guillaume", "Hiram", "Rob", "Roman");
 
@@ -122,7 +122,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals(4, numbersFound.size());
     }
 
-    public void testSpliterWithAggregationStrategyParallel() throws Exception {
+    public void testSplitterWithAggregationStrategyParallel() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
 
@@ -141,7 +141,7 @@ public class SplitterTest extends ContextTestSupport {
         assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
     }
     
-    public void testSpliterWithAggregationStrategyParallelStreaming() throws Exception {
+    public void testSplitterWithAggregationStrategyParallelStreaming() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(5);
         resultEndpoint.expectedBodiesReceivedInAnyOrder("James", "Guillaume", "Hiram", "Rob", "Roman");
