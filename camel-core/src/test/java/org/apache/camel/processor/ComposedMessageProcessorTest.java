@@ -54,13 +54,15 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(1);
         resultEndpoint.expectedHeaderReceived("orderId", "myorderid");
-        
+
+        // START SNIPPET: e1        
         List<OrderItem> order = Arrays.asList(new OrderItem[] {
             new OrderItem("widget", 500), 
             new OrderItem("gadget", 200)});
 
         template.sendBodyAndHeader("direct:start", order, "orderId", "myorderid");
-                
+        // END SNIPPET: e1                
+        
         assertMockEndpointsSatisfied();
         
         List<OrderItem> validatedOrder = resultEndpoint.getExchanges().get(0).getIn().getBody(List.class);
@@ -79,6 +81,7 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: e2
                 // split up the order so individual OrderItems can be validated by the appropriate bean
                 from("direct:start").split().body().choice() 
                     .when().method("orderItemHelper", "isWidget").to("bean:widgetInventory", "seda:aggregate")
@@ -86,10 +89,12 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
                 
                 // collect and re-assemble the validated OrderItems into an order again
                 from("seda:aggregate").aggregate(new MyOrderAggregationStrategy()).header("orderId").to("mock:result");
+                // END SNIPPET: e2
             }
         };
     }
     
+    // START SNIPPET: e3    
     public static final class OrderItem {
         String type; // type of the item
         int quantity; // how many we want
@@ -100,19 +105,23 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             this.quantity = quantity;        
         }
     }
+    // END SNIPPET: e3    
     
     public static final class OrderItemHelper {
         private OrderItemHelper() {
         }
         
+        // START SNIPPET: e4  
         public static boolean isWidget(@Body OrderItem orderItem) {
             return orderItem.type.equals("widget");
         }
+        // END SNIPPET: e4  
     }
 
     /**
      * Bean that checks whether the specified number of widgets can be ordered
      */
+    // START SNIPPET: e5  
     public static final class WidgetInventory {
         public void checkInventory(@Body OrderItem orderItem) {
             assertEquals("widget", orderItem.type);
@@ -121,10 +130,12 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             }
         }
     }    
+    // END SNIPPET: e5  
     
     /**
      * Bean that checks whether the specified number of gadgets can be ordered
      */
+    // START SNIPPET: e6
     public static final class GadgetInventory {
         public void checkInventory(@Body OrderItem orderItem) {
             assertEquals("gadget", orderItem.type);
@@ -133,11 +144,13 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             }
         }
     }
+    // END SNIPPET: e6  
     
     /**
      * Aggregation strategy that re-assembles the validated OrderItems 
      * into an order, which is just a List.
      */
+    // START SNIPPET: e7  
     public static final class MyOrderAggregationStrategy implements AggregationStrategy {
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             List<OrderItem> order = new ArrayList<OrderItem>(2);
@@ -147,4 +160,5 @@ public class ComposedMessageProcessorTest extends ContextTestSupport {
             return oldExchange;
         }
     }
+    // END SNIPPET: e7  
 }
