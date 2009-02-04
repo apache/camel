@@ -23,6 +23,7 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.HeaderFilterStrategyAware;
+import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -34,6 +35,7 @@ import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
+import org.restlet.data.Status;
 
 /**
  * Default Restlet binding implementation
@@ -66,6 +68,10 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 }
 
             }
+        }
+        
+        if (!request.isEntityAvailable()) {
+            return;
         }
         
         Form form = new Form(request.getEntity());
@@ -152,15 +158,27 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
      */
     public void populateRestletResponseFromExchange(Exchange exchange,
             Response response) {
-        Object body = exchange.getOut().getBody();
-        MediaType mediaType = MediaType.TEXT_PLAIN;
-        if (body instanceof String) {
+        
+        // get content type
+        Message out = exchange.getOut();
+        MediaType mediaType = out.getHeader(RestletConstants.MEDIA_TYPE, MediaType.class);
+        if (mediaType == null) {
+            Object body = out.getBody();
             mediaType = MediaType.TEXT_PLAIN;
-        } else if (body instanceof StringSource || body instanceof DOMSource) {
-            mediaType = MediaType.TEXT_XML;
+            if (body instanceof String) {
+                mediaType = MediaType.TEXT_PLAIN;
+            } else if (body instanceof StringSource || body instanceof DOMSource) {
+                mediaType = MediaType.TEXT_XML;
+            }
         }
                 
-        for (Map.Entry<String, Object> entry : exchange.getOut().getHeaders().entrySet()) {
+        // get response code
+        Integer responseCode = out.getHeader(RestletConstants.RESPONSE_CODE, Integer.class);
+        if (responseCode != null) {
+            response.setStatus(Status.valueOf(responseCode));
+        }
+
+        for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
             if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), 
                     entry.getValue())) {
                 response.getAttributes().put(entry.getKey(), entry.getValue());
@@ -171,7 +189,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
         
-        String text = exchange.getOut().getBody(String.class);
+        String text = out.getBody(String.class);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Populate Restlet response from exchange body: " + text);
         }
