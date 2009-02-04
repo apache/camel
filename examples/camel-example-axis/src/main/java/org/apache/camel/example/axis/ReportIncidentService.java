@@ -37,7 +37,7 @@ public class ReportIncidentService {
         // store the data as a file
         String filename = parameters.getIncidentId() + ".txt";
         // send the data to the endpoint and the header contains what filename it should be stored as
-        template.sendBodyAndHeader(data, "org.apache.camel.file.name", filename);
+        template.sendBodyAndHeader(data, "CamelFileName", filename);
 
         OutputReportIncident out = new OutputReportIncident();
         out.setCode("OK");
