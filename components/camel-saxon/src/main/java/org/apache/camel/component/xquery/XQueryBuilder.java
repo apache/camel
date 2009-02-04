@@ -64,9 +64,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-
-
-
 /**
  * Creates an XQuery builder
  *
@@ -100,8 +97,6 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
     public Object evaluate(Exchange exchange) {
         try {
-            initialize();
-
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Evaluation " + expression + " for exchange: " + exchange);
             }
@@ -114,7 +109,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
                 } else if (resultType.isAssignableFrom(Node.class)) {
                     return evaluateAsDOM(exchange);
                 } else {
-                    // TODO figure out how to convert to the given type
+                    throw new IllegalArgumentException("ResultType: " + resultType.getCanonicalName() + " not supported");
                 }
             }
             switch (resultsFormat) {
@@ -138,27 +133,27 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public List evaluateAsList(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         return getExpression().evaluate(createDynamicContext(exchange));
     }
 
     public Object evaluateAsStringSource(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         String text = evaluateAsString(exchange);
         return new StringSource(text);
     }
 
     public Object evaluateAsBytesSource(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         byte[] bytes = evaluateAsBytes(exchange);
         return new BytesSource(bytes);
     }
 
     public Node evaluateAsDOM(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         DOMResult result = new DOMResult();
         DynamicQueryContext context = createDynamicContext(exchange);
@@ -168,7 +163,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public byte[] evaluateAsBytes(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Result result = new StreamResult(buffer);
@@ -178,7 +173,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     }
 
     public String evaluateAsString(Exchange exchange) throws Exception {
-        initialize();
+        initialize(exchange);
 
         StringWriter buffer = new StringWriter();
         SequenceIterator iter = getExpression().iterator(createDynamicContext(exchange));
@@ -443,7 +438,7 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
     /**
      * Initializes this builder - <b>Must be invoked before evaluation</b>.
      */
-    protected synchronized void initialize() throws XPathException, IOException {
+    protected synchronized void initialize(Exchange exchange) throws XPathException, IOException {
         // must use synchronized for concurrency issues and only let it initialize once
         if (!initialized.get()) {
             if (LOG.isDebugEnabled()) {
@@ -465,6 +460,10 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
 
             initialized.set(true);
         }
+
+        // let the configuration be accessible on the exchange as its shared for this evaulation
+        // and can be needed for 3rd part type converters or in some other situations
+        exchange.setProperty("CamelSaxonConfiguration", configuration);
     }
 
 }
