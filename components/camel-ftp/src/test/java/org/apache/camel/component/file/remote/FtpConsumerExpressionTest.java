@@ -21,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -53,7 +52,7 @@ public class FtpConsumerExpressionTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Reports");
 
-        template.sendBodyAndHeader(getFtpUrl(), "Reports", NewFileComponent.HEADER_FILE_NAME, "report2.txt");
+        sendFile(getFtpUrl(), "Reports", "report2.txt");
 
         assertMockEndpointsSatisfied();
 

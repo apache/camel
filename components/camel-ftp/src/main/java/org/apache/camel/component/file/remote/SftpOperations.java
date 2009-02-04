@@ -209,7 +209,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     private boolean buildDirectoryChunks(String dirName) throws IOException, SftpException {
         final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
+        final String[] dirs = dirName.split("\\/|\\\\");
 
         boolean success = false;
         for (String dir : dirs) {
