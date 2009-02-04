@@ -22,18 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.EntityEnclosingMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
-import org.apache.commons.httpclient.methods.StringRequestEntity;
 
 /**
  *
  * @version $Revision$
  */
-public class RestletPostContentTest extends ContextTestSupport {
-
-    private static final String MSG_BODY = "Hello World!";
+public class RestletResponseTest extends ContextTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() {
@@ -41,28 +36,23 @@ public class RestletPostContentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST")
-                    .process(new SetUserProcessor());
-                
+                from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeader(RestletConstants.RESPONSE_CODE, "417");
+                        exchange.getOut().setHeader(RestletConstants.MEDIA_TYPE, "application/JSON");
+                    }        
+                });
             }
-            
         };
     }
     
-    class SetUserProcessor implements Processor {
-        public void process(Exchange exchange) throws Exception {   
-            assertEquals(MSG_BODY, exchange.getIn().getBody(String.class));
-        }
-        
-    }
-    
-    public void testPostBody() throws Exception {
+    public void testCustomResponse() throws Exception {
         HttpMethod method = new PostMethod("http://localhost:9080/users/homer");
         try {
-            RequestEntity requestEntity = new StringRequestEntity(MSG_BODY, null, null);
-            ((EntityEnclosingMethod)method).setRequestEntity(requestEntity);
             HttpClient client = new HttpClient();
-            assertEquals(200, client.executeMethod(method));
+            assertEquals(417, client.executeMethod(method));
+            assertTrue(method.getResponseHeader("Content-Type").getValue()
+                    .startsWith("application/JSON"));
         } finally {
             method.releaseConnection();
         }
