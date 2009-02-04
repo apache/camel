@@ -18,11 +18,11 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.converter.IOConverter;
 
 /**
- * Unit test to verify that Camel can builde remote directory on FTP server if missing (full or part of).
+ * Unit test to verify that Camel can build remote directory on FTP server if missing (full or part of).
  */
 public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
 
@@ -33,7 +33,7 @@ public class FtpProducerBuildDirectoryTest extends FtpServerTestSupport {
     public void testProduceAndBuildFullRemotFolderTest() throws Exception {
         deleteDirectory(FTP_ROOT_DIR + "");
 
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "claus.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "claus.txt");
 
         File file = new File(FTP_ROOT_DIR + "upload/user/claus/claus.txt");
         file = file.getAbsoluteFile();

@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -37,9 +37,9 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Godday World", FileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", NewFileComponent.HEADER_FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Godday World", NewFileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");
     }
 
     public void testMultiDir() throws Exception {

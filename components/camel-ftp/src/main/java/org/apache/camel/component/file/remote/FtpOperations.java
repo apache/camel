@@ -223,10 +223,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     private boolean buildDirectoryChunks(String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/");
+        final String[] dirs = dirName.split("\\/|\\\\");
 
         boolean success = false;
-        for (String dir : dirs) {
+        for (String dir : dirs) {            
             sb.append(dir).append('/');
             String directory = sb.toString();
 

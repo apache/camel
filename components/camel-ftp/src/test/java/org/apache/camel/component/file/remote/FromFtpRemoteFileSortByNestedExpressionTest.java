@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -74,10 +74,10 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/sortbynested/?password=admin";
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
-        template.sendBodyAndHeader(getFtpUrl(), "Hello Dublin", FileComponent.HEADER_FILE_NAME, "dublin.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Paris", NewFileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello London", NewFileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Copenhagen", NewFileComponent.HEADER_FILE_NAME, "copenhagen.xml");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello Dublin", NewFileComponent.HEADER_FILE_NAME, "dublin.txt");
     }
 
 }
