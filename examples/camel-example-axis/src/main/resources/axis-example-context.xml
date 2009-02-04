@@ -10,7 +10,7 @@
 
     <camel:camelContext id="camelContext">
         <!-- endpoint named backup that is configued as a file component -->
-        <camel:endpoint id="backup" uri="file://target?append=false"/>
+        <camel:endpoint id="backup" uri="file://target/?append=false"/>
 
     </camel:camelContext>
 
