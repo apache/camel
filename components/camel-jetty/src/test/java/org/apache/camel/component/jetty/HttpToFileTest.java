@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
 /**
@@ -29,13 +30,18 @@ import org.apache.camel.converter.IOConverter;
 public class HttpToFileTest extends ContextTestSupport {
 
     public void testToJettyAndSaveToFile() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
         Object out = template.sendBody("http://localhost:8080/myworld", "Hello World");
 
         String response = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("Response from Jetty", "We got the file", response);
 
+        assertMockEndpointsSatisfied();
+
         // give file some time to save
-        Thread.sleep(2000);
+        Thread.sleep(500);
 
         File file = new File("./target/myworld/hello.txt");
         file = file.getAbsoluteFile();
@@ -48,7 +54,6 @@ public class HttpToFileTest extends ContextTestSupport {
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/myworld");
-        disableJMX();
         super.setUp();
     }
 
@@ -62,7 +67,8 @@ public class HttpToFileTest extends ContextTestSupport {
                 from("seda:in")
                     .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
                     .convertBodyTo(String.class)
-                    .to("file://target/myworld?append=false");
+                    .to("file://target/myworld/")
+                    .to("mock:result");
             }
         };
     }
