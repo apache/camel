@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -51,7 +51,7 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
         mock.expectedBodiesReceived("Hello World");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "report.txt");
 
         assertMockEndpointsSatisfied();
 
@@ -62,7 +62,7 @@ public class FtpConsumerIdempotentTest extends FtpServerTestSupport {
         mock.expectedMessageCount(0);
 
         // move file back
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "report.txt");
 
         // should NOT consume the file again, let 2 secs pass to let the consumer try to consume it but it should not
         Thread.sleep(2000);

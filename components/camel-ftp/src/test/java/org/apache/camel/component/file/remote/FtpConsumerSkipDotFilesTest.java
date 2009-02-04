@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -46,10 +46,10 @@ public class FtpConsumerSkipDotFilesTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/dotfiles/?password=admin";
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, ".skipme");
-        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(getFtpUrl(), "Bye World", FileComponent.HEADER_FILE_NAME, ".camel");
-        template.sendBodyAndHeader(getFtpUrl(), "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, ".skipme");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", NewFileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye World", NewFileComponent.HEADER_FILE_NAME, ".camel");
+        template.sendBodyAndHeader(getFtpUrl(), "Reports", NewFileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

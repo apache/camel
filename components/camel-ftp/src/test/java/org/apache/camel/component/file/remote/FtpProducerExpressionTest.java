@@ -22,7 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -56,14 +56,14 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProduceBeanByHeader() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
 
         Thread.sleep(500);
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
     public void testProducerDateByHeader() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl(), "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Hello World", NewFileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());

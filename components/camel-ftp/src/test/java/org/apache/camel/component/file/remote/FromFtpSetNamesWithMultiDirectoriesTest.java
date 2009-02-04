@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
@@ -76,7 +76,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo1.jpeg"));
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo1.jpeg");
+        exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME, "logo1.jpeg");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
@@ -86,7 +86,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         endpoint = context.getEndpoint(ftpUrl);
         exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo2.png"));
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo2.png");
+        exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME, "logo2.png");
         producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);

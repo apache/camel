@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -54,7 +54,7 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello ASCII from FTPServer");
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "ascii.txt");
+        exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME, "ascii.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
