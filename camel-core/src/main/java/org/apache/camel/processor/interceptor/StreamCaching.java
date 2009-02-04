@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * {@link InterceptStrategy} implementation to configure stream caching on a RouteContext
  */
-public class StreamCaching implements InterceptStrategy {
+public final class StreamCaching implements InterceptStrategy {
     
     /*
      * Hide constructor -- instances will be created through static enable() methods

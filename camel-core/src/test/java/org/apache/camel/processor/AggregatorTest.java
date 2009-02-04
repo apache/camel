@@ -88,7 +88,7 @@ public class AggregatorTest extends ContextTestSupport {
 
                 from("seda:header").setHeader("visited", constant(true)).aggregate(header("cheese")).to("mock:result");
 
-                // in this sample we aggregate using our own startegy with a completion predicate
+                // in this sample we aggregate using our own strategy with a completion predicate
                 // stating that the aggregated header is equal to 5.
                 from("direct:predicate").aggregate(header("cheese"), new MyAggregationStrategy()).
                     completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
