@@ -15,7 +15,7 @@
     <description>An example based on real life use case for reporting incidents using webservice that are transformed
         and send as emails to a backing system
     </description>
-    
+    <packaging>war</packaging>
 
     <dependencies>
         <dependency>
@@ -142,6 +142,14 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>maven-jetty-plugin</artifactId>
                 <version>${jetty-version}</version>
+                <configuration>
+                   <connectors>
+                      <connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
+                        <port>9080</port>
+                        <maxIdleTime>60000</maxIdleTime>
+                      </connector>
+                   </connectors>                   
+                </configuration>
             </plugin>
 
         </plugins>
