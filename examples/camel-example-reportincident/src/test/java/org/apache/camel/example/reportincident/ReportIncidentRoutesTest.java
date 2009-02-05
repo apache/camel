@@ -28,13 +28,15 @@ import org.jvnet.mock_javamail.Mailbox;
 public class ReportIncidentRoutesTest extends TestCase {
 
     // should be the same address as we have in our route
-    private static final String URL = "http://localhost:9080/reportincident/webservices/incident";
+    private static final String URL = "http://localhost:9080/camel-example-reportincident/webservices/incident";
 
     private CamelContext camel;
 
     protected void startCamel() throws Exception {
         camel = new DefaultCamelContext();
-        camel.addRoutes(new ReportIncidentRoutes());
+        ReportIncidentRoutes routes = new ReportIncidentRoutes();
+        routes.setUsingServletTransport(false);
+        camel.addRoutes(routes);
         camel.start();
     }
 

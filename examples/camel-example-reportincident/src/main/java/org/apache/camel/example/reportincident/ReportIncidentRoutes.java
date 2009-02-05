@@ -16,8 +16,10 @@
  */
 package org.apache.camel.example.reportincident;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.NewFileComponent;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.bean.BeanLanguage;
 
 /**
@@ -26,14 +28,25 @@ import org.apache.camel.language.bean.BeanLanguage;
  * In the configure method we have all kind of DSL methods we use for expressing our routes.
  */
 public class ReportIncidentRoutes extends RouteBuilder {
+    private boolean usingServletTransport = true;
+    
+    public void setUsingServletTransport(boolean flag) {
+        usingServletTransport = flag;
+    }
 
     public void configure() throws Exception {
         // webservice response for OK
         OutputReportIncident ok = new OutputReportIncident();
         ok.setCode("0");
 
-        // endpoint to our CXF webservice
-        String cxfEndpoint = "cxf://http://localhost:9080/reportincident/webservices/incident"
+        // endpoint to our CXF webservice  
+        // We should use the related path to publish the service, when using the ServletTransport
+        String cxfEndpointAddress = "cxf:/incident";
+        // Using the full http address for stand alone running
+        if (!usingServletTransport) {
+            cxfEndpointAddress = "cxf://http://localhost:9080/camel-example-reportincident/webservices/incident";
+        }
+        String cxfEndpoint = cxfEndpointAddress
                 + "?serviceClass=org.apache.camel.example.reportincident.ReportIncidentEndpoint"
                 + "&wsdlURL=report_incident.wsdl";
 
@@ -42,20 +55,28 @@ public class ReportIncidentRoutes extends RouteBuilder {
             // we need to convert the CXF payload to InputReportIncident that FilenameGenerator and velocity expects
             .convertBodyTo(InputReportIncident.class)
             // then set the file name using the FilenameGenerator bean
-            .setHeader(FileComponent.HEADER_FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
+            .setHeader(NewFileComponent.HEADER_FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
             // and create the mail body using velocity templating
             .to("velocity:MailBody.vm")
             // and store the file
-            .to("file://target/subfolder")
+            .to("newfile://target/subfolder")
             // return OK as response
             .transform(constant(ok));
 
         // second part from the file backup -> send email
-        from("file://target/subfolder")
+        from("newfile://target/subfolder")
             // set the subject of the email
             .setHeader("subject", constant("new incident reported"))
             // send the email
             .to("smtp://someone@localhost?password=secret&to=incident@mycompany.com");
+    }
+    
+    public static void main(String args[]) throws Exception {
+        CamelContext camel = new DefaultCamelContext();
+        ReportIncidentRoutes routes = new ReportIncidentRoutes();
+        routes.setUsingServletTransport(false);
+        camel.addRoutes(routes);
+        camel.start();
     }
 
 }

@@ -25,7 +25,7 @@
 	<fail unless="env.SPRING_HOME" message="You must download Spring2.5 and set your CXF_HOME to run this demo."/>
 	<fail unless="env.JETTY_HOME" message="You must download Jetty6 and set your JETTY_HOME to run this demo."/>
 
-	<property name="project.name" value="camel-example-cxf"/>
+	<property name="project.name" value="camel-example-reportincident"/>
 
 	<property name="jetty.home" value="${env.JETTY_HOME}"/>
 	<path id="jetty.classpath">
@@ -63,8 +63,8 @@
 	</target>
 
 	<target name="run" depends="generate.code,build"
-		description="Compile and run the sample of camel-cxf component">
-		<camelrun mainClass="org.apache.camel.example.cxf.CamelCxfExample" />
+		description="Compile and run the sample of reportincident component">
+		<camelrun mainClass="org.apache.camel.example.reportincident.ReportIncidentRoutes" />
 	</target>
 
 	<available property="wsdl.dir" value="${build.resources.dir}" file="${build.resources.dir}/report_incident.wsdl" />
