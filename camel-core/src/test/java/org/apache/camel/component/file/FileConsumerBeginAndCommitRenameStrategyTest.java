@@ -48,10 +48,10 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         mock.assertIsSatisfied();
 
         // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
+        Thread.sleep(500);
 
         // content of file should be Hello Paris
-        String content = IOConverter.toString(new File("./target/done/paris.txt"));
+        String content = IOConverter.toString(new File("./target/done/paris.txt").getAbsoluteFile());
         assertEquals("The file should have been renamed", "Hello Paris", content);
     }
 
