@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import java.net.URI;
+import org.apache.camel.util.FileUtil;
 
 public class GenericFileConfiguration {
 
@@ -31,7 +32,8 @@ public class GenericFileConfiguration {
     }
 
     public void setFile(String file) {
-        this.file = file;
+        // must normalize path to cater for Windows and other OS
+        this.file = FileUtil.normalizePath(file);
     }
 
     public String toString() {

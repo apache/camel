@@ -175,9 +175,6 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
         }
 
-        // must normalize path to cater for Windows and other OS
-        name = FileUtil.normalizePath(name);
-
         String endpointFile = endpoint.getConfiguration().getFile();
         if (endpoint.isDirectory()) {
             // Its a directory so we should use it as a base path for the filename
@@ -195,6 +192,9 @@ public class GenericFileProducer<T> extends DefaultProducer {
         } else {
             answer = endpointFile;
         }
+
+        // must normalize path to cater for Windows and other OS
+        answer = FileUtil.normalizePath(answer);
 
         return answer;
     }

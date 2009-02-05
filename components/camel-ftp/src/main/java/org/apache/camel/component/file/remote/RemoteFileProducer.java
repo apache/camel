@@ -71,7 +71,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         connectIfNecessary();
         if (!loggedIn) {
             // must be logged in to be able to upload the file
-            String message = "Could not connect/login to: " + ((RemoteFileEndpoint) getEndpoint()).remoteServerInformation();
+            String message = "Cannot connect/login to: " + ((RemoteFileEndpoint) getEndpoint()).remoteServerInformation();
             throw new GenericFileOperationFailedException(message);
         }
     }
@@ -97,7 +97,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     protected void connectIfNecessary() throws IOException {
         if (!((RemoteFileOperations) operations).isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
-                log.debug("Not connected/logged in, connecting to " + getEndpoint());
+                log.debug("Not already connected/logged in. Connecting to: " + getEndpoint());
             }
             RemoteFileOperations rfo = (RemoteFileOperations) operations;
             RemoteFileEndpoint rfe = (RemoteFileEndpoint) getEndpoint();
