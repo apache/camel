@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
+package org.apache.camel.spring.file;
 
 import java.io.File;
 
@@ -23,6 +23,8 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.file.NewFileEndpoint;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.hamcrest.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
