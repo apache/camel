@@ -77,6 +77,7 @@ public class Splitter extends MulticastProcessor implements Processor {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, Object value) {
         final Iterator iterator = ObjectHelper.createIterator(value);
         return new Iterable() {
@@ -113,7 +114,7 @@ public class Splitter extends MulticastProcessor implements Processor {
         } else {
             result = new ArrayList<ProcessorExchangePair>();
         }
-        Iterator<Object> iter = ObjectHelper.createIterator(value);
+        Iterator iter = ObjectHelper.createIterator(value);
         while (iter.hasNext()) {
             Object part = iter.next();
             Exchange newExchange = exchange.copy();

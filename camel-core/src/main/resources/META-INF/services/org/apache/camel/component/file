@@ -15,5 +15,5 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.file.FileComponent
-strategy.factory.class=org.apache.camel.component.file.strategy.FileProcessStrategyFactory
+class=org.apache.camel.component.file.NewFileComponent
+strategy.factory.class=org.apache.camel.component.file.strategy.NewFileProcessStrategyFactory

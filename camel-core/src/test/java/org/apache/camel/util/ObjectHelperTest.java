@@ -29,6 +29,7 @@ import junit.framework.TestCase;
  * @version $Revision$
  */
 public class ObjectHelperTest extends TestCase {
+
     public void testRemoveInitialCharacters() throws Exception {
         assertEquals(ObjectHelper.removeStartingCharacters("foo", '/'), "foo");
         assertEquals(ObjectHelper.removeStartingCharacters("/foo", '/'), "foo");
@@ -135,7 +136,15 @@ public class ObjectHelperTest extends TestCase {
 
     public void testCreateIteratorWithStringAndCommaSeparator() {
         String s = "a,b,c";
-        Iterator it = ObjectHelper.createIterator(s);
+        Iterator it = ObjectHelper.createIterator(s, ",");
+        assertEquals("a", it.next());
+        assertEquals("b", it.next());
+        assertEquals("c", it.next());
+    }
+
+    public void testCreateIteratorWithStringAndSemiColonSeparator() {
+        String s = "a;b;c";
+        Iterator it = ObjectHelper.createIterator(s, ";");
         assertEquals("a", it.next());
         assertEquals("b", it.next());
         assertEquals("c", it.next());
