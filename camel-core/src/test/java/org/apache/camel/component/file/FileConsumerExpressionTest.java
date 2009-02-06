@@ -109,16 +109,10 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Big World");
+        mock.expectedFileExists("target/filelanguage/backup/123.txt", "Bye Big World");
 
         template.sendBodyAndHeader("newfile://target/filelanguage/", "Bye Big World", NewFileComponent.HEADER_FILE_NAME, "report3.txt");
         assertMockEndpointsSatisfied();
-
-        // give time for consumer to rename file
-        Thread.sleep(200);
-
-        File file = new File("target/filelanguage/backup/123.txt");
-        file = file.getAbsoluteFile();
-        assertTrue("File should have been renamed", file.exists());
     }
 
     public void testRenameToSiblingFolder() throws Exception {
@@ -133,16 +127,10 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Big World");
+        mock.expectedFileExists("target/backup/report4.txt.bak");
 
         template.sendBodyAndHeader("newfile://target/filelanguage/", "Hello Big World", NewFileComponent.HEADER_FILE_NAME, "report4.txt");
         assertMockEndpointsSatisfied();
-
-        // give time for consumer to rename file
-        Thread.sleep(200);
-
-        File file = new File("target/backup/report4.txt.bak");
-        file = file.getAbsoluteFile();
-        assertTrue("File should have been renamed", file.exists());
     }
 
     public void testRenameToBeanWithBeanLanguage() throws Exception {
@@ -165,17 +153,11 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bean Language Rules The World");
+        mock.expectedFileExists("target/filelanguage/123");
 
         template.sendBodyAndHeader("newfile://target/filelanguage/", "Bean Language Rules The World",
                 NewFileComponent.HEADER_FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
-
-        // give time for consumer to rename file
-        Thread.sleep(200);
-
-        File file = new File("target/filelanguage/123");
-        file = file.getAbsoluteFile();
-        assertTrue("File should have been renamed", file.exists());
     }
 
     public class MyGuidGenerator {

@@ -38,6 +38,13 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
     private String fileUrl = "file://target/exclusiveread/slowfile?consumer.delay=500&readLock=rename";
 
     @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("./target/exclusiveread");
+        createDirectory("./target/exclusiveread/slowfile");
+        super.setUp();
+    }
+
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
@@ -48,8 +55,6 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
         mock.setMinimumResultWaitTime(3000);
@@ -65,9 +70,6 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
-        
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -94,9 +96,6 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
-        
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -123,8 +122,6 @@ public class FileExclusiveReadRenameStrategyTest extends ContextTestSupport {
             return;
         }
 
-        deleteDirectory("./target/exclusiveread");
-        createDirectory("./target/exclusiveread/slowfile");
         // to test that if noop and thus idempotent we will retry to consume the file
         // the 2nd. time since the first time we could not get the read lock due timeout
         // so the file should only be marked in the idempotent repository if we could process it

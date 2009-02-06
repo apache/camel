@@ -16,12 +16,9 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 
 /**
  * Unit test that we can produce files even for InOut MEP.
@@ -32,16 +29,13 @@ public class FileMEPInOutTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
+        mock.expectedFileExists("target/FileMEPInOutTest.txt", "Hello World");
 
         // request is InOut
         template.requestBodyAndHeader("direct:in", "Hello World", FileComponent.HEADER_FILE_NAME,
             "FileMEPInOutTest.txt");
 
         assertMockEndpointsSatisfied();
-
-        File file = new File("target/FileMEPInOutTest.txt");
-        file = file.getAbsoluteFile();
-        assertEquals("Hello World", IOConverter.toString(file));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

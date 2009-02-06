@@ -44,8 +44,6 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        Thread.sleep(100);
-
         mock.assertIsSatisfied();
     }
 
@@ -65,8 +63,6 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello London");
 
         template.sendBodyAndHeader("newfile:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
-
-        Thread.sleep(100);
 
         mock.assertIsSatisfied();
     }

@@ -18,6 +18,8 @@ package org.apache.camel.component.mock;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -39,11 +41,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExpressionComparator;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -147,10 +151,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
     }
 
-
     public static void expectsMessageCount(int count, MockEndpoint... endpoints) throws InterruptedException {
         for (MockEndpoint endpoint : endpoints) {
-            MockEndpoint.expectsMessageCount(count);
+            endpoint.setExpectedMessageCount(count);
         }
     }
 
@@ -189,9 +192,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Set the processor that will be invoked when the index
      * message is received.
-     *
-     * @param index
-     * @param processor
      */
     public void whenExchangeReceived(int index, Processor processor) {
         this.processors.put(index, processor);
@@ -203,8 +203,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      *
      * This processor could be overwritten by
      * {@link #whenExchangeReceived(int, Processor)} method.
-     *
-     * @param processor
      */
     public void whenAnyExchangeReceived(Processor processor) {
         this.defaultProcessor = processor;
@@ -398,10 +396,56 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
+     * Adds an expection that a file exists with the given name
+     *
+     * @param name name of file, will cater for / and \ on different OS platforms
+     */
+    public void expectedFileExists(final String name) {
+        expectedFileExists(name, null);
+    }
+
+    /**
+     * Adds an expection that a file exists with the given name
+     * <p>
+     * Will wait at most 5 seconds while checking for the existence of the file.
+     *
+     * @param name name of file, will cater for / and \ on different OS platforms
+     * @param content content of file to compare, can be <tt>null</tt> to not compare content
+     */
+    public void expectedFileExists(final String name, final String content) {
+        final File file = new File(FileUtil.normalizePath(name)).getAbsoluteFile();
+
+        expects(new Runnable() {
+            public void run() {
+                // wait at most 2 seconds for the file to exists
+                final long timeout = System.currentTimeMillis() + 5000;
+
+                boolean stop = false;
+                while (!stop && !file.exists()) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    stop = System.currentTimeMillis() > timeout;
+                }
+
+                assertTrue("The file should exists: " + name, file.exists());
+
+                if (content != null) {
+                    try {
+                        assertEquals("Content of file: " + name, content, IOConverter.toString(file));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        });
+    }
+
+    /**
      * Adds an expectation that messages received should have ascending values
      * of the given expression such as a user generated counter value
-     *
-     * @param expression
      */
     public void expectsAscending(final Expression expression) {
         expects(new Runnable() {
@@ -414,8 +458,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     /**
      * Adds an expectation that messages received should have descending values
      * of the given expression such as a user generated counter value
-     *
-     * @param expression
      */
     public void expectsDescending(final Expression expression) {
         expects(new Runnable() {

@@ -39,17 +39,11 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
     public void testRenameSuccess() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
+        mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
-
-        // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
-
-        // content of file should be Hello Paris
-        String content = IOConverter.toString(new File("./target/done/paris.txt"));
-        assertEquals("The file should have been renamed", "Hello Paris", content);
     }
 
     public void testRenameFileExists() throws Exception {
