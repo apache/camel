@@ -27,7 +27,7 @@ import org.apache.camel.language.bean.BeanLanguage;
 /**
  * Unit test for expression option for file consumer.
  */
-public class FileConsumerExpressionTest extends ContextTestSupport {
+public class FileConsumerMoveExpressionTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("newfile://target/filelanguage/report.txt?directory=false&autoCreate=false"
-                     + "&expression=${id}.bak").to("mock:result");
+                     + "&moveExpression=${id}.bak").to("mock:result");
             }
         });
         context.start();
@@ -77,7 +77,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("newfile://target/filelanguage/report2.txt?directory=false&autoCreate=false"
-                     + "&expression=backup-${id}-${file:name.noext}.bak").to("mock:result");
+                     + "&moveExpression=backup-${id}-${file:name.noext}.bak").to("mock:result");
             }
         });
         context.start();
@@ -102,7 +102,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("newfile://target/filelanguage/report3.txt?directory=false&autoCreate=false"
-                      + "&expression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
+                      + "&moveExpression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
             }
         });
         context.start();
@@ -120,7 +120,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("newfile://target/filelanguage/report4.txt?directory=false&autoCreate=false"
-                     + "&expression=../backup/${file:name}.bak").to("mock:result");
+                     + "&moveExpression=../backup/${file:name}.bak").to("mock:result");
             }
         });
         context.start();
@@ -144,7 +144,7 @@ public class FileConsumerExpressionTest extends ContextTestSupport {
                 endpoint.setOperations(new NewFileOperations(endpoint));
                 endpoint.setDirectory(false);
                 endpoint.setAutoCreate(false);
-                endpoint.setExpression(BeanLanguage.bean("myguidgenerator"));
+                endpoint.setMoveExpression(BeanLanguage.bean("myguidgenerator"));
 
                 from(endpoint).to("mock:result");
             }

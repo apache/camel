@@ -59,13 +59,10 @@ public class FromFileToFtpDefaultRootRenameStrategyTest extends FtpServerTestSup
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        // give our poller chance to collect the file
-        Thread.sleep(500);
-
         assertMockEndpointsSatisfied();
 
-        // give our mock a chance to delete chance to del the file
-        Thread.sleep(500);
+        // give our mock a chance to delete the file
+        Thread.sleep(250);
 
         // assert the file is NOT there now
         assertTrue(!expectedOnFtpServer.exists());

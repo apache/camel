@@ -47,16 +47,10 @@ public class FromFtpToFileNoFileNameHeaderTest extends FtpServerTestSupport {
         resultEndpoint.expectedBodiesReceived("Hello World from FTPServer");
         resultEndpoint.assertIsSatisfied();
 
-        // wait until the file producer has written the file
-        Thread.sleep(1000);
-
         // assert the file
         File file = new File("target/ftptest/hello.txt");
         assertTrue("The file should exists", file.exists());
         assertTrue("File size wrong", file.length() > 10);
-
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
     }
 
     private void prepareFtpServer() throws Exception {

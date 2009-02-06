@@ -51,9 +51,6 @@ public class FromFtpToBinaryFilesTest extends FtpServerTestSupport {
         byte[] bytes = ex.getIn().getBody(byte[].class);
         assertTrue("Logo size wrong", bytes.length > 10000);
 
-        // wait until the file producer has written the file
-        Thread.sleep(2000);
-
         // assert the file
         File file = new File("target/ftptest/logo.jpeg");
         assertTrue(" The binary file should exists", file.exists());

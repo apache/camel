@@ -34,8 +34,8 @@ public class FromFtpPassiveModeTest extends FtpServerTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "passive");
+        super.setUp();
         prepareFtpServer();
     }
 

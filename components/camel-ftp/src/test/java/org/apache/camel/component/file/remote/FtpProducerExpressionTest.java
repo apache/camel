@@ -34,6 +34,11 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    @Override
     protected void setUp() throws Exception {
         super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "filelanguage");
@@ -48,49 +53,43 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProduceBeanByExpression() throws Exception {
-        template.sendBody(getFtpUrl() + "&expression=${bean:myguidgenerator}.bak", "Hello World");
+        template.sendBody(getFtpUrl() + "&fileExpression=${bean:myguidgenerator}.bak", "Hello World");
 
-        Thread.sleep(500);
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
     public void testProduceBeanByHeader() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "${bean:myguidgenerator}.bak");
 
-        Thread.sleep(500);
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
 
     public void testProducerDateByHeader() throws Exception {
         sendFile(getFtpUrl(), "Hello World", "myfile-${date:now:yyyyMMdd}.txt");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
     public void testProducerDateByExpression() throws Exception {
-        template.sendBody(getFtpUrl() + "&expression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
+        template.sendBody(getFtpUrl() + "&fileExpression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
     }
 
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
-        template.sendBody(getFtpUrl() + "&expression=" + expression, "Hello World");
+        template.sendBody(getFtpUrl() + "&fileExpression=" + expression, "Hello World");
 
-        Thread.sleep(500);
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists(FTP_ROOT_DIR + "filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&expression=myfile-${in.header.foo}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&fileExpression=myfile-${in.header.foo}.txt",
                 "Hello World", "foo", "abc");
 
-        Thread.sleep(500);
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-abc.txt");
     }
 
@@ -99,10 +98,9 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&expression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&fileExpression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
                 "Hello World", "birthday", date);
 
-        Thread.sleep(500);
         assertFileExists(FTP_ROOT_DIR + "filelanguage/mybirthday-19740420.txt");
     }
 

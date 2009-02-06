@@ -52,9 +52,6 @@ public class FtpLoginTest extends FtpServerTestSupport {
     public void testGoodLogin() throws Exception {
         uploadFile("scott", "tiger");
 
-        // give time for producer
-        Thread.sleep(2000);
-
         // assert file created
         File file = new File(FTP_ROOT_DIR + "login/report.txt");
         file = file.getAbsoluteFile();

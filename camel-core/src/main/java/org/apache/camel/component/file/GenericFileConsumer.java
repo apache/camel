@@ -22,9 +22,12 @@ import java.util.List;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Processor;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -36,6 +39,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     protected boolean loggedIn;
+    protected String fileExpressionResult;
 
     public GenericFileConsumer(GenericFileEndpoint<T> endpoint, Processor processor, GenericFileOperations<T> operations) {
         super(endpoint, processor);
@@ -47,6 +51,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * Poll for files
      */
     protected void poll() throws Exception {
+        // must reset for each poll
+        fileExpressionResult = null;
 
         // before we poll is there anything we need to check ? Such as are we
         // connected to the FTP Server Still ?
@@ -346,7 +352,26 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             }
         }
 
+        // use file expression for a simple dynamic file filter
+        if (endpoint.getFileExpression() != null) {
+            evaluteFileExpression();
+            if (fileExpressionResult != null) {
+               if (!name.equals(fileExpressionResult)) {
+                   return false;
+                }                                    
+            }
+        }
+
         return true;
     }
+
+    private void evaluteFileExpression() {
+        if (fileExpressionResult == null) {
+            Exchange dummy = new DefaultExchange(endpoint.getCamelContext());
+            fileExpressionResult = (String) endpoint.getFileExpression().evaluate(dummy);
+        }
+    }
+
+
 
 }

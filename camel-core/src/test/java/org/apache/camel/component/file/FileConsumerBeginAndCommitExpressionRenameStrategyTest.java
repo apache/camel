@@ -50,7 +50,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("newfile://target?expression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("newfile://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -63,7 +63,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&expression=../done/${file:name}&consumer.delay=5000")
+                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&moveExpression=../done/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;

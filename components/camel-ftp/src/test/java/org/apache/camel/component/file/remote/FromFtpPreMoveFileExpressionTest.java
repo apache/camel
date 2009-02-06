@@ -38,8 +38,8 @@ public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "movefile");
+        super.setUp();
         prepareFtpServer();
     }
 

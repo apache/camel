@@ -61,8 +61,8 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         afterPropertiesSet();
         RemoteFileConsumer<T> consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
 
-        if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getExpression() != null)) {
-            throw new IllegalArgumentException("You cannot set delete=true and a moveNamePrefix, moveNamePostfix or expression option");
+        if (isDelete() && (getMoveNamePrefix() != null || getMoveNamePostfix() != null || getMoveExpression() != null)) {
+            throw new IllegalArgumentException("You cannot both set delete=true and either a (moveNamePrefix, moveNamePostfix or moveExpression) option");
         }
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotent()) {

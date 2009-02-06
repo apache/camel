@@ -60,7 +60,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         }
 
         try {
-            context.getEndpoint("newfile://target?expression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("newfile://target?moveExpression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });

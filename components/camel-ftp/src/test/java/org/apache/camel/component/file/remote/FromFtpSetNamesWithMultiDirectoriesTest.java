@@ -52,9 +52,6 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         byte[] bytes = ex.getIn().getBody(byte[].class);
         assertTrue("Logo size wrong", bytes.length > 10000);
 
-        // wait until the file producer has written the file
-        Thread.sleep(1000);
-
         // assert the file
         File file = new File("target/ftpsetnamestest/data1/logo1.jpeg");
         assertTrue("The binary file should exists", file.exists());
@@ -64,9 +61,6 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
         file = new File("target/ftpsetnamestest/data2/logo2.png");
         assertTrue(" The binary file should exists", file.exists());
         assertTrue("Logo size wrong", file.length() > 50000);
-
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
     }
 
     private void prepareFtpServer() throws Exception {

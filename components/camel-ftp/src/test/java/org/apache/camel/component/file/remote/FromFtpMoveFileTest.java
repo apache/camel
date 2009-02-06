@@ -37,8 +37,8 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        super.setUp();
         deleteDirectory(FTP_ROOT_DIR + "movefile");
+        super.setUp();
         prepareFtpServer();
     }
 
@@ -64,16 +64,9 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be moved");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
 
         mock.assertIsSatisfied();
-
-        // give time to allow ftp consumer to move file after its processed
-        Thread.sleep(1000);
-
-        // assert the file is deleted
-        File file = new File(FTP_ROOT_DIR + "movefile/done/sub2/hello.txt.old");
-        file = file.getAbsoluteFile();
-        assertTrue("The file should have been moved", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
