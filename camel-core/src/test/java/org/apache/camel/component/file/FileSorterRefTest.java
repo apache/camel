@@ -43,13 +43,13 @@ public class FileSorterRefTest extends ContextTestSupport {
         super.setUp();
 
         template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Paris",
-            FileComponent.HEADER_FILE_NAME, "paris.txt");
+            NewFileComponent.HEADER_FILE_NAME, "paris.txt");
 
         template.sendBodyAndHeader("newfile:target/filesorter/", "Hello London",
-            FileComponent.HEADER_FILE_NAME, "london.txt");
+            NewFileComponent.HEADER_FILE_NAME, "london.txt");
 
         template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Copenhagen",
-            FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+            NewFileComponent.HEADER_FILE_NAME, "copenhagen.txt");
     }
 
     public void testSortFiles() throws Exception {
