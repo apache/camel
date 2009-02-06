@@ -27,7 +27,7 @@ import org.apache.camel.impl.JndiRegistry;
 /**
  * Unit test for FTP using expression (file language)
  */
-public class FtpConsumerExpressionTest extends FtpServerTestSupport {
+public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&consumer.delay=5000";
@@ -69,7 +69,7 @@ public class FtpConsumerExpressionTest extends FtpServerTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl() + "&expression=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
+                from(getFtpUrl() + "&moveExpression=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
                         + "-${file:name.noext}.bak").to("mock:result");
             }
         };

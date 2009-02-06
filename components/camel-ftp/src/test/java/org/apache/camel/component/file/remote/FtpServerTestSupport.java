@@ -108,7 +108,6 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     }
     
     public void sendFile(String url, Object body, String fileName) {
-        template.sendBodyAndHeader(url, body,
-                                   NewFileComponent.HEADER_FILE_NAME, fileName);
+        template.sendBodyAndHeader(url, body, NewFileComponent.HEADER_FILE_NAME, fileName);
     }
 }

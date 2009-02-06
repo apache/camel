@@ -38,7 +38,7 @@ public final class NewFileProcessStrategyFactory {
         String moveNamePostfix = (String) params.get("moveNamePostfix");
         String preMoveNamePrefix = (String) params.get("preMoveNamePrefix");
         String preMoveNamePostfix = (String) params.get("preMoveNamePostfix");
-        Expression expression = (Expression) params.get("expression");
+        Expression moveExpression = (Expression) params.get("moveExpression");
         Expression preMoveExpression = (Expression) params.get("preMoveExpression");
         boolean move = moveNamePrefix != null || moveNamePostfix != null;
         boolean preMove = preMoveNamePrefix != null || preMoveNamePostfix != null;
@@ -61,12 +61,12 @@ public final class NewFileProcessStrategyFactory {
                 strategy.setBeginRenamer(new GenericFileDefaultRenamer<File>(preMoveNamePrefix, preMoveNamePostfix));
             }
             return strategy;
-        } else if (expression != null || preMoveExpression != null) {
+        } else if (moveExpression != null || preMoveExpression != null) {
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            if (expression != null) {
+            if (moveExpression != null) {
                 GenericFileExpressionRenamer<File> renamer = new GenericFileExpressionRenamer<File>();
-                renamer.setExpression(expression);
+                renamer.setExpression(moveExpression);
                 strategy.setCommitRenamer(renamer);
             }
             if (preMoveExpression != null) {

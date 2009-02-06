@@ -26,6 +26,11 @@ import org.apache.camel.converter.IOConverter;
  */
 public class FtpProducerTempPrefixTest extends FtpServerTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/upload/user/claus?binary=false&password=admin&tempPrefix=.uploading";
     }

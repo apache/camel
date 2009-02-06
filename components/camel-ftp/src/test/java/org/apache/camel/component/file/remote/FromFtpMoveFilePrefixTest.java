@@ -64,16 +64,9 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World this file will be moved");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/hello.txt");
 
         mock.assertIsSatisfied();
-
-        // give ftp time to move the file
-        Thread.sleep(1000);
-
-        // assert the file is deleted
-        File file = new File(FTP_ROOT_DIR + "movefile/done/hello.txt");
-        file = file.getAbsoluteFile();
-        assertTrue("The file should have been moved", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

@@ -67,7 +67,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String includeNamePrefix;
     protected String includeNamePostfix;
     protected String regexPattern;
-    protected Expression expression;
+    protected Expression fileExpression;
+    protected Expression moveExpression;
     protected Expression preMoveExpression;
     protected boolean idempotent;
     protected IdempotentRepository idempotentRepository;
@@ -246,20 +247,20 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.delete = delete;
     }
 
-    public Expression getExpression() {
-        return expression;
+    public Expression getMoveExpression() {
+        return moveExpression;
     }
 
-    public void setExpression(Expression expression) {
-        this.expression = expression;
+    public void setMoveExpression(Expression moveExpression) {
+        this.moveExpression = moveExpression;
     }
 
     /**
-     * Sets the expression based on
+     * Sets the move expression based on
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
-    public void setExpression(String fileLanguageExpression) {
-        this.expression = FileLanguage.file(fileLanguageExpression);
+    public void setMoveExpression(String fileLanguageExpression) {
+        this.moveExpression = FileLanguage.file(fileLanguageExpression);
     }
 
     public Expression getPreMoveExpression() {
@@ -276,6 +277,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setPreMoveExpression(String fileLanguageExpression) {
         this.preMoveExpression = FileLanguage.file(fileLanguageExpression);
+    }
+
+    public Expression getFileExpression() {
+        return fileExpression;
+    }
+
+    public void setFileExpression(Expression fileExpression) {
+        this.fileExpression = fileExpression;
+    }
+
+    /**
+     * Sets the file expression based on
+     * {@link org.apache.camel.language.simple.FileLanguage}
+     */
+    public void setFileExpression(String fileLanguageExpression) {
+        this.fileExpression = FileLanguage.file(fileLanguageExpression);
     }
 
     public boolean isIdempotent() {
@@ -423,11 +440,13 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     /**
      * Should the file be moved after consuming?
+     *
+     * @deprecated not used
      */
     public boolean isMoveFile() {
         return moveNamePostfix != null || moveNamePrefix != null
                 || preMoveNamePostfix != null || preMoveNamePrefix != null
-                || expression != null;
+                || moveExpression != null;
     }
 
     /**
@@ -477,8 +496,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         if (preMoveNamePostfix != null) {
             params.put("preMoveNamePostfix", preMoveNamePostfix);
         }
-        if (expression != null) {
-            params.put("expression", expression);
+        if (moveExpression != null) {
+            params.put("moveExpression", moveExpression);
         }
         if (preMoveExpression != null) {
             params.put("preMoveExpression", preMoveExpression);

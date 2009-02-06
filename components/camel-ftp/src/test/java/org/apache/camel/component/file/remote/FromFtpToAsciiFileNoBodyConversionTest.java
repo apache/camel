@@ -37,9 +37,6 @@ public class FromFtpToAsciiFileNoBodyConversionTest extends FtpServerTestSupport
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMinimumMessageCount(1);
         resultEndpoint.expectedBodiesReceived("Hello ASCII from FTPServer");
-
-        // let some time pass to let the consumer etc. properly do its business before closing
-        Thread.sleep(1000);
     }
 
     @Override

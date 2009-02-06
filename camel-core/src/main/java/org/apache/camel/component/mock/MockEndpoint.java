@@ -406,7 +406,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     /**
      * Adds an expection that a file exists with the given name
-     * <p>
+     * <p/>
      * Will wait at most 5 seconds while checking for the existence of the file.
      *
      * @param name name of file, will cater for / and \ on different OS platforms
@@ -417,7 +417,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         expects(new Runnable() {
             public void run() {
-                // wait at most 2 seconds for the file to exists
+                // wait at most 5 seconds for the file to exists
                 final long timeout = System.currentTimeMillis() + 5000;
 
                 boolean stop = false;
