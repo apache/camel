@@ -39,19 +39,19 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
         template.send("direct:report", exchange);
 
-        File file = new File("target/reports/report.txt/" + id);
+        File file = new File("target/reports/report.txt/" + id).getAbsoluteFile();
         assertEquals("File should exists", true, file.exists());
     }
 
     public void testProducerWithConfiguedFileNameInEndpointURI() throws Exception {
         template.sendBody("direct:report2", "This is another good report");
-        File file = new File("target/report2.txt");
+        File file = new File("target/report2.txt").getAbsoluteFile();
         assertEquals("File should exists", true, file.exists());
     }
 
     public void testProducerWithHeaderFileName() throws Exception {
         template.sendBody("direct:report3", "This is super good report");
-        File file = new File("target/report-super.txt");
+        File file = new File("target/report-super.txt").getAbsoluteFile();
         assertEquals("File should exists", true, file.exists());
     }
 

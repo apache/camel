@@ -21,11 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for  the file sort by expression with nested groups
+ * Unit test for the file sort by expression with nested groups
  */
 public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/";
+    private String fileUrl = "newfile://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
@@ -33,22 +33,36 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Dublin",
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Dublin",
             FileComponent.HEADER_FILE_NAME, "dublin.txt");
     }
 
     public void testSortNestedFiles() throws Exception {
         prepareFolder("a");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(fileUrl + "a/?sortBy=file:name.ext;file:name").to("mock:result");
+            }
+        });
+        context.start();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Dublin", "Hello London", "Hello Paris", "Hello Copenhagen");
 
@@ -57,20 +71,19 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
     public void testSortNestedFilesReverse() throws Exception {
         prepareFolder("b");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(fileUrl + "b/?sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
+            }
+        });
+        context.start();
+
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Dublin", "Hello Copenhagen");
 
         assertMockEndpointsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(fileUrl + "a/?sortBy=file:name.ext;file:name&initialDelay=1000&delay=500").to("mock:result");
-
-                from(fileUrl + "b/?sortBy=file:name.ext;reverse:file:name&initialDelay=1000&delay=1000").to("mock:reverse");
-            }
-        };
     }
 
 }

@@ -21,11 +21,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for  the file sort by expression
+ * Unit test for the file sort by expression
  */
 public class FileSortByExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "file://target/filesorter/";
+    private String fileUrl = "newfile://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
@@ -33,19 +33,33 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         super.setUp();
     }
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
-            FileComponent.HEADER_FILE_NAME, "paris.dat");
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Paris",
+            NewFileComponent.HEADER_FILE_NAME, "paris.dat");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
-            FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello London",
+            NewFileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
-            FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
+        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Copenhagen",
+            NewFileComponent.HEADER_FILE_NAME, "copenhagen.xml");
     }
 
     public void testSortFiles() throws Exception {
         prepareFolder("a");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(fileUrl + "a/?sortBy=file:name.ext").to("mock:result");
+            }
+        });
+        context.start();
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello Paris", "Hello London", "Hello Copenhagen");
 
@@ -54,20 +68,19 @@ public class FileSortByExpressionTest extends ContextTestSupport {
 
     public void testSortFilesReverse() throws Exception {
         prepareFolder("b");
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from(fileUrl + "b/?sortBy=reverse:file:name.ext").to("mock:reverse");
+            }
+        });
+        context.start();
+
         MockEndpoint reverse = getMockEndpoint("mock:reverse");
         reverse.expectedBodiesReceived("Hello Copenhagen", "Hello London", "Hello Paris");
 
         assertMockEndpointsSatisfied();
-    }
-
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() throws Exception {
-                from(fileUrl + "a/?sortBy=file:name.ext&initialDelay=1000").to("mock:result");
-
-                from(fileUrl + "b/?sortBy=reverse:file:name.ext&initialDelay=1000").to("mock:reverse");
-            }
-        };
     }
 
 }
