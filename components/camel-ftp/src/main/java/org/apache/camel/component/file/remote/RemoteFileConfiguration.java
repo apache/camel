@@ -38,6 +38,11 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     public RemoteFileConfiguration(URI uri) {
         configure(uri);
     }
+    
+    @Override
+    public boolean needToNormalize() {
+        return false;
+    }
 
     @Override
     public void configure(URI uri) {

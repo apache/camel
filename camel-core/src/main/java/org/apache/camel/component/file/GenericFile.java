@@ -35,7 +35,7 @@ public class GenericFile<T> implements Serializable {
     private long fileLength;
     private long lastModified;
     private T file;
-    private GenericFileBinding<T> binding;
+    private GenericFileBinding<T> binding;    
 
     @Override
     public GenericFile<T> clone() {
@@ -65,6 +65,14 @@ public class GenericFile<T> implements Serializable {
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
         return result;
+    }    
+    
+    public boolean needToNormalize() {
+        return true;
+    }
+    
+    public String getFileSeparator() {
+        return File.separator;
     }
 
     /**
@@ -74,29 +82,33 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        // must normalize path to cater for Windows and other OS
-        newName = FileUtil.normalizePath(newName);
+        
+        newName = needToNormalize()
+            // must normalize path to cater for Windows and other OS
+            ? FileUtil.normalizePath(newName)
+            // for the remote file we don't need to do that     
+            : newName;
 
-        setAbsoluteFileName(getParent() + File.separator + newName);
+        setAbsoluteFileName(getParent() + getFileSeparator() + newName);
         
         // relative name is a bit more complex to set as newName itself can contain
         // folders we need to consider as well
         String baseNewName = null;
-        if (newName.indexOf(File.separator) != -1) {
-            baseNewName = newName.substring(0, newName.lastIndexOf(File.separator));
-            newName = newName.substring(newName.lastIndexOf(File.separator) + 1);
+        if (newName.indexOf(getFileSeparator()) != -1) {
+            baseNewName = newName.substring(0, newName.lastIndexOf(getFileSeparator()));
+            newName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
         }
 
-        if (relativeFileName.indexOf(File.separator) != -1) {
+        if (relativeFileName.indexOf(getFileSeparator()) != -1) {
             String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(File.separator));
             if (baseNewName != null) {
-                setRelativeFileName(relative + File.separator + baseNewName + File.separator + newName);
+                setRelativeFileName(relative + getFileSeparator() + baseNewName + getFileSeparator() + newName);
             } else {
-                setRelativeFileName(relative + File.separator + newName);
+                setRelativeFileName(relative + getFileSeparator() + newName);
             }
         } else {
             if (baseNewName != null) {
-                setRelativeFileName(baseNewName + File.separator + newName);
+                setRelativeFileName(baseNewName + getFileSeparator() + newName);
             } else {
                 setRelativeFileName(newName);
             }
@@ -154,8 +166,8 @@ public class GenericFile<T> implements Serializable {
     }
 
     public String getParent() {       
-        if (getAbsoluteFileName().lastIndexOf(File.separator) > 0) {
-            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(File.separator));
+        if (getAbsoluteFileName().lastIndexOf(getFileSeparator()) > 0) {
+            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(getFileSeparator()));
         } else {
             return "";
         }
@@ -173,8 +185,13 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setAbsoluteFileName(String absoluteFileName) {
-        // must normalize path to cater for Windows and other OS
-        this.absoluteFileName = FileUtil.normalizePath(absoluteFileName);
+               
+        this.absoluteFileName = needToNormalize()
+            // must normalize path to cater for Windows and other OS
+            ? FileUtil.normalizePath(absoluteFileName)
+            // we don't need to do that for Remote File
+            : absoluteFileName;
+        
     }
 
     public String getAbsoluteFileName() {
