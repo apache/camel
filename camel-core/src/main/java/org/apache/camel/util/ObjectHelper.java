@@ -318,9 +318,27 @@ public final class ObjectHelper {
      * Creates an iterator over the value if the value is a collection, an
      * Object[] or a primitive type array; otherwise to simplify the caller's
      * code, we just create a singleton collection iterator over a single value
+     * <p/>
+     * Will default use comma for String separating String values.
+     *
+     * @param value  the value
+     * @return the iterator
+     */
+    public static Iterator createIterator(Object value) {
+        return createIterator(value, ",");
+    }
+
+    /**
+     * Creates an iterator over the value if the value is a collection, an
+     * Object[] or a primitive type array; otherwise to simplify the caller's
+     * code, we just create a singleton collection iterator over a single value
+     *
+     * @param value  the value
+     * @param  delimiter  delimiter for separating String values
+     * @return the iterator
      */
     @SuppressWarnings("unchecked")
-    public static Iterator createIterator(Object value) {
+    public static Iterator createIterator(Object value, String delimiter) {
         if (value == null) {
             return Collections.EMPTY_LIST.iterator();
         } else if (value instanceof Iterator) {
@@ -352,8 +370,7 @@ public final class ObjectHelper {
             };
         } else if (value instanceof String) {
             Scanner scanner = new Scanner((String)value);
-            // use comma as delimiter for String values
-            scanner.useDelimiter(",");
+            scanner.useDelimiter(delimiter);
             return scanner;
         } else {
             return Collections.singletonList(value).iterator();
