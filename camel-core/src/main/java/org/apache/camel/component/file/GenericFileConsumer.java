@@ -324,13 +324,24 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePrefix())) {
-            if (name.startsWith(endpoint.getExcludedNamePrefix())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePrefix())) {
+            if (name.startsWith(endpoint.getExcludeNamePrefix())) {
                 return false;
             }
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePostfix())) {
-            if (name.endsWith(endpoint.getExcludedNamePostfix())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePostfix())) {
+            if (name.endsWith(endpoint.getExcludeNamePostfix())) {
+                return false;
+            }
+        }
+
+        if (ObjectHelper.isNotEmpty(endpoint.getIncludeNamePrefix())) {
+            if (!name.startsWith(endpoint.getIncludeNamePrefix())) {
+                return false;
+            }
+        }
+        if (ObjectHelper.isNotEmpty(endpoint.getIncludeNamePostfix())) {
+            if (!name.endsWith(endpoint.getIncludeNamePostfix())) {
                 return false;
             }
         }

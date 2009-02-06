@@ -304,13 +304,13 @@ public class FileConsumer extends ScheduledPollConsumer {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePrefix())) {
-            if (name.startsWith(endpoint.getExcludedNamePrefix())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePrefix())) {
+            if (name.startsWith(endpoint.getExcludeNamePrefix())) {
                 return false;
             }
         }
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludedNamePostfix())) {
-            if (name.endsWith(endpoint.getExcludedNamePostfix())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePostfix())) {
+            if (name.endsWith(endpoint.getExcludeNamePostfix())) {
                 return false;
             }
         }

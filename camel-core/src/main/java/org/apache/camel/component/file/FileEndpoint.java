@@ -69,8 +69,8 @@ public class FileEndpoint extends ScheduledPollEndpoint {
     private String moveNamePostfix;
     private String preMoveNamePrefix;
     private String preMoveNamePostfix;
-    private String excludedNamePrefix;
-    private String excludedNamePostfix;
+    private String excludeNamePrefix;
+    private String excludeNamePostfix;
     private int bufferSize = 128 * 1024;
     private boolean ignoreFileNameHeader;
     private Expression expression;
@@ -343,20 +343,20 @@ public class FileEndpoint extends ScheduledPollEndpoint {
         this.ignoreFileNameHeader = ignoreFileNameHeader;
     }
 
-    public String getExcludedNamePrefix() {
-        return excludedNamePrefix;
+    public String getExcludeNamePrefix() {
+        return excludeNamePrefix;
     }
 
-    public void setExcludedNamePrefix(String excludedNamePrefix) {
-        this.excludedNamePrefix = excludedNamePrefix;
+    public void setExcludeNamePrefix(String excludeNamePrefix) {
+        this.excludeNamePrefix = excludeNamePrefix;
     }
 
-    public String getExcludedNamePostfix() {
-        return excludedNamePostfix;
+    public String getExcludeNamePostfix() {
+        return excludeNamePostfix;
     }
 
-    public void setExcludedNamePostfix(String excludedNamePostfix) {
-        this.excludedNamePostfix = excludedNamePostfix;
+    public void setExcludeNamePostfix(String excludeNamePostfix) {
+        this.excludeNamePostfix = excludeNamePostfix;
     }
 
     public Expression getExpression() {

@@ -21,12 +21,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that file consumer will exclude pre and postfixes
+ * Unit test that file consumer will include pre and postfixes
  */
-public class FileConsumerExcludeNameTest extends ContextTestSupport {
+public class FileConsumerIncludeNameTest extends ContextTestSupport {
 
-    public void testExludePreAndPostfixes() throws Exception {
-        deleteDirectory("./target/exclude");
+    public void testIncludePreAndPostfixes() throws Exception {
+        deleteDirectory("./target/include");
         prepareFiles();
 
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -36,17 +36,17 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
     }
 
     private void prepareFiles() throws Exception {
-        String url = "file://target/exclude";
-        template.sendBodyAndHeader(url, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(url, "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        String url = "newfile://target/include";
+        template.sendBodyAndHeader(url, "Hello World", NewFileComponent.HEADER_FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(url, "Reports", NewFileComponent.HEADER_FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(url, "Bye World", NewFileComponent.HEADER_FILE_NAME, "secret.txt");
+        template.sendBodyAndHeader(url, "Reports", NewFileComponent.HEADER_FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/exclude/?excludeNamePrefix=secret&excludeNamePostfix=xml")
+                from("newfile://target/include/?includeNamePrefix=report&includeNamePostfix=txt")
                     .to("mock:result");
             }
         };

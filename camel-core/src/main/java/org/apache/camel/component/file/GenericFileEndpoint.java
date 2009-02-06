@@ -62,8 +62,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String moveNamePostfix;
     protected String preMoveNamePrefix;
     protected String preMoveNamePostfix;
-    protected String excludedNamePrefix;
-    protected String excludedNamePostfix;
+    protected String excludeNamePrefix;
+    protected String excludeNamePostfix;
+    protected String includeNamePrefix;
+    protected String includeNamePostfix;
     protected String regexPattern;
     protected Expression expression;
     protected Expression preMoveExpression;
@@ -188,20 +190,36 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.preMoveNamePostfix = preMoveNamePostfix;
     }
 
-    public String getExcludedNamePrefix() {
-        return excludedNamePrefix;
+    public String getExcludeNamePrefix() {
+        return excludeNamePrefix;
     }
 
-    public void setExcludedNamePrefix(String excludedNamePrefix) {
-        this.excludedNamePrefix = excludedNamePrefix;
+    public void setExcludeNamePrefix(String excludeNamePrefix) {
+        this.excludeNamePrefix = excludeNamePrefix;
     }
 
-    public String getExcludedNamePostfix() {
-        return excludedNamePostfix;
+    public String getExcludeNamePostfix() {
+        return excludeNamePostfix;
     }
 
-    public void setExcludedNamePostfix(String excludedNamePostfix) {
-        this.excludedNamePostfix = excludedNamePostfix;
+    public void setExcludeNamePostfix(String excludeNamePostfix) {
+        this.excludeNamePostfix = excludeNamePostfix;
+    }
+
+    public String getIncludeNamePrefix() {
+        return includeNamePrefix;
+    }
+
+    public void setIncludeNamePrefix(String includeNamePrefix) {
+        this.includeNamePrefix = includeNamePrefix;
+    }
+
+    public String getIncludeNamePostfix() {
+        return includeNamePostfix;
+    }
+
+    public void setIncludeNamePostfix(String includeNamePostfix) {
+        this.includeNamePostfix = includeNamePostfix;
     }
 
     public boolean isRecursive() {
