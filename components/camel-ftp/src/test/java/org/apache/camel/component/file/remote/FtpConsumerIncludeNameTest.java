@@ -20,13 +20,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test that ftp consumer will exclude pre and postfixes
+ * Unit test that ftp consumer will include pre and postfixes
  */
-public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
+public class FtpConsumerIncludeNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/excludename?password=admin"
-                + "&excludeNamePrefix=secret&excludeNamePostfix=xml";
+        return "ftp://admin@localhost:" + getPort() + "/includename?password=admin"
+                + "&includeNamePrefix=report&excludeNamePostfix=xml";
     }
 
     @Override
@@ -35,20 +35,20 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
         prepareFtpServer();
     }
 
-    public void testExludePreAndPostfixes() throws Exception {
+    public void testIncludeAndExludePreAndPostfixes() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(2);
-        mock.expectedBodiesReceived("Reports", "Reports");
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Report 1");
         mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
         // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool and store as a local file        
+        // test that we can pool and store as a local file
         sendFile(getFtpUrl(), "Hello World", "hello.xml");
-        sendFile(getFtpUrl(), "Reports", "report1.txt");
+        sendFile(getFtpUrl(), "Report 1", "report1.txt");
         sendFile(getFtpUrl(), "Bye World", "secret.txt");
-        sendFile(getFtpUrl(), "Reports", "report2.txt");
+        sendFile(getFtpUrl(), "Report 2", "report2.xml");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
