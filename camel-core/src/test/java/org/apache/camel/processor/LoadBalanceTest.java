@@ -53,6 +53,8 @@ public class LoadBalanceTest extends ContextTestSupport {
         expectsMessageCount(0, y, z);
         sendMessage("bar", body);
         assertMockEndpointsSatisfied();
+        
+        x.reset();
 
         body = "<two/>";
         y.expectedBodiesReceived(body);
@@ -60,6 +62,8 @@ public class LoadBalanceTest extends ContextTestSupport {
         sendMessage("bar", body);
         assertMockEndpointsSatisfied();
 
+        y.reset();        
+        
         body = "<three/>";
         z.expectedBodiesReceived(body);
         expectsMessageCount(0, x, y);
