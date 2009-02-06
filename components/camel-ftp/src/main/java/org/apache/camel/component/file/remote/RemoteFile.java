@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
+
 import org.apache.camel.component.file.GenericFile;
 
 /**
@@ -33,6 +35,15 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
 
     public void setHostname(String hostname) {
         this.hostname = hostname;
+    }
+    
+    @Override
+    public boolean needToNormalize() {
+        return false;
+    }
+    
+    public String getFileSeparator() {
+        return "/";
     }
 
     public RemoteFile<T> copyFrom(RemoteFile<T> source) {

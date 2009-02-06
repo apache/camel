@@ -22,6 +22,9 @@ import org.apache.camel.util.FileUtil;
 public class GenericFileConfiguration {
 
     private String file;
+    public boolean needToNormalize() {
+        return true;
+    }
 
     public void configure(URI uri) {
         setFile(uri.getPath());
@@ -31,9 +34,12 @@ public class GenericFileConfiguration {
         return file;
     }
 
-    public void setFile(String file) {
-        // must normalize path to cater for Windows and other OS
-        this.file = FileUtil.normalizePath(file);
+    public void setFile(String file) { 
+        this.file = needToNormalize()
+            // must normalize path to cater for Windows and other OS
+            ? FileUtil.normalizePath(file)
+            // for the remote file we don't need to do that   
+            : file;        
     }
 
     public String toString() {
