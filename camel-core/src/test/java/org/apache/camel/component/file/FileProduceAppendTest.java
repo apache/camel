@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 
 /**
  * Unit test to verify the append option
@@ -31,27 +30,23 @@ public class FileProduceAppendTest extends ContextTestSupport {
     public void testAppendText() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
 
         template.sendBody("direct:start", " World");
 
         assertMockEndpointsSatisfied();
-
-        String body = IOConverter.toString(new File("target/test-file-append/hello.txt").getAbsoluteFile());
-        assertEquals("Hello World", body);
     }
 
     public void testAppendFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedFileExists("target/test-file-append/hello.txt", "Hello World");
 
         // create a file with some content we want to append to the existing file
         File in = new File("target/test-file-append/world.txt").getAbsoluteFile();
         template.sendBody("direct:start", in);
 
         assertMockEndpointsSatisfied();
-
-        String body = IOConverter.toString(new File("target/test-file-append/hello.txt").getAbsoluteFile());
-        assertEquals("Hello World", body);
     }
 
     @Override

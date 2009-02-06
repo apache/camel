@@ -66,8 +66,6 @@ public class FileConsumerBeginExpressionRenameStrategyTest extends ContextTestSu
 
         template.sendBodyAndHeader("newfile:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        Thread.sleep(100);
-
         mock.assertIsSatisfied();
     }
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,15 +32,11 @@ public class ToFileRouteTest extends ContextTestSupport {
     public void testToFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
+        mock.expectedFileExists("target/test-reports/report.txt");
 
         template.sendBody("seda:reports", "This is a great report");
 
         assertMockEndpointsSatisfied();
-
-        // assert the file exists
-        File file = new File("target/test-reports/report.txt");
-        file = file.getAbsoluteFile();
-        assertTrue("The file should have been written", file.exists());
     }
 
     protected JndiRegistry createRegistry() throws Exception {

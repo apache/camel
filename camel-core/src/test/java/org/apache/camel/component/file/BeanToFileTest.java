@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
@@ -34,13 +32,11 @@ public class BeanToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
+        mock.expectedFileExists("target/BeanToFileTest.txt", "Bye World");
+
         template.sendBody("direct:in", "World");
 
         assertMockEndpointsSatisfied();
-
-        File file = new File("target/BeanToFileTest.txt");
-        file = file.getAbsoluteFile();
-        assertEquals("Bye World", IOConverter.toString(file));
     }
 
     protected Context createJndiContext() throws Exception {

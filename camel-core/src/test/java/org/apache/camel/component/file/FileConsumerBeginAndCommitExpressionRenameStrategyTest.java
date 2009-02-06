@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.IOConverter;
 
 /**
  * Unit test for the FileRenameStrategy using preMoveExpression and expression options
@@ -42,17 +41,11 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
+        mock.expectedFileExists("./target/done/paris.bak", "Hello Paris");
 
         template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
-
-        // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
-
-        // content of file should be Hello Paris
-        String content = IOConverter.toString(new File("./target/done/paris.bak"));
-        assertEquals("The file should have been renamed", "Hello Paris", content);
     }
 
     public void testIllegalOptions() throws Exception {
