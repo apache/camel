@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.jaxb;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -31,13 +33,12 @@ import org.apache.camel.Message;
 import org.apache.camel.converter.HasAnnotation;
 import org.apache.camel.converter.jaxp.XmlConverter;
 
-
-
 /**
  * @version $Revision$
  */
-public class JaxbConverter {
+public final class JaxbConverter {
     private XmlConverter jaxbConverter;
+    private Map<Class, JAXBContext> contexts = new HashMap<Class, JAXBContext>();
 
     public XmlConverter getJaxbConverter() {
         if (jaxbConverter == null) {
@@ -51,15 +52,14 @@ public class JaxbConverter {
     }
 
     @Converter
-    public static JAXBSource toSource(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException {
-        JAXBContext context = createJaxbContext(value);
+    public JAXBSource toSource(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException {
+        JAXBContext context = getJaxbContext(value);
         return new JAXBSource(context, value);
     }
 
     @Converter
-    public Document toDocument(
-            @HasAnnotation(XmlRootElement.class)Object value) throws JAXBException, ParserConfigurationException {
-        JAXBContext context = createJaxbContext(value);
+    public Document toDocument(@HasAnnotation(XmlRootElement.class)Object value) throws JAXBException, ParserConfigurationException {
+        JAXBContext context = getJaxbContext(value);
         Marshaller marshaller = context.createMarshaller();
 
         Document doc = getJaxbConverter().createDocument();
@@ -79,18 +79,20 @@ public class JaxbConverter {
         return answer;
     }
 
-    protected static JAXBContext createJaxbContext(Object value) throws JAXBException {
-        if (value == null) {
-            throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
+    private synchronized JAXBContext getJaxbContext(Object value) throws JAXBException {
+        JAXBContext context = contexts.get(value.getClass());
+        if (context == null) {
+            context = createJaxbContext(value);
+            contexts.put(value.getClass(), context);
         }
-        JAXBContext context = JAXBContext.newInstance(value.getClass());
         return context;
     }
 
-//    public void write(OutputStream out, Object value) throws JAXBException {
-//        JAXBContext context = JAXBContext.newInstance(value.getClass());
-//        Marshaller marshaller = context.createMarshaller();
-//        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//        marshaller.marshal(value, out);
-//    }
+    private JAXBContext createJaxbContext(Object value) throws JAXBException {
+        if (value == null) {
+            throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
+        }
+        return JAXBContext.newInstance(value.getClass());
+    }
+
 }
