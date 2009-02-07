@@ -20,5 +20,5 @@
  * <a href="http://camel.apache.org/data-format.html">Data Formats</a> used to marshal and unmarshal objects to
  * and from streams inside <a href="http://camel.apache.org/components.html">components</a>
  */
-@javax.xml.bind.annotation.XmlSchema(namespace = "http://activemq.apache.org/camel/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
 package org.apache.camel.model.dataformat;

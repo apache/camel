@@ -23,14 +23,14 @@
   xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" 
   xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:cxf-beans="http://cxf.apache.org/configuration/beans"
-  xmlns:camel-spring="http://activemq.apache.org/camel/schema/spring"
+  xmlns:camel-spring="http://camel.apache.org/schema/spring"
   targetNamespace="http://cxf.apache.org/transports/camel" 
   elementFormDefault="qualified" jaxb:version="2.0">
   
     
     <xs:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
     <xs:import namespace="http://cxf.apache.org/configuration/beans" schemaLocation="http://cxf.apache.org/schemas/configuration/cxf-beans.xsd"/>
-    <xs:import namespace="http://activemq.apache.org/camel/schema/spring" schemaLocation="http://activemq.apache.org/camel/schema/spring/camel-spring.xsd"/>
+    <xs:import namespace="http://camel.apache.org/schema/spring" schemaLocation="http://camel.apache.org/schema/spring/camel-spring.xsd"/>
     
     <xs:element name="destination">
         <xs:complexType>

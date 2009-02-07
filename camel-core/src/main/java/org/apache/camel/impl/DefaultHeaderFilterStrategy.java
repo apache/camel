@@ -39,7 +39,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     
-    protected enum Direction { IN, OUT };
+    protected enum Direction { IN, OUT }
     
     private Set<String> inFilter;
     private Pattern inFilterPattern;

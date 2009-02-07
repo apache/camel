@@ -23,7 +23,7 @@
        xmlns:amq="http://activemq.apache.org/schema/core"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd">
 
   <!-- This creates an embedded ActiveMQ Broker -->
@@ -34,7 +34,7 @@
   </broker>
 
   <!-- Lets connect the Camel ActiveMQ component to the embedded broker.
-       See http://activemq.apache.org/camel/activemq.html for more information.
+       See http://camel.apache.org/activemq.html for more information.
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
     <property name="brokerURL" value="tcp://localhost:61616"/>
@@ -46,7 +46,7 @@
   <bean class="org.apache.camel.example.pojo_messaging.SendFileRecordsToQueueBean"/>
   <bean class="org.apache.camel.example.pojo_messaging.DistributeRecordsBean"/>
  
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring"/>
   <!-- END SNIPPET: ex -->
 
 </beans>

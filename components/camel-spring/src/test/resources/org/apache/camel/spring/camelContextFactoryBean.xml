@@ -18,10 +18,10 @@
   <!-- START SNIPPET: xsdlocation -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-          http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
   <!-- END SNIPPET: xsdlocation -->
 
   <!-- START SNIPPET: example1 -->
@@ -31,7 +31,7 @@
   <!-- END SNIPPET: example1 -->
 
   <!-- START SNIPPET: example2 -->
-  <camelContext id="camel2" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="camel2" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="seda:test.c"/>
       <to uri="seda:test.d"/>
@@ -40,13 +40,13 @@
   <!-- END SNIPPET: example2 -->
 
   <!-- START SNIPPET: example3 -->
-  <camelContext id="camel3" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext id="camel3" xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.spring.example</package>
   </camelContext>
   <!-- END SNIPPET: example3 -->
   
   <!-- START SNIPPET: example4 -->
-  <camelContext id="camel4" xmlns="http://activemq.apache.org/camel/schema/spring" shouldStartContext="false">
+  <camelContext id="camel4" xmlns="http://camel.apache.org/schema/spring" shouldStartContext="false">
     <package>org.apache.camel.spring.example</package>
   </camelContext>
   <!-- END SNIPPET: example4 --> 

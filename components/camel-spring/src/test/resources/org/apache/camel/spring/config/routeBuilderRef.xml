@@ -19,13 +19,13 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
 
 
   <!-- START SNIPPET: example5 -->
-  <camelContext id="camel5" xmlns="http://activemq.apache.org/camel/schema/spring" autowireRouteBuilders="false">
+  <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring" autowireRouteBuilders="false">
     <routeBuilderRef ref="configuredRouteBuilder"/>
   </camelContext>
   <!-- END SNIPPET: example5 -->

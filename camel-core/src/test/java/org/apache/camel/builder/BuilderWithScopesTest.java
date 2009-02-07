@@ -341,7 +341,7 @@ public class BuilderWithScopesTest extends TestSupport {
                     .process(orderProcessor2).end().process(orderProcessor3);
             }
         };
-    };
+    }
 
     public void testRouteWithTryCatchFinallyEndNoException() throws Exception {
         ArrayList<String> expected = new ArrayList<String>();

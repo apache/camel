@@ -33,7 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A <a href="http://activemq.apache.org/camel/data-format.html">data format</a>
+ * A <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) using Bindy to marshal to and from CSV files
  */
 public class BindyCsvDataFormat implements DataFormat {

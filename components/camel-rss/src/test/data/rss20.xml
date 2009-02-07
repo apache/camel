@@ -119,12 +119,12 @@
         src="http://1.bp.blogspot.com/_JZEz3zQ95mA/SQs3Y9gcT2I/AAAAAAAAACo/9fliISzJtHg/s400/apache-camel-6.png"
         alt="" id="BLOGGER_PHOTO_ID_5263361491479580514" border="0"
         /&gt;&lt;/a&gt;&lt;br /&gt;Several months and 266 fixes later (a new
-        record!), the &lt;a href="http://activemq.apache.org/camel/"&gt;Apache
+        record!), the &lt;a href="http://camel.apache.org/"&gt;Apache
         Camel&lt;/a&gt; team is proud to present version 1.5.0!&lt;br
         /&gt;&lt;br /&gt;Go ahead, take a look at the &lt;a
-        href="http://activemq.apache.org/camel/camel-150-release.html"&gt;release
+        href="http://camel.apache.org/camel-150-release.html"&gt;release
         notes&lt;/a&gt; and grab it &lt;a
-        href="http://activemq.apache.org/camel/download.html"&gt;here&lt;/a&gt;.
+        href="http://camel.apache.org/download.html"&gt;here&lt;/a&gt;.
         Its still pretty fresh so it may take a few hours before the release
         propagates to all Apache download mirrors (try &lt;a
         href="http://people.apache.org/repo/m2-ibiblio-rsync-repository/org/apache/camel/apache-camel/1.5.0/"&gt;here&lt;/a&gt;
@@ -250,7 +250,7 @@
         Some folks have been having issues getting all the Maven repositories
         set up properly in &lt;a
         href="http://nexus.sonatype.org/"&gt;Nexus&lt;/a&gt; for &lt;a
-        href="http://activemq.apache.org/camel/"&gt;Apache Camel&lt;/a&gt;.
+        href="http://camel.apache.org/"&gt;Apache Camel&lt;/a&gt;.
         Here's my working Nexus config and settings.xml - hope it helps!&lt;br
         /&gt;&lt;a
         href="http://people.apache.org/%7Ejanstey/blog_stuff/camel_nexus_config/nexus.xml"&gt;&lt;br
@@ -287,7 +287,7 @@
         alt="" id="BLOGGER_PHOTO_ID_5242189240558466354" border="0"
         /&gt;&lt;/a&gt;&lt;br /&gt;Over the past few months I've been hacking
         away on various parts of &lt;a
-        href="http://activemq.apache.org/camel/"&gt;Apache Camel&lt;/a&gt;. It
+        href="http://camel.apache.org/"&gt;Apache Camel&lt;/a&gt;. It
         was initially just for fun, but quickly turned into my day job :) With
         over 40 fixes contributed, the Camel team decided to vote me in as a
         committer!&lt;br /&gt;&lt;br /&gt;This is my first committer status on

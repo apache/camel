@@ -22,25 +22,23 @@
        http://www.springframework.org/schema/beans
        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
-       http://activemq.apache.org/camel/schema/cxfEndpoint
-       http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
-       http://activemq.apache.org/camel/schema/spring
-       http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/cxfEndpoint.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-   <camelContext id="conduit_context" xmlns="http://activemq.apache.org/camel/schema/spring">
+   <camelContext id="conduit_context" xmlns="http://camel.apache.org/schema/spring">
        <route>
            <from uri="direct:EndpointA" />
            <to uri="direct:EndpointB" />
        </route>
    </camelContext>
 
-   <camel:conduit name="{http://activemq.apache.org/camel-test}portA.camel-conduit">
+   <camel:conduit name="{http://camel.apache.org/camel-test}portA.camel-conduit">
        <camel:camelContextRef>conduit_context</camel:camelContextRef>
    </camel:conduit>
    <!-- START SNIPPET: example -->
-   <camel:conduit name="{http://activemq.apache.org/camel-test}portB.camel-conduit">
-       <camelContext id="context" xmlns="http://activemq.apache.org/camel/schema/spring">
+   <camel:conduit name="{http://camel.apache.org/camel-test}portB.camel-conduit">
+       <camelContext id="context" xmlns="http://camel.apache.org/schema/spring">
          <route>
            <from uri="direct:EndpointC" />
            <to uri="direct:EndpointD" />

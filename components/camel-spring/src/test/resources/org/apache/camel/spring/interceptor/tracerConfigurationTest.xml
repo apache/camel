@@ -19,7 +19,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd 
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd 
     ">
 
     <!-- SNIPPET START: e1 -->
@@ -32,7 +32,7 @@
         <property name="logName" value="com.mycompany.messages"/>
     </bean>
 
-    <camelContext id="camel" trace="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
             <to uri="mock:result"/>

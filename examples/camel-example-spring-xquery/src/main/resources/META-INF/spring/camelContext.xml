@@ -20,10 +20,10 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- START SNIPPET: example -->
-  <camelContext useJmx="true" xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext useJmx="true" xmlns="http://camel.apache.org/schema/spring">
 
     <!-- lets parse files, transform them with XQuery and send them to JMS -->
     <route>

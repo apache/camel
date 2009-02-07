@@ -19,7 +19,7 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
     <!-- START SNIPPET: e1 -->
@@ -28,7 +28,7 @@
     <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
 
     <!-- this is the camel context where we define the routes -->
-    <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
 
       <onException>
         <!-- the exception is full qualified names as plain strings -->

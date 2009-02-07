@@ -55,7 +55,7 @@ public class CamelDestinationTest extends CamelTestSupport {
     }
 
     public void testCamelDestinationConfiguration() throws Exception {
-        QName testEndpointQName = new QName("http://activemq.apache.org/camel-test", "port");
+        QName testEndpointQName = new QName("http://camel.apache.org/camel-test", "port");
         // set up the bus with configure file
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);
@@ -66,7 +66,7 @@ public class CamelDestinationTest extends CamelTestSupport {
         endpointInfo.setName(testEndpointQName);
         CamelDestination destination = new CamelDestination(null, bus, null, endpointInfo);
 
-        assertEquals("{http://activemq.apache.org/camel-test}port.camel-destination", destination.getBeanName());
+        assertEquals("{http://camel.apache.org/camel-test}port.camel-destination", destination.getBeanName());
         CamelContext context = destination.getCamelContext();
 
         assertNotNull("The camel context which get from camel destination is not null", context);
