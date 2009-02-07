@@ -30,8 +30,6 @@ public class CxfWsdlFirstProcessorTest extends CxfWsdlFirstTest {
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
         assertEquals(2, fromHandler.getFaultCount());
         assertEquals(4, fromHandler.getMessageCount());
-        assertEquals(0, toHandler.getGetHeadersCount());
-        
+        assertEquals(0, toHandler.getGetHeadersCount());   
     }
-
 }

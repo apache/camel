@@ -17,17 +17,17 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<xsd:schema xmlns="http://activemq.apache.org/camel/schema/spring/integration"
+<xsd:schema xmlns="http://camel.apache.org/schema/spring/integration"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:camel-spring="http://activemq.apache.org/camel/schema/spring"
-  targetNamespace="http://activemq.apache.org/camel/schema/spring/integration"
+  xmlns:camel-spring="http://camel.apache.org/schema/spring"
+  targetNamespace="http://camel.apache.org/schema/spring/integration"
   elementFormDefault="qualified"
   attributeFormDefault="unqualified">
 
   <xsd:import namespace="http://www.springframework.org/schema/beans" schemaLocation="http://www.springframework.org/schema/beans/spring-beans.xsd"/>
-  <xsd:import namespace="http://activemq.apache.org/camel/schema/spring" schemaLocation="http://activemq.apache.org/camel/schema/spring/camel-spring.xsd"/>
+  <xsd:import namespace="http://camel.apache.org/schema/spring" schemaLocation="http://camel.apache.org/schema/spring/camel-spring.xsd"/>
 
   <xsd:complexType name="camelEndpointType">
   	<xsd:sequence>

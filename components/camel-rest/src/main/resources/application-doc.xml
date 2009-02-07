@@ -7,7 +7,7 @@
 
   <doc xml:lang="de">
     <p>
-      For more on the REST API please see<a href="http://activemq.apache.org/camel/rest.html">the REST API
+      For more on the REST API please see<a href="http://camel.apache.org/rest.html">the REST API
       documentation</a>.
     </p>
   </doc>

@@ -17,21 +17,21 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://activemq.apache.org/camel/schema/cxfEndpoint"
+       xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
        xmlns:camel="http://cxf.apache.org/transports/camel"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://cxf.apache.org/transports/camel http://cxf.apache.org/transports/camel.xsd
-       http://activemq.apache.org/camel/schema/cxfEndpoint http://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
    <camel:destination name="{http://apache.org/hello_world_soap_http}SoapPort.camel-destination">
-        <camelContext id="camel_destination" xmlns="http://activemq.apache.org/camel/schema/spring">
+        <camelContext id="camel_destination" xmlns="http://camel.apache.org/schema/spring">
         </camelContext>
    </camel:destination>
    
    <camel:conduit name="{http://apache.org/hello_world_soap_http}SoapPort.camel-conduit">
-        <camelContext id="camel_conduit" xmlns="http://activemq.apache.org/camel/schema/spring">
+        <camelContext id="camel_conduit" xmlns="http://camel.apache.org/schema/spring">
         </camelContext>
    </camel:conduit>
    

@@ -45,7 +45,7 @@ public class Camel715ThreadProcessorTest extends TestCase {
             exchange.setProperty("iterationNumber", iterationNumber);
         }
 
-    };
+    }
 
     public void testThreadProcessor() {
         try {

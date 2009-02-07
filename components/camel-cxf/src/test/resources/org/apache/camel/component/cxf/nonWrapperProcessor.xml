@@ -17,14 +17,13 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://activemq.apache.org/camel/schema/cxfEndpoint"
-       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
-       http://activemq.apache.org/camel/schema/cxfEndpoint http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-
 
   <cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:8092/PersonService/"
                    serviceClass="org.apache.camel.non_wrapper.Person"
@@ -34,7 +33,7 @@
 
    <bean id="personProcessor" class="org.apache.camel.non_wrapper.PersonProcessor"/>
 
-   <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+   <camelContext xmlns="http://camel.apache.org/schema/spring">
       <route>
             <from uri="cxf:bean:routerEndpoint?dataFormat=POJO"/>
             <process ref= "personProcessor"/>

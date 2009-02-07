@@ -15,7 +15,8 @@
 # limitations under the License.
 #
 
-http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration.xsd=schema/camel-spring-integration.xsd
+http\://camel.apache.org/schema/spring/integration/camel-spring-integration.xsd=schema/camel-spring-integration.xsd
 
 http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-1.4.0.xsd=schema/camel-spring-integration.xsd
-http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-${pom.version}.xsd=schema/camel-spring-integration.xsd
+http\://activemq.apache.org/camel/schema/spring/integration/camel-spring-integration-1.5.0.xsd=schema/camel-spring-integration.xsd
+http\://camel.apache.org/schema/spring/integration/camel-spring-integration-${pom.version}.xsd=schema/camel-spring-integration.xsd

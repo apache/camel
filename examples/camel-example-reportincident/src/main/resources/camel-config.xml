@@ -19,14 +19,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
-            http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
             http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
     <import resource="classpath:META-INF/cxf/cxf.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-extension-soap.xml"/>
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml"/>
     
     <!-- create a camel context as to start Camel -->
-    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <package>org.apache.camel.example.reportincident</package>
     </camelContext>
 

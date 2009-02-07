@@ -17,15 +17,15 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:camel="http://activemq.apache.org/camel/schema/spring"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
   <bean id="sayService" class="org.apache.camel.spring.remoting.SayService" scope="singleton"/>
 
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- create the client proxy -->
     <proxy id="sayProxy" serviceUrl="jms:test.serviceQueue"
            serviceInterface="org.apache.camel.spring.remoting.ISay"/>

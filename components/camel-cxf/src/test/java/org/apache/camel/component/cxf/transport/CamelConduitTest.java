@@ -58,8 +58,8 @@ public class CamelConduitTest extends CamelTestSupport {
     }
 
     public void testCamelConduitConfiguration() throws Exception {
-        QName testEndpointQNameA = new QName("http://activemq.apache.org/camel-test", "portA");
-        QName testEndpointQNameB = new QName("http://activemq.apache.org/camel-test", "portB");
+        QName testEndpointQNameA = new QName("http://camel.apache.org/camel-test", "portA");
+        QName testEndpointQNameB = new QName("http://camel.apache.org/camel-test", "portB");
         // set up the bus with configure file
         SpringBusFactory bf = new SpringBusFactory();
         BusFactory.setDefaultBus(null);

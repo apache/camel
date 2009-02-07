@@ -20,7 +20,7 @@
 
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
  <import resource="classpath:activemq.xml" />
@@ -37,7 +37,7 @@
   <bean id="setExchangePatternProcessor" class="org.apache.camel.itest.jetty.SetExchangePatternProcessor"/>
 
   <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://activemq.apache.org/camel/schema/spring" trace="true">
+  <camelContext xmlns="http://camel.apache.org/schema/spring" trace="true">
     <route>
         <from uri="jetty:http://localhost:9000/test"/>
         <to uri="log:MyCategory?level=INFO"/>

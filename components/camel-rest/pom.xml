@@ -309,7 +309,7 @@
                 <srcdir>src/main/java/org/apache/camel/rest/model</srcdir>
                 <schemas>
                   <schema>
-                    <namespace>http://activemq.apache.org/camel/schema/rest</namespace>
+                    <namespace>http://camel.apache.org/schema/rest</namespace>
                     <file>camel-rest.xsd</file>
                   </schema>
                 </schemas>
