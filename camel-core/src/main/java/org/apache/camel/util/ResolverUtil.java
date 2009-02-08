@@ -192,7 +192,10 @@ public class ResolverUtil<T> {
     public Set<ClassLoader> getClassLoaders() {
         if (classLoaders == null) {
             classLoaders = new HashSet<ClassLoader>();
-            classLoaders.add(Thread.currentThread().getContextClassLoader());
+            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+            if (ccl != null) {
+                classLoaders.add(ccl);
+            }
             classLoaders.add(ResolverUtil.class.getClassLoader());
         }
         return classLoaders;
