@@ -88,7 +88,10 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
      */
     protected String[] findPackageNames() throws IOException {
         Set<String> packages = new HashSet<String>();
-        findPackages(packages, Thread.currentThread().getContextClassLoader());
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        if (ccl != null) {
+            findPackages(packages, ccl);
+        }
         findPackages(packages, getClass().getClassLoader());
         return packages.toArray(new String[packages.size()]);
     }
