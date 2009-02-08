@@ -36,6 +36,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         super(endpoint, operations);
     }
 
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         GenericFileExchange remoteExchange = (GenericFileExchange) getEndpoint().createExchange(exchange);
         processExchange(remoteExchange);
@@ -49,9 +50,9 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         loggedIn = false;
         if (isStopping() || isStopped()) {
             // if we are stopping then ignore any exception during a poll
-            log.debug("Exception occured during stopping. " + exception.getMessage());
+            log.debug("Exception occured during stopping: " + exception.getMessage());
         } else {
-            log.debug("Exception occured during processing.", exception);
+            log.debug("Exception occured during processing. ", exception);
             disconnect();
             // Rethrow to signify that we didn't poll
             throw exception;
@@ -61,7 +62,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
     public void disconnect() throws IOException {
         loggedIn = false;
         if (log.isDebugEnabled()) {
-            log.debug("Disconnecting from " + getEndpoint());
+            log.debug("Disconnecting from: " + getEndpoint());
         }
         ((RemoteFileOperations) operations).disconnect();
     }
@@ -89,7 +90,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
         try {
             disconnect();
         } catch (Exception e) {
-            log.debug("Exception occured during disconnecting from " + getEndpoint() + " " + e.getMessage());
+            log.debug("Exception occured during disconnecting from: " + getEndpoint() + " " + e.getMessage());
         }
         super.doStop();
     }
@@ -106,7 +107,7 @@ public class RemoteFileProducer<T> extends GenericFileProducer<T> {
             if (!loggedIn) {
                 return;
             }
-            log.info("Connected and logged in to " + getEndpoint());
+            log.info("Connected and logged in to: " + getEndpoint());
         }
     }
 

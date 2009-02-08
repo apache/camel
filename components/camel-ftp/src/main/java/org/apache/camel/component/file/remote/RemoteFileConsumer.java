@@ -50,7 +50,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         try {
             if (((RemoteFileOperations) operations).isConnected()) {
                 loggedIn = false;
-                log.debug("Disconnecting from " + remoteServer());
+                log.debug("Disconnecting from: " + remoteServer());
                 ((RemoteFileOperations) operations).disconnect();
             }
         } catch (GenericFileOperationFailedException e) {
@@ -62,11 +62,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected void connectIfNecessary() throws IOException {
         if (!((RemoteFileOperations) operations).isConnected() || !loggedIn) {
             if (log.isDebugEnabled()) {
-                log.debug("Not connected/logged in, connecting to " + remoteServer());
+                log.debug("Not connected/logged in, connecting to: " + remoteServer());
             }
             loggedIn = ((RemoteFileOperations) operations).connect((RemoteFileConfiguration) endpoint.getConfiguration());
             if (loggedIn) {
-                log.info("Connected and logged in to " + remoteServer());
+                log.info("Connected and logged in to: " + remoteServer());
             }
         }
     }

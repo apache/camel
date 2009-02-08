@@ -24,7 +24,6 @@ import java.nio.channels.FileLock;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.NewFileComponent;
@@ -34,19 +33,17 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- *
+ * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file.
+ * This is the default behaviour in Camel 1.x.
  */
 public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Log LOG = LogFactory.getLog(NewMarkerFileExclusiveReadLockStrategy.class);
-
-    private GenericFileRenamer<File> lockFileRenamer = new GenericFileDefaultRenamer<File>("", NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX);
 
     @SuppressWarnings("unchecked")
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 
-        GenericFile newFile = lockFileRenamer.renameFile((GenericFileExchange<File>) exchange, file);
-        String lockFileName = newFile.getAbsoluteFileName();
+        String lockFileName = file.getAbsoluteFileName() + NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
         }
@@ -54,8 +51,8 @@ public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclus
         FileChannel channel = new RandomAccessFile(lockFileName, "rw").getChannel();
         FileLock lock = channel.lock();
         if (lock != null) {
-            exchange.setProperty("org.apache.camel.file.marker.lock", lock);
-            exchange.setProperty("org.apache.camel.file.marker.filename", lockFileName);
+            exchange.setProperty("CamelFileLock", lock);
+            exchange.setProperty("CamelFileLockName", lockFileName);
             return true;
         } else {
             return false;
@@ -64,8 +61,8 @@ public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclus
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                          GenericFile<File> fileGenericFile, Exchange exchange) throws Exception {
-        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.marker.lock", FileLock.class);
-        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.marker.filename", String.class);
+        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", FileLock.class);
+        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
         Channel channel = lock.channel();
 
         if (LOG.isTraceEnabled()) {

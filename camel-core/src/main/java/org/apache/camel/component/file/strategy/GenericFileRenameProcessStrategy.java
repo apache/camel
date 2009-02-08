@@ -34,19 +34,6 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     public GenericFileRenameProcessStrategy() {
     }
 
-    public GenericFileRenameProcessStrategy(String namePrefix, String namePostfix) {
-        this(new GenericFileDefaultRenamer<T>(namePrefix, namePostfix), null);
-    }
-
-    public GenericFileRenameProcessStrategy(String namePrefix, String namePostfix, String preNamePrefix, String preNamePostfix) {
-        this(new GenericFileDefaultRenamer<T>(namePrefix, namePostfix), new GenericFileDefaultRenamer<T>(preNamePrefix, preNamePostfix));
-    }
-
-    public GenericFileRenameProcessStrategy(GenericFileRenamer<T> commitRenamer, GenericFileRenamer<T> beginRenamer) {
-        this.commitRenamer = commitRenamer;
-        this.beginRenamer = beginRenamer;
-    }
-
     @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         // must invoke super

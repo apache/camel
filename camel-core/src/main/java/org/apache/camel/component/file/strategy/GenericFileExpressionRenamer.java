@@ -24,6 +24,13 @@ import org.apache.camel.util.ObjectHelper;
 public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
     private Expression expression;
 
+    public GenericFileExpressionRenamer() {
+    }
+
+    public GenericFileExpressionRenamer(Expression expression) {
+        this.expression = expression;
+    }
+
     public GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
         ObjectHelper.notNull(expression, "expression");
 

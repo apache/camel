@@ -38,7 +38,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&moveNamePrefix=done/").to("mock:result");
+                from("file://target/idempotent/?idempotent=true&moveExpression=done/${file:name}").to("mock:result");
             }
         };
     }

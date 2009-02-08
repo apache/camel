@@ -70,7 +70,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/reports?preMoveNamePrefix=../inprogress/&consumer.delay=5000")
+                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;
