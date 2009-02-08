@@ -60,7 +60,7 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
                 if (timeout > 0) {
                     long delta = System.currentTimeMillis() - start;
                     if (delta > timeout) {
-                        LOG.debug("Could not acquire read lock within " + timeout + " millis. Will skip the file: " + target);
+                        LOG.debug("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
                         // we could not get the lock within the timeout period, so return false
                         return false;
                     }
@@ -79,8 +79,8 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
                     }
 
                     // store lock so we can release it later
-                    exchange.setProperty("org.apache.camel.file.lock", lock);
-                    exchange.setProperty("org.apache.camel.file.lock.fileName", target.getName());
+                    exchange.setProperty("CamelFileLock", lock);
+                    exchange.setProperty("CamelFileLockName", target.getName());
 
                     exclusive = true;
                 } else {
@@ -105,8 +105,8 @@ public class NewFileLockExclusiveReadLockStrategy implements GenericFileExclusiv
 
     public void releaseExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                          GenericFile<File> fileGenericFile, Exchange exchange) throws Exception {
-        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock", FileLock.class);
-        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "org.apache.camel.file.lock.filename", String.class);
+        FileLock lock = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLock", FileLock.class);
+        String lockFileName = ExchangeHelper.getMandatoryProperty(exchange, "CamelFileLockName", String.class);
         Channel channel = lock.channel();
         try {
             lock.release();

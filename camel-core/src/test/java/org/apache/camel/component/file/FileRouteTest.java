@@ -68,7 +68,7 @@ public class FileRouteTest extends ContextTestSupport {
         }
 
         public void process(Exchange exchange) {
-            locks.add(exchange.getProperty("org.apache.camel.file.marker.filename", String.class));
+            locks.add(exchange.getProperty("CamelFileLockName", String.class));
         }
     }
 }

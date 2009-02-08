@@ -34,17 +34,7 @@ public class FtpIllegalOptionsTest extends ContextTestSupport {
         }
 
         try {
-            context.getEndpoint("file://target?moveNamePrefix=../done/&delete=true").createConsumer(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                }
-            });
-            fail("Should have thrown an exception");
-        } catch (IllegalArgumentException e) {
-            // ok
-        }
-
-        try {
-            context.getEndpoint("file://target?moveNamePostfix=.bak&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });

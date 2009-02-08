@@ -58,10 +58,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean recursive;
     protected boolean delete;
     protected String tempPrefix;
-    protected String moveNamePrefix;
-    protected String moveNamePostfix;
-    protected String preMoveNamePrefix;
-    protected String preMoveNamePostfix;
     protected String excludeNamePrefix;
     protected String excludeNamePostfix;
     protected String includeNamePrefix;
@@ -157,38 +153,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setNoop(boolean noop) {
         this.noop = noop;
-    }
-
-    public String getMoveNamePrefix() {
-        return moveNamePrefix;
-    }
-
-    public void setMoveNamePrefix(String moveNamePrefix) {
-        this.moveNamePrefix = moveNamePrefix;
-    }
-
-    public String getMoveNamePostfix() {
-        return moveNamePostfix;
-    }
-
-    public void setMoveNamePostfix(String moveNamePostfix) {
-        this.moveNamePostfix = moveNamePostfix;
-    }
-
-    public String getPreMoveNamePrefix() {
-        return preMoveNamePrefix;
-    }
-
-    public void setPreMoveNamePrefix(String preMoveNamePrefix) {
-        this.preMoveNamePrefix = preMoveNamePrefix;
-    }
-
-    public String getPreMoveNamePostfix() {
-        return preMoveNamePostfix;
-    }
-
-    public void setPreMoveNamePostfix(String preMoveNamePostfix) {
-        this.preMoveNamePostfix = preMoveNamePostfix;
     }
 
     public String getExcludeNamePrefix() {
@@ -439,19 +403,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     /**
-     * Should the file be moved after consuming?
-     *
-     * @deprecated not used
-     */
-    public boolean isMoveFile() {
-        return moveNamePostfix != null || moveNamePrefix != null
-                || preMoveNamePostfix != null || preMoveNamePrefix != null
-                || moveExpression != null;
-    }
-
-    /**
      * Configures the given message with the file which sets the body to the
-     * file object and sets the {@link FileComponent#HEADER_FILE_NAME} header.
+     * file object.
      */
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
@@ -483,18 +436,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
         if (isDelete()) {
             params.put("delete", Boolean.toString(true));
-        }
-        if (moveNamePrefix != null) {
-            params.put("moveNamePrefix", moveNamePrefix);
-        }
-        if (moveNamePostfix != null) {
-            params.put("moveNamePostfix", moveNamePostfix);
-        }
-        if (preMoveNamePrefix != null) {
-            params.put("preMoveNamePrefix", preMoveNamePrefix);
-        }
-        if (preMoveNamePostfix != null) {
-            params.put("preMoveNamePostfix", preMoveNamePostfix);
         }
         if (moveExpression != null) {
             params.put("moveExpression", moveExpression);

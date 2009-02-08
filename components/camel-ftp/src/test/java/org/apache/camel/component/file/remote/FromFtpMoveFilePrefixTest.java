@@ -32,7 +32,7 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&consumer.delay=5000"
-                + "&moveNamePrefix=done/";
+                + "&moveExpression=done/${file:name}";
     }
 
     @Override

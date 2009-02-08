@@ -28,19 +28,14 @@ public final class GenericFileProcessStrategyFactory {
     private GenericFileProcessStrategyFactory() {
     }
 
+    @SuppressWarnings("unchecked")
     public static GenericFileProcessStrategy createGenericFileProcessStrategy(Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
-        String moveNamePrefix = (String) params.get("moveNamePrefix");
-        String moveNamePostfix = (String) params.get("moveNamePostfix");
-        String preMoveNamePrefix = (String) params.get("preMoveNamePrefix");
-        String preMoveNamePostfix = (String) params.get("preMoveNamePostfix");
         Expression moveExpression = (Expression) params.get("moveExpression");
         Expression preMoveExpression = (Expression) params.get("preMoveExpression");
-        boolean move = moveNamePrefix != null || moveNamePostfix != null;
-        boolean preMove = preMoveNamePrefix != null || preMoveNamePostfix != null;
 
         if (isNoop) {
             GenericFileNoOpProcessStrategy strategy = new GenericFileNoOpProcessStrategy();
@@ -49,16 +44,6 @@ public final class GenericFileProcessStrategyFactory {
         } else if (isDelete) {
             GenericFileDeleteProcessStrategy strategy = new GenericFileDeleteProcessStrategy();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            return strategy;
-        } else if (move || preMove) {
-            GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
-            strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            if (move) {
-                strategy.setCommitRenamer(new GenericFileDefaultRenamer(moveNamePrefix, moveNamePostfix));
-            }
-            if (preMove) {
-                strategy.setBeginRenamer(new GenericFileDefaultRenamer(preMoveNamePrefix, preMoveNamePostfix));
-            }
             return strategy;
         } else if (moveExpression != null || preMoveExpression != null) {
             GenericFileRenameProcessStrategy strategy = new GenericFileRenameProcessStrategy();
