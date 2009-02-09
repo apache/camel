@@ -252,7 +252,7 @@ public class RouteBuilderTest extends TestSupport {
             // take off the InstrumentationProcessor
             processor = unwrapDelegateProcessor(processor);
             // take off the StreamCacheInterceptor
-            processor = unwrapInterceptor(processor);
+            processor = unwrapDelegateProcessor(processor);
             MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
             List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
