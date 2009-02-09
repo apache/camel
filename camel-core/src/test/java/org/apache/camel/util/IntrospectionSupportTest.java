@@ -16,6 +16,10 @@
  */
 package org.apache.camel.util;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.util.jndi.ExampleBean;
 
@@ -61,6 +65,27 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         public String getName() {
             return bean.getName();
         }
+    }
+
+    public void testHasProperties() throws Exception {
+        assertFalse(IntrospectionSupport.hasProperties(Collections.EMPTY_MAP, null));
+        assertFalse(IntrospectionSupport.hasProperties(Collections.EMPTY_MAP, ""));
+        assertFalse(IntrospectionSupport.hasProperties(Collections.EMPTY_MAP, "foo."));
+
+        Map<String, String> param = new HashMap<String, String>();
+        assertFalse(IntrospectionSupport.hasProperties(param, null));
+        assertFalse(IntrospectionSupport.hasProperties(param, ""));
+        assertFalse(IntrospectionSupport.hasProperties(param, "foo."));
+
+        param.put("name", "Claus");
+        assertTrue(IntrospectionSupport.hasProperties(param, null));
+        assertTrue(IntrospectionSupport.hasProperties(param, ""));
+        assertFalse(IntrospectionSupport.hasProperties(param, "foo."));
+
+        param.put("foo.name", "Hadrian");
+        assertTrue(IntrospectionSupport.hasProperties(param, null));
+        assertTrue(IntrospectionSupport.hasProperties(param, ""));
+        assertTrue(IntrospectionSupport.hasProperties(param, "foo."));
     }
 
 }

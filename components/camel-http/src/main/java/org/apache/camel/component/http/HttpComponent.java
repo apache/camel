@@ -99,9 +99,11 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
         throws Exception {
 
         // http client can be configured from URI options
-        HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");        
-        
+        HttpClientParams clientParams = new HttpClientParams();
+        IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
+        // validate that we could resolve all httpClient. parameters as this component is lenient
+        validateUnknownParameters(uri, parameters, "httpClient.");
+
         configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
@@ -118,7 +120,8 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
             }
         }
 
-        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, params, httpConnectionManager, httpClientConfigurer);
+
+        HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
         }

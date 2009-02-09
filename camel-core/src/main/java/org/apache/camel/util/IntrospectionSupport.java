@@ -108,6 +108,23 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    public static boolean hasProperties(Map properties, String optionPrefix) {
+        ObjectHelper.notNull(properties, "properties");
+
+        if (ObjectHelper.isNotEmpty(optionPrefix)) {
+            for (Object o : properties.keySet()) {
+                String name = (String) o;
+                if (name.startsWith(optionPrefix)) {
+                    return true;
+                }
+            }
+            // no parameters with this prefix
+            return false;
+        } else {
+            return !properties.isEmpty();
+        }
+    }
+
     public static Object getProperty(Object target, String property) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(property, "property");
