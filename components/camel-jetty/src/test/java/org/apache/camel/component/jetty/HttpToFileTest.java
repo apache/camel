@@ -29,7 +29,7 @@ import org.apache.camel.converter.IOConverter;
 public class HttpToFileTest extends ContextTestSupport {
 
     public void testToJettyAndSaveToFile() throws Exception {
-        Object out = template.sendBody("http://localhost:8080/myworld", "Hello World");
+        Object out = template.sendBody("http://localhost:9080/myworld", "Hello World");
 
         String response = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("Response from Jetty", "We got the file", response);
@@ -42,7 +42,7 @@ public class HttpToFileTest extends ContextTestSupport {
         assertTrue("File should exists", file.exists());
 
         String content = IOConverter.toString(file);
-        assertEquals("File conent", "Hello World", content);
+        assertEquals("File content", "Hello World", content);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class HttpToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // put the incoming data on the seda queue and return a fixed response that we got the file
-                from("jetty:http://localhost:8080/myworld").to("seda:in").setBody(constant("We got the file"));
+                from("jetty:http://localhost:9080/myworld").convertBodyTo(String.class).to("seda:in").transform(constant("We got the file"));
 
                 // store the content from the queue as a file
                 from("seda:in")
@@ -64,5 +64,4 @@ public class HttpToFileTest extends ContextTestSupport {
             }
         };
     }
-
 }
