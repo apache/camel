@@ -145,9 +145,6 @@ public class ThreadTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                //TODO: revert this once we get DelegateProcessor to support async
-                setErrorHandlerBuilder(noErrorHandler());
-
                 // START SNIPPET: example
                 from("direct:a").thread(1).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

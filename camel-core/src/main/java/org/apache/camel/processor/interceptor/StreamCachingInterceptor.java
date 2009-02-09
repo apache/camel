@@ -18,36 +18,25 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.InterceptorType;
-import org.apache.camel.processor.Interceptor;
+import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;
 
 /**
- * {@link Interceptor} that converts a message into a re-readable format
+ * {@link DelegateProcessor} that converts a message into a re-readable format
  */
-public class StreamCachingInterceptor extends Interceptor {
+public class StreamCachingInterceptor extends DelegateProcessor implements AsyncProcessor {
 
     public StreamCachingInterceptor() {
         super();
-        setInterceptorLogic(new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                try {
-                    StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
-                    if (newBody != null) {
-                        exchange.getIn().setBody(newBody);
-                    }
-                    MessageHelper.resetStreamCache(exchange.getIn());
-                } catch (NoTypeConversionAvailableException ex) {
-                    // ignore if in is not of StreamCache type
-                }
-                proceed(exchange);
-            }
-        });
     }
 
     public StreamCachingInterceptor(Processor processor) {
@@ -72,6 +61,39 @@ public class StreamCachingInterceptor extends Interceptor {
                 && ((InterceptorRef)interceptor).getInterceptor() instanceof StreamCachingInterceptor) {
                 interceptors.remove(interceptor);
             }
+        }
+    }
+    
+    @Override
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
+            if (newBody != null) {
+                exchange.getIn().setBody(newBody);
+            }
+            MessageHelper.resetStreamCache(exchange.getIn());
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore if in is not of StreamCache type
+        }
+        return proceed(exchange, callback);
+    } 
+
+    public boolean proceed(Exchange exchange, AsyncCallback callback) {
+        if (getProcessor() instanceof AsyncProcessor) {
+            return ((AsyncProcessor) getProcessor()).process(exchange, callback);
+        } else {
+            try {
+                processor.process(exchange);
+            } catch (Throwable e) {
+                exchange.setException(e);
+            }
+            // false means processing of the exchange asynchronously,
+            callback.done(true);
+            return true;
         }
     }
 }
