@@ -33,4 +33,9 @@ public class SedaConfigureTest extends ContextTestSupport {
         LinkedBlockingQueue blockingQueue = assertIsInstanceOf(LinkedBlockingQueue.class, queue);
         assertEquals("remainingCapacity", 2000, blockingQueue.remainingCapacity());
     }
+    
+    public void testConcurrentConsumersConfigured() {
+        SedaEndpoint endpoint = resolveMandatoryEndpoint("seda:foo?concurrentConsumers=5", SedaEndpoint.class);
+        assertEquals("concurrentConsumers", 5, endpoint.getConcurrentConsumers());
+    }
 }

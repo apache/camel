@@ -39,6 +39,7 @@ public class SedaComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new SedaEndpoint(uri, this, parameters);
+        int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, 1);
+        return new SedaEndpoint(uri, this, createQueue(uri, parameters), consumers);
     }
 }

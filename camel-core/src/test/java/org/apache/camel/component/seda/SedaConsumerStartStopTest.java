@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -31,6 +32,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 public class SedaConsumerStartStopTest extends ContextTestSupport {
 
+    private static final String SEDA_QUEUE_CONSUMERS_5 = "seda:queue?concurrentConsumers=5";
     private PollingConsumer consumer;
 
     public boolean isUseRouteBuilder() {
@@ -85,5 +87,30 @@ public class SedaConsumerStartStopTest extends ContextTestSupport {
         }
 
         assertMockEndpointsSatisfied();
+    }
+    
+    public void testConcurrentConsumers() throws Exception {
+        context.addRoutes(new RouteBuilder(context) {
+        
+            @Override
+            public void configure() throws Exception {
+                from(SEDA_QUEUE_CONSUMERS_5).delay(500).to("mock:result");
+        
+            }
+        });
+        context.start();
+        
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(10);
+        
+        for (int i = 0; i < 10; i++) {
+            sendBody(SEDA_QUEUE_CONSUMERS_5, i);
+        }
+        
+        Thread.sleep(800);
+        assertEquals(5, mock.getReceivedCounter());
+        
+        Thread.sleep(700);
+        assertEquals(10, mock.getReceivedCounter());
     }
 }

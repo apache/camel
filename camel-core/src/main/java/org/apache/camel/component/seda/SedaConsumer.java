@@ -17,6 +17,10 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
@@ -39,7 +43,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
 
     private SedaEndpoint endpoint;
     private AsyncProcessor processor;
-    private Thread thread;
+    private ExecutorService executor;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -88,14 +92,23 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     }
 
     protected void doStart() throws Exception {
-        thread = new Thread(this, getThreadName(endpoint.getEndpointUri()));
-        thread.setDaemon(true);
-        thread.start();
+        int concurrentConsumers = endpoint.getConcurrentConsumers();
+        executor = Executors.newFixedThreadPool(concurrentConsumers, new ThreadFactory() {
+        
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, getThreadName(endpoint.getEndpointUri()));
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+        for (int i = 0; i < concurrentConsumers; i++) {
+            executor.execute(this);
+        }
     }
 
     protected void doStop() throws Exception {
-        thread.join();
-        thread = null;
+        executor.shutdownNow();
+        executor = null;
     }
 
 }
