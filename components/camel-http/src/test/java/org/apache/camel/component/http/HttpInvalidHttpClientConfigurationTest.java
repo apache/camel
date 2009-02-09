@@ -26,14 +26,14 @@ import static org.apache.camel.component.http.HttpMethods.POST;
 /**
  * Unit test of invalid configuraiton
  */
-public class HttpInvalidConfigurationTest extends ContextTestSupport {
+public class HttpInvalidHttpClientConfigurationTest extends ContextTestSupport {
 
     protected void setUp() throws Exception {
         try {
             super.setUp();
             fail("Should have thrown ResolveEndpointFailedException");
         } catch (ResolveEndpointFailedException e) {
-            assertTrue(e.getMessage().endsWith("You have duplicated the http(s) protocol."));
+            assertTrue(e.getMessage().endsWith("Unknown parameters=[{xxx=true}]"));
         }
     }
 
@@ -44,7 +44,7 @@ public class HttpInvalidConfigurationTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(HTTP_METHOD, POST).to("http://http://www.google.com");
+                from("direct:start").setHeader(HTTP_METHOD, POST).to("http://www.google.com?httpClient.xxx=true");
             }
         };
     }

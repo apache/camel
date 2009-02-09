@@ -21,13 +21,12 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,7 +62,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         // gather list of files to process
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
 
-        String name = endpoint.getConfiguration().getFile();        
+        String name = endpoint.getConfiguration().getFile();
         boolean isDirectory = endpoint.isDirectory();
         if (isDirectory) {
             pollDirectory(name, files);
@@ -356,9 +355,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (endpoint.getFileExpression() != null) {
             evaluteFileExpression();
             if (fileExpressionResult != null) {
-               if (!name.equals(fileExpressionResult)) {
-                   return false;
-                }                                    
+                if (!name.equals(fileExpressionResult)) {
+                    return false;
+                }
             }
         }
 
@@ -371,7 +370,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             fileExpressionResult = (String) endpoint.getFileExpression().evaluate(dummy);
         }
     }
-
 
 
 }

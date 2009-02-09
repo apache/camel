@@ -31,10 +31,8 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
     }
 
     public void configureHttpClient(HttpClient client) {
-        
         Credentials defaultcreds = new UsernamePasswordCredentials(username, password);
         client.getState().setCredentials(AuthScope.ANY, defaultcreds);
-
     }
 
 }
