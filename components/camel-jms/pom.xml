@@ -97,19 +97,13 @@
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
       <exclusions>
+        <!-- to avoid the cycle dependency here -->
       	<exclusion>
       	  <groupId>org.apache.camel</groupId>
       	  <artifactId>camel-jms</artifactId>
       	</exclusion>
       </exclusions>
       <scope>test</scope>
-      <!-- to avoid the cycle dependency here -->
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-jms</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.xbean</groupId>
