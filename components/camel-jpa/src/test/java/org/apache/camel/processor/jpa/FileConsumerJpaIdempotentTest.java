@@ -64,7 +64,7 @@ public class FileConsumerJpaIdempotentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&moveNamePrefix=done/").to("mock:result");
+                from("file://target/idempotent/?idempotent=true&idempotentRepository=#jpaStore&moveExpression=done/${file:name}").to("mock:result");
             }
         };
     }
