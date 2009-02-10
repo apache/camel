@@ -16,17 +16,10 @@
  */
 package org.apache.camel.processor;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.language.XPath;
 
 public class DetourTest extends ContextTestSupport {
     
