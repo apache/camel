@@ -16,15 +16,20 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.camel.Message;
+import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
@@ -59,11 +64,20 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteExceptionResponse(exchange.getException(), response);
             }
         } else {
-            Message out = exchange.getOut();
+            // just copy the protocol relates header
+            copyProtocolHeaders(exchange.getIn(), exchange.getOut());
+            Message out = exchange.getOut();            
             if (out != null) {
                 doWriteResponse(out, response);
             }
         }
+    }
+
+    private void copyProtocolHeaders(Message request, Message response) {
+        if (request.getHeader(GZIPHelper.CONTENT_ENCODING) != null) {            
+            String contentEncoding = request.getHeader(GZIPHelper.CONTENT_ENCODING, String.class);            
+            response.setHeader(GZIPHelper.CONTENT_ENCODING, contentEncoding);
+        }        
     }
 
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
@@ -88,8 +102,8 @@ public class DefaultHttpBinding implements HttpBinding {
             response.setStatus(code);
         }
         // set the content type in the response.
-        if (message.getHeader("Content-Type") != null) {
-            String contentType = message.getHeader("Content-Type", String.class);
+        if (message.getHeader("Content-Type") != null) {            
+            String contentType = message.getHeader("Content-Type", String.class);            
             response.setContentType(contentType);
         }
 
@@ -106,18 +120,22 @@ public class DefaultHttpBinding implements HttpBinding {
         if (message.getBody() != null) {
             // try to stream the body since that would be the most efficient
             InputStream is = message.getBody(InputStream.class);
-            int length = 0;
             if (is != null) {
-                ServletOutputStream os = null;
+                ServletOutputStream os = response.getOutputStream();
                 try {
-                    os = response.getOutputStream();
+                    ByteArrayOutputStream initialArray = new ByteArrayOutputStream();
                     int c;
                     while ((c = is.read()) >= 0) {
-                        os.write(c);
-                        length++;
+                        initialArray.write(c);
                     }
+                    byte[] processedArray = processReponseContent(message, initialArray.toByteArray(), response);
+                    os.write(processedArray);
                     // set content length before we flush
-                    response.setContentLength(length);
+                    // Here the processedArray length is used instead of the
+                    // length of the characters in written to the initialArray
+                    // because if the method processReponseContent compresses
+                    // the data, the processedArray may contain a different length 
+                    response.setContentLength(processedArray.length);
                     os.flush();
                 } finally {
                     os.close();
@@ -134,6 +152,11 @@ public class DefaultHttpBinding implements HttpBinding {
             }
 
         }
+    }
+    
+    protected byte[] processReponseContent(Message message, byte[] array, HttpServletResponse response) throws IOException {
+        String gzipEncoding = message.getHeader(GZIPHelper.CONTENT_ENCODING, String.class);        
+        return GZIPHelper.compressArrayIfGZIPRequested(gzipEncoding, array, response);
     }
 
     public Object parseBody(HttpMessage httpMessage) throws IOException {

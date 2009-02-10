@@ -30,7 +30,7 @@ public class JettyResponseBodyWhenErrorTest extends ContextTestSupport {
 
     public void testResponseBodyWhenError() throws Exception {
         try {
-            template.sendBody("http://localhost:8080/myapp/myservice", "bookid=123");
+            template.sendBody("http://localhost:9080/myapp/myservice", "bookid=123");
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();
@@ -48,7 +48,7 @@ public class JettyResponseBodyWhenErrorTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
-                from("jetty:http://localhost:8080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
             }
         };
     }

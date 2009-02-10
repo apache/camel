@@ -31,7 +31,7 @@ import java.net.URLConnection;
 public class HttpRouteUsingUrlPostTest extends HttpRouteTest {
 
     protected void invokeHttpEndpoint() throws IOException {
-        URL url = new URL("http://localhost:8080/test");
+        URL url = new URL("http://localhost:9080/test");
         URLConnection urlConnection = url.openConnection();
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);

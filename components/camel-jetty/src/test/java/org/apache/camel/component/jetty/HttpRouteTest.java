@@ -63,7 +63,7 @@ public class HttpRouteTest extends ContextTestSupport {
     public void testHelloEndpoint() throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("http://localhost:8080/hello").openStream();
+        InputStream is = new URL("http://localhost:9080/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -75,14 +75,14 @@ public class HttpRouteTest extends ContextTestSupport {
     }
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:8080/test").to("mock:a");
+                from("jetty:http://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -96,7 +96,7 @@ public class HttpRouteTest extends ContextTestSupport {
                         exchange.getOut(true).setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:http://localhost:8080/hello?sessionSupport=true").process(proc);
+                from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);
             }
         };
     }

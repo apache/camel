@@ -40,7 +40,7 @@ public class ConvertPayloadToInputStreamTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -59,7 +59,7 @@ public class ConvertPayloadToInputStreamTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jetty:http://localhost:8080/test").
+                from("jetty:http://localhost:9080/test").
                         convertBodyTo(InputStream.class).
                         to("mock:result");
             }

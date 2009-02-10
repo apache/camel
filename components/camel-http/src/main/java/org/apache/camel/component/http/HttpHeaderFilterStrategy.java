@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 
 /**
@@ -30,6 +31,7 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
+        getOutFilter().add(GZIPHelper.CONTENT_ENCODING);
         getOutFilter().add(HttpMethods.HTTP_METHOD);
         getOutFilter().add(HttpProducer.QUERY);
         getOutFilter().add(HttpProducer.HTTP_RESPONSE_CODE.toLowerCase());

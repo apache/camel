@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class JettyRouteTest extends ContextTestSupport {
 
     public void testSendToJetty() throws Exception {
-        Object response = template.requestBody("http://localhost:8080/myapp/myservice", "bookid=123");
+        Object response = template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
         // convert the response to a String
         String body = context.getTypeConverter().convertTo(String.class, response);
         assertEquals("<html><body>Book 123 is Camel in Action</body></html>", body);
@@ -40,7 +40,7 @@ public class JettyRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("jetty:http://localhost:8080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
                 // END SNIPPET: e1
             }
         };
