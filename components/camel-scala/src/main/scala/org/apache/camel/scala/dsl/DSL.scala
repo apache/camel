@@ -23,28 +23,30 @@ import org.apache.camel.model.dataformat.DataFormatType
  */
 trait DSL {
   
+  def aggregate(expression: Exchange => Any) : SAggregatorType
+  def as[Target](toType: Class[Target]) : DSL
   def attempt : STryType
   def bean(bean: Any) : DSL
   def choice : SChoiceType
-  def -->(uris: String*) : DSL
-  def to(uris: String*) : DSL
-  def when(filter: Exchange => Boolean) : SChoiceType
-  def as[Target](toType: Class[Target]) : DSL
-  def recipients(expression: Exchange => Any) : DSL
-  def splitter(expression: Exchange => Any) : SSplitterType
-  def otherwise : DSL
+  def delay(delay: Period) : SDelayerType
+  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
+  def inOnly(): SProcessorType
+  def inOut(): SProcessorType
+  def loadbalance : SLoadBalanceType
   def marshal(format : DataFormatType) : DSL
   def multicast : SMulticastType
+  def otherwise : DSL
   def process(function: Exchange => Unit) : DSL
-  def throttle(frequency: Frequency) : SThrottlerType
-  def loadbalance : SLoadBalanceType
-  def delay(delay: Period) : SDelayerType
+  def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequencerType
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
+  def splitter(expression: Exchange => Any) : SSplitterType
   def thread(number: Int) : SThreadType
+  def throttle(frequency: Frequency) : SThrottlerType
+  def to(uris: String*) : DSL
   def unmarshal(format: DataFormatType) : DSL
-  def aggregate(expression: Exchange => Any) : SAggregatorType
-  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
+  def when(filter: Exchange => Boolean) : SChoiceType
+  def -->(uris: String*) : DSL
 
 }
