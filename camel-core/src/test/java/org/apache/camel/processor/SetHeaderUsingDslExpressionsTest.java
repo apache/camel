@@ -27,15 +27,47 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class SetHeaderUsingDslExpressionsTest extends ContextTestSupport {
     protected String body = "<person name='James' city='London'/>";
     protected MockEndpoint expected;
+    
+    public final class MyValueClass {
+        
+        private String value1;
+        private String value2;
+        
+        public MyValueClass(String v1, String v2) {
+            value1 = v1;
+            value2 = v2;
+        }
+        
+        public int hashCode() {
+            return value1.hashCode() * 10 + value2.hashCode();
+        }
+        
+        public boolean equals(Object obj) {
+            boolean result = false;        
+            if (obj instanceof MyValueClass) {
+                MyValueClass value = (MyValueClass)obj;
+                if (this.value1.equals(value.value1) && this.value2.equals(value.value2)) {
+                    result = true;
+                }
+            } 
+            return result;
+        }
+        
+    }
 
     public void testUseConstant() throws Exception {
+        MyValueClass value = new MyValueClass("value1", "value2");
         context.addRoutes(new RouteBuilder() {
             public void configure() throws Exception {
+                MyValueClass insteadValue = new MyValueClass("value1", "value2");
                 from("direct:start").
                         setHeader("foo").constant("ABC").
+                        setHeader("value").constant(insteadValue).
                         to("mock:result");
             }
         });
+        
+        expected.message(0).header("value").isEqualTo(value);
 
         template.sendBodyAndHeader("direct:start", body, "bar", "ABC");
 
