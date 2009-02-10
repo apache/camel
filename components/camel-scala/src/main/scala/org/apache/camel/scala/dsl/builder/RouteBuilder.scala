@@ -55,7 +55,7 @@ class RouteBuilder extends Preamble with DSL with Routes {
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = {
      val exception = new SExceptionType(builder.onException(manifest.erasure))(this)
      exception.apply(block)
-  }  
+  }
 
   def attempt = stack.top.attempt
   def bean(bean: Any) = stack.top.bean(bean)
@@ -66,6 +66,8 @@ class RouteBuilder extends Preamble with DSL with Routes {
   def as[Target](toType: Class[Target]) = stack.top.as(toType)
   def recipients(expression: Exchange => Any) = stack.top.recipients(expression)
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
+  def inOnly = stack.top.inOnly
+  def inOut = stack.top.inOut
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
   def marshal(format: DataFormatType) = stack.top.marshal(format)

@@ -27,6 +27,8 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 abstract class SAbstractType extends DSL {
   
+  type RawProcessorType = ProcessorType[P] forSome {type P}
+  
   val target : ProcessorType[T] forSome {type T}
   implicit val builder: RouteBuilder
   implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
@@ -48,7 +50,7 @@ abstract class SAbstractType extends DSL {
     
   def as[Target](toType: Class[Target]) = {
     target.convertBodyTo(toType)
-    new SProcessorType(target.asInstanceOf[ProcessorType[P] forSome {type P}])
+    new SProcessorType(target.asInstanceOf[RawProcessorType])
   }
   
   def attempt : STryType = new STryType(target.tryBlock)
@@ -57,7 +59,7 @@ abstract class SAbstractType extends DSL {
     new SSplitterType(target.split(expression))
     
   def recipients(expression: Exchange => Any) = 
-    new SProcessorType(target.recipientList(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+    new SProcessorType(target.recipientList(expression).asInstanceOf[RawProcessorType])
 
   def apply(block: => Unit) = {
     builder.build(this, block)
@@ -65,9 +67,9 @@ abstract class SAbstractType extends DSL {
   }
 
   def bean(bean: Any) = bean match {
-    case cls: Class[_] => new SProcessorType(target.bean(cls).asInstanceOf[ProcessorType[P] forSome {type P}])
-    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[ProcessorType[P] forSome {type P}])
-    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[ProcessorType[P] forSome {type P}])
+    case cls: Class[_] => new SProcessorType(target.bean(cls).asInstanceOf[RawProcessorType])
+    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[RawProcessorType])
+    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[RawProcessorType])
   }
   
   def choice = new SChoiceType(target.choice)
@@ -76,6 +78,9 @@ abstract class SAbstractType extends DSL {
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
   def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerType(target.idempotentConsumer(expression, null))
+  
+  def inOnly = new SProcessorType(target.inOnly.asInstanceOf[RawProcessorType])
+  def inOut = new SProcessorType(target.inOut.asInstanceOf[RawProcessorType])
  
   def marshal(format: DataFormatType) = {
     target.marshal(format)
@@ -89,7 +94,6 @@ abstract class SAbstractType extends DSL {
     this
   }
  
-  
   def throttle(frequency: Frequency) = new SThrottlerType(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
   def loadbalance = new SLoadBalanceType(target.loadBalance)
