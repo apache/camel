@@ -49,8 +49,8 @@ public class RestletQueryTest extends ContextTestSupport {
     class SetUserProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {   
-            assertEquals(QUERY_STRING, 
-                    exchange.getProperty(RestletConstants.QUERY_STRING, String.class));
+            assertEquals(QUERY_STRING, exchange.getIn().getHeader(RestletConstants.QUERY_STRING, 
+                    String.class));
         }
         
     }
