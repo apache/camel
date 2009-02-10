@@ -96,7 +96,7 @@ public class HttpsRouteTest extends ContextTestSupport {
     public void testEndpointWithoutHttps() {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:a", MockEndpoint.class);    
         try {
-            template.sendBodyAndHeader("jetty:http://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+            template.sendBodyAndHeader("jetty:http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
             fail("expect exception on access to https endpoint via http");
         } catch (RuntimeCamelException expected) {
         }
@@ -106,7 +106,7 @@ public class HttpsRouteTest extends ContextTestSupport {
     public void testHelloEndpoint() throws Exception {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
-        InputStream is = new URL("https://localhost:8080/hello").openStream();
+        InputStream is = new URL("https://localhost:9080/hello").openStream();
         int c;
         while ((c = is.read()) >= 0) {
             os.write(c);
@@ -119,7 +119,7 @@ public class HttpsRouteTest extends ContextTestSupport {
         
     public void testHelloEndpointWithoutHttps() throws Exception {
         try {
-            new URL("http://localhost:8080/hello").openStream();
+            new URL("http://localhost:9080/hello").openStream();
             fail("expected SocketException on use ot http");
         } catch (SocketException expected) {
         }
@@ -128,7 +128,7 @@ public class HttpsRouteTest extends ContextTestSupport {
     }
     
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("jetty:https://localhost:8080/test", expectedBody, "Content-Type", "application/xml");
+        template.sendBodyAndHeader("jetty:https://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override
@@ -142,14 +142,14 @@ public class HttpsRouteTest extends ContextTestSupport {
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
                 componentJetty.setKeystore(keyStoreUrl.getPath());
                 
-                from("jetty:https://localhost:8080/test").to("mock:a");
+                from("jetty:https://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut(true).setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:8080/hello").process(proc);
+                from("jetty:https://localhost:9080/hello").process(proc);
             }
         };
     }

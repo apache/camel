@@ -39,14 +39,14 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslSocketConnector(sslSocketConnector);
                 
-                from("jetty:https://localhost:8080/test").to("mock:a");
+                from("jetty:https://localhost:9080/test").to("mock:a");
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getOut(true).setBody("<b>Hello World</b>");
                     }
                 };
-                from("jetty:https://localhost:8080/hello").process(proc);
+                from("jetty:https://localhost:9080/hello").process(proc);
             }
         };
     }

@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.helper.GZIPHelper;
 
 /**
  * Unit test for exposing a http server that returns images
@@ -30,8 +31,18 @@ import org.apache.camel.builder.RouteBuilder;
 public class JettyImageFileTest extends ContextTestSupport {
 
     public void testImageContentType() throws Exception {
-        Endpoint endpoint = context.getEndpoint("http://localhost:8080/myapp/myservice");
+        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
+        template.send(endpoint, exchange);
+
+        assertNotNull(exchange.getOut().getBody());
+        assertOutMessageHeader(exchange, "Content-Type", "image/jpeg");
+    }
+    
+    public void testImageWithGZip() throws Exception {
+        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
+        Exchange exchange = endpoint.createExchange();
+        GZIPHelper.setGZIPMessageHeader(exchange.getIn());
         template.send(endpoint, exchange);
 
         assertNotNull(exchange.getOut().getBody());
@@ -42,7 +53,7 @@ public class JettyImageFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:8080/myapp/myservice").process(new MyImageService());
+                from("jetty:http://localhost:9080/myapp/myservice").process(new MyImageService());
             }
         };
     }
