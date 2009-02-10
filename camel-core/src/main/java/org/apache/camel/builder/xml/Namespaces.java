@@ -140,6 +140,5 @@ public class Namespaces {
      */
     public void configure(NamespaceAware namespaceAware) {
         namespaceAware.setNamespaces(getNamespaces());
-
     }
 }
