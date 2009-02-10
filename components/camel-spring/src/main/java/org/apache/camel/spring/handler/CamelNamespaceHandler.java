@@ -24,13 +24,14 @@ import java.util.Set;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.model.FromType;
+import org.apache.camel.model.SendType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -69,11 +70,9 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
 
-
     public ModelFileGenerator createModelFileGenerator() throws JAXBException {
         return new ModelFileGenerator(getJaxbContext());
     }
-
 
     public void init() {
         // remoting
@@ -96,9 +95,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // jmx agent
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentType.class);
 
-        // TODO switch to use the above mechanism?
-        registerParser("endpoint", endpointParser);
+        // endpoint
+        addBeanDefinitionParser("endpoint", EndpointFactoryBean.class);
 
+        // camel context
         Class cl = CamelContextFactoryBean.class;
         try {
             cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
@@ -125,8 +125,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         registerParser(elementName, new ScriptDefinitionParser(engineName));
     }
 
-    protected void registerParser(String name,
-                                  org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
+    protected void registerParser(String name, org.springframework.beans.factory.xml.BeanDefinitionParser parser) {
         parserElementNames.add(name);
         registerBeanDefinitionParser(name, parser);
     }
@@ -139,11 +138,6 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         try {
             binder = getJaxbContext().createBinder();
             return binder.unmarshal(element);
-            /*
-             * Unmarshaller unmarshaller =
-             * getJaxbContext().createUnmarshaller(); return
-             * unmarshaller.unmarshal(element);
-             */
         } catch (JAXBException e) {
             throw new BeanDefinitionStoreException("Failed to parse JAXB element: " + e, e);
         }
@@ -190,8 +184,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
             String contextId = element.getAttribute("id");
 
-            // lets avoid folks having to explicitly give an ID to a camel
-            // context
+            // lets avoid folks having to explicitly give an ID to a camel context
             if (ObjectHelper.isEmpty(contextId)) {
                 contextId = "camelContext";
                 element.setAttribute("id", contextId);
@@ -225,16 +218,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                         createBeanPostProcessor(parserContext, contextId, childElement, builder);
                         createdBeanPostProcessor = true;
                     } else if (localName.equals("endpoint")) {
-                        BeanDefinition definition = endpointParser.parse(childElement, parserContext);
-                        String id = childElement.getAttribute("id");
-                        if (ObjectHelper.isNotEmpty(id)) {
-                            // TODO we can zap this?
-                            definition.getPropertyValues()
-                                .addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
-                            // definition.getPropertyValues().addPropertyValue("context",
-                            // builder.getBeanDefinition());
-                            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
-                        }
+                        registerEndpoint(childElement, parserContext, contextId);
                     } else {
                         BeanDefinitionParser parser = parserMap.get(localName);
                         if (parser != null) {
@@ -251,6 +235,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     }
                 }
             }
+
+            // inject endpoints defined in routes where we can have set an id in the from/to types
+            injectWithinRoutesNodeIdsAsEndpoint(element, parserContext, contextId);
+
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element);
             if (!createdBeanPostProcessor) {
@@ -282,4 +270,37 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
         }
     }
+
+    protected void injectWithinRoutesNodeIdsAsEndpoint(Element element, ParserContext parserContext, String contextId) {
+        NodeList list = element.getChildNodes();
+        int size = list.getLength();
+        for (int i = 0; i < size; i++) {
+            Node child = list.item(i);
+            if (child instanceof Element) {
+                Element childElement = (Element)child;
+                Object object = binder.getJAXBNode(child);
+                // we only want from/to types to be registered as endpoints
+                if (object instanceof FromType || object instanceof SendType) {
+                    registerEndpoint(childElement, parserContext, contextId);
+                }
+                // recursive
+                injectWithinRoutesNodeIdsAsEndpoint(childElement, parserContext, contextId);
+            }
+        }
+    }
+
+    private void registerEndpoint(Element childElement, ParserContext parserContext, String contextId) {
+        String id = childElement.getAttribute("id");
+        // must have an id to be registered
+        if (ObjectHelper.isNotEmpty(id)) {
+            BeanDefinition definition = endpointParser.parse(childElement, parserContext);
+            // TODO we can zap this?
+            definition.getPropertyValues()
+                .addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
+            // definition.getPropertyValues().addPropertyValue("context",
+            // builder.getBeanDefinition());
+            parserContext.registerComponent(new BeanComponentDefinition(definition, id));
+        }
+    }
+    
 }
