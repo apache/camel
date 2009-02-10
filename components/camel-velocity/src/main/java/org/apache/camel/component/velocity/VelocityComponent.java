@@ -37,6 +37,9 @@ public class VelocityComponent extends DefaultComponent {
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new VelocityEndpoint(uri, this, remaining, parameters);
+        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
+        VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining, parameters);
+        answer.setContentCache(cache);
+        return answer;
     }
 }
