@@ -68,12 +68,32 @@ public class VelocityContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    public void testCachedIsDefault() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello London");
+
+        template.sendBodyAndHeader("direct:c", "Body", "name", "London");
+        mock.assertIsSatisfied();
+
+        // now change content in the file in the classpath and try again
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", FileComponent.HEADER_FILE_NAME, "hello.vm");
+
+        mock.reset();
+        // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
+        mock.expectedBodiesReceived("Hello Paris");
+
+        template.sendBodyAndHeader("direct:c", "Body", "name", "Paris");
+        mock.assertIsSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=false").to("mock:result");
 
                 from("direct:b").to("velocity://org/apache/camel/component/velocity/hello.vm?contentCache=true").to("mock:result");
+
+                from("direct:c").to("velocity://org/apache/camel/component/velocity/hello.vm").to("mock:result");
             }
         };
     }
