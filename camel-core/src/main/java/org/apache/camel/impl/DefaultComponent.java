@@ -92,7 +92,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
             // if endpoint is strict (not lenient) and we have unknown parameters configured then
             // fail if there are parameters that could not be set, then they are probably miss spelt or not supported at all
             if (!endpoint.isLenientProperties()) {
-                validateUnknownParameters(uri, parameters, null);
+                validateParameters(uri, parameters, null);
             }
         }
 
@@ -100,14 +100,14 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Strategy for validation of unknown parameters not able to be resolved to any endpoint options.
+     * Strategy for validation of parameters, that was not able to be resolved to any endpoint options.
      *
      * @param uri          the uri - the uri the end user provided untouched
      * @param parameters   the parameters, an empty map if no parameters given
      * @param optionPrefix optional prefix to filter the parameters for validation. Use <tt>null</tt> for validate all.
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
-    protected void validateUnknownParameters(String uri, Map parameters, String optionPrefix) {
+    protected void validateParameters(String uri, Map parameters, String optionPrefix) {
         Map param = parameters;
         if (optionPrefix != null) {
             param = IntrospectionSupport.extractProperties(parameters, optionPrefix);
