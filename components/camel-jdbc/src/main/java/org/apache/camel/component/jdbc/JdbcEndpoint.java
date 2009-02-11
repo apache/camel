@@ -31,6 +31,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
     private DataSource dataSource;
 
+    public JdbcEndpoint() {
+    }
+
     public JdbcEndpoint(String endpointUri, Component component, DataSource dataSource) {
         super(endpointUri, component);
         this.dataSource = dataSource;
@@ -48,8 +51,24 @@ public class JdbcEndpoint extends DefaultEndpoint {
         return new JdbcProducer(this, dataSource, readSize);
     }
 
+    public int getReadSize() {
+        return readSize;
+    }
+
     public void setReadSize(int readSize) {
         this.readSize = readSize;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    public void setDataSource(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return "jdbc";
+    }
 }
