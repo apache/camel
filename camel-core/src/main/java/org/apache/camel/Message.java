@@ -32,15 +32,13 @@ public interface Message {
 
     /**
      * Returns the id of the message
-     *
-     * @return the id of the message
      */
     String getMessageId();
 
     /**
      * Sets the id of the message
      *
-     * @param messageId
+     * @param messageId id of the message
      */
     void setMessageId(String messageId);
 
@@ -79,7 +77,7 @@ public interface Message {
     /**
      * Removes the named header from this message
      *
-     * @param name
+     * @param name name of the header
      * @return the old value of the header
      */
     Object removeHeader(String name);
@@ -94,14 +92,12 @@ public interface Message {
     /**
      * Set all the headers associated with this message
      *
-     * @param headers
+     * @param headers headers to set
      */
     void setHeaders(Map<String, Object> headers);
 
     /**
      * Returns the body of the message as a POJO
-     *
-     * @return the body of the message
      */
     Object getBody();
 
@@ -115,11 +111,16 @@ public interface Message {
 
     /**
      * Sets the body of the message
+     *
+     * @param body the body
      */
     void setBody(Object body);
 
     /**
      * Sets the body of the message as a specific type
+     *
+     * @param body the body
+     * @param type the type of the body
      */
     <T> void setBody(Object body, Class<T> type);
 
@@ -133,6 +134,8 @@ public interface Message {
 
     /**
      * Copies the contents of the other message into this message
+     *
+     * @param message the other message
      */
     void copyFrom(Message message);
 
@@ -176,7 +179,7 @@ public interface Message {
     /**
      * Set all the attachments associated with this message
      *
-     * @param attachments
+     * @param attachments attachements
      */
     void setAttachments(Map<String, DataHandler> attachments);
 

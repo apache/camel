@@ -46,7 +46,7 @@ public class LoopProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         // Intermediate conversion to String is needed when direct conversion to Integer is not available
         // but evaluation result is a textual representation of a numeric value.
-        String text = ExchangeHelper.convertToType(exchange, String.class, expression.evaluate(exchange));
+        String text = expression.evaluate(exchange, String.class);
         Integer value = ExchangeHelper.convertToType(exchange, Integer.class, text);
         if (value == null) {
             // TODO: we should probably catch evaluate/convert exception an set is as fault (after fix for CAMEL-316)

@@ -17,13 +17,14 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.RuntimeCamelException;
 
 /**
  * A proxy creation failed trying to create a proxy of a given type and on an given endpoint
  *
  * @version $Revision$
  */
-public class ProxyInstantiationException extends RuntimeException {
+public class ProxyInstantiationException extends RuntimeCamelException {
     private final Class<?> type;
     private final Endpoint endpoint;
 

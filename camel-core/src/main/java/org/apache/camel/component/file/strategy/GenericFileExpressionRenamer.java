@@ -34,8 +34,7 @@ public class GenericFileExpressionRenamer<T> implements GenericFileRenamer<T> {
     public GenericFile<T> renameFile(GenericFileExchange<T> exchange, GenericFile<T> file) {
         ObjectHelper.notNull(expression, "expression");
 
-        Object eval = expression.evaluate(exchange);
-        String newName = exchange.getContext().getTypeConverter().convertTo(String.class, eval);
+        String newName = expression.evaluate(exchange, String.class);
 
         // clone and change the name
         GenericFile<T> result = file.clone();

@@ -36,4 +36,13 @@ public interface Expression {
      * @return the value of the expression
      */
     Object evaluate(Exchange exchange);
+
+    /**
+     * Returns the value of the expression on the given exchange
+     *
+     * @param exchange the message exchange on which to evaluate the expression
+     * @param type the expected type of the evaluation result
+     * @return the value of the expression
+     */
+    <T> T evaluate(Exchange exchange, Class<T> type);
 }

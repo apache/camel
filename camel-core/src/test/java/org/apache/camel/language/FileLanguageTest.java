@@ -71,7 +71,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:length}", file.length());
 
         // modified is a Date object
-        Date modified = (Date) FileLanguage.file("file:modified").evaluate(exchange);
+        Date modified = FileLanguage.file("file:modified").evaluate(exchange, Date.class);
         assertEquals(new Date(file.lastModified()), modified);
     }
 

@@ -366,6 +366,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
 
     private void evaluteFileExpression() {
         if (fileExpressionResult == null) {
+            // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = new DefaultExchange(endpoint.getCamelContext());
             fileExpressionResult = (String) endpoint.getFileExpression().evaluate(dummy);
         }

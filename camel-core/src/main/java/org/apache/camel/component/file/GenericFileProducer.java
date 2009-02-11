@@ -171,8 +171,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             if (log.isDebugEnabled()) {
                 log.debug("Filename evaluated as expression: " + expression);
             }
-            Object result = expression.evaluate(exchange);
-            name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
+            name = expression.evaluate(exchange, String.class);
         }
 
         String endpointFile = endpoint.getConfiguration().getFile();

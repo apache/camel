@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.impl.ExpressionSupport;
 
 /**
  * A helper class for developers wishing to implement an {@link Expression} using Java code with a minimum amount
- * of code to write so that the developer only needs to implement the {@link #evaluate(Exchange)} method.
+ * of code to write so that the developer only needs to implement one of the
+ * {@link #evaluate(Exchange)} or {@link #evaluate(org.apache.camel.Exchange, Class)} methods.
  *
  * @version $Revision$
  */
 public abstract class ExpressionAdapter extends ExpressionSupport {
 
-    public abstract Object evaluate(Exchange exchange);
-
     protected String assertionFailureMessage(Exchange exchange) {
         return toString();
+    }
+
+    public Object evaluate(Exchange exchange) {
+        return evaluate(exchange, Object.class);
     }
 }

@@ -36,6 +36,11 @@ public class ValueBuilder implements Expression {
         return expression.evaluate(exchange);
     }
 
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
     public Expression getExpression() {
         return expression;
     }

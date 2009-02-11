@@ -17,7 +17,6 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
-
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -29,6 +28,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -185,7 +185,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void validate() {
-        ObjectHelper.notNull(getEntityManagerFactory(), "entityManagerFactory property");
+        ObjectHelper.notNull(getEntityManagerFactory(), "entityManagerFactory");
     }
 
     protected JpaTemplate createTemplate() {
@@ -203,7 +203,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     protected TransactionStrategy createTransactionStrategy() {
         EntityManagerFactory emf = getEntityManagerFactory();
         return JpaTemplateTransactionStrategy.newInstance(emf, getTemplate());
-        // return new DefaultTransactionStrategy(emf);
     }
 
     protected Expression createProducerExpression() {
@@ -211,7 +210,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         if (type == null) {
             return ExpressionBuilder.bodyExpression();
         } else {
-            return new Expression() {
+            return new ExpressionAdapter() {
                 public Object evaluate(Exchange exchange) {
                     Object answer = exchange.getIn().getBody(type);
                     if (answer == null) {

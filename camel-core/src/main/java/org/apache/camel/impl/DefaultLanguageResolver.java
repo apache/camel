@@ -33,6 +33,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected static final FactoryFinder LANGUAGE_FACTORY = new FactoryFinder("META-INF/services/org/apache/camel/language/");
     protected static final FactoryFinder LANGUAGE_RESOLVER = new FactoryFinder("META-INF/services/org/apache/camel/language/resolver/");
 
+    @SuppressWarnings("unchecked")
     public Language resolveLanguage(String name, CamelContext context) {
         Class type = null;
         try {
@@ -52,6 +53,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
         return noSpecificLanguageFound(name, context);
     }
 
+    @SuppressWarnings("unchecked")
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class type = null;
         try {

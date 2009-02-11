@@ -38,7 +38,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * @version $Revision$
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
-    
+
     protected enum Direction { IN, OUT }
     
     private Set<String> inFilter;
@@ -47,35 +47,13 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private Set<String> outFilter;
     private Pattern outFilterPattern;
 
-    private boolean isLowercase;
+    private boolean lowercase;
     private boolean allowNullValues;
     
-    /**
-     * Applies filtering logic to Camel Message header that is
-     * going to be copied to target message.
-     * 
-     * It returns true if the filtering logics return a match.  Otherwise,
-     * it returns false.  A match means the header should be excluded.
-     * 
-     * @param headerName 
-     * @param headerValue
-     * @return true if this header should be filtered out.
-     */
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue) {
         return doFiltering(Direction.OUT, headerName, headerValue);
     }
 
-    /**
-     * Applies filtering logic to an external message header message that 
-     * is going to be copied to Camel message header.
-     * 
-     * It returns true if the filtering logics return a match.  Otherwise,
-     * it returns false.  A match means the header should be excluded.
-     *  
-     * @param headerName 
-     * @param headerValue
-     * @return true if this header should be excluded.
-     */
     public boolean applyFilterToExternalHeaders(String headerName, Object headerValue) {
         return doFiltering(Direction.IN, headerName, headerValue);
     }
@@ -97,6 +75,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "out" direction filter set.  The "out" direction is referred to 
      * copying headers from a Camel message to an external message.
+     *
+     * @param value  the filter
      */
     public void setOutFilter(Set<String> value) {
         outFilter = value;
@@ -147,6 +127,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     /**
      * Sets the "in" direction filter set.  The "in" direction is referred to 
      * copying headers from an external message to a Camel message.
+     *
+     * @param value the filter
      */
     public void setInFilter(Set<String> value) {
         inFilter = value;
@@ -186,8 +168,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
      */
-    public boolean getIsLowercase() {
-        return isLowercase;
+    public boolean isLowercase() {
+        return lowercase;
     }
     
     /**
@@ -196,8 +178,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
      */
-    public void setIsLowercase(boolean value) {
-        isLowercase = value;
+    public void setLowercase(boolean value) {
+        lowercase = value;
     }
     
     public boolean getAllowNullValues() {
@@ -238,7 +220,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (isLowercase) {
+            if (lowercase) {
                 if (filter.contains(headerName.toLowerCase())) {
                     return true;
                 }

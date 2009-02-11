@@ -53,7 +53,6 @@ public final class ExpressionHelper {
      * @return the result of the evaluation as the specified type.
      */
     public static <T> T evaluateAsType(Expression expression, Exchange exchange, Class<T> resultType) {
-        Object value = expression.evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(resultType, exchange, value);
+        return expression.evaluate(exchange, resultType);
     }
 }

@@ -39,8 +39,7 @@ public class FileExpressionRenamer implements FileRenamer {
     public File renameFile(FileExchange exchange, File file) {
         ObjectHelper.notNull(expression, "expression");
 
-        Object result = expression.evaluate(exchange);
-        String name = exchange.getContext().getTypeConverter().convertTo(String.class, result);
+        String name = expression.evaluate(exchange, String.class);
 
         // must normalize path to cater for Windows and other OS
         name = FileUtil.normalizePath(name);
