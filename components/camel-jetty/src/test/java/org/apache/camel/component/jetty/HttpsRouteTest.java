@@ -55,12 +55,12 @@ public class HttpsRouteTest extends ContextTestSupport {
         super.tearDown();
     }
 
-    private void setSystemProp(String key, String value) {
+    protected void setSystemProp(String key, String value) {
         String originalValue = System.setProperty(key, value);
         originalValues.put(key, originalValue != null ? originalValue : NULL_VALUE_MARKER);
     }
 
-    private void restoreSystemProperties() {
+    protected void restoreSystemProperties() {
         for (Object key : originalValues.keySet()) {
             Object value = (String) originalValues.get(key);  
             if (NULL_VALUE_MARKER.equals(value)) {

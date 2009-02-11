@@ -47,6 +47,8 @@ import org.mortbay.jetty.servlet.SessionHandler;
  */
 public class JettyHttpComponent extends HttpComponent {
 
+    private static final String JETTY_SSL_KEYSTORE = "jetty.ssl.keystore";
+
     class ConnectorRef {
         Connector connector;
         CamelServlet servlet;
@@ -229,6 +231,13 @@ public class JettyHttpComponent extends HttpComponent {
             sslSocketConnector.setKeyPassword(sslKeyPassword);
             if (sslKeystore != null) {
                 sslSocketConnector.setKeystore(sslKeystore);
+            } else {
+                // try the keystore system property as a backup, jetty doesn't seem
+                // to read this property anymore
+                String keystoreProperty = System.getProperty(JETTY_SSL_KEYSTORE);
+                if (keystoreProperty != null) {
+                    sslSocketConnector.setKeystore(keystoreProperty);
+                }
             }
         }
         return sslSocketConnector;
