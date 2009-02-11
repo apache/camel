@@ -23,7 +23,7 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
   <!-- START SNIPPET: example -->
-  <camelContext useJmx="true" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <!-- lets parse files, transform them with XQuery and send them to JMS -->
     <route>

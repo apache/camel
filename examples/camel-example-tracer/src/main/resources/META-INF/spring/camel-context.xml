@@ -22,9 +22,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <!-- START SNIPPET: e3 -->
         <endpoint id="traced" uri="jpa://org.apache.camel.processor.interceptor.JpaTraceEventMessage?persistenceUnit=tracer"/>
         <!-- END SNIPPET: e3 -->

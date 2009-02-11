@@ -27,6 +27,9 @@ import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -46,11 +49,11 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     private static final String TYPES = "in,file,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));
+    private ExecutorService executor;
     private InputStream inputStream = System.in;
     private StreamEndpoint endpoint;
     private String uri;
     private boolean initialPromptDone;
-    private Thread scanThread;
 
     public StreamConsumer(StreamEndpoint endpoint, Processor processor, String uri) throws Exception {
         super(endpoint, processor);
@@ -71,23 +74,21 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStream = resolveStreamFromUrl();
         }
 
-        scanThread = new Thread(this, getThreadName(endpoint.getEndpointUri()));
-        scanThread.setDaemon(true);
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting thread: " + scanThread.getName());
-        }
-        scanThread.start();
+        executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
+            public Thread newThread(Runnable runnable) {
+                Thread thread = new Thread(runnable, getThreadName(endpoint.getEndpointUri()));
+                thread.setDaemon(true);
+                return thread;
+            }
+        });
+        executor.execute(this);
     }
 
     @Override
     public void doStop() throws Exception {
         // important: do not close the stream as it will close the standard system.in etc.
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Stopping thread: " + scanThread.getName());
-        }
-        // must use timeout to let this thread die
-        scanThread.join(1000);
-        scanThread = null;
+        executor.shutdownNow();
+        executor = null;
         super.doStop();
     }
 
