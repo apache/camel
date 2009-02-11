@@ -30,8 +30,13 @@
     </bean>
 
     <bean id="myHttpConnectionManager" class="org.apache.commons.httpclient.MultiThreadedHttpConnectionManager">
-        <property name="maxConnectionsPerHost" value="5"/>
+        <property name="params" ref="myHttpConnectionManagerParams"/>
     </bean>
+
+    <bean id="myHttpConnectionManagerParams" class="org.apache.commons.httpclient.params.HttpConnectionManagerParams">
+        <property name="defaultMaxConnectionsPerHost" value="5"/>
+    </bean>
+
     <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
