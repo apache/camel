@@ -21,6 +21,8 @@ import javax.xml.ws.Endpoint;
 import javax.xml.ws.Service;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.jaxws.EndpointImpl;
 import org.apache.hello_world_soap_http.Greeter;
@@ -36,7 +38,13 @@ public class CXFGreeterRouterTest extends CxfRouterTestSupport {
                                                 "SOAPService");
     private final QName routerPortName = new QName("http://apache.org/hello_world_soap_http",
                                                 "RouterPort");
-
+    
+    private final String testDocLitFaultBody = 
+        "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
+        + "<soap:Body><testDocLitFault xmlns=\"http://apache.org/hello_world_soap_http/types\">"
+        + "<faultType>NoSuchCodeLitFault</faultType></testDocLitFault>"
+        + "</soap:Body></soap:Envelope>";
+    
     @Override
     protected void setUp() throws Exception {
         applicationContext = createApplicationContext();
@@ -48,6 +56,7 @@ public class CXFGreeterRouterTest extends CxfRouterTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
+        
         if (applicationContext != null) {
             applicationContext.destroy();
         }
@@ -87,6 +96,16 @@ public class CXFGreeterRouterTest extends CxfRouterTestSupport {
             assertNotNull("The fault info should not be null", fault.getFaultInfo());
         }
 
+    }
+    
+    public void testRoutingSOAPFault() throws Exception {
+        try {
+            template.sendBody("http://localhost:9003/CamelContext/RouterPort", testDocLitFaultBody);
+            fail("Should get an exception here.");
+        } catch (RuntimeCamelException exception) {
+            assertTrue("It should get the response error", exception.getCause() instanceof HttpOperationFailedException);
+            assertEquals("Get a wrong response code", ((HttpOperationFailedException)exception.getCause()).getStatusCode(), 500);
+        }
     }
     
     @Override
