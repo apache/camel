@@ -16,22 +16,30 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.Comparator;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-import com.sun.syndication.feed.synd.SyndEntry;
+import org.apache.camel.builder.RouteBuilder;
 
-public class RssDateComparator implements Comparator<SyndEntry> {
+public class RssEndpointTest extends RssPollingConsumerTest {
 
-    public int compare(SyndEntry s1, SyndEntry s2) {
-        return getUpdatedDate(s2).compareTo(getUpdatedDate(s1));
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                RssEndpoint rss = new RssEndpoint();
+                rss.setCamelContext(context);
+                rss.setFeedUri("file:src/test/data/rss20.xml");
+                rss.setSplitEntries(false);
+
+                Map map = new HashMap();
+                map.put("delay", 100);
+                rss.setConsumerProperties(map);
+
+                context.addEndpoint("myrss", rss);
+
+                from("myrss").to("mock:result");
+            }
+        };
     }
 
-    private Date getUpdatedDate(SyndEntry entry) {
-        Date date = entry.getUpdatedDate();
-        if (date == null) {
-            date = entry.getPublishedDate();
-        }        
-        return date;
-    }    
 }

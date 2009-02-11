@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.io.IOException;
-
-import com.sun.syndication.feed.synd.SyndFeed;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.FeedPollingConsumer;
 

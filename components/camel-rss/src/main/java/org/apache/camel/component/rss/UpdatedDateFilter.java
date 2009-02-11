@@ -42,7 +42,8 @@ public class UpdatedDateFilter implements EntryFilter {
 
     public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {        
         Date updated = ((SyndEntry)entry).getUpdatedDate();
-        if (updated == null) { // never been updated so get published date
+        if (updated == null) {
+            // never been updated so get published date
             updated = ((SyndEntry)entry).getPublishedDate();
         }
         if (updated == null) {

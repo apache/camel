@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.rss;
 
 import com.sun.syndication.feed.synd.SyndFeed;

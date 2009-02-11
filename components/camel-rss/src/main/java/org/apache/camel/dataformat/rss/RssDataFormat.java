@@ -18,16 +18,14 @@ package org.apache.camel.dataformat.rss;
 
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.List;
 
-import com.sun.syndication.feed.synd.SyndEntry;
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 /**
  * RSS DataFormat
  * <p/>
@@ -49,7 +47,7 @@ public class RssDataFormat implements DataFormat {
         if (xml != null) {
             out.write(xml.getBytes());
         } else {
-            LOG.debug("Couldn't marshal RSS feed to XML.");
+            LOG.debug("Cannot marshal RSS feed to XML.");
         }
     }
 

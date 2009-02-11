@@ -14,24 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.rss;
+package org.apache.camel.component.atom;
 
-import java.util.Comparator;
-import java.util.Date;
+import org.apache.camel.builder.RouteBuilder;
 
-import com.sun.syndication.feed.synd.SyndEntry;
+/**
+ * Unit test for AtomPollingConsumer
+ */
+public class AtomEndpointTest extends AtomPollingConsumerTest {
 
-public class RssDateComparator implements Comparator<SyndEntry> {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                AtomEndpoint atom = new AtomEndpoint();
+                atom.setCamelContext(context);
+                atom.setFeedUri("file:src/test/data/feed.atom");
+                atom.setSplitEntries(false);
 
-    public int compare(SyndEntry s1, SyndEntry s2) {
-        return getUpdatedDate(s2).compareTo(getUpdatedDate(s1));
+                context.addEndpoint("atomic", atom);
+
+                from("atomic").to("mock:result", "mock:result2");
+            }
+        };
     }
 
-    private Date getUpdatedDate(SyndEntry entry) {
-        Date date = entry.getUpdatedDate();
-        if (date == null) {
-            date = entry.getPublishedDate();
-        }        
-        return date;
-    }    
 }
