@@ -20,10 +20,8 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -37,16 +35,11 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class HttpComponent extends DefaultComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
-    protected HeaderFilterStrategy headerFilterStrategy;
     protected HttpBinding httpBinding;
 
-    public HttpComponent() {
-        this.setHeaderFilterStrategy(new HttpHeaderFilterStrategy());
-    }
-    
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      *
@@ -102,7 +95,7 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
         HttpClientParams clientParams = new HttpClientParams();
         IntrospectionSupport.setProperties(clientParams, parameters, "httpClient.");
         // validate that we could resolve all httpClient. parameters as this component is lenient
-        validateUnknownParameters(uri, parameters, "httpClient.");
+        validateParameters(uri, parameters, "httpClient.");
 
         configureParameters(parameters);
 
@@ -119,7 +112,6 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
                         "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
             }
         }
-
 
         HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
@@ -147,14 +139,6 @@ public class HttpComponent extends DefaultComponent implements HeaderFilterStrat
 
     public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
         this.httpConnectionManager = httpConnectionManager;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
     }
 
     public HttpBinding getHttpBinding() {

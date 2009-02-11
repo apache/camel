@@ -26,6 +26,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.HeaderFilterStrategyAware;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.httpclient.HttpClient;
@@ -38,14 +40,18 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  *
  * @version $Revision$
  */
-public class HttpEndpoint extends DefaultPollingEndpoint {
+public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 
+    private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpBinding binding;
     private HttpComponent component;
     private URI httpUri;
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+
+    public HttpEndpoint() {
+    }
 
     public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpConnectionManager httpConnectionManager) throws URISyntaxException {
         this(endPointURI, component, httpURI, new HttpClientParams(), httpConnectionManager, null);
@@ -81,6 +87,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint {
      * Factory method used by producers and consumers to create a new {@link HttpClient} instance
      */
     public HttpClient createHttpClient() {
+        ObjectHelper.notNull(clientParams, "clientParams");
+        ObjectHelper.notNull(httpConnectionManager, "httpConnectionManager");
+
         HttpClient answer = new HttpClient(getClientParams());
         answer.setHttpConnectionManager(httpConnectionManager);
         HttpClientConfigurer configurer = getHttpClientConfigurer();
@@ -103,9 +112,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint {
         return true;
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
+
+
     // Properties
     //-------------------------------------------------------------------------
-
 
     /**
      * Provide access to the client parameters used on new {@link HttpClient} instances
@@ -144,16 +157,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint {
         return binding;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return component.getHeaderFilterStrategy();
-    }
-
     public void setBinding(HttpBinding binding) {
         this.binding = binding;
-    }
-
-    public boolean isSingleton() {
-        return true;
     }
 
     public String getPath() {
@@ -178,4 +183,25 @@ public class HttpEndpoint extends DefaultPollingEndpoint {
     public URI getHttpUri() {
         return httpUri;
     }
+
+    public void setHttpUri(URI httpUri) {
+        this.httpUri = httpUri;
+    }
+
+    public HttpConnectionManager getHttpConnectionManager() {
+        return httpConnectionManager;
+    }
+
+    public void setHttpConnectionManager(HttpConnectionManager httpConnectionManager) {
+        this.httpConnectionManager = httpConnectionManager;
+    }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
 }
