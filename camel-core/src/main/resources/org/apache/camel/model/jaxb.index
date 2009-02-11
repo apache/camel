@@ -21,6 +21,7 @@ ChoiceType
 ConvertBodyType
 DelayerType
 Description
+EnricherType
 ExceptionType
 ExpressionSubElementType
 FilterType

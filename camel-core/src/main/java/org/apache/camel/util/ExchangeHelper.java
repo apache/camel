@@ -188,6 +188,11 @@ public final class ExchangeHelper {
      * @param source the source exchange which is not modified
      */
     public static void copyResults(Exchange result, Exchange source) {
+
+        // --------------------------------------------------------------------
+        //  TODO: merge logic with that of copyResultsPreservePattern()
+        // --------------------------------------------------------------------
+        
         if (result != source) {
             result.setException(source.getException());
             Message fault = source.getFault(false);
@@ -213,6 +218,68 @@ public final class ExchangeHelper {
             }
             result.getProperties().clear();
             result.getProperties().putAll(source.getProperties());
+        }
+    }
+
+    /**
+     * Copies the <code>source</code> exchange to <code>target</code> exchange
+     * preserving the {@link ExchangePattern} of <code>target</code>.  
+     * 
+     * @param source source exchange.
+     * @param result target exchange.
+     * 
+     * @see #resultMessage(Exchange)
+     * @see #faultMessage(Exchange)
+     */
+    public static void copyResultsPreservePattern(Exchange result, Exchange source) {
+
+        // --------------------------------------------------------------------
+        //  TODO: merge logic with that of copyResults()
+        // --------------------------------------------------------------------
+        
+        if (source == result) {
+            // no need to copy
+            return;
+        }
+        
+        // copy in message
+        Message m = source.getIn();
+        result.getIn().copyFrom(m);
+    
+        // copy out message
+        m = source.getOut(false);
+        if (m != null) {
+            // exchange pattern sensitive
+            getResultMessage(result).copyFrom(m);
+        }
+        
+        // copy fault message
+        m = source.getFault(false);
+        if (m != null) {
+            result.getFault().copyFrom(m);
+        }
+        
+        // copy exception
+        result.setException(source.getException());
+        
+        // copy properties
+        result.getProperties().clear();
+        result.getProperties().putAll(source.getProperties());
+    }
+
+    /**
+     * Returns the message where to write results in an
+     * exchange-pattern-sensitive way.
+     * 
+     * @param exchange
+     *            message exchange.
+     * @return result message.
+     */
+    public static Message getResultMessage(Exchange exchange) {
+        if (exchange.getPattern().isOutCapable()) {
+            return exchange.getOut();
+        } else {
+            return exchange.getIn();
         }
     }
 

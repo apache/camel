@@ -52,6 +52,7 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -1788,6 +1789,24 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return (Type) this;
     }
 
+    /**
+     * Enriches an exchange with additional data obtained from a
+     * <code>resourceUri</code>.
+     * 
+     * @param resourceUri
+     *            URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy
+     *            aggregation strategy to aggregate input data and additional
+     *            data.
+     * @return this processor type
+     * @see Enricher
+     * 
+     */
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
+        addOutput(new EnricherType(aggregationStrategy, resourceUri));
+        return (Type)this;
+    }
+    
     // DataFormat support
     // -------------------------------------------------------------------------
 
