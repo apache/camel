@@ -37,18 +37,17 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     private boolean feedHeader = true;
     private boolean sortEntries;
 
+    public FeedEndpoint() {
+    }
+
     public FeedEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component);
         this.feedUri = feedUri;
-
-        ObjectHelper.notNull(feedUri, "feedUri property");
     }
 
     public FeedEndpoint(String endpointUri, String feedUri) {
         this(endpointUri);
         this.feedUri = feedUri;
-
-        ObjectHelper.notNull(feedUri, "feedUri property");
     }
 
     public FeedEndpoint(String endpointUri) {
@@ -64,6 +63,8 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(feedUri, "feedUri");
+
         FeedPollingConsumer answer;
         if (isSplitEntries()) {
             answer = createEntryPollingConsumer(this, processor, filter, lastUpdate);
@@ -106,6 +107,11 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
      * @return the created exchange
      */
     public abstract Exchange createExchange(Object feed, Object entry);
+
+    @Override
+    protected String createEndpointUri() {
+        return "atom:" + feedUri;
+    }
 
     // Properties
     //-------------------------------------------------------------------------

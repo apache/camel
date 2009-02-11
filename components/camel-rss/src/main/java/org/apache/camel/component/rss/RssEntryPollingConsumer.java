@@ -16,21 +16,17 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 
 import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
-import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
 
 
 /**
  * Consumer to poll RSS feeds and return each entry from the feed step by step.
- *
  */
 public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
 

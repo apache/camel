@@ -18,16 +18,13 @@ package org.apache.camel.component.rss;
 
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.impl.DefaultComponent;
 
 /**
  * An <a href="http://camel.apache.org/rss.html">RSS Component</a>.
  * <p/>
  * Camel uses <a href="https://rome.dev.java.net/">ROME</a> as the RSS implementation.  
- *
  */
 public class RssComponent extends FeedComponent {
 

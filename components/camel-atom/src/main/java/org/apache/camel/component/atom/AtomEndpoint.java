@@ -18,17 +18,12 @@ package org.apache.camel.component.atom;
 
 import java.util.Date;
 
-import org.apache.abdera.model.Entry;
 import org.apache.abdera.model.Feed;
-import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.component.feed.FeedPollingConsumer;
-import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * An <a href="http://camel.apache.org/atom.html">Atom Endpoint</a>.
@@ -40,7 +35,10 @@ public class AtomEndpoint extends FeedEndpoint {
      * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
      */
     public static final String HEADER_ATOM_FEED = "org.apache.camel.component.atom.feed";
-    
+
+    public AtomEndpoint() {
+    }
+
     public AtomEndpoint(String endpointUri, FeedComponent component, String feedUri) {
         super(endpointUri, component, feedUri);
     }
