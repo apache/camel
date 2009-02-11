@@ -165,7 +165,11 @@ public final class CxfBinding {
         if (context != null) {
             MessageContext messageContext = new WrappedMessageContext(context, null, Scope.HANDLER);
             response.put(Client.RESPONSE_CONTEXT, messageContext);
-
+            //put the ResponseCode in the response context
+            Object value = context.get(Message.RESPONSE_CODE);
+            if (value != null) {
+                response.put(Message.RESPONSE_CODE, value);
+            }
         }
     }
 
