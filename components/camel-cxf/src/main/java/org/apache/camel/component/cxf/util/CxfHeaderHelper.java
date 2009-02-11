@@ -105,16 +105,17 @@ public final class CxfHeaderHelper {
 
         // propagate request context
         key = Client.REQUEST_CONTEXT;
-        value = message.get(key);
+        value = message.get(key);        
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value)) {
             headers.put(key, value);
         }
 
         // propagate response context
         key = Client.RESPONSE_CONTEXT;
-        value = message.get(key);
+        value = message.get(key);        
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value)) {
             headers.put(key, value);
-        }
+        }      
+        
     }
 }
