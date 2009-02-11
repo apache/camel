@@ -25,6 +25,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.impl.ExpressionAdapter;
 import static org.apache.camel.builder.xml.XPathBuilder.xpath;
 
 /**
@@ -100,7 +101,7 @@ public class NeilSplitterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                Expression catFightCats = new Expression() {
+                Expression catFightCats = new ExpressionAdapter() {
                     public Object evaluate(Exchange exchange) {
                         CatFight catFight = (CatFight)
                                 exchange.getIn().getBody();

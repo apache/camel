@@ -50,11 +50,9 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
     @SuppressWarnings("unchecked")
     public void setExpressions(List<Expression> expressions) {
         if (expressions.isEmpty()) {
-            throw new IllegalArgumentException(
-                    "Expression required to resolve sequence number");
+            throw new IllegalArgumentException("Expression required to resolve sequence number");
         } else if (expressions.size() > 1) {
-            throw new IllegalArgumentException(
-                    "More than one expression currently not supported");
+            throw new IllegalArgumentException("More than one expression currently not supported");
         }
         expression = expressions.get(0);
     }
@@ -78,7 +76,7 @@ public class DefaultExchangeComparator implements ExpressionResultComparator {
     }
 
     private long getSequenceNumber(Exchange exchange) {
-        return (Long)expression.evaluate(exchange);
+        return expression.evaluate(exchange, Long.class);
     }
     
 }

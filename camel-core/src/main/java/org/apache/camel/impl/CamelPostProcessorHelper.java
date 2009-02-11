@@ -34,6 +34,7 @@ import org.apache.camel.Service;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ProxyHelper;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -90,8 +91,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 Consumer consumer = endpoint.createConsumer(processor);
                 startService(consumer);
             } catch (Exception e) {
-                LOG.warn(e);
-                throw org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException(e);
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
     }
@@ -166,7 +166,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             startService(pollingConsumer);
             return pollingConsumer;
         } catch (Exception e) {
-            throw org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
@@ -180,7 +180,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
             startService(producer);
             return producer;
         } catch (Exception e) {
-            throw org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 }

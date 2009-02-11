@@ -23,6 +23,7 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.language.constant.ConstantLanguage;
 
@@ -41,7 +42,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileNameExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileName", String.class);
             }
@@ -54,7 +55,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileNameNoExtensionExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader("CamelFileName", String.class);
                 if (name != null) {
@@ -77,7 +78,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileNameExtensionExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader("CamelFileName", String.class);
                 if (name != null) {
@@ -95,7 +96,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileParentExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileParent", String.class);
             }
@@ -108,7 +109,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression filePathExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFilePath", String.class);
             }
@@ -121,7 +122,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileAbsolutePathExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileAbsolutePath", String.class);
             }
@@ -134,7 +135,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileCanoicalPathExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileCanonicalPath", String.class);
             }
@@ -147,7 +148,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileSizeExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileLength", Long.class);
             }
@@ -160,7 +161,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression fileLastModifiedExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeader("CamelFileLastModified", Date.class);
             }
@@ -174,7 +175,7 @@ public final class FileExpressionBuilder {
 
 
     public static Expression dateExpression(final String command, final String pattern) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 if ("file".equals(command)) {
                     Date date = exchange.getIn().getHeader("CamelFileLastModified", Date.class);
@@ -198,7 +199,7 @@ public final class FileExpressionBuilder {
     }
 
     public static Expression simpleExpression(final String simple) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions

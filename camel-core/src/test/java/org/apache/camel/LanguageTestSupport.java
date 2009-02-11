@@ -79,11 +79,11 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         Expression expression = language.createExpression(expressionText);
         assertNotNull("No Expression could be created for text: " + expressionText + " language: " + language, expression);
         
-        Object value = expression.evaluate(exchange);
-
-        // lets try convert to the type of the expected
+        Object value;
         if (expectedValue != null) {
-            value = ExchangeHelper.convertToType(exchange, expectedValue.getClass(), value);
+            value = expression.evaluate(exchange, expectedValue.getClass());
+        } else {
+            value = expression.evaluate(exchange);
         }
 
         log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);

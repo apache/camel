@@ -34,7 +34,7 @@ public class JhcHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
         getOutFilter().add(JhcProducer.HTTP_RESPONSE_CODE);
-        setIsLowercase(true);
+        setLowercase(true);
 
         // filter headers begin with "org.apache.camel"
         setOutFilterPattern("(org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");   

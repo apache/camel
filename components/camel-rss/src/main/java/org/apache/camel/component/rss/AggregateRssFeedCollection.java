@@ -19,12 +19,12 @@ package org.apache.camel.component.rss;
 
 import com.sun.syndication.feed.synd.SyndFeed;
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.processor.aggregate.DefaultAggregationCollection;
 
 public class AggregateRssFeedCollection extends DefaultAggregationCollection {
     public AggregateRssFeedCollection() {
-        super(new Expression() {
+        super(new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getBody() instanceof SyndFeed;
             }

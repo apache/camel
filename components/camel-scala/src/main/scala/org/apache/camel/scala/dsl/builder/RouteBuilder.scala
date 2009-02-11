@@ -53,8 +53,8 @@ class RouteBuilder extends Preamble with DSL with Routes {
 
   def from(uri: String) = new SRouteType(builder.from(uri), this)
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = {
-     val exception = new SExceptionType(builder.onException(manifest.erasure))(this)
-     exception.apply(block)
+    val exception = new SExceptionType(builder.onException(manifest.erasure))(this)
+    exception.apply(block)
   }
 
   def attempt = stack.top.attempt

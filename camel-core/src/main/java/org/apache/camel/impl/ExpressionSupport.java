@@ -33,6 +33,11 @@ public abstract class ExpressionSupport implements Expression, Predicate {
         return ObjectHelper.evaluateValuePredicate(value);
     }
 
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
     public void assertMatches(String text, Exchange exchange) {
         if (!matches(exchange)) {
             throw new AssertionError(text + " " + assertionFailureMessage(exchange) + " for exchange: " + exchange);

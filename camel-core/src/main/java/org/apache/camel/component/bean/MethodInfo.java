@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.util.ExchangeHelper;
@@ -170,7 +171,8 @@ public class MethodInfo {
             Expression parameterExpression = parameters.get(i).getExpression();
             expressions[i] = parameterExpression;
         }
-        return new Expression() {
+        return new ExpressionAdapter() {
+            @SuppressWarnings("unchecked")
             public Object evaluate(Exchange exchange) {
                 Object[] answer = new Object[size];
                 Object body = exchange.getIn().getBody();
@@ -183,11 +185,9 @@ public class MethodInfo {
                     if (multiParameterArray) {
                         value = ((Object[])body)[i];
                     } else {
-                        value = expressions[i].evaluate(exchange);
+                        value = expressions[i].evaluate(exchange, parameters.get(i).getType());
                     }
                     // now lets try to coerce the value to the required type
-                    Class expectedType = parameters.get(i).getType();
-                    value = ExchangeHelper.convertToType(exchange, expectedType, value);
                     answer[i] = value;
                 }
                 return answer;

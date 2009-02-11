@@ -51,6 +51,7 @@ public abstract class MessageSupport implements Message {
         return getBody(type, getBody());
     }
 
+    @SuppressWarnings({"unchecked" })
     protected <T> T getBody(Class<T> type, Object body) {
         Exchange e = getExchange();
         if (e != null) {

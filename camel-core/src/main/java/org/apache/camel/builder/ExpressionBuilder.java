@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.bean.BeanLanguage;
 import org.apache.camel.language.simple.SimpleLanguage;
 import org.apache.camel.processor.DeadLetterChannel;
@@ -54,7 +55,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the header value
      */
     public static Expression headerExpression(final String headerName) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object header = exchange.getIn().getHeader(headerName);
                 if (header == null) {
@@ -78,7 +79,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the inbound headers
      */
     public static Expression headersExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getHeaders();
             }
@@ -97,7 +98,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the header value
      */
     public static Expression outHeaderExpression(final String headerName) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Message out = exchange.getOut(false);
                 if (out == null) {
@@ -125,7 +126,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the headers
      */
     public static Expression outHeadersExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getOut().getHeaders();
             }
@@ -144,7 +145,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the exception set on the exchange
      */
     public static Expression exchangeExceptionExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Throwable exception = exchange.getException();
                 if (exception == null) {
@@ -167,7 +168,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the exception message set on the exchange
      */
     public static Expression exchangeExceptionMessageExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Throwable exception = exchange.getException();
                 if (exception == null) {
@@ -191,7 +192,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the property value
      */
     public static Expression propertyExpression(final String propertyName) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getProperty(propertyName);
             }
@@ -211,7 +212,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the properties
      */
     public static Expression propertiesExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getProperties();
             }
@@ -241,7 +242,7 @@ public final class ExpressionBuilder {
      */
     public static Expression systemPropertyExpression(final String propertyName,
                                                       final String defaultValue) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return System.getProperty(propertyName, defaultValue);
             }
@@ -260,7 +261,7 @@ public final class ExpressionBuilder {
      * @return an expression object which will return the constant value
      */
     public static Expression constantExpression(final Object value) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return value;
             }
@@ -276,7 +277,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the exchanges inbound message body
      */
     public static Expression bodyExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getBody();
             }
@@ -293,7 +294,7 @@ public final class ExpressionBuilder {
      * to the given type
      */
     public static <T> Expression bodyExpression(final Class<T> type) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getBody(type);
             }
@@ -309,7 +310,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the out messages body
      */
     public static Expression outBodyExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Message out = exchange.getOut(false);
                 if (out == null) {
@@ -330,7 +331,7 @@ public final class ExpressionBuilder {
      * to the given type
      */
     public static <T> Expression outBodyExpression(final Class<T> type) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Message out = exchange.getOut(false);
                 if (out == null) {
@@ -350,7 +351,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the fault messages body
      */
     public static Expression faultBodyExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getFault().getBody();
             }
@@ -367,7 +368,7 @@ public final class ExpressionBuilder {
      * to the given type
      */
     public static <T> Expression faultBodyExpression(final Class<T> type) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getFault().getBody(type);
             }
@@ -383,7 +384,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the exchange
      */
     public static Expression exchangeExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange;
             }
@@ -399,7 +400,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the IN message
      */
     public static Expression inMessageExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn();
             }
@@ -415,7 +416,7 @@ public final class ExpressionBuilder {
      * Returns the expression for the OUT message
      */
     public static Expression outMessageExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getOut();
             }
@@ -431,10 +432,9 @@ public final class ExpressionBuilder {
      * Returns an expression which converts the given expression to the given type
      */
     public static Expression convertTo(final Expression expression, final Class type) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+                return expression.evaluate(exchange, type);
             }
 
             @Override
@@ -450,7 +450,7 @@ public final class ExpressionBuilder {
      */
     public static Expression tokenizeExpression(final Expression expression,
                                                 final String token) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 Scanner scanner = getScanner(exchange, value);
@@ -472,7 +472,7 @@ public final class ExpressionBuilder {
     public static Expression regexTokenize(final Expression expression,
                                            final String regexTokenizer) {
         final Pattern pattern = Pattern.compile(regexTokenizer);
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 Scanner scanner = getScanner(exchange, value);
@@ -530,7 +530,7 @@ public final class ExpressionBuilder {
     public static Expression regexReplaceAll(final Expression expression,
                                              final String regex, final String replacement) {
         final Pattern pattern = Pattern.compile(regex);
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = evaluateStringExpression(expression, exchange);
                 if (text == null) {
@@ -554,7 +554,7 @@ public final class ExpressionBuilder {
                                              final String regex, final Expression replacementExpression) {
 
         final Pattern pattern = Pattern.compile(regex);
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 String text = evaluateStringExpression(expression, exchange);
                 String replacement = evaluateStringExpression(replacementExpression, exchange);
@@ -575,7 +575,7 @@ public final class ExpressionBuilder {
      * Appends the String evaluations of the two expressions together
      */
     public static Expression append(final Expression left, final Expression right) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return evaluateStringExpression(left, exchange) + evaluateStringExpression(right, exchange);
             }
@@ -597,8 +597,7 @@ public final class ExpressionBuilder {
      *         not be evaluated
      */
     public static String evaluateStringExpression(Expression expression, Exchange exchange) {
-        Object value = expression.evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        return expression.evaluate(exchange, String.class);
     }
 
     /**
@@ -612,7 +611,7 @@ public final class ExpressionBuilder {
      * Returns an expression for the given system property
      */
     public static Expression systemProperty(final String name, final String defaultValue) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return System.getProperty(name, defaultValue);
             }
@@ -639,7 +638,7 @@ public final class ExpressionBuilder {
      * @return an expression which when evaluated will return the concatenated values
      */
     public static Expression concatExpression(final Collection<Expression> expressions, final String expression) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 StringBuffer buffer = new StringBuffer();
                 for (Expression expression : expressions) {
@@ -666,7 +665,7 @@ public final class ExpressionBuilder {
      * Returns an Expression for the inbound message id
      */
     public static Expression messageIdExpression() {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return exchange.getIn().getMessageId();
             }
@@ -679,7 +678,7 @@ public final class ExpressionBuilder {
     }
 
     public static Expression dateExpression(final String command, final String pattern) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 Date date;
                 if ("now".equals(command)) {
@@ -712,7 +711,7 @@ public final class ExpressionBuilder {
     }
 
     public static Expression simpleExpression(final String simple) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
@@ -727,7 +726,7 @@ public final class ExpressionBuilder {
     }
 
     public static Expression beanExpression(final String expression) {
-        return new Expression() {
+        return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions

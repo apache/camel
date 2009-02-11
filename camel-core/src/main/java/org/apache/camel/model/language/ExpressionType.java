@@ -116,6 +116,15 @@ public class ExpressionType implements Expression, Predicate {
         return expressionValue.evaluate(exchange);
     }
 
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        if (expressionValue == null) {
+            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
+            expressionValue = createExpression(routeContext);
+        }
+        ObjectHelper.notNull(expressionValue, "expressionValue");
+        return expressionValue.evaluate(exchange, type);
+    }
+
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
         if (!matches(exchange)) {
             throw new AssertionError(text + getExpression() + " for exchange: " + exchange);

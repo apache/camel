@@ -23,4 +23,9 @@ class ScalaExpression(val expression: Exchange => Any) extends Expression[Exchan
   
   def evaluate(exchange: Exchange) = expression(exchange).asInstanceOf[Object]
 
+  def evaluate[Target](exchange: Exchange, toType: Class[Target]) = {
+    var value = expression(exchange)
+    exchange.getContext().getTypeConverter().convertTo(toType, value)
+  }
+
 }

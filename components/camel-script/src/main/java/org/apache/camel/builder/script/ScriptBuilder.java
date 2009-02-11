@@ -77,6 +77,11 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         return evaluateScript(exchange);
     }
 
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
     public boolean matches(Exchange exchange) {
         Object scriptValue = evaluateScript(exchange);
         return matches(exchange, scriptValue);
