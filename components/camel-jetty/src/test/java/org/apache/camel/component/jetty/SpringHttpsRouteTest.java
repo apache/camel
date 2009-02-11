@@ -16,27 +16,20 @@
  */
 package org.apache.camel.component.jetty;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.SocketException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringHttpsRouteTest extends ContextTestSupport {
     private static final String NULL_VALUE_MARKER = ContextTestSupport.class.getCanonicalName();
