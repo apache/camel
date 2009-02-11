@@ -32,11 +32,11 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
  * @version $Revision$
  */
 public class JdbcRouteTest extends ContextTestSupport {
+    protected DataSource ds;
     private String driverClass = "org.hsqldb.jdbcDriver";
     private String url = "jdbc:hsqldb:mem:camel_jdbc";
     private String user = "sa";
     private String password = "";
-    private DataSource ds;
 
     public void testJdbcRoutes() throws Exception {
         // START SNIPPET: invoke

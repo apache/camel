@@ -17,12 +17,13 @@
 package org.apache.camel.component.sql;
 
 import java.util.Map;
-
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * @version $Revision:520964 $
@@ -44,11 +45,19 @@ public class SqlComponent extends DefaultComponent {
             dataSource = mandatoryLookup(dataSourceRef, DataSource.class);
         }
         
-        return new SqlEndpoint(uri, remaining.replaceAll("#", "?"), this, dataSource, parameters);
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
+        IntrospectionSupport.setProperties(jdbcTemplate, parameters, "template.");
+
+        String query = remaining.replaceAll("#", "?");
+
+        return new SqlEndpoint(uri, this, jdbcTemplate, query);
     }
 
     public void setDataSource(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
+    public DataSource getDataSource() {
+        return dataSource;
+    }
 }
