@@ -34,10 +34,10 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EnricherType extends OutputType<EnricherType> {
 
-    @XmlAttribute(required = true)
+    @XmlAttribute(name = "uri", required = true)
     private String resourceUri;
     
-    @XmlAttribute(required = false)
+    @XmlAttribute(name = "strategyRef", required = false)
     private String aggregationStrategyRef;
     
     @XmlTransient

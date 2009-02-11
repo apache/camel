@@ -26,7 +26,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <enrich resourceUri="direct:resource" aggregationStrategyRef="sampleAggregator"/>
+      <enrich uri="direct:resource" strategyRef="sampleAggregator"/>
       <to uri="mock:result"/>
     </route>
     <route>
