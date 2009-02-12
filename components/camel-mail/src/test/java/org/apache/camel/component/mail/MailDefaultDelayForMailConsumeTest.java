@@ -37,18 +37,19 @@ public class MailDefaultDelayForMailConsumeTest extends ContextTestSupport {
         mock.reset();
         template.sendBody("smtp://bond@localhost", "Hello Paris");
         mock.expectedBodiesReceived("Hello Paris");
-        // poll next mail and that is should be done within the default delay + 2 sec slack
-        mock.setResultWaitTime(MailConsumer.DEFAULT_CONSUMER_DELAY + 2000L);
+        // poll next mail and that is should be done within the default delay (overrule to 5 sec) + 2 sec slack
+        mock.setResultWaitTime(5000L + 2000L);
         mock.assertIsSatisfied();
         long delta = System.currentTimeMillis() - start;
-        assertTrue("Camel should not default poll the mailbox to often", delta > MailConsumer.DEFAULT_CONSUMER_DELAY - 1000L);
+        assertTrue("Camel should not default poll the mailbox to often", delta > 5000 - 1000L);
     }
 
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bond@localhost").to("mock:result");
+                // we overrule the default of 60 sec to 5 so the unit test is faster
+                from("pop3://bond@localhost?delay=5000").to("mock:result");
             }
         };
     }
