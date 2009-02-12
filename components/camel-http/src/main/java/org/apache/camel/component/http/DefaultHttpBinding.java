@@ -162,10 +162,14 @@ public class DefaultHttpBinding implements HttpBinding {
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
+        // Need to handle the GET Method which has no inputStream
+        if ("GET".equals(request.getMethod())) {
+            return null;
+        }
         if (isUseReaderForPayload()) {
             return request.getReader();
         } else {
-            return request.getInputStream();
+            return GZIPHelper.getInputStream(request);
         }
     }
 
