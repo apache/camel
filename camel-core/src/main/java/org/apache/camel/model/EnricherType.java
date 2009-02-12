@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -58,7 +59,8 @@ public class EnricherType extends OutputType<EnricherType> {
     
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        Enricher enricher = new Enricher(null, resourceUri);
+        Endpoint endpoint = routeContext.resolveEndpoint(resourceUri);
+        Enricher enricher = new Enricher(null, endpoint.createProducer());
         if (aggregationStrategyRef != null) {
             aggregationStrategy = routeContext.lookup(aggregationStrategyRef, AggregationStrategy.class);
         }
