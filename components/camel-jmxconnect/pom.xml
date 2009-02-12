@@ -52,8 +52,6 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-camel</artifactId>
-      <!-- TODO move to 5.2 ASAP -->
-      <version>5.2-SNAPSHOT</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -72,8 +70,6 @@
     <dependency>
       <groupId>org.apache.activemq</groupId>
       <artifactId>activemq-core</artifactId>
-      <!-- TODO move to 5.2 ASAP -->
-      <version>5.2-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
     <dependency>
