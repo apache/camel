@@ -16,31 +16,24 @@
  */
 package org.apache.camel.component.velocity;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.velocity.app.VelocityEngine;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
  * @version $Revision$
  */
-public class VelocityComponent extends DefaultComponent {
-    private VelocityEngine velocityEngine;
+public class VelocityEndpointTest extends VelocityTest {
 
-    public VelocityEngine getVelocityEngine() {
-        return velocityEngine;
-    }
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                VelocityEndpoint endpoint = new VelocityEndpoint();
+                endpoint.setCamelContext(context);
+                endpoint.setResourceUri("org/apache/camel/component/velocity/example.vm");
 
-    public void setVelocityEngine(VelocityEngine velocityEngine) {
-        this.velocityEngine = velocityEngine;
-    }
+                context.addEndpoint("velo", endpoint);
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
-        VelocityEndpoint answer = new VelocityEndpoint(uri, this, remaining);
-        answer.setContentCache(cache);
-        answer.setVelocityEngine(velocityEngine);
-        return answer;
+                from("direct:a").to("velo");
+            }
+        };
     }
 }
