@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.jivesoftware.smack.packet.Message;
 
 /**
@@ -40,6 +41,7 @@ public class XmppBinding {
     }
 
     public XmppBinding(HeaderFilterStrategy headerFilterStrategy) {
+        ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy");
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
@@ -53,12 +55,11 @@ public class XmppBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            // BUG?
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
                 message.setProperty(name, value);
             }
         }
+        
         String id = exchange.getExchangeId();
         if (id != null) {
             message.setProperty("exchangeId", id);
@@ -78,11 +79,11 @@ public class XmppBinding {
         for (String name : xmppMessage.getPropertyNames()) {
             Object value = xmppMessage.getProperty(name);
 
-            if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
                 answer.put(name, value);
             }
         }
+
         return answer;
     }
 }

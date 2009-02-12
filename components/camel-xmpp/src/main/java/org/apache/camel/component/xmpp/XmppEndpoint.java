@@ -18,13 +18,15 @@ package org.apache.camel.component.xmpp;
 
 import java.util.Iterator;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.AccountManager;
@@ -39,8 +41,9 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
  *
  * @version $Revision:520964 $
  */
-public class XmppEndpoint extends DefaultEndpoint {
+public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final transient Log LOG = LogFactory.getLog(XmppEndpoint.class);
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private XmppBinding binding;
     private XMPPConnection connection;
     private String host;
@@ -55,9 +58,11 @@ public class XmppEndpoint extends DefaultEndpoint {
     private String nickname;
     private String serviceName;
 
+    public XmppEndpoint() {
+    }
+
     public XmppEndpoint(String uri, XmppComponent component) {
         super(uri, component);
-        binding = new XmppBinding(component.getHeaderFilterStrategy());
     }
 
     public XmppEndpoint(String endpointUri) {
@@ -69,8 +74,7 @@ public class XmppEndpoint extends DefaultEndpoint {
             return createGroupChatProducer();
         } else {
             if (participant == null) {
-                throw new IllegalArgumentException("No room or participant configured on this endpoint: "
-                                                   + this);
+                throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
             return createPrivateChatProducer(participant);
         }
@@ -97,11 +101,20 @@ public class XmppEndpoint extends DefaultEndpoint {
         return new XmppExchange(this, getExchangePattern(), getBinding(), message);
     }
 
+    @Override
+    protected String createEndpointUri() {
+        return "xmpp://" + host + ":" + port + "/" + participant + "?serviceName=" + serviceName;
+    }
+
+    public boolean isSingleton() {
+        return true;
+    }
+    
     // Properties
     // -------------------------------------------------------------------------
     public XmppBinding getBinding() {
         if (binding == null) {
-            binding = new XmppBinding();
+            binding = new XmppBinding(headerFilterStrategy);
         }
         return binding;
     }
@@ -213,6 +226,14 @@ public class XmppEndpoint extends DefaultEndpoint {
         this.connection = connection;
     }
 
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
     protected XMPPConnection createConnection() throws XMPPException {
@@ -252,6 +273,7 @@ public class XmppEndpoint extends DefaultEndpoint {
 
             // presence is not needed to be sent after login
         }
+
         return connection;
     }
 
@@ -259,7 +281,7 @@ public class XmppEndpoint extends DefaultEndpoint {
      * If there is no "@" symbol in the room, find the chat service JID and
      * return fully qualified JID for the room as room@conference.server.domain
      */
-    public String resolveRoom() throws XMPPException, CamelException {
+    public String resolveRoom() throws XMPPException {
         if (room == null) {
             throw new IllegalArgumentException("room is not specified");
         }
@@ -271,17 +293,12 @@ public class XmppEndpoint extends DefaultEndpoint {
         XMPPConnection conn = getConnection();
         Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
         if (!iterator.hasNext()) {
-            throw new CamelException("Cannot find Multi User Chat service");
+            throw new XMPPException("Cannot find Multi User Chat service");
         }
         String chatServer = iterator.next();
-        if (LOG.isInfoEnabled()) {
-            LOG.info("Detected chat server: " + chatServer);
-        }
+        LOG.info("Detected chat server: " + chatServer);
 
         return room + "@" + chatServer;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

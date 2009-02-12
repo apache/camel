@@ -16,22 +16,28 @@
  */
 package org.apache.camel.component.xmpp;
 
-import org.apache.camel.RuntimeCamelException;
-import org.jivesoftware.smack.XMPPException;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * A runtime exception thrown if sending or receiving from XMPP fails
- *
- * @version $Revision:520964 $
- */
-public class RuntimeXmppException extends RuntimeCamelException {
+public class GoogleTalkEndpointTest extends GoogleTalkTest {
 
-    public RuntimeXmppException(XMPPException cause) {
-        super(cause);
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() throws Exception {
+                XmppEndpoint endpoint = new XmppEndpoint();
+                endpoint.setCamelContext(context);
+                endpoint.setHost("talk.google.com");
+                endpoint.setPort(5222);
+                endpoint.setUser("user");
+                endpoint.setPassword("secret");
+                endpoint.setServiceName("gmail.com");
+                endpoint.setParticipant("touser@gmail.com");
+
+                context.addEndpoint("talk", endpoint);
+
+                from("direct:start").
+                    to("talk").
+                    to("mock:result");
+            }
+        };
     }
-
-    public RuntimeXmppException(String message, XMPPException cause) {
-        super(message, cause);
-    }
-
 }

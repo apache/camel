@@ -19,33 +19,13 @@ package org.apache.camel.component.xmpp;
 import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * @version $Revision:520964 $
  */
-public class XmppComponent extends DefaultComponent implements HeaderFilterStrategyAware {
-
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
-
-    public XmppComponent() {
-    }
-
-    public XmppComponent(CamelContext context) {
-        super(context);
-    }
-
-    /**
-     * Static builder method
-     */
-    public static XmppComponent xmppComponent() {
-        return new XmppComponent();
-    }
+public class XmppComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
@@ -68,15 +48,8 @@ public class XmppComponent extends DefaultComponent implements HeaderFilterStrat
                 endpoint.setParticipant(remainingPath);
             }
         }
+        
         return endpoint;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-        
-    }
 }
