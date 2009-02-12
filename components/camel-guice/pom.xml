@@ -34,7 +34,6 @@
   <description>Camel Guice</description>
 
   <properties>
-    <!--<guiceyfruit-version>2.0-SNAPSHOT</guiceyfruit-version>-->
     <camel.osgi.export.pkg>org.apache.camel.guice.*</camel.osgi.export.pkg>
   </properties>
 
