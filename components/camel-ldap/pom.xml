@@ -25,7 +25,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.6.0</version>
   </parent>
 
   <artifactId>camel-ldap</artifactId>
