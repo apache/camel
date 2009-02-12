@@ -31,7 +31,7 @@ public class TestRouteBuilder extends RouteBuilder {
     public void configure() throws Exception {
 
         // START SNIPPET: consumer_route
-        from("restlet:http://localhost:9080/securedOrders?restletMethod=post&restletRealmRef=realm").process(new Processor() {
+        from("restlet:http://localhost:9080/securedOrders?restletMethod=post&restletRealm=#realm").process(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getOut().setBody(
                         "received [" + exchange.getIn().getBody()

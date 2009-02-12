@@ -17,11 +17,16 @@
 package org.apache.camel.component.restlet;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.restlet.data.Method;
 
 /**
@@ -30,7 +35,8 @@ import org.restlet.data.Method;
  * @version $Revision$
  */
 public class RestletEndpoint extends DefaultEndpoint {
-    
+    private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
+
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
@@ -40,12 +46,13 @@ public class RestletEndpoint extends DefaultEndpoint {
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
     private String uriPattern;
+    private Map<String, String> restletRealm;
+    private HeaderFilterStrategy headerFilterStrategy;
     private RestletBinding restletBinding;
-    private Map<String, String> realm;
+    private AtomicBoolean bindingInitialized = new AtomicBoolean(false);
 
-    public RestletEndpoint(RestletComponent component, String remaining, RestletBinding restletBinding) throws Exception {
+    public RestletEndpoint(RestletComponent component, String remaining) throws Exception {
         super(remaining, component);
-        this.restletBinding = restletBinding;
     }
 
     public boolean isSingleton() {
@@ -115,6 +122,18 @@ public class RestletEndpoint extends DefaultEndpoint {
     }
 
     public RestletBinding getRestletBinding() {
+        if (restletBinding == null) {
+            restletBinding = new DefaultRestletBinding();   
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create default Restlet Binding " + restletBinding);
+            }
+        }
+        
+        if (!bindingInitialized.getAndSet(true) 
+                && restletBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)restletBinding)
+                .setHeaderFilterStrategy(getHeaderFilterStrategy());
+        }
         return restletBinding;
     }
 
@@ -122,11 +141,26 @@ public class RestletEndpoint extends DefaultEndpoint {
         this.restletBinding = restletBinding;
     }
 
-    public Map<String, String> getRealm() {
-        return realm;
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public void setRealm(Map<String, String> realm) {
-        this.realm = realm;
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new RestletHeaderFilterStrategy();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Create Restlet default header filter strategy " 
+                        + headerFilterStrategy);
+            }
+        }
+        return headerFilterStrategy;
+    }
+
+    public void setRestletRealm(Map<String, String> restletRealm) {
+        this.restletRealm = restletRealm;
+    }
+
+    public Map<String, String> getRestletRealm() {
+        return restletRealm;
     }
 }
