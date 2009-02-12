@@ -34,7 +34,7 @@ public class JettyHttpClientOptionsTest extends ContextTestSupport {
         assertEquals("Get the wrong http client parameter", 5555, producer.getHttpClient().getParams().getSoTimeout());
 
         // send and receive
-        Object out = template.requestBody("http://localhost:8080/myapp/myservice", "Hello World");
+        Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
@@ -43,7 +43,7 @@ public class JettyHttpClientOptionsTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty:http://localhost:8080/myapp/myservice?httpClient.soTimeout=5555").transform().constant("Bye World");
+                from("jetty:http://localhost:9080/myapp/myservice?httpClient.soTimeout=5555").transform().constant("Bye World");
             }
         };
     }

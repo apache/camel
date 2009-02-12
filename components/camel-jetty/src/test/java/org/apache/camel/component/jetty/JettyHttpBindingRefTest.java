@@ -32,12 +32,12 @@ import org.apache.camel.impl.JndiRegistry;
 public class JettyHttpBindingRefTest extends ContextTestSupport {
 
     public void testDefaultHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:8080/myapp/myservice", "Hello World");
+        Object out = template.requestBody("http://localhost:9080/myapp/myservice", "Hello World");
         assertEquals("Bye World", context.getTypeConverter().convertTo(String.class, out));
     }
 
     public void testCustomHttpBinding() throws Exception {
-        Object out = template.requestBody("http://localhost:8081/myapp/myotherservice", "Hello World");
+        Object out = template.requestBody("http://localhost:9081/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
     }
 
@@ -56,9 +56,9 @@ public class JettyHttpBindingRefTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("jetty:http://localhost:8080/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
+                from("jetty:http://localhost:9080/myapp/myservice?httpBindingRef=default").transform().constant("Bye World");
 
-                from("jetty:http://localhost:8081/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
+                from("jetty:http://localhost:9081/myapp/myotherservice?httpBindingRef=myownbinder").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         throw new IllegalStateException("Not implemented");
                     }

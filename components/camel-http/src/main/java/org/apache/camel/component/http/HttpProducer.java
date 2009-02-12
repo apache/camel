@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -154,7 +155,7 @@ public class HttpProducer extends DefaultProducer<HttpExchange> implements Produ
         InputStream is = null;
         try {
             bos = new LoadingByteArrayOutputStream();
-            is = method.getResponseBodyAsStream();
+            is = GZIPHelper.getInputStream(method);            
             // in case of no response stream
             if (is == null) {
                 return null;

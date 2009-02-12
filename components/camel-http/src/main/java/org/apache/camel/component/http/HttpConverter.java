@@ -18,11 +18,13 @@ package org.apache.camel.component.http;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.Converter;
+import org.apache.camel.component.http.helper.GZIPHelper;
 
 /**
  * Some converter methods making it easy to convert the body of a message to servlet types or to switch between
@@ -46,6 +48,15 @@ public class HttpConverter {
         HttpServletRequest request = toServletRequest(message);
         if (request != null) {
             return request.getInputStream();
+        }
+        return null;
+    }
+
+    @Converter
+    public InputStream toInputStream(HttpMessage message) throws Exception {
+        HttpServletRequest request = toServletRequest(message);
+        if (request != null) {
+            return GZIPHelper.getInputStream(request);
         }
         return null;
     }
