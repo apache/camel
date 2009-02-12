@@ -23,7 +23,6 @@ import javax.jms.ExceptionListener;
 import javax.jms.Session;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.component.jms.requestor.Requestor;
@@ -60,20 +59,17 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private Requestor requestor;
     private QueueBrowseStrategy queueBrowseStrategy;
     private boolean attemptedToCreateQueueBrowserStrategy;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
 
     public JmsComponent() {
-        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
-    }
-
-    public JmsComponent(JmsConfiguration configuration) {
-        this.configuration = configuration;
-        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
     }
 
     public JmsComponent(CamelContext context) {
         super(context);
-        setHeaderFilterStrategy(new JmsHeaderFilterStrategy());
+    }
+
+    public JmsComponent(JmsConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     /**
@@ -347,6 +343,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         this.queueBrowseStrategy = queueBrowseStrategy;
     }
 
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -421,6 +425,9 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             }
         }
         setProperties(endpoint.getConfiguration(), parameters);
+
+        endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
+
         return endpoint;
     }
 
@@ -461,14 +468,6 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
         } else {
             return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
         }
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        this.headerFilterStrategy = strategy;
     }
 
 }
