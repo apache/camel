@@ -144,6 +144,10 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+        if (restletBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)restletBinding)
+                .setHeaderFilterStrategy(headerFilterStrategy);
+        }
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {

@@ -345,6 +345,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+        if (cxfBinding instanceof HeaderFilterStrategyAware) {
+            ((HeaderFilterStrategyAware)cxfBinding)
+                .setHeaderFilterStrategy(headerFilterStrategy);
+        }
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
