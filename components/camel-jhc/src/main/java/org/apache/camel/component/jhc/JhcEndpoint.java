@@ -19,7 +19,6 @@ package org.apache.camel.component.jhc;
 import java.net.URI;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -37,6 +36,7 @@ public class JhcEndpoint extends DefaultEndpoint {
 
     private HttpParams params;
     private URI httpUri;
+    private HeaderFilterStrategy headerFilterStrategy;
 
     public JhcEndpoint(String endpointUri, JhcComponent component, URI httpUri) {
         super(endpointUri, component);
@@ -101,11 +101,12 @@ public class JhcEndpoint extends DefaultEndpoint {
         return new JhcConsumer(this, processor);
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (getComponent() instanceof HeaderFilterStrategyAware) {
-            return ((HeaderFilterStrategyAware)getComponent()).getHeaderFilterStrategy();
-        } else {
-            return new JhcHeaderFilterStrategy();
-        }
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
     }
+
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
+    }
+    
 }
