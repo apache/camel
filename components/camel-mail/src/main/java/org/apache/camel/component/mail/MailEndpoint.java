@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
@@ -36,15 +37,14 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
     private MailConfiguration configuration;
+    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public MailEndpoint() {
-        this.binding = new MailBinding();
     }
 
     public MailEndpoint(String uri, MailComponent component, MailConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        this.binding = new MailBinding(component.getHeaderFilterStrategy());
     }
 
     public MailEndpoint(String endpointUri, MailConfiguration configuration) {
@@ -102,20 +102,22 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         return new MailExchange(this, getExchangePattern(), getBinding(), message);
     }
 
+    public boolean isSingleton() {
+        return false;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
+
     public MailBinding getBinding() {
         if (binding == null) {
-            binding = new MailBinding();
+            binding = new MailBinding(headerFilterStrategy);
         }
         return binding;
     }
 
     /**
-     * Sets the binding used to convert from a Camel message to and from a Mail
-     * message
-     *
-     * @param binding the binding to use
+     * Sets the binding used to convert from a Camel message to and from a Mail message
      */
     public void setBinding(MailBinding binding) {
         this.binding = binding;
@@ -129,7 +131,12 @@ public class MailEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
-    public boolean isSingleton() {
-        return false;
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        return headerFilterStrategy;
     }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
+        this.headerFilterStrategy = headerFilterStrategy;
+    }
+
 }

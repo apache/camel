@@ -23,10 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -34,9 +31,8 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision:520964 $
  */
-public class MailComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class MailComponent extends DefaultComponent {
     private MailConfiguration configuration;
-    private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
 
     public MailComponent() {
         this.configuration = new MailConfiguration();
@@ -116,11 +112,4 @@ public class MailComponent extends DefaultComponent implements HeaderFilterStrat
         return path;
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-    }
 }
