@@ -25,13 +25,10 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision:520964 $
@@ -43,6 +40,9 @@ public class RmiEndpoint extends DefaultEndpoint {
     private URI uri;
     private int port;
     private String method;
+
+    public RmiEndpoint() {
+    }
 
     protected RmiEndpoint(String endpointUri, RmiComponent component) throws URISyntaxException {
         super(endpointUri, component);
@@ -58,14 +58,21 @@ public class RmiEndpoint extends DefaultEndpoint {
         return false;
     }
 
-    public Consumer createConsumer(Processor processor) throws Exception {
+    @Override
+    protected String createEndpointUri() {
+        return uri.toString();
+    }
+
+    public Consumer createConsumer(Processor processor) {
+        ObjectHelper.notNull(uri, "uri");
         if (remoteInterfaces == null || remoteInterfaces.size() == 0) {
-            throw new RuntimeCamelException("To create a RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
+            throw new IllegalArgumentException("To create a RMI consumer, the RMI endpoint's remoteInterfaces property must be be configured.");
         }
         return new RmiConsumer(this, processor);
     }
 
     public Producer createProducer() throws Exception {
+        ObjectHelper.notNull(uri, "uri");
         return new RmiProducer(this);
     }
 
@@ -130,5 +137,13 @@ public class RmiEndpoint extends DefaultEndpoint {
 
     public void setMethod(String method) {
         this.method = method;
+    }
+
+    public URI getUri() {
+        return uri;
+    }
+
+    public void setUri(URI uri) {
+        this.uri = uri;
     }
 }

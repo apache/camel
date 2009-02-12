@@ -34,13 +34,17 @@ import org.apache.camel.util.jndi.JndiContext;
  */
 public class RmiRouteTest extends TestCase {
 
+    protected int getPort() {
+        return 37541;
+    }
+
     public void testPojoRoutes() throws Exception {
         if (classPathHasSpaces()) {
             return;
         }
 
         // Boot up a local RMI registry
-        LocateRegistry.createRegistry(37541);
+        LocateRegistry.createRegistry(getPort());
 
         // START SNIPPET: register
         JndiContext context = new JndiContext();
@@ -49,20 +53,7 @@ public class RmiRouteTest extends TestCase {
         CamelContext camelContext = new DefaultCamelContext(context);
         // END SNIPPET: register
 
-        // START SNIPPET: route
-        // lets add simple route
-        camelContext.addRoutes(new RouteBuilder() {
-            public void configure() {
-                from("direct:hello").to("rmi://localhost:37541/bye");
-
-                // When exposing an RMI endpoint, the interfaces it exposes must
-                // be configured.
-                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:37541/bye");
-                bye.setRemoteInterfaces(ISay.class);
-                from(bye).to("bean:bye");
-            }
-        });
-        // END SNIPPET: route
+        camelContext.addRoutes(getRouteBuilder(camelContext));
 
         camelContext.start();
 
@@ -74,6 +65,23 @@ public class RmiRouteTest extends TestCase {
         // END SNIPPET: invoke
 
         camelContext.stop();
+    }
+
+    protected RouteBuilder getRouteBuilder(final CamelContext context) {
+        return new RouteBuilder() {
+            // START SNIPPET: route
+            // lets add simple route
+            public void configure() {
+                from("direct:hello").to("rmi://localhost:37541/bye");
+
+                // When exposing an RMI endpoint, the interfaces it exposes must
+                // be configured.
+                RmiEndpoint bye = (RmiEndpoint)endpoint("rmi://localhost:37541/bye");
+                bye.setRemoteInterfaces(ISay.class);
+                from(bye).to("bean:bye");
+            }
+            // END SNIPPET: route
+        };
     }
 
     private boolean classPathHasSpaces() {
