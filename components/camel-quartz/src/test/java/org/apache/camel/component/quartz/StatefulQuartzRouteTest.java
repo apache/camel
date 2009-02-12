@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.quartz;
 
 import java.util.List;
@@ -26,13 +25,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @author martin.gilday
- * 
+ *
  */
 public class StatefulQuartzRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
-    public void testSendAndReceiveMails() throws Exception {
+    public void testQuartz() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
@@ -48,11 +46,6 @@ public class StatefulQuartzRouteTest extends ContextTestSupport {
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.apache.camel.ContextTestSupport#createRouteBuilder()
-     */
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

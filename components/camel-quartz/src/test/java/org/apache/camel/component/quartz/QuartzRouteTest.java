@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class QuartzRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
 
-    public void testSendAndReceiveMails() throws Exception {
+    public void testQuartzRoute() throws Exception {
         resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(2);
         resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");

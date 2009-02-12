@@ -27,7 +27,7 @@ public class CamelJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         QuartzEndpoint component = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzEndpoint.ENDPOINT_KEY);
         if (component == null) {
-            throw new JobExecutionException("No quartz endpoint available for key: " + QuartzEndpoint.ENDPOINT_KEY + ". Bad job data map");
+            throw new JobExecutionException("No quartz endpoint available for key: " + QuartzEndpoint.ENDPOINT_KEY);
         }
         component.onJobExecute(context);
     }
