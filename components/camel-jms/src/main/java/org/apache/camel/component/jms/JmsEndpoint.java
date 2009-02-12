@@ -45,14 +45,19 @@ import org.springframework.transaction.PlatformTransactionManager;
  *
  * @version $Revision:520964 $
  */
-public class JmsEndpoint extends DefaultEndpoint {
-    private final boolean pubSubDomain;
+public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
+    private HeaderFilterStrategy headerFilterStrategy;
+    private boolean pubSubDomain;
     private JmsBinding binding;
     private String destinationName;
     private Destination destination;
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
+
+    public JmsEndpoint() {
+        this(null, null);
+    }
 
     public JmsEndpoint(String uri, JmsComponent component, String destinationName, boolean pubSubDomain, JmsConfiguration configuration) {
         super(uri, component);
@@ -78,10 +83,6 @@ public class JmsEndpoint extends DefaultEndpoint {
      */
     public JmsEndpoint(String endpointUri, String destinationName) {
         this(endpointUri, destinationName, true);
-    }
-
-    public JmsEndpoint() {
-        this(null, null);
     }
 
     public JmsProducer createProducer() throws Exception {
@@ -179,6 +180,17 @@ public class JmsEndpoint extends DefaultEndpoint {
 
     // Properties
     // -------------------------------------------------------------------------
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new JmsHeaderFilterStrategy();
+        }
+        return headerFilterStrategy;
+    }
+
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        this.headerFilterStrategy = strategy;
+    }
+
     public JmsBinding getBinding() {
         if (binding == null) {
             binding = new JmsBinding(this);
@@ -303,14 +315,6 @@ public class JmsEndpoint extends DefaultEndpoint {
                 final DestinationEndpoint destinationEndpoint = (DestinationEndpoint) this;
                 template.setDestinationResolver(JmsConfiguration.createDestinationResolver(destinationEndpoint));
             }
-        }
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        if (getComponent() instanceof HeaderFilterStrategyAware) {
-            return ((HeaderFilterStrategyAware)getComponent()).getHeaderFilterStrategy();
-        } else {
-            return new JmsHeaderFilterStrategy();
         }
     }
 
