@@ -39,6 +39,7 @@
           <to uri="mock:z"/>
         </otherwise>
       </choice>
+      <to uri="mock:end"/>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->
