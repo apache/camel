@@ -26,7 +26,7 @@ You can also run this example in a osgi container like ServiceMix kernel
  http://cwiki.apache.org/CAMEL/how-to-run-camel-in-a-osgi-container.html
 
 If you hit any problems please let us know on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.  Enjoy!

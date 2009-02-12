@@ -37,7 +37,7 @@ To run the example with Ant
   e. To Run the example using Ant, type
     ant
   or to run the example and generate visualization graphs (refer to
-  http://activemq.apache.org/camel/visualisation.html), type
+  http://camel.apache.org/visualisation.html), type
     ant camel.dot
 
 You can see the routing rules by looking at the java code in the
@@ -47,10 +47,10 @@ src/main/resources/jndi.properties
 To stop the example hit ctrl + c
 
 For the latest & greatest documentation on how to use this example please see
-  http://activemq.apache.org/camel/guice-jms-example.html
+  http://camel.apache.org/guice-jms-example.html
 
 If you hit any problems please talk to us on the Camel Forums
-  http://activemq.apache.org/camel/discussion-forums.html
+  http://camel.apache.org/discussion-forums.html
 
 Please help us make Apache Camel better - we appreciate any feedback you
 may have.  Enjoy!
