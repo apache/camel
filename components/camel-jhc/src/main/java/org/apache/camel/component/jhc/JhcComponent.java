@@ -20,21 +20,17 @@ import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
-public class JhcComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class JhcComponent extends DefaultComponent {
 
     private HttpParams params;
-    private HeaderFilterStrategy headerFilterStrategy;
 
     public JhcComponent() {
-        setHeaderFilterStrategy(new JhcHeaderFilterStrategy());
         
         params = new BasicHttpParams()
             .setIntParameter(HttpConnectionParams.SO_TIMEOUT, 5000)
@@ -57,11 +53,4 @@ public class JhcComponent extends DefaultComponent implements HeaderFilterStrate
         return new JhcEndpoint(uri, this, new URI(uri.substring(uri.indexOf(':') + 1)));
     }
 
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-    }
 }
