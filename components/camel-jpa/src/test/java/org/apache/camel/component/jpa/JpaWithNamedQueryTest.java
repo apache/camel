@@ -104,8 +104,7 @@ public class JpaWithNamedQueryTest extends TestCase {
         assertEquals("address property", "foo@bar.com", result.getAddress());
 
         // lets now test that the database is updated
-        // TODO we need to sleep as we will be invoked from inside the
-        // transaction!
+        // we need to sleep as we will be invoked from inside the transaction!
         Thread.sleep(1000);
 
         transactionStrategy.execute(new JpaCallback() {

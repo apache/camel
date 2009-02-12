@@ -49,6 +49,9 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean consumeLockEntity = true;
     private boolean flushOnSend = true;
 
+    public JpaEndpoint() {
+    }
+
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
         entityManagerFactory = component.getEntityManagerFactory();
@@ -87,6 +90,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public boolean isSingleton() {
         return false;
     }
+
+    @Override
+    protected String createEndpointUri() {
+        return "jpa" + entityType != null ? "://" + entityType.getName() : "";
+    }
+
 
     // Properties
     // -------------------------------------------------------------------------
@@ -212,7 +221,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         } else {
             return new ExpressionAdapter() {
                 public Object evaluate(Exchange exchange) {
-                    Object answer = exchange.getIn().getBody(type);
+                    Object answer = null;
+                    try {
+                        answer = exchange.getIn().getBody(type);
+                    } catch (NoTypeConversionAvailableException e) {
+                        // ignore
+                    }
                     if (answer == null) {
                         Object defaultValue = exchange.getIn().getBody();
                         if (defaultValue != null) {
