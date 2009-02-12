@@ -28,10 +28,12 @@ public class ChoiceTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
+    protected MockEndpoint end;
 
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
         x.expectedBodiesReceived(body);
+        end.expectedBodiesReceived(body);
         // The SpringChoiceTest.java can't setup the header by Spring configure file
         // x.expectedHeaderReceived("name", "a");
         expectsMessageCount(0, y, z);
@@ -44,6 +46,7 @@ public class ChoiceTest extends ContextTestSupport {
     public void testSendToSecondWhen() throws Exception {
         String body = "<two/>";
         y.expectedBodiesReceived(body);
+        end.expectedBodiesReceived(body);
         expectsMessageCount(0, x, z);
 
         sendMessage("cheese", body);
@@ -54,6 +57,7 @@ public class ChoiceTest extends ContextTestSupport {
     public void testSendToOtherwiseClause() throws Exception {
         String body = "<three/>";
         z.expectedBodiesReceived(body);
+        end.expectedBodiesReceived(body);
         expectsMessageCount(0, x, y);
 
         sendMessage("somethingUndefined", body);
@@ -72,6 +76,7 @@ public class ChoiceTest extends ContextTestSupport {
         x = getMockEndpoint("mock:x");
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
+        end = getMockEndpoint("mock:end");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -80,7 +85,7 @@ public class ChoiceTest extends ContextTestSupport {
                 from("direct:start").choice()
                   .when().xpath("$foo = 'bar'").to("mock:x")
                   .when().xpath("$foo = 'cheese'").to("mock:y")
-                  .otherwise().to("mock:z");
+                  .otherwise().to("mock:z").end().to("mock:end");
             }
         };
     }
