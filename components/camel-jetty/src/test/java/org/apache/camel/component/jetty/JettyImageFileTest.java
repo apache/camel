@@ -32,7 +32,7 @@ public class JettyImageFileTest extends ContextTestSupport {
     
     private void sendImageContent(boolean usingGZip) throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = endpoint.createExchange();        
         if (usingGZip) {
             GZIPHelper.setGZIPMessageHeader(exchange.getIn());
         }
@@ -54,13 +54,13 @@ public class JettyImageFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyImageService());
+                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyImageService());
             }
         };
     }
 
     public class MyImageService implements Processor {
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) throws Exception {            
             exchange.getOut().setBody(new File("src/test/data/logo.jpeg"));
             exchange.getOut().setHeader("Content-Type", "image/jpeg");
         }

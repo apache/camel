@@ -67,14 +67,14 @@ public class JettyContentTypeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyBookService());
             }
         };
     }
 
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getHeader("user") != null) {
+            if (exchange.getIn().getHeader("user") != null && exchange.getIn().getBody(String.class).equals("<order>123</order>")) {
                 exchange.getOut().setBody("<order>OK</order>");                
             } else {
                 exchange.getOut().setBody("FAIL");

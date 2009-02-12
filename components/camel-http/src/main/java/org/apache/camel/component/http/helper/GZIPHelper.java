@@ -66,7 +66,7 @@ public final class GZIPHelper {
             method.getResponseBodyAsStream());
     }
 
-    public static InputStream getInputStream(HttpServletRequest request) throws Exception {
+    public static InputStream getInputStream(HttpServletRequest request) throws IOException {
         InputStream dataStream = request.getInputStream();
         String contentEncoding = request.getHeader(CONTENT_ENCODING);
         return getGZIPWrappedInputStream(contentEncoding, dataStream);
