@@ -19,47 +19,51 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+
 import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
 
 /**
  * A content enricher that enriches input data by first obtaining additional
- * data from a <i>resource</i> identified by an <code>resourceUri</code> and
- * second by aggregating input data and additional data. Aggregation of input
- * data and additional data is delegated to an {@link AggregationStrategy}
+ * data from a <i>resource</i> represented by an endpoint <code>producer</code>
+ * and second by aggregating input data and additional data. Aggregation of
+ * input data and additional data is delegated to an {@link AggregationStrategy}
  * object.
  */
 public class Enricher extends ServiceSupport implements Processor {
 
-    private ProducerTemplate producer;
-
-    private String resourceUri;
     private AggregationStrategy aggregationStrategy;
+
+    private Producer producer;
 
     /**
      * Creates a new {@link Enricher}. The default aggregation strategy is to
      * copy the additional data obtained from the enricher's resource over the
      * input data. When using the copy aggregation strategy the enricher
      * degenerates to a normal transformer.
-     *
-     * @param resourceUri URI of resource endpoint for obtaining additional data.
+     * 
+     * @param producer
+     *            producer to resource endpoint.
      */
-    public Enricher(String resourceUri) {
-        this(defaultAggregationStrategy(), resourceUri);
+    public Enricher(Producer producer) {
+        this(defaultAggregationStrategy(), producer);
     }
 
     /**
      * Creates a new {@link Enricher}.
-     *
-     * @param aggregationStrategy aggregation strategy to aggregate input data and additional data.
-     * @param resourceUri         URI of resource endpoint for obtaining additional data.
+     * 
+     * @param aggregationStrategy
+     *            aggregation strategy to aggregate input data and additional
+     *            data.
+     * @param producer
+     *            producer to resource endpoint.
      */
-    public Enricher(AggregationStrategy aggregationStrategy, String resourceUri) {
+    public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
         this.aggregationStrategy = aggregationStrategy;
-        this.resourceUri = resourceUri;
+        this.producer = producer;
     }
 
     /**
@@ -80,21 +84,20 @@ public class Enricher extends ServiceSupport implements Processor {
 
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining
-     * additional data from an endpoint identified by an
-     * <code>resourceUri</code> and second by aggregating input data and
-     * additional data. Aggregation of input data and additional data is
-     * delegated to an {@link AggregationStrategy} object set at construction
-     * time. If the message exchange with the resource endpoint fails then no
-     * aggregation will be done and the failed exchange content is copied over
-     * to the original message exchange.
-     *
-     * @param exchange input data.
+     * additional data from an endpoint represented by an endpoint
+     * <code>producer</code> and second by aggregating input data and additional
+     * data. Aggregation of input data and additional data is delegated to an
+     * {@link AggregationStrategy} object set at construction time. If the
+     * message exchange with the resource endpoint fails then no aggregation
+     * will be done and the failed exchange content is copied over to the
+     * original message exchange.
+     * 
+     * @param exchange
+     *            input data.
      */
     public void process(Exchange exchange) throws Exception {
-        // create in-out exchange to obtain additional data from resource
         Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);
-        // send created exchange to resource endpoint
-        resourceExchange = getProducerTemplate(exchange).send(resourceUri, resourceExchange);
+        producer.process(resourceExchange);
 
         if (resourceExchange.isFailed()) {
             // copy resource exchange onto original exchange (preserving pattern)
@@ -134,22 +137,12 @@ public class Enricher extends ServiceSupport implements Processor {
         return new CopyAggregationStrategy();
     }
 
-    private synchronized ProducerTemplate getProducerTemplate(Exchange exchange) throws Exception {
-        if (producer == null) {
-            producer = exchange.getContext().createProducerTemplate();
-            producer.start();
-        }
-        return producer;
-    }
-
     protected void doStart() throws Exception {
+        producer.start();
     }
 
     protected void doStop() throws Exception {
-        if (producer != null) {
-            producer.stop();
-            producer = null;
-        }
+        producer.stop();
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
