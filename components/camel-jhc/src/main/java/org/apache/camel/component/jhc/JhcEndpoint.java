@@ -19,6 +19,7 @@ package org.apache.camel.component.jhc;
 import java.net.URI;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -32,11 +33,11 @@ import org.apache.http.params.HttpParams;
  * Time: 8:06:42 PM
  * To change this template use File | Settings | File Templates.
  */
-public class JhcEndpoint extends DefaultEndpoint {
+public class JhcEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
 
     private HttpParams params;
     private URI httpUri;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new JhcHeaderFilterStrategy();
 
     public JhcEndpoint(String endpointUri, JhcComponent component, URI httpUri) {
         super(endpointUri, component);

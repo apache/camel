@@ -28,6 +28,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -42,7 +43,7 @@ import org.springframework.util.Assert;
  * A CXF based SOAP endpoint which wraps an existing
  * endpoint with SOAP processing.
  */
-public class CxfSoapEndpoint implements Endpoint {
+public class CxfSoapEndpoint implements Endpoint, HeaderFilterStrategyAware {
 
     private final Endpoint endpoint;
     private Resource wsdl;
@@ -52,15 +53,10 @@ public class CxfSoapEndpoint implements Endpoint {
     private QName serviceName;
     private QName endpointName;
     private Bus bus;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new CxfHeaderFilterStrategy();
 
     public CxfSoapEndpoint(Endpoint endpoint) {
-        this(endpoint, new CxfHeaderFilterStrategy());
-    }
-
-    public CxfSoapEndpoint(Endpoint endpoint, HeaderFilterStrategy headerFilterStrategy) {
         this.endpoint = endpoint;
-        this.headerFilterStrategy = headerFilterStrategy;
     }
     
     protected Endpoint getInnerEndpoint() {
@@ -169,6 +165,10 @@ public class CxfSoapEndpoint implements Endpoint {
         return headerFilterStrategy;
     }
 
+    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
+        headerFilterStrategy = strategy;
+        
+    }
     public boolean isLenientProperties() {
         return false;
     }

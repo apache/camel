@@ -61,7 +61,7 @@ import org.apache.cxf.message.Message;
  *
  * @version $Revision$
  */
-public class CxfEndpoint extends DefaultEndpoint {
+public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     
     private static final Log LOG = LogFactory.getLog(CxfEndpoint.class);
 
@@ -324,6 +324,7 @@ public class CxfEndpoint extends DefaultEndpoint {
 
     public void setCxfBinding(CxfBinding cxfBinding) {
         this.cxfBinding = cxfBinding;
+        cxfBindingInitialized.set(false);
     }
 
     public CxfBinding getCxfBinding() {

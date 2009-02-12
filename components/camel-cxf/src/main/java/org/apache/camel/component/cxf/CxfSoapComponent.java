@@ -19,25 +19,19 @@ package org.apache.camel.component.cxf;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
-
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">SOAP Component</a>
  *
  * @version $Revision$
  */
-public class CxfSoapComponent extends DefaultComponent implements HeaderFilterStrategyAware {
-
-    private HeaderFilterStrategy headerFilterStrategy;
+public class CxfSoapComponent extends DefaultComponent {
 
     public CxfSoapComponent() {
-        setHeaderFilterStrategy(new CxfHeaderFilterStrategy());
     }
     
     @Override
@@ -47,7 +41,7 @@ public class CxfSoapComponent extends DefaultComponent implements HeaderFilterSt
             remaining += "?" + URISupport.createQueryString(parameters);
         }
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
-        CxfSoapEndpoint soapEndpoint = new CxfSoapEndpoint(endpoint, getHeaderFilterStrategy());
+        CxfSoapEndpoint soapEndpoint = new CxfSoapEndpoint(endpoint);
         setProperties(soapEndpoint, soapProps);
         soapEndpoint.init();
         return soapEndpoint;
@@ -56,15 +50,6 @@ public class CxfSoapComponent extends DefaultComponent implements HeaderFilterSt
     @Override
     protected boolean useIntrospectionOnEndpoint() {
         return false;
-    }
-
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
-    }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        headerFilterStrategy = strategy;
-        
     }
 
 }

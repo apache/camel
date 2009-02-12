@@ -34,7 +34,7 @@ import org.restlet.data.Method;
  *
  * @version $Revision$
  */
-public class RestletEndpoint extends DefaultEndpoint {
+public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
     private static final Log LOG = LogFactory.getLog(RestletEndpoint.class);
 
     private static final int DEFAULT_PORT = 80;
@@ -139,6 +139,7 @@ public class RestletEndpoint extends DefaultEndpoint {
 
     public void setRestletBinding(RestletBinding restletBinding) {
         this.restletBinding = restletBinding;
+        bindingInitialized.set(false);
     }
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
