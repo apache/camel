@@ -14,18 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.restlet;
 
-import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.util.URISupport;
-import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.restlet.data.Method;
 
 /**
@@ -46,24 +42,10 @@ public class RestletEndpoint extends DefaultEndpoint {
     private String uriPattern;
     private RestletBinding restletBinding;
     private Map<String, String> realm;
-    
-    public RestletEndpoint(RestletComponent component, String remaining, 
-            Map<String, String> parameters, RestletBinding restletBinding) throws Exception {
+
+    public RestletEndpoint(RestletComponent component, String remaining, RestletBinding restletBinding) throws Exception {
         super(remaining, component);
         this.restletBinding = restletBinding;
-        
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
-        protocol = u.getScheme();
-        
-        uriPattern = u.getPath();
-        if (parameters.size() > 0) {
-            uriPattern = uriPattern + "?" + URISupport.createQueryString(parameters);
-        }
-        
-        host = u.getHost();
-        if (u.getPort() > 0) {
-            port = u.getPort();
-        }
     }
 
     public boolean isSingleton() {
@@ -75,7 +57,7 @@ public class RestletEndpoint extends DefaultEndpoint {
         // true to allow dynamic URI options to be configured and passed to external system.
         return true;
     }
-    
+
     public Consumer createConsumer(Processor processor) throws Exception {
         return new RestletConsumer(this, processor);
     }
@@ -84,82 +66,67 @@ public class RestletEndpoint extends DefaultEndpoint {
         return new RestletProducer(this);
     }
 
-    /**
-     * @param restletConsumer
-     */
     public void connect(RestletConsumer restletConsumer) throws Exception {
         ((RestletComponent)getComponent()).connect(restletConsumer);
     }
 
-    /**
-     * @param restletConsumer
-     */
     public void disconnect(RestletConsumer restletConsumer) throws Exception {
         ((RestletComponent)getComponent()).disconnect(restletConsumer);        
     }
 
-    /**
-     * @return the protocol
-     */
-    public String getProtocol() {
-        return protocol;
-    }
-
-    /**
-     * @return the host
-     */
-    public String getHost() {
-        return host;
-    }
-
-    /**
-     * @return the port
-     */
-    public int getPort() {
-        return port;
-    }
-    
-    /**
-     * @return the uriPattern
-     */
-    public String getUriPattern() {
-        return uriPattern;
-    }
-
-    /**
-     * @return the restletBinding
-     */
-    public RestletBinding getRestletBinding() {
-        return restletBinding;
-    }
-
-    /**
-     * @param restletMethod the restletMethod to set
-     */
-    public void setRestletMethod(Method restletMethod) {
-        this.restletMethod = restletMethod;
-    }
-
-    /**
-     * @return the restletMethod
-     */
     public Method getRestletMethod() {
         return restletMethod;
     }
 
-    /**
-     * @param realm
-     */
-    public void setRealm(Map<String, String> realm) {
-        this.realm = realm;
+    public void setRestletMethod(Method restletMethod) {
+        this.restletMethod = restletMethod;
     }
-    
-    /**
-     * @return the realm
-     */
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public String getUriPattern() {
+        return uriPattern;
+    }
+
+    public void setUriPattern(String uriPattern) {
+        this.uriPattern = uriPattern;
+    }
+
+    public RestletBinding getRestletBinding() {
+        return restletBinding;
+    }
+
+    public void setRestletBinding(RestletBinding restletBinding) {
+        this.restletBinding = restletBinding;
+    }
+
     public Map<String, String> getRealm() {
         return realm;
     }
 
-
+    public void setRealm(Map<String, String> realm) {
+        this.realm = realm;
+    }
 }
