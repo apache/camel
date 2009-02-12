@@ -29,37 +29,38 @@ import org.apache.camel.component.http.helper.GZIPHelper;
  * Unit test for exposing a http server that returns images
  */
 public class JettyImageFileTest extends ContextTestSupport {
-
-    public void testImageContentType() throws Exception {
+    
+    private void sendImageContent(boolean usingGZip) throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = endpoint.createExchange();        
+        if (usingGZip) {
+            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+        }
         template.send(endpoint, exchange);
 
         assertNotNull(exchange.getOut().getBody());
         assertOutMessageHeader(exchange, "Content-Type", "image/jpeg");
     }
-    
-    public void testImageWithGZip() throws Exception {
-        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();
-        GZIPHelper.setGZIPMessageHeader(exchange.getIn());
-        template.send(endpoint, exchange);
 
-        assertNotNull(exchange.getOut().getBody());
-        assertOutMessageHeader(exchange, "Content-Type", "image/jpeg");
+    public void testImageContentType() throws Exception {
+        sendImageContent(false);
+    }
+    
+    public void testImageContentWithGZip() throws Exception {
+        sendImageContent(true);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyImageService());
+                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyImageService());
             }
         };
     }
 
     public class MyImageService implements Processor {
-        public void process(Exchange exchange) throws Exception {
+        public void process(Exchange exchange) throws Exception {            
             exchange.getOut().setBody(new File("src/test/data/logo.jpeg"));
             exchange.getOut().setHeader("Content-Type", "image/jpeg");
         }

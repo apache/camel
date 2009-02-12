@@ -27,33 +27,28 @@ import org.apache.camel.component.http.helper.GZIPHelper;
  * Unit test for content-type
  */
 public class JettyContentTypeTest extends ContextTestSupport {
-
-    public void testSameContentType() throws Exception {
+    protected void sendMessageWithContentType(boolean usingGZip) {
         Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("<order>123</order>");
         exchange.getIn().setHeader("user", "Claus");
         exchange.getIn().setHeader("content-type", "text/xml");
+        if (usingGZip) {
+            GZIPHelper.setGZIPMessageHeader(exchange.getIn());
+        }
         template.send(endpoint, exchange);
 
         String body = exchange.getOut().getBody(String.class);
         assertEquals("<order>OK</order>", body);
         assertOutMessageHeader(exchange, "content-type", "text/xml");
     }
+
+    public void testSameContentType() throws Exception {
+        sendMessageWithContentType(false);
+    }
     
     public void testContentTypeWithGZip() throws Exception {
-        Endpoint endpoint = context.getEndpoint("http://localhost:9080/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("<order>123</order>");
-        exchange.getIn().setHeader("user", "Claus");
-        exchange.getIn().setHeader("content-type", "text/xml");
-        GZIPHelper.setGZIPMessageHeader(exchange.getIn());
-        template.send(endpoint, exchange);
-
-        String body = exchange.getOut().getBody(String.class);
-        assertEquals("<order>OK</order>", body);
-        assertOutMessageHeader(exchange, "content-type", "text/xml");
-        assertOutMessageHeader(exchange, GZIPHelper.CONTENT_ENCODING, GZIPHelper.GZIP);
+        sendMessageWithContentType(true);
     }
 
     public void testMixedContentType() throws Exception {
@@ -72,14 +67,14 @@ public class JettyContentTypeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
+                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyBookService());
             }
         };
     }
 
     public class MyBookService implements Processor {
         public void process(Exchange exchange) throws Exception {
-            if (exchange.getIn().getHeader("user") != null) {
+            if (exchange.getIn().getHeader("user") != null && exchange.getIn().getBody(String.class).equals("<order>123</order>")) {
                 exchange.getOut().setBody("<order>OK</order>");                
             } else {
                 exchange.getOut().setBody("FAIL");
