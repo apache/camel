@@ -31,26 +31,21 @@ import org.apache.commons.httpclient.methods.GetMethod;
 public class RestletQueryTest extends ContextTestSupport {
     private static final String QUERY_STRING = "foo=bar&test=123";
 
-    
     @Override
     protected RouteBuilder createRouteBuilder() {
-
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}")
                     .process(new SetUserProcessor());
-                
             }
-            
         };
     }
     
     class SetUserProcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {   
-            assertEquals(QUERY_STRING, exchange.getIn().getHeader(RestletConstants.QUERY_STRING, 
-                    String.class));
+            assertEquals(QUERY_STRING, exchange.getIn().getHeader(RestletConstants.QUERY_STRING, String.class));
         }
         
     }
