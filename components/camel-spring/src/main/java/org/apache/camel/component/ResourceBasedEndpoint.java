@@ -38,11 +38,14 @@ import org.springframework.core.io.ResourceLoader;
  */
 public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     protected final transient Log log = LogFactory.getLog(getClass());
-    private final String resourceUri;
+    private String resourceUri;
     private ResourceLoader resourceLoader = new DefaultResourceLoader();
     private Resource resource;
     private boolean contentCache;
     private byte[] buffer;
+
+    protected ResourceBasedEndpoint() {
+    }
 
     public ResourceBasedEndpoint(String endpointUri, Component component, String resourceUri, Processor processor) {
         super(endpointUri, component, processor);
@@ -65,19 +68,6 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
             }
         }
         return resource;
-    }
-
-    public boolean isContentCache() {
-        return contentCache;
-    }
-
-    /**
-     * Sets wether to use resource content cache or not - default is <tt>false</tt>.
-     *
-     * @see #getResourceAsInputStream()
-     */
-    public void setContentCache(boolean contentCache) {
-        this.contentCache = contentCache;
     }
 
     /**
@@ -111,6 +101,19 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
         return resource.getInputStream();
     }
 
+    public boolean isContentCache() {
+        return contentCache;
+    }
+
+    /**
+     * Sets wether to use resource content cache or not - default is <tt>false</tt>.
+     *
+     * @see #getResourceAsInputStream()
+     */
+    public void setContentCache(boolean contentCache) {
+        this.contentCache = contentCache;
+    }
+
     public ResourceLoader getResourceLoader() {
         return resourceLoader;
     }
@@ -122,4 +125,9 @@ public abstract class ResourceBasedEndpoint extends ProcessorEndpoint {
     public String getResourceUri() {
         return resourceUri;
     }
+
+    public void setResourceUri(String resourceUri) {
+        this.resourceUri = resourceUri;
+    }
+
 }

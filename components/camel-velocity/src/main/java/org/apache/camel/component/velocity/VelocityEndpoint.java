@@ -38,14 +38,15 @@ import org.springframework.core.io.Resource;
  * @version $Revision$
  */
 public class VelocityEndpoint extends ResourceBasedEndpoint {
-    private final VelocityComponent component;
     private VelocityEngine velocityEngine;
     private boolean loaderCache = true;
     private String encoding;
 
-    public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri, Map parameters) {
+    public VelocityEndpoint() {
+    }
+
+    public VelocityEndpoint(String uri, VelocityComponent component, String resourceUri) {
         super(uri, component, resourceUri, null);
-        this.component = component;
     }
 
     @Override
@@ -58,9 +59,14 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         return ExchangePattern.InOut;
     }
 
-    private VelocityEngine getVelocityEngine() throws Exception {
+    @Override
+    protected String createEndpointUri() {
+        return "velocity:" + getResourceUri();
+    }
+
+    private synchronized VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
-            velocityEngine = component.getVelocityEngine();
+            velocityEngine = new VelocityEngine();
             velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? Boolean.TRUE : Boolean.FALSE);
             velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
             velocityEngine.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, VelocityEndpoint.class.getName());
@@ -71,6 +77,7 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
 
     public void setVelocityEngine(VelocityEngine velocityEngine) {
         this.velocityEngine = velocityEngine;
+
     }
 
     public boolean isLoaderCache() {

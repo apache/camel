@@ -37,7 +37,10 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
     private String encoding;
     private Configuration configuration;
 
-    public FreemarkerEndpoint(String uri, Component component, String resourceUri, Map parameters) {
+    public FreemarkerEndpoint() {
+    }
+
+    public FreemarkerEndpoint(String uri, Component component, String resourceUri) {
         super(uri, component, resourceUri, null);
     }
 
@@ -49,6 +52,11 @@ public class FreemarkerEndpoint extends ResourceBasedEndpoint {
     @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return "freemarker:" + getResourceUri();
     }
 
     /**

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
