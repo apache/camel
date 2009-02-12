@@ -21,10 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.logging.Log;
@@ -34,7 +31,6 @@ import org.restlet.Guard;
 import org.restlet.Restlet;
 import org.restlet.Server;
 import org.restlet.data.ChallengeScheme;
-import org.restlet.data.Method;
 import org.restlet.data.Protocol;
 
 /**
@@ -42,41 +38,20 @@ import org.restlet.data.Protocol;
  *
  * @version $Revision$
  */
-public class RestletComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public class RestletComponent extends DefaultComponent {
     private static final Log LOG = LogFactory.getLog(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
     private final Map<String, MethodBasedRouter> routers = new HashMap<String, MethodBasedRouter>();
     private final Component component = new Component();
-    private HeaderFilterStrategy headerFilterStrategy = new RestletHeaderFilterStrategy();
 
     @Override
     @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         
-        RestletBinding restletBinding = null;
-        // lookup binding in registry if provided
-        String ref = getAndRemoveParameter(parameters, "restletBindingRef", String.class);
-        if (ref != null) {
-            restletBinding = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, RestletBinding.class);
-        }
+        RestletEndpoint result = new RestletEndpoint(this, remaining);
+        setProperties(result, parameters);
         
-        if (restletBinding == null) {
-            restletBinding = new DefaultRestletBinding();
-        }
-        
-        if (restletBinding instanceof HeaderFilterStrategyAware) {
-            ((HeaderFilterStrategyAware)restletBinding).setHeaderFilterStrategy(headerFilterStrategy);
-        }
-        
-        Map<String, String> realm = null;
-        ref = getAndRemoveParameter(parameters, "restletRealmRef", String.class);
-        if (ref != null) {
-            realm = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, Map.class);
-        }
-        
-        Method method = getAndRemoveParameter(parameters, "restletMethod", Method.class);
-
         // construct URI so we can use it to get the splitted information
         URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
         String protocol = u.getScheme();
@@ -92,18 +67,11 @@ public class RestletComponent extends DefaultComponent implements HeaderFilterSt
             port = u.getPort();
         }
 
-        RestletEndpoint result = new RestletEndpoint(this, remaining, restletBinding);
         result.setProtocol(protocol);
         result.setUriPattern(uriPattern);
         result.setHost(host);
         if (port > 0) {
             result.setPort(port);
-        }
-        if (method != null) {
-            result.setRestletMethod(method);
-        }
-        if (realm != null) {
-            result.setRealm(realm);
         }
 
         return result;
@@ -118,26 +86,24 @@ public class RestletComponent extends DefaultComponent implements HeaderFilterSt
     @Override
     protected void doStop() throws Exception {
         component.stop();
-        // just clear maps, component will stop the servers and routes
-        servers.clear();
-        routers.clear();
+        // routers map entries are removed as consumer stops and servers map 
+        // is not touch so to keep in sync with component's servers
         super.doStop();
     }
     
-    public HeaderFilterStrategy getHeaderFilterStrategy() {
-        return headerFilterStrategy;
+    @Override
+    protected boolean useIntrospectionOnEndpoint() {
+        // we invoke setProperties ourselves so we can construct "user" uri on 
+        // on the remaining parameters
+        return false;
     }
-
-    public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
-        this.headerFilterStrategy = strategy;
-    }
-
+    
     public void connect(RestletConsumer consumer) throws Exception {
         RestletEndpoint endpoint = (RestletEndpoint)consumer.getEndpoint();
         addServerIfNeccessary(endpoint);
         MethodBasedRouter router = getMethodRouter(endpoint.getUriPattern());
         
-        Map<String, String> realm = endpoint.getRealm();
+        Map<String, String> realm = endpoint.getRestletRealm();
         Restlet target = consumer.getRestlet();
         if (realm != null && realm.size() > 0) {
             Guard guard = new Guard(component.getContext().createChildContext(), 
