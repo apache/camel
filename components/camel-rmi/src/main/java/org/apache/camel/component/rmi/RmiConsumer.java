@@ -44,7 +44,6 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
     public RmiConsumer(RmiEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-
     }
 
     @Override
@@ -59,7 +58,8 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
             String name = endpoint.getName();
             registry.bind(name, stub);
 
-        } catch (Exception e) { // Registration might fail.. clean up..
+        } catch (Exception e) {
+            // Registration might fail.. clean up..
             try {
                 UnicastRemoteObject.unexportObject(stub, true);
             } catch (Throwable ignore) {
@@ -76,7 +76,8 @@ public class RmiConsumer extends DefaultConsumer implements InvocationHandler {
         try {
             Registry registry = endpoint.getRegistry();
             registry.unbind(endpoint.getName());
-        } catch (Throwable e) { // do our best to unregister
+        } catch (Throwable e) {
+            // do our best to unregister
         }
         UnicastRemoteObject.unexportObject(proxy, true);
     }
