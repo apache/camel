@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
@@ -25,18 +24,11 @@ import org.quartz.SchedulerException;
 import org.quartz.StatefulJob;
 
 /**
- * @author martin.gilday
- * 
+ * Stateful job
  */
 public class StatefulCamelJob implements StatefulJob {
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.quartz.Job#execute(org.quartz.JobExecutionContext)
-     */
     public void execute(final JobExecutionContext context) throws JobExecutionException {
-
         SchedulerContext schedulerContext;
         try {
             schedulerContext = context.getScheduler().getContext();

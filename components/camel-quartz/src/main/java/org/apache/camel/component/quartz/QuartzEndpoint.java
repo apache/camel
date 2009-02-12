@@ -21,11 +21,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.util.ObjectHelper;
@@ -56,6 +54,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private JobDetail jobDetail;
     private boolean started;
     private boolean stateful;
+
+    public QuartzEndpoint() {
+    }
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component, final Scheduler scheduler) {
         super(endpointUri, component);
@@ -95,7 +96,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             trigger.setStartTime(new Date());
         }
         detail.getJobDataMap().put(ENDPOINT_KEY, isStateful() ? getEndpointUri() : this);
-        if (null == detail.getJobClass()) {
+        if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
         if (detail.getName() == null) {
@@ -139,6 +140,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public QuartzConsumer createConsumer(Processor processor) throws Exception {
         return new QuartzConsumer(this, processor);
+    }
+
+    @Override
+    protected String createEndpointUri() {
+        return "quartz://" + getTrigger().getGroup() + "/" + getTrigger().getName();
     }
 
     // Properties
@@ -190,19 +196,16 @@ public class QuartzEndpoint extends DefaultEndpoint {
         this.trigger = trigger;
     }
 
-    /**
-     * @return the stateful mode
-     */
     public boolean isStateful() {
         return this.stateful;
     }
 
-    /**
-     * @param stateful
-     *            sets the stateful mode
-     */
     public void setStateful(final boolean stateful) {
         this.stateful = stateful;
+    }
+
+    public void setScheduler(Scheduler scheduler) {
+        this.scheduler = scheduler;
     }
 
     // Implementation methods

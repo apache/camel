@@ -82,11 +82,7 @@ public class QuartzComponent extends DefaultComponent {
         } else {
             name = u.getHost();
         }
-        /*
-         * String[] names = ObjectHelper.splitOnCharacter(remaining, "/", 2); if
-         * (names[1] != null) { group = names[0]; name = names[1]; } else { name =
-         * names[0]; }
-         */
+
         Trigger trigger = cronTrigger;
         if (trigger == null) {
             trigger = answer.getTrigger();
