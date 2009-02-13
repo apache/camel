@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.mail;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,8 +32,6 @@ public class SpringMailEndpointTest extends AbstractJUnit38SpringContextTests {
 
     @Autowired
     protected ProducerTemplate template;
-    @EndpointInject(name = "myMailEndpoint")
-    protected Endpoint inputFTP;
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint result;
 
@@ -43,9 +40,8 @@ public class SpringMailEndpointTest extends AbstractJUnit38SpringContextTests {
 
         String body = "Hello Claus.\nYes it does.\n\nRegards James.";
 
-        result.expectedMessageCount(1);
-        result.expectedHeaderReceived("subject", "Hello Camel");
         result.expectedBodiesReceived(body);
+        result.expectedHeaderReceived("subject", "Hello Camel");
 
         template.sendBodyAndHeader("smtp://james2@localhost", body, "subject", "Hello Camel");
 

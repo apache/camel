@@ -25,6 +25,11 @@
     <bean id="myMailEndpoint" class="org.apache.camel.component.mail.MailEndpoint">
         <property name="camelContext" ref="camel"/>
         <property name="configuration" ref="mailConfig"/>
+        <property name="consumerProperties">
+            <map key-type="java.lang.String">
+                <entry key="delay" value="1000"/>
+            </map>
+        </property>
     </bean>
 
     <bean id="mailConfig" class="org.apache.camel.component.mail.MailConfiguration">
@@ -33,6 +38,7 @@
         <property name="username" value="james2"/>
         <property name="password" value="james2"/>
         <property name="protocol" value="pop3"/>
+        <property name="processOnlyUnseenMessages" value="false"/>
     </bean>
 
     <!-- START SNIPPET: example -->
