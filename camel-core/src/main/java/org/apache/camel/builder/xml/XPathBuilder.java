@@ -43,8 +43,10 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
+import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 
 import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
@@ -535,6 +537,9 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         if (answer instanceof String) {
             answer = new InputSource(new StringReader(answer.toString()));
         }
+        
+        // call the reset if the in message body is StreamCache
+        MessageHelper.resetStreamCache(exchange.getIn());
         return answer;
     }
 }

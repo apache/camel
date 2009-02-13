@@ -60,6 +60,7 @@ import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.NamespaceAware;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -403,8 +404,10 @@ public abstract class XQueryBuilder implements Expression<Exchange>, Predicate<E
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);
             dynamicQueryContext.setContextItem(doc);
         }
-
+        
         configureQuery(dynamicQueryContext, exchange);
+        // call the reset if the in message body is StreamCache
+        MessageHelper.resetStreamCache(exchange.getIn());
         return dynamicQueryContext;
     }
 

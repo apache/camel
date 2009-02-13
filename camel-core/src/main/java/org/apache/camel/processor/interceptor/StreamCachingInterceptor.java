@@ -82,12 +82,12 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
         return proceed(exchange, callback);
     } 
 
-    public boolean proceed(Exchange exchange, AsyncCallback callback) {
-        if (getProcessor() instanceof AsyncProcessor) {
+    public boolean proceed(Exchange exchange, AsyncCallback callback) {        
+        if (getProcessor() instanceof AsyncProcessor) {            
             return ((AsyncProcessor) getProcessor()).process(exchange, callback);
         } else {
             try {
-                processor.process(exchange);
+                getProcessor().process(exchange);
             } catch (Throwable e) {
                 exchange.setException(e);
             }
