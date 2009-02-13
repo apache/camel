@@ -18,7 +18,6 @@ package org.apache.camel.itest.jms;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 

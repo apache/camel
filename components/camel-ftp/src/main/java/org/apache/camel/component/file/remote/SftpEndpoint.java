@@ -26,16 +26,19 @@ import org.apache.camel.Processor;
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     public SftpEndpoint() {
-        this.operations = new SftpOperations();
+        SftpOperations operations = new SftpOperations();
+        operations.setEndpoint(this);
+        this.operations = operations;
     }
 
     public SftpEndpoint(String uri, SftpComponent component, RemoteFileOperations<ChannelSftp.LsEntry> operations,
-                                  RemoteFileConfiguration configuration) {
+                        RemoteFileConfiguration configuration) {
         super(uri, component, operations, configuration);
     }
 
     @Override
-    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
+    protected RemoteFileConsumer<ChannelSftp.LsEntry> buildConsumer(Processor processor,
+                                                                    RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         return new SftpConsumer(this, processor, operations);
     }
 

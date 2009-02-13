@@ -16,19 +16,7 @@
  */
 package org.apache.camel.itest.customerrelations;
 
-import java.lang.reflect.Proxy;
-import java.util.List;
-import java.util.Map;
-
 import junit.framework.TestCase;
-
-import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.interceptor.Fault;
-import org.apache.cxf.jaxws.EndpointImpl;
-import org.apache.cxf.jaxws.JaxWsClientProxy;
-import org.apache.cxf.message.Message;
-import org.apache.cxf.phase.AbstractPhaseInterceptor;
-import org.apache.cxf.phase.Phase;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CustomerServicesWsAddressingTest extends TestCase {

@@ -24,8 +24,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ftpserver.FtpServer;
+import org.apache.ftpserver.FtpServerFactory;
+import org.apache.ftpserver.filesystem.nativefs.NativeFileSystemFactory;
+import org.apache.ftpserver.ftplet.UserManager;
+import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
-import org.apache.ftpserver.usermanager.PropertiesUserManager;
+import org.apache.ftpserver.usermanager.impl.PropertiesUserManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
@@ -70,17 +74,22 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit3
     }
 
     protected void initFtpServer() throws Exception {
-        ftpServer = new FtpServer();
+        FtpServerFactory serverFactory = new FtpServerFactory();
 
         // setup user management to read our users.properties and use clear text passwords
-        PropertiesUserManager uman = new PropertiesUserManager();
-        uman.setFile(new File("./src/test/resources/users.properties").getAbsoluteFile());
-        uman.setPasswordEncryptor(new ClearTextPasswordEncryptor());
-        uman.setAdminName("admin");
-        uman.configure();
-        ftpServer.setUserManager(uman);
+        File file = new File("./src/test/resources/users.properties").getAbsoluteFile();
+        UserManager uman = new PropertiesUserManager(new ClearTextPasswordEncryptor(), file, "admin");
+        serverFactory.setUserManager(uman);
 
-        ftpServer.getListener("default").setPort(20123);
+        NativeFileSystemFactory fsf = new NativeFileSystemFactory();
+        fsf.setCreateHome(true);
+        serverFactory.setFileSystem(fsf);
+
+        ListenerFactory factory = new ListenerFactory();
+        factory.setPort(20123);
+        serverFactory.addListener("default", factory.createListener());
+
+        ftpServer = serverFactory.createServer();
     }
 
 }

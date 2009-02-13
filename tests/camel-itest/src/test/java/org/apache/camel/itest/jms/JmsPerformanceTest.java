@@ -18,10 +18,8 @@ package org.apache.camel.itest.jms;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-
 import javax.naming.Context;
 
-import org.apache.activemq.broker.Broker;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.jndi.JndiContext;
