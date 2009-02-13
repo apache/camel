@@ -64,7 +64,7 @@ public class JettyWithXPathChoiceTest extends ContextTestSupport {
             public void configure() {
                 // Need a convertBodyTo processor here or we may get an error
                 // that we are at the end of the stream
-                from("jetty:http://localhost:9080/myworld").convertBodyTo(String.class).choice()
+                from("jetty:http://localhost:9080/myworld").choice()
                   .when().xpath("/one").to("mock:x")
                   .when().xpath("/two").to("mock:y")
                   .otherwise().to("mock:z");
