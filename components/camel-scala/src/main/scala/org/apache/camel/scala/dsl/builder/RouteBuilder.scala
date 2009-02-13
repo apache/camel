@@ -68,6 +68,7 @@ class RouteBuilder extends Preamble with DSL with Routes {
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
+  def loop(expression: Exchange => Any) = stack.top.loop(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
   def marshal(format: DataFormatType) = stack.top.marshal(format)
