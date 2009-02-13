@@ -33,6 +33,7 @@ trait DSL {
   def inOnly(): SProcessorType
   def inOut(): SProcessorType
   def loadbalance : SLoadBalanceType
+  def loop(expression: Exchange => Any) : SLoopType
   def marshal(format : DataFormatType) : DSL
   def multicast : SMulticastType
   def otherwise : DSL

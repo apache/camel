@@ -82,6 +82,8 @@ abstract class SAbstractType extends DSL {
   def inOnly = new SProcessorType(target.inOnly.asInstanceOf[RawProcessorType])
   def inOut = new SProcessorType(target.inOut.asInstanceOf[RawProcessorType])
  
+  def loop(expression: Exchange => Any) = new SLoopType(target.loop(expression))
+  
   def marshal(format: DataFormatType) = {
     target.marshal(format)
     this
