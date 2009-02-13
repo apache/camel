@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.file.strategy;
 
+import java.io.File;
+
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 public abstract class GenericFileProcessStrategySupport<T> implements GenericFileProcessStrategy<T> {
+    protected final transient Log log = LogFactory.getLog(getClass());
     private GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
@@ -43,12 +48,16 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
+
+        deleteLocalWorkFile(exchange);
     }
 
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, GenericFileExchange<T> exchange, GenericFile<T> file) throws Exception {
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
+
+        deleteLocalWorkFile(exchange);
     }
 
     public GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy() {
@@ -57,6 +66,18 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     public void setExclusiveReadLockStrategy(GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy) {
         this.exclusiveReadLockStrategy = exclusiveReadLockStrategy;
+    }
+
+    private void deleteLocalWorkFile(GenericFileExchange<T> exchange) {
+        // delete local work file, if it was used (eg by ftp component)
+        String path = exchange.getIn().getHeader("CamelFileLocalWorkPath", String.class);
+        if (path != null) {
+            File local = new File(path);
+            if (log.isTraceEnabled()) {
+                log.trace("Deleting lock work file: " + local);
+            }
+            local.delete();
+        }
     }
 }
 

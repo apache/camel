@@ -50,7 +50,10 @@ public class FtpComponent extends RemoteFileComponent<FTPFile> {
         FtpConfiguration config = new FtpConfiguration(new URI(baseUri));
 
         FtpOperations operations = new FtpOperations();
-        return new FtpEndpoint(uri, this, operations, config);
+        FtpEndpoint result = new FtpEndpoint(uri, this, operations, config);
+        operations.setEndpoint(result);
+
+        return result;
     }
 
     protected void afterPropertiesSet(GenericFileEndpoint<FTPFile> endpoint) throws Exception {

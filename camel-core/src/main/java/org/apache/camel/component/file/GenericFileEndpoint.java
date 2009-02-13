@@ -51,6 +51,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected GenericFileConfiguration configuration;
 
     protected boolean directory = true;
+    protected String localWorkDirectory;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
     protected boolean append = true;
@@ -400,6 +401,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setProcessStrategy(GenericFileProcessStrategy<T> processStrategy) {
         this.processStrategy = processStrategy;
+    }
+
+    public String getLocalWorkDirectory() {
+        return localWorkDirectory;
+    }
+
+    public void setLocalWorkDirectory(String localWorkDirectory) {
+        this.localWorkDirectory = localWorkDirectory;
     }
 
     /**

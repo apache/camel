@@ -152,7 +152,7 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     /**
      * Uses fail over load balancer
      * 
-     * @retrun the builder
+     * @return the builder
      */
     public LoadBalanceType failOver() {
         loadBalancerType = new LoadBalancerType(new FailOverLoadBalancer());
@@ -162,8 +162,8 @@ public class LoadBalanceType extends ProcessorType<LoadBalanceType> {
     /**
      * Uses fail over load balancer
      * 
-     * @param the exception Class which we want to catch
-     * @retrun the builder
+     * @param throwable exception Class which we want to catch
+     * @return the builder
      */
     public LoadBalanceType failOver(Class throwable) {
         loadBalancerType = new LoadBalancerType(new FailOverLoadBalancer(throwable));

@@ -27,6 +27,7 @@ import java.nio.channels.FileChannel;
 import java.util.List;
 
 import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -118,18 +119,22 @@ public class NewFileOperations implements GenericFileOperations<File> {
         
         File file = new File(fileName);
         try {
-            boolean fileSource = exchange.getIn().getBody() instanceof File;
-            if (fileSource) {
-                File source = ExchangeHelper.getMandatoryInBody(exchange, File.class);
+            File source = null;
+            try {
+                source = exchange.getIn().getBody(File.class);
+            } catch (NoTypeConversionAvailableException e) {
+                // ignore
+            }
+            if (source != null && source.exists()) {
                 writeFileByFile(source, file);
             } else {
                 InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
                 writeFileByStream(in, file);
             }
         } catch (IOException e) {            
-            throw new GenericFileOperationFailedException("Can not store file: " + file, e);
+            throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         } catch (InvalidPayloadException e) {
-            throw new GenericFileOperationFailedException("Can not store file: " + file, e);
+            throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         }
 
         return true;

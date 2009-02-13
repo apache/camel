@@ -17,6 +17,8 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,6 +42,7 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
     private static final transient Log LOG = LogFactory.getLog(FtpOperations.class);
     private final FTPClient client;
+    private GenericFileEndpoint endpoint;
 
     public FtpOperations() {
         this.client = new FTPClient();
@@ -50,7 +53,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        // noop
+        this.endpoint = endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration config) throws GenericFileOperationFailedException {
@@ -167,21 +170,98 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean retrieveFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+        if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+            // local work directory is configured so we should store file content as files in this local directory
+            return retrieveFileToFileInLocalWorkDirectory(name, exchange);
+        } else {
+            // store file content directory as stream on the body
+            return retrieveFileToStreamInBody(name, exchange);
+        }
+    }
+
+    private boolean retrieveFileToStreamInBody(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+        OutputStream os = null;
         try {
+            os = new ByteArrayOutputStream();
             GenericFile<FTPFile> target = exchange.getGenericFile();
-            OutputStream os = new ByteArrayOutputStream();
             target.setBody(os);
             return client.retrieveFile(name, os);
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } finally {
+            ObjectHelper.close(os, "retrieve: " + name, LOG);
         }
     }
 
-    public boolean storeFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+    private boolean retrieveFileToFileInLocalWorkDirectory(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+        File temp;
+        File local = new File(endpoint.getLocalWorkDirectory());
+        OutputStream os;
         try {
-            return client.storeFile(name, exchange.getIn().getBody(InputStream.class));
+            // use relative filename in local work directory
+            String relativeName = exchange.getGenericFile().getRelativeFileName();
+            
+            temp = new File(local, relativeName + ".inprogress");
+            local = new File(local, relativeName);
+
+            // create directory to local work file
+            local.mkdirs();
+
+            // delete any existing files
+            if (temp.exists()) {
+                if (!temp.delete()) {
+                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                }
+            }
+            if (local.exists()) {
+                if (!local.delete()) {
+                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + local);
+                }
+            }
+
+            // create new temp local work file
+            if (!temp.createNewFile()) {
+                throw new RemoteFileOperationFailedException("Cannot create new local work file: " + temp);
+            }
+
+            // store content as a file in the local work directory in the temp handle
+            os = new FileOutputStream(temp);
+
+            // set header with the path to the local work file
+            exchange.getIn().setHeader("CamelFileLocalWorkPath", local.getPath());
+
+        } catch (Exception e) {
+            throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);
+        }
+
+        boolean result;
+        try {
+            GenericFile<FTPFile> target = exchange.getGenericFile();
+            // store the java.io.File handle as the body
+            target.setBody(local);
+            result = client.retrieveFile(name, os);
+
+            // rename temp to local after we have retrieved the data
+            if (!temp.renameTo(local)) {
+                throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+            }
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } finally {
+            ObjectHelper.close(os, "retrieve: " + name, LOG);
+        }
+
+        return result;
+    }
+
+    public boolean storeFile(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
+        InputStream is = exchange.getIn().getBody(InputStream.class);
+        try {
+            return client.storeFile(name, is);
+        } catch (IOException e) {
+            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        } finally {
+            ObjectHelper.close(is, "store: " + name, LOG);
         }
     }
 
@@ -221,12 +301,20 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+        try {
+            return this.client.deleteFile(name);
+        } catch (IOException e) {
+            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+        }
+    }
+
     private boolean buildDirectoryChunks(String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
         final String[] dirs = dirName.split("\\/|\\\\");
 
         boolean success = false;
-        for (String dir : dirs) {            
+        for (String dir : dirs) {
             sb.append(dir).append('/');
             String directory = sb.toString();
 
@@ -241,23 +329,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
 
         return success;
-    }
-
-    public FTPClient changeCurrentDirectory(FTPClient client, String path) throws GenericFileOperationFailedException {
-        try {
-            client.changeWorkingDirectory(path);
-            return client;
-        } catch (IOException e) {
-            throw new RemoteFileOperationFailedException("Failed to delete [" + path + "]", e);
-        }
-    }
-
-    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        try {
-            return this.client.deleteFile(name);
-        } catch (IOException e) {
-            throw new RemoteFileOperationFailedException("Failed to delete [" + name + "]", e);
-        }
     }
 
 }
