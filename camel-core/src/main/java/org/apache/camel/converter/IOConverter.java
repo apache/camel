@@ -42,7 +42,6 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
-
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 
@@ -50,6 +49,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -123,7 +123,7 @@ public final class IOConverter {
                 try {
                     return toInputStream(text.getBytes(charsetName));
                 } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Can't convert the String into the bytes with the charset " + charsetName, e);
+                    LOG.warn("Cannot convert the String into byte[] with the charset: " + charsetName, e);
                 }
             }
         }
@@ -157,7 +157,7 @@ public final class IOConverter {
                 try {
                     return new String(data, charsetName);
                 } catch (UnsupportedEncodingException e) {
-                    LOG.warn("Can't convert the byte to String with the charset " + charsetName, e);
+                    LOG.warn("Cannot convert the byte[] to String with the charset: " + charsetName, e);
                 }
             }
         }
@@ -213,11 +213,7 @@ public final class IOConverter {
                 builder.append(line);
             }
         } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                LOG.warn("Failed to close stream: " + e, e);
-            }
+            ObjectHelper.close(reader, "reader", LOG);
         }
     }
 
@@ -235,12 +231,9 @@ public final class IOConverter {
                 sb.append(buf, 0, len);
             }
         } finally {
-            try {
-                reader.close();
-            } catch (IOException e) {
-                LOG.warn("Failed to close stream: " + e, e);
-            }
+            ObjectHelper.close(reader, "reader", LOG);
         }
+
         return sb.toString().getBytes();
     }
 
@@ -275,8 +268,12 @@ public final class IOConverter {
     @Converter
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        copy(stream, bos);
-        return bos.toByteArray();
+        try {
+            copy(stream, bos);
+            return bos.toByteArray();
+        } finally {
+            ObjectHelper.close(bos, "stream", LOG);
+        }
     }
 
     @Converter
