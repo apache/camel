@@ -17,9 +17,7 @@
 package org.apache.camel.itest.jetty;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.stream.StreamCache;
 
 public class SetResponseProcessor implements Processor {
 

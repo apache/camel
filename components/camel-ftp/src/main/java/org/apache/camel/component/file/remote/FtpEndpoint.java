@@ -25,11 +25,13 @@ import org.apache.commons.net.ftp.FTPFile;
 public class FtpEndpoint extends RemoteFileEndpoint<FTPFile> {
 
     public FtpEndpoint() {
-        this.operations = new FtpOperations();
+        FtpOperations operations = new FtpOperations();
+        operations.setEndpoint(this);
+        this.operations = operations;
     }
 
     public FtpEndpoint(String uri, FtpComponent component, FtpOperations operations,
-                                 RemoteFileConfiguration configuration) {
+                       RemoteFileConfiguration configuration) {
         super(uri, component, operations, configuration);
     }
 

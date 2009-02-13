@@ -45,6 +45,13 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cxf</artifactId>
+            <!-- conflicts with mockmail for unit testing, so we exclude this geronimo spec -->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-javamail_1.4_spec</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
@@ -75,23 +82,25 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftpserver-core</artifactId>
-            <version>1.0.0-M3</version>
-            <scope>test</scope>
+          <groupId>org.apache.ftpserver</groupId>
+          <artifactId>ftpserver-core</artifactId>
+          <version>1.0.0-RC2</version>
+          <scope>test</scope>
         </dependency>
+
         <dependency>
-            <groupId>org.apache.ftpserver</groupId>
-            <artifactId>ftplet-api</artifactId>
-            <version>1.0.0-M3</version>
-            <scope>test</scope>
+          <groupId>org.apache.ftpserver</groupId>
+          <artifactId>ftplet-api</artifactId>
+          <version>1.0.0-RC2</version>
+          <scope>test</scope>
         </dependency>
-        <!-- ftpserver using mina 2.0.0-M2 -->
+
+        <!-- ftpserver using mina 2.0.0-M4 -->
         <dependency>
-            <groupId>org.apache.mina</groupId>
-            <artifactId>mina-core</artifactId>
-            <version>2.0.0-M2</version>
-            <scope>test</scope>
+          <groupId>org.apache.mina</groupId>
+          <artifactId>mina-core</artifactId>
+          <version>2.0.0-M4</version>
+          <scope>test</scope>
         </dependency>
         <dependency>
           <groupId>org.slf4j</groupId>
