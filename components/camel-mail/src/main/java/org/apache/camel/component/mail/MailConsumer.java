@@ -113,7 +113,7 @@ public class MailConsumer extends ScheduledPollConsumer {
                 if (folder.isOpen()) {
                     folder.close(true);
                 }
-            } catch (MessagingException e) {
+            } catch (Exception e) {
                 // some mail servers will lock the folder so we ignore in this case (CAMEL-1263)
                 LOG.debug("Could not close mailbox folder: " + folder.getName(), e);
             }
