@@ -38,6 +38,12 @@ public final class GenericFileConverter {
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
             GenericFile file = (GenericFile) value;
             Class from = file.getBody().getClass();
+
+            // maybe from is already the type we want
+            if (from.isAssignableFrom(type)) {
+                return file.getBody();
+            }
+            // no then try to lookup a type converter
             TypeConverter tc = registry.lookup(type, from);
             if (tc != null) {
                 Object body = file.getBody();

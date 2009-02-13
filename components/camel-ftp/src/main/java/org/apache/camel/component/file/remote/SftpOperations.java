@@ -17,6 +17,8 @@
 package org.apache.camel.component.file.remote;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,11 +48,12 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Log LOG = LogFactory.getLog(SftpOperations.class);
+    private GenericFileEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        // noop
+        this.endpoint = endpoint;
     }
 
     public boolean connect(RemoteFileConfiguration configuration) throws GenericFileOperationFailedException {
@@ -194,9 +197,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 }
             }
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory " + directory, e);
+            throw new RemoteFileOperationFailedException("Cannot build directory: " + directory, e);
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory " + directory, e);
+            throw new RemoteFileOperationFailedException("Cannot build directory: " + directory, e);
         } finally {
             // change back to original directory
             if (originalDirectory != null) {
@@ -272,6 +275,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean retrieveFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+        if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
+            // local work directory is configured so we should store file content as files in this local directory
+            return retrieveFileToFileInLocalWorkDirectory(name, exchange);
+        } else {
+            // store file content directory as stream on the body
+            return retrieveFileToStreamInBody(name, exchange);
+        }
+    }
+
+    private boolean retrieveFileToStreamInBody(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
         try {
             GenericFile<ChannelSftp.LsEntry> target = exchange.getGenericFile();
             OutputStream os = new ByteArrayOutputStream();
@@ -279,8 +292,68 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.get(name, os);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Could not retrieve the file [" + name + "]", e);
+            throw new RemoteFileOperationFailedException("Cannot retrieve file: " + name, e);
         }
+    }
+
+    private boolean retrieveFileToFileInLocalWorkDirectory(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
+        File temp;
+        File local = new File(endpoint.getLocalWorkDirectory());
+        OutputStream os;
+        try {
+            // use relative filename in local work directory
+            String relativeName = exchange.getGenericFile().getRelativeFileName();
+
+            temp = new File(local, relativeName + ".inprogress");
+            local = new File(local, relativeName);
+
+            // create directory to local work file
+            local.mkdirs();
+
+            // delete any existing files
+            if (temp.exists()) {
+                if (!temp.delete()) {
+                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                }
+            }
+            if (local.exists()) {
+                if (!local.delete()) {
+                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + local);
+                }
+            }
+
+            // create new temp local work file
+            if (!temp.createNewFile()) {
+                throw new RemoteFileOperationFailedException("Cannot create new local work file: " + temp);
+            }
+
+            // store content as a file in the local work directory in the temp handle
+            os = new FileOutputStream(temp);
+
+            // set header with the path to the local work file
+            exchange.getIn().setHeader("CamelFileLocalWorkPath", local.getPath());
+
+        } catch (Exception e) {
+            throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);
+        }
+
+        try {
+            GenericFile<ChannelSftp.LsEntry> target = exchange.getGenericFile();
+            // store the java.io.File handle as the body
+            target.setBody(local);
+            channel.get(name, os);
+
+            // rename temp to local after we have retrieved the data
+            if (!temp.renameTo(local)) {
+                throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+            }
+        } catch (SftpException e) {
+            throw new RemoteFileOperationFailedException("Cannot retrieve file: " + name, e);
+        } finally {
+            ObjectHelper.close(os, "retrieve: " + name, LOG);
+        }
+
+        return true;
     }
 
     public boolean storeFile(String name, GenericFileExchange<ChannelSftp.LsEntry> exchange) throws GenericFileOperationFailedException {
@@ -289,9 +362,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.put(in, name);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Could not write the file [" + name + "]", e);
+            throw new RemoteFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
-            throw new RemoteFileOperationFailedException("Could not write the file [" + name + "]", e);
+            throw new RemoteFileOperationFailedException("Cannot store file: " + name, e);
         }
     }
 

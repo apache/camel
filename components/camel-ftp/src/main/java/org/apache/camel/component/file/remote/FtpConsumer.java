@@ -89,17 +89,19 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {
-        RemoteFile<FTPFile> remote = new RemoteFile<FTPFile>();
-        remote.setFile(file);
-        remote.setFileName(file.getName());
-        remote.setFileLength(file.getSize());
+        RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
+
+        answer.setFile(file);
+        answer.setFileName(file.getName());
+        answer.setFileLength(file.getSize());
         if (file.getTimestamp() != null) {
-            remote.setLastModified(file.getTimestamp().getTimeInMillis());
+            answer.setLastModified(file.getTimestamp().getTimeInMillis());
         }
-        remote.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
+        answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
-        remote.setAbsoluteFileName(absoluteFileName);
+        answer.setAbsoluteFileName(absoluteFileName);
 
         // the relative filename
         String ftpBasePath = endpoint.getConfiguration().getFile();
@@ -107,9 +109,9 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         if (relativePath.startsWith("/")) {
             relativePath = relativePath.substring(1);
         }
-        remote.setRelativeFileName(relativePath);
+        answer.setRelativeFileName(relativePath);
 
-        return remote;
+        return answer;
     }
 
 }

@@ -23,11 +23,8 @@ import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrategySupport<T> {
-    private static final transient Log LOG = LogFactory.getLog(org.apache.camel.component.file.strategy.GenericFileRenameProcessStrategy.class);
     private GenericFileRenamer<T> beginRenamer;
     private GenericFileRenamer<T> commitRenamer;
 
@@ -77,8 +74,8 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
             throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");
         }
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Renaming file: " + from + " to: " + to);
+        if (log.isDebugEnabled()) {
+            log.debug("Renaming file: " + from + " to: " + to);
         }
         boolean renamed = operations.renameFile(from.getAbsoluteFileName(), to.getAbsoluteFileName());
         if (!renamed) {
