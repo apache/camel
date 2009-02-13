@@ -14,59 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.component.jetty;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
-/**
- * @version $Revision$
- */
-public class ChoiceTest extends ContextTestSupport {
+public class JettyWithXPathChoiceTest extends ContextTestSupport {
     protected MockEndpoint x;
     protected MockEndpoint y;
     protected MockEndpoint z;
-    protected MockEndpoint end;
 
     public void testSendToFirstWhen() throws Exception {
         String body = "<one/>";
-        x.expectedBodiesReceived(body);
-        end.expectedBodiesReceived(body);
-        // The SpringChoiceTest.java can't setup the header by Spring configure file
-        // x.expectedHeaderReceived("name", "a");
         expectsMessageCount(0, y, z);
 
-        sendMessage("bar", body);
+        sendBody(body);
 
         assertMockEndpointsSatisfied();
-    }
 
-    public void testSendToSecondWhen() throws Exception {
-        String body = "<two/>";
-        y.expectedBodiesReceived(body);
-        end.expectedBodiesReceived(body);
+        x.reset();
+        y.reset();
+        z.reset();        
+        
+        body = "<two/>";
         expectsMessageCount(0, x, z);
+        
+        sendBody(body);
 
-        sendMessage("cheese", body);
-
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();    
     }
 
-    public void testSendToOtherwiseClause() throws Exception {
-        String body = "<three/>";
-        z.expectedBodiesReceived(body);
-        end.expectedBodiesReceived(body);
-        expectsMessageCount(0, x, y);
-
-        sendMessage("somethingUndefined", body);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    protected void sendMessage(final Object headerValue, final Object body) throws Exception {
-        template.sendBodyAndHeader("direct:start", body, "foo", headerValue);
+    private void sendBody(String body) {
+        template.sendBody("http://localhost:9080/myworld", body);
     }
 
     @Override
@@ -76,16 +57,17 @@ public class ChoiceTest extends ContextTestSupport {
         x = getMockEndpoint("mock:x");
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
-        end = getMockEndpoint("mock:end");
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice()
-                  .when().xpath("$foo = 'bar'").to("mock:x")
-                  .when().xpath("$foo = 'cheese'").to("mock:y")
-                  .otherwise().to("mock:z").end().to("mock:end");
+                // Need a convertBodyTo processor here or we may get an error
+                // that we are at the end of the stream
+                from("jetty:http://localhost:9080/myworld").convertBodyTo(String.class).choice()
+                  .when().xpath("/one").to("mock:x")
+                  .when().xpath("/two").to("mock:y")
+                  .otherwise().to("mock:z");
             }
         };
     }
