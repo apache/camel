@@ -54,10 +54,16 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     }
 
     protected void tearDown() throws Exception {
-        super.tearDown();
-        ftpServer.stop();
-        ftpServer = null;
-        port = 0;
+        try {
+            super.tearDown();
+            ftpServer.stop();
+            ftpServer = null;
+            port = 0;
+        } catch (Exception e) {
+            // ignore while shutting down as we could be polling during shutdown
+            // and get errors when the ftp server is stopping. This is only an issue
+            // since we host the ftp server embedded in the same jvm for unit testing
+        }
     }
 
     protected void initFtpServer() throws Exception {
