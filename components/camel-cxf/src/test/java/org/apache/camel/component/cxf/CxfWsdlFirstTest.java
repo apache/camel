@@ -118,7 +118,7 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
             // Caught expected WebServiceException here
             assertTrue("Should get the xml vaildate error!", ex.getMessage().indexOf("MyStringType") > 0);         
         }
-        
+
         verifyJaxwsHandlers(fromHandler, toHandler);
     }
 
@@ -126,7 +126,9 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
         assertEquals(2, fromHandler.getFaultCount());
         assertEquals(4, fromHandler.getMessageCount());
         assertEquals(7, toHandler.getGetHeadersCount());
-        
+        assertEquals(8, toHandler.getMessageCount());
+        assertEquals(6, toHandler.getFaultCount());
+
     }
 
     @SuppressWarnings("unchecked")
