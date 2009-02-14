@@ -18,7 +18,6 @@ package org.apache.camel.component.seda;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.Component;
@@ -39,22 +38,29 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class SedaEndpoint extends DefaultEndpoint<Exchange> implements BrowsableEndpoint<Exchange> {
     private BlockingQueue<Exchange> queue;
+    private int concurrentConsumers = 1;
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
-        super(endpointUri, component);
-        this.queue = queue;
+        this(endpointUri, component, queue, 1);
     }
 
-    public SedaEndpoint(String uri, SedaComponent component, Map parameters) {
-        this(uri, component, component.createQueue(uri, parameters));
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
+        super(endpointUri, component);
+        this.queue = queue;
+        this.concurrentConsumers = concurrentConsumers;
     }
 
     public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue) {
+        this(endpointUri, queue, 1);
+    }
+
+    public SedaEndpoint(String endpointUri, BlockingQueue<Exchange> queue, int concurrentConsumers) {
         super(endpointUri);
         ObjectHelper.notNull(queue, "queue");
         this.queue = queue;
+        this.concurrentConsumers = concurrentConsumers;
     }
-
+    
     public Producer createProducer() throws Exception {
         return new CollectionProducer(this, getQueue());
     }
@@ -66,7 +72,15 @@ public class SedaEndpoint extends DefaultEndpoint<Exchange> implements Browsable
     public BlockingQueue<Exchange> getQueue() {
         return queue;
     }
-
+    
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
+    }
+    
+    public int getConcurrentConsumers() {
+        return concurrentConsumers;
+    }
+    
     public boolean isSingleton() {
         return true;
     }
