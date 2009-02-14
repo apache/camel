@@ -101,7 +101,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         ObjectHelper.notNull(type, "type");
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Evaluation " + expression + " for exchange: " + exchange);
+                LOG.debug("Evaluation: " + expression + " for exchange: " + exchange);
             }
             if (type.equals(String.class)) {
                 return (T) evaluateAsString(exchange);
@@ -120,7 +120,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     public Object evaluate(Exchange exchange) {
         try {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Evaluation " + expression + " for exchange: " + exchange);
+                LOG.debug("Evaluation: " + expression + " for exchange: " + exchange);
             }
 
             if (resultType != null) {
@@ -215,13 +215,16 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     }
 
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
+        List list;
+
         try {
-            List list = evaluateAsList(exchange);
-            if (!matches(exchange, list)) {
-                throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
-            }
+            list = evaluateAsList(exchange);
         } catch (Exception e) {
             throw new AssertionError(e);
+        }
+
+        if (!matches(exchange, list)) {
+            throw new AssertionError(this + " failed on " + exchange + " as evaluated: " + list);
         }
     }
 
@@ -485,8 +488,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             initialized.set(true);
         }
 
-        // let the configuration be accessible on the exchange as its shared for this evaulation
-        // and can be needed for 3rd part type converters or in some other situations
+        // let the configuration be accessible on the exchange as its shared for this evaluation
+        // and can be needed by 3rd party type converters or other situations (camel-artixds)
         exchange.setProperty("CamelSaxonConfiguration", configuration);
     }
 
