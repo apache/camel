@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.xml.ws.BindingProvider;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
 
@@ -32,6 +31,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
+import org.apache.cxf.jaxws.handler.HandlerChainInvoker;
 import org.apache.cxf.message.Message;
 
 /**
@@ -106,6 +106,10 @@ public final class CxfBinding {
             //Allows other components to pass properties into cxf request context
             requestContext.putAll(exchange.getProperties());
         }
+        
+        // Make sure we don't propagate HandleChainInvoker as it can mess up JAXWS handler
+        requestContext.remove(HandlerChainInvoker.class.getName());
+        
         answer.put(Client.REQUEST_CONTEXT, requestContext);
 
         return answer;

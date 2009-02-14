@@ -123,9 +123,11 @@ public class CxfWsdlFirstTest extends SpringTestSupport {
     }
 
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
-        assertEquals(8, fromHandler.getFaultCount());
-        assertEquals(11, fromHandler.getMessageCount());
+        assertEquals(2, fromHandler.getFaultCount());
+        assertEquals(4, fromHandler.getMessageCount());
         assertEquals(7, toHandler.getGetHeadersCount());
+        assertEquals(8, toHandler.getMessageCount());
+        assertEquals(6, toHandler.getFaultCount());
         
     }
 
