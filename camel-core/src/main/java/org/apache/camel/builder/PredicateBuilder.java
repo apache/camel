@@ -16,7 +16,7 @@
  */
 package org.apache.camel.builder;
 
-
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.util.ObjectHelper;
-
 import static org.apache.camel.util.ObjectHelper.compare;
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -108,6 +107,30 @@ public final class PredicateBuilder {
             @Override
             public String toString() {
                 return "(" + left + ") or (" + right + ")";
+            }
+        };
+    }
+
+    /**
+     * A helper method to return true if any of the predicates
+     * matches.
+     */
+    public static Predicate in(final Predicate... predicates) {
+        notNull(predicates, "predicates");
+
+        return new PredicateSupport() {
+            public boolean matches(Exchange exchange) {
+                for (Predicate in : predicates) {
+                    if (in.matches(exchange)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public String toString() {
+                return "in (" + Arrays.asList(predicates) + ")";
             }
         };
     }
