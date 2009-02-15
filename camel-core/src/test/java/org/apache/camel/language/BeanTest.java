@@ -32,10 +32,12 @@ public class BeanTest extends LanguageTestSupport {
 
     public void testSimpleExpressions() throws Exception {
         assertExpression("foo.cheese", "abc");
+        assertExpression("foo?method=cheese", "abc");
     }
 
     public void testPredicates() throws Exception {
         assertPredicate("foo.isFooHeaderAbc");
+        assertPredicate("foo?method=isFooHeaderAbc");
     }
 
     public void testBeanTypeExpression() throws Exception {

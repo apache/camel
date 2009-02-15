@@ -150,4 +150,22 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("c", it.next());
     }
 
+    public void testBefore() {
+        assertEquals("Hello ", ObjectHelper.before("Hello World", "World"));
+        assertEquals("Hello ", ObjectHelper.before("Hello World Again", "World"));
+        assertEquals(null, ObjectHelper.before("Hello Again", "Foo"));
+    }
+
+    public void testAfter() {
+        assertEquals(" World", ObjectHelper.after("Hello World", "Hello"));
+        assertEquals(" World Again", ObjectHelper.after("Hello World Again", "Hello"));
+        assertEquals(null, ObjectHelper.after("Hello Again", "Foo"));
+    }
+
+    public void testBetween() {
+        assertEquals("foo bar", ObjectHelper.between("Hello 'foo bar' how are you", "'", "'"));
+        assertEquals("foo bar", ObjectHelper.between("Hello ${foo bar} how are you", "${", "}"));
+        assertEquals(null, ObjectHelper.between("Hello ${foo bar} how are you", "'", "'"));
+    }
+
 }

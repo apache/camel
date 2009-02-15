@@ -290,6 +290,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the exchanges inbound message body type
+     */
+    public static Expression bodyType() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getBody().getClass();
+            }
+
+            @Override
+            public String toString() {
+                return "bodyType";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body converted
      * to the given type
      */
@@ -440,6 +456,23 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "" + expression + ".convertTo(" + type.getCanonicalName() + ".class)";
+            }
+        };
+    }
+
+    /**
+     * Returns an expression which converts the given expression to the given type the type
+     * expression is evaluted to
+     */
+    public static Expression convertTo(final Expression expression, final Expression type) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return expression.evaluate(exchange, type.evaluate(exchange).getClass());
+            }
+
+            @Override
+            public String toString() {
+                return "" + expression + ".convertTo(" + type + ")";
             }
         };
     }
