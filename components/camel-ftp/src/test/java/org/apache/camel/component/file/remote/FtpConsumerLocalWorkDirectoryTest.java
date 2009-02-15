@@ -26,6 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
+import org.apache.camel.util.FileUtil;
 
 /**
  * @version $Revision$
@@ -39,6 +40,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/lwd");
+        deleteDirectory("target/out");
         super.setUp();
         prepareFtpServer();
     }
@@ -82,8 +84,8 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         File body = exchange.getIn().getBody(File.class);
                         assertNotNull(body);
-                        assertTrue("Local work file should exists", body.exists());
-                        assertEquals("target/lwd/hello.txt", body.getPath());
+                        assertTrue("Local work file should exists", body.exists());                        
+                        assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
                     }
                 }).to("file://target/out", "mock:result");
             }

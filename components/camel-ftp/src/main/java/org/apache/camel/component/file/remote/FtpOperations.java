@@ -30,6 +30,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -194,8 +195,8 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     private boolean retrieveFileToFileInLocalWorkDirectory(String name, GenericFileExchange<FTPFile> exchange) throws GenericFileOperationFailedException {
-        File temp;
-        File local = new File(endpoint.getLocalWorkDirectory());
+        File temp;        
+        File local = new File(FileUtil.normalizePath(endpoint.getLocalWorkDirectory()));
         OutputStream os;
         try {
             // use relative filename in local work directory
@@ -216,8 +217,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             if (local.exists()) {
                 if (!local.delete()) {
                     throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + local);
-                }
+                }                
             }
+           
 
             // create new temp local work file
             if (!temp.createNewFile()) {
@@ -227,10 +229,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // store content as a file in the local work directory in the temp handle
             os = new FileOutputStream(temp);
 
-            // set header with the path to the local work file
+            // set header with the path to the local work file            
             exchange.getIn().setHeader("CamelFileLocalWorkPath", local.getPath());
 
-        } catch (Exception e) {
+        } catch (Exception e) {            
             throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
@@ -238,18 +240,21 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             GenericFile<FTPFile> target = exchange.getGenericFile();
             // store the java.io.File handle as the body
-            target.setBody(local);
+            target.setBody(local);            
             result = client.retrieveFile(name, os);
-
-            // rename temp to local after we have retrieved the data
-            if (!temp.renameTo(local)) {
-                throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
-            }
-        } catch (IOException e) {
+            
+        } catch (IOException e) {            
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-        } finally {
+        }  finally {
+            // need to close the stream before rename it
             ObjectHelper.close(os, "retrieve: " + name, LOG);
+        }   
+            
+        // rename temp to local after we have retrieved the data
+        if (!temp.renameTo(local)) {                
+            throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
         }
+        
 
         return result;
     }
