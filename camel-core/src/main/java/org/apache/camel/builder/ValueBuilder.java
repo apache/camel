@@ -16,6 +16,9 @@
  */
 package org.apache.camel.builder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
@@ -97,6 +100,20 @@ public class ValueBuilder implements Expression {
 
     public Predicate not(Predicate predicate) {
         return onNewPredicate(PredicateBuilder.not(predicate));
+    }
+
+    public Predicate in(Object... values) {
+        List<Predicate> predicates = new ArrayList<Predicate>();
+        for (Object value : values) {
+            Expression right = asExpression(value);
+            Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
+            predicates.add(predicate);
+        }
+        return in(predicates.toArray(new Predicate[predicates.size()]));
+    }
+
+    public Predicate in(Predicate... predicates) {
+        return onNewPredicate(PredicateBuilder.in(predicates));
     }
 
     /**
