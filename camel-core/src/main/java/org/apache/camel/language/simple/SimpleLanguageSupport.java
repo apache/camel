@@ -38,7 +38,7 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
  */
 public abstract class SimpleLanguageSupport implements Language {
 
-    protected static final Pattern PATTERN = Pattern.compile("^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|is)\\s+(.+)$");
+    protected static final Pattern PATTERN = Pattern.compile("^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=)\\s+(.+)$");
     protected final Log log = LogFactory.getLog(getClass());
 
     public Predicate createPredicate(String expression) {
@@ -80,6 +80,10 @@ public abstract class SimpleLanguageSupport implements Language {
         } else {
             // text can either be a constant enclosed by ' ' or another expression using ${ } placeholders
             String constant = ObjectHelper.between(text, "'", "'");
+            if (constant == null) {
+                // if no ' ' around then fallback to the text itself
+                constant = text;
+            }
             String simple = ObjectHelper.between(text, "${", "}");
 
             Expression exp = simple != null ? createSimpleExpression(simple) : createConstantExpression(constant);
