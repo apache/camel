@@ -28,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/filesorter/?sorter=#mySorter&initialDelay=1000";
+    private String fileUrl = "file://target/filesorter/?sorter=#mySorter&initialDelay=1000";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -42,14 +42,14 @@ public class FileSorterRefTest extends ContextTestSupport {
         deleteDirectory("target/filesorter");
         super.setUp();
 
-        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Paris",
-            NewFileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
+            FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello London",
-            NewFileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
+            FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/", "Hello Copenhagen",
-            NewFileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+        template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
+            FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
     }
 
     public void testSortFiles() throws Exception {

@@ -36,19 +36,19 @@ import org.apache.commons.logging.LogFactory;
 /**
  * File operations for {@link java.io.File}.
  */
-public class NewFileOperations implements GenericFileOperations<File> {
-    private static final transient Log LOG = LogFactory.getLog(NewFileOperations.class);
-    private NewFileEndpoint endpoint;
+public class FileOperations implements GenericFileOperations<File> {
+    private static final transient Log LOG = LogFactory.getLog(FileOperations.class);
+    private FileEndpoint endpoint;
 
-    public NewFileOperations() {
+    public FileOperations() {
     }
 
-    public NewFileOperations(NewFileEndpoint endpoint) {
+    public FileOperations(FileEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
     public void setEndpoint(GenericFileEndpoint endpoint) {
-        this.endpoint = (NewFileEndpoint) endpoint;
+        this.endpoint = (FileEndpoint) endpoint;
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {        

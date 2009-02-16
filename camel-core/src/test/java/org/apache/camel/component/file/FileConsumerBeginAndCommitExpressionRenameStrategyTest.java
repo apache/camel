@@ -43,14 +43,14 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists("./target/done/paris.bak", "Hello Paris");
 
-        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("newfile://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -63,7 +63,7 @@ public class FileConsumerBeginAndCommitExpressionRenameStrategyTest extends Cont
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&moveExpression=../done/${file:name}&consumer.delay=5000")
+                from("file://target/reports?preMoveExpression=../inprogress/${file:name.noext}.bak&moveExpression=../done/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;

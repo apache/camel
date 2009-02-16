@@ -434,7 +434,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             name = name.substring(1);
         }
 
-        message.setHeader(NewFileComponent.HEADER_FILE_NAME, name);
+        message.setHeader(FileComponent.HEADER_FILE_NAME, name);
     }
 
     protected Map<String, Object> getParamsAsMap() {

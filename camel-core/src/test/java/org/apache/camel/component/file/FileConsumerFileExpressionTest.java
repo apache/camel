@@ -45,14 +45,14 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     }
 
     public void testConsumeFileBasedOnBeanName() throws Exception {
-        template.sendBodyAndHeader("newfile://target/filelanguage/bean", "Hello World", NewFileComponent.HEADER_FILE_NAME, "122.txt");
-        template.sendBodyAndHeader("newfile://target/filelanguage/bean", "Goodday World", NewFileComponent.HEADER_FILE_NAME, "123.txt");
-        template.sendBodyAndHeader("newfile://target/filelanguage/bean", "Bye World", NewFileComponent.HEADER_FILE_NAME, "124.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Hello World", FileComponent.HEADER_FILE_NAME, "122.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Goodday World", FileComponent.HEADER_FILE_NAME, "123.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", FileComponent.HEADER_FILE_NAME, "124.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("newfile://target/filelanguage/bean/"
+                from("file://target/filelanguage/bean/"
                       + "?fileExpression=${bean:counter.next}.txt&delete=true").to("mock:result");
             }
         });
@@ -67,15 +67,15 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     }
 
     public void testConsumeFileBasedOnDatePattern() throws Exception {
-        template.sendBodyAndHeader("newfile://target/filelanguage/date", "Bye World", NewFileComponent.HEADER_FILE_NAME, "myfile-20081128.txt");
-        template.sendBodyAndHeader("newfile://target/filelanguage/date", "Hello World", NewFileComponent.HEADER_FILE_NAME, "myfile-20081129.txt");
-        template.sendBodyAndHeader("newfile://target/filelanguage/date", "Goodday World", NewFileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Bye World", FileComponent.HEADER_FILE_NAME, "myfile-20081128.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-20081129.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Goodday World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("newfile://target/filelanguage/date/"
+                from("file://target/filelanguage/date/"
                       + "?fileExpression=myfile-${date:now:yyyyMMdd}.txt").to("mock:result");
                 // END SNIPPET: e1
             }

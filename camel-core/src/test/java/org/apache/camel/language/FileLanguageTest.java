@@ -26,10 +26,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExchange;
-import org.apache.camel.component.file.NewFileConsumer;
-import org.apache.camel.component.file.NewFileEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.simple.FileLanguage;
 
@@ -108,14 +108,14 @@ public class FileLanguageTest extends LanguageTestSupport {
 
     public Exchange createExchange() {
         // create the file
-        String uri = "newfile://target/filelanguage";
+        String uri = "file://target/filelanguage";
         template.sendBodyAndHeader(uri, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         // get the file handle
         file = new File("target/filelanguage/hello.txt");
-        GenericFile<File> gf = NewFileConsumer.asGenericFile(file);
+        GenericFile<File> gf = FileConsumer.asGenericFile(file);
 
-        NewFileEndpoint endpoint = getMandatoryEndpoint(uri, NewFileEndpoint.class);
+        FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
         GenericFileExchange<File> answer = new GenericFileExchange<File>(endpoint, ExchangePattern.InOut);
         answer.setGenericFile(gf);
 

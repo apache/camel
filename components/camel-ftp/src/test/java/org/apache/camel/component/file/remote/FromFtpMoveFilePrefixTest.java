@@ -22,7 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -48,7 +48,7 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World this file will be moved");
-        exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME, "hello.txt");
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);

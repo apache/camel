@@ -36,17 +36,17 @@ public class FileConsumerIncludeAndExcludeNameTest extends ContextTestSupport {
     }
 
     private void prepareFiles() throws Exception {
-        String url = "newfile://target/includeexclude";
-        template.sendBodyAndHeader(url, "Hello World", NewFileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Report 1", NewFileComponent.HEADER_FILE_NAME, "report1.xml");
-        template.sendBodyAndHeader(url, "Report 2", NewFileComponent.HEADER_FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader(url, "Report 3", NewFileComponent.HEADER_FILE_NAME, "report3.txt");
+        String url = "file://target/includeexclude";
+        template.sendBodyAndHeader(url, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(url, "Report 1", FileComponent.HEADER_FILE_NAME, "report1.xml");
+        template.sendBodyAndHeader(url, "Report 2", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Report 3", FileComponent.HEADER_FILE_NAME, "report3.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/includeexclude/?includeNamePrefix=report&excludeNamePostfix=xml")
+                from("file://target/includeexclude/?includeNamePrefix=report&excludeNamePostfix=xml")
                     .to("mock:result");
             }
         };

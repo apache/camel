@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSortByNestedExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/filesorter/";
+    private String fileUrl = "file://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
@@ -39,16 +39,16 @@ public class FileSortByNestedExpressionTest extends ContextTestSupport {
     }
 
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Paris",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
             FileComponent.HEADER_FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello London",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
             FileComponent.HEADER_FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Copenhagen",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
             FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Dublin",
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Dublin",
             FileComponent.HEADER_FILE_NAME, "dublin.txt");
     }
 

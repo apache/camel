@@ -30,7 +30,7 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
 
     public void testGeneratedFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint("direct:a");
-        NewFileEndpoint fileEndpoint = resolveMandatoryEndpoint("newfile://target", NewFileEndpoint.class);
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file://target", FileEndpoint.class);
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World");
@@ -47,7 +47,7 @@ public class FileProduceGeneratedFileNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("newfile://target");
+                from("direct:a").to("file://target");
             }
         };
     }

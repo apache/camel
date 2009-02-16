@@ -22,7 +22,7 @@ import java.io.Serializable;
 /**
  * File binding with the {@link java.io.File} type.
  */
-public class NewFileBinding implements GenericFileBinding<File>, Serializable {
+public class FileBinding implements GenericFileBinding<File>, Serializable {
 
     private File body;
 

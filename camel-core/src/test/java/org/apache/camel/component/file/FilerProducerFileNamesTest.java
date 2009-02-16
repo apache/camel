@@ -34,7 +34,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("This is a good report");
 
-        NewFileEndpoint fileEndpoint = resolveMandatoryEndpoint("newfile:target/reports/report.txt", NewFileEndpoint.class);
+        FileEndpoint fileEndpoint = resolveMandatoryEndpoint("file:target/reports/report.txt", FileEndpoint.class);
         String id = fileEndpoint.getGeneratedFileName(exchange.getIn());
 
         template.send("direct:report", exchange);
@@ -58,11 +58,11 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:report").to("newfile:target/reports/report.txt");
+                from("direct:report").to("file:target/reports/report.txt");
 
-                from("direct:report2").to("newfile:target/report2.txt?autoCreate=false&directory=false");
+                from("direct:report2").to("file:target/report2.txt?autoCreate=false&directory=false");
 
-                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, constant("report-super.txt")).to("newfile:target/");
+                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, constant("report-super.txt")).to("file:target/");
             }
         };
     }

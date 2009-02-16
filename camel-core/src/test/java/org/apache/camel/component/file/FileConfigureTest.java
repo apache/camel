@@ -40,24 +40,24 @@ public class FileConfigureTest extends ContextTestSupport {
     };
 
     public void testUriConfigurations() throws Exception {
-        assertFileEndpoint("newfile://target/foo/bar", EXPECT_PATH);
-        assertFileEndpoint("newfile://target/foo/bar?delete=true", EXPECT_PATH);
-        assertFileEndpoint("newfile:target/foo/bar?delete=true", EXPECT_PATH);
-        assertFileEndpoint("newfile:target/foo/bar", EXPECT_PATH);
-        assertFileEndpoint("newfile://target/foo/bar/", EXPECT_PATH);
-        assertFileEndpoint("newfile://target/foo/bar/?delete=true", EXPECT_PATH);
-        assertFileEndpoint("newfile:target/foo/bar/?delete=true", EXPECT_PATH);
-        assertFileEndpoint("newfile:target/foo/bar/", EXPECT_PATH);
-        assertFileEndpoint("newfile:/target/foo/bar/", File.separator + EXPECT_PATH);
-        assertFileEndpoint("newfile:/", File.separator);
-        assertFileEndpoint("newfile:///", File.separator);
+        assertFileEndpoint("file://target/foo/bar", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar/", EXPECT_PATH);
+        assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH);
+        assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH);
+        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH);
+        assertFileEndpoint("file:/", File.separator);
+        assertFileEndpoint("file:///", File.separator);
     }
 
     public void testConsumerConfigurations() throws Exception {
-        NewFileConsumer consumer = createFileConsumer("newfile://target/foo/bar?recursive=true");
+        FileConsumer consumer = createFileConsumer("file://target/foo/bar?recursive=true");
         assertNotNull(consumer);
         try {
-            createFileConsumer("newfile://target/foo/bar?recursiv=true");
+            createFileConsumer("file://target/foo/bar?recursiv=true");
             fail("Expect a configure exception here");
         } catch (Exception ex) {
             assertTrue("Get the wrong exception type here", ex instanceof ResolveEndpointFailedException);
@@ -71,13 +71,13 @@ public class FileConfigureTest extends ContextTestSupport {
         deleteDirectory("/target");
     }
 
-    private NewFileConsumer createFileConsumer(String endpointUri) throws Exception {
-        NewFileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, NewFileEndpoint.class);
+    private FileConsumer createFileConsumer(String endpointUri) throws Exception {
+        FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         return endpoint.createConsumer(DUMMY_PROCESSOR);
     }
 
     private void assertFileEndpoint(String endpointUri, String expectedPath) throws IOException {
-        NewFileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, NewFileEndpoint.class);
+        FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
         File file = endpoint.getFile();
@@ -85,7 +85,7 @@ public class FileConfigureTest extends ContextTestSupport {
         assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
 
         file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
-        GenericFile<File> consumedFile = NewFileConsumer.asGenericFile(file);
+        GenericFile<File> consumedFile = FileConsumer.asGenericFile(file);
 
         Message message = new DefaultMessage();
         endpoint.configureMessage(consumedFile, message);

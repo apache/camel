@@ -23,10 +23,10 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
-import org.apache.camel.component.file.NewFileComponent;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -36,14 +36,14 @@ import org.apache.commons.logging.LogFactory;
  * Acquires read lock to the given file using a marker file so other Camel consumers wont acquire the same file.
  * This is the default behaviour in Camel 1.x.
  */
-public class NewMarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
-    private static final transient Log LOG = LogFactory.getLog(NewMarkerFileExclusiveReadLockStrategy.class);
+public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
+    private static final transient Log LOG = LogFactory.getLog(MarkerFileExclusiveReadLockStrategy.class);
 
     @SuppressWarnings("unchecked")
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 
-        String lockFileName = file.getAbsoluteFileName() + NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        String lockFileName = file.getAbsoluteFileName() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
         }

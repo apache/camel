@@ -29,9 +29,9 @@ public class FileConsumeFileOnlyTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/fileonly");
         super.setUp();
-        template.sendBodyAndHeader("newfile://target/fileonly", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("newfile://target/fileonly", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("newfile://target/fileonly/2008", "2008 Report", FileComponent.HEADER_FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file://target/fileonly", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/fileonly", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/fileonly/2008", "2008 Report", FileComponent.HEADER_FILE_NAME, "report2008.txt");
     }
 
     public void testConsumeFileOnly() throws Exception {
@@ -45,7 +45,7 @@ public class FileConsumeFileOnlyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/fileonly/report.txt?directory=false&recursive=false&delete=true").to("mock:result");
+                from("file://target/fileonly/report.txt?directory=false&recursive=false&delete=true").to("mock:result");
             }
         };
     }

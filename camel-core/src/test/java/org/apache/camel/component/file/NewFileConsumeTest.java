@@ -42,7 +42,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
     public void testNewFileConsumer() throws Exception {
         deleteDirectory("target/consumefile");
 
-        NewFileComponent comp = new NewFileComponent();
+        FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 
         // create a file to consume
@@ -54,7 +54,7 @@ public class NewFileConsumeTest extends ContextTestSupport {
             fos.close();
         }
 
-        Endpoint endpoint = comp.createEndpoint("newfile://target/consumefile", "target/consumefile", new HashMap());
+        Endpoint endpoint = comp.createEndpoint("file://target/consumefile", "target/consumefile", new HashMap());
         Consumer consumer = endpoint.createConsumer(new Processor() {
             public void process(Exchange exchange) throws Exception {
                 assertNotNull(exchange);
