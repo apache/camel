@@ -17,7 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.NewFileComponent;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**

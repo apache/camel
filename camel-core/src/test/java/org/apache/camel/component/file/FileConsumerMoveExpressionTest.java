@@ -51,7 +51,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("newfile://target/filelanguage/report.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/report.txt?directory=false&autoCreate=false"
                      + "&moveExpression=${id}.bak").to("mock:result");
             }
         });
@@ -60,7 +60,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("newfile://target/filelanguage/", "Hello World", NewFileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -76,7 +76,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("newfile://target/filelanguage/report2.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/report2.txt?directory=false&autoCreate=false"
                      + "&moveExpression=backup-${id}-${file:name.noext}.bak").to("mock:result");
             }
         });
@@ -85,7 +85,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bye World", NewFileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -101,7 +101,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("newfile://target/filelanguage/report3.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/report3.txt?directory=false&autoCreate=false"
                       + "&moveExpression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
             }
         });
@@ -111,7 +111,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye Big World");
         mock.expectedFileExists("target/filelanguage/backup/123.txt", "Bye Big World");
 
-        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bye Big World", NewFileComponent.HEADER_FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", FileComponent.HEADER_FILE_NAME, "report3.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -119,7 +119,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("newfile://target/filelanguage/report4.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/report4.txt?directory=false&autoCreate=false"
                      + "&moveExpression=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -129,7 +129,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Big World");
         mock.expectedFileExists("target/backup/report4.txt.bak");
 
-        template.sendBodyAndHeader("newfile://target/filelanguage/", "Hello Big World", NewFileComponent.HEADER_FILE_NAME, "report4.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", FileComponent.HEADER_FILE_NAME, "report4.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -138,10 +138,10 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // configured by java using java beans setters
-                NewFileEndpoint endpoint = new NewFileEndpoint();
+                FileEndpoint endpoint = new FileEndpoint();
                 endpoint.setCamelContext(context);
                 endpoint.setFile(new File("target/filelanguage/report5.txt"));
-                endpoint.setOperations(new NewFileOperations(endpoint));
+                endpoint.setOperations(new FileOperations(endpoint));
                 endpoint.setDirectory(false);
                 endpoint.setAutoCreate(false);
                 endpoint.setMoveExpression(BeanLanguage.bean("myguidgenerator"));
@@ -155,8 +155,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bean Language Rules The World");
         mock.expectedFileExists("target/filelanguage/123");
 
-        template.sendBodyAndHeader("newfile://target/filelanguage/", "Bean Language Rules The World",
-                NewFileComponent.HEADER_FILE_NAME, "report5.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Bean Language Rules The World",
+                FileComponent.HEADER_FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
     }
 

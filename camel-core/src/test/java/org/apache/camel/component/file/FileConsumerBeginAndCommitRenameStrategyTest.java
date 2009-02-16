@@ -43,14 +43,14 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
 
-        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("newfile://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -60,7 +60,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         }
 
         try {
-            context.getEndpoint("newfile://target?moveExpression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target?moveExpression=${file:name.noext}.bak&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -73,7 +73,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name}&moveExpression=../done/${file:name}&consumer.delay=5000")
+                from("file://target/reports?preMoveExpression=../inprogress/${file:name}&moveExpression=../done/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;

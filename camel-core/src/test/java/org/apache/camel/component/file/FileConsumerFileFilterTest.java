@@ -26,7 +26,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class FileConsumerFileFilterTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/filefilter/?filter=#myFilter";
+    private String fileUrl = "file://target/filefilter/?filter=#myFilter";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -45,7 +45,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        template.sendBodyAndHeader("newfile:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
             FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(2000);
@@ -57,10 +57,10 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("newfile:target/filefilter/", "This is a file to be filtered",
+        template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
             FileComponent.HEADER_FILE_NAME, "skipme.txt");
 
-        template.sendBodyAndHeader("newfile:target/filefilter/", "Hello World",
+        template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
             FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();

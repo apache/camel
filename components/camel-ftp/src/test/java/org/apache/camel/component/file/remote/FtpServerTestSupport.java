@@ -21,7 +21,7 @@ import java.io.FileOutputStream;
 import java.util.Random;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.component.file.NewFileComponent;
+import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.converter.IOConverter;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -114,6 +114,6 @@ public abstract class FtpServerTestSupport extends ContextTestSupport {
     }
     
     public void sendFile(String url, Object body, String fileName) {
-        template.sendBodyAndHeader(url, body, NewFileComponent.HEADER_FILE_NAME, fileName);
+        template.sendBodyAndHeader(url, body, FileComponent.HEADER_FILE_NAME, fileName);
     }
 }

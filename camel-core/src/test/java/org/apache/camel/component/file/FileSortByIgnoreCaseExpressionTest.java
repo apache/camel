@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/filesorter/";
+    private String fileUrl = "file://target/filesorter/";
 
     @Override
     protected void setUp() throws Exception {
@@ -39,14 +39,14 @@ public class FileSortByIgnoreCaseExpressionTest extends ContextTestSupport {
     }
 
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Paris",
-            NewFileComponent.HEADER_FILE_NAME, "report-3.dat");
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
+            FileComponent.HEADER_FILE_NAME, "report-3.dat");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello London",
-            NewFileComponent.HEADER_FILE_NAME, "REPORT-2.txt");
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
+            FileComponent.HEADER_FILE_NAME, "REPORT-2.txt");
 
-        template.sendBodyAndHeader("newfile:target/filesorter/" + folder, "Hello Copenhagen",
-            NewFileComponent.HEADER_FILE_NAME, "Report-1.xml");
+        template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
+            FileComponent.HEADER_FILE_NAME, "Report-1.xml");
     }
 
     public void testSortFilesByNameWithCase() throws Exception {

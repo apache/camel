@@ -85,7 +85,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         assertEquals("File " + filename + " should be deleted", false, file.exists());
 
         // and no lock files
-        file = new File("target/messages/input/" + filename + FileEndpoint.DEFAULT_LOCK_FILE_POSTFIX);
+        file = new File("target/messages/input/" + filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
         assertEquals("File " + filename + " lock should be deleted", false, file.exists());
     }
 

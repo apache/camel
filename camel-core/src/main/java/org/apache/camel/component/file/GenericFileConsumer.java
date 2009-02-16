@@ -99,8 +99,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             // add current index and total as headers
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
             exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
-            exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_BATCH_INDEX, index);
-            exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_BATCH_TOTAL, total);
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
+            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
             processExchange(exchange);
         }
     }
@@ -308,7 +308,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         // lock files should be skipped
-        if (name.endsWith(NewFileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
+        if (name.endsWith(FileComponent.DEFAULT_LOCK_FILE_POSTFIX)) {
             return false;
         }
 

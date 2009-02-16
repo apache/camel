@@ -32,7 +32,7 @@
         </route>
     </camelContext>
 
-    <bean id="inputFile" class="org.apache.camel.component.file.NewFileEndpoint">
+    <bean id="inputFile" class="org.apache.camel.component.file.FileEndpoint">
         <property name="file" value="target/test-default-inbox"/>
     </bean>
     <!-- END SNIPPET: example -->

@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FileProduceTempPrefixTest extends ContextTestSupport {
 
-    private String fileUrl = "newfile://target/tempandrename/?tempPrefix=inprogress.";
+    private String fileUrl = "file://target/tempandrename/?tempPrefix=inprogress.";
 
     public void testCreateTempFileName() throws Exception {
         Endpoint endpoint = context.getEndpoint(fileUrl);

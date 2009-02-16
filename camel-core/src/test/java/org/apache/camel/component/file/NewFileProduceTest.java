@@ -37,10 +37,10 @@ public class NewFileProduceTest extends ContextTestSupport {
     public void testNewFileProducer() throws Exception {
         deleteDirectory("target/producefile");
 
-        NewFileComponent comp = new NewFileComponent();
+        FileComponent comp = new FileComponent();
         comp.setCamelContext(context);
 
-        Endpoint endpoint = comp.createEndpoint("newfile://target/producefile", "target/producefile", new HashMap());
+        Endpoint endpoint = comp.createEndpoint("file://target/producefile", "target/producefile", new HashMap());
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "bye.txt");

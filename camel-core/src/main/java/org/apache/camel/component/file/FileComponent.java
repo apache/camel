@@ -17,88 +17,57 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.Comparator;
-import java.util.Iterator;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.isNotEmpty;
-
 /**
- * The <a href="http://camel.apache.org/file.html">File Component</a>
- * for working with file systems
- *
- * @version $Revision$
- * @deprecated will be replaced with NewFile in Camel 2.0
+ * File component.
  */
-public class FileComponent extends DefaultComponent {
+public class FileComponent extends GenericFileComponent<File> {
 
     /**
      * Header key holding the value: the fixed filename to use for producing files.
      */
-    public static final String HEADER_FILE_NAME = NewFileComponent.HEADER_FILE_NAME;
+    public static final String HEADER_FILE_NAME = "CamelFileName";
 
     /**
      * Header key holding the value: absolute filepath for the actual file produced (by file producer).
      * Value is set automatically by Camel
      */
-    public static final String HEADER_FILE_NAME_PRODUCED = NewFileComponent.HEADER_FILE_NAME_PRODUCED;
+    public static final String HEADER_FILE_NAME_PRODUCED = "CamelFileNameProduced";
 
     /**
      * Header key holding the value: current index of total in the batch being consumed
      */
-    public static final String HEADER_FILE_BATCH_INDEX = NewFileComponent.HEADER_FILE_BATCH_INDEX;
+    public static final String HEADER_FILE_BATCH_INDEX = "CamelFileBatchIndex";
 
     /**
      * Header key holding the value: total in the batch being consumed
      */
-    public static final String HEADER_FILE_BATCH_TOTAL = NewFileComponent.HEADER_FILE_BATCH_TOTAL;
+    public static final String HEADER_FILE_BATCH_TOTAL = "CamelFileBatchTotal";
 
-    public FileComponent() {
-    }
+    /**
+     * Default camel lock filename postfix
+     */
+    public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
-    public FileComponent(CamelContext context) {
-        super(context);
-    }
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+    protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
-        FileEndpoint result = new FileEndpoint(file, uri, this);
 
-        // sort by using file language 
-        String sortBy = getAndRemoveParameter(parameters, "sortBy", String.class);
-        if (isNotEmpty(sortBy) && !isReferenceParameter(sortBy)) {
-            // we support nested sort groups so they should be chained
-            String[] groups = sortBy.split(";");
-            Iterator<String> it = ObjectHelper.createIterator(groups);
-            Comparator<FileExchange> comparator = createSortByComparator(it);
-            result.setSortBy(comparator);
-        }
+        FileEndpoint result = new FileEndpoint(uri, this);
+        result.setFile(file);
 
-        setProperties(result, parameters);
+        GenericFileConfiguration config = new GenericFileConfiguration();
+        config.setFile(file.getPath());
+        result.setConfiguration(config);
+
+        FileOperations operations = new FileOperations();
+        operations.setEndpoint(result);
+        result.setOperations(operations);
+
         return result;
     }
 
-    private Comparator<FileExchange> createSortByComparator(Iterator<String> it) {
-        if (!it.hasNext()) {
-            return null;
-        }
-
-        String group = it.next();
-
-        boolean reverse = group.startsWith("reverse:");
-        String reminder = reverse ? ifStartsWithReturnRemainder("reverse:", group) : group;
-
-        boolean ignoreCase = reminder.startsWith("ignoreCase:");
-        reminder = ignoreCase ? ifStartsWithReturnRemainder("ignoreCase:", reminder) : reminder;
-
-        ObjectHelper.notEmpty(reminder, "sortBy expression", this);
-
-        // recursive add nested sorters
-        return DefaultFileSorter.sortByFileLanguage(reminder, reverse, ignoreCase, createSortByComparator(it));
+    protected void afterPropertiesSet(GenericFileEndpoint<File> endpoint) throws Exception {
+        // noop
     }
-
 }

@@ -21,7 +21,7 @@ import java.io.File;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
-import org.apache.camel.component.file.NewFileComponent;
+import org.apache.camel.component.file.FileComponent;
 
 /**
  * Unit test for login failure due bad password and login with accepted password
@@ -63,7 +63,7 @@ public class FtpLoginTest extends FtpServerTestSupport {
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello World from FTPServer");
-        exchange.getIn().setHeader(NewFileComponent.HEADER_FILE_NAME, "report.txt");
+        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "report.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);

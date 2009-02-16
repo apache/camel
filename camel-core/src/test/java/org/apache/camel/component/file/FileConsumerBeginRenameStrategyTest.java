@@ -42,7 +42,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("newfile:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -62,7 +62,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("newfile:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
     }
@@ -70,7 +70,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/reports?preMoveExpression=../inprogress/${file:name}&consumer.delay=5000")
+                from("file://target/reports?preMoveExpression=../inprogress/${file:name}&consumer.delay=5000")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 GenericFileExchange<File> fe = (GenericFileExchange<File>) exchange;

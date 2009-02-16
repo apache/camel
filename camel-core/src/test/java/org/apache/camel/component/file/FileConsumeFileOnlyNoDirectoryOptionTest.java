@@ -29,7 +29,7 @@ public class FileConsumeFileOnlyNoDirectoryOptionTest extends FileConsumeFileOnl
             public void configure() throws Exception {
                 // directory=false is not set but Camel so figure out report.txt is a file and consume
                 // the file anyway
-                from("newfile://target/fileonly/report.txt?recursive=false&delete=true&initialDelay=1000").to("mock:result");
+                from("file://target/fileonly/report.txt?recursive=false&delete=true&initialDelay=1000").to("mock:result");
             }
         };
     }
