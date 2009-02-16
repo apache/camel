@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -60,6 +61,8 @@ public class Endpoints {
     }
 
     public void load(CamelContext camelContext) {
+        ObjectHelper.notNull(camelContext, "camelContext has not been injected!");
+        
         Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
         for (Endpoint endpoint : endpoints) {
             addEndpoint(createEndpointLink(endpoint));

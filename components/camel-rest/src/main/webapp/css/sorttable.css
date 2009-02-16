@@ -14,30 +14,57 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.rest.model.EndpointLink;
-import com.sun.jersey.api.view.ImplicitProduces;
+table.sortable {
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 1em;
 
-import javax.ws.rs.core.MediaType;
-
-/**
- * @version $Revision$
- */
-@ImplicitProduces({MediaType.TEXT_HTML})
-public class EndpointResource {
-    private final Endpoint endpoint;
-
-    public EndpointResource(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getHref() {
-        return new EndpointLink(endpoint).getHref();
-    }
-
-    public String getUri() {
-        return endpoint.getEndpointUri();
-    }
+  margin: 1em auto;
 }
+
+th {                              
+  padding: 2px;
+  padding-left: 10px;
+  text-align: left;
+  background-color: #ccc;
+}
+
+tfoot {
+ /*  border-top: 1px solid black; */
+}
+
+td {
+  padding: 0.5em;
+ /*  border: 1px solid black;  */
+  /** border-top: 1px solid black; */
+}
+
+tr {
+  background-color: #ffffff;
+}
+
+tr.odd {
+  background-color: #f3f3f3;
+}
+
+td.numeric,
+  th.numeric {
+  text-align: right;
+}
+
+/** forms using table layout */
+td.label {
+  background-color: #f3f3f3;
+}
+/*
+table.layout {
+  border-bottom: solid white;
+  border-right: solid white;
+}
+
+td.layout {
+  border-top: 1px solid black;
+  border: solid white;
+}
+*/

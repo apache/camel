@@ -1,4 +1,5 @@
 /**
+ *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -6,7 +7,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,28 +17,11 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.rest.model.EndpointLink;
-import com.sun.jersey.api.view.ImplicitProduces;
-
-import javax.ws.rs.core.MediaType;
-
 /**
- * @version $Revision$
+ * @version $Revision: 1.1 $
  */
-@ImplicitProduces({MediaType.TEXT_HTML})
-public class EndpointResource {
-    private final Endpoint endpoint;
+public class Constants {
+    public static final String HTML_MIME_TYPES = "text/html;qs=5";
 
-    public EndpointResource(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getHref() {
-        return new EndpointLink(endpoint).getHref();
-    }
-
-    public String getUri() {
-        return endpoint.getEndpointUri();
-    }
+    public static final String DATA_MIME_TYPES = "text/xml,application/xml,application/json";
 }

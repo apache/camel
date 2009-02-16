@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +15,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-<%@ page contentType="text/html"%>
-<%@ page pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %>
+<p>
+	<table border="0" cellpadding="0" cellspacing="0">
+		<tr>
+			<th class="panelTitle">
+				<decorator:title default="Unknown panel" />
+			</th>
+		</tr>
+		<tr>
+			<td class="panelBody">
+				<decorator:body />
+			</td>
+		</tr>
+	</table>
+</p>
