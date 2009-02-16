@@ -41,7 +41,7 @@ public class FileRouteToJmsToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("newfile://target/file2file/in", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file2file/in", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
         Thread.sleep(100);
@@ -63,9 +63,9 @@ public class FileRouteToJmsToFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/file2file/in").to("activemq:queue:hello");
+                from("file://target/file2file/in").to("activemq:queue:hello");
 
-                from("activemq:queue:hello").to("newfile://target/file2file/out", "mock:result");
+                from("activemq:queue:hello").to("file://target/file2file/out", "mock:result");
             }
         };
     }

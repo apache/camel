@@ -42,7 +42,7 @@ public class FileRouteToJmsTest extends ContextTestSupport {
         mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
 
         deleteDirectory("target/routefromfile");
-        template.sendBodyAndHeader("newfile://target/routefromfile", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/routefromfile", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class FileRouteToJmsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("newfile://target/routefromfile").to("activemq:queue:hello");
+                from("file://target/routefromfile").to("activemq:queue:hello");
 
                 from("activemq:queue:hello").to("mock:result");
             }
