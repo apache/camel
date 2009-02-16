@@ -150,6 +150,42 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} >= ${bean:generator.generateId}", true);
     }
 
+    public void testConstains() throws Exception {
+        assertExpression("${in.header.foo} contains 'a'", true);
+        assertExpression("${in.header.foo} contains a", true);
+        assertExpression("${in.header.foo} contains 'ab'", true);
+        assertExpression("${in.header.foo} contains 'abc'", true);
+        assertExpression("${in.header.foo} contains 'def'", false);
+        assertExpression("${in.header.foo} contains def", false);
+    }
+
+    public void testRegex() throws Exception {
+        assertExpression("${in.header.foo} regex '^a..$'", true);
+        assertExpression("${in.header.foo} regex '^ab.$'", true);
+        assertExpression("${in.header.foo} regex ^ab.$", true);
+        assertExpression("${in.header.foo} regex ^d.*$", false);
+
+        assertExpression("${in.header.bar} regex '^\\d{3}'", true);
+        assertExpression("${in.header.bar} regex '^\\d{2}'", false);
+        assertExpression("${in.header.bar} regex ^\\d{3}", true);
+        assertExpression("${in.header.bar} regex ^\\d{2}", false);
+    }
+
+    public void testIn() throws Exception {
+        // string to string
+        assertExpression("${in.header.foo} in 'foo,abc,def'", true);
+        assertExpression("${in.header.foo} in ${bean:generator.generateFilename}", true);
+        assertExpression("${in.header.foo} in foo,abc,def", true);
+        assertExpression("${in.header.foo} in 'foo,def'", false);
+
+        // integer to string
+        assertExpression("${in.header.bar} in '100,123,200'", true);
+        assertExpression("${in.header.bar} in 100,123,200", true);
+        assertExpression("${in.header.bar} in ${bean:generator.generateId}", true);
+        assertExpression("${in.header.bar} in '100,200'", false);
+    }
+
+
     protected String getLanguageName() {
         return "simple";
     }

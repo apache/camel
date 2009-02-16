@@ -25,11 +25,14 @@ package org.apache.camel.language.simple;
  *   <li>LT : <</li>
  *   <li>LTE : <=</li>
  *   <li>NOT : !=</li>
+ *   <li>contains : tested for if it contains the value</li>
+ *   <li>regex : matching a regular expression</li>
+ *   <li>in : tested for in a list of values separated by comma</li>
  * </ul>
  */
 public enum SimpleLangaugeOperator {
 
-    EQ, GT, GTE, LT, LTE, NOT;
+    EQ, GT, GTE, LT, LTE, NOT, CONTAINS, REGEX, IN;
 
     public static SimpleLangaugeOperator asOperator(String text) {
         if ("==".equals(text)) {
@@ -44,6 +47,12 @@ public enum SimpleLangaugeOperator {
             return LTE;
         } else if ("!=".equals(text)) {
             return NOT;
+        } else if ("contains".equals(text)) {
+            return CONTAINS;
+        } else if ("regex".equals(text)) {
+            return REGEX;
+        } else if ("in".equals(text)) {
+            return IN;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -61,7 +70,13 @@ public enum SimpleLangaugeOperator {
             return "<=";
         } else if (operator == NOT) {
             return "!=";
-        } 
+        } else if (operator == CONTAINS) {
+            return "contains";
+        } else if (operator == REGEX) {
+            return "regex";
+        } else if (operator == IN) {
+            return "in";
+        }
         return "";
     }
 
