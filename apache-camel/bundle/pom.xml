@@ -241,12 +241,12 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-tagsoup</artifactId>
     </dependency>
-    <!--
-        <dependency>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-testng</artifactId>
-        </dependency>
-    -->
+    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+    </dependency>
+    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-uface</artifactId>
