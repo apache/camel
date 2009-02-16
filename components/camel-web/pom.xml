@@ -25,14 +25,14 @@
     <version>2.0-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <artifactId>camel-rest</artifactId>
+  <artifactId>camel-web</artifactId>
 
-  <name>Camel :: REST</name>
-  <description>Camel REST Support</description>
+  <name>Camel :: Web</name>
+  <description>Camel Web Application with REST support</description>
   <packaging>war</packaging>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.rest.*</camel.osgi.export.pkg>
+    <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
     <jersey-version>1.0.3-SNAPSHOT</jersey-version>
     <jetty-port>8080</jetty-port>
   </properties>
