@@ -35,70 +35,94 @@ public class SimpleOperatorTest extends LanguageTestSupport {
     public void testEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} == 'abc'", true);
+        assertExpression("${in.header.foo} == abc", true);
         assertExpression("${in.header.foo} == 'def'", false);
+        assertExpression("${in.header.foo} == def", false);
         assertExpression("${in.header.foo} == '1'", false);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} == '123'", true);
+        assertExpression("${in.header.bar} == 123", true);
         assertExpression("${in.header.bar} == '444'", false);
+        assertExpression("${in.header.bar} == 444", false);
         assertExpression("${in.header.bar} == '1'", false);
     }
 
     public void testNotEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} != 'abc'", false);
+        assertExpression("${in.header.foo} != abc", false);
         assertExpression("${in.header.foo} != 'def'", true);
+        assertExpression("${in.header.foo} != def", true);
         assertExpression("${in.header.foo} != '1'", true);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} != '123'", false);
+        assertExpression("${in.header.bar} != 123", false);
         assertExpression("${in.header.bar} != '444'", true);
+        assertExpression("${in.header.bar} != 444", true);
         assertExpression("${in.header.bar} != '1'", true);
     }
 
     public void testGreatherThanOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} > 'aaa'", true);
+        assertExpression("${in.header.foo} > aaa", true);
         assertExpression("${in.header.foo} > 'def'", false);
+        assertExpression("${in.header.foo} > def", false);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} > '100'", true);
+        assertExpression("${in.header.bar} > 100", true);
         assertExpression("${in.header.bar} > '123'", false);
+        assertExpression("${in.header.bar} > 123", false);
         assertExpression("${in.header.bar} > '200'", false);
     }
 
     public void testGreatherThanOrEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} >= 'aaa'", true);
+        assertExpression("${in.header.foo} >= aaa", true);
         assertExpression("${in.header.foo} >= 'abc'", true);
+        assertExpression("${in.header.foo} >= abc", true);
         assertExpression("${in.header.foo} >= 'def'", false);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} >= '100'", true);
+        assertExpression("${in.header.bar} >= 100", true);
         assertExpression("${in.header.bar} >= '123'", true);
+        assertExpression("${in.header.bar} >= 123", true);
         assertExpression("${in.header.bar} >= '200'", false);
     }
 
     public void testLessThanOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} < 'aaa'", false);
+        assertExpression("${in.header.foo} < aaa", false);
         assertExpression("${in.header.foo} < 'def'", true);
+        assertExpression("${in.header.foo} < def", true);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} < '100'", false);
+        assertExpression("${in.header.bar} < 100", false);
         assertExpression("${in.header.bar} < '123'", false);
+        assertExpression("${in.header.bar} < 123", false);
         assertExpression("${in.header.bar} < '200'", true);
     }
 
     public void testLessThanOrEqualOperator() throws Exception {
         // string to string comparison
         assertExpression("${in.header.foo} <= 'aaa'", false);
+        assertExpression("${in.header.foo} <= aaa", false);
         assertExpression("${in.header.foo} <= 'abc'", true);
+        assertExpression("${in.header.foo} <= abc", true);
         assertExpression("${in.header.foo} <= 'def'", true);
 
         // integer to string comparioson
         assertExpression("${in.header.bar} <= '100'", false);
+        assertExpression("${in.header.bar} <= 100", false);
         assertExpression("${in.header.bar} <= '123'", true);
+        assertExpression("${in.header.bar} <= 123", true);
         assertExpression("${in.header.bar} <= '200'", true);
     }
 
