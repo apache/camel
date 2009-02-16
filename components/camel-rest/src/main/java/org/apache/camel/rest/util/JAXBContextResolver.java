@@ -17,22 +17,20 @@
 package org.apache.camel.rest.util;
 
 
-
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.ext.ContextResolver;
-import javax.ws.rs.ext.Provider;
-import javax.xml.bind.JAXBContext;
-
+import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
-
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
+
+import javax.ws.rs.ext.ContextResolver;
+import javax.ws.rs.ext.Provider;
+import javax.xml.bind.JAXBContext;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @version $Revision$
@@ -42,13 +40,39 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private final JAXBContext context;
 
+    private final Set<Class> types;
+
+    private final Class[] cTypes = {RoutesType.class, RouteType.class,
+            Camel.class, Endpoints.class, EndpointLink.class};
+
+    public JAXBContextResolver() throws Exception {
+        this.types = new HashSet(Arrays.asList(cTypes));
+
+        // TODO we can't use natural with JAXB 2.1.6 or 2.1 for some reason?
+        JSONConfiguration.Builder builder = JSONConfiguration.mapped();
+        //JSONConfiguration.Builder builder = JSONConfiguration.natural();
+        this.context = new JSONJAXBContext(builder.build(), cTypes);
+    }
+
+    public JAXBContext getContext(Class<?> objectType) {
+        return (types.contains(objectType)) ? context : null;
+    }
+}
+
+/*implements ContextResolver<JAXBContext> {
+
+    private final JAXBContext context;
+
     public JAXBContextResolver() throws Exception {
         Map<String, Object> props = new HashMap<String, Object>();
+        props.put(JSONJAXBContext.JAXB_CONTEXT_FACTORY, Boolean.TRUE);
         //props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED");
+/*
         props.put(JSONJAXBContext.JSON_ROOT_UNWRAPPING, Boolean.TRUE);
         props.put(JSONJAXBContext.JSON_NON_STRINGS, "[\"number\"]");
+*/
 
-        this.context = new JSONJAXBContext(getJaxbClasses(), props);
+/*this.context = new JSONJAXBContext(getJaxbClasses(), props);
     }
 
     protected Class[] getJaxbClasses() {
@@ -63,4 +87,4 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
         }
         return null;
     }
-}
+*/

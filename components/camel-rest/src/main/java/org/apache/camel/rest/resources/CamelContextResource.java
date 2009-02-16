@@ -17,18 +17,10 @@
 package org.apache.camel.rest.resources;
 
 
-import java.util.List;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.api.view.Viewable;
+import com.sun.jersey.api.view.ImplicitProduces;
+import com.sun.jersey.api.spring.Autowire;
 import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.model.RouteType;
@@ -36,6 +28,15 @@ import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 
 /**
@@ -44,10 +45,11 @@ import org.apache.camel.rest.model.Endpoints;
  * @version $Revision$
  */
 @Path("/")
+@ImplicitProduces(Constants.HTML_MIME_TYPES)
 @Singleton
-public class CamelContextResource extends ResourceSupport {
+public class CamelContextResource {
 
-    private final CamelContext camelContext;
+    private CamelContext camelContext;
 
     public CamelContextResource(@Inject CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -61,34 +63,12 @@ public class CamelContextResource extends ResourceSupport {
         return camelContext.getName();
     }
 
-    // TODO remove redunant non-DRY code ASAP
-    //
-    // The following redundant methods are here
-    // until there is a way to specify a higher priority for HTML views
-    //
-    // for more details see these issues
-    //
-    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=65
-    // https://jsr311.dev.java.net/issues/show_bug.cgi?id=46
-    
-    @GET
-    @Path("endpoints")
-    @Produces({MediaType.TEXT_HTML})
-    public Viewable endpoints() {
-        return view("endpoints");
-    }
-
-    @GET
-    @Path("routes")
-    @Produces({MediaType.TEXT_HTML})
-    public Viewable routesView() {
-        return view("routes");
-    }
-
     // XML / JSON representations
     //-------------------------------------------------------------------------
 
     @GET
+    // TODO we can replace this long expression with a static constant
+    // when Jersey supports JAX-RS 1.1
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Camel getCamel() {
         return new Camel(camelContext);
@@ -102,7 +82,7 @@ public class CamelContextResource extends ResourceSupport {
      */
     @GET
     @Path("endpoints")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Endpoints getEndpointsDTO() {
         return new Endpoints(camelContext);
     }
@@ -132,7 +112,7 @@ public class CamelContextResource extends ResourceSupport {
      */
     @GET
     @Path("routes")
-    @Produces({"application/xml", "application/json"})
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public RoutesType getRouteDefinitions() {
         RoutesType answer = new RoutesType();
         if (camelContext != null) {
@@ -147,7 +127,6 @@ public class CamelContextResource extends ResourceSupport {
     public List<RouteType> getRoutes() {
         return getRouteDefinitions().getRoutes();
     }
-
 
 
 }

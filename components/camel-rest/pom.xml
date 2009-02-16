@@ -33,7 +33,7 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.rest.*</camel.osgi.export.pkg>
-    <jersey-version>1.0.1</jersey-version>
+    <jersey-version>1.0.3-SNAPSHOT</jersey-version>
     <jetty-port>8080</jetty-port>
   </properties>
 
@@ -69,6 +69,11 @@
       <artifactId>jersey-atom</artifactId>
       <version>${jersey-version}</version>
     </dependency>
+    <dependency>
+      <groupId>opensymphony</groupId>
+      <artifactId>sitemesh</artifactId>
+      <version>2.3</version>
+    </dependency>
 
     <!-- testing -->
     <dependency>
@@ -98,17 +103,16 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-        <groupId>javax.servlet</groupId>
-        <artifactId>jstl</artifactId>
-        <version>1.1.2</version>
-        <scope>compile</scope>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
+      <version>1.1.2</version>
+      <scope>compile</scope>
     </dependency>
     <dependency>
-        <groupId>taglibs</groupId>
-        <artifactId>standard</artifactId>
-        <version>1.1.2</version>
+      <groupId>taglibs</groupId>
+      <artifactId>standard</artifactId>
+      <version>1.1.2</version>
     </dependency>
-
 
     <dependency>
       <groupId>org.slf4j</groupId>

@@ -1,4 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator" prefix="decorator" %>
 <%--
     Licensed to the Apache Software Foundation (ASF) under one or more
     contributor license agreements.  See the NOTICE file distributed with
@@ -15,7 +15,17 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-<%@ page contentType="text/html"%>
-<%@ page pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator" %>
+
+<html>
+    <head>
+        <title><decorator:title default="Welcome!" /></title>
+        <decorator:head />
+    </head>
+
+    <body onload="window.print();">
+        Printed on <%=new java.util.Date()%>.<br/>
+        <hr noshade="noshade" size="1"/>
+        <br/>
+        <decorator:body />
+    </body>
+</html>
