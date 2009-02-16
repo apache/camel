@@ -18,6 +18,7 @@ package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
+import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
@@ -38,7 +40,7 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
  */
 public abstract class SimpleLanguageSupport implements Language {
 
-    protected static final Pattern PATTERN = Pattern.compile("^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=)\\s+(.+)$");
+    protected static final Pattern PATTERN = Pattern.compile("^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|regex|in)\\s+(.+)$");
     protected final Log log = LogFactory.getLog(getClass());
 
     public Predicate createPredicate(String expression) {
@@ -74,9 +76,11 @@ public abstract class SimpleLanguageSupport implements Language {
         String text = matcher.group(3);
 
         final Expression right;
+        final Expression rightConverted;
         // special null handling
         if ("null".equals(text)) {
             right = createConstantExpression(null);
+            rightConverted = right;
         } else {
             // text can either be a constant enclosed by ' ' or another expression using ${ } placeholders
             String constant = ObjectHelper.between(text, "'", "'");
@@ -86,33 +90,45 @@ public abstract class SimpleLanguageSupport implements Language {
             }
             String simple = ObjectHelper.between(text, "${", "}");
 
-            Expression exp = simple != null ? createSimpleExpression(simple) : createConstantExpression(constant);
+            right = simple != null ? createSimpleExpression(simple) : createConstantExpression(constant);
             // to support numeric comparions using > and < operators we must convert the right hand side
             // to the same type as the left
-            right = ExpressionBuilder.convertTo(exp, left);
+            rightConverted = ExpressionBuilder.convertTo(right, left);
         }
 
         return new ExpressionAdapter() {
             @Override
-            protected String assertionFailureMessage(Exchange exchange) {
-                return super.assertionFailureMessage(exchange);
-            }
-
-            @Override
-            public Object evaluate(Exchange exchange) {
+            public Object evaluate(final Exchange exchange) {
                 Predicate predicate = null;
                 if (operator == EQ) {
-                    predicate = PredicateBuilder.isEqualTo(left, right);
+                    predicate = PredicateBuilder.isEqualTo(left, rightConverted);
                 } else if (operator == GT) {
-                    predicate = PredicateBuilder.isGreaterThan(left, right);
+                    predicate = PredicateBuilder.isGreaterThan(left, rightConverted);
                 } else if (operator == GTE) {
-                    predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, right);
+                    predicate = PredicateBuilder.isGreaterThanOrEqualTo(left, rightConverted);
                 } else if (operator == LT) {
-                    predicate = PredicateBuilder.isLessThan(left, right);
+                    predicate = PredicateBuilder.isLessThan(left, rightConverted);
                 } else if (operator == LTE) {
-                    predicate = PredicateBuilder.isLessThanOrEqualTo(left, right);
+                    predicate = PredicateBuilder.isLessThanOrEqualTo(left, rightConverted);
                 } else if (operator == NOT) {
-                    predicate = PredicateBuilder.isNotEqualTo(left, right);
+                    predicate = PredicateBuilder.isNotEqualTo(left, rightConverted);
+                } else if (operator == CONTAINS) {
+                    predicate = PredicateBuilder.contains(left, rightConverted);
+                } else if (operator == REGEX) {
+                    // reg ex should use String pattern, so we evalute the right hand side as a String
+                    predicate = PredicateBuilder.regex(left, right.evaluate(exchange, String.class));
+                } else if (operator == IN) {
+                    // okay the in operator is a bit more complex as we need to build a list of values
+                    // from the right handside expression.
+                    // each element on the right handside must be separated by comma (default for create iterator)
+                    Iterator it = ObjectHelper.createIterator(right.evaluate(exchange));
+                    List<Object> values = new ArrayList<Object>();
+                    while (it.hasNext()) {
+                        values.add(it.next());
+                    }
+                    // then reuse value builder to create the in predicate with the list of values
+                    ValueBuilder vb = new ValueBuilder(left);
+                    predicate = vb.in(values.toArray());
                 }
 
                 if (predicate == null) {

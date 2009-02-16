@@ -106,6 +106,7 @@ public class ValueBuilder implements Expression {
         List<Predicate> predicates = new ArrayList<Predicate>();
         for (Object value : values) {
             Expression right = asExpression(value);
+            right = ExpressionBuilder.convertTo(right, expression);
             Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
             predicates.add(predicate);
         }
