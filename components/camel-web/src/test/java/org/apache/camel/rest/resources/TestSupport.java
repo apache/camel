@@ -16,13 +16,11 @@
  */
 package org.apache.camel.rest.resources;
 
-import junit.framework.TestCase;
-
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
-
+import junit.framework.TestCase;
 import org.apache.camel.rest.Main;
 
 /**
@@ -55,5 +53,16 @@ public class TestSupport extends TestCase {
     protected void tearDown() throws Exception {
         super.tearDown();
         Main.stop();
+    }
+
+    protected void assertHtmlResponse(String response) {
+        assertNotNull("No text returned!", response);
+
+        assertResponseContains(response, "<html>");
+        assertResponseContains(response, "</html>");
+    }
+
+    protected void assertResponseContains(String response, String text) {
+        assertTrue("Response should contain " + text + " but was: " + response, response.contains(text));
     }
 }
