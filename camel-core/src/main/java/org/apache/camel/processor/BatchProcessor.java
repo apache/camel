@@ -22,6 +22,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.GroupedExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.ExceptionHandler;
@@ -42,13 +43,14 @@ public class BatchProcessor extends ServiceSupport implements Processor {
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
+    private boolean groupExchanges;
 
     private Processor processor;
     private Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
 
     private BatchSender sender;
-    
+
     public BatchProcessor(Processor processor, Collection<Exchange> collection) {
         ObjectHelper.notNull(processor, "processor");
         ObjectHelper.notNull(collection, "collection");
@@ -110,6 +112,14 @@ public class BatchProcessor extends ServiceSupport implements Processor {
 
     public void setBatchTimeout(long batchTimeout) {
         this.batchTimeout = batchTimeout;
+    }
+
+    public boolean isGroupExchanges() {
+        return groupExchanges;
+    }
+
+    public void setGroupExchanges(boolean groupExchanges) {
+        this.groupExchanges = groupExchanges;
     }
 
     public Processor getProcessor() {
@@ -219,11 +229,27 @@ public class BatchProcessor extends ServiceSupport implements Processor {
         }
         
         private void sendExchanges() throws Exception {
+            GroupedExchange grouped = null;
+
             Iterator<Exchange> iter = collection.iterator();
             while (iter.hasNext()) {
                 Exchange exchange = iter.next();
                 iter.remove();
-                processExchange(exchange);
+                if (!groupExchanges) {
+                    // non grouped so process the exchange one at a time
+                    processExchange(exchange);
+                } else {
+                    // grouped so add all exchanges into one group
+                    if (grouped == null) {
+                        grouped = new GroupedExchange(exchange.getContext());
+                    }
+                    grouped.addExchange(exchange);
+                }
+            }
+
+            // and after adding process the single grouped exchange
+            if (grouped != null) {
+                processExchange(grouped);
             }
         }
     }

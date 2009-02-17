@@ -53,7 +53,7 @@ public class FileComponent extends GenericFileComponent<File> {
     /**
      * Header key holding file path to a local work directory containg a consumed file (if any)
      */
-    public static final String HEADER_FILE_LOCAL_WORK_PATH= "CamelFileLocalWorkPath";
+    public static final String HEADER_FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);

@@ -66,8 +66,11 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     private String strategyRef;
     @XmlAttribute(required = false)
     private String collectionRef;    
+    @XmlAttribute(required = false)
+    private Boolean groupExchanges;
     @XmlElement(name = "completedPredicate", required = false)
     private ExpressionSubElementType completedPredicate;
+
 
     public AggregatorType() {
     }
@@ -168,6 +171,10 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
         if (outBatchSize != null) {
             aggregator.setOutBatchSize(outBatchSize);
         }
+
+        if (groupExchanges != null) {
+            aggregator.setGroupExchanges(groupExchanges);
+        }
         
         return aggregator;
     }
@@ -256,6 +263,14 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
         return completedPredicate;
     }
 
+    public Boolean getGroupExchanges() {
+        return groupExchanges;
+    }
+
+    public void setGroupExchanges(Boolean groupExchanges) {
+        this.groupExchanges = groupExchanges;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
@@ -337,6 +352,17 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     }
 
     /**
+     * Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single
+     * combined {@link org.apache.camel.impl.GroupedExchange} class holding all the aggregated exchanges.
+     *
+     * @return the builder
+     */
+    public AggregatorType groupExchanges() {
+        setGroupExchanges(true);
+        return this;
+    }
+
+    /**
      * Sets the predicate used to determine if the aggregation is completed
      *
      * @return the clause used to create the predicate
@@ -402,5 +428,5 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
-    }    
+    }
 }
