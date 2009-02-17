@@ -116,28 +116,64 @@ public class FileOperations implements GenericFileOperations<File> {
 
     public boolean storeFile(String fileName, GenericFileExchange<File> exchange) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
-        
+
+        // we can write the file by 3 different techniques
+        // 1. write file to file
+        // 2. rename a file from a local work path
+        // 3. write stream to file
+
         File file = new File(fileName);
         try {
+
+            // is the body file based
             File source = null;
             try {
-                source = exchange.getIn().getBody(File.class);
+                if (exchange.getIn().getBody() instanceof File || exchange.getIn().getBody() instanceof GenericFile) {
+                    source = exchange.getIn().getBody(File.class);
+                }
             } catch (NoTypeConversionAvailableException e) {
                 // ignore
             }
-            if (source != null && source.exists()) {
-                writeFileByFile(source, file);
-            } else {
-                InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
-                writeFileByStream(in, file);
+
+            if (source != null) {
+                // okay we know the body is a file type
+
+                // so try to see if we can optimize by renaming the local work path file instead of doing
+                // a full file to file copy, as the local work copy is to be deleted afterwords anyway
+                // local work path
+                File local = exchange.getIn().getHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, File.class);
+                if (local != null && local.exists()) {
+                    boolean renamed = writeFileByLocalWorkPath(local, file);
+                    if (renamed) {
+                        // clear header as we have renamed the file
+                        exchange.getIn().setHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, null);
+                        // return as the operation is complete, we just renamed the local work file
+                        // to the target.
+                        return true;
+                    }
+                } else if (source.exists()) {
+                    // no there is no local work file so use file to file copy if the source exists
+                    writeFileByFile(source, file);
+                    return true;
+                }
             }
-        } catch (IOException e) {            
+
+            // fallback and use stream based
+            InputStream in = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
+            writeFileByStream(in, file);
+            return true;
+        } catch (IOException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         } catch (InvalidPayloadException e) {
             throw new GenericFileOperationFailedException("Cannot store file: " + file, e);
         }
+    }
 
-        return true;
+    private boolean writeFileByLocalWorkPath(File source, File file) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Using local work file being renamed from: " + source + " to: " + file);
+        }
+        return source.renameTo(file);
     }
 
     private void writeFileByFile(File source, File target) throws IOException {

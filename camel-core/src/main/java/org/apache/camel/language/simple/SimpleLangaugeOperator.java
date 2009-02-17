@@ -26,13 +26,16 @@ package org.apache.camel.language.simple;
  *   <li>LTE : <=</li>
  *   <li>NOT : !=</li>
  *   <li>contains : tested for if it contains the value</li>
+ *   <li>not contains : tested for if it does not contain the value</li>
  *   <li>regex : matching a regular expression</li>
+ *   <li>not regex : not matching a regular expression</li>
  *   <li>in : tested for in a list of values separated by comma</li>
+ *   <li>not in : tested for not in a list of values separated by comma</li>
  * </ul>
  */
 public enum SimpleLangaugeOperator {
 
-    EQ, GT, GTE, LT, LTE, NOT, CONTAINS, REGEX, IN;
+    EQ, GT, GTE, LT, LTE, NOT, CONTAINS, NOT_CONTAINS, REGEX, NOT_REGEX, IN, NOT_IN;
 
     public static SimpleLangaugeOperator asOperator(String text) {
         if ("==".equals(text)) {
@@ -49,10 +52,16 @@ public enum SimpleLangaugeOperator {
             return NOT;
         } else if ("contains".equals(text)) {
             return CONTAINS;
+        } else if ("not contains".equals(text)) {
+            return NOT_CONTAINS;
         } else if ("regex".equals(text)) {
             return REGEX;
+        } else if ("not regex".equals(text)) {
+            return NOT_REGEX;
         } else if ("in".equals(text)) {
             return IN;
+        } else if ("not in".equals(text)) {
+            return NOT_IN;
         }
         throw new IllegalArgumentException("Operator not supported: " + text);
     }
@@ -72,10 +81,16 @@ public enum SimpleLangaugeOperator {
             return "!=";
         } else if (operator == CONTAINS) {
             return "contains";
+        } else if (operator == NOT_CONTAINS) {
+            return "not contains";
         } else if (operator == REGEX) {
             return "regex";
+        } else if (operator == NOT_REGEX) {
+            return "not regex";
         } else if (operator == IN) {
             return "in";
+        } else if (operator == NOT_IN) {
+            return "not in";
         }
         return "";
     }

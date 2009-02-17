@@ -50,6 +50,11 @@ public class FileComponent extends GenericFileComponent<File> {
      */
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
+    /**
+     * Header key holding file path to a local work directory containg a consumed file (if any)
+     */
+    public static final String HEADER_FILE_LOCAL_WORK_PATH= "CamelFileLocalWorkPath";
+
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);
 

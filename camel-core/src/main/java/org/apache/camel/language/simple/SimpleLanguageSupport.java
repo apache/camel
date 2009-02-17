@@ -17,8 +17,8 @@
 package org.apache.camel.language.simple;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,7 +40,8 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
  */
 public abstract class SimpleLanguageSupport implements Language {
 
-    protected static final Pattern PATTERN = Pattern.compile("^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|regex|in)\\s+(.+)$");
+    protected static final Pattern PATTERN = Pattern.compile(
+            "^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in)\\s+(.+)$");
     protected final Log log = LogFactory.getLog(getClass());
 
     public Predicate createPredicate(String expression) {
@@ -112,12 +113,18 @@ public abstract class SimpleLanguageSupport implements Language {
                     predicate = PredicateBuilder.isLessThanOrEqualTo(left, rightConverted);
                 } else if (operator == NOT) {
                     predicate = PredicateBuilder.isNotEqualTo(left, rightConverted);
-                } else if (operator == CONTAINS) {
+                } else if (operator == CONTAINS || operator == NOT_CONTAINS) {
                     predicate = PredicateBuilder.contains(left, rightConverted);
-                } else if (operator == REGEX) {
+                    if (operator == NOT_CONTAINS) {
+                        predicate = PredicateBuilder.not(predicate);
+                    }
+                } else if (operator == REGEX || operator == NOT_REGEX) {
                     // reg ex should use String pattern, so we evalute the right hand side as a String
                     predicate = PredicateBuilder.regex(left, right.evaluate(exchange, String.class));
-                } else if (operator == IN) {
+                    if (operator == NOT_REGEX) {
+                        predicate = PredicateBuilder.not(predicate);
+                    }
+                } else if (operator == IN || operator == NOT_IN) {
                     // okay the in operator is a bit more complex as we need to build a list of values
                     // from the right handside expression.
                     // each element on the right handside must be separated by comma (default for create iterator)
@@ -129,6 +136,9 @@ public abstract class SimpleLanguageSupport implements Language {
                     // then reuse value builder to create the in predicate with the list of values
                     ValueBuilder vb = new ValueBuilder(left);
                     predicate = vb.in(values.toArray());
+                    if (operator == NOT_IN) {
+                        predicate = PredicateBuilder.not(predicate);
+                    }
                 }
 
                 if (predicate == null) {
