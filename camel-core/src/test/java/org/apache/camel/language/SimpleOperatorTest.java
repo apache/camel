@@ -159,6 +159,15 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.foo} contains def", false);
     }
 
+    public void testNotConstains() throws Exception {
+        assertExpression("${in.header.foo} not contains 'a'", false);
+        assertExpression("${in.header.foo} not contains a", false);
+        assertExpression("${in.header.foo} not contains 'ab'", false);
+        assertExpression("${in.header.foo} not contains 'abc'", false);
+        assertExpression("${in.header.foo} not contains 'def'", true);
+        assertExpression("${in.header.foo} not contains def", true);
+    }
+
     public void testRegex() throws Exception {
         assertExpression("${in.header.foo} regex '^a..$'", true);
         assertExpression("${in.header.foo} regex '^ab.$'", true);
@@ -169,6 +178,18 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} regex '^\\d{2}'", false);
         assertExpression("${in.header.bar} regex ^\\d{3}", true);
         assertExpression("${in.header.bar} regex ^\\d{2}", false);
+    }
+
+    public void testNotRegex() throws Exception {
+        assertExpression("${in.header.foo} not regex '^a..$'", false);
+        assertExpression("${in.header.foo} not regex '^ab.$'", false);
+        assertExpression("${in.header.foo} not regex ^ab.$", false);
+        assertExpression("${in.header.foo} not regex ^d.*$", true);
+
+        assertExpression("${in.header.bar} not regex '^\\d{3}'", false);
+        assertExpression("${in.header.bar} not regex '^\\d{2}'", true);
+        assertExpression("${in.header.bar} not regex ^\\d{3}", false);
+        assertExpression("${in.header.bar} not regex ^\\d{2}", true);
     }
 
     public void testIn() throws Exception {
@@ -185,6 +206,19 @@ public class SimpleOperatorTest extends LanguageTestSupport {
         assertExpression("${in.header.bar} in '100,200'", false);
     }
 
+    public void testNotIn() throws Exception {
+        // string to string
+        assertExpression("${in.header.foo} not in 'foo,abc,def'", false);
+        assertExpression("${in.header.foo} not in ${bean:generator.generateFilename}", false);
+        assertExpression("${in.header.foo} not in foo,abc,def", false);
+        assertExpression("${in.header.foo} not in 'foo,def'", true);
+
+        // integer to string
+        assertExpression("${in.header.bar} not in '100,123,200'", false);
+        assertExpression("${in.header.bar} not in 100,123,200", false);
+        assertExpression("${in.header.bar} not in ${bean:generator.generateId}", false);
+        assertExpression("${in.header.bar} not in '100,200'", true);
+    }
 
     protected String getLanguageName() {
         return "simple";

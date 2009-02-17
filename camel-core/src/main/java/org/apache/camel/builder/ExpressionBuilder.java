@@ -472,7 +472,7 @@ public final class ExpressionBuilder {
 
             @Override
             public String toString() {
-                return "" + expression + ".convertTo(" + type + ")";
+                return "" + expression + ".convertToEvaluatedType(" + type + ")";
             }
         };
     }

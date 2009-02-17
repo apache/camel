@@ -70,7 +70,7 @@ public final class PredicateBuilder {
 
             @Override
             public String toString() {
-                return "not " + predicate;
+                return "not (" + predicate + ")";
             }
         };
     }
@@ -293,7 +293,7 @@ public final class PredicateBuilder {
 
             @Override
             public String toString() {
-                return expression + ".matches(" + pattern + ")";
+                return expression + ".matches('" + pattern + "')";
             }
 
             @Override

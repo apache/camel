@@ -33,7 +33,7 @@ import org.apache.camel.util.FileUtil;
  */
 public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
 
-    private String getFtpUrl() {
+    protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/lwd/?password=admin&delay=5000&localWorkDirectory=target/lwd";
     }
 
@@ -87,7 +87,7 @@ public class FtpConsumerLocalWorkDirectoryTest extends FtpServerTestSupport {
                         assertTrue("Local work file should exists", body.exists());                        
                         assertEquals(FileUtil.normalizePath("target/lwd/hello.txt"), body.getPath());
                     }
-                }).to("file://target/out", "mock:result");
+                }).to("mock:result", "file://target/out");
             }
         };
     }
