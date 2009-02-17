@@ -36,21 +36,6 @@
     <scala-plugin-version>$SCALA_PLUGIN_VERSION_REPLACEME$</scala-plugin-version>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </repository>
-  </repositories>
-  <pluginRepositories>
-    <pluginRepository>
-      <id>scala-tools.org</id>
-      <name>Scala-tools Maven2 Repository</name>
-      <url>http://scala-tools.org/repo-releases</url>
-    </pluginRepository>
-  </pluginRepositories>
-
   <build>
     <sourceDirectory>src/main/scala</sourceDirectory>
     <testSourceDirectory>src/test/scala</testSourceDirectory>
