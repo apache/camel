@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
 
 import java.util.List;
 
-import org.apache.camel.rest.model.Camel;
-import org.apache.camel.rest.model.EndpointLink;
-import org.apache.camel.rest.model.Endpoints;
+import org.apache.camel.web.model.Camel;
+import org.apache.camel.web.model.EndpointLink;
+import org.apache.camel.web.model.Endpoints;
 
 /**
- * @version $Revision$
+ * @version $Revision: 735413 $
  */
 public class EndpointsTest extends TestSupport {
 

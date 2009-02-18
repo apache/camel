@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
 
 
 import com.sun.jersey.api.view.ImplicitProduces;
@@ -22,7 +22,7 @@ import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.rest.model.Camel;
+import org.apache.camel.web.model.Camel;
 
 import javax.annotation.PreDestroy;
 import javax.ws.rs.GET;

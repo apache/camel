@@ -45,7 +45,7 @@
     <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
     <init-param>
       <param-name>com.sun.jersey.config.property.resourceConfigClass</param-name>
-      <param-value>org.apache.camel.rest.util.CamelResourceConfig</param-value>
+      <param-value>org.apache.camel.web.util.CamelResourceConfig</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.feature.Redirect</param-name>
@@ -57,7 +57,7 @@
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.property.packages</param-name>
-      <param-value>org.apache.camel.rest</param-value>
+      <param-value>org.apache.camel.web</param-value>
     </init-param>
     <init-param>
       <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>

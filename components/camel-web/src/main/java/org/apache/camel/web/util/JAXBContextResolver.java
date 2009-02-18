@@ -14,24 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.util;
+package org.apache.camel.web.util;
 
 
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
 import org.apache.camel.model.Constants;
-import org.apache.camel.rest.model.Camel;
-import org.apache.camel.rest.model.EndpointLink;
-import org.apache.camel.rest.model.Endpoints;
 
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @version $Revision$
@@ -47,7 +39,7 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
         JSONConfiguration.Builder builder = JSONConfiguration.mapped();
         //JSONConfiguration.Builder builder = JSONConfiguration.natural();
         //this.context = new JSONJAXBContext(builder.build(), cTypes);
-        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.rest.model";
+        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.web.model";
         this.context = new JSONJAXBContext(builder.build(), packages);
     }
 

@@ -15,20 +15,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
 
-import com.sun.jersey.api.client.WebResource;
+import org.apache.camel.model.RouteType;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 /**
  * @version $Revision: 1.1 $
  */
-public class StaticContentTest  extends TestSupport {
+public class RouteResource extends CamelChildResourceSupport {
+    private RouteType route;
 
-    public void testCssFile() throws Exception {
-        String response = resource("/css/site.css").get(String.class);
-        assertNotNull("Should have returned a response", response);
-        assertResponseContains(response, "Rounded Box Styles");
+    public RouteResource(RoutesResource routesResource, RouteType route) {
+        super(routesResource.getContextResource());
+        this.route = route;
     }
 
-
+    @GET
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public RouteType getRoute() {
+        return route;
+    }
 }

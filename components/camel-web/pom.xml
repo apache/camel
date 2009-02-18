@@ -347,7 +347,7 @@
               <phase>process-sources</phase>
               <configuration>
                 <destdir>${project.build.directory}/schema</destdir>
-                <srcdir>src/main/java/org/apache/camel/rest/model</srcdir>
+                <srcdir>src/main/java/org/apache/camel/web/model</srcdir>
                 <schemas>
                   <schema>
                     <namespace>http://camel.apache.org/schema/rest</namespace>

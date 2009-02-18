@@ -14,42 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.model;
-
-import org.apache.camel.CamelContext;
-
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @version $Revision$
+ * The JAXB POJOs for the
+ * <a href="http://camel.apache.org/rest.html">Camel REST Support</a>
  */
-@XmlRootElement
-@XmlAccessorType(XmlAccessType.FIELD)
-public class Camel {
-    @XmlAttribute
-    private String name;
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/rest", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED) package org.apache.camel.web.model;
 
-    public Camel() {
-    }
-
-    public Camel(CamelContext camelContext) {
-        setName(camelContext.getName());
-    }
-
-    @Override
-    public String toString() {
-        return "CamelContext: " + getName();
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-}
