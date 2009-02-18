@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExpressionHelper;
 
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which
@@ -70,7 +69,7 @@ public class Delayer extends DelayProcessorSupport {
     protected void delay(Exchange exchange) throws Exception {
         long time = 0;
         if (timeExpression != null) {
-            Long longValue = ExpressionHelper.evaluateAsType(timeExpression, exchange, Long.class);
+            Long longValue = timeExpression.evaluate(exchange, Long.class);
             if (longValue != null) {
                 time = longValue.longValue();
             }
