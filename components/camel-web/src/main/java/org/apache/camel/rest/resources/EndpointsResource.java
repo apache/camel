@@ -62,7 +62,7 @@ public class EndpointsResource {
      */
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Endpoints getEndpointsDTO() {
+    public Endpoints getDTO() {
         return new Endpoints(camelContext);
     }
 
@@ -94,7 +94,7 @@ public class EndpointsResource {
 
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
-    public Response postMessage(String uri) throws URISyntaxException {
+    public Response postUri(String uri) throws URISyntaxException {
         EndpointResource endpoint = getEndpoint(uri);
         if (endpoint != null) {
             return Response.ok().build();
@@ -104,7 +104,7 @@ public class EndpointsResource {
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response processForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
+    public Response postUriForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
         System.out.println("Received form! " + formData);
         newUri = formData.getFirst("uri", String.class);
         EndpointResource endpoint = getEndpoint(newUri);
@@ -127,7 +127,7 @@ public class EndpointsResource {
     //-------------------------------------------------------------------------
 
     public List<EndpointLink> getEndpoints() {
-        return getEndpointsDTO().getEndpoints();
+        return getDTO().getEndpoints();
     }
 
     public String getError() {
