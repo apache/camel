@@ -23,6 +23,7 @@ import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Camel;
@@ -36,6 +37,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.annotation.PreDestroy;
 import java.util.List;
 
 
@@ -50,9 +52,12 @@ import java.util.List;
 public class CamelContextResource {
 
     private CamelContext camelContext;
+    private ProducerTemplate template;
 
-    public CamelContextResource(@Inject CamelContext camelContext) {
+    public CamelContextResource(@Inject CamelContext camelContext) throws Exception {
         this.camelContext = camelContext;
+        this.template = camelContext.createProducerTemplate();
+        template.start();
     }
 
     public CamelContext getCamelContext() {
@@ -61,6 +66,13 @@ public class CamelContextResource {
 
     public String getName() {
         return camelContext.getName();
+    }
+
+    @PreDestroy
+    public void close() throws Exception {
+        if (template != null) {
+            template.stop();
+        }
     }
 
     // XML / JSON representations
@@ -99,7 +111,7 @@ public class CamelContextResource {
         // TODO lets assume the ID is the endpoint
         Endpoint endpoint = getCamelContext().getEndpoint(id);
         if (endpoint != null) {
-            return new EndpointResource(endpoint);
+            return new EndpointResource(camelContext, template, endpoint);
         } else {
             return null;
         }
