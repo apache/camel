@@ -62,8 +62,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
             try {
                 exchange = queue.poll(1000, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Interupted: " + e, e);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Interupted: " + e, e);
                 }
                 continue;
             }
@@ -82,8 +82,8 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                     try {
                         queue.put(exchange);
                     } catch (InterruptedException e) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Interupted: " + e, e);
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Interupted: " + e, e);
                         }
                     }
                 }

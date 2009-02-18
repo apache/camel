@@ -122,6 +122,32 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     }
 
     /**
+     * Creates inputs to the route
+     *
+     * @param uris  the from uris
+     * @return the builder
+     */
+    public RouteType from(String... uris) {
+        for (String uri : uris) {
+            getInputs().add(new FromType(uri));
+        }
+        return this;
+    }
+
+    /**
+     * Creates inputs to the route
+     *
+     * @param endpoints  the from endpoints
+     * @return the builder
+     */
+    public RouteType from(Endpoint... endpoints) {
+        for (Endpoint endpoint : endpoints) {
+            getInputs().add(new FromType(endpoint));
+        }
+        return this;
+    }
+
+    /**
      * Set the group name for this route
      *
      * @param name  the group name

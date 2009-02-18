@@ -161,6 +161,30 @@ public class RoutesType extends OptionalIdentifiedType<RoutesType> implements Ro
     }
 
     /**
+     * Creates a new route from the given URI inputs
+     *
+     * @param uris  the from uri
+     * @return the builder
+     */
+    public RouteType from(String... uris) {
+        RouteType route = createRoute();
+        route.from(uris);
+        return route(route);
+    }
+
+    /**
+     * Creates a new route from the given endpoints
+     *
+     * @param endpoints  the from endpoints
+     * @return the builder
+     */
+    public RouteType from(Endpoint... endpoints) {
+        RouteType route = createRoute();
+        route.from(endpoints);
+        return route(route);
+    }
+
+    /**
      * Creates a new route using the given route
      *
      * @param route the route
