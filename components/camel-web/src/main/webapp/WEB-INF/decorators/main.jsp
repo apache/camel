@@ -63,9 +63,11 @@
           <div class="top_red_bar">
             <div id="site-breadcrumbs">
               <a href="<c:url value='/index'/>" title="Home">Home</a>
+<%--
               &#124;
               <a href="<c:url value='/send'/>"
                  title="Send">Send</a>
+--%>
             </div>
             <div id="site-quicklinks"><P>
               <a href="http://camel.apache.org/support.html"
@@ -86,6 +88,8 @@
                 <div class="navigation">
                   <div class="navigation_top">
                     <div class="navigation_bottom">
+
+<%--
                       <H3>Queue Views</H3>
 
                       <ul class="alternate" type="square">
@@ -94,6 +98,7 @@
                         <li><a href="queueGraph.jsp" title="View the queue depths as a graph">Graph</a></li>
                         <li><a href="xml/queues.jsp" title="View the queues as XML">XML</a></li>
                       </ul>
+--%>
                       <H3>Useful Links</H3>
 
                       <ul class="alternate" type="square">
