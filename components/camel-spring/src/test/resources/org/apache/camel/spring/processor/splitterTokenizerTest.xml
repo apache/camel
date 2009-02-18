@@ -22,25 +22,16 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:parallel-custom-pool"/>
-      <split threadPoolExecutorRef="threadPoolExecutor">
-        <xpath>/invoice/lineItems</xpath>
-        <to uri="mock:result"/>
-      </split>
-    </route>
-  </camelContext>
+    <!-- START SNIPPET: e1 -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <split>
+                <tokenizer token="@"/>
+                <to uri="mock:result"/>
+            </split>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
 
-  <!-- There's an easier way of specifying constructor args, just can't remember it
-       at the moment... old Spring syntax will do for now! -->
-  <bean id="threadPoolExecutor" class="java.util.concurrent.ThreadPoolExecutor">
-    <constructor-arg index="0" value="8"/>
-    <constructor-arg index="1" value="16"/>
-    <constructor-arg index="2" value="0"/>
-    <constructor-arg index="3" value="MILLISECONDS"/>
-    <constructor-arg index="4"><bean class="java.util.concurrent.LinkedBlockingQueue"/></constructor-arg>
-  </bean>
-  <!-- END SNIPPET: example -->
 </beans>

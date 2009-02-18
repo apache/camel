@@ -31,5 +31,6 @@ PythonExpression
 RubyExpression
 SimpleExpression
 SqlExpression
+TokenizerExpression
 XPathExpression
 XQueryExpression
