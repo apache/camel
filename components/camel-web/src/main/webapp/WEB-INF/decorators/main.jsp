@@ -19,9 +19,9 @@
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"/>
   <title><decorator:title default="Camel Console"/></title>
   <style type="text/css" media="screen">
-    @import url( <c:url value="/css/sorttable.css"/> );
-    @import url( <c:url value="/css/type-settings.css"/> );
-    @import url( <c:url value="/css/site.css"/> );
+    @import url(<c:url value="/css/sorttable.css"/>);
+    @import url(<c:url value="/css/type-settings.css"/>);
+    @import url(<c:url value="/css/site.css"/>);
   </style>
   <c:if test="${!disableJavaScript}">
     <script type='text/javascript' src='<c:url value="/js/common.js"/>'></script>
@@ -63,11 +63,8 @@
           <div class="top_red_bar">
             <div id="site-breadcrumbs">
               <a href="<c:url value='/index'/>" title="Home">Home</a>
-<%--
               &#124;
-              <a href="<c:url value='/send'/>"
-                 title="Send">Send</a>
---%>
+              <a href="<c:url value='/endpoints'/>" title="View current endpoints or create new ones">Endpoints</a>
             </div>
             <div id="site-quicklinks"><P>
               <a href="http://camel.apache.org/support.html"
@@ -89,18 +86,21 @@
                   <div class="navigation_top">
                     <div class="navigation_bottom">
 
+<%--
                       <H3>Actions</H3>
 
                       <ul class="alternate" type="square">
-                        <li><a href="<c:url value='/endpoints'/>" title="View current endpoints or create new ones">Endpoints</a></li>
+                        <li></li>
                       </ul>
 
 
+--%>
                       <H3>Useful Links</H3>
 
                       <ul class="alternate" type="square">
                         <li><a href="http://camel.apache.org/documentation.html"
-                               title="a powerful open source integration framework based on known Enterprise Integration Patterns with powerful Bean Integration">Documentation</a></li>
+                               title="a powerful open source integration framework based on known Enterprise Integration Patterns with powerful Bean Integration">Documentation</a>
+                        </li>
                         <li><a href="http://camel.apache.org/faq.html">FAQ</a></li>
                         <li><a href="http://camel.apache.org/download.html">Downloads</a>
                         </li>
