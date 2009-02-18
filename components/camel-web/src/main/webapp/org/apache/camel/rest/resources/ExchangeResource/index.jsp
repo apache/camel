@@ -52,7 +52,7 @@
   </tr>
   <tr>
     <td colspan="2">
-      ${it.in.body}
+      <div class="message"><c:out value="${it.in.body}" escapeXml="true" /></div>
     </td>
   </tr>
 </table>
