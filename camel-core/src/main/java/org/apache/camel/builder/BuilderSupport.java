@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.SendProcessor;
@@ -148,6 +149,22 @@ public abstract class BuilderSupport {
         return Builder.bean(beanRef, null);
     }
 
+    /**
+     * Returns an expression value builder that replaces all occurrences of the 
+     * regular expression with the given replacement
+     */
+    public ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
+        return Builder.regexReplaceAll(content, regex, replacement);
+    }
+
+    /**
+     * Returns an expression value builder that replaces all occurrences of the 
+     * regular expression with the given replacement
+     */
+    public ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
+        return Builder.regexReplaceAll(content, regex, replacement);
+    }    
+    
     /**
      * Returns a <a href="http://camel.apache.org/bean-language.html">bean expression</a>
      * value builder

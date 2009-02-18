@@ -165,7 +165,7 @@ public class ValueBuilder implements Expression {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given
+     * Replaces all occurrences of the regular expression with the given
      * replacement
      */
     public ValueBuilder regexReplaceAll(String regex, String replacement) {
@@ -174,7 +174,7 @@ public class ValueBuilder implements Expression {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given
+     * Replaces all occurrences of the regular expression with the given
      * replacement
      */
     public ValueBuilder regexReplaceAll(String regex, Expression replacement) {
