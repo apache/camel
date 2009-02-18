@@ -24,10 +24,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.rest.model.EndpointLink;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -70,6 +75,39 @@ public class EndpointResource {
         return template;
     }
 
+    public HttpHeaders getHeaders() {
+        return headers;
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public Endpoint getEndpoint() {
+        return endpoint;
+    }
+
+
+    public BrowsableEndpoint getBrowsableEndpoint() {
+        if (endpoint instanceof BrowsableEndpoint) {
+            return (BrowsableEndpoint) endpoint;
+        }
+        return null;
+    }
+
+    @Path("messages/{id}")
+    public ExchangeResource getExchange(@PathParam("id") String exchangeId) {
+        if (endpoint instanceof BrowsableEndpoint) {
+            BrowsableEndpoint browsableEndpoint = (BrowsableEndpoint) endpoint;
+            Exchange exchange = ExchangeHelper.getExchangeById(browsableEndpoint.getExchanges(), exchangeId);
+            if (exchange != null) {
+                return new ExchangeResource(this, exchange);
+            }
+        }
+        // should return 404
+        return null;
+    }
+    
     @POST
     @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
     public Response postMessage(final String body) throws URISyntaxException {
@@ -97,6 +135,8 @@ public class EndpointResource {
                 // lets pass in all the HTTP headers
                 if (headers != null) {
                     MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
+
+                    System.out.println("Headers are: " + requestHeaders);
                     Set<Map.Entry<String, List<String>>> entries = requestHeaders.entrySet();
                     for (Map.Entry<String, List<String>> entry : entries) {
                         String key = entry.getKey();
@@ -108,6 +148,9 @@ public class EndpointResource {
                             in.setHeader(key, values);
                         }
                     }
+                }
+                else {
+                    System.out.println("No request headers!");
                 }
             }
         });
