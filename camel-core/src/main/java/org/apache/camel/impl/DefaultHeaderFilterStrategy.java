@@ -220,7 +220,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (lowercase) {
+            if (isLowercase()) {
                 if (filter.contains(headerName.toLowerCase())) {
                     return true;
                 }
