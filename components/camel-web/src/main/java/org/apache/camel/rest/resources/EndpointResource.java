@@ -109,7 +109,7 @@ public class EndpointResource {
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response processForm(@Context HttpHeaders headers, Form formData) throws URISyntaxException {
+    public Response postMessageForm(@Context HttpHeaders headers, Form formData) throws URISyntaxException {
         System.out.println("Received form! " + formData);
         String body = formData.getFirst("text", String.class);
         sendMessage(headers, body);
