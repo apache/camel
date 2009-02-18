@@ -18,11 +18,8 @@
 package org.apache.camel.rest.resources;
 
 import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.ImplicitProduces;
 import com.sun.jersey.api.view.Viewable;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.ProducerTemplate;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
 
@@ -43,7 +40,6 @@ import java.util.List;
 /**
  * @version $Revision: 1.1 $
  */
-//@ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class EndpointsResource extends CamelChildResourceSupport {
     private String error = "";
     private String newUri = "mock:someName";
@@ -60,7 +56,7 @@ public class EndpointsResource extends CamelChildResourceSupport {
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public Endpoints getDTO() {
-        return new Endpoints(camelContext);
+        return new Endpoints(getCamelContext());
     }
 
 
@@ -75,11 +71,11 @@ public class EndpointsResource extends CamelChildResourceSupport {
             // lets remove any whitespace
             id = id.trim();
             if (id.length() > 0) {
-                endpoint = camelContext.getEndpoint(id);
+                endpoint = getCamelContext().getEndpoint(id);
             }
         }
         if (endpoint != null) {
-            return new EndpointResource(camelContext, template, endpoint);
+            return new EndpointResource(getContextResource(), endpoint);
         } else {
             return null;
         }

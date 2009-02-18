@@ -17,12 +17,15 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
 
@@ -34,6 +37,7 @@ public class RoutesResource extends CamelChildResourceSupport {
     public RoutesResource(CamelContextResource contextResource) {
         super(contextResource);
     }
+
     /**
      * Returns the routes currently active within this context
      *
@@ -43,6 +47,7 @@ public class RoutesResource extends CamelChildResourceSupport {
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public RoutesType getRouteDefinitions() {
         RoutesType answer = new RoutesType();
+        CamelContext camelContext = getCamelContext();
         if (camelContext != null) {
             List<RouteType> list = camelContext.getRouteDefinitions();
             answer.setRoutes(list);
@@ -50,6 +55,19 @@ public class RoutesResource extends CamelChildResourceSupport {
         return answer;
     }
 
+    /**
+      * Looks up an individual route
+      */
+     @Path("{id}")
+     public RouteResource getEndpoint(@PathParam("id") String id) {
+        List<RouteType> list = getRoutes();
+        for (RouteType routeType : list) {
+            if (routeType.getId().equals(id)) {
+                return new RouteResource(this, routeType);
+            }
+        }
+        return null;
+     }
 
 
     // Properties

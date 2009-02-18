@@ -17,9 +17,9 @@
  */
 package org.apache.camel.rest.resources;
 
+import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import com.sun.jersey.api.view.ImplicitProduces;
 
 /**
  * A useful base class for any sub resource of the root {@link org.apache.camel.rest.resources.CamelContextResource}
@@ -28,10 +28,12 @@ import com.sun.jersey.api.view.ImplicitProduces;
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {
-    protected final CamelContext camelContext;
-    protected final ProducerTemplate template;
+    private final CamelContext camelContext;
+    private final ProducerTemplate template;
+    private CamelContextResource contextResource;
 
     public CamelChildResourceSupport(CamelContextResource contextResource) {
+        this.contextResource = contextResource;
         camelContext = contextResource.getCamelContext();
         template = contextResource.getTemplate();
     }
@@ -42,5 +44,9 @@ public class CamelChildResourceSupport {
 
     public ProducerTemplate getTemplate() {
         return template;
+    }
+
+    public CamelContextResource getContextResource() {
+        return contextResource;
     }
 }

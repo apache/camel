@@ -18,16 +18,13 @@ package org.apache.camel.rest.resources;
 
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.ImplicitProduces;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.EndpointHelper;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.rest.model.EndpointLink;
+import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.ExchangeHelper;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -47,15 +44,11 @@ import java.util.Set;
 /**
  * @version $Revision$
  */
-@ImplicitProduces(Constants.HTML_MIME_TYPES)
-public class EndpointResource {
-    private final CamelContext camelContext;
+public class EndpointResource extends CamelChildResourceSupport {
     private final Endpoint endpoint;
-    private final ProducerTemplate template;
 
-    public EndpointResource(CamelContext camelContext, ProducerTemplate template, Endpoint endpoint) {
-        this.camelContext = camelContext;
-        this.template = template;
+    public EndpointResource(CamelContextResource contextResource, Endpoint endpoint) {
+        super(contextResource);
         this.endpoint = endpoint;
     }
 
@@ -65,14 +58,6 @@ public class EndpointResource {
 
     public String getUri() {
         return endpoint.getEndpointUri();
-    }
-
-    public ProducerTemplate getTemplate() {
-        return template;
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
     }
 
     public Endpoint getEndpoint() {
@@ -99,10 +84,10 @@ public class EndpointResource {
         // should return 404
         return null;
     }
-    
+
     @POST
     @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
-    public Response postMessage(@Context HttpHeaders headers,final String body) throws URISyntaxException {
+    public Response postMessage(@Context HttpHeaders headers, final String body) throws URISyntaxException {
         sendMessage(headers, body);
         return Response.ok().build();
     }
@@ -119,7 +104,7 @@ public class EndpointResource {
     protected void sendMessage(final HttpHeaders headers, final String body) {
         System.out.println("Sending to " + endpoint + " body: " + body);
 
-        template.send(endpoint, new Processor() {
+        getTemplate().send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
                 in.setBody(body);
@@ -140,8 +125,7 @@ public class EndpointResource {
                             in.setHeader(key, values);
                         }
                     }
-                }
-                else {
+                } else {
                     System.out.println("No request headers!");
                 }
             }
