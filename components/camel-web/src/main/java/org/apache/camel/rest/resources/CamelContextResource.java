@@ -22,17 +22,13 @@ import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Camel;
-import org.apache.camel.rest.model.EndpointLink;
 
 import javax.annotation.PreDestroy;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 
 /**

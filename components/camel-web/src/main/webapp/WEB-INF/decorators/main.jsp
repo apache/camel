@@ -65,6 +65,8 @@
               <a href="<c:url value='/index'/>" title="Home">Home</a>
               &#124;
               <a href="<c:url value='/endpoints'/>" title="View current endpoints or create new ones">Endpoints</a>
+              &#124;
+              <a href="<c:url value='/routes'/>" title="View current routes">Routes</a>
             </div>
             <div id="site-quicklinks"><P>
               <a href="http://camel.apache.org/support.html"

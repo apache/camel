@@ -16,12 +16,12 @@
  */
 package org.apache.camel.rest.model;
 
+import org.apache.camel.Endpoint;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.Endpoint;
 
 /**
  * @version $Revision$

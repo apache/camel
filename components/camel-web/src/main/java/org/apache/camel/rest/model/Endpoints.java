@@ -16,18 +16,17 @@
  */
 package org.apache.camel.rest.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.util.ObjectHelper;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.util.ObjectHelper;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * @version $Revision$
@@ -62,7 +61,7 @@ public class Endpoints {
 
     public void load(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext has not been injected!");
-        
+
         Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
         for (Endpoint endpoint : endpoints) {
             addEndpoint(createEndpointLink(endpoint));
