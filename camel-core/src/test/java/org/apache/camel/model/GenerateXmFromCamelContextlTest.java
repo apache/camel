@@ -19,13 +19,13 @@ package org.apache.camel.model;
 import java.io.StringWriter;
 import java.util.List;
 
-import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Marshaller;
 
-import org.apache.camel.model.language.GroovyExpression;
-import org.apache.camel.model.language.XQueryExpression;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.language.GroovyExpression;
+import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * @version $Revision$

@@ -41,4 +41,4 @@ public class RegExRouteTest extends ContextTestSupport {
             }
         };
     }
-  }
+}
