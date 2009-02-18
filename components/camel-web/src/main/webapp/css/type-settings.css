@@ -175,3 +175,7 @@ div.message {
     height: 100px;
     overflow : auto;
 }
+
+.error {
+  color: crimson;
+}

@@ -17,8 +17,8 @@
 package org.apache.camel.rest.resources;
 
 
+import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.ImplicitProduces;
-import com.sun.jersey.api.spring.Autowire;
 import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
@@ -29,15 +29,20 @@ import org.apache.camel.model.RoutesType;
 import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
+import javax.annotation.PreDestroy;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import javax.annotation.PreDestroy;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Context;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 
@@ -64,6 +69,10 @@ public class CamelContextResource {
         return camelContext;
     }
 
+    public ProducerTemplate getTemplate() {
+        return template;
+    }
+
     public String getName() {
         return camelContext.getName();
     }
@@ -86,35 +95,13 @@ public class CamelContextResource {
         return new Camel(camelContext);
     }
 
-
-    /**
-     * Returns a list of endpoints available in this context
-     *
-     * @return
-     */
-    @GET
     @Path("endpoints")
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public Endpoints getEndpointsDTO() {
-        return new Endpoints(camelContext);
+    public EndpointsResource getEndpointsResource() {
+        return new EndpointsResource(this);
     }
 
     public List<EndpointLink> getEndpoints() {
-        return getEndpointsDTO().getEndpoints();
-    }
-
-    /**
-     * Looks up an individual endpoint
-     */
-    @Path("endpoint/{id}")
-    public EndpointResource getEndpoint(@PathParam("id") String id) {
-        // TODO lets assume the ID is the endpoint
-        Endpoint endpoint = getCamelContext().getEndpoint(id);
-        if (endpoint != null) {
-            return new EndpointResource(camelContext, template, endpoint);
-        } else {
-            return null;
-        }
+        return getEndpointsResource().getEndpointsDTO().getEndpoints();
     }
 
     /**
@@ -139,6 +126,5 @@ public class CamelContextResource {
     public List<RouteType> getRoutes() {
         return getRouteDefinitions().getRoutes();
     }
-
 
 }
