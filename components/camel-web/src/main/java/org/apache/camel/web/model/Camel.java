@@ -14,27 +14,42 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.util;
+package org.apache.camel.web.model;
 
-import com.sun.jersey.api.core.PackagesResourceConfig;
+import org.apache.camel.CamelContext;
 
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * @version $Revision$
  */
-public class CamelResourceConfig extends PackagesResourceConfig {
-    public CamelResourceConfig() {
-        super("org.apache.camel.rest");
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Camel {
+    @XmlAttribute
+    private String name;
+
+    public Camel() {
     }
 
-    public Map<String, MediaType> getMediaTypeMappings() {
-        Map<String, MediaType> m = new HashMap<String, MediaType>();
-        m.put("html", MediaType.TEXT_HTML_TYPE);
-        m.put("xml", MediaType.APPLICATION_XML_TYPE);
-        m.put("json", MediaType.APPLICATION_JSON_TYPE);
-        return m;
+    public Camel(CamelContext camelContext) {
+        setName(camelContext.getName());
+    }
+
+    @Override
+    public String toString() {
+        return "CamelContext: " + getName();
+
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

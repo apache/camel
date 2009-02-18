@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,13 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
+
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
-public class Constants {
-    public static final String HTML_MIME_TYPES = "text/html;qs=5";
+public class EndpointsHtmlTest extends TestSupport {
 
-    public static final String DATA_MIME_TYPES = "text/xml,application/xml,application/json";
+    public void testCamelAsHtml() throws Exception {
+        String response = resource("/").accept("text/html").get(String.class);
+
+        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+    }
+
+
+    public void testEndpointsAsHtml() throws Exception {
+        String response = resource("endpoints").accept("text/html").get(String.class);
+
+        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+    }
+
 }

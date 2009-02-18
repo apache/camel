@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest;
+package org.apache.camel.web;
 
 import org.mortbay.jetty.Connector;
 import org.mortbay.jetty.Handler;

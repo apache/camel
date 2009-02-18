@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.spring;
+package org.apache.camel.web.spring;
 
 import java.io.StringWriter;
 import java.util.List;
@@ -25,7 +25,7 @@ import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
-import org.apache.camel.rest.resources.CamelContextResource;
+import org.apache.camel.web.resources.CamelContextResource;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 

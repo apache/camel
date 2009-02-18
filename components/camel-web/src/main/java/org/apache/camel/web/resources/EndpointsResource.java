@@ -15,13 +15,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
 
 import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.Viewable;
 import org.apache.camel.Endpoint;
-import org.apache.camel.rest.model.EndpointLink;
-import org.apache.camel.rest.model.Endpoints;
+import org.apache.camel.web.model.EndpointLink;
+import org.apache.camel.web.model.Endpoints;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;

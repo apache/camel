@@ -15,14 +15,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.resources;
 
 import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 
 /**
- * A useful base class for any sub resource of the root {@link org.apache.camel.rest.resources.CamelContextResource}
+ * A useful base class for any sub resource of the root {@link org.apache.camel.web.resources.CamelContextResource}
  *
  * @version $Revision: 1.1 $
  */

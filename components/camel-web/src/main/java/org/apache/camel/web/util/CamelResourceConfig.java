@@ -14,25 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.rest.resources;
+package org.apache.camel.web.util;
 
+import com.sun.jersey.api.core.PackagesResourceConfig;
+
+import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @version $Revision$
  */
-public class EndpointsHtmlTest extends TestSupport {
-
-    public void testCamelAsHtml() throws Exception {
-        String response = resource("/").accept("text/html").get(String.class);
-
-        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+public class CamelResourceConfig extends PackagesResourceConfig {
+    public CamelResourceConfig() {
+        super("org.apache.camel.web");
     }
 
-
-    public void testEndpointsAsHtml() throws Exception {
-        String response = resource("endpoints").accept("text/html").get(String.class);
-
-        assertTrue("Should contain <html> but was: " + response, response.contains("<html>"));
+    public Map<String, MediaType> getMediaTypeMappings() {
+        Map<String, MediaType> m = new HashMap<String, MediaType>();
+        m.put("html", MediaType.TEXT_HTML_TYPE);
+        m.put("xml", MediaType.APPLICATION_XML_TYPE);
+        m.put("json", MediaType.APPLICATION_JSON_TYPE);
+        return m;
     }
-
 }
