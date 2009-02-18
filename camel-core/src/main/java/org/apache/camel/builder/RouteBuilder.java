@@ -94,6 +94,30 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
+     * Creates a new route from the given URIs input
+     *
+     * @param uris  the from uris
+     * @return the builder
+     */
+    public RouteType from(String... uris) {
+        RouteType answer = routeCollection.from(uris);
+        configureRoute(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a new route from the given endpoint
+     *
+     * @param endpoints  the from endpoints
+     * @return the builder
+     */
+    public RouteType from(Endpoint... endpoints) {
+        RouteType answer = routeCollection.from(endpoints);
+        configureRoute(answer);
+        return answer;
+    }
+
+    /**
      * Installs the given <a href="http://camel.apache.org/error-handler.html">error handler</a> builder
      *
      * @param errorHandlerBuilder  the error handler to be used by default for all child routes

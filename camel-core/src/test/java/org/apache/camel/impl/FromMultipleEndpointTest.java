@@ -23,26 +23,30 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * @version $Revision$
  */
-public class FromEndpointTest extends ContextTestSupport {
-    private MockEndpoint results;
-    private Object expectedBody = "<hello>world!</hello>";
+public class FromMultipleEndpointTest extends ContextTestSupport {
 
-    public void testReceivedMessageHasFromEndpointSet() throws Exception {
-        results = getMockEndpoint("mock:results");
-        results.expectedBodiesReceived(expectedBody);
+    public void testMultipleFromEndpoint() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:results");
+        mock.expectedMessageCount(3);
 
-        template.sendBody("direct:start", expectedBody);
+        template.sendBody("direct:foo", "foo");
+        template.sendBody("seda:bar", "bar");
 
-        results.assertIsSatisfied();
-        List<Exchange> list = results.getReceivedExchanges();
+        mock.assertIsSatisfied();
+        List<Exchange> list = mock.getReceivedExchanges();
+
         Exchange exchange = list.get(0);
         Endpoint fromEndpoint = exchange.getFromEndpoint();
-        assertNotNull("exchange.fromEndpoint() is null!", fromEndpoint);
-        assertEquals("fromEndpoint URI", "direct:start", fromEndpoint.getEndpointUri());
+        assertEquals("fromEndpoint URI", "direct:foo", fromEndpoint.getEndpointUri());
+
+        exchange = list.get(1);
+        fromEndpoint = exchange.getFromEndpoint();
+        assertEquals("fromEndpoint URI", "seda:bar", fromEndpoint.getEndpointUri());
     }
 
     @Override
@@ -50,7 +54,9 @@ public class FromEndpointTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("mock:results");
+                getContext().addInterceptStrategy(new Tracer());
+
+                from("direct:foo", "seda:bar", "timer://baz?delay=500&period=1000").to("mock:results");
             }
         };
 
