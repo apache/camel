@@ -238,7 +238,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (isLowercase) {
+            if (isLowercase()) {
                 if (filter.contains(headerName.toLowerCase())) {
                     return true;
                 }

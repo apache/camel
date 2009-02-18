@@ -31,8 +31,8 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
     protected void initialize() {
         getOutFilter().add("content-length");
         getOutFilter().add("content-type");
-        getOutFilter().add(GZIPHelper.CONTENT_ENCODING);
-        getOutFilter().add(HttpMethods.HTTP_METHOD);
+        getOutFilter().add(GZIPHelper.CONTENT_ENCODING.toLowerCase());
+        getOutFilter().add(HttpMethods.HTTP_METHOD.toLowerCase());
         getOutFilter().add(HttpProducer.QUERY);
         getOutFilter().add(HttpProducer.HTTP_RESPONSE_CODE.toLowerCase());
         setIsLowercase(true);
