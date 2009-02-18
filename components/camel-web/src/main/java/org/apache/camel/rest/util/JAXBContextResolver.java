@@ -21,6 +21,7 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.api.json.JSONJAXBContext;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.Constants;
 import org.apache.camel.rest.model.Camel;
 import org.apache.camel.rest.model.EndpointLink;
 import org.apache.camel.rest.model.Endpoints;
@@ -39,52 +40,27 @@ import java.util.Set;
 public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
 
     private final JAXBContext context;
-
-    private final Set<Class> types;
-
-    private final Class[] cTypes = {RoutesType.class, RouteType.class,
-            Camel.class, Endpoints.class, EndpointLink.class};
-
+    private String packages;
     public JAXBContextResolver() throws Exception {
-        this.types = new HashSet(Arrays.asList(cTypes));
 
         // TODO we can't use natural with JAXB 2.1.6 or 2.1 for some reason?
         JSONConfiguration.Builder builder = JSONConfiguration.mapped();
         //JSONConfiguration.Builder builder = JSONConfiguration.natural();
-        this.context = new JSONJAXBContext(builder.build(), cTypes);
+        //this.context = new JSONJAXBContext(builder.build(), cTypes);
+        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.rest.model";
+        this.context = new JSONJAXBContext(builder.build(), packages);
     }
 
     public JAXBContext getContext(Class<?> objectType) {
-        return (types.contains(objectType)) ? context : null;
-    }
-}
-
-/*implements ContextResolver<JAXBContext> {
-
-    private final JAXBContext context;
-
-    public JAXBContextResolver() throws Exception {
-        Map<String, Object> props = new HashMap<String, Object>();
-        props.put(JSONJAXBContext.JAXB_CONTEXT_FACTORY, Boolean.TRUE);
-        //props.put(JSONJAXBContext.JSON_NOTATION, "MAPPED");
-/*
-        props.put(JSONJAXBContext.JSON_ROOT_UNWRAPPING, Boolean.TRUE);
-        props.put(JSONJAXBContext.JSON_NON_STRINGS, "[\"number\"]");
-*/
-
-/*this.context = new JSONJAXBContext(getJaxbClasses(), props);
-    }
-
-    protected Class[] getJaxbClasses() {
-        return new Class[]{RoutesType.class, RouteType.class,
-                           Camel.class, Endpoints.class, EndpointLink.class};
-    }
-
-    public JAXBContext getContext(Class<?> objectType) {
-        String name = objectType.getPackage().getName();
-        if (name.startsWith("org.apache.camel.model") || name.startsWith("org.apache.camel.rest.model")) {
-            return context;
+        Package aPackage = objectType.getPackage();
+        if (aPackage != null) {
+            String name = aPackage.getName();
+            if (name.length() > 0) {
+                if (packages.contains(name)) {
+                    return context;
+                }
+            }
         }
         return null;
     }
-*/
+}
