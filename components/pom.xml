@@ -73,7 +73,7 @@
     <module>camel-ognl</module>
     <module>camel-osgi</module>
     <module>camel-quartz</module>
-    <!--<module>camel-rest</module>-->
+    <module>camel-restlet</module>
     <module>camel-rmi</module>
     <module>camel-ruby</module>
     <module>camel-rss</module>
@@ -88,13 +88,13 @@
     <module>camel-stream</module>
     <!--<module>camel-supercsv</module>-->
     <module>camel-swing</module>
+    <module>camel-tagsoup</module>
     <module>camel-test</module>
     <module>camel-uface</module>
     <module>camel-velocity</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
-    <module>camel-tagsoup</module>
-    <module>camel-restlet</module>
+    <module>camel-web</module>
   </modules>
 </project>
