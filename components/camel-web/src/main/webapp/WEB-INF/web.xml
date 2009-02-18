@@ -31,6 +31,16 @@
   </listener>
 
   <filter>
+    <filter-name>sitemesh</filter-name>
+    <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>sitemesh</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
+
+  <filter>
     <filter-name>Jersey Filter</filter-name>
     <filter-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</filter-class>
     <init-param>
@@ -54,19 +64,9 @@
       <param-value>/(images|css|js)/.*</param-value>
     </init-param>
   </filter>
-  
+
   <filter-mapping>
     <filter-name>Jersey Filter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
-
-  <filter>
-    <filter-name>sitemesh</filter-name>
-    <filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
-  </filter>
-
-  <filter-mapping>
-    <filter-name>sitemesh</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
 
