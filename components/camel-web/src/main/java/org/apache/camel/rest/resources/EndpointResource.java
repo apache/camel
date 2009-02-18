@@ -16,20 +16,45 @@
  */
 package org.apache.camel.rest.resources;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.rest.model.EndpointLink;
+import com.sun.jersey.api.representation.Form;
 import com.sun.jersey.api.view.ImplicitProduces;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.rest.model.EndpointLink;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
  */
-@ImplicitProduces({MediaType.TEXT_HTML})
+@ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class EndpointResource {
+    private final CamelContext camelContext;
     private final Endpoint endpoint;
+    private final ProducerTemplate template;
 
-    public EndpointResource(Endpoint endpoint) {
+    @Context
+    HttpHeaders headers;
+
+
+    public EndpointResource(CamelContext camelContext, ProducerTemplate template, Endpoint endpoint) {
+        this.camelContext = camelContext;
+        this.template = template;
         this.endpoint = endpoint;
     }
 
@@ -40,4 +65,53 @@ public class EndpointResource {
     public String getUri() {
         return endpoint.getEndpointUri();
     }
+
+    public ProducerTemplate getTemplate() {
+        return template;
+    }
+
+    @POST
+    @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
+    public Response postMessage(final String body) throws URISyntaxException {
+        sendMessage(body);
+        return Response.ok().build();
+    }
+
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+    public Response processForm(Form formData) throws URISyntaxException {
+        System.out.println("Received form! " + formData);
+        String body = formData.getFirst("text", String.class);
+        sendMessage(body);
+        return Response.seeOther(new URI(getHref())).build();
+    }
+
+    protected void sendMessage(final String body) {
+        System.out.println("Sending to " + endpoint + " body: " + body);
+
+        template.send(endpoint, new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                Message in = exchange.getIn();
+                in.setBody(body);
+
+                // lets pass in all the HTTP headers
+                if (headers != null) {
+                    MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
+                    Set<Map.Entry<String, List<String>>> entries = requestHeaders.entrySet();
+                    for (Map.Entry<String, List<String>> entry : entries) {
+                        String key = entry.getKey();
+                        List<String> values = entry.getValue();
+                        int size = values.size();
+                        if (size == 1) {
+                            in.setHeader(key, values.get(0));
+                        } else if (size > 0) {
+                            in.setHeader(key, values);
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+
 }
