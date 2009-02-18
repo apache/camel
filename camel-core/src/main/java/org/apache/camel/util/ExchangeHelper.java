@@ -389,4 +389,18 @@ public final class ExchangeHelper {
     public static <T> T lookupBean(Exchange exchange, String name, Class<T> type) {
         return exchange.getContext().getRegistry().lookup(name, type);
     }
+
+    /**
+     * Returns the first exchange in the given collection of exchanges which has the same exchange ID as the one given
+     * or null if none could be found
+     */
+    public static Exchange getExchangeById(Iterable<Exchange> exchanges, String exchangeId) {
+        for (Exchange exchange : exchanges) {
+            String id = exchange.getExchangeId();
+            if (id != null && id.equals(exchangeId)) {
+                return exchange;
+            }
+        }
+        return null;
+    }
 }
