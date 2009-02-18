@@ -45,6 +45,14 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>java.net.maven2</id>
+      <name>java.net Maven 2 Repo</name>
+      <url>http://download.java.net/maven/2</url>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -238,10 +246,15 @@
               <artifactId>maven-wadl-plugin</artifactId>
               <version>${jersey-version}</version>
             </docletArtifact>
+            <docletArtifact>
+              <groupId>com.sun.jersey.contribs</groupId>
+              <artifactId>wadl-resourcedoc-doclet</artifactId>
+              <version>${jersey-version}</version>
+            </docletArtifact>
             <!--
-                Also specify jersey and xerces as doclet artifacts as the ResourceDoclet
-                uses classes provided by them to generate the resourcedoc.
-             -->
+               Also specify jersey and xerces as doclet artifacts as the ResourceDoclet
+               uses classes provided by them to generate the resourcedoc.
+            -->
             <docletArtifact>
               <groupId>com.sun.jersey</groupId>
               <artifactId>jersey-server</artifactId>
@@ -252,6 +265,18 @@
               <artifactId>xercesImpl</artifactId>
               <version>2.6.1</version>
             </docletArtifact>
+            <!--
+                        <docletArtifact>
+                          <groupId>javax.xml.bind</groupId>
+                          <artifactId>jaxb-api</artifactId>
+                          <version>${jaxb-api-version}</version>
+                        </docletArtifact>
+                        <docletArtifact>
+                          <groupId>javax.xml</groupId>
+                          <artifactId>jaxb-impl</artifactId>
+                          <version>${jaxb-version}</version>
+                        </docletArtifact>
+            -->
             <docletArtifact>
               <groupId>javax.xml.bind</groupId>
               <artifactId>jaxb-api</artifactId>
@@ -272,6 +297,13 @@
               <artifactId>stax-api</artifactId>
               <version>${stax-api-version}</version>
             </docletArtifact>
+            <!--
+                        <docletArtifact>
+                          <groupId>javax.xml.stream</groupId>
+                          <artifactId>stax-api</artifactId>
+                          <version>${stax-api-version}</version>
+                        </docletArtifact>
+            -->
           </docletArtifacts>
           <additionalparam>-output ${project.build.outputDirectory}/resourcedoc.xml</additionalparam>
         </configuration>
