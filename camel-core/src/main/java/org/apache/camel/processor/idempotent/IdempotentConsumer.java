@@ -21,7 +21,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.util.ExpressionHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,7 +52,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        String messageId = ExpressionHelper.evaluateAsString(messageIdExpression, exchange);
+        String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
         }
