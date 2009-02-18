@@ -53,10 +53,6 @@ public class EndpointResource {
     private final Endpoint endpoint;
     private final ProducerTemplate template;
 
-    @Context
-    HttpHeaders headers;
-
-
     public EndpointResource(CamelContext camelContext, ProducerTemplate template, Endpoint endpoint) {
         this.camelContext = camelContext;
         this.template = template;
@@ -73,10 +69,6 @@ public class EndpointResource {
 
     public ProducerTemplate getTemplate() {
         return template;
-    }
-
-    public HttpHeaders getHeaders() {
-        return headers;
     }
 
     public CamelContext getCamelContext() {
@@ -110,21 +102,21 @@ public class EndpointResource {
     
     @POST
     @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
-    public Response postMessage(final String body) throws URISyntaxException {
-        sendMessage(body);
+    public Response postMessage(@Context HttpHeaders headers,final String body) throws URISyntaxException {
+        sendMessage(headers, body);
         return Response.ok().build();
     }
 
     @POST
     @Consumes("application/x-www-form-urlencoded")
-    public Response processForm(Form formData) throws URISyntaxException {
+    public Response processForm(@Context HttpHeaders headers, Form formData) throws URISyntaxException {
         System.out.println("Received form! " + formData);
         String body = formData.getFirst("text", String.class);
-        sendMessage(body);
+        sendMessage(headers, body);
         return Response.seeOther(new URI(getHref())).build();
     }
 
-    protected void sendMessage(final String body) {
+    protected void sendMessage(final HttpHeaders headers, final String body) {
         System.out.println("Sending to " + endpoint + " body: " + body);
 
         template.send(endpoint, new Processor() {

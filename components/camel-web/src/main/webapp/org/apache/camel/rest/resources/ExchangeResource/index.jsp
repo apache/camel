@@ -10,7 +10,7 @@
 
 <table>
   <tr>
-    <td>
+    <td valign="top">
       <table>
         <tr>
           <th colspan="2">Properties</th>
@@ -27,7 +27,7 @@
         </c:forEach>
       </table>
     </td>
-    <td>
+    <td valign="top">
       <table>
         <tr>
           <th colspan="2">Headers</th>
