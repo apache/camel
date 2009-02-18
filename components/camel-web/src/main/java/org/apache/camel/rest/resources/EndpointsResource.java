@@ -43,16 +43,13 @@ import java.util.List;
 /**
  * @version $Revision: 1.1 $
  */
-@ImplicitProduces(Constants.HTML_MIME_TYPES)
-public class EndpointsResource {
-    private final CamelContext camelContext;
-    private final ProducerTemplate template;
+//@ImplicitProduces(Constants.HTML_MIME_TYPES)
+public class EndpointsResource extends CamelChildResourceSupport {
     private String error = "";
     private String newUri = "mock:someName";
 
     public EndpointsResource(CamelContextResource contextResource) {
-        this.camelContext = contextResource.getCamelContext();
-        this.template = contextResource.getTemplate();
+        super(contextResource);
     }
 
     /**

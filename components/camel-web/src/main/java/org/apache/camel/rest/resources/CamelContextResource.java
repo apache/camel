@@ -73,7 +73,7 @@ public class CamelContextResource {
         }
     }
 
-    // XML / JSON representations
+    // representations
     //-------------------------------------------------------------------------
 
     @GET
@@ -89,31 +89,16 @@ public class CamelContextResource {
         return new EndpointsResource(this);
     }
 
+    @Path("routes")
+    public RoutesResource getRoutesResource() {
+        return new RoutesResource(this);
+    }
+/*
+
     public List<EndpointLink> getEndpoints() {
         return getEndpointsResource().getDTO().getEndpoints();
     }
+*/
 
-    /**
-     * Returns the routes currently active within this context
-     *
-     * @return
-     */
-    @GET
-    @Path("routes")
-    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public RoutesType getRouteDefinitions() {
-        RoutesType answer = new RoutesType();
-        if (camelContext != null) {
-            List<RouteType> list = camelContext.getRouteDefinitions();
-            answer.setRoutes(list);
-        }
-        return answer;
-    }
-
-    // Properties
-    //-------------------------------------------------------------------------
-    public List<RouteType> getRoutes() {
-        return getRouteDefinitions().getRoutes();
-    }
 
 }
