@@ -7,7 +7,6 @@
 
 <h2>Routes</h2>
 
-
 <ul>
   <c:forEach var="i" items="${it.routes}">
     <li><a href="${i.id}">${i.shortName}</a> ${i.description}

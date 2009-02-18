@@ -38,7 +38,7 @@ public class CamelRouteTest extends TestCase {
 
     public void testCanMarshalRoutes() throws Exception {
         CamelContextResource resource = new CamelContextResource(camelContext);
-        RoutesType routes = resource.getRouteDefinitions();
+        RoutesType routes = resource.getRoutesResource().getRouteDefinitions();
         List<RouteType> list = routes.getRoutes();
         System.out.println("Found routes: " + list);
 
