@@ -145,7 +145,7 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given
+     * Replaces all occurrences of the regular expression with the given
      * replacement
      */
     public ValueBuilder<E> regexReplaceAll(String regex, String replacement) {
@@ -154,7 +154,7 @@ public class ValueBuilder<E extends Exchange> implements Expression<E> {
     }
 
     /**
-     * Replaces all occurrencies of the regular expression with the given
+     * Replaces all occurrences of the regular expression with the given
      * replacement
      */
     public ValueBuilder<E> regexReplaceAll(String regex, Expression<E> replacement) {

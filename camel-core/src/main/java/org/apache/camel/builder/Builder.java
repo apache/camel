@@ -118,4 +118,22 @@ public final class Builder {
                                                                       final String defaultValue) {
         return new ValueBuilder<E>(ExpressionBuilder.<E> systemProperty(name, defaultValue));
     }
+    
+    /**
+     * Returns an expression that replaces all occurrences of the regular 
+     * expression with the given replacement
+     */
+    public static ValueBuilder regexReplaceAll(Expression content, String regex, String replacement) {
+        Expression newExp = ExpressionBuilder.regexReplaceAll(content, regex, replacement);
+        return new ValueBuilder(newExp);
+    }
+
+    /**
+     * Returns an expression that replaces all occurrences of the regular 
+     * expression with the given replacement
+     */
+    public static ValueBuilder regexReplaceAll(Expression content, String regex, Expression replacement) {
+        Expression newExp = ExpressionBuilder.regexReplaceAll(content, regex, replacement);
+        return new ValueBuilder(newExp);
+    }
 }
