@@ -82,6 +82,11 @@
       <artifactId>sitemesh</artifactId>
       <version>2.3</version>
     </dependency>
+    <dependency>
+      <groupId>javax.annotation</groupId>
+      <artifactId>jsr250-api</artifactId>
+      <optional>true</optional>
+    </dependency>
 
     <!-- testing -->
     <dependency>
