@@ -21,13 +21,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class RegExRouteTest extends ContextTestSupport {
-    String orignalBody = "Foo";
-    String replacedBody = "Bar";
+    String orignalBody = "Foo and another Foo";
+    String expectedBody = "Bar and another Bar";
     
     public void testSendingMessage() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
         
-        result.expectedBodiesReceived(replacedBody);
+        result.expectedBodiesReceived(expectedBody);
         
         template.sendBody("direct:start", orignalBody);
         
