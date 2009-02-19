@@ -17,19 +17,42 @@
 package org.apache.camel.web.util;
 
 import com.sun.jersey.api.core.PackagesResourceConfig;
+import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.api.wadl.config.WadlGeneratorConfig;
+import com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc;
+import com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport;
+import com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport;
+import org.apache.camel.web.resources.CamelContextResource;
+import org.apache.camel.web.resources.Constants;
 
 import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.apache.camel.web.resources.Constants;
 
 /**
  * @version $Revision$
  */
 public class CamelResourceConfig extends PackagesResourceConfig {
     public CamelResourceConfig() {
-        super("org.apache.camel.web");
+        super(createProperties());
+    }
+
+    protected static Map<String, Object> createProperties() {
+        Map<String, Object> properties = new HashMap<String, Object>();
+
+        properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, CamelContextResource.class.getPackage().getName());
+
+        WadlGeneratorConfig config = WadlGeneratorConfig
+                .generator(WadlGeneratorApplicationDoc.class)
+                .prop("applicationDocsFile", "classpath:/application-doc.xml")
+                .generator(WadlGeneratorGrammarsSupport.class)
+                .prop("grammarsFile", "classpath:/application-grammars.xml")
+                .generator(WadlGeneratorResourceDocSupport.class)
+                .prop("resourceDocFile", "classpath:/resourcedoc.xml")
+                .build();
+
+        properties.put(ResourceConfig.PROPERTY_WADL_GENERATOR_CONFIG, config);
+        return properties;
     }
 
     public Map<String, MediaType> getMediaTypeMappings() {

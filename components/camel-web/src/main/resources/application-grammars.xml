@@ -2,5 +2,5 @@
 <grammars xmlns="http://research.sun.com/wadl/2006/10"
     xmlns:xsd="http://www.w3.org/2001/XMLSchema"
     xmlns:xi="http://www.w3.org/1999/XML/xinclude">
-    <include href="camel-rest.xsd" />
+    <include href="camel-web.xsd" />
 </grammars>

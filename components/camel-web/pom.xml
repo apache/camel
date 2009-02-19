@@ -228,8 +228,8 @@
             <goals>
               <goal>javadoc</goal>
             </goals>
-            <!--<phase>compile</phase>-->
-            <phase>package</phase>
+            <phase>compile</phase>
+            <!--<phase>package</phase>-->
           </execution>
         </executions>
 
@@ -238,7 +238,7 @@
           <encoding>UTF-8</encoding>
           <verbose>false</verbose>
           <show>public</show>
-          <subpackages>com.sun.jersey.samples.generatewadl.resources</subpackages>
+          <subpackages>org.apache.camel.web.resources</subpackages>
 
           <doclet>com.sun.jersey.wadl.resourcedoc.ResourceDoclet</doclet>
           <docletArtifacts>
@@ -309,6 +309,72 @@
           <additionalparam>-output ${project.build.outputDirectory}/resourcedoc.xml</additionalparam>
         </configuration>
       </plugin>
+
+
+      <plugin>
+        <groupId>com.sun.jersey.contribs</groupId>
+        <artifactId>maven-wadl-plugin</artifactId>
+        <version>${jersey-version}</version>
+        <executions>
+          <execution>
+            <id>generate</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <wadlFile>${project.build.outputDirectory}/application.wadl</wadlFile>
+          <formatWadlFile>true</formatWadlFile>
+          <baseUri>http://www.example.com/api</baseUri>
+          <packagesResourceConfig>
+            <param>org.apache.camel.web.resources</param>
+          </packagesResourceConfig>
+          <wadlGenerators>
+            <wadlGeneratorDescription>
+              <className>com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc</className>
+              <properties>
+                <property>
+                  <name>applicationDocsFile</name>
+                  <value>${basedir}/src/main/resources/application-doc.xml</value>
+                </property>
+              </properties>
+            </wadlGeneratorDescription>
+            <wadlGeneratorDescription>
+              <className>com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport</className>
+              <properties>
+                <property>
+                  <name>grammarsFile</name>
+                  <value>${basedir}/src/main/resources/application-grammars.xml</value>
+                </property>
+              </properties>
+            </wadlGeneratorDescription>
+            <wadlGeneratorDescription>
+              <className>com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport</className>
+              <properties>
+                <property>
+                  <name>resourceDocFile</name>
+                  <value>${project.build.outputDirectory}/resourcedoc.xml</value>
+                </property>
+              </properties>
+            </wadlGeneratorDescription>
+            <!--
+                                    <wadlGeneratorDescription>
+                                        <className>com.sun.jersey.samples.generatewadl.util.ExampleWadlGenerator</className>
+                                        <properties>
+                                            <property>
+                                                <name>resourceDocFile</name>
+                                                <value>${project.build.outputDirectory}/resourcedoc.xml</value>
+                                            </property>
+                                        </properties>
+                                    </wadlGeneratorDescription>
+            -->
+          </wadlGenerators>
+        </configuration>
+
+      </plugin>
+
 
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
