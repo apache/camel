@@ -63,6 +63,10 @@
       <param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
       <param-value>/(images|css|js)/.*</param-value>
     </init-param>
+    <init-param>
+      <param-name>com.sun.jersey.config.property.WadlResourceUri</param-name>
+      <param-value>/api</param-value>
+    </init-param>
   </filter>
 
   <filter-mapping>
