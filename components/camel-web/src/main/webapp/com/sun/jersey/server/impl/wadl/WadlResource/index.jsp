@@ -17,6 +17,8 @@
   Your web browser will serve up the HTML representation by default unless you specify the HTTP <code>Accept</code>
   header
   with <code>text/xml</code> or <code>application/xml</code> for XML and <code>application/json</code> for JSON.
+  Though you can typically add <b>.xml</b> or <b>.json</b> to a URI to get the XML or JSON respresentation in your browser
+  without having to mess around with <code>Accept</code> headers.
 </p>
 
 <api:resource resource="${it.rootResource}"/>

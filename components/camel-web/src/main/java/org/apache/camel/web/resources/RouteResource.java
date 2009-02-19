@@ -18,12 +18,17 @@
 package org.apache.camel.web.resources;
 
 import org.apache.camel.model.RouteType;
+import org.apache.camel.view.RouteDotGenerator;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 
 /**
+ * A single Camel Route which is used to implement one or more
+ *  <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
+ *
  * @version $Revision: 1.1 $
  */
 public class RouteResource extends CamelChildResourceSupport {
@@ -34,9 +39,24 @@ public class RouteResource extends CamelChildResourceSupport {
         this.route = route;
     }
 
+    /**
+     * Returns the XML or JSON representation of this route
+     */
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public RouteType getRoute() {
         return route;
     }
+
+    /**
+     * Returns the Graphviz DOT <a href="http://camel.apache.org/visualisation.html">Visualisation</a>
+     * of this route
+     */
+    @GET
+    @Produces(Constants.DOT_MIMETYPE)
+    public String getDot() throws IOException {
+        RouteDotGenerator generator = new RouteDotGenerator("/tmp/camel");
+        return generator.getRoutesText(getCamelContext());
+    }
+
 }
