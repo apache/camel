@@ -16,18 +16,13 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.util.List;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 public class CxfConsumerMessageTest extends CxfConsumerTest {
-    private static final transient Log LOG = LogFactory.getLog(CxfConsumerMessageTest.class);
     private static final String ECHO_METHOD = "ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"";
 
     private static final String ECHO_RESPONSE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"

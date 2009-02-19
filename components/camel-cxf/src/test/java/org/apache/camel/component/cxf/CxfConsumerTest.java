@@ -17,7 +17,6 @@
 
 package org.apache.camel.component.cxf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,8 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
@@ -36,7 +33,6 @@ public class CxfConsumerTest extends ContextTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:28080/test";
     protected static final String SIMPLE_ENDPOINT_URI = "cxf://" + SIMPLE_ENDPOINT_ADDRESS
         + "?serviceClass=org.apache.camel.component.cxf.HelloService";
-    private static final transient Log LOG = LogFactory.getLog(CxfProducerRouterTest.class);
 
     private static final String ECHO_OPERATION = "echo";
     private static final String ECHO_BOOLEAN_OPERATION = "echoBoolean";
@@ -51,7 +47,7 @@ public class CxfConsumerTest extends ContextTestSupport {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // Get the parameter list
-                        List parameter = in.getBody(List.class);
+                        List<?> parameter = in.getBody(List.class);
                         // Get the operation name
                         String operation = (String)in.getHeader(CxfConstants.OPERATION_NAME);
                         Object result = operation + " " + (String)parameter.get(0);
@@ -63,7 +59,7 @@ public class CxfConsumerTest extends ContextTestSupport {
                     public void process(final Exchange exchange) {
                         Message in = exchange.getIn();
                         // Get the parameter list
-                        List parameter = in.getBody(List.class);
+                        List<?> parameter = in.getBody(List.class);
                         // Put the result back
                         exchange.getOut().setBody((Boolean)parameter.get(0));
                     }
