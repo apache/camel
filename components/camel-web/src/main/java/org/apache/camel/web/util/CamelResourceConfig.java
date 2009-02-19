@@ -22,6 +22,8 @@ import javax.ws.rs.core.MediaType;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.web.resources.Constants;
+
 /**
  * @version $Revision$
  */
@@ -35,6 +37,7 @@ public class CamelResourceConfig extends PackagesResourceConfig {
         m.put("html", MediaType.TEXT_HTML_TYPE);
         m.put("xml", MediaType.APPLICATION_XML_TYPE);
         m.put("json", MediaType.APPLICATION_JSON_TYPE);
+        m.put("dot", MediaType.valueOf(Constants.DOT_MIMETYPE));
         return m;
     }
 }

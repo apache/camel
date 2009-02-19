@@ -24,4 +24,6 @@ public class Constants {
     public static final String HTML_MIME_TYPES = "text/html;qs=5";
 
     public static final String DATA_MIME_TYPES = "text/xml,application/xml,application/json";
+
+    public static final String DOT_MIMETYPE = "text/vnd.graphviz";
 }
