@@ -18,6 +18,7 @@
 package org.apache.camel.web.resources;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.view.RouteDotGenerator;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.RoutesType;
 
@@ -27,6 +28,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import java.util.List;
+import java.io.IOException;
 
 /**
  * @version $Revision: 1.1 $
@@ -52,6 +54,13 @@ public class RoutesResource extends CamelChildResourceSupport {
             answer.setRoutes(list);
         }
         return answer;
+    }
+
+    @GET
+    @Produces(Constants.DOT_MIMETYPE)
+    public String getDot() throws IOException {
+        RouteDotGenerator generator = new RouteDotGenerator("/tmp/camel");
+        return generator.getRoutesText(getCamelContext());
     }
 
     /**

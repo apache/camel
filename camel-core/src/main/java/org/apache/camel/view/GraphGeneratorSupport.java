@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -67,6 +68,17 @@ public abstract class GraphGeneratorSupport {
      */
     public void setDir(String dir) {
         this.dir = dir;
+    }
+
+    public String getRoutesText(CamelContext context) throws IOException {
+        List<RouteType> routes = context.getRouteDefinitions();
+        routeGroupMap = createRouteGroupMap(routes);
+
+        StringWriter buffer = new StringWriter();
+        PrintWriter writer = new PrintWriter(buffer);
+        generateFile(writer, routeGroupMap);
+        writer.close();
+        return buffer.toString();
     }
 
     public void drawRoutes(CamelContext context) throws IOException {
