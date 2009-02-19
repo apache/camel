@@ -24,21 +24,23 @@ import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;proceed/&gt; element
+ * Represents an XML &lt;stop/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "proceed")
+@XmlRootElement(name = "stop")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProceedType extends OutputType<ProcessorType> {
+public class StopType extends OutputType<ProcessorType> {
 
     @Override
     public String getShortName() {
-        return "proceed";
+        return "stop";
     }
 
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createOutputsProcessor(routeContext);
+        // stop does not have any processor
+        return null;
     }
 
     @Override
@@ -48,6 +50,6 @@ public class ProceedType extends OutputType<ProcessorType> {
 
     @Override
     public String toString() {
-        return "proceed[" + getOutputs() + "]";
+        return getShortName();
     }
 }
