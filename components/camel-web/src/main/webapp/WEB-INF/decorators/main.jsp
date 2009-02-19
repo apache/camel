@@ -88,22 +88,27 @@
                   <div class="navigation_top">
                     <div class="navigation_bottom">
 
-<%--
-                      <H3>Actions</H3>
+                      <%--
+                                            <H3>Actions</H3>
 
-                      <ul class="alternate" type="square">
-                        <li></li>
-                      </ul>
+                                            <ul class="alternate" type="square">
+                                              <li></li>
+                                            </ul>
 
 
---%>
+                      --%>
                       <H3>Useful Links</H3>
 
                       <ul class="alternate" type="square">
                         <li><a href="http://camel.apache.org/documentation.html"
                                title="a powerful open source integration framework based on known Enterprise Integration Patterns with powerful Bean Integration">Documentation</a>
                         </li>
+                        <li><a href="http://camel.apache.org/web-cosole.html"
+                               title="more help on using the Web Console">Console Help</a>
+                        </li>
                         <li><a href="http://camel.apache.org/faq.html">FAQ</a></li>
+                        <li><a href="<c:url value='/api'/>" title="View the REST API details">API</a>
+                        </li>
                         <li><a href="http://camel.apache.org/download.html">Downloads</a>
                         </li>
                         <li><a href="http://camel.apache.org/discussion-forums.html">Forums</a>
