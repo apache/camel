@@ -18,14 +18,11 @@ package org.apache.camel.model;
 
 import java.io.StringWriter;
 import java.util.List;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.language.GroovyExpression;
-import org.apache.camel.model.language.XQueryExpression;
 
 /**
  * @version $Revision$
@@ -43,7 +40,6 @@ public class GenerateXmFromCamelContextlTest extends ContextTestSupport {
         dump(routeType);
     }
 
-
     protected void dump(Object object) throws Exception {
         JAXBContext jaxbContext = XmlTestSupport.createJaxbContext();
         Marshaller marshaller = jaxbContext.createMarshaller();
@@ -53,9 +49,8 @@ public class GenerateXmFromCamelContextlTest extends ContextTestSupport {
         log.info("Created: " + buffer);
         assertNotNull(buffer);
         String out = buffer.toString();
-        assertTrue("Should contain the description", out.indexOf("This is a description of the route") > 0);
+        assertTrue("Should contain the description", out.indexOf("<from uri=\"direct:start\"/>") > 0);
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
