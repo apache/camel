@@ -38,6 +38,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
+ * The active endpoints in Camel
+ * 
  * @version $Revision: 1.1 $
  */
 public class EndpointsResource extends CamelChildResourceSupport {
@@ -61,7 +63,9 @@ public class EndpointsResource extends CamelChildResourceSupport {
 
 
     /**
-     * Looks up an individual endpoint
+     * Returns the resource of an individual Camel endpoint
+     *
+     * @param id the endpoints unique URI
      */
     @Path("{id}")
     public EndpointResource getEndpoint(@PathParam("id") String id) {
@@ -85,6 +89,11 @@ public class EndpointsResource extends CamelChildResourceSupport {
     // Creating endpoints
     //-------------------------------------------------------------------------
 
+    /**
+     * Creates a new Endpoint for the given URI that is posted.
+     *
+     * @param uri the plain text URI of the endpoint to be created
+     */
     @POST
     @Consumes(MediaType.TEXT_PLAIN)
     public Response postUri(String uri) throws URISyntaxException {
@@ -95,6 +104,13 @@ public class EndpointsResource extends CamelChildResourceSupport {
         return Response.noContent().build();
     }
 
+    /**
+     * Creates a new Endpoint for the given URI that is posted using form encoding with the <code>uri</code>
+     * value in the form being used to specify the endpoints unique URI.
+     *
+     * @param formData is the form data POSTed typically from a HTML form with the <code>uri</code> field used to create
+     * the endpoint
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     public Response postUriForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {

@@ -9,7 +9,7 @@
 
 <form action="${it.href}" method="post">
   <input type="submit" value="Send"> <input type="reset"> <br>
-  <textarea name="text" rows="30" cols="80"></textarea>
+  <textarea name="body" rows="30" cols="80"></textarea>
 </form>
 
 </body>

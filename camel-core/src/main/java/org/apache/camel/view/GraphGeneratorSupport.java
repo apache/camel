@@ -16,17 +16,6 @@
  */
 package org.apache.camel.view;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.FromType;
@@ -38,6 +27,17 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @version $Revision$
@@ -73,7 +73,15 @@ public abstract class GraphGeneratorSupport {
     public String getRoutesText(CamelContext context) throws IOException {
         List<RouteType> routes = context.getRouteDefinitions();
         routeGroupMap = createRouteGroupMap(routes);
+        return createRouteMapText();
+    }
 
+    public String getRouteText(RouteType route) throws IOException {
+        routeGroupMap = createRouteGroupMap(route);
+        return createRouteMapText();
+    }
+
+    private String createRouteMapText() {
         StringWriter buffer = new StringWriter();
         PrintWriter writer = new PrintWriter(buffer);
         generateFile(writer, routeGroupMap);
@@ -142,10 +150,10 @@ public abstract class GraphGeneratorSupport {
     protected NodeData getNodeData(Object node) {
         Object key = node;
         if (node instanceof FromType) {
-            FromType fromType = (FromType)node;
+            FromType fromType = (FromType) node;
             key = fromType.getUriOrRef();
         } else if (node instanceof ToType) {
-            ToType toType = (ToType)node;
+            ToType toType = (ToType) node;
             key = toType.getUriOrRef();
         }
         NodeData answer = nodeMap.get(key);
@@ -160,17 +168,27 @@ public abstract class GraphGeneratorSupport {
     protected Map<String, List<RouteType>> createRouteGroupMap(List<RouteType> routes) {
         Map<String, List<RouteType>> map = new HashMap<String, List<RouteType>>();
         for (RouteType route : routes) {
-            String group = route.getGroup();
-            if (group == null) {
-                group = "Camel Routes";
-            }
-            List<RouteType> list = map.get(group);
-            if (list == null) {
-                list = new ArrayList<RouteType>();
-                map.put(group, list);
-            }
-            list.add(route);
+            addRouteToMap(map, route);
         }
         return map;
+    }
+
+    protected Map<String, List<RouteType>> createRouteGroupMap(RouteType route) {
+        Map<String, List<RouteType>> map = new HashMap<String, List<RouteType>>();
+        addRouteToMap(map, route);
+        return map;
+    }
+
+    protected void addRouteToMap(Map<String, List<RouteType>> map, RouteType route) {
+        String group = route.getGroup();
+        if (group == null) {
+            group = "Camel Routes";
+        }
+        List<RouteType> list = map.get(group);
+        if (list == null) {
+            list = new ArrayList<RouteType>();
+            map.put(group, list);
+        }
+        list.add(route);
     }
 }

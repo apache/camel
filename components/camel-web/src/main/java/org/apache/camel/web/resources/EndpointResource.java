@@ -41,6 +41,8 @@ import java.util.Map;
 import java.util.Set;
 
 /**
+ * A Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
+ *
  * @version $Revision$
  */
 public class EndpointResource extends CamelChildResourceSupport {
@@ -71,6 +73,10 @@ public class EndpointResource extends CamelChildResourceSupport {
         return null;
     }
 
+    /**
+     * Returns a single Camel <a href="http://camel.apache.org/exchange.html">message exchange</a> on this endpoint if the endpoint supports
+     * <a href="http://camel.apache.org/browsableendpoint.html">being browsed</a>
+     */
     @Path("messages/{id}")
     public ExchangeResource getExchange(@PathParam("id") String exchangeId) {
         if (endpoint instanceof BrowsableEndpoint) {
@@ -84,6 +90,10 @@ public class EndpointResource extends CamelChildResourceSupport {
         return null;
     }
 
+    /**
+     * Posts a <a href="http://camel.apache.org/message.html">message</a> to this Camel endpoint with the payload
+     * being text, XML or JSON
+     */
     @POST
     @Consumes({MediaType.TEXT_PLAIN, MediaType.TEXT_HTML, MediaType.TEXT_XML, MediaType.APPLICATION_XML})
     public Response postMessage(@Context HttpHeaders headers, final String body) throws URISyntaxException {
@@ -91,18 +101,19 @@ public class EndpointResource extends CamelChildResourceSupport {
         return Response.ok().build();
     }
 
+    /**
+     * Posts a <a href="http://camel.apache.org/message.html">message</a> to this Camel endpoint taking the
+     * form data and extracting the <code>body</code> field as the body of the message.
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     public Response postMessageForm(@Context HttpHeaders headers, Form formData) throws URISyntaxException {
-        System.out.println("Received form! " + formData);
-        String body = formData.getFirst("text", String.class);
+        String body = formData.getFirst("body", String.class);
         sendMessage(headers, body);
         return Response.seeOther(new URI(getHref())).build();
     }
 
     protected void sendMessage(final HttpHeaders headers, final String body) {
-        System.out.println("Sending to " + endpoint + " body: " + body);
-
         getTemplate().send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
@@ -112,7 +123,6 @@ public class EndpointResource extends CamelChildResourceSupport {
                 if (headers != null) {
                     MultivaluedMap<String, String> requestHeaders = headers.getRequestHeaders();
 
-                    System.out.println("Headers are: " + requestHeaders);
                     Set<Map.Entry<String, List<String>>> entries = requestHeaders.entrySet();
                     for (Map.Entry<String, List<String>> entry : entries) {
                         String key = entry.getKey();
@@ -124,8 +134,6 @@ public class EndpointResource extends CamelChildResourceSupport {
                             in.setHeader(key, values);
                         }
                     }
-                } else {
-                    System.out.println("No request headers!");
                 }
             }
         });

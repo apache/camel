@@ -32,7 +32,8 @@ import javax.ws.rs.core.MediaType;
 
 
 /**
- * The resource for the CamelContext
+ * The root Camel resource from which all other resources can be navigated such as for <code>endpoints</code>
+ * or <code>routes</code>
  *
  * @version $Revision$
  */
@@ -72,6 +73,9 @@ public class CamelContextResource {
     // representations
     //-------------------------------------------------------------------------
 
+    /**
+     * Returns the XML or JSON representation of the CamelContext
+     */
     @GET
     // TODO we can replace this long expression with a static constant
     // when Jersey supports JAX-RS 1.1
@@ -80,11 +84,17 @@ public class CamelContextResource {
         return new Camel(camelContext);
     }
 
+    /**
+     * Returns the active endpoints
+     */
     @Path("endpoints")
     public EndpointsResource getEndpointsResource() {
         return new EndpointsResource(this);
     }
 
+    /**
+     * Returns the active routes
+     */
     @Path("routes")
     public RoutesResource getRoutesResource() {
         return new RoutesResource(this);
