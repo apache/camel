@@ -103,7 +103,7 @@
                         <li><a href="http://camel.apache.org/documentation.html"
                                title="a powerful open source integration framework based on known Enterprise Integration Patterns with powerful Bean Integration">Documentation</a>
                         </li>
-                        <li><a href="http://camel.apache.org/web-cosole.html"
+                        <li><a href="http://camel.apache.org/web-console.html"
                                title="more help on using the Web Console">Console Help</a>
                         </li>
                         <li><a href="http://camel.apache.org/faq.html">FAQ</a></li>
