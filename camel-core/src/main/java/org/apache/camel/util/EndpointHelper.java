@@ -38,9 +38,6 @@ public final class EndpointHelper {
      * Creates a {@link PollingConsumer} and polls all pending messages on the endpoint
      * and invokes the given {@link Processor} to process each {@link Exchange} and then closes
      * down the consumer and throws any exceptions thrown.
-     *
-     * @param endpoint
-     * @param processor
      */
     public static void pollEndpoint(Endpoint endpoint, Processor processor, long timeout) throws Exception {
         PollingConsumer consumer = endpoint.createPollingConsumer();
@@ -69,9 +66,6 @@ public final class EndpointHelper {
      * endpoint and invokes the given {@link Processor} to process each
      * {@link Exchange} and then closes down the consumer and throws any
      * exceptions thrown.
-     *
-     * @param endpoint
-     * @param processor
      */
     public static void pollEndpoint(Endpoint endpoint, Processor processor) throws Exception {
         pollEndpoint(endpoint, processor, 1000L);

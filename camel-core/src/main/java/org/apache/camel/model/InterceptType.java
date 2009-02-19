@@ -16,17 +16,13 @@
  */
 package org.apache.camel.model;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Intercept;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.PredicateBuilder;
@@ -78,6 +74,9 @@ public class InterceptType extends OutputType<ProcessorType> {
 
     /**
      * Applies this interceptor only if the given predicate is true
+     *
+     * @param predicate  the predicate
+     * @return the builder
      */
     public ChoiceType when(Predicate predicate) {
         usePredicate = Boolean.TRUE;
@@ -94,11 +93,51 @@ public class InterceptType extends OutputType<ProcessorType> {
         setStopIntercept(Boolean.TRUE);
     }
 
-    @XmlElement(name = "stop", required = false)
-    public void setStop(String elementValue /* not used */) {
-        stopIntercept();
-    }    
-    
+    /**
+     * This method is <b>only</b> for handling some post configuration
+     * that is needed from the Spring DSL side as JAXB does not invoke the fluent
+     * builders, so we need to manually handle this afterwards, and since this is
+     * an interceptor it has to do a bit of magic logic to fixup to handle predicates
+     * with or without proceed/stop set as well.
+     */
+    public void afterPropertiesSet() {
+        List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>();
+        for (ProcessorType<?> out : outputs) {
+            if (out instanceof WhenType) {
+                // JAXB does not invoke the when() fluent builder so we need to wrap the when in
+                // a choice with the proceed as the when for the Java DSL does
+                WhenType when = (WhenType) out;
+                usePredicate = Boolean.TRUE;
+                ChoiceType choice = new ChoiceType();
+                choice.when(PredicateBuilder.not(when.getExpression()));
+                choice.addOutput(proceed);
+                list.add(choice);
+
+                ChoiceType otherwise = choice.otherwise();
+                // add the children to the otherwise
+                for (ProcessorType child : when.getOutputs()) {
+                    if (child instanceof StopType) {
+                        // notify we should stop
+                        stopIntercept();
+                    } else {
+                        otherwise.addOutput(child);
+                    }
+                }
+            } else if (out instanceof StopType) {
+                // notify we shuld stop
+                stopIntercept();
+            } else {
+                list.add(out);
+            }
+        }
+
+        // replace old output with this redone output list
+        outputs.clear();
+        for (ProcessorType<?> out : list) {
+            addOutput(out);
+        }
+    }
+
     public InterceptType createProxy() {
         InterceptType answer = new InterceptType();
         answer.getOutputs().addAll(this.getOutputs());
@@ -119,24 +158,24 @@ public class InterceptType extends OutputType<ProcessorType> {
 
                     // for the predicated version we add the proceed() to otherwise()
                     // before knowing if stop() will follow, so let's make a small adjustment
-                    if (usePredicate.booleanValue() && getStopIntercept().booleanValue()) {
+                    if (usePredicate && getStopIntercept()) {
                         WhenType when = choice.getWhenClauses().get(0);
                         when.getOutputs().remove(this.getProceed());
                     }
 
                     // add proceed to the when clause
                     addProceedProxy(this.getProceed(), answer.getProceed(),
-                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !getStopIntercept().booleanValue());
+                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate && !getStopIntercept());
 
                     // force adding a proceed at the end (otherwise) if its not a stop type
-                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !getStopIntercept().booleanValue());
+                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !getStopIntercept());
 
-                    if (getStopIntercept().booleanValue()) {
+                    if (getStopIntercept()) {
                         // must add proceed to when clause if stop is explictiy declared, otherwise when the
                         // predicate test fails then there is no proceed
                         // See example: InterceptorSimpleRouteTest (City Paris is never proceeded)  
                         addProceedProxy(this.getProceed(), answer.getProceed(),
-                            choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue());
+                            choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate);
                     }
 
                     break;
@@ -144,7 +183,7 @@ public class InterceptType extends OutputType<ProcessorType> {
             }
             if (choice == null) {
                 // force adding a proceed at the end if its not a stop type
-                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !getStopIntercept().booleanValue());
+                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !getStopIntercept());
             }
         }
 

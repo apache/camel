@@ -61,14 +61,5 @@ public class OutputType<Type extends ProcessorType> extends ProcessorType<Type> 
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
         // don't inherit interceptors by default
-/*
-        List<InterceptorType> list = output.getInterceptors();
-        if (list == null) {
-            log.warn("No interceptor collection: " + output);
-        }
-        else {
-            list.addAll(getInterceptors());
-        }
-*/
     }
 }

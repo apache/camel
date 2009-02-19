@@ -49,6 +49,7 @@ import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ProcessorTypeHelper;
 import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -63,7 +64,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -214,17 +214,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 // add exception handlers as top children
                 route.getOutputs().addAll(exceptionHandlers);
 
-                // add the interceptor
+                // add the interceptor but we must do some pre configuration beforehand
+                intercept.afterPropertiesSet();
                 InterceptType proxy = intercept.createProxy();
                 route.addOutput(proxy);
                 route.pushBlock(proxy.getProceed());
 
-                int outputsSize = proxy.getOutputs().size();
-                if (outputsSize > 0) {
-                    ProcessorType processorType = proxy.getOutputs().get(outputsSize - 1);
-                    if (processorType instanceof ProceedType) {
-                        route.getOutputs().addAll(outputs);
-                    }
+                // if there is a proceed in the interceptor proxy then we should add
+                // the current outputs to out route so we will proceed and continue to route to them
+                ProceedType proceed = ProcessorTypeHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedType.class);
+                if (proceed != null) {
+                    proceed.getOutputs().addAll(outputs);
                 }
             }
 
