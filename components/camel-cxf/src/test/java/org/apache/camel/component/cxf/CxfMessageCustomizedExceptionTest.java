@@ -17,8 +17,6 @@
 
 package org.apache.camel.component.cxf;
 
-import org.apache.cxf.BusFactory;
-
 /**
  * Test for throwing the CustomizedException from Camel CXF consumer with MESSAGE DataFormat
  */

@@ -22,7 +22,6 @@ import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 // START SNIPPET: personProcessor
