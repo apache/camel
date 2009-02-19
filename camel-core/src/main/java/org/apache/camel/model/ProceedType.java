@@ -40,4 +40,14 @@ public class ProceedType extends OutputType<ProcessorType> {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return createOutputsProcessor(routeContext);
     }
+
+    @Override
+    public String getLabel() {
+        return getShortName();
+    }
+
+    @Override
+    public String toString() {
+        return getShortName();
+    }
 }

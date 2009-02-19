@@ -97,8 +97,8 @@ public class InterceptType extends OutputType<ProcessorType> {
     @XmlElement(name = "stop", required = false)
     public void setStop(String elementValue /* not used */) {
         stopIntercept();
-    }    
-    
+    }
+
     public InterceptType createProxy() {
         InterceptType answer = new InterceptType();
         answer.getOutputs().addAll(this.getOutputs());
@@ -119,24 +119,24 @@ public class InterceptType extends OutputType<ProcessorType> {
 
                     // for the predicated version we add the proceed() to otherwise()
                     // before knowing if stop() will follow, so let's make a small adjustment
-                    if (usePredicate.booleanValue() && getStopIntercept().booleanValue()) {
+                    if (usePredicate && getStopIntercept()) {
                         WhenType when = choice.getWhenClauses().get(0);
                         when.getOutputs().remove(this.getProceed());
                     }
 
                     // add proceed to the when clause
                     addProceedProxy(this.getProceed(), answer.getProceed(),
-                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue() && !getStopIntercept().booleanValue());
+                        choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate && !getStopIntercept());
 
                     // force adding a proceed at the end (otherwise) if its not a stop type
-                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !getStopIntercept().booleanValue());
+                    addProceedProxy(this.getProceed(), answer.getProceed(), choice.getOtherwise(), !getStopIntercept());
 
-                    if (getStopIntercept().booleanValue()) {
+                    if (getStopIntercept()) {
                         // must add proceed to when clause if stop is explictiy declared, otherwise when the
                         // predicate test fails then there is no proceed
                         // See example: InterceptorSimpleRouteTest (City Paris is never proceeded)  
                         addProceedProxy(this.getProceed(), answer.getProceed(),
-                            choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate.booleanValue());
+                            choice.getWhenClauses().get(choice.getWhenClauses().size() - 1), usePredicate);
                     }
 
                     break;
@@ -144,7 +144,7 @@ public class InterceptType extends OutputType<ProcessorType> {
             }
             if (choice == null) {
                 // force adding a proceed at the end if its not a stop type
-                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !getStopIntercept().booleanValue());
+                addProceedProxy(this.getProceed(), answer.getProceed(), answer, !getStopIntercept());
             }
         }
 
