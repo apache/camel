@@ -16,6 +16,11 @@
  */
 package org.apache.camel.web.resources;
 
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteType;
+
+import java.util.List;
+
 
 /**
  * @version $Revision$
@@ -24,15 +29,14 @@ public class RoutesTest extends TestSupport {
 
     public void testRoutes() throws Exception {
 
-        String routes = resource.path("routes").accept("application/xml").get(String.class);
-        System.out.println("Routes: " + routes);
-/*
-        RoutesType routes = wr.path("routes").accept("application/xml").get(RoutesType.class);
+        String text = resource.path("routes").accept("application/xml").get(String.class);
+        System.out.println("Routes XML: " + text);
+        assertNotNull("XML should not be null", text);
+
+        RoutesType routes = resource.path("routes").accept("application/xml").get(RoutesType.class);
         assertNotNull("Should have found routes", routes);
         List<RouteType> routeList = routes.getRoutes();
         assertNotNull("Should have more than one route", routeList.size() > 0);
-
         System.out.println("Have routes: " + routeList);
-*/
     }
 }

@@ -177,10 +177,6 @@
           <includes>
             <include>**/*Test.*</include>
           </includes>
-          <excludes>
-            <!-- TODO FIXME ASAP -->
-            <exclude>**/RoutesTest.*</exclude>
-          </excludes>
         </configuration>
       </plugin>
 
@@ -327,7 +323,7 @@
             <configuration>
               <artifacts>
                 <artifact>
-                  <file>${project.build.directory}/schema/camel-rest.xsd</file>
+                  <file>${project.build.directory}/schema/camel-web.xsd</file>
                   <type>xsd</type>
                 </artifact>
               </artifacts>
@@ -350,8 +346,8 @@
                 <srcdir>src/main/java/org/apache/camel/web/model</srcdir>
                 <schemas>
                   <schema>
-                    <namespace>http://camel.apache.org/schema/rest</namespace>
-                    <file>camel-rest.xsd</file>
+                    <namespace>http://camel.apache.org/schema/web</namespace>
+                    <file>camel-web.xsd</file>
                   </schema>
                 </schemas>
                 <!--<verbose>false</verbose>-->
@@ -366,12 +362,12 @@
             <artifactItems>
               <artifactItem>
                 <groupId>org.apache.camel</groupId>
-                <artifactId>camel-rest</artifactId>
+                <artifactId>camel-web</artifactId>
                 <version>${pom.version}</version>
                 <type>xsd</type>
                 <overWrite>false</overWrite>
                 <outputDirectory>${project.build.directory}/schema</outputDirectory>
-                <destFileName>camel-rest.xsd</destFileName>
+                <destFileName>camel-web.xsd</destFileName>
               </artifactItem>
             </artifactItems>
           </configuration>
