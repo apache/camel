@@ -40,6 +40,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         serviceInterceptor.add(new MessageInvokerInterceptor());
     }
 
+    @SuppressWarnings("unchecked")
     protected void removeInterceptorWhichIsInThePhases(List<Interceptor> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {
             if (i instanceof PhaseInterceptor) {
@@ -55,6 +56,7 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void removeInterceptorWhichIsOutThePhases(List<Interceptor> interceptors, String[] phaseNames) {
         for (Interceptor i : interceptors) {
             boolean outside = false;

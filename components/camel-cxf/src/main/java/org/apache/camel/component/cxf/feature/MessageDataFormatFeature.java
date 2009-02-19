@@ -33,11 +33,12 @@ import org.apache.cxf.phase.Phase;
  */
 public class MessageDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LogUtils.getL7dLogger(MessageDataFormatFeature.class);
-    // interceptor filiter
-    // filiter the unused phase interceptor
-    private static final String[] REMAINING_IN_PHASES = {Phase.RECEIVE , Phase.POST_INVOKE};
-    private static final String[] REMAINING_OUT_PHASES = {Phase.PREPARE_SEND, Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING};
-
+    // filter the unused in phase interceptor
+    private static final String[] REMAINING_IN_PHASES = {Phase.RECEIVE , Phase.USER_STREAM,
+        Phase.INVOKE, Phase.POST_INVOKE};
+    // filter the unused in phase interceptor
+    private static final String[] REMAINING_OUT_PHASES = {Phase.PREPARE_SEND, Phase.USER_STREAM,
+        Phase.WRITE, Phase.SEND, Phase.PREPARE_SEND_ENDING};
 
     @Override
     public void initialize(Client client, Bus bus) {

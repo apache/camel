@@ -16,18 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.endpoint.ServerImpl;
-import org.apache.cxf.frontend.ClientFactoryBean;
-import org.apache.cxf.frontend.ClientProxyFactoryBean;
-import org.apache.cxf.frontend.ServerFactoryBean;
-
 
 public abstract class CxfRouterTestSupport extends ContextTestSupport {    
 
