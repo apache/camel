@@ -96,7 +96,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         // system property
         remainder = ifStartsWithReturnRemainder("sys.", expression);
         if (remainder != null) {
-            return ExpressionBuilder.systemProperty(remainder);
+            return ExpressionBuilder.systemPropertyExpression(remainder);
         }
 
         // date: prefix

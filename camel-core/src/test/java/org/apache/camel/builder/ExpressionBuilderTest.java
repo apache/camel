@@ -18,6 +18,7 @@ package org.apache.camel.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -26,13 +27,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-
-import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
-import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
-import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
-import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
-import static org.apache.camel.builder.ExpressionBuilder.regexTokenize;
-import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
+import static org.apache.camel.builder.ExpressionBuilder.*;
 import static org.apache.camel.builder.PredicateBuilder.contains;
 
 /**
@@ -42,15 +37,15 @@ public class ExpressionBuilderTest extends TestSupport {
     protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
 
     public void testRegexTokenize() throws Exception {
-        Expression expression = regexTokenize(headerExpression("location"), ",");
+        Expression expression = regexTokenizeExpression(headerExpression("location"), ",");
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
         assertExpression(expression, exchange, expected);
 
-        Predicate predicate = contains(regexTokenize(headerExpression("location"), ","),
+        Predicate predicate = contains(regexTokenizeExpression(headerExpression("location"), ","),
                                                  constantExpression("London"));
         assertPredicate(predicate, exchange, true);
 
-        predicate = contains(regexTokenize(headerExpression("location"), ","),
+        predicate = contains(regexTokenizeExpression(headerExpression("location"), ","),
                              constantExpression("Manchester"));
         assertPredicate(predicate, exchange, false);
     }
@@ -80,10 +75,18 @@ public class ExpressionBuilderTest extends TestSupport {
     }
 
     public void testTokenizeLines() throws Exception {
-        Expression expression = regexTokenize(bodyExpression(), "[\r|\n]");
+        Expression expression = regexTokenizeExpression(bodyExpression(), "[\r|\n]");
         exchange.getIn().setBody("Hello World\nBye World\rSee you again");
 
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
+        assertExpression(expression, exchange, expected);
+    }
+
+    public void testSortLines() throws Exception {
+        Expression expression = sortExpression(body().tokenize(",").getExpression(), new SortByName());
+        exchange.getIn().setBody("Jonathan,Claus,James,Hadrian");
+
+        ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Claus", "Hadrian", "James", "Jonathan"}));
         assertExpression(expression, exchange, expected);
     }
 
@@ -95,4 +98,12 @@ public class ExpressionBuilderTest extends TestSupport {
         in.setHeader("name", "James");
         in.setHeader("location", "Islington,London,UK");
     }
+
+    private class SortByName implements Comparator<String> {
+
+        public int compare(java.lang.String o1, java.lang.String o2) {
+            return o1.compareToIgnoreCase(o2);
+        }
+    }
+
 }

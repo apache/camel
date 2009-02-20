@@ -301,4 +301,5 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     public void addInterceptor(InterceptorType interceptor) {
         getInterceptors().add(interceptor);
     }
+
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.builder;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -106,7 +107,7 @@ public class ValueBuilder implements Expression {
         List<Predicate> predicates = new ArrayList<Predicate>();
         for (Object value : values) {
             Expression right = asExpression(value);
-            right = ExpressionBuilder.convertTo(right, expression);
+            right = ExpressionBuilder.convertToExpression(right, expression);
             Predicate predicate = onNewPredicate(PredicateBuilder.isEqualTo(expression, right));
             predicates.add(predicate);
         }
@@ -160,7 +161,7 @@ public class ValueBuilder implements Expression {
      * regular expression
      */
     public ValueBuilder regexTokenize(String regex) {
-        Expression newExp = ExpressionBuilder.regexTokenize(expression, regex);
+        Expression newExp = ExpressionBuilder.regexTokenizeExpression(expression, regex);
         return new ValueBuilder(newExp);
     }
 
@@ -190,12 +191,12 @@ public class ValueBuilder implements Expression {
      * @return the current builder
      */
     public ValueBuilder convertTo(Class<?> type) {
-        Expression newExp = ExpressionBuilder.convertTo(expression, type);
+        Expression newExp = ExpressionBuilder.convertToExpression(expression, type);
         return new ValueBuilder(newExp);
     }
 
     /**
-     * Converts the current value a String using the registered type converters
+     * Converts the current value to a String using the registered type converters
      * 
      * @return the current builder
      */
@@ -205,12 +206,24 @@ public class ValueBuilder implements Expression {
 
     /**
      * Appends the string evaluation of this expression with the given value
-     * 
+     *
      * @param value the value or expression to append
      * @return the current builder
      */
     public ValueBuilder append(Object value) {
         return new ValueBuilder(ExpressionBuilder.append(expression, asExpression(value)));
+    }
+
+    /**
+     * Sorts the current value using the given comparator. The current value must be convertable
+     * to a {@link List} to allow sorting using the comparator.
+     *
+     * @param comparator  the comparator used by sorting
+     * @return the current builder
+     */
+    public ValueBuilder sort(Comparator comparator) {
+        Expression newExp = ExpressionBuilder.sortExpression(expression, comparator);
+        return new ValueBuilder(newExp);
     }
 
     // Implementation methods

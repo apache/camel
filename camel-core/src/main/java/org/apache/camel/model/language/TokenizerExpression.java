@@ -26,7 +26,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.spi.RouteContext;
 import static org.apache.camel.builder.Builder.body;
 import static org.apache.camel.builder.Builder.header;
-import static org.apache.camel.builder.ExpressionBuilder.regexTokenize;
+import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
 import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
 import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
@@ -76,7 +76,7 @@ public class TokenizerExpression extends ExpressionType {
     public Expression createExpression(RouteContext routeContext) {
         Expression exp = headerName == null ? body() : header(headerName);
         if (regex != null && regex) {
-            return regexTokenize(exp, token);
+            return regexTokenizeExpression(exp, token);
         } else {
             return tokenizeExpression(exp, token);
         }

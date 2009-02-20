@@ -59,6 +59,7 @@ SetHeaderType
 SetOutHeaderType
 SetPropertyType
 SplitterType
+SortType
 StopType
 ThrottlerType
 ThreadType
