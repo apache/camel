@@ -81,6 +81,7 @@
     <testng-version>5.8</testng-version>
     <xbean-spring-version>3.4</xbean-spring-version>
     <xstream-version>1.3.1</xstream-version>
+    <xmlsec-version>1.4.2</xmlsec-version>
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
@@ -463,6 +464,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-xmlbeans</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-xmlsecurity</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

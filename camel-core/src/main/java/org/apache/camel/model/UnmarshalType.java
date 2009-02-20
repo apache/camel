@@ -35,6 +35,7 @@ import org.apache.camel.model.dataformat.SerializationDataFormat;
 import org.apache.camel.model.dataformat.StringDataFormat;
 import org.apache.camel.model.dataformat.TidyMarkupDataFormat;
 import org.apache.camel.model.dataformat.XMLBeansDataFormat;
+import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
 import org.apache.camel.processor.UnmarshalProcessor;
@@ -60,6 +61,7 @@ public class UnmarshalType extends OutputType<ProcessorType> {
     @XmlElement(required = false, name = "hl7", type = HL7DataFormat.class),
     @XmlElement(required = false, name = "jaxb", type = JaxbDataFormat.class),
     @XmlElement(required = false, name = "rss", type = RssDataFormat.class),
+    @XmlElement(required = false, name = "secureXML", type = XMLSecurityDataFormat.class),
     @XmlElement(required = false, name = "serialization", type = SerializationDataFormat.class),
     @XmlElement(required = false, name = "string", type = StringDataFormat.class),
     @XmlElement(required = false, name = "tidyMarkup", type = TidyMarkupDataFormat.class),    

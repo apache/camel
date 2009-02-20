@@ -94,6 +94,7 @@
         <include>org.apache.camel:camel-uface</include>
         <include>org.apache.camel:camel-velocity</include>
         <include>org.apache.camel:camel-xmlbeans</include>
+        <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
         <include>commons-logging:commons-logging</include>
