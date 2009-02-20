@@ -26,22 +26,23 @@ import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 
 /**
+ * A resolver of the JAXB context primed for the Camel XML languages
+ * which supports JSON as well as XML encoding
+ *
  * @version $Revision$
  */
 @Provider
 public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
-
     private final JAXBContext context;
     private String packages;
+
     public JAXBContextResolver() throws Exception {
 
         // TODO we can't use natural with JAXB 2.1.6 or 2.1 for some reason?
         JSONConfiguration.Builder builder = JSONConfiguration.mapped();
         //JSONConfiguration.Builder builder = JSONConfiguration.natural();
-        //this.context = new JSONJAXBContext(builder.build(), cTypes);
-        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.web.model";
 
-        System.out.println(">>> Creating a JAXBJSON context with packages " + packages);
+        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.web.model";
         this.context = new JSONJAXBContext(builder.build(), packages);
     }
 
@@ -56,5 +57,13 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
             }
         }
         return null;
+    }
+
+    public String getPackages() {
+        return packages;
+    }
+
+    public JAXBContext getContext() {
+        return context;
     }
 }
