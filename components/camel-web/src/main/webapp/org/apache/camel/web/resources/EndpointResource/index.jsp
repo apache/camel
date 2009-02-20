@@ -8,7 +8,7 @@
         <h1>Endpoint: ${it.uri}</h1>
 
         <ul>
-          <li><a href="${it.href}/send">Send to this endpoint</a></li>
+          <li><a href='<c:url value="${it.href}/send"/>'>Send to this endpoint</a></li>
         </ul>
 
         <c:if test="${it.browsableEndpoint != null}">
@@ -18,7 +18,7 @@
             </tr>
           <c:forEach items="${it.browsableEndpoint.exchanges}" var="exchange">
             <tr>
-              <td><a href="${it.href}/messages/${exchange.exchangeId}" title="View this message">${exchange.exchangeId}</a></td>
+              <td><a href='<c:url value="${it.href}/messages/${exchange.exchangeId}"/>' title="View this message">${exchange.exchangeId}</a></td>
             </tr>
           </c:forEach>
           </table>

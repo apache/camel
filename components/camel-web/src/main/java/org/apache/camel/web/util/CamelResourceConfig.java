@@ -22,7 +22,6 @@ import com.sun.jersey.api.wadl.config.WadlGeneratorConfig;
 import com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc;
 import com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport;
 import com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport;
-import org.apache.camel.web.resources.CamelContextResource;
 import org.apache.camel.web.resources.Constants;
 
 import javax.ws.rs.core.MediaType;
@@ -40,7 +39,7 @@ public class CamelResourceConfig extends PackagesResourceConfig {
     protected static Map<String, Object> createProperties() {
         Map<String, Object> properties = new HashMap<String, Object>();
 
-        properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, CamelContextResource.class.getPackage().getName());
+        properties.put(PackagesResourceConfig.PROPERTY_PACKAGES, "org.apache.camel.web");
 
         WadlGeneratorConfig config = WadlGeneratorConfig
                 .generator(WadlGeneratorApplicationDoc.class)

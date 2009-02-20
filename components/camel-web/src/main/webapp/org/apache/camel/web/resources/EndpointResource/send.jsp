@@ -7,7 +7,7 @@
 
 <h1>Endpoint: ${it.uri}</h1>
 
-<form action="${it.href}" method="post">
+<form action='<c:url value="${it.href}"/>' method="post">
   <input type="submit" value="Send"> <input type="reset"> <br>
   <textarea name="body" rows="30" cols="80"></textarea>
 </form>
