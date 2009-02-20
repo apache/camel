@@ -96,5 +96,6 @@
     <module>camel-xmpp</module>
     <module>camel-xstream</module>
     <module>camel-web</module>
+    <module>camel-web-standalone</module>
   </modules>
 </project>
