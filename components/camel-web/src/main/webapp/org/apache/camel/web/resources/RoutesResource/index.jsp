@@ -9,7 +9,7 @@
 
 <ul>
   <c:forEach var="i" items="${it.routes}">
-    <li><a href="/routes/${i.id}">${i.shortName}</a> ${i.description}
+    <li><a href='<c:url value="/routes/${i.id}"/>'>${i.shortName}</a> ${i.description}
   </c:forEach>
 </ul>
 
