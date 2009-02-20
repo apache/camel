@@ -22,7 +22,10 @@ import java.io.InputStream;
 import java.nio.channels.ReadableByteChannel;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -238,6 +241,7 @@ public final class ExpressionBuilder {
      * Returns an expression for a system property value with the given name
      *
      * @param propertyName the name of the system property the expression will return
+     * @param defaultValue default value to return if no system property exists
      * @return an expression object which will return the system property value
      */
     public static Expression systemPropertyExpression(final String propertyName,
@@ -290,22 +294,6 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the exchanges inbound message body type
-     */
-    public static Expression bodyType() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getBody().getClass();
-            }
-
-            @Override
-            public String toString() {
-                return "bodyType";
-            }
-        };
-    }
-
-    /**
      * Returns the expression for the exchanges inbound message body converted
      * to the given type
      */
@@ -318,6 +306,22 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "bodyAs[" + type.getName() + "]";
+            }
+        };
+    }
+
+    /**
+     * Returns the expression for the exchanges inbound message body type
+     */
+    public static Expression bodyTypeExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getBody().getClass();
+            }
+
+            @Override
+            public String toString() {
+                return "bodyType";
             }
         };
     }
@@ -447,7 +451,7 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression which converts the given expression to the given type
      */
-    public static Expression convertTo(final Expression expression, final Class type) {
+    public static Expression convertToExpression(final Expression expression, final Class type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return expression.evaluate(exchange, type);
@@ -464,7 +468,7 @@ public final class ExpressionBuilder {
      * Returns an expression which converts the given expression to the given type the type
      * expression is evaluted to
      */
-    public static Expression convertTo(final Expression expression, final Expression type) {
+    public static Expression convertToExpression(final Expression expression, final Expression type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 return expression.evaluate(exchange, type.evaluate(exchange).getClass());
@@ -502,8 +506,8 @@ public final class ExpressionBuilder {
      * Returns a tokenize expression which will tokenize the string with the
      * given regex
      */
-    public static Expression regexTokenize(final Expression expression,
-                                           final String regexTokenizer) {
+    public static Expression regexTokenizeExpression(final Expression expression,
+                                                     final String regexTokenizer) {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
@@ -520,40 +524,25 @@ public final class ExpressionBuilder {
         };
     }
 
-    private static Scanner getScanner(Exchange exchange, Object value) {
-        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-
-        Scanner scanner = null;
-        if (value instanceof Readable) {
-            scanner = new Scanner((Readable)value);
-        } else if (value instanceof InputStream) {
-            scanner = charset == null ? new Scanner((InputStream)value)
-                : new Scanner((InputStream)value, charset);
-        } else if (value instanceof File) {
-            try {
-                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
-            } catch (FileNotFoundException e) {
-                throw new RuntimeCamelException(e);
+    /**
+     * Returns a sort expression which will sort the expression with the given comparator.
+     * <p/>
+     * The expression is evaluted as a {@link List} object to allow sorting.
+     */
+    @SuppressWarnings("unchecked")
+    public static Expression sortExpression(final Expression expression, final Comparator comparator) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                List list = expression.evaluate(exchange, List.class);
+                Collections.sort(list, comparator);
+                return list;
             }
-        } else if (value instanceof String) {
-            scanner = new Scanner((String)value);
-        } else if (value instanceof ReadableByteChannel) {
-            scanner = charset == null ? new Scanner((ReadableByteChannel)value)
-                : new Scanner((ReadableByteChannel)value, charset);
-        }
 
-        if (scanner == null) {
-            // value is not a suitable type, try to convert value to a string
-            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
-            if (text != null) {
-                scanner = new Scanner(text);
+            @Override
+            public String toString() {
+                return "sort(" + expression + " by: " + comparator + ")";
             }
-        }
-        
-        if (scanner == null) {
-            scanner = new Scanner("");
-        }
-        return scanner;
+        };
     }
 
     /**
@@ -565,7 +554,7 @@ public final class ExpressionBuilder {
         final Pattern pattern = Pattern.compile(regex);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String text = evaluateStringExpression(expression, exchange);
+                String text = expression.evaluate(exchange, String.class);
                 if (text == null) {
                     return null;
                 }
@@ -589,8 +578,8 @@ public final class ExpressionBuilder {
         final Pattern pattern = Pattern.compile(regex);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String text = evaluateStringExpression(expression, exchange);
-                String replacement = evaluateStringExpression(replacementExpression, exchange);
+                String text = expression.evaluate(exchange, String.class);
+                String replacement = replacementExpression.evaluate(exchange, String.class);
                 if (text == null || replacement == null) {
                     return null;
                 }
@@ -610,43 +599,12 @@ public final class ExpressionBuilder {
     public static Expression append(final Expression left, final Expression right) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return evaluateStringExpression(left, exchange) + evaluateStringExpression(right, exchange);
+                return left.evaluate(exchange, String.class) + right.evaluate(exchange, String.class);
             }
 
             @Override
             public String toString() {
                 return "append(" + left + ", " + right + ")";
-            }
-        };
-    }
-
-    /**
-     * Evaluates the expression on the given exchange and returns the String
-     * representation
-     *
-     * @param expression the expression to evaluate
-     * @param exchange the exchange to use to evaluate the expression
-     * @return the String representation of the expression or null if it could
-     *         not be evaluated
-     */
-    public static String evaluateStringExpression(Expression expression, Exchange exchange) {
-        return expression.evaluate(exchange, String.class);
-    }
-
-    /**
-     * Returns an expression for the given system property
-     */
-    public static Expression systemProperty(final String name) {
-        return systemProperty(name, null);
-    }
-
-    /**
-     * Returns an expression for the given system property
-     */
-    public static Expression systemProperty(final String name, final String defaultValue) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return System.getProperty(name, defaultValue);
             }
         };
     }
@@ -675,7 +633,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 StringBuffer buffer = new StringBuffer();
                 for (Expression expression : expressions) {
-                    String text = evaluateStringExpression(expression, exchange);
+                    String text = expression.evaluate(exchange, String.class);
                     if (text != null) {
                         buffer.append(text);
                     }
@@ -776,6 +734,42 @@ public final class ExpressionBuilder {
     public static Expression beanExpression(final String beanRef, final String methodName) {
         String expression = methodName != null ? beanRef + "." + methodName : beanRef;
         return beanExpression(expression);
+    }
+
+    private static Scanner getScanner(Exchange exchange, Object value) {
+        String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+
+        Scanner scanner = null;
+        if (value instanceof Readable) {
+            scanner = new Scanner((Readable)value);
+        } else if (value instanceof InputStream) {
+            scanner = charset == null ? new Scanner((InputStream)value)
+                    : new Scanner((InputStream)value, charset);
+        } else if (value instanceof File) {
+            try {
+                scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
+            } catch (FileNotFoundException e) {
+                throw new RuntimeCamelException(e);
+            }
+        } else if (value instanceof String) {
+            scanner = new Scanner((String)value);
+        } else if (value instanceof ReadableByteChannel) {
+            scanner = charset == null ? new Scanner((ReadableByteChannel)value)
+                    : new Scanner((ReadableByteChannel)value, charset);
+        }
+
+        if (scanner == null) {
+            // value is not a suitable type, try to convert value to a string
+            String text = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+            if (text != null) {
+                scanner = new Scanner(text);
+            }
+        }
+
+        if (scanner == null) {
+            scanner = new Scanner("");
+        }
+        return scanner;
     }
 
 }

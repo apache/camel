@@ -148,7 +148,7 @@ public final class Builder {
      * Returns an expression for the given system property
      */
     public static ValueBuilder systemProperty(final String name, final String defaultValue) {
-        return new ValueBuilder(ExpressionBuilder.systemProperty(name, defaultValue));
+        return new ValueBuilder(ExpressionBuilder.systemPropertyExpression(name, defaultValue));
     }
 
     /**

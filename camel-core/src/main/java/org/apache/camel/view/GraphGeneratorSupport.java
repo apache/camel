@@ -16,6 +16,17 @@
  */
 package org.apache.camel.view;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.ChoiceType;
 import org.apache.camel.model.FromType;
@@ -27,17 +38,6 @@ import org.apache.camel.model.language.ExpressionType;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @version $Revision$

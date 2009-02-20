@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,6 +66,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import static org.apache.camel.builder.Builder.body;
 
 /**
  * Base class for processor types that most XML types extend.
@@ -1609,6 +1611,50 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public Type convertBodyTo(String typeString) {
         addOutput(new ConvertBodyType(typeString));
         return (Type) this;
+    }
+
+    /**
+     * Sorts the IN message body using the given comparator.
+     * The IN body mut be convertable to {@link List}.
+     *
+     * @param comparator  the comparator to use for sorting
+     * @return the builder
+     */
+    public Type sortBody(Comparator comparator) {
+        addOutput(new SortType(body(), comparator));
+        return (Type) this;
+    }
+
+    /**
+     * Sorts the IN message body using a default sorting based on toString representation.
+     * The IN body mut be convertable to {@link List}.
+     *
+     * @return the builder
+     */
+    public Type sortBody() {
+        return sortBody(null);
+    }
+
+    /**
+     * Sorts the expression using the given comparator
+     *
+     * @param expression  the expression, must be convertable to {@link List}
+     * @param comparator  the comparator to use for sorting
+     * @return the builder
+     */
+    public Type sort(Expression expression, Comparator comparator) {
+        addOutput(new SortType(expression, comparator));
+        return (Type) this;
+    }
+
+    /**
+     * Sorts the expression using a default sorting based on toString representation. 
+     *
+     * @param expression  the expression, must be convertable to {@link List}
+     * @return the builder
+     */
+    public Type sort(Expression expression) {
+        return sort(expression, null);
     }
 
     /**

@@ -94,7 +94,7 @@ public abstract class SimpleLanguageSupport implements Language {
             right = simple != null ? createSimpleExpression(simple) : createConstantExpression(constant);
             // to support numeric comparions using > and < operators we must convert the right hand side
             // to the same type as the left
-            rightConverted = ExpressionBuilder.convertTo(right, left);
+            rightConverted = ExpressionBuilder.convertToExpression(right, left);
         }
 
         return new ExpressionAdapter() {
