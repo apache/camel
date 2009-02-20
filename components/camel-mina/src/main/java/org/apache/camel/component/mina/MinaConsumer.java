@@ -36,6 +36,8 @@ import org.apache.mina.common.IoSession;
  * @version $Revision$
  */
 public class MinaConsumer extends DefaultConsumer<MinaExchange> {
+    public static final transient String HEADER_CLOSE_SESSION_WHEN_COMPLETE = "CamelMinaCloseSessionWhenComplete";
+
     private static final transient Log LOG = LogFactory.getLog(MinaConsumer.class);
 
     private final MinaEndpoint endpoint;
@@ -109,6 +111,7 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                 } else {
                     body = MinaPayloadHelper.getIn(endpoint, exchange);
                 }
+
                 boolean failed = exchange.isFailed();
                 if (failed && !endpoint.isTransferExchange()) {
                     if (exchange.getException() != null) {
@@ -129,7 +132,21 @@ public class MinaConsumer extends DefaultConsumer<MinaExchange> {
                         LOG.debug("Writing body: " + body);
                     }
                     MinaHelper.writeBody(session, body, exchange);
+
                 }
+            }
+
+            // should session be closed after complete?
+            Boolean close;
+            if (ExchangeHelper.isOutCapable(exchange)) {
+                close = exchange.getOut().getHeader(HEADER_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            } else {
+                close = exchange.getIn().getHeader(HEADER_CLOSE_SESSION_WHEN_COMPLETE, Boolean.class);
+            }
+
+            if (close != null && close) {
+                LOG.debug("Closing session when complete");
+                session.close();
             }
         }
 
