@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,12 +16,9 @@
  */
 package org.apache.camel.web.resources;
 
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import org.apache.camel.Endpoint;
-import org.apache.camel.web.model.EndpointLink;
-import org.apache.camel.web.model.Endpoints;
-
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -33,13 +29,16 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+import org.apache.camel.Endpoint;
+import org.apache.camel.web.model.EndpointLink;
+import org.apache.camel.web.model.Endpoints;
 
 /**
  * The active endpoints in Camel
- * 
+ *
  * @version $Revision: 1.1 $
  */
 public class EndpointsResource extends CamelChildResourceSupport {
@@ -109,7 +108,7 @@ public class EndpointsResource extends CamelChildResourceSupport {
      * value in the form being used to specify the endpoints unique URI.
      *
      * @param formData is the form data POSTed typically from a HTML form with the <code>uri</code> field used to create
-     * the endpoint
+     *                 the endpoint
      */
     @POST
     @Consumes("application/x-www-form-urlencoded")

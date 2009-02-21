@@ -16,8 +16,6 @@
  */
 package org.apache.camel.web;
 
-import org.mortbay.jetty.runner.Runner;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -28,16 +26,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.mortbay.jetty.runner.Runner;
+
 /**
  * A bootstrap class for starting Jetty Runner using an embedded war
  *
  * @version $Revision: 745637 $
  */
-public class Main {
+public final class Main {
     private static final String WAR_POSTFIX = ".war";
     private static final String WAR_NAME = "camel-web";
     private static final String WAR_FILENAME = WAR_NAME + WAR_POSTFIX;
     private static final int KB = 1024;
+
+    private Main() {
+        // is started from main
+    }
 
     public static void main(String[] args) throws Exception {
         System.out.println("Welcome to Apache Camel!");

@@ -16,6 +16,10 @@
  */
 package org.apache.camel.web.util;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.ws.rs.core.MediaType;
+
 import com.sun.jersey.api.core.PackagesResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.api.wadl.config.WadlGeneratorConfig;
@@ -23,10 +27,6 @@ import com.sun.jersey.server.wadl.generators.WadlGeneratorApplicationDoc;
 import com.sun.jersey.server.wadl.generators.WadlGeneratorGrammarsSupport;
 import com.sun.jersey.server.wadl.generators.resourcedoc.WadlGeneratorResourceDocSupport;
 import org.apache.camel.web.resources.Constants;
-
-import javax.ws.rs.core.MediaType;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @version $Revision$

@@ -17,13 +17,13 @@
 package org.apache.camel.web.util;
 
 
-import com.sun.jersey.api.json.JSONConfiguration;
-import com.sun.jersey.api.json.JSONJAXBContext;
-import org.apache.camel.model.Constants;
-
 import javax.ws.rs.ext.ContextResolver;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
+
+import com.sun.jersey.api.json.JSONConfiguration;
+import com.sun.jersey.api.json.JSONJAXBContext;
+import org.apache.camel.model.Constants;
 
 /**
  * A resolver of the JAXB context primed for the Camel XML languages
