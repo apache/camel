@@ -180,7 +180,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 MessageHelper.resetStreamCache(exchange.getIn());
 
                 // wait until we should redeliver
-                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay);
+                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
 
                 // letting onRedeliver be executed
                 deliverToRedeliveryProcessor(exchange, callback, data);
@@ -257,7 +257,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 exchange.setException(null);
             }
             // wait until we should redeliver
-            data.redeliveryDelay = data.currentRedeliveryPolicy.getRedeliveryDelay(data.redeliveryDelay);
+            data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
             timer.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
 
             // letting onRedeliver be executed
@@ -293,23 +293,24 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      * Gives an optional configure redelivery processor a chance to process before the Exchange
      * will be redelivered. This can be used to alter the Exchange.
      */
-    private boolean deliverToRedeliveryProcessor(final Exchange exchange, final AsyncCallback callback,
+    private void deliverToRedeliveryProcessor(final Exchange exchange, final AsyncCallback callback,
                                             final RedeliveryData data) {
         if (redeliveryProcessor == null) {
-            return true;
+            return;
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("RedeliveryProcessor " + redeliveryProcessor + " is processing Exchange before its redelivered");
+            LOG.trace("RedeliveryProcessor " + redeliveryProcessor + " is processing Exchange: " + exchange + " before its redelivered");
         }
+
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(redeliveryProcessor);
-        boolean sync = afp.process(exchange, new AsyncCallback() {
+        afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
-                callback.done(data.sync);
+                LOG.trace("Redelivery processor done");
+                // do NOT call done on callback as this is the redelivery processor that
+                // is done. we should not mark the entire exchange as done.
             }
         });
-
-        return sync;
     }
     
     private boolean deliverToFaultProcessor(final Exchange exchange, final AsyncCallback callback,

@@ -89,6 +89,11 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DeadLetterChannelBuilder delayPattern(String delayPattern) {
+        getRedeliveryPolicy().delayPattern(delayPattern);
+        return this;
+    }
+
     public DeadLetterChannelBuilder maximumRedeliveries(int maximumRedeliveries) {
         getRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
