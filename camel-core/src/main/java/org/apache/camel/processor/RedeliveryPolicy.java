@@ -20,6 +20,7 @@ import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.model.LoggingLevel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -47,6 +48,23 @@ import org.apache.commons.logging.LogFactory;
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
  * Setting the maximumRedeliveries to 0 will disable redelivery.
+ * <p/>
+ * This policy can be configured either by one of the following two settings:
+ * <ul>
+ *   <li>using convnetional options, using all the options defined above</li>
+ *   <li>using delay pattern to declare intervals for delays</li>
+ * </ul>
+ * <p/>
+ * <b>Note:</b> If using delay patterns then the following options is not used (delay, backOffMultiplier, useExponentialBackOff, useCollisionAvoidance)
+ * <p/>
+ * <b>Using delay pattern</b>:
+ * <br/>The delay pattern syntax is: <tt>limit:delay;limit 2:delay 2;limit 3:delay 3;...;limit N:delay N</tt>.
+ * <p/>
+ * How it works is best illustrate with an example with this pattern: <tt>delayPattern=5:1000;10:5000:20:20000</tt>
+ * <br/>The delays will be for attempt in range 0..4 = 0 millis, 5..9 = 1000 millis, 10..19 = 5000 millis, >= 20 = 20000 millis.
+ * <p/>
+ * If you want to set a starting delay, then use 0 as the first limit, eg: <tt>0:1000;5:5000</tt> will use 1 sec delay
+ * until attempt number 5 where it will use 5 seconds going forward.
  *
  * @version $Revision$
  */
@@ -63,6 +81,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.ERROR;
+    protected String delayPattern;
 
     public RedeliveryPolicy() {
     }
@@ -77,7 +96,8 @@ public class RedeliveryPolicy extends DelayPolicy {
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
-            + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor + "]";
+            + ", collisionAvoidanceFactor=" + collisionAvoidanceFactor
+            + ", delayPattern=" + delayPattern + "]";
     }
 
     public RedeliveryPolicy copy() {
@@ -114,9 +134,13 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     /**
      * Calculates the new redelivery delay based on the last one then sleeps for the necessary amount of time
+     *
+     * @param redeliveryDelay  previous redelivery delay
+     * @param redeliveryCounter  number of previous redelivery attempts
+     * @return the calculate delay
      */
-    public long sleep(long redeliveryDelay) {
-        redeliveryDelay = getRedeliveryDelay(redeliveryDelay);
+    public long sleep(long redeliveryDelay, int redeliveryCounter) {
+        redeliveryDelay = calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
 
         if (redeliveryDelay > 0) {
             if (LOG.isDebugEnabled()) {
@@ -125,18 +149,22 @@ public class RedeliveryPolicy extends DelayPolicy {
             try {
                 Thread.sleep(redeliveryDelay);
             } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Thread interrupted: " + e, e);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Thread interrupted: " + e, e);
                 }
             }
         }
         return redeliveryDelay;
     }
 
+    protected long calculateRedeliveryDelay(long previousDelay, int redeliveryCounter) {
+        if (ObjectHelper.isNotEmpty(delayPattern)) {
+            // calculate delay using the pattern
+             return calculateRedeliverDelayUsingPattern(delayPattern, redeliveryCounter);
+        }
 
-    public long getRedeliveryDelay(long previousDelay) {
+        // calculate the delay using the conventional parameters
         long redeliveryDelay;
-
         if (previousDelay == 0) {
             redeliveryDelay = delay;
         } else if (useExponentialBackOff && backOffMultiplier > 1) {
@@ -162,6 +190,28 @@ public class RedeliveryPolicy extends DelayPolicy {
         }
 
         return redeliveryDelay;
+    }
+
+    /**
+     * Calculates the delay using the delay pattern
+     */
+    protected static long calculateRedeliverDelayUsingPattern(String delayPattern, int redeliveryCounter) {
+        String[] groups = delayPattern.split(";");
+        // find the group where ther redelivery counter matches
+        long answer = 0;
+        for (String group : groups) {
+            long delay = Long.valueOf(ObjectHelper.after(group, ":"));
+            int count = Integer.valueOf(ObjectHelper.before(group, ":"));
+            
+
+            if (count > redeliveryCounter) {
+                break;
+            } else {
+                answer = delay;
+            }
+        }
+
+        return answer;
     }
 
 
@@ -238,6 +288,14 @@ public class RedeliveryPolicy extends DelayPolicy {
         return this;
     }    
     
+    /**
+     * Sets the delay pattern with delay intervals.
+     */
+    public RedeliveryPolicy delayPattern(String delayPattern) {
+        setDelayPattern(delayPattern);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public double getBackOffMultiplier() {
@@ -351,5 +409,16 @@ public class RedeliveryPolicy extends DelayPolicy {
 
     public LoggingLevel getRetryAttemptedLogLevel() {
         return retryAttemptedLogLevel;
+    }
+
+    public String getDelayPattern() {
+        return delayPattern;
+    }
+
+    /**
+     * Sets an optional delay pattern to use insted of fixed delay.
+     */
+    public void setDelayPattern(String delayPattern) {
+        this.delayPattern = delayPattern;
     }
 }
