@@ -197,12 +197,6 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-rest</artifactId>
-      <version>${project.version}</version>
-      <classifier>classes</classifier>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
       <artifactId>camel-rmi</artifactId>
     </dependency>
     <dependency>
