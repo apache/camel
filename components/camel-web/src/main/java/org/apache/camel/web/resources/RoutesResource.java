@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,22 +16,22 @@
  */
 package org.apache.camel.web.resources;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.view.RouteDotGenerator;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
-
+import java.io.IOException;
+import java.util.List;
 import javax.ws.rs.GET;
-import javax.ws.rs.Produces;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
-import java.io.IOException;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
+import org.apache.camel.view.RouteDotGenerator;
 
 /**
  * The active routes in Camel which are used to implement one or more
- *  <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
+ * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
  *
  * @version $Revision: 1.1 $
  */
@@ -69,10 +68,10 @@ public class RoutesResource extends CamelChildResourceSupport {
     }
 
     /**
-      * Looks up an individual route
-      */
-     @Path("{id}")
-     public RouteResource getEndpoint(@PathParam("id") String id) {
+     * Looks up an individual route
+     */
+    @Path("{id}")
+    public RouteResource getEndpoint(@PathParam("id") String id) {
         List<RouteType> list = getRoutes();
         for (RouteType routeType : list) {
             if (routeType.getId().equals(id)) {
@@ -80,7 +79,7 @@ public class RoutesResource extends CamelChildResourceSupport {
             }
         }
         return null;
-     }
+    }
 
 
     // Properties

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.web.resources;
 
-import org.apache.camel.model.RoutesType;
-import org.apache.camel.model.RouteType;
-
 import java.util.List;
+
+import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RoutesType;
 
 
 /**
