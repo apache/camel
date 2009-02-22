@@ -17,6 +17,7 @@
 package org.apache.camel.spring.config;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ public class DeadLetterChannelRedeliveryConfigTest extends AbstractJUnit38Spring
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
 
         dead.expectedBodiesReceived("Hello World");
-        dead.message(0).header("org.apache.camel.Redelivered").isEqualTo(true);
-        dead.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(3);
+        dead.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        dead.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(3);
         result.expectedMessageCount(0);
 
         try {

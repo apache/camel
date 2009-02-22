@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -23,13 +25,14 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for testing possibility to modify exchange before redelivering
+ * Unit test for testing possibility to modify exchange before redelivering specific
+ * per on exception
  */
-public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
+public class DeadLetterChannelOnExceptionOnRedeliveryTest extends ContextTestSupport {
 
     static int counter;
 
-    public void testOnExceptionAlterMessageBeforeRedelivery() throws Exception {
+    public void testGlobalOnRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World123");
 
@@ -38,12 +41,12 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void xxxtestOnExceptionAlterMessageWithHeadersBeforeRedelivery() throws Exception {
+    public void testRouteSpecificOnRedelivery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World123");
-        mock.expectedHeaderReceived("foo", "123");
+        mock.expectedBodiesReceived("Hello World");
+        mock.message(0).header("Timeout").isEqualTo(5000);
 
-        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "123");
+        template.sendBody("direct:io", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,6 +63,12 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
+                // when we redeliver caused by an IOException we want to do some special
+                // code before the redeliver attempt
+                onException(IOException.class).onRedelivery(new MyIORedeliverPrcessor());
+                // END SNIPPET: e1
+
+                // START SNIPPET: e2
                 // we configure our Dead Letter Channel to invoke
                 // MyRedeliveryProcessor before a redelivery is
                 // attempted. This allows us to alter the message before
@@ -67,26 +76,20 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
                         .onRedelivery(new MyRedeliverPrcessor())
                         // setting delay to zero is just to make unit teting faster
                         .delay(0L));
-                // END SNIPPET: e1
+                // END SNIPPET: e2
 
 
-                from("direct:start").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        // force some error so Camel will do redelivery
-                        if (++counter <= 3) {
-                            throw new IllegalArgumentException("Forced by unit test");
-                        }
-                    }
-                }).to("mock:result");
+                from("direct:start").process(new ThrowExceptionProcessor()).to("mock:result");
 
+                from("direct:io").process(new ThrowIOExceptionProcessor()).to("mock:result");
             }
         };
     }
 
-    // START SNIPPET: e2
+    // START SNIPPET: e3
     // This is our processor that is executed before every redelivery attempt
     // here we can do what we want in the java code, such as altering the message
-    public class MyRedeliverPrcessor implements Processor {
+    public static class MyRedeliverPrcessor implements Processor {
 
         public void process(Exchange exchange) throws Exception {
             // the message is being redelivered so we can alter it
@@ -99,7 +102,43 @@ public class DeadLetterChannelOnRedeliveryTest extends ContextTestSupport {
             exchange.getIn().setBody(body + count);
         }
     }
-    // END SNIPPET: e2
+    // END SNIPPET: e3
+
+    // START SNIPPET: e4
+    // This is our processor that is executed before IOException redeliver attempt
+    // here we can do what we want in the java code, such as altering the message
+
+    public static class MyIORedeliverPrcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // just for show and tell, here we set a special header to instruct
+            // the receive a given timeout value
+            exchange.getIn().setHeader("Timeout", 5000);
+        }
+    }
+    // END SNIPPET: e4
+
+    public static class ThrowExceptionProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // force some error so Camel will do redelivery
+            if (++counter <= 3) {
+                throw new IllegalArgumentException("Forced by unit test");
+            }
+
+        }
+    }
+
+    public static class ThrowIOExceptionProcessor implements Processor {
+
+        public void process(Exchange exchange) throws Exception {
+            // force some error so Camel will do redelivery
+            if (++counter <= 3) {
+                throw new IOException("Cannot connect");
+            }
+
+        }
+    }
 
 
 }

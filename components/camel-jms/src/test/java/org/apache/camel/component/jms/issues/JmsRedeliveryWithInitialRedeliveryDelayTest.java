@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.issues;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -36,8 +37,8 @@ public class JmsRedeliveryWithInitialRedeliveryDelayTest extends AbstractJUnit38
         MockEndpoint result = context.getEndpoint("mock:result", MockEndpoint.class);
 
         dead.expectedBodiesReceived("Hello World");
-        dead.message(0).header("org.apache.camel.Redelivered").isEqualTo(true);
-        dead.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(4);
+        dead.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
+        dead.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(4);
         result.expectedMessageCount(0);
 
         context.createProducerTemplate().sendBody("activemq:in", "Hello World");

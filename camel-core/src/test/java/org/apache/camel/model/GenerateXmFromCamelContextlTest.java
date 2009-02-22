@@ -34,7 +34,7 @@ public class GenerateXmFromCamelContextlTest extends ContextTestSupport {
         assertEquals("Size of list " + list, 1, list.size());
         RouteType routeType = list.get(0);
 
-        System.out.println("Found route: " + routeType);
+        log.info("Found route: " + routeType);
 
         // now lets marshall it!
         dump(routeType);

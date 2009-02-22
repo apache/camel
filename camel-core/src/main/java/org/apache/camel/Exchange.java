@@ -30,11 +30,22 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
-    String CHARSET_NAME = "org.apache.camel.Exchange.CharsetName";
+    String AGGREGATED_COUNT = "CamelAggregatedCount";
 
-    String AGGREGATED_COUNT = "org.apache.camel.Exchange.AggregatedCount";
+    String CHARSET_NAME = "CamelCharsetName";
 
-    String EXCEPTION_HANDLED_PROPERTY = "CamelExceptionHandled";
+    String EXCEPTION_CAUGHT = "CamelExceptionCaught";
+
+    String EXCEPTION_HANDLED = "CamelExceptionHandled";
+
+    String FAILURE_HANDLED = "CamelFailureHandled";
+
+    String REDELIVERED = "CamelRedelivered";
+
+    String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
+
+    String TRANSACTED = "CamelTransacted";
+
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

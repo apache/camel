@@ -152,7 +152,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Throwable exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
                 }
                 return exception;
             }
@@ -175,7 +175,7 @@ public final class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 Throwable exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
                 }
                 return exception != null ? exception.getMessage() : null;
             }
@@ -451,6 +451,7 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression which converts the given expression to the given type
      */
+    @SuppressWarnings("unchecked")
     public static Expression convertToExpression(final Expression expression, final Class type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

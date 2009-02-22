@@ -35,8 +35,8 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         // We expect the exchange here after 1 delivery and 2 re-deliveries
         MockEndpoint mock = getMockEndpoint("mock:noThread");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
 
         try {
             template.sendBody("direct:inNoThread", "Hello World");
@@ -56,8 +56,8 @@ public class BelasThreadErrorHandlerIssue794Test extends ContextTestSupport {
         // We expect the exchange here after 1 delivery and 2 re-deliveries
         MockEndpoint mock = getMockEndpoint("mock:beforeThread");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
 
         try {
             template.sendBody("direct:inBeforeThread", "Hello World");

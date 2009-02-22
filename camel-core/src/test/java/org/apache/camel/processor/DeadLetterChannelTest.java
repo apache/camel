@@ -38,8 +38,8 @@ public class DeadLetterChannelTest extends ContextTestSupport {
 
     public void testFirstFewAttemptsFail() throws Exception {
         successEndpoint.expectedBodiesReceived(body);
-        successEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        successEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(1);
+        successEndpoint.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
+        successEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(1);
 
         deadEndpoint.expectedMessageCount(0);
 
@@ -52,15 +52,15 @@ public class DeadLetterChannelTest extends ContextTestSupport {
         failUntilAttempt = 5;
 
         deadEndpoint.expectedBodiesReceived(body);
-        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERED).isEqualTo(true);
-        deadEndpoint.message(0).header(DeadLetterChannel.REDELIVERY_COUNTER).isEqualTo(2);
+        deadEndpoint.message(0).header(Exchange.REDELIVERED).isEqualTo(true);
+        deadEndpoint.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
         successEndpoint.expectedMessageCount(0);
 
         sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
 
-        Throwable t = deadEndpoint.getExchanges().get(0).getProperty(DeadLetterChannel.EXCEPTION_CAUSE_PROPERTY, Throwable.class);
+        Throwable t = deadEndpoint.getExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
         assertNotNull("Should have been a cause property", t);
         assertTrue(t instanceof RuntimeException);
         assertEquals("Failed to process due to attempt: 3 being less than: 5", t.getMessage());
@@ -80,8 +80,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new AsyncProcessor() {
             public void process(Exchange exchange) {
-                Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
-                                                             Integer.class);
+                Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt < failUntilAttempt) {
                     throw new RuntimeException("Failed to process due to attempt: " + attempt
@@ -90,8 +89,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
             }
             // START SNIPPET: AsyncProcessor
             public boolean process(Exchange exchange, AsyncCallback callback) {                
-                Integer counter = exchange.getIn().getHeader(DeadLetterChannel.REDELIVERY_COUNTER,
-                                                             Integer.class);
+                Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt > 1) {
                     assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(), "Timer-0");

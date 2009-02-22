@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,7 +32,7 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
         MockEndpoint successEndpoint = getMockEndpoint("mock:success");
 
         failedEndpoint.expectedBodiesReceived(body);
-        failedEndpoint.message(0).header(DeadLetterChannel.CAUGHT_EXCEPTION_HEADER)
+        failedEndpoint.message(0).header(Exchange.EXCEPTION_CAUGHT)
             .isEqualTo(RUNTIME_EXCEPTION);
         failedEndpoint.expectedMessageCount(1);
 

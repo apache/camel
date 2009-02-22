@@ -72,7 +72,7 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
     public class MyRetryBean {
 
         // using bean binding we can bind the information from the exchange to the types we have in our method signature
-        public boolean retryUntil(@Header(name = DeadLetterChannel.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
+        public boolean retryUntil(@Header(name = Exchange.REDELIVERY_COUNTER) Integer counter, @Body String body, @ExchangeException Exception causedBy) {
             // NOTE: counter is the redelivery attempt, will start from 1
             invoked++;
 

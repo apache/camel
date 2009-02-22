@@ -36,8 +36,8 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
         // We expect the exchange here after 1 delivery and 2 re-deliveries
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(3);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(3);
 
         long start = System.currentTimeMillis();
         try {
