@@ -34,8 +34,10 @@
     </bean>
 
 
+    <!-- START SNIPPET: e2 -->
     <bean id="myRedeliveryProcessor"
           class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyRedeliverPrcessor"/>
+    <!-- END SNIPPET: e2 -->
 
     <bean id="myIORedeliverProcessor"
           class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$MyIORedeliverPrcessor"/>
@@ -47,12 +49,13 @@
           class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$ThrowIOExceptionProcessor"/>
 
 
-    <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="deadLetterErrorHandler">
 
+        <!-- START SNIPPET: e1 -->
         <onException onRedeliveryRef="myIORedeliverProcessor">
             <exception>java.io.IOException</exception>
         </onException>
+        <!-- END SNIPPET: e1 -->
 
         <route>
             <from uri="direct:start"/>
@@ -67,6 +70,5 @@
         </route>
 
     </camelContext>
-    <!-- END SNIPPET: e1 -->
 
 </beans>
