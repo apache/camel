@@ -313,8 +313,8 @@ public class DefaultExchange implements Exchange {
     }
 
     public boolean isTransacted() {
-        ExchangeProperty<?> property = ExchangeProperty.get("transacted");
-        return property != null && property.get(this) == Boolean.TRUE;
+        Boolean transacted = getProperty(TRANSACTED, Boolean.class);
+        return transacted != null && transacted;
     }
 
     public UnitOfWork getUnitOfWork() {

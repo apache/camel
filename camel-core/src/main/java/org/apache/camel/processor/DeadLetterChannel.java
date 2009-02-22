@@ -45,14 +45,8 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
-    public static final String REDELIVERY_COUNTER = "org.apache.camel.RedeliveryCounter";
-    public static final String REDELIVERED = "org.apache.camel.Redelivered";
-    public static final String EXCEPTION_CAUSE_PROPERTY = "CamelCauseException";
-    public static final String CAUGHT_EXCEPTION_HEADER = "org.apache.camel.CamelCaughtException";    
-    
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
-    private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName() + ".FAILURE_HANDLED";
-    
+
     private static Timer timer = new Timer();
     private Processor output;
     private Processor deadLetter;
@@ -71,6 +65,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
         Processor failureProcessor = deadLetter;
+        Processor onRedeliveryProcessor = redeliveryProcessor;
     }
     
     private class RedeliverTimerTask extends TimerTask {
@@ -267,8 +262,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     
     private void handleException(Exchange exchange, RedeliveryData data) {
         Throwable e = exchange.getException();
-        // set the original caused exception
-        exchange.setProperty(EXCEPTION_CAUSE_PROPERTY, e);
+
+        // store the original caused exception in a property, so we can restore it later
+        exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
 
         // find the error handler to use (if any)
         ExceptionType exceptionPolicy = getExceptionPolicy(exchange, e);
@@ -276,9 +272,16 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();
             data.retryUntilPredicate = exceptionPolicy.getRetryUntilPolicy();
+
+            // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();
             if (processor != null) {
                 data.failureProcessor = processor;
+            }
+            // route specific on redelivey?
+            processor = exceptionPolicy.getOnRedelivery();
+            if (processor != null) {
+                data.onRedeliveryProcessor = processor;
             }
         }
 
@@ -295,15 +298,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      */
     private void deliverToRedeliveryProcessor(final Exchange exchange, final AsyncCallback callback,
                                             final RedeliveryData data) {
-        if (redeliveryProcessor == null) {
+        if (data.onRedeliveryProcessor == null) {
             return;
         }
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("RedeliveryProcessor " + redeliveryProcessor + " is processing Exchange: " + exchange + " before its redelivered");
+            LOG.trace("RedeliveryProcessor " + data.onRedeliveryProcessor + " is processing Exchange: " + exchange + " before its redelivered");
         }
 
-        AsyncProcessor afp = AsyncProcessorTypeConverter.convert(redeliveryProcessor);
+        AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.onRedeliveryProcessor);
         afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
                 LOG.trace("Redelivery processor done");
@@ -324,6 +327,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
         boolean sync = afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
+                LOG.trace("Fault processor done");
                 restoreExceptionOnExchange(exchange, data.handledPredicate);
                 callback.done(data.sync);
             }
@@ -340,13 +344,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     // -------------------------------------------------------------------------
 
     public static boolean isFailureHandled(Exchange exchange) {
-        return exchange.getProperty(FAILURE_HANDLED_PROPERTY) != null
-            || exchange.getIn().getHeader(CAUGHT_EXCEPTION_HEADER) != null;
+        Boolean handled = exchange.getProperty(Exchange.FAILURE_HANDLED, Boolean.class);
+        return handled != null && handled;
     }
 
     public static void setFailureHandled(Exchange exchange) {
-        exchange.setProperty(FAILURE_HANDLED_PROPERTY, exchange.getException());
-        exchange.getIn().setHeader(CAUGHT_EXCEPTION_HEADER, exchange.getException());
+        exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
+        // clear exception since its failure handled
         exchange.setException(null);
     }
 
@@ -398,12 +402,12 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
-            exchange.setException(exchange.getProperty(FAILURE_HANDLED_PROPERTY, Throwable.class));
+            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class));
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
             }
-            exchange.setProperty(Exchange.EXCEPTION_HANDLED_PROPERTY, Boolean.TRUE);
+            exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.TRUE);
         }
     }
 
@@ -431,13 +435,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      */
     protected int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
         Message in = exchange.getIn();
-        Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
+        Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
         int next = 1;
         if (counter != null) {
             next = counter + 1;
         }
-        in.setHeader(REDELIVERY_COUNTER, next);
-        in.setHeader(REDELIVERED, Boolean.TRUE);
+        in.setHeader(Exchange.REDELIVERY_COUNTER, next);
+        in.setHeader(Exchange.REDELIVERED, Boolean.TRUE);
         return next;
     }
 
@@ -446,16 +450,16 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      */
     private void decrementRedeliveryCounter(Exchange exchange) {
         Message in = exchange.getIn();
-        Integer counter = in.getHeader(REDELIVERY_COUNTER, Integer.class);
+        Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
         if (counter != null) {
             int prev = counter - 1;
-            in.setHeader(REDELIVERY_COUNTER, prev);
+            in.setHeader(Exchange.REDELIVERY_COUNTER, prev);
             // set boolean flag according to counter
-            in.setHeader(REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
+            in.setHeader(Exchange.REDELIVERED, prev > 0 ? Boolean.TRUE : Boolean.FALSE);
         } else {
             // not redelivered
-            in.setHeader(REDELIVERY_COUNTER, 0);
-            in.setHeader(REDELIVERED, Boolean.FALSE);
+            in.setHeader(Exchange.REDELIVERY_COUNTER, 0);
+            in.setHeader(Exchange.REDELIVERED, Boolean.FALSE);
         }
     }
 

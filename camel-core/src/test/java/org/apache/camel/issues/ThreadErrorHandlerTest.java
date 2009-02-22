@@ -30,8 +30,8 @@ public class ThreadErrorHandlerTest extends ContextTestSupport {
     public void testThreadErrorHandler() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
 
         try {
             template.sendBody("direct:in", "Hello World");

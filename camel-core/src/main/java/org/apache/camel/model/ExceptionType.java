@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlAttribute;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
@@ -61,6 +62,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private RedeliveryPolicyType redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
     private ExpressionSubElementType handled;
+    @XmlAttribute(name = "onRedeliveryRef", required = false)
+    private String onRedeliveryRef;
     @XmlElementRef
     private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
     @XmlTransient
@@ -71,6 +74,8 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     private Predicate handledPolicy;
     @XmlTransient
     private Predicate retryUntilPolicy;
+    @XmlTransient
+    private Processor onRedelivery;
 
     public ExceptionType() {
     }
@@ -115,6 +120,11 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         errorHandler = routeContext.createProcessor(this);
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
         builder.addErrorHandlers(this);
+
+        // lookup onRedelivery if ref is provided
+        if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
+            onRedelivery = routeContext.lookup(onRedeliveryRef, Processor.class);
+        }
     }
 
     @Override
@@ -331,6 +341,16 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
         return this;
     }
 
+    /**
+     * Sets a processor that should be processed <b>before</b> a redelivey attempt.
+     * <p/>
+     * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
+     */
+    public ExceptionType onRedelivery(Processor processor) {
+        setOnRedelivery(processor);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
     public List<ProcessorType> getOutputs() {
@@ -411,6 +431,23 @@ public class ExceptionType extends ProcessorType<ProcessorType> {
     public void setRetryUntilPolicy(Predicate retryUntilPolicy) {
         this.retryUntilPolicy = retryUntilPolicy;
     }
+
+    public Processor getOnRedelivery() {
+        return onRedelivery;
+    }
+
+    public void setOnRedelivery(Processor onRedelivery) {
+        this.onRedelivery = onRedelivery;
+    }
+
+    public String getOnRedeliveryRef() {
+        return onRedeliveryRef;
+    }
+
+    public void setOnRedeliveryRef(String onRedeliveryRef) {
+        this.onRedeliveryRef = onRedeliveryRef;
+    }
+
 
     // Implementation methods
     //-------------------------------------------------------------------------

@@ -64,7 +64,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
         while (true) {
             boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
             if (nextExchange.isFailed() || exceptionHandled) {
-                // The Exchange.EXCEPTION_HANDLED_PROPERTY property is only set if satisfactory handling was done 
+                // The Exchange.EXCEPTION_HANDLED property is only set if satisfactory handling was done
                 //  by the error handler.  It's still an exception, the exchange still failed.
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
@@ -126,7 +126,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
                     boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
                     if (nextExchange.isFailed() || exceptionHandled) {
-                        // The Exchange.EXCEPTION_HANDLED_PROPERTY property is only set if satisfactory handling was done
+                        // The Exchange.EXCEPTION_HANDLED property is only set if satisfactory handling was done
                         //  by the error handler.  It's still an exception, the exchange still failed.
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
@@ -152,7 +152,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
 
     private static boolean hasExceptionBeenHandled(Exchange nextExchange) {
-        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.EXCEPTION_HANDLED_PROPERTY));
+        return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.EXCEPTION_HANDLED));
     }
 
     /**

@@ -36,8 +36,8 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         // We expect the exchange here after 1 delivery and 2 re-deliveries
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(2);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
 
         try {
             template.sendBody("direct:start", "Hello World");
@@ -56,8 +56,8 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         // We expect the exchange here after 1 delivery
         MockEndpoint mock = getMockEndpoint("mock:no");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.FALSE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(0);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.FALSE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(0);
 
         try {
             template.sendBody("direct:no", "Hello World");
@@ -76,8 +76,8 @@ public class DeadLetterChannelRedeliveryTest extends ContextTestSupport {
         // We expect the exchange here after 1 delivery and 1 re delivery
         MockEndpoint mock = getMockEndpoint("mock:one");
         mock.expectedMessageCount(1);
-        mock.message(0).header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("org.apache.camel.RedeliveryCounter").isEqualTo(1);
+        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
+        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(1);
 
         try {
             template.sendBody("direct:one", "Hello World");

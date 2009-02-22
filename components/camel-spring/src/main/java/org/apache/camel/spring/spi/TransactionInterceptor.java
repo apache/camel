@@ -17,7 +17,6 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.DelayPolicy;
@@ -41,8 +40,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public class TransactionInterceptor extends DelegateProcessor {
-    public static final ExchangeProperty<Boolean> TRANSACTED =
-        new ExchangeProperty<Boolean>("transacted", "org.apache.camel.transacted", Boolean.class);
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
     private RedeliveryPolicy redeliveryPolicy;
@@ -85,8 +82,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                         activeTx = status.isNewTransaction() && !status.isCompleted();
                         if (!activeTx) {
                             if (DefaultTransactionStatus.class.isAssignableFrom(status.getClass())) {
-                                DefaultTransactionStatus defStatus =
-                                        DefaultTransactionStatus.class.cast(status);
+                                DefaultTransactionStatus defStatus = DefaultTransactionStatus.class.cast(status);
                                 activeTx = defStatus.hasTransaction() && !status.isCompleted();
                             }
                         }
@@ -98,7 +94,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                     // okay mark the exchange as transacted, then the DeadLetterChannel or others know
                     // its a transacted exchange
                     if (activeTx) {
-                        TRANSACTED.set(exchange, Boolean.TRUE);
+                        exchange.setProperty(Exchange.TRANSACTED, Boolean.TRUE);
                     }
 
                     // process the exchange

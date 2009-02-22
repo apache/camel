@@ -66,7 +66,7 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
                 // START SNIPPET: e1
                 // we configure an interceptor that is triggered when the redelivery flag
                 // has been set TRUE on an exchange
-                intercept().when(header("org.apache.camel.Redelivered").isEqualTo(Boolean.TRUE)).
+                intercept().when(header("CamelRedelivered").isEqualTo(Boolean.TRUE)).
                         process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 // the message is being redelivered so we can alter it
@@ -74,7 +74,7 @@ public class InterceptAlterMessageBeforeRedeliveryTest extends ContextTestSuppor
                                 // we just append the redelivery counter to the body
                                 // you can of course do all kind of stuff instead
                                 String body = exchange.getIn().getBody(String.class);
-                                int count = exchange.getIn().getHeader("org.apache.camel.RedeliveryCounter", Integer.class);
+                                int count = exchange.getIn().getHeader("CamelRedeliveryCounter", Integer.class);
 
                                 exchange.getIn().setBody(body + count);
                             }
