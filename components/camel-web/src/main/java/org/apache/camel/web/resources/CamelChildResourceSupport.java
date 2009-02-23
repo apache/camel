@@ -19,6 +19,10 @@ package org.apache.camel.web.resources;
 import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class for any sub resource of the root {@link org.apache.camel.web.resources.CamelContextResource}
@@ -27,6 +31,8 @@ import org.apache.camel.ProducerTemplate;
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {
+    private static final transient Log LOG = LogFactory.getLog(CamelChildResourceSupport.class);
+
     private final CamelContext camelContext;
     private final ProducerTemplate template;
     private CamelContextResource contextResource;
@@ -47,5 +53,16 @@ public class CamelChildResourceSupport {
 
     public CamelContextResource getContextResource() {
         return contextResource;
+    }
+
+    public DefaultTypeConverter getDefaultTypeConverter() {
+        TypeConverterRegistry converterRegistry = getCamelContext().getTypeConverterRegistry();
+        if (converterRegistry instanceof DefaultTypeConverter) {
+            return (DefaultTypeConverter) converterRegistry;
+        }
+        else {
+            LOG.info("Not a default type converter as it is: " + converterRegistry);
+        }
+        return null;
     }
 }

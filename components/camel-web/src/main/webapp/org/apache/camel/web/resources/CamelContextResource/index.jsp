@@ -22,6 +22,18 @@
   </li>
 </ul>
 
+<p>The following diagnostic links might be useful too...
+</p>
+
+<ul>
+  <li>
+    <a href="<c:url value='/converters'/>" title="View the available type converters currently registered with Camel">Type Converters</a>
+  </li>
+  <li>
+    <a href="<c:url value='/systemProperties'/>" title="View the System Properties used to create this service">System Properties</a>
+  </li>
+</ul>
+
 <p>Lets take it for a ride!</p>
 
 </body>
