@@ -46,15 +46,21 @@ import org.apache.camel.web.model.EndpointLink;
  * @version $Revision$
  */
 public class EndpointResource extends CamelChildResourceSupport {
+    private final String key;
     private final Endpoint endpoint;
 
-    public EndpointResource(CamelContextResource contextResource, Endpoint endpoint) {
+    public EndpointResource(CamelContextResource contextResource, String key, Endpoint endpoint) {
         super(contextResource);
+        this.key = key;
         this.endpoint = endpoint;
     }
 
     public String getHref() {
-        return new EndpointLink(endpoint).getHref();
+        return new EndpointLink(key, endpoint).getHref();
+    }
+
+    public String getKey() {
+        return key;
     }
 
     public String getUri() {
@@ -64,7 +70,6 @@ public class EndpointResource extends CamelChildResourceSupport {
     public Endpoint getEndpoint() {
         return endpoint;
     }
-
 
     public BrowsableEndpoint getBrowsableEndpoint() {
         if (endpoint instanceof BrowsableEndpoint) {

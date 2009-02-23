@@ -78,7 +78,7 @@ public class EndpointsResource extends CamelChildResourceSupport {
             }
         }
         if (endpoint != null) {
-            return new EndpointResource(getContextResource(), endpoint);
+            return new EndpointResource(getContextResource(), id, endpoint);
         } else {
             return null;
         }

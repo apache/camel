@@ -42,6 +42,11 @@ public class EndpointLink {
         load(endpoint);
     }
 
+    public EndpointLink(String key, Endpoint endpoint) {
+        this();
+        load(key, endpoint);
+    }
+
     @Override
     public String toString() {
         return "EndpointLink{href='" + href + "' uri='" + uri + "'}";
@@ -52,6 +57,11 @@ public class EndpointLink {
         this.href = createHref(uri);
     }
 
+    public void load(String key, Endpoint endpoint) {
+        this.uri = endpoint.getEndpointUri();
+        this.href = createHref(key);
+    }
+    
     public String getHref() {
         return href;
     }
@@ -72,4 +82,5 @@ public class EndpointLink {
         // TODO how to encode as a href?
         return "/endpoints/" + uri;
     }
+
 }

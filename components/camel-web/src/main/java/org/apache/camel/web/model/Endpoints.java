@@ -19,6 +19,8 @@ package org.apache.camel.web.model;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -62,16 +64,23 @@ public class Endpoints {
     public void load(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext has not been injected!");
 
+        Map<String,Endpoint> map = camelContext.getEndpointMap();
+        Set<Map.Entry<String,Endpoint>> entries = map.entrySet();
+        for (Map.Entry<String, Endpoint> entry : entries) {
+            addEndpoint(createEndpointLink(entry.getKey(), entry.getValue()));
+        }
+/*
         Collection<Endpoint> endpoints = camelContext.getSingletonEndpoints();
         for (Endpoint endpoint : endpoints) {
             addEndpoint(createEndpointLink(endpoint));
         }
+*/
 
     }
 
-    protected EndpointLink createEndpointLink(Endpoint endpoint) {
+    protected EndpointLink createEndpointLink(String key, Endpoint endpoint) {
         EndpointLink answer = new EndpointLink();
-        answer.load(endpoint);
+        answer.load(key, endpoint);
         return answer;
     }
 
