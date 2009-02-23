@@ -60,11 +60,11 @@ public class DeadLetterChannelRedeliveryDelayPatternTest extends ContextTestSupp
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").delayPattern("0:250;2:500").maximumRedeliveries(3)
-                        .onRedelivery(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        counter++;
-                    }
-                }));
+                    .onRedelivery(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            counter++;
+                        }
+                    }));
 
                 from("direct:start").process(throwException(new Exception("Forced exception by unit test")));
             }
