@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
@@ -177,12 +178,13 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return answer;
     }
 
-    public Set<Class> getToClassMappings(Class fromClass) {
-        Set<Class> answer = new HashSet<Class>();
+    public Map<Class,TypeConverter> getToClassMappings(Class fromClass) {
+        Map<Class,TypeConverter> answer = new HashMap<Class,TypeConverter>();
         synchronized (typeMappings) {
-            for (TypeMapping mapping : typeMappings.keySet()) {
+            for (Map.Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet()) {
+                TypeMapping mapping = entry.getKey();
                 if (mapping.isApplicable(fromClass)) {
-                    answer.add(mapping.getToType());
+                    answer.put(mapping.getToType(), entry.getValue());
                 }
             }
         }

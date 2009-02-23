@@ -18,6 +18,7 @@
 package org.apache.camel.web.resources;
 
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.TypeConverter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,14 +36,15 @@ public class ConvertersFromResource extends CamelChildResourceSupport {
         this.type = type;
     }
 
-    public Map<String, Class> getConverters() {
-        Map<String, Class> answer = new TreeMap<String, Class>();
+    public Map<String, TypeConverter> getConverters() {
+        Map<String, TypeConverter> answer = new TreeMap<String, TypeConverter>();
         DefaultTypeConverter converter = getDefaultTypeConverter();
         if (converter != null) {
-            Set<Class> classes = converter.getToClassMappings(type);
-            for (Class aClass : classes) {
+            Map<Class, TypeConverter> classes = converter.getToClassMappings(type);
+            for (Map.Entry<Class, TypeConverter> entry : classes.entrySet()) {
+                Class aClass = entry.getKey();
                 String name = ConvertersResource.nameOf(aClass);
-                answer.put(name, aClass);
+                answer.put(name, entry.getValue());
             }
         }
         return answer;
