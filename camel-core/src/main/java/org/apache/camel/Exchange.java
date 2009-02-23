@@ -33,7 +33,7 @@ public interface Exchange {
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
 
-    String AGGREGATED_COUNT = "CamelAggregatedCount";
+    String AGGREGATED_SIZE = "CamelAggregatedSize";
 
     String CHARSET_NAME = "CamelCharsetName";
 

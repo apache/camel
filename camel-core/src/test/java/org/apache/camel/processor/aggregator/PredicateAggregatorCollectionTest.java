@@ -66,7 +66,7 @@ public class PredicateAggregatorCollectionTest extends ContextTestSupport {
                 // - and finally we stop aggregate if we receive 2 or more messages
                 AggregationCollection ag = new PredicateAggregationCollection(header("id"),
                     new UseLatestAggregationStrategy(),
-                    header(Exchange.AGGREGATED_COUNT).isEqualTo(3));
+                    header(Exchange.AGGREGATED_SIZE).isEqualTo(3));
 
                 // our route is aggregating from the direct queue and sending the response to the mock
                 from("direct:start")

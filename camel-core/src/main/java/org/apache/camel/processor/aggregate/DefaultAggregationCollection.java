@@ -63,13 +63,13 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
         Exchange newExchange = exchange;
 
         if (oldExchange != null) {
-            Integer count = oldExchange.getProperty(Exchange.AGGREGATED_COUNT, Integer.class);
+            Integer count = oldExchange.getProperty(Exchange.AGGREGATED_SIZE, Integer.class);
             if (count == null) {
                 count = 1;
             }
             count++;
             newExchange = aggregationStrategy.aggregate(oldExchange, newExchange);
-            newExchange.setProperty(Exchange.AGGREGATED_COUNT, count);
+            newExchange.setProperty(Exchange.AGGREGATED_SIZE, count);
         }
 
         // the strategy may just update the old exchange and return it
@@ -78,7 +78,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
                 LOG.debug("put exchange:" + newExchange + " for key:"  + correlationKey);
             }
             if (oldExchange == null) {
-                newExchange.setProperty(Exchange.AGGREGATED_COUNT, Integer.valueOf(1));
+                newExchange.setProperty(Exchange.AGGREGATED_SIZE, Integer.valueOf(1));
             }
             map.put(correlationKey, newExchange);
         }
