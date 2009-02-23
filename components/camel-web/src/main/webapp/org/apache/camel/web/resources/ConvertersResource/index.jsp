@@ -14,7 +14,7 @@
   </tr>
   <c:forEach items="${it.fromClassTypes}" var="entry">
     <tr>
-      <td><a href="converters/${entry.key}">${entry.key}</a></td>
+      <td><a href="converters/${entry.value.name}">${entry.key}</a></td>
     </tr>
   </c:forEach>
 </table>

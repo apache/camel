@@ -23,7 +23,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -61,6 +60,7 @@ public class ConvertersResource extends CamelChildResourceSupport {
 
     public ConvertersFromResource getConvertersFrom(@PathParam("type") Class type) {
 */
+
     public ConvertersFromResource getConvertersFrom(@PathParam("type") String typeName) {
         Class type;
         try {

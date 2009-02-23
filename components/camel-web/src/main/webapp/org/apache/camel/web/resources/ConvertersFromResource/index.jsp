@@ -1,11 +1,11 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Type Converters from: ${it.type.name}</title>
+  <title>Type Converters from: ${it.type.canonicalName}</title>
 </head>
 <body>
 
-<h1>Type Converters from: ${it.type.name}</h1>
+<h1>Type Converters from: ${it.type.canonicalName}</h1>
 
 <table>
   <tr>
