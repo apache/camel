@@ -37,7 +37,7 @@
        See http://camel.apache.org/activemq.html for more information.
   -->
   <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
-    <property name="brokerURL" value="tcp://localhost:61616"/>
+    <property name="brokerURL" value="failover:tcp://localhost:61616"/>
   </bean>
   
   <!-- END SNIPPET: activemq -->
