@@ -127,6 +127,12 @@ public interface CamelContext extends Service {
     Collection<Endpoint> getEndpoints();
 
     /**
+     * Returns a new Map containing all of the active endpoints with the key of the map being their
+     * unique key
+     */
+    Map<String,Endpoint> getEndpointMap();
+
+    /**
      * Returns the collection of all registered endpoints for a uri or an empty collection.
      * For a singleton endpoint the collection will contain exactly one element.
      *
