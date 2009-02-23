@@ -1,11 +1,11 @@
 <html>
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>Apache Camel</title>
+  <title>Apache Camel ${it.version}</title>
 </head>
 <body>
 
-<h1>Welcome to Apache Camel</h1>
+<h1>Welcome to Apache Camel ${it.version}</h1>
 
 <p>Welcome to the Web Console for instance <b>${it.name}</b>.</p>
 <p>We hope you find the following links helpful</p>

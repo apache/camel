@@ -27,6 +27,8 @@ import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.web.model.Camel;
 
 /**
@@ -61,6 +63,13 @@ public class CamelContextResource {
         return camelContext.getName();
     }
 
+    public String getVersion() {
+        if (camelContext instanceof ServiceSupport) {
+            ServiceSupport serviceSupport = (ServiceSupport) camelContext;
+            return serviceSupport.getVersion();
+        }
+        return null;
+    }
     @PreDestroy
     public void close() throws Exception {
         if (template != null) {
