@@ -187,4 +187,9 @@ public interface Message {
      * Returns <tt>true</tt> if this message has any attachments.
      */
     boolean hasAttachments();
+
+    /**
+     * Returns the unique ID for a message exchange if this message is capable of creating one or null if not
+     */
+    String createExchangeId();
 }
