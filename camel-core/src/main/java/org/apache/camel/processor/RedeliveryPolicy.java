@@ -20,8 +20,8 @@ import java.util.Random;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.model.LoggingLevel;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -160,7 +160,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     protected long calculateRedeliveryDelay(long previousDelay, int redeliveryCounter) {
         if (ObjectHelper.isNotEmpty(delayPattern)) {
             // calculate delay using the pattern
-             return calculateRedeliverDelayUsingPattern(delayPattern, redeliveryCounter);
+            return calculateRedeliverDelayUsingPattern(delayPattern, redeliveryCounter);
         }
 
         // calculate the delay using the conventional parameters
