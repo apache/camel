@@ -17,6 +17,8 @@
 package org.apache.camel.web.resources;
 
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
@@ -75,7 +77,11 @@ public class ExchangeResource {
     }
 
     public Map<String, Object> getProperties() {
-        return exchange.getProperties();
+        return new TreeMap<String, Object>(exchange.getProperties());
+    }
+
+    public Map<String, Object> getHeaders() {
+        return new TreeMap<String, Object>(exchange.getIn().getHeaders());
     }
 
     public ExchangePattern getPattern() {

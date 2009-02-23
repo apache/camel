@@ -36,7 +36,7 @@
           <th>Name</th>
           <th>Value</th>
         </tr>
-        <c:forEach items="${it.in.headers}" var="entry">
+        <c:forEach items="${it.headers}" var="entry">
           <tr>
             <td>${entry.key}</td>
             <td>${entry.value}</td>
