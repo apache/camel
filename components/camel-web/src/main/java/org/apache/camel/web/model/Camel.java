@@ -31,6 +31,8 @@ import org.apache.camel.CamelContext;
 public class Camel {
     @XmlAttribute
     private String name;
+    @XmlAttribute
+    private String version;
 
     public Camel() {
     }
@@ -38,6 +40,12 @@ public class Camel {
     public Camel(CamelContext camelContext) {
         setName(camelContext.getName());
     }
+
+    public Camel(CamelContext camelContext, String version) {
+        setName(camelContext.getName());
+        setVersion(version);
+    }
+
 
     @Override
     public String toString() {
@@ -51,5 +59,13 @@ public class Camel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 }
