@@ -45,18 +45,18 @@ public class StreamCacheConverter {
     private XmlConverter converter = new XmlConverter();
 
     @Converter
-    public StreamCache convertToStreamCache(StreamSource source) throws TransformerException {
-        return new SourceCache(converter.toString(source));
+    public StreamCache convertToStreamCache(StreamSource source) throws IOException {
+        return new StreamSourceCache(source);
     }
     
     @Converter
-    public StreamCache convertToStreamCache(StringSource source) throws TransformerException {
+    public StreamCache convertToStreamCache(StringSource source) {
         //no need to do stream caching for a StringSource
         return null;
     }
     
     @Converter
-    public StreamCache convertToStreamCache(BytesSource source) throws TransformerException {
+    public StreamCache convertToStreamCache(BytesSource source) {
         //no need to do stream caching for a BytesSource
         return null;
     }
@@ -94,6 +94,35 @@ public class StreamCacheConverter {
             // do nothing here
         }
 
+    }
+    
+    /*
+     * {@link StreamCache} implementation for Cache the StreamSource {@link StreamSource}s
+     */
+    private class StreamSourceCache extends StreamSource implements StreamCache {
+        InputStreamCache inputStreamCache;
+        ReaderCache readCache;
+        
+        public StreamSourceCache(StreamSource source) throws IOException {
+            if (source.getInputStream() != null) {
+                inputStreamCache = new InputStreamCache(IOConverter.toBytes(source.getInputStream()));
+                setInputStream(inputStreamCache);
+                setSystemId(source.getSystemId());
+            }
+            if (source.getReader() != null) {
+                readCache = new ReaderCache(IOConverter.toString(source.getReader()));
+                setReader(readCache);
+            }
+        }
+        public void reset() {
+            if (inputStreamCache != null) {
+                inputStreamCache.reset();
+            }
+            if (readCache != null) {
+                readCache.reset();
+            }            
+        }
+        
     }
 
     private class InputStreamCache extends ByteArrayInputStream implements StreamCache {
