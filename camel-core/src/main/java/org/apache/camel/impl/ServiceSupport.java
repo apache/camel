@@ -135,8 +135,11 @@ public abstract class ServiceSupport implements Service {
             return false;
         }
     }
-    
-    protected synchronized String getVersion() {
+
+    /**
+     * Returns the version of this service
+     */
+    public synchronized String getVersion() {
         if (ObjectHelper.isNotEmpty(version)) {
             return version;
         }
@@ -153,7 +156,6 @@ public abstract class ServiceSupport implements Service {
         } else {
             version = "";
         }
-        
         return version;
     }
 }
