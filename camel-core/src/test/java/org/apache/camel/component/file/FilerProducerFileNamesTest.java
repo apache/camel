@@ -62,7 +62,7 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
                 from("direct:report2").to("file:target/report2.txt?autoCreate=false&directory=false");
 
-                from("direct:report3").setHeader(FileComponent.HEADER_FILE_NAME, constant("report-super.txt")).to("file:target/");
+                from("direct:report3").setHeader(Exchange.FILE_NAME, constant("report-super.txt")).to("file:target/");
             }
         };
     }

@@ -110,6 +110,7 @@ public final class URISupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static Map parseQuery(String uri) throws URISyntaxException {
         try {
             Map rc = new HashMap();
@@ -128,7 +129,9 @@ public final class URISupport {
             }
             return rc;
         } catch (UnsupportedEncodingException e) {
-            throw (URISyntaxException)new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
+            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
+            se.initCause(e);
+            throw se;
         }
     }
 
@@ -220,6 +223,7 @@ public final class URISupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private static String[] splitComponents(String str) {
         ArrayList l = new ArrayList();
 
@@ -271,15 +275,15 @@ public final class URISupport {
             if (options.size() > 0) {
                 StringBuffer rc = new StringBuffer();
                 boolean first = true;
-                for (Iterator iter = options.keySet().iterator(); iter.hasNext();) {
+                for (Object o : options.keySet()) {
                     if (first) {
                         first = false;
                     } else {
                         rc.append("&");
                     }
 
-                    String key = (String)iter.next();
-                    String value = (String)options.get(key);
+                    String key = (String) o;
+                    String value = (String) options.get(key);
                     rc.append(URLEncoder.encode(key, "UTF-8"));
                     rc.append("=");
                     rc.append(URLEncoder.encode(value, "UTF-8"));
@@ -289,7 +293,9 @@ public final class URISupport {
                 return "";
             }
         } catch (UnsupportedEncodingException e) {
-            throw (URISyntaxException)new URISyntaxException(e.toString(), "Invalid encoding").initCause(e);
+            URISyntaxException se = new URISyntaxException(e.toString(), "Invalid encoding");
+            se.initCause(e);
+            throw se;
         }
     }
 

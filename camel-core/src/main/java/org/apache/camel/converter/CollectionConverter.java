@@ -69,6 +69,7 @@ public final class CollectionConverter {
      * Converts a collection to a List if it is not already
      */
     @Converter
+    @SuppressWarnings("unchecked")
     public static List toList(Collection collection) {
         return new ArrayList(collection);
     }
@@ -77,6 +78,7 @@ public final class CollectionConverter {
      * Converts an {@link Iterator} to a {@link ArrayList}
      */
     @Converter
+    @SuppressWarnings("unchecked")
     public static ArrayList toArrayList(Iterator it) {
         ArrayList list = new ArrayList();
         while (it.hasNext()) {
@@ -86,6 +88,7 @@ public final class CollectionConverter {
     }
 
     @Converter
+    @SuppressWarnings("unchecked")
     public static Set toSet(Object[] array) {
         Set answer = new HashSet();
         answer.addAll(Arrays.asList(array));
@@ -93,6 +96,7 @@ public final class CollectionConverter {
     }
 
     @Converter
+    @SuppressWarnings("unchecked")
     public static Set toSet(Collection collection) {
         return new HashSet(collection);
     }
@@ -103,6 +107,7 @@ public final class CollectionConverter {
     }
 
     @Converter
+    @SuppressWarnings("unchecked")
     public static Properties toProperties(Map map) {
         Properties answer = new Properties();
         answer.putAll(map);
@@ -110,11 +115,13 @@ public final class CollectionConverter {
     }
 
     @Converter
+    @SuppressWarnings("unchecked")
     public static Hashtable toHashtable(Map map) {
         return new Hashtable(map);
     }
 
     @Converter
+    @SuppressWarnings("unchecked")
     public static HashMap toHashMap(Map map) {
         return new HashMap(map);
     }
@@ -123,6 +130,7 @@ public final class CollectionConverter {
      * Converts an {@link Iterable} into a {@link List} 
      */
     @Converter
+    @SuppressWarnings("unchecked")
     public static List toList(Iterable iterable) {
         if (iterable instanceof List) {
             return (List) iterable;

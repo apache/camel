@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -27,7 +28,7 @@ public class FileFilterOnNameRouteTest extends FileRouteTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).filter(header(FileComponent.HEADER_FILE_NAME).contains("-")).to("mock:result");
+                from(uri).filter(header(Exchange.FILE_NAME).contains("-")).to("mock:result");
             }
         };
     }

@@ -20,8 +20,8 @@ import java.io.File;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -53,7 +53,7 @@ public class SpringFtpEndpointTest extends AbstractJUnit38SpringContextTests {
     public void testFtpEndpointAsSpringBean() throws Exception {
         result.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader(inputFTP, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(inputFTP, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }

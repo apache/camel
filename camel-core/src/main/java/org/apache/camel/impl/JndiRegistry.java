@@ -79,6 +79,7 @@ public class JndiRegistry implements Registry {
         this.context = context;
     }
 
+    @SuppressWarnings("unchecked")
     protected Context createContext() throws NamingException {
         Hashtable properties = new Hashtable(System.getProperties());
         return new InitialContext(properties);

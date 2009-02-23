@@ -109,7 +109,7 @@ public class FileLanguageTest extends LanguageTestSupport {
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/filelanguage";
-        template.sendBodyAndHeader(uri, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         // get the file handle
         file = new File("target/filelanguage/hello.txt");

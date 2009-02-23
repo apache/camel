@@ -20,9 +20,9 @@ import java.io.File;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.hamcrest.Assertions;
@@ -51,7 +51,7 @@ public class SpringFileRouteTest extends AbstractJUnit38SpringContextTests {
         result.expectedBodiesReceived(expectedBody);
         result.setResultWaitTime(5000);
 
-        template.sendBodyAndHeader(inputFile, expectedBody, FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(inputFile, expectedBody, Exchange.FILE_NAME, "hello.txt");
 
         result.assertIsSatisfied();
     }

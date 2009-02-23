@@ -97,6 +97,7 @@ public class StreamResequencerConfig {
      * 
      * @param capacity   capacity of the resequencer's inbound queue.
      * @param timeout    minimum time to wait for missing elements (messages).
+     * @param comparator comparator for sequence comparision
      */
     public StreamResequencerConfig(int capacity, long timeout, ExpressionResultComparator comparator) {
         this.capacity = capacity;

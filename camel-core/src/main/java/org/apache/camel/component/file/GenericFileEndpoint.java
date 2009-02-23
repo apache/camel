@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Component;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -434,7 +435,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
             name = name.substring(1);
         }
 
-        message.setHeader(FileComponent.HEADER_FILE_NAME, name);
+        message.setHeader(Exchange.FILE_NAME, name);
     }
 
     protected Map<String, Object> getParamsAsMap() {

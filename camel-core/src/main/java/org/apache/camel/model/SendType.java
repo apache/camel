@@ -89,6 +89,7 @@ public class SendType<Type extends ProcessorType> extends ProcessorType<Type> {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }

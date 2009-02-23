@@ -25,8 +25,6 @@ import org.apache.camel.Exchange;
  */
 public interface DataSet {
 
-    String INDEX_HEADER = "camelDataSetIndex";
-
     /**
      * Populates a message exchange when using the DataSet as a source of messages
      */

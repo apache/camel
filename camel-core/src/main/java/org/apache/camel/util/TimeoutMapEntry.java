@@ -52,7 +52,7 @@ public class TimeoutMapEntry implements Comparable, Map.Entry {
     }
 
     public Object setValue(Object value) {
-        Object oldValue = value;
+        Object oldValue = this.value;
         this.value = value;
         return oldValue;
     }

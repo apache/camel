@@ -420,9 +420,6 @@ public class XmlConverter {
 
     /**
      * Converts the given TRaX Source into a W3C DOM node
-     * @throws SAXException
-     * @throws IOException
-     * @throws ParserConfigurationException
      */
     @Converter
     public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {

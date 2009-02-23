@@ -42,10 +42,8 @@ public class Timeout extends TimerTask {
      * timeout value. The task is not scheduled immediately. It will be
      * scheduled by calling this task's {@link #schedule()} method.
      * 
-     * @param timer
-     *            a timer
-     * @param timeout
-     *            a timeout value.
+     * @param timer a timer
+     * @param timeout a timeout value.
      */
     public Timeout(Timer timer, long timeout) {
         this.timeout = timeout;

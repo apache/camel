@@ -43,7 +43,7 @@ public class NewFileProduceTest extends ContextTestSupport {
         Endpoint endpoint = comp.createEndpoint("file://target/producefile", "target/producefile", new HashMap());
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "bye.txt");
+                exchange.getIn().setHeader(Exchange.FILE_NAME, "bye.txt");
                 exchange.getIn().setBody("Bye World");
             }
         });

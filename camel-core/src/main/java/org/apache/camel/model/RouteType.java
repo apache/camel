@@ -287,14 +287,6 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         for (InterceptorType interceptor : interceptors) {
             output.addInterceptor(interceptor);
         }
-/*
-        List<InterceptorType> list = output.getInterceptors();
-        if (list == null) {
-            LOG.warn("No interceptor collection: " + output);
-        } else {
-            list.addAll(getInterceptors());
-        }
-*/
     }
 
     @Override

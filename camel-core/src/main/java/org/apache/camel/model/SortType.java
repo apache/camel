@@ -93,6 +93,7 @@ public class SortType extends OutputType<SortType> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }

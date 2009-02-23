@@ -20,8 +20,8 @@ import java.io.File;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.ftpserver.FtpServer;
 import org.apache.ftpserver.FtpServerFactory;
@@ -52,11 +52,11 @@ public class SpringFileAntPathMatcherRemoteFileFilterTest extends AbstractJUnit3
     public void testAntPatchMatherFilter() throws Exception {
         result.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader(inputFTP, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(inputFTP, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.xml");
-        template.sendBodyAndHeader(inputFTP, "Bad world", FileComponent.HEADER_FILE_NAME, "subfolder/badday.txt");
-        template.sendBodyAndHeader(inputFTP, "Day world", FileComponent.HEADER_FILE_NAME, "day.xml");
-        template.sendBodyAndHeader(inputFTP, expectedBody, FileComponent.HEADER_FILE_NAME, "subfolder/foo/godday.txt");
+        template.sendBodyAndHeader(inputFTP, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(inputFTP, "Bye World", Exchange.FILE_NAME, "bye.xml");
+        template.sendBodyAndHeader(inputFTP, "Bad world", Exchange.FILE_NAME, "subfolder/badday.txt");
+        template.sendBodyAndHeader(inputFTP, "Day world", Exchange.FILE_NAME, "day.xml");
+        template.sendBodyAndHeader(inputFTP, expectedBody, Exchange.FILE_NAME, "subfolder/foo/godday.txt");
 
         result.assertIsSatisfied();
     }

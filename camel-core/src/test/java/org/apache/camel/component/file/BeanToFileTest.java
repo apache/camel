@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
@@ -50,7 +51,7 @@ public class BeanToFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:in").
                     to("bean:myBean").
-                    setHeader(FileComponent.HEADER_FILE_NAME, constant("BeanToFileTest.txt")).
+                    setHeader(Exchange.FILE_NAME, constant("BeanToFileTest.txt")).
                     to("file://target/?append=false", "mock:result");
             }
         };

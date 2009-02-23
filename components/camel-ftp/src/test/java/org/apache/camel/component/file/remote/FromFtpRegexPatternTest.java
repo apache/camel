@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -46,10 +46,10 @@ public class FromFtpRegexPatternTest extends FtpServerTestSupport {
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/regexp/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(ftpUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(ftpUrl, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(ftpUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(ftpUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(ftpUrl, "Reports", Exchange.FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

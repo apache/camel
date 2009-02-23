@@ -26,13 +26,11 @@ import org.apache.camel.spi.RouteContext;
 /**
  * @version $Revision$
  */
-public class InstrumentationErrorHandlerWrappingStrategy implements
-        ErrorHandlerWrappingStrategy {
+public class InstrumentationErrorHandlerWrappingStrategy implements ErrorHandlerWrappingStrategy {
 
     private Map<ProcessorType, PerformanceCounter> counterMap;
 
-    public InstrumentationErrorHandlerWrappingStrategy(
-            Map<ProcessorType, PerformanceCounter> counterMap) {
+    public InstrumentationErrorHandlerWrappingStrategy(Map<ProcessorType, PerformanceCounter> counterMap) {
         this.counterMap = counterMap;
     }
 

@@ -42,7 +42,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -62,7 +62,7 @@ public class FileConsumerBeginRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
     }

@@ -97,6 +97,7 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
     /**
      * Factory method to create the data format instance
      */
+    @SuppressWarnings("unchecked")
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatTypeName != null) {
             Class type = ObjectHelper.loadClass(dataFormatTypeName, getClass().getClassLoader());

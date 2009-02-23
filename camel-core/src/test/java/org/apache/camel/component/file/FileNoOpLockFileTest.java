@@ -40,7 +40,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Locked");
 
         template.sendBodyAndHeader("file:target/reports/locked", "Hello Locked",
-            FileComponent.HEADER_FILE_NAME, "report.txt");
+            Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 
@@ -56,7 +56,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Not Locked");
 
         template.sendBodyAndHeader("file:target/reports/notlocked", "Hello Not Locked",
-            FileComponent.HEADER_FILE_NAME, "report.txt");
+            Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 

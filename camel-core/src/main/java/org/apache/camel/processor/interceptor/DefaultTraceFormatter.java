@@ -263,7 +263,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
         // assemble result with and without the to/from
         if (showNode) {
-            result = id.trim() + " >>> " + from.toString() + " --> " + to.trim();
+            result = id.trim() + " >>> " + from + " --> " + to.trim();
             if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
                 result += " (OUT) ";
             }

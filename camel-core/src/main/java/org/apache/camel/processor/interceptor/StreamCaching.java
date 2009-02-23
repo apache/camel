@@ -33,9 +33,6 @@ public final class StreamCaching implements InterceptStrategy {
         super();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @SuppressWarnings("unchecked")
     public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         return new StreamCachingInterceptor(target);

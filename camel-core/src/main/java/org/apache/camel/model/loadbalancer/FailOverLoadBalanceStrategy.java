@@ -20,9 +20,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -38,11 +38,11 @@ public class FailOverLoadBalanceStrategy extends LoadBalancerType {
         if (ObjectHelper.isNotEmpty(failedException)) {
             Class failExceptionClazz = ObjectHelper.loadClass(failedException);
             if (failExceptionClazz == null) {
-                throw new RuntimeCamelException("Can't find the failException " + failedException + " for the FailOverLoadBalancer");
+                throw new RuntimeCamelException("Cannot find failException: " + failedException + " to be used with this FailOverLoadBalancer");
             }
-            return new org.apache.camel.processor.loadbalancer.FailOverLoadBalancer(failExceptionClazz);
+            return new FailOverLoadBalancer(failExceptionClazz);
         } else {
-            return new org.apache.camel.processor.loadbalancer.FailOverLoadBalancer();
+            return new FailOverLoadBalancer();
         }
     }
     

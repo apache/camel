@@ -64,7 +64,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
                 handleInteruptedException(e);
             }
         }
-        LOG.debug("Consumer is not running, so returning null");
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Consumer is not running, so returning null");
+        }
         return null;
     }
 

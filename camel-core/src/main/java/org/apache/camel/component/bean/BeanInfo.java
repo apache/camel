@@ -108,7 +108,7 @@ public class BeanInfo {
         MethodInfo methodInfo = null;
 
         // TODO use some other mechanism?
-        String name = exchange.getIn().getHeader(BeanProcessor.METHOD_NAME, String.class);
+        String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (name != null) {
             methodInfo = operations.get(name);
         }
@@ -231,6 +231,7 @@ public class BeanInfo {
         return answer;
     }
 
+    @SuppressWarnings("unchecked")
     protected MethodInfo createMethodInfo(Class clazz, Method method) {
         Class[] parameterTypes = method.getParameterTypes();
         Annotation[][] parametersAnnotations = method.getParameterAnnotations();
@@ -299,6 +300,7 @@ public class BeanInfo {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     protected MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
         // lets see if we can find a method who's body param type matches the message body
         Message in = exchange.getIn();
@@ -339,8 +341,7 @@ public class BeanInfo {
                         value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
                         if (value != null) {
                             if (newBody != null) {
-                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched,
-                                                                                               methodInfo));
+                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
                             } else {
                                 newBody = value;
                                 matched = methodInfo;
@@ -397,8 +398,7 @@ public class BeanInfo {
 
         // TODO look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
-            Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType,
-                                                                                annotation);
+            Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType, annotation);
             if (answer != null) {
                 return answer;
             }

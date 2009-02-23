@@ -16,14 +16,7 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.File;
-
-import org.apache.camel.CamelException;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$

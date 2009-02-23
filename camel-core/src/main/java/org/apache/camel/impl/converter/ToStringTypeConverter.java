@@ -27,6 +27,7 @@ import org.apache.camel.TypeConverter;
  */
 public class ToStringTypeConverter implements TypeConverter {
 
+    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> toType, Object value) {
         if (value != null) {
             if (toType.equals(String.class)) {

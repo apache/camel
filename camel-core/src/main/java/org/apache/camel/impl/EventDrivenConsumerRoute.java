@@ -31,7 +31,7 @@ import org.apache.camel.Service;
  *
  * @version $Revision$
  */
-public class EventDrivenConsumerRoute<E extends Exchange> extends Route<E> {
+public class EventDrivenConsumerRoute extends Route {
     private Processor processor;
 
     public EventDrivenConsumerRoute(Endpoint endpoint, Processor processor) {

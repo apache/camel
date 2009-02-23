@@ -42,7 +42,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
-    private CamelContext context;
+    private final CamelContext context;
     private final ProducerCache producerCache = new ProducerCache();
     private boolean useEndpointCache = true;
     private final Map<String, Endpoint> endpointCache = new HashMap<String, Endpoint>();
@@ -296,7 +296,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public <T extends Endpoint> T getResolvedEndpoint(String endpointUri, Class<T> expectedClass) {
-        Endpoint e = null;
+        Endpoint e;
         synchronized (endpointCache) {
             e = endpointCache.get(endpointUri);
         }

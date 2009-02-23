@@ -18,7 +18,7 @@ package org.apache.camel.component.file.strategy;
 
 import java.io.File;
 
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
@@ -71,7 +71,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
 
     private void deleteLocalWorkFile(GenericFileExchange<T> exchange) {
         // delete local work file, if it was used (eg by ftp component)
-        File local = exchange.getIn().getHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, File.class);
+        File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
             if (log.isTraceEnabled()) {
                 log.trace("Deleting lock work file: " + local);

@@ -100,11 +100,12 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
     /**
      * Factory method to create the load balancer instance
      */
+    @SuppressWarnings("unchecked")
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         if (loadBalancerTypeName != null) {
             Class type = ObjectHelper.loadClass(loadBalancerTypeName, getClass().getClassLoader());
             if (type == null) {
-                throw new IllegalArgumentException("The class " + loadBalancerTypeName + " is not on the classpath! Cannot use the loadBalancer " + this);
+                throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }
             return (LoadBalancer) ObjectHelper.newInstance(type);
         }
@@ -136,12 +137,10 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
         ObjectHelper.notNull(loadBalancer, "loadBalancer");
         
         return loadBalancer.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSynchronously) {
+            public void done(boolean sync) {
                 // Only handle the async case...
-                if (doneSynchronously) {
-                    return;
-                } else {
-                    callback.done(doneSynchronously);
+                if (!sync) {
+                    callback.done(sync);
                 }
             }
         });                

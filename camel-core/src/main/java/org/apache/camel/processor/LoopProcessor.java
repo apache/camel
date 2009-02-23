@@ -30,9 +30,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class LoopProcessor extends DelegateProcessor {
-    public static final String PROP_ITER_COUNT = "CamelIterationCount";
-    public static final String PROP_ITER_INDEX = "CamelIterationIndex";
-
     private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
 
     private Expression expression;
@@ -50,13 +47,16 @@ public class LoopProcessor extends DelegateProcessor {
         Integer value = ExchangeHelper.convertToType(exchange, Integer.class, text);
         if (value == null) {
             // TODO: we should probably catch evaluate/convert exception an set is as fault (after fix for CAMEL-316)
-            throw new RuntimeCamelException("Expression \"" + expression + "\" does not evaluate to an int.");
+            throw new RuntimeCamelException("Expression \"" + expression + "\" is not convertable to an Integer.");
         }
-        int count = value.intValue();
-        exchange.setProperty(PROP_ITER_COUNT, count);
+
+        int count = value;
+        exchange.setProperty(Exchange.LOOP_SIZE, count);
         for (int i = 0; i < count; i++) {
-            LOG.debug("LoopProcessor: iteration #" + i);
-            exchange.setProperty(PROP_ITER_INDEX, i);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("LoopProcessor: iteration #" + i);
+            }
+            exchange.setProperty(Exchange.LOOP_INDEX, i);
             super.process(exchange);
         }
     }

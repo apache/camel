@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
@@ -141,12 +142,12 @@ public class FileOperations implements GenericFileOperations<File> {
                 // so try to see if we can optimize by renaming the local work path file instead of doing
                 // a full file to file copy, as the local work copy is to be deleted afterwords anyway
                 // local work path
-                File local = exchange.getIn().getHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, File.class);
+                File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
                 if (local != null && local.exists()) {
                     boolean renamed = writeFileByLocalWorkPath(local, file);
                     if (renamed) {
                         // clear header as we have renamed the file
-                        exchange.getIn().setHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, null);
+                        exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, null);
                         // return as the operation is complete, we just renamed the local work file
                         // to the target.
                         return true;

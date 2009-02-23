@@ -45,8 +45,6 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the schema that failed
-     * 
-     * @return the schema that failed
      */
     public Object getSchema() {
         return schema;
@@ -54,8 +52,6 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the validation errors
-     * 
-     * @return the validation errors
      */
     public List<SAXParseException> getErrors() {
         return errors;
@@ -63,8 +59,6 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the fatal validation errors
-     * 
-     * @return the fatal validation errors
      */
     public List<SAXParseException> getFatalErrors() {
         return fatalErrors;
@@ -72,8 +66,6 @@ public class SchemaValidationException extends ValidationException {
 
     /**
      * Returns the validation warnings
-     * 
-     * @return the validation warnings
      */
     public List<SAXParseException> getWarnings() {
         return warnings;

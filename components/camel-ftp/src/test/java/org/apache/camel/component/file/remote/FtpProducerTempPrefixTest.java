@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import java.io.File;
 
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.converter.IOConverter;
 
 /**

@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -33,16 +34,16 @@ public class FileConsumerDirectoryNotMatchedTest extends ContextTestSupport {
         super.setUp();
 
         template.sendBodyAndHeader("file:target/dirnotmatched/", "This is a dot file",
-            FileComponent.HEADER_FILE_NAME, ".skipme");
+            Exchange.FILE_NAME, ".skipme");
 
         template.sendBodyAndHeader("file:target/dirnotmatched/", "This is a web file",
-            FileComponent.HEADER_FILE_NAME, "index.html");
+            Exchange.FILE_NAME, "index.html");
 
         template.sendBodyAndHeader("file:target/dirnotmatched/2007", "2007 report",
-            FileComponent.HEADER_FILE_NAME, "report2007.txt");
+            Exchange.FILE_NAME, "report2007.txt");
 
         template.sendBodyAndHeader("file:target/dirnotmatched/2008", "2008 report",
-            FileComponent.HEADER_FILE_NAME, "report2008.txt");
+            Exchange.FILE_NAME, "report2008.txt");
     }
 
     public void testSkipDirectories() throws Exception {

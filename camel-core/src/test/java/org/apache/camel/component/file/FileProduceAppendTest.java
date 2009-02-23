@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -53,8 +54,8 @@ public class FileProduceAppendTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/test-file-append");
         super.setUp();
-        template.sendBodyAndHeader("file://target/test-file-append", "Hello", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/test-file-append", " World", FileComponent.HEADER_FILE_NAME, "world.txt");
+        template.sendBodyAndHeader("file://target/test-file-append", "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/test-file-append", " World", Exchange.FILE_NAME, "world.txt");
     }
 
     @Override
@@ -62,7 +63,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .setHeader(FileComponent.HEADER_FILE_NAME, constant("hello.txt"))
+                    .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
                     .to("file://target/test-file-append?append=true", "mock:result");
             }
         };

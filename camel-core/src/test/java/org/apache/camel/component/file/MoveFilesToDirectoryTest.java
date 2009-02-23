@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -34,7 +35,7 @@ public class MoveFilesToDirectoryTest extends ContextTestSupport {
     protected boolean noop;
 
     public void testFileRoute() throws Exception {
-        template.sendBodyAndHeader("file:" + inputDirectory, expectedBody, FileComponent.HEADER_FILE_NAME, fileName);
+        template.sendBodyAndHeader("file:" + inputDirectory, expectedBody, Exchange.FILE_NAME, fileName);
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived(expectedBody);

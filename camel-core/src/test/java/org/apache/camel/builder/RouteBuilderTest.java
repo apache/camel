@@ -63,7 +63,7 @@ public class RouteBuilderTest extends TestSupport {
         List<Route> routes = buildSimpleRoute();
 
         assertEquals("Number routes created", 1, routes.size());
-        for (Route<Exchange> route : routes) {
+        for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);

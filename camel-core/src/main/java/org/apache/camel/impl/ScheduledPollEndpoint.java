@@ -77,6 +77,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         configureScheduledPollConsumerProperties(options, consumerProperties);
     }
 
+    @SuppressWarnings("unchecked")
     private void configureScheduledPollConsumerProperties(Map options, Map consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix

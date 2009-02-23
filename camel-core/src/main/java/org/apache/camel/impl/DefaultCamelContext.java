@@ -25,13 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-
 import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
@@ -58,9 +57,7 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
@@ -69,7 +66,6 @@ import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
-
 /**
  * Represents the context used to configure routes and the policies to use.
  *
@@ -124,7 +120,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
             // if not created then fallback to default
             if (lifecycleStrategy == null) {
-                LOG.warn("Not possible to use JMX lifecycle strategy. Using DefaultLifecycleStrategy instead.");
+                LOG.warn("Cannot use JMX lifecycle strategy. Using DefaultLifecycleStrategy instead.");
                 lifecycleStrategy = new DefaultLifecycleStrategy();
             }
         }
@@ -162,7 +158,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         ObjectHelper.notNull(component, "component");
         synchronized (components) {
             if (components.containsKey(componentName)) {
-                throw new IllegalArgumentException("Component previously added: " + componentName);
+                throw new IllegalArgumentException("Cannot add component as its already previously added: " + componentName);
             }
             component.setCamelContext(this);
             components.put(componentName, component);
@@ -239,9 +235,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public Map<String,Endpoint> getEndpointMap() {
+    public Map<String, Endpoint> getEndpointMap() {
         synchronized (endpoints) {
-            return new TreeMap<String,Endpoint>(endpoints);
+            return new TreeMap<String, Endpoint>(endpoints);
         }
     }
 
@@ -353,7 +349,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {
-                    LOG.debug("Failed to resolve endpoint " + uri + ". Reason: " + e, e);
                     throw new ResolveEndpointFailedException(uri, e);
                 }
             }
@@ -382,7 +377,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public void setRoutes(List<Route> routes) {
         this.routes = routes;
-        throw new UnsupportedOperationException("overriding existing routes is not supported yet, use addRoutes instead");
+        throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRoutes instead");
     }
 
     public void addRoutes(Collection<Route> routes) throws Exception {
@@ -684,7 +679,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     protected void startRoutes(Collection<Route> routeList) throws Exception {
         if (routeList != null) {
-            for (Route<Exchange> route : routeList) {
+            for (Route route : routeList) {
                 List<Service> services = route.getServicesForRoute();
                 for (Service service : services) {
                     addService(service);
@@ -776,7 +771,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Attempt to convert the bean from a {@link Registry} to an endpoint using
+     * Strategy method for attempting to convert the bean from a {@link Registry} to an endpoint using
      * some kind of transformation or wrapper
      *
      * @param uri  the uri for the endpoint (and name in the registry)
@@ -830,8 +825,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
-        }
-        else {
+        } else {
             // lets try find the first endpoint key which is free
             for (int counter = 0; true; counter++) {
                 String key = (counter > 0) ? uri + ":" + counter : uri;

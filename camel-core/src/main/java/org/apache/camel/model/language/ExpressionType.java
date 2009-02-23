@@ -90,7 +90,7 @@ public class ExpressionType implements Expression, Predicate {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (getLanguage() != null) {
-            sb.append(getLanguage() + "{");
+            sb.append(getLanguage()).append("{");
         }
         if (getExpression() != null) {
             sb.append(getExpression());

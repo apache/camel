@@ -18,9 +18,9 @@ package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,6 +37,7 @@ public class DefaultComponentResolver implements ComponentResolver {
             new FactoryFinder("META-INF/services/org/apache/camel/component/");
     private static final transient Log LOG = LogFactory.getLog(DefaultComponentResolver.class);
 
+    @SuppressWarnings("unchecked")
     public Component resolveComponent(String name, CamelContext context) {
         Object bean = null;
         try {
@@ -45,7 +46,7 @@ public class DefaultComponentResolver implements ComponentResolver {
                 LOG.debug("Found component: " + name + " in registry: " + bean);
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            LOG.debug("Ignored error looking up bean: " + name, e);
         }
         if (bean != null) {
             if (bean instanceof Component) {

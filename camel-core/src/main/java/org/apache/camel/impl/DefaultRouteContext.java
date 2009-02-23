@@ -18,14 +18,12 @@ package org.apache.camel.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Intercept;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
@@ -39,7 +37,6 @@ import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
-import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -131,6 +128,7 @@ public class DefaultRouteContext implements RouteContext {
         return getCamelContext().getRegistry().lookup(name, type);
     }
 
+    @SuppressWarnings("unchecked")
     public void commit() {
         // now lets turn all of the event driven consumer processors into a
         // single route
@@ -157,18 +155,6 @@ public class DefaultRouteContext implements RouteContext {
     }
 
     public void intercept(Intercept interceptor) {
-/*
-        InterceptorRef block = new InterceptorRef(interceptor);
-        RouteType route = getRoute();
-        List<ProcessorType<?>> list = route.getOutputs();
-        for (ProcessorType<?> processorType : list) {
-            block.addOutput(processorType);
-        }
-        route.clearOutput();
-        route.intercept(block);
-*/
-
-        //getRoute().getInterceptors().add(new InterceptorRef(interceptor));
         lastInterceptor = (Interceptor)interceptor;
     }
 
@@ -198,16 +184,14 @@ public class DefaultRouteContext implements RouteContext {
 
     public void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy) {
         errorHandlerWrappingStrategy = strategy;
-        
     }
 
     public boolean isRouteAdded() {
         return routeAdded;
     }
 
-    public void setIsRouteAdded(boolean b) {
-        routeAdded = b;
-        
+    public void setIsRouteAdded(boolean routeAdded) {
+        this.routeAdded = routeAdded;
     }
 
     public DataFormatType getDataFormat(String ref) {

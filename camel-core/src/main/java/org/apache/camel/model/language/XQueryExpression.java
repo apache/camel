@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,7 +94,7 @@ public class XQueryExpression extends NamespaceAwareExpression {
             try {
                 resultType = Class.forName(type);
             } catch (ClassNotFoundException e) {
-                LOG.error("ClassNotFoundException creating class: " + type);
+                throw new RuntimeCamelException(e);
             }
         }
     }

@@ -41,8 +41,8 @@ public class LoopTestProcessor implements Processor {
     }
 
     public void process(Exchange exchange) {
-        Integer c = exchange.getProperty(LoopProcessor.PROP_ITER_COUNT, Integer.class);
-        Integer i = exchange.getProperty(LoopProcessor.PROP_ITER_INDEX, Integer.class);
+        Integer c = exchange.getProperty(Exchange.LOOP_SIZE, Integer.class);
+        Integer i = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
         if (c == null || c.intValue() != this.count) {
             exchange.setException(new CamelException(
                 "Invalid count value.  Expected " + this.count + " but was " + c));

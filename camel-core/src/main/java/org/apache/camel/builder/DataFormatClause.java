@@ -223,8 +223,7 @@ public class DataFormatClause<T extends ProcessorType> {
     /**
      * Uses the XML Security data format
      */
-    public T secureXML(String secureTag, boolean secureTagContents, String passPhrase,
-                        String xmlCipherAlgorithm) {
+    public T secureXML(String secureTag, boolean secureTagContents, String passPhrase, String xmlCipherAlgorithm) {
         XMLSecurityDataFormat xsdf = new XMLSecurityDataFormat(secureTag, secureTagContents, passPhrase, xmlCipherAlgorithm);
         return dataFormat(xsdf);
     }

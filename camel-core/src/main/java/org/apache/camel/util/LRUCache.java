@@ -37,7 +37,7 @@ public class LRUCache<K, V> extends LinkedHashMap<K, V> {
      * specified initial capacity, maximumCacheSize,load factor and ordering mode.
      *
      * @param initialCapacity  the initial capacity.
-     * @param maximumCacheSize
+     * @param maximumCacheSize the max capacity.
      * @param loadFactor       the load factor.
      * @param accessOrder      the ordering mode - <tt>true</tt> for
      *                         access-order, <tt>false</tt> for insertion-order.

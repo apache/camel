@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
@@ -25,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,7 +38,7 @@ public class BeanRouteTest extends ContextTestSupport {
     public void testSendingMessageWithMethodNameHeader() throws Exception {
         String expectedBody = "Wobble";
 
-        template.sendBodyAndHeader("direct:in", expectedBody, BeanProcessor.METHOD_NAME, "read");
+        template.sendBodyAndHeader("direct:in", expectedBody, Exchange.BEAN_METHOD_NAME, "read");
 
         assertEquals("bean received correct value for: " + myBean, expectedBody, myBean.body);
     }
@@ -52,7 +50,7 @@ public class BeanRouteTest extends ContextTestSupport {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody(expectedBody);
-                in.setHeader(BeanProcessor.METHOD_NAME, "read");
+                in.setHeader(Exchange.BEAN_METHOD_NAME, "read");
             }
         });
         assertEquals("bean received correct value", expectedBody, myBean.body);

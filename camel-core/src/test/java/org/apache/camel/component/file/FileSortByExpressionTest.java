@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -40,13 +41,13 @@ public class FileSortByExpressionTest extends ContextTestSupport {
 
     private void prepareFolder(String folder) {
         template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Paris",
-            FileComponent.HEADER_FILE_NAME, "paris.dat");
+            Exchange.FILE_NAME, "paris.dat");
 
         template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello London",
-            FileComponent.HEADER_FILE_NAME, "london.txt");
+            Exchange.FILE_NAME, "london.txt");
 
         template.sendBodyAndHeader("file:target/filesorter/" + folder, "Hello Copenhagen",
-            FileComponent.HEADER_FILE_NAME, "copenhagen.xml");
+            Exchange.FILE_NAME, "copenhagen.xml");
     }
 
     public void testSortFiles() throws Exception {

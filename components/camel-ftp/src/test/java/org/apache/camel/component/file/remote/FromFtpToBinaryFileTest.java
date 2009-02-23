@@ -22,7 +22,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 
@@ -64,7 +63,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         Endpoint endpoint = context.getEndpoint(getFtpUrl());
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(IOConverter.toFile("src/test/data/ftpbinarytest/logo.jpeg"));
-        exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "logo.jpeg");
+        exchange.getIn().setHeader(Exchange.FILE_NAME, "logo.jpeg");
         Producer producer = endpoint.createProducer();
         producer.start();
         producer.process(exchange);
@@ -75,7 +74,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 String fileUrl = "file:target/ftptest/?noop=true&append=false";
-                from(getFtpUrl()).setHeader(FileComponent.HEADER_FILE_NAME, constant("deleteme.jpg"))
+                from(getFtpUrl()).setHeader(Exchange.FILE_NAME, constant("deleteme.jpg"))
                         .to(fileUrl, "mock:result");
             }
         };

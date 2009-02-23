@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -45,9 +46,9 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     }
 
     public void testConsumeFileBasedOnBeanName() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage/bean", "Hello World", FileComponent.HEADER_FILE_NAME, "122.txt");
-        template.sendBodyAndHeader("file://target/filelanguage/bean", "Goodday World", FileComponent.HEADER_FILE_NAME, "123.txt");
-        template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", FileComponent.HEADER_FILE_NAME, "124.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Hello World", Exchange.FILE_NAME, "122.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Goodday World", Exchange.FILE_NAME, "123.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/bean", "Bye World", Exchange.FILE_NAME, "124.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -67,9 +68,9 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     }
 
     public void testConsumeFileBasedOnDatePattern() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage/date", "Bye World", FileComponent.HEADER_FILE_NAME, "myfile-20081128.txt");
-        template.sendBodyAndHeader("file://target/filelanguage/date", "Hello World", FileComponent.HEADER_FILE_NAME, "myfile-20081129.txt");
-        template.sendBodyAndHeader("file://target/filelanguage/date", "Goodday World", FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Bye World", Exchange.FILE_NAME, "myfile-20081128.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Hello World", Exchange.FILE_NAME, "myfile-20081129.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Goodday World", Exchange.FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override

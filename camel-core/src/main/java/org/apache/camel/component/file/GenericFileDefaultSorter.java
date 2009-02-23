@@ -138,8 +138,7 @@ public final class GenericFileDefaultSorter {
             }
 
             public String toString() {
-                return expression
-                        + (nested != null ? ";" + nested.toString() : "");
+                return expression + (nested != null ? ";" + nested.toString() : "");
             }
         };
     }

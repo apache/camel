@@ -51,6 +51,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
                + ", processor=" + nextProcessor + "]";
     }
 
+    @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         String messageId = messageIdExpression.evaluate(exchange, String.class);
         if (messageId == null) {

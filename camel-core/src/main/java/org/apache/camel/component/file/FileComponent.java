@@ -25,35 +25,9 @@ import java.util.Map;
 public class FileComponent extends GenericFileComponent<File> {
 
     /**
-     * Header key holding the value: the fixed filename to use for producing files.
-     */
-    public static final String HEADER_FILE_NAME = "CamelFileName";
-
-    /**
-     * Header key holding the value: absolute filepath for the actual file produced (by file producer).
-     * Value is set automatically by Camel
-     */
-    public static final String HEADER_FILE_NAME_PRODUCED = "CamelFileNameProduced";
-
-    /**
-     * Header key holding the value: current index of total in the batch being consumed
-     */
-    public static final String HEADER_FILE_BATCH_INDEX = "CamelFileBatchIndex";
-
-    /**
-     * Header key holding the value: total in the batch being consumed
-     */
-    public static final String HEADER_FILE_BATCH_TOTAL = "CamelFileBatchTotal";
-
-    /**
      * Default camel lock filename postfix
      */
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
-
-    /**
-     * Header key holding file path to a local work directory containg a consumed file (if any)
-     */
-    public static final String HEADER_FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map parameters) throws Exception {
         File file = new File(remaining);

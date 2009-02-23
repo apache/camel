@@ -38,7 +38,6 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
 
     public synchronized Expression getDefaultParameterTypeExpression(Class parameterType) {
         Expression expression = parameterTypeToExpressionMap.get(parameterType);
-
         return expression;
     }
 

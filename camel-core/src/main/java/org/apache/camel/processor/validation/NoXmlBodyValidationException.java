@@ -27,6 +27,6 @@ import org.apache.camel.ValidationException;
 public class NoXmlBodyValidationException extends ValidationException {
 
     public NoXmlBodyValidationException(Exchange exchange) {
-        super(exchange, "No XML body could be found on the input message" + exchange);
+        super(exchange, "No XML body could be found on the input message");
     }
 }

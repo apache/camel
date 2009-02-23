@@ -34,6 +34,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "filter")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FilterType extends ExpressionNode implements Block {
+
     public FilterType() {
     }
 

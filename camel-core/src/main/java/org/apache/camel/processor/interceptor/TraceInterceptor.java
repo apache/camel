@@ -151,6 +151,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         logger.process(exchange);
     }
 
+    @SuppressWarnings("unchecked")
     protected void traceExchange(Exchange exchange) throws Exception {
         // should we send a trace event to an optional destination?
         if (tracer.getDestination() != null || tracer.getDestinationUri() != null) {

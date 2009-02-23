@@ -73,6 +73,7 @@ public class RoutingSlipType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }

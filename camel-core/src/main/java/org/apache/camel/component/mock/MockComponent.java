@@ -35,7 +35,7 @@ public class MockComponent extends DefaultComponent {
         MockEndpoint endpoint = new MockEndpoint(uri, this);
         Integer value = getAndRemoveParameter(parameters, "reportGroup", Integer.class);
         if (value != null) {
-            Processor reporter = new ThroughputLogger("org.apache.camel.mock:" + remaining, value);
+            Processor reporter = new ThroughputLogger("org.apache.camel.component.mock:" + remaining, value);
             endpoint.setReporter(reporter);
         }
         return endpoint;

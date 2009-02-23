@@ -108,6 +108,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void onRoutesAdd(Collection<Route> routes) {
         // the agent hasn't been started
         if (!initialized) {

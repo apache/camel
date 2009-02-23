@@ -48,6 +48,7 @@ public class GenericFile<T> implements Serializable {
      * @param source the source
      * @return a clone of the source
      */
+    @SuppressWarnings("unchecked")
     public GenericFile<T> copyFrom(GenericFile<T> source) {
         GenericFile<T> result;
         try {
@@ -82,7 +83,6 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        
         newName = needToNormalize()
             // must normalize path to cater for Windows and other OS
             ? FileUtil.normalizePath(newName)
@@ -185,13 +185,11 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setAbsoluteFileName(String absoluteFileName) {
-               
         this.absoluteFileName = needToNormalize()
             // must normalize path to cater for Windows and other OS
             ? FileUtil.normalizePath(absoluteFileName)
             // we don't need to do that for Remote File
             : absoluteFileName;
-        
     }
 
     public String getAbsoluteFileName() {

@@ -71,6 +71,7 @@ public class JndiContext implements Context, Serializable {
         this(env, createBindingsMapFromEnvironment(env));
     }
 
+    @SuppressWarnings("unchecked")
     public JndiContext(Hashtable environment, Map bindings) {
         if (environment == null) {
             this.environment = new Hashtable();
@@ -86,6 +87,7 @@ public class JndiContext implements Context, Serializable {
         this.nameInNamespace = nameInNamespace;
     }
 
+    @SuppressWarnings("unchecked")
     protected JndiContext(JndiContext clone, Hashtable env) {
         this.bindings = clone.bindings;
         this.treeBindings = clone.treeBindings;
@@ -102,6 +104,7 @@ public class JndiContext implements Context, Serializable {
      * properties using $foo.class to point to a class name with $foo.* being
      * properties set on the injected bean
      */
+    @SuppressWarnings("unchecked")
     public static Map createBindingsMapFromEnvironment(Hashtable env) throws Exception {
         Map answer = new HashMap(env);
 
@@ -147,6 +150,7 @@ public class JndiContext implements Context, Serializable {
      * created it). (the names are suitably extended by the segment originally
      * lopped off).
      */
+    @SuppressWarnings("unchecked")
     protected Map internalBind(String name, Object value) throws NamingException {
         assert name != null && name.length() > 0;
         assert !frozen;
@@ -194,6 +198,7 @@ public class JndiContext implements Context, Serializable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Object addToEnvironment(String propName, Object propVal) throws NamingException {
         return environment.put(propName, propVal);
     }

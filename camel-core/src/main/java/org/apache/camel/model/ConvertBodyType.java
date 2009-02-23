@@ -70,6 +70,7 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }
@@ -94,7 +95,7 @@ public class ConvertBodyType extends ProcessorType<ProcessorType> {
         if (typeClass == null) {
             Class clazz = createTypeClass();
             if (clazz == null) {
-                throw new RuntimeCamelException("Can't load the class with the class name: " + getType());
+                throw new RuntimeCamelException("Cannot load the class with the class name: " + getType());
             }
             setTypeClass(clazz);
         }

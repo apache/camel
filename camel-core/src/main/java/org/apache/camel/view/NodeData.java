@@ -55,6 +55,7 @@ public class NodeData {
     public String association = "property";
     private final String imagePrefix;
 
+    @SuppressWarnings("unchecked")
     public NodeData(String id, Object node, String imagePrefix) {
         this.id = id;
         this.imagePrefix = imagePrefix;
@@ -159,8 +160,7 @@ public class NodeData {
             }
         }
         if (isEmpty(this.url) && isNotEmpty(this.nodeType)) {
-            this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase().replace(' ', '-')
-                       + ".html";
+            this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase().replace(' ', '-') + ".html";
         }
         if (node instanceof ProcessorType && this.outputs == null) {
             ProcessorType processorType = (ProcessorType)node;

@@ -17,8 +17,8 @@
 package org.apache.camel.component.velocity;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -30,7 +30,7 @@ public class VelocityContentCacheTest extends ContextTestSupport {
         super.setUp();
 
         // create a vm file in the classpath as this is the tricky reloading stuff
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Hello $headers.name", FileComponent.HEADER_FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Hello $headers.name", Exchange.FILE_NAME, "hello.vm");
     }
 
     public void testNotCached() throws Exception {
@@ -41,7 +41,7 @@ public class VelocityContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", FileComponent.HEADER_FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         mock.expectedBodiesReceived("Bye Paris");
@@ -58,7 +58,7 @@ public class VelocityContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", FileComponent.HEADER_FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye
@@ -76,7 +76,7 @@ public class VelocityContentCacheTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // now change content in the file in the classpath and try again
-        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", FileComponent.HEADER_FILE_NAME, "hello.vm");
+        template.sendBodyAndHeader("file://target/test-classes/org/apache/camel/component/velocity?append=false", "Bye $headers.name", Exchange.FILE_NAME, "hello.vm");
 
         mock.reset();
         // we must expected the original filecontent as the cache is enabled, so its Hello and not Bye

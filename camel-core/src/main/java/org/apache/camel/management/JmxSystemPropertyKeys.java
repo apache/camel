@@ -45,8 +45,7 @@ public final class JmxSystemPropertyKeys {
     public static final String CREATE_CONNECTOR = "org.apache.camel.jmx.createRmiConnector";
     
     // use jvm platform mbean server flag
-    public static final String USE_PLATFORM_MBS = 
-        "org.apache.camel.jmx.usePlatformMBeanServer";
+    public static final String USE_PLATFORM_MBS = "org.apache.camel.jmx.usePlatformMBeanServer";
 
     private JmxSystemPropertyKeys() {
         // not instantiated

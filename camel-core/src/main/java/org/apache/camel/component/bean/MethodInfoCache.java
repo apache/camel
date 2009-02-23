@@ -37,6 +37,7 @@ public class MethodInfoCache {
         this(camelContext, 1000, 10000);
     }
 
+    @SuppressWarnings("unchecked")
     public MethodInfoCache(CamelContext camelContext, int classCacheSize, int methodCacheSize) {
         this(camelContext, createLruCache(classCacheSize), createLruCache(methodCacheSize));
     }

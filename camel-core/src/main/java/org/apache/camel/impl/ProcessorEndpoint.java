@@ -55,7 +55,6 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         this.processor = processor;
     }
 
-
     protected ProcessorEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
     }

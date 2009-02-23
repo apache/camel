@@ -43,7 +43,7 @@ public class FileConsumerBeginAndCommitRenameStrategyTest extends ContextTestSup
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }

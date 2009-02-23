@@ -70,6 +70,7 @@ public final class IntrospectionSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static boolean getProperties(Object target, Map properties, String optionPrefix) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
@@ -160,6 +161,7 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    @SuppressWarnings("unchecked")
     public static Map extractProperties(Map properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
@@ -258,6 +260,7 @@ public final class IntrospectionSupport {
         return setProperty(null, target, name, value);
     }
 
+    @SuppressWarnings("unchecked")
     private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
         if (typeConverter != null) {
             return typeConverter.convertTo(type, value);
@@ -391,6 +394,7 @@ public final class IntrospectionSupport {
         return name;
     }
 
+    @SuppressWarnings("unchecked")
     private static void addFields(Object target, Class startClass, Class stopClass, LinkedHashMap map) {
         if (startClass != stopClass) {
             addFields(target, startClass.getSuperclass(), stopClass, map);

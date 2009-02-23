@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.util.Comparator;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -43,13 +44,13 @@ public class FileSorterRefTest extends ContextTestSupport {
         super.setUp();
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello Paris",
-            FileComponent.HEADER_FILE_NAME, "paris.txt");
+            Exchange.FILE_NAME, "paris.txt");
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello London",
-            FileComponent.HEADER_FILE_NAME, "london.txt");
+            Exchange.FILE_NAME, "london.txt");
 
         template.sendBodyAndHeader("file:target/filesorter/", "Hello Copenhagen",
-            FileComponent.HEADER_FILE_NAME, "copenhagen.txt");
+            Exchange.FILE_NAME, "copenhagen.txt");
     }
 
     public void testSortFiles() throws Exception {

@@ -112,8 +112,7 @@ public final class PredicateBuilder {
     }
 
     /**
-     * A helper method to return true if any of the predicates
-     * matches.
+     * A helper method to return true if any of the predicates matches.
      */
     public static Predicate in(final Predicate... predicates) {
         notNull(predicates, "predicates");
@@ -298,8 +297,7 @@ public final class PredicateBuilder {
 
             @Override
             protected String assertionFailureMessage(Exchange exchange) {
-                return super.assertionFailureMessage(exchange) + " for <" + expression.evaluate(exchange)
-                       + ">";
+                return super.assertionFailureMessage(exchange) + " for <" + expression.evaluate(exchange) + ">";
             }
 
         };

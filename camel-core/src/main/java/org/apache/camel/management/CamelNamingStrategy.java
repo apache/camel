@@ -73,7 +73,7 @@ public class CamelNamingStrategy {
      *
      * @param context the camel context
      * @return generated ObjectName
-     * @throws MalformedObjectNameException
+     * @throws MalformedObjectNameException can be thrown
      */
     public ObjectName getObjectName(CamelContext context) throws MalformedObjectNameException {
         StringBuffer buffer = new StringBuffer();
@@ -130,7 +130,7 @@ public class CamelNamingStrategy {
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=route,name=&lt;route-name&gt;</tt>
      */
     public ObjectName getObjectName(ManagedRoute mbean) throws MalformedObjectNameException {
-        Route<? extends Exchange> route = mbean.getRoute();
+        Route route = mbean.getRoute();
         Endpoint ep = route.getEndpoint();
         String id = (String)route.getProperties().get(Route.ID_PROPERTY);
 
@@ -154,7 +154,7 @@ public class CamelNamingStrategy {
         String cid;
         if (ep != null) {
             ctxid = getContextId(ep.getCamelContext());            
-            cid = ObjectName.quote(ep.getEndpointUri());            
+            cid = ObjectName.quote(ep.getEndpointUri());
         } else {
             ctxid = VALUE_UNKNOWN;
             cid = null;

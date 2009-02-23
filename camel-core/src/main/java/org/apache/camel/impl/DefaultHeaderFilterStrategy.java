@@ -47,7 +47,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private Set<String> outFilter;
     private Pattern outFilterPattern;
 
-    private boolean lowercase;
+    private boolean lowerCase;
     private boolean allowNullValues;
     
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue) {
@@ -168,8 +168,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
      */
-    public boolean isLowercase() {
-        return lowercase;
+    public boolean isLowerCase() {
+        return lowerCase;
     }
     
     /**
@@ -178,8 +178,8 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
      * checking it the filter Set.  It does not affect filtering using
      * regular expression pattern.
      */
-    public void setLowercase(boolean value) {
-        lowercase = value;
+    public void setLowerCase(boolean value) {
+        lowerCase = value;
     }
     
     public boolean getAllowNullValues() {
@@ -195,7 +195,6 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     }
 
     private boolean doFiltering(Direction direction, String headerName, Object headerValue) {
-        
         if (headerName == null) {
             return true;
         }
@@ -220,7 +219,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (isLowercase()) {
+            if (isLowerCase()) {
                 if (filter.contains(headerName.toLowerCase())) {
                     return true;
                 }

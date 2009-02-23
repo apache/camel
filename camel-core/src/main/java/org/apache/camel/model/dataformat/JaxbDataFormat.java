@@ -75,13 +75,13 @@ public class JaxbDataFormat extends DataFormatType {
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
-        if (answer != null && !answer.booleanValue()) {
+        if (answer != null && !answer) {
             setProperty(dataFormat, "prettyPrint", Boolean.FALSE);
         } else { // the default value is true
             setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
         }
         answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
-        if (answer != null && !answer.booleanValue()) {
+        if (answer != null && !answer) {
             setProperty(dataFormat, "ignoreJAXBElement", Boolean.FALSE);
         } else { // the default value is true
             setProperty(dataFormat, "ignoreJAXBElement", Boolean.TRUE);

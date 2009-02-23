@@ -50,10 +50,7 @@ public final class ObjectConverter {
     @Converter
     public static boolean toBool(Object value) {
         Boolean answer = toBoolean(value);
-        if (answer != null) {
-            return answer.booleanValue();
-        }
-        return false;
+        return answer != null && answer;
     }
 
     /**
@@ -96,7 +93,7 @@ public final class ObjectConverter {
             return (Byte) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Byte.valueOf(number.byteValue());
+            return number.byteValue();
         } else if (value instanceof String) {
             return Byte.valueOf((String) value);
         } else {
@@ -128,7 +125,7 @@ public final class ObjectConverter {
             return (Short) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Short.valueOf(number.shortValue());
+            return number.shortValue();
         } else if (value instanceof String) {
             return Short.valueOf((String) value);
         } else {
@@ -145,7 +142,7 @@ public final class ObjectConverter {
             return (Integer) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Integer.valueOf(number.intValue());
+            return number.intValue();
         } else if (value instanceof String) {
             return Integer.valueOf((String) value);
         } else {
@@ -162,7 +159,7 @@ public final class ObjectConverter {
             return (Long) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Long.valueOf(number.longValue());
+            return number.longValue();
         } else if (value instanceof String) {
             return Long.valueOf((String) value);
         } else {
@@ -179,7 +176,7 @@ public final class ObjectConverter {
             return (Float) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Float.valueOf(number.floatValue());
+            return number.floatValue();
         } else if (value instanceof String) {
             return Float.valueOf((String) value);
         } else {
@@ -196,14 +193,12 @@ public final class ObjectConverter {
             return (Double) value;
         } else if (value instanceof Number) {
             Number number = (Number) value;
-            return Double.valueOf(number.doubleValue());
+            return number.doubleValue();
         } else if (value instanceof String) {
             return Double.valueOf((String) value);
         } else {
             return null;
         }
     }
-
-
 
 }

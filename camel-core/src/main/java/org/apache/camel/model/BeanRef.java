@@ -143,6 +143,7 @@ public class BeanRef extends OutputType<ProcessorType> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) {
         BeanProcessor answer;
         if (ref != null) {

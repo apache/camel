@@ -121,19 +121,6 @@ public class DefaultExchange implements Exchange {
         return new ConcurrentHashMap<String, Object>(properties);
     }
 
-    private static Message safeCopy(Exchange exchange, Message message) {
-        // TODO: This method is not used
-        if (message == null) {
-            return null;
-        }
-        Message answer = message.copy();
-        if (answer instanceof MessageSupport) {
-            MessageSupport messageSupport = (MessageSupport) answer;
-            messageSupport.setExchange(exchange);
-        }
-        return answer;
-    }
-
     public Exchange newInstance() {
         return new DefaultExchange(this);
     }
@@ -162,6 +149,7 @@ public class DefaultExchange implements Exchange {
         return getContext().getTypeConverter().convertTo(type, this, value);
     }
 
+    @SuppressWarnings("unchecked")
     public void setProperty(String name, Object value) {
         ExchangeProperty<?> property = ExchangeProperty.getByName(name);
 
@@ -185,8 +173,7 @@ public class DefaultExchange implements Exchange {
     private <T> void validateExchangePropertyIsExpectedType(ExchangeProperty<?> property, Class<T> type, Object value) {
         if (value != null && property != null && !property.type().isAssignableFrom(type)) {
             throw new RuntimeCamelException("Type cast exception while getting an "
-                    + "Exchange Property value '" + value.toString()
-                    + "' on Exchange " + this
+                    + "Exchange Property value '" + value.toString() + "' on Exchange " + this
                     + " for a well known Exchange Property with these traits: " + property);
         }
     }

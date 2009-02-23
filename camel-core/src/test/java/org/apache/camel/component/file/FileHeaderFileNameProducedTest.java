@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,9 +30,9 @@ public class FileHeaderFileNameProducedTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         // the absolute path to the file written should contain the target folder
-        mock.message(0).header(FileComponent.HEADER_FILE_NAME_PRODUCED).contains("target");
+        mock.message(0).header(Exchange.FILE_NAME_PRODUCED).contains("target");
 
-        template.requestBodyAndHeader("direct:in", "Hello World", FileComponent.HEADER_FILE_NAME,
+        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
             "FileHeaderFileNameProducedTest.txt");
 
         mock.assertIsSatisfied();

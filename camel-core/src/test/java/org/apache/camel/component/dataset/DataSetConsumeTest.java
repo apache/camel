@@ -19,6 +19,7 @@ package org.apache.camel.component.dataset;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 
 /**
  * @version $Revision$
@@ -29,7 +30,7 @@ public class DataSetConsumeTest extends ContextTestSupport {
     public void testSendingMessagesExplicitlyToDataSetEndpoint() throws Exception {
         long size = dataSet.getSize();
         for (long i = 0; i < size; i++) {
-            template.sendBodyAndHeader("dataset:foo", "<hello>world!</hello>", DataSet.INDEX_HEADER, i);
+            template.sendBodyAndHeader("dataset:foo", "<hello>world!</hello>", Exchange.DATASET_INDEX, i);
         }
 
         assertMockEndpointsSatisfied();

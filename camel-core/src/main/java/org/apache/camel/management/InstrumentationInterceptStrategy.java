@@ -40,9 +40,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         this.counterMap = counterMap;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType,
-            Processor target) throws Exception {
-
+    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         Processor retval = target;
         PerformanceCounter counter = counterMap.get(processorType);
 

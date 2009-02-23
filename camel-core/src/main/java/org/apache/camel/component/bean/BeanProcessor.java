@@ -37,8 +37,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class BeanProcessor extends ServiceSupport implements Processor {
-    public static final String METHOD_NAME = "org.apache.camel.MethodName";
-    public static final String MULTI_PARAMETER_ARRAY = "org.apache.camel.MultiParameterArray";
     private static final transient Log LOG = LogFactory.getLog(BeanProcessor.class);
 
     private boolean multiParameterArray;
@@ -82,8 +80,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         }
         Message in = exchange.getIn();
 
-        if (in.getHeader(MULTI_PARAMETER_ARRAY) == null) {
-            in.setHeader(MULTI_PARAMETER_ARRAY, isMultiParameterArray());
+        if (in.getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) == null) {
+            in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
         try {
@@ -104,8 +102,8 @@ public class BeanProcessor extends ServiceSupport implements Processor {
         } else {
             // we just override the bean's invocation method name here
             if (ObjectHelper.isNotEmpty(method)) {
-                prevMethod = in.getHeader(METHOD_NAME, String.class);
-                in.setHeader(METHOD_NAME, method);
+                prevMethod = in.getHeader(Exchange.BEAN_METHOD_NAME, String.class);
+                in.setHeader(Exchange.BEAN_METHOD_NAME, method);
                 isExplicitMethod = true;
             }
             invocation = beanInfo.createInvocation(bean, exchange);
@@ -143,7 +141,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             }
         } finally {
             if (isExplicitMethod) {
-                in.setHeader(METHOD_NAME, prevMethod);
+                in.setHeader(Exchange.BEAN_METHOD_NAME, prevMethod);
             }
         }
     }

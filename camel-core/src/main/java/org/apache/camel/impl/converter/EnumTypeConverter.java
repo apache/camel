@@ -32,6 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class EnumTypeConverter implements TypeConverter {
 
+    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isEnum() && value != null) {
             String text = value.toString();
