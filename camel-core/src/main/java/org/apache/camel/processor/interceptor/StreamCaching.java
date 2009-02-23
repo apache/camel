@@ -56,7 +56,7 @@ public final class StreamCaching implements InterceptStrategy {
     }
     
     /**
-     * Enable stream caching for a RouteContext
+     * Disable stream caching for a RouteContext
      * 
      * @param context the route context
      */
