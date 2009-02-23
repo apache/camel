@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Callable;
 
 import javax.naming.Context;
@@ -240,7 +241,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public Map<String,Endpoint> getEndpointMap() {
         synchronized (endpoints) {
-            return new HashMap<String,Endpoint>(endpoints);
+            return new TreeMap<String,Endpoint>(endpoints);
         }
     }
 
