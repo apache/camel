@@ -90,7 +90,7 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
         beanMock.c();        
         beanMock.d();        
         EasyMock.replay(beanMock);
-        template.sendBodyAndHeader("direct:start2", "test", BeanProcessor.METHOD_NAME, "d");
+        template.sendBodyAndHeader("direct:start2", "test", Exchange.BEAN_METHOD_NAME, "d");
         EasyMock.verify(beanMock);
     }
 

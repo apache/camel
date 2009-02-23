@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -46,7 +47,7 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
 
         template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            FileComponent.HEADER_FILE_NAME, "skipme.txt");
+            Exchange.FILE_NAME, "skipme.txt");
 
         mock.setResultWaitTime(2000);
         mock.assertIsSatisfied();
@@ -58,10 +59,10 @@ public class FileConsumerFileFilterTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("file:target/filefilter/", "This is a file to be filtered",
-            FileComponent.HEADER_FILE_NAME, "skipme.txt");
+            Exchange.FILE_NAME, "skipme.txt");
 
         template.sendBodyAndHeader("file:target/filefilter/", "Hello World",
-            FileComponent.HEADER_FILE_NAME, "hello.txt");
+            Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }

@@ -58,6 +58,7 @@ public class WebSphereResolverUtil extends ResolverUtil {
      * @throws IOException is thrown by the classloader
      */
     @Override
+    @SuppressWarnings("unchecked")
     protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
         // try super first, just in vase
         Enumeration<URL> enumeration = super.getResources(loader, packageName);

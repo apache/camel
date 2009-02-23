@@ -42,7 +42,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
@@ -56,7 +56,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
@@ -70,7 +70,7 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Madrid", FileComponent.HEADER_FILE_NAME, "madrid.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail

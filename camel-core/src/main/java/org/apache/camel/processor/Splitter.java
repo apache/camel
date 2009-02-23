@@ -43,9 +43,6 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class Splitter extends MulticastProcessor implements Processor {
-    public static final String SPLIT_SIZE = "org.apache.camel.splitSize";
-    public static final String SPLIT_COUNTER = "org.apache.camel.splitCounter";
-
     private final Expression expression;
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy) {
@@ -98,7 +95,7 @@ public class Splitter extends MulticastProcessor implements Processor {
                     }
 
                     public void remove() {
-                        throw new UnsupportedOperationException("remove is not supported by this iterator");
+                        throw new UnsupportedOperationException("Remove is not supported by this iterator");
                     }
                 };
             }
@@ -126,10 +123,10 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     @Override
-    protected void updateNewExchange(Exchange exchange, int i, Iterable<ProcessorExchangePair> allPairs) {
-        exchange.getIn().setHeader(SPLIT_COUNTER, i);
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs) {
+        exchange.getIn().setHeader(Exchange.SPLIT_INDEX, index);
         if (allPairs instanceof Collection) {
-            exchange.getIn().setHeader(SPLIT_SIZE, ((Collection) allPairs).size());
+            exchange.getIn().setHeader(Exchange.SPLIT_SIZE, ((Collection) allPairs).size());
         }
     }
 

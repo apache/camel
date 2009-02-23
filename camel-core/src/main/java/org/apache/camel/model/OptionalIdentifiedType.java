@@ -90,6 +90,7 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
      * @param lang  sets the language for the description, use null to not set a language
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public T description(String id, String text, String lang) {
         if (id != null) {
             setId(id);

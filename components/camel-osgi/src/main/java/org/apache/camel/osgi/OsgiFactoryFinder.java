@@ -22,8 +22,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

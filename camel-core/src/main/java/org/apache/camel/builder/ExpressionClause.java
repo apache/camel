@@ -109,6 +109,7 @@ public class ExpressionClause<T> extends ExpressionType {
     /**
      * An expression of an outbound message body converted to the expected type
      */
+    @SuppressWarnings("unchecked")
     public T outBody(Class expectedType) {
         return expression(ExpressionBuilder.outBodyExpression(expectedType));
     }

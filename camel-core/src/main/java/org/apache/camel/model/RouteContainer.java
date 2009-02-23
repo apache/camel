@@ -29,12 +29,16 @@ public interface RouteContainer {
 
     /**
      * Returns the routes
+     *
+     * @return the routes
      */
     @XmlElementRef
     List<RouteType> getRoutes();
 
     /**
      * Sets the routes to use
+     *
+     * @param routes the routes
      */
     void setRoutes(List<RouteType> routes);
 }

@@ -45,8 +45,7 @@ public class Enricher extends ServiceSupport implements Processor {
      * input data. When using the copy aggregation strategy the enricher
      * degenerates to a normal transformer.
      * 
-     * @param producer
-     *            producer to resource endpoint.
+     * @param producer producer to resource endpoint.
      */
     public Enricher(Producer producer) {
         this(defaultAggregationStrategy(), producer);
@@ -55,11 +54,8 @@ public class Enricher extends ServiceSupport implements Processor {
     /**
      * Creates a new {@link Enricher}.
      * 
-     * @param aggregationStrategy
-     *            aggregation strategy to aggregate input data and additional
-     *            data.
-     * @param producer
-     *            producer to resource endpoint.
+     * @param aggregationStrategy  aggregation strategy to aggregate input data and additional data.
+     * @param producer producer to resource endpoint.
      */
     public Enricher(AggregationStrategy aggregationStrategy, Producer producer) {
         this.aggregationStrategy = aggregationStrategy;
@@ -92,8 +88,7 @@ public class Enricher extends ServiceSupport implements Processor {
      * will be done and the failed exchange content is copied over to the
      * original message exchange.
      * 
-     * @param exchange
-     *            input data.
+     * @param exchange input data.
      */
     public void process(Exchange exchange) throws Exception {
         Exchange resourceExchange = createResourceExchange(exchange, ExchangePattern.InOut);

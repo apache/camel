@@ -33,8 +33,8 @@ public class TimerFiredTimeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange exchange = mock.getExchanges().get(0);
-        assertEquals("hello", exchange.getProperty("org.apache.camel.timer.name"));
-        assertNotNull(exchange.getProperty("org.apache.camel.timer.firedTime"));
+        assertEquals("hello", exchange.getProperty(Exchange.TIMER_NAME));
+        assertNotNull(exchange.getProperty(Exchange.TIMER_FIRED_TIME));
         assertNotNull(exchange.getIn().getHeader("firedTime"));
     }
 

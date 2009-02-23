@@ -59,10 +59,8 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
                 sync = asyncProcessor.process(exchange, new AsyncCallback() {
                     public void done(boolean sync) {
                         // Only handle the async case...
-                        if (sync) {
-                            return;
-                        } else {
-                            callback.done(sync);                        
+                        if (!sync) {
+                            callback.done(sync);
                         }
                     }
                 });                

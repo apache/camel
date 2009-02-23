@@ -44,6 +44,7 @@ public class VmComponent extends SedaComponent {
         return new SedaEndpoint(uri, this, blockingQueue);
     }
 
+    @SuppressWarnings("unchecked")
     protected BlockingQueue<Exchange> getBlockingQueue(String uri, Map parameters) {
         synchronized (QUEUES) {
             BlockingQueue<Exchange> answer = QUEUES.get(uri);

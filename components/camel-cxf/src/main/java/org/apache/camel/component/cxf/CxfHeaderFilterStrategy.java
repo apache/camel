@@ -44,8 +44,6 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         // we need to filter the header of this name.
         getOutFilter().add(Message.PROTOCOL_HEADERS);
         getInFilter().add(Message.PROTOCOL_HEADERS);
-
-
     }
 
 }

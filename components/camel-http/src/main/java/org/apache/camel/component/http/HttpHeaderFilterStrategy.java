@@ -34,9 +34,9 @@ public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add(HttpMethods.HTTP_METHOD.toLowerCase());
         getOutFilter().add(HttpProducer.QUERY);
         getOutFilter().add(HttpProducer.HTTP_RESPONSE_CODE.toLowerCase());
-        setLowercase(true);
+        setLowerCase(true);
         
-        // filter headers begin with "org.apache.camel"
-        setOutFilterPattern("(org\\.apache\\.camel)[\\.|a-z|A-z|0-9]*");    
+        // filter headers begin with "Camel" or "org.apache.camel"
+        setOutFilterPattern("([Camel|org\\.apache\\.camel])[\\.|a-z|A-z|0-9]*");
     }
 }

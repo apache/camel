@@ -75,6 +75,7 @@ public final class CollectionHelper {
      * @param key the key in the map
      * @param value the value to put in the map
      */
+    @SuppressWarnings("unchecked")
     public static void appendValue(Map map, Object key, Object value) {
         Object oldValue = map.get(key);
         if (oldValue != null) {
@@ -98,6 +99,7 @@ public final class CollectionHelper {
      * @param filters  objects to skip
      * @return a new list without the filtered objects
      */
+    @SuppressWarnings("unchecked")
     public static List filterList(List list, Object... filters) {
         List answer = new ArrayList();
         for (Object o : list) {

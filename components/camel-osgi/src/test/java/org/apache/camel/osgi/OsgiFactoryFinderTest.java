@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.osgi;
 
 import java.io.IOException;
 
-import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.camel.NoFactoryAvailableException;
 
 public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {
     public void testFindClass() throws Exception {

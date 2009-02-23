@@ -122,6 +122,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param uri  the endpoint to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(String uri) {
         addOutput(new ToType(uri));
         return (Type) this;
@@ -134,6 +135,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoint  the endpoint to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(Endpoint endpoint) {
         addOutput(new ToType(endpoint));
         return (Type) this;
@@ -146,6 +148,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param uri  the endpoint to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(ExchangePattern pattern, String uri) {
         addOutput(new ToType(uri, pattern));
         return (Type) this;
@@ -159,6 +162,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoint  the endpoint to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(ExchangePattern pattern, Endpoint endpoint) {
         addOutput(new ToType(endpoint, pattern));
         return (Type) this;
@@ -170,6 +174,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param uris  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(String... uris) {
         for (String uri : uris) {
             addOutput(new ToType(uri));
@@ -184,6 +189,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoints  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint));
@@ -197,6 +203,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoints  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint));
@@ -212,6 +219,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param uris  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(ExchangePattern pattern, String... uris) {
         for (String uri : uris) {
             addOutput(new ToType(uri, pattern));
@@ -226,6 +234,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoints  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(ExchangePattern pattern, Endpoint... endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint, pattern));
@@ -240,6 +249,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param endpoints  list of endpoints to send to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type to(ExchangePattern pattern, Iterable<Endpoint> endpoints) {
         for (Endpoint endpoint : endpoints) {
             addOutput(new ToType(endpoint, pattern));
@@ -255,6 +265,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param exchangePattern  instance of {@link ExchangePattern}
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type setExchangePattern(ExchangePattern exchangePattern) {
         addOutput(new SetExchangePatternType(exchangePattern));
         return (Type) this;
@@ -502,6 +513,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public ProcessorType<? extends ProcessorType> end() {
         if (blocks.isEmpty()) {
             if (parent == null) {
@@ -683,6 +695,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param recipients expression to decide the destinations
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type recipientList(Expression recipients) {
         RecipientListType answer = new RecipientListType(recipients);
         addOutput(answer);
@@ -698,7 +711,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     public ExpressionClause<ProcessorType<Type>> recipientList() {
         RecipientListType answer = new RecipientListType();
         addOutput(answer);
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(this);
         answer.setExpression(clause);
         return clause;
     }
@@ -714,6 +727,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                      the list of URIs in the routing slip.
      * @return the buiider
      */
+    @SuppressWarnings("unchecked")
     public Type routingSlip(String header, String uriDelimiter) {
         RoutingSlipType answer = new RoutingSlipType(header, uriDelimiter);
         addOutput(answer);
@@ -731,6 +745,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *                class will look in for the list of URIs to route the message to.
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type routingSlip(String header) {
         RoutingSlipType answer = new RoutingSlipType(header);
         addOutput(answer);
@@ -1025,6 +1040,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param fault   the fault
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type throwFault(Throwable fault) {
         ThrowFaultType answer = new ThrowFaultType();
         answer.setFault(fault);
@@ -1048,6 +1064,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param ref  a reference in the registry to lookup the interceptor that must be of type {@link DelegateProcessor}
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type interceptor(String ref) {
         InterceptorRef interceptor = new InterceptorRef(ref);
         intercept(interceptor);
@@ -1061,6 +1078,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *              be of type {@link DelegateProcessor}
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type interceptors(String... refs) {
         for (String ref : refs) {
             interceptor(ref);
@@ -1074,6 +1092,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param interceptor  the interceptor
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type intercept(DelegateProcessor interceptor) {
         intercept(new InterceptorRef(interceptor));
         return (Type) this;
@@ -1144,6 +1163,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the builder
      * @see ProcessorType#proceed()
      */
+    @SuppressWarnings("unchecked")
     public Type proceed() {
         ProceedType proceed = null;
         ProcessorType currentProcessor = this;
@@ -1180,6 +1200,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return the builder
      * @see #proceed()
      */
+    @SuppressWarnings("unchecked")
     public Type stop() {
         ProcessorType currentProcessor = this;
 
@@ -1258,6 +1279,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *
      * @return the current builder with the fault handler configured
      */
+    @SuppressWarnings("unchecked")
     public Type handleFault() {
         intercept(new HandleFaultType());
         return (Type) this;
@@ -1269,6 +1291,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param errorHandlerBuilder the error handler to be used by default for all child routes
      * @return the current builder with the error handler configured
      */
+    @SuppressWarnings("unchecked")
     public Type errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
         return (Type) this;
@@ -1281,6 +1304,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param condition the flag as to whether error handlers should be inherited or not
      * @return the current builder
      */
+    @SuppressWarnings("unchecked")
     public Type inheritErrorHandler(boolean condition) {
         setInheritErrorHandlerFlag(condition);
         return (Type) this;
@@ -1297,6 +1321,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param processor  the custom {@link Processor}
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type process(Processor processor) {
         ProcessorRef answer = new ProcessorRef(processor);
         addOutput(answer);
@@ -1311,6 +1336,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param ref   reference to a {@link Processor} to lookup in the registry
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type processRef(String ref) {
         ProcessorRef answer = new ProcessorRef();
         answer.setRef(ref);
@@ -1325,6 +1351,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param bean  the bean to invoke
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type bean(Object bean) {
         BeanRef answer = new BeanRef();
         answer.setBean(bean);
@@ -1340,6 +1367,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type bean(Object bean, String method) {
         BeanRef answer = new BeanRef();
         answer.setBean(bean);
@@ -1355,6 +1383,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param  beanType  the bean class, Camel will instantiate an object at runtime
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type bean(Class beanType) {
         BeanRef answer = new BeanRef();
         answer.setBeanType(beanType);
@@ -1370,6 +1399,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type bean(Class beanType, String method) {
         BeanRef answer = new BeanRef();
         answer.setBeanType(beanType);
@@ -1385,6 +1415,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param ref  reference to a bean to lookup in the registry
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type beanRef(String ref) {
         BeanRef answer = new BeanRef(ref);
         addOutput(answer);
@@ -1399,6 +1430,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param method  the method name to invoke on the bean (can be used to avoid ambiguty)
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type beanRef(String ref, String method) {
         BeanRef answer = new BeanRef(ref, method);
         addOutput(answer);
@@ -1412,7 +1444,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return a expression builder clause to set the body
      */
     public ExpressionClause<ProcessorType<Type>> setBody() {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(this);
         SetBodyType answer = new SetBodyType(clause);
         addOutput(answer);
         return clause;
@@ -1425,6 +1457,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression   the expression used to set the body
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type setBody(Expression expression) {
         SetBodyType answer = new SetBodyType(expression);
         addOutput(answer);
@@ -1438,6 +1471,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression   the expression used to set the body
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type transform(Expression expression) {
         TransformType answer = new TransformType(expression);
         addOutput(answer);
@@ -1474,7 +1508,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorType<Type>> setHeader(String name) {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(this);
         SetHeaderType answer = new SetHeaderType(name, clause);
         addOutput(answer);
         return clause;
@@ -1487,6 +1521,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression  the expression used to set the header
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type setHeader(String name, Expression expression) {
         SetHeaderType answer = new SetHeaderType(name, expression);
         addOutput(answer);
@@ -1500,7 +1535,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return a expression builder clause to set the header
      */
     public ExpressionClause<ProcessorType<Type>> setOutHeader(String name) {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(this);
         SetOutHeaderType answer = new SetOutHeaderType(name, clause);
         addOutput(answer);
         return clause;
@@ -1513,6 +1548,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression  the expression used to set the header
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type setOutHeader(String name, Expression expression) {
         SetOutHeaderType answer = new SetOutHeaderType(name, expression);
         addOutput(answer);
@@ -1537,6 +1573,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param expression  the expression used to set the property
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type setProperty(String name, Expression expression) {
         SetPropertyType answer = new SetPropertyType(name, expression);
         addOutput(answer);
@@ -1551,7 +1588,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @return a expression builder clause to set the property
      */
     public ExpressionClause<ProcessorType<Type>> setProperty(String name) {
-        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>((Type) this);
+        ExpressionClause<ProcessorType<Type>> clause = new ExpressionClause<ProcessorType<Type>>(this);
         SetPropertyType answer = new SetPropertyType(name, clause);
         addOutput(answer);
         return clause;
@@ -1563,6 +1600,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param name  the header name
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type removeHeader(String name) {
         RemoveHeaderType answer = new RemoveHeaderType(name);
         addOutput(answer);
@@ -1585,6 +1623,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param name  the property name
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type removeProperty(String name) {
         RemovePropertyType answer = new RemovePropertyType(name);
         addOutput(answer);
@@ -1597,6 +1636,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param type the type to convert to
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type convertBodyTo(Class type) {
         addOutput(new ConvertBodyType(type));
         return (Type) this;
@@ -1608,6 +1648,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param typeString the type to convert to as a fully qualified classname
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type convertBodyTo(String typeString) {
         addOutput(new ConvertBodyType(typeString));
         return (Type) this;
@@ -1620,6 +1661,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param comparator  the comparator to use for sorting
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type sortBody(Comparator comparator) {
         addOutput(new SortType(body(), comparator));
         return (Type) this;
@@ -1642,6 +1684,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param comparator  the comparator to use for sorting
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type sort(Expression expression, Comparator comparator) {
         addOutput(new SortType(expression, comparator));
         return (Type) this;
@@ -1668,8 +1711,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      *            data.
      * @return this processor type
      * @see Enricher
-     * 
      */
+    @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
         addOutput(new EnricherType(aggregationStrategy, resourceUri));
         return (Type)this;
@@ -1697,6 +1740,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param dataFormatType  the dataformat
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type unmarshal(DataFormatType dataFormatType) {
         addOutput(new UnmarshalType(dataFormatType));
         return (Type) this;
@@ -1723,6 +1767,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param dataTypeRef  reference to a {@link DataFormat} to lookup in the registry
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type unmarshal(String dataTypeRef) {
         addOutput(new UnmarshalType(dataTypeRef));
         return (Type) this;
@@ -1747,6 +1792,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param dataFormatType  the dataformat
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type marshal(DataFormatType dataFormatType) {
         addOutput(new MarshalType(dataFormatType));
         return (Type) this;
@@ -1773,6 +1819,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param dataTypeRef  reference to a {@link DataFormat} to lookup in the registry
      * @return the builder
      */
+    @SuppressWarnings("unchecked")
     public Type marshal(String dataTypeRef) {
         addOutput(new MarshalType(dataTypeRef));
         return (Type) this;
@@ -1781,6 +1828,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
     // Properties
     // -------------------------------------------------------------------------
     @XmlTransient
+    @SuppressWarnings("unchecked")
     public ProcessorType<? extends ProcessorType> getParent() {
         return parent;
     }
@@ -1835,7 +1883,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Lets default the inherit value to be true if there is none specified
      */
     public static boolean isInheritErrorHandler(Boolean value) {
-        return value == null || value.booleanValue();
+        return value == null || value;
     }
 
     @XmlAttribute(name = "inheritErrorHandler", required = false)
@@ -1885,6 +1933,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * @param routeContext the route context
      * @param target       the processor which can be wrapped
      * @return the original processor or a new wrapped interceptor
+     * @throws Exception can be thrown in case of error
      */
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
         ObjectHelper.notNull(target, "target", this);
@@ -1956,6 +2005,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         output.setNodeFactory(getNodeFactory());
     }
 
+    @SuppressWarnings("unchecked")
     public void addOutput(ProcessorType processorType) {
         processorType.setParent(this);
         configureChild(processorType);

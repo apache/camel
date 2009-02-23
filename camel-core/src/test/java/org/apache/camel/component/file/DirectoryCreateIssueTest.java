@@ -49,7 +49,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                     destinations[i] = "seda:file" + i;
 
                     from("seda:file" + i)
-                            .setHeader(FileComponent.HEADER_FILE_NAME,
+                            .setHeader(Exchange.FILE_NAME,
                                     constant("file" + i + ".txt"))
                             .to("file://" + path + "/?append=false&noop=true", "mock:result");
                 }

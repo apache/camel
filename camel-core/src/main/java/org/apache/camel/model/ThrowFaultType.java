@@ -92,6 +92,7 @@ public class ThrowFaultType extends ProcessorType<ThrowFaultType> {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         return Collections.EMPTY_LIST;
     }

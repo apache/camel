@@ -91,9 +91,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
             // lets store the name we really used in the header, so end-users
             // can retrieve it
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
-            // @deprecated will be removed later
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME_PRODUCED, target);
+            exchange.getIn().setHeader(Exchange.FILE_NAME_PRODUCED, target);
         } catch (Exception e) {
             handleFailedWrite(exchange, e);
         }
@@ -153,7 +151,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected String createFileName(Exchange exchange) {
         String answer;
 
-        String name = exchange.getIn().getHeader(FileComponent.HEADER_FILE_NAME, String.class);
+        String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
 
         // expression support
         Expression expression = endpoint.getFileExpression();
@@ -162,7 +160,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // whatever configured on the endpoint
             if (name.indexOf("${") > -1) {
                 if (log.isDebugEnabled()) {
-                    log.debug(FileComponent.HEADER_FILE_NAME + " contains a FileLanguage expression: " + name);
+                    log.debug(Exchange.FILE_NAME + " contains a FileLanguage expression: " + name);
                 }
                 expression = FileLanguage.file(name);
             }

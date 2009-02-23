@@ -27,7 +27,6 @@ import org.apache.camel.Processor;
  * (rather like JMS Topics).  
  * 
  * @version $Revision$
- * 
  */
 public class TopicLoadBalancer extends LoadBalancerSupport {
 

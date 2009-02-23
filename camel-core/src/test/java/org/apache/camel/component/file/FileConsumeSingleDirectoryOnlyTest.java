@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,9 +30,9 @@ public class FileConsumeSingleDirectoryOnlyTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/singledirectoryonly");
         super.setUp();
-        template.sendBodyAndHeader("file://target/singledirectoryonly", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/singledirectoryonly", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/singledirectoryonly/2008", "2008 Report", FileComponent.HEADER_FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader("file://target/singledirectoryonly", "Hello World", Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/singledirectoryonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/singledirectoryonly/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
     }
 
     public void testConsumeFileOnly() throws Exception {

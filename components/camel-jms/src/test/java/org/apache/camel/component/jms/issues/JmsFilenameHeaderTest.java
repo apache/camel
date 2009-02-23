@@ -17,17 +17,15 @@
 package org.apache.camel.component.jms.issues;
 
 import java.io.File;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.mock.MockEndpoint;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * Unit test for sending the filename for file producer over the JMS wire.
@@ -39,8 +37,7 @@ public class JmsFilenameHeaderTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("direct:in", "Hello World",
-            FileComponent.HEADER_FILE_NAME, filename);
+        template.sendBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME, filename);
 
         mock.assertIsSatisfied();
 

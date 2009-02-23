@@ -75,7 +75,7 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         if (otherwise != null) {
             otherwiseProcessor = otherwise.createProcessor(routeContext);
         } else {
-            LOG.warn("No otherwise clause was specified for a choice block, any unmatched exchanges will be dropped");
+            LOG.warn("No otherwise clause was specified for this choice block: " + this + ", any unmatched exchanges will be dropped.");
         }
         return new ChoiceProcessor(filters, otherwiseProcessor);
     }
@@ -138,6 +138,7 @@ public class ChoiceType extends ProcessorType<ChoiceType> {
         this.whenClauses = whenClauses;
     }
 
+    @SuppressWarnings("unchecked")
     public List<ProcessorType> getOutputs() {
         if (otherwise != null) {
             return otherwise.getOutputs();

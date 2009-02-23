@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -37,10 +38,10 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
 
     private void prepareFiles() throws Exception {
         String url = "file://target/exclude";
-        template.sendBodyAndHeader(url, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.xml");
-        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report1.txt");
-        template.sendBodyAndHeader(url, "Bye World", FileComponent.HEADER_FILE_NAME, "secret.txt");
-        template.sendBodyAndHeader(url, "Reports", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader(url, "Hello World", Exchange.FILE_NAME, "hello.xml");
+        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report1.txt");
+        template.sendBodyAndHeader(url, "Bye World", Exchange.FILE_NAME, "secret.txt");
+        template.sendBodyAndHeader(url, "Reports", Exchange.FILE_NAME, "report2.txt");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

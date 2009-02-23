@@ -81,6 +81,7 @@ public class DefaultNamespaceContext implements NamespaceContext, NamespaceAware
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     public Iterator getPrefixes(String namespaceURI) {
         Set set = new HashSet();
         for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {

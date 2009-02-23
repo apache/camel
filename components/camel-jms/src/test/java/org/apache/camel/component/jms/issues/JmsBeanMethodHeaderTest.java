@@ -23,13 +23,12 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.bean.BeanProcessor;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
@@ -61,7 +60,7 @@ public class JmsBeanMethodHeaderTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Yes");
 
         template.sendBodyAndHeader("direct:approve", ExchangePattern.InOut, "James",
-            BeanProcessor.METHOD_NAME, "approveLoan");
+            Exchange.BEAN_METHOD_NAME, "approveLoan");
 
         mock.assertIsSatisfied();
     }
@@ -71,7 +70,7 @@ public class JmsBeanMethodHeaderTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Yes");
 
         template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James",
-            BeanProcessor.METHOD_NAME, "approveLoan");
+            Exchange.BEAN_METHOD_NAME, "approveLoan");
 
         mock.assertIsSatisfied();
     }
@@ -82,7 +81,7 @@ public class JmsBeanMethodHeaderTest extends ContextTestSupport {
         mock.expectedBodiesReceived("No");
 
         template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James",
-            BeanProcessor.METHOD_NAME, "approveSuperLoan");
+            Exchange.BEAN_METHOD_NAME, "approveSuperLoan");
 
         mock.assertIsSatisfied();
     }

@@ -26,7 +26,6 @@ public class ExchangePatternProcessor implements AsyncProcessor {
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
     public ExchangePatternProcessor() {
-        
     }
     
     public ExchangePatternProcessor(ExchangePattern ep) {

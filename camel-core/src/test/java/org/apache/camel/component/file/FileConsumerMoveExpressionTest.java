@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
@@ -60,7 +61,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Hello World", Exchange.FILE_NAME, "report.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -85,7 +86,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", FileComponent.HEADER_FILE_NAME, "report2.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Bye World", Exchange.FILE_NAME, "report2.txt");
         assertMockEndpointsSatisfied();
 
         // give time for consumer to rename file
@@ -111,7 +112,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye Big World");
         mock.expectedFileExists("target/filelanguage/backup/123.txt", "Bye Big World");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", FileComponent.HEADER_FILE_NAME, "report3.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Bye Big World", Exchange.FILE_NAME, "report3.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -129,7 +130,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Big World");
         mock.expectedFileExists("target/backup/report4.txt.bak");
 
-        template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", FileComponent.HEADER_FILE_NAME, "report4.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/", "Hello Big World", Exchange.FILE_NAME, "report4.txt");
         assertMockEndpointsSatisfied();
     }
 
@@ -156,7 +157,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         mock.expectedFileExists("target/filelanguage/123");
 
         template.sendBodyAndHeader("file://target/filelanguage/", "Bean Language Rules The World",
-                FileComponent.HEADER_FILE_NAME, "report5.txt");
+                Exchange.FILE_NAME, "report5.txt");
         assertMockEndpointsSatisfied();
     }
 

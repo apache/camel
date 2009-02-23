@@ -22,6 +22,7 @@ import org.apache.camel.util.FileUtil;
 public class GenericFileConfiguration {
 
     private String file;
+
     public boolean needToNormalize() {
         return true;
     }

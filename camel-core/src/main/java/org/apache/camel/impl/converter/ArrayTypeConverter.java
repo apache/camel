@@ -34,6 +34,7 @@ import org.apache.camel.TypeConverter;
  */
 public class ArrayTypeConverter implements TypeConverter {
 
+    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Object value) {
         if (type.isArray()) {
             if (value instanceof Collection) {

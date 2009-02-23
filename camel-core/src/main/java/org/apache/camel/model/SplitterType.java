@@ -170,6 +170,7 @@ public class SplitterType extends ExpressionNode {
     /**
      * Setting the executor for executing the splitting action. 
      *
+     * @param executor the executor
      * @return the builder
      */
     public SplitterType executor(Executor executor) {

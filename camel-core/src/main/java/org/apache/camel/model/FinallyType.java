@@ -31,6 +31,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "finally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyType extends OutputType<ProcessorType> implements Block {
+
     @Override
     public String toString() {
         return "Finally[" + getOutputs() + "]";

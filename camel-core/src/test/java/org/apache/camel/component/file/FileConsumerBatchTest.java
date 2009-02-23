@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,8 +30,8 @@ public class FileConsumerBatchTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/file-batch");
         super.setUp();
-        template.sendBodyAndHeader("file://target/file-batch/", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader("file://target/file-batch/", "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader("file://target/file-batch/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/file-batch/", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
     @Override
@@ -47,9 +48,9 @@ public class FileConsumerBatchTest extends ContextTestSupport {
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Bye World");
 
         // test header keys
-        mock.message(0).header(FileComponent.HEADER_FILE_BATCH_TOTAL).isEqualTo(2);
-        mock.message(0).header(FileComponent.HEADER_FILE_BATCH_INDEX).isEqualTo(0);
-        mock.message(1).header(FileComponent.HEADER_FILE_BATCH_INDEX).isEqualTo(1);
+        mock.message(0).header(Exchange.FILE_BATCH_SIZE).isEqualTo(2);
+        mock.message(0).header(Exchange.FILE_BATCH_INDEX).isEqualTo(0);
+        mock.message(1).header(Exchange.FILE_BATCH_INDEX).isEqualTo(1);
 
         assertMockEndpointsSatisfied();
     }

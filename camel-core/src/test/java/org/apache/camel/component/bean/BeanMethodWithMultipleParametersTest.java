@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.BeanRouteTest;
 import org.apache.camel.util.jndi.JndiContext;
@@ -47,7 +48,7 @@ public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
 
     public void testSendMessageWithSettingHeader() throws Exception {
         Object[] args = {"hello", 123, "world"};
-        template.sendBodyAndHeader("direct:in", args, BeanProcessor.MULTI_PARAMETER_ARRAY, true);
+        template.sendBodyAndHeader("direct:in", args, Exchange.BEAN_MULTI_PARAMETER_ARRAY, true);
 
         assertEquals("bean.foo", "hello", myBean.foo);
         assertEquals("bean.bar", 123, myBean.bar);

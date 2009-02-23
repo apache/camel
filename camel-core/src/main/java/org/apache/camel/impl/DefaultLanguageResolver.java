@@ -17,11 +17,11 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.NoFactoryAvailableException;
 
 /**
  * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and

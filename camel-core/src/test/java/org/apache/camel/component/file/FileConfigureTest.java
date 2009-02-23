@@ -89,6 +89,6 @@ public class FileConfigureTest extends ContextTestSupport {
 
         Message message = new DefaultMessage();
         endpoint.configureMessage(consumedFile, message);
-        assertEquals(EXPECT_FILE, message.getHeader(FileComponent.HEADER_FILE_NAME));
+        assertEquals(EXPECT_FILE, message.getHeader(Exchange.FILE_NAME));
     }
 }

@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -48,7 +49,7 @@ public class FileProduceTempPrefixTest extends ContextTestSupport {
     public void testTempPrefix() throws Exception {
         deleteDirectory("target/tempandrename");
 
-        template.sendBodyAndHeader("direct:a", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("direct:a", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File("target/tempandrename/hello.txt");
         // use absolute file to let unittest pass on all platforms

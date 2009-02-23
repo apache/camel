@@ -52,6 +52,7 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
         return convertTo(type, null, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         Object instance = injector.newInstance();
         if (instance == null) {

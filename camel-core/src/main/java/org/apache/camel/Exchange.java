@@ -30,22 +30,40 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
+    String BEAN_METHOD_NAME = "CamelBeanMethodName";
+    String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
+
     String AGGREGATED_COUNT = "CamelAggregatedCount";
 
     String CHARSET_NAME = "CamelCharsetName";
 
+    String DATASET_INDEX = "CamelDataSetIndex";
+
     String EXCEPTION_CAUGHT = "CamelExceptionCaught";
-
     String EXCEPTION_HANDLED = "CamelExceptionHandled";
-
     String FAILURE_HANDLED = "CamelFailureHandled";
 
-    String REDELIVERED = "CamelRedelivered";
+    String FILE_BATCH_INDEX = "CamelFileBatchIndex";
+    String FILE_BATCH_SIZE = "CamelFileBatchSize";
+    String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
+    String FILE_NAME = "CamelFileName";
+    String FILE_NAME_PRODUCED = "CamelFileNameProduced";
 
+    String LOOP_INDEX = "CamelLoopIndex";
+    String LOOP_SIZE = "CamelLoopSize";
+
+    String REDELIVERED = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
 
-    String TRANSACTED = "CamelTransacted";
+    String SPLIT_INDEX = "CamelSplitIndex";
+    String SPLIT_SIZE = "CamelSplitSize";
 
+    String TIMER_NAME = "CamelTimerName";
+    String TIMER_FIRED_TIME = "CamelTimerFiredTime";
+    String TIMER_PERIOD = "CamelTimerPeriod";
+    String TIMER_TIME = "CamelTimerTime";
+
+    String TRANSACTED = "CamelTransacted";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.

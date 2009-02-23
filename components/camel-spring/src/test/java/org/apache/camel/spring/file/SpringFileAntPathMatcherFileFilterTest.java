@@ -18,9 +18,9 @@ package org.apache.camel.spring.file;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.TestSupport;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -42,11 +42,11 @@ public class SpringFileAntPathMatcherFileFilterTest extends AbstractJUnit38Sprin
     public void testAntPatchMatherFilter() throws Exception {
         result.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader(inputFile, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
-        template.sendBodyAndHeader(inputFile, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.xml");
-        template.sendBodyAndHeader(inputFile, expectedBody, FileComponent.HEADER_FILE_NAME, "subfolder/foo/godday.txt");
-        template.sendBodyAndHeader(inputFile, "Bad world", FileComponent.HEADER_FILE_NAME, "subfolder/badday.txt");
-        template.sendBodyAndHeader(inputFile, "Day world", FileComponent.HEADER_FILE_NAME, "day.xml");
+        template.sendBodyAndHeader(inputFile, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(inputFile, "Bye World", Exchange.FILE_NAME, "bye.xml");
+        template.sendBodyAndHeader(inputFile, expectedBody, Exchange.FILE_NAME, "subfolder/foo/godday.txt");
+        template.sendBodyAndHeader(inputFile, "Bad world", Exchange.FILE_NAME, "subfolder/badday.txt");
+        template.sendBodyAndHeader(inputFile, "Day world", Exchange.FILE_NAME, "day.xml");
 
         result.assertIsSatisfied();
     }

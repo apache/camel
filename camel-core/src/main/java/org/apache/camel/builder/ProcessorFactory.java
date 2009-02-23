@@ -25,6 +25,12 @@ import org.apache.camel.Processor;
  */
 public interface ProcessorFactory {
 
+    /**
+     * Creates the processor.
+     *
+     * @return a newly created processor
+     * @throws Exception is thrown if the processor cannot be created
+     */
     Processor createProcessor() throws Exception;
 
 }

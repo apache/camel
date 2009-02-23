@@ -16,9 +16,8 @@
  */
 package org.apache.camel.example.etl;
 
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringRouteBuilder;
-
 import static org.apache.camel.language.juel.JuelExpression.el;
 
 /**
@@ -28,12 +27,11 @@ import static org.apache.camel.language.juel.JuelExpression.el;
 public class EtlRoutes extends SpringRouteBuilder {
     public void configure() throws Exception {
         from("file:src/data?noop=true").convertBodyTo(PersonDocument.class)
-        //  .intercept(transactionInterceptor())
             .to("jpa:org.apache.camel.example.etl.CustomerEntity");
 
         // the following will dump the database to files
         from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false&consumer.delay=3000&consumeLockEntity=false")
-            .setHeader(FileComponent.HEADER_FILE_NAME, el("${in.body.userName}.xml"))
+            .setHeader(Exchange.FILE_NAME, el("${in.body.userName}.xml"))
             .to("file:target/customers?append=false");
     }
 }

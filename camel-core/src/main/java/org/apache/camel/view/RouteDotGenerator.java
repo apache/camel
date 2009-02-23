@@ -93,6 +93,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
         if (node instanceof MulticastType || node instanceof InterceptorRef) {
             // no need for a multicast or interceptor node

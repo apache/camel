@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -33,9 +34,9 @@ public class FileConsumeMultipleDirectoriesTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/multidir");
         super.setUp();
-        template.sendBodyAndHeader(fileUrl, "Bye World", FileComponent.HEADER_FILE_NAME, "bye.txt");
-        template.sendBodyAndHeader(fileUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "sub/hello.txt");
-        template.sendBodyAndHeader(fileUrl, "Godday World", FileComponent.HEADER_FILE_NAME, "sub/sub2/godday.txt");
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "sub/sub2/godday.txt");
     }
 
     public void testMultiDir() throws Exception {

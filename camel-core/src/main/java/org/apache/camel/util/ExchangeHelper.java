@@ -227,9 +227,6 @@ public final class ExchangeHelper {
      * 
      * @param source source exchange.
      * @param result target exchange.
-     * 
-     * @see #resultMessage(Exchange)
-     * @see #faultMessage(Exchange)
      */
     public static void copyResultsPreservePattern(Exchange result, Exchange source) {
 
@@ -332,6 +329,7 @@ public final class ExchangeHelper {
      * @param exchange the exchange to make available
      * @param map      the map to populate
      */
+    @SuppressWarnings("unchecked")
     public static void populateVariableMap(Exchange exchange, Map map) {
         map.put("exchange", exchange);
         Message in = exchange.getIn();

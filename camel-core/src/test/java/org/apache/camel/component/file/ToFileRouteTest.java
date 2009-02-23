@@ -67,7 +67,7 @@ public class ToFileRouteTest extends ContextTestSupport {
 
             // set the output filename using java code logic, notice that this is done by setting
             // a special header property of the out exchange
-            exchange.getOut().setHeader(FileComponent.HEADER_FILE_NAME, "report.txt");
+            exchange.getOut().setHeader(Exchange.FILE_NAME, "report.txt");
         }
 
     }

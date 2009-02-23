@@ -389,6 +389,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given body values are received by this
      * endpoint in any order
      */
+    @SuppressWarnings("unchecked")
     public void expectedBodiesReceivedInAnyOrder(Object... bodies) {
         List bodyList = new ArrayList();
         bodyList.addAll(Arrays.asList(bodies));
@@ -719,6 +720,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected void performAssertions(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         Object actualBody = in.getBody();

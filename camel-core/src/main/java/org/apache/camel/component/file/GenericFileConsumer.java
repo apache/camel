@@ -97,10 +97,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         for (int index = 0; index < total; index++) {
             GenericFileExchange<T> exchange = exchanges.get(index);
             // add current index and total as headers
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_INDEX, index);
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_BATCH_TOTAL, total);
+            exchange.getIn().setHeader(Exchange.FILE_BATCH_INDEX, index);
+            exchange.getIn().setHeader(Exchange.FILE_BATCH_SIZE, total);
             processExchange(exchange);
         }
     }

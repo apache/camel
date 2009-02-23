@@ -94,7 +94,7 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
         getDataSet().populateMessage(exchange, messageIndex);
 
         Message in = exchange.getIn();
-        in.setHeader(DataSet.INDEX_HEADER, messageIndex);
+        in.setHeader(Exchange.DATASET_INDEX, messageIndex);
 
         return exchange;
     }
@@ -190,8 +190,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     }
 
     protected void assertMessageExpected(long index, Exchange expected, Exchange actual) throws Exception {
-        long actualCounter = ExchangeHelper.getMandatoryHeader(actual, DataSet.INDEX_HEADER, Long.class);
-        assertEquals("Header: " + DataSet.INDEX_HEADER, index, actualCounter, actual);
+        long actualCounter = ExchangeHelper.getMandatoryHeader(actual, Exchange.DATASET_INDEX, Long.class);
+        assertEquals("Header: " + Exchange.DATASET_INDEX, index, actualCounter, actual);
 
         getDataSet().assertMessageExpected(this, expected, actual, index);
     }

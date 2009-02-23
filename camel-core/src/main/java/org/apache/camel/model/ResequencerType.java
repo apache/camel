@@ -217,13 +217,11 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
 
     @XmlElement(name = "batch-config", required = false)
     public void setBatchConfig(BatchResequencerConfig batchConfig) {
-        // TODO: find out how to have these two within an <xsd:choice>
         batch(batchConfig);
     }
 
     @XmlElement(name = "stream-config", required = false)
     public void setStreamConfig(StreamResequencerConfig streamConfig) {
-        // TODO: find out how to have these two within an <xsd:choice>
         stream(streamConfig);
     }
 
@@ -241,12 +239,10 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Creates a batch {@link Resequencer} instance applying the given
      * <code>config</code>.
      * 
-     * @param routeContext
-     *            route context.
-     * @param config
-     *            batch resequencer configuration.
+     * @param routeContext route context.
+     * @param config batch resequencer configuration.
      * @return the configured batch resequencer.
-     * @throws Exception 
+     * @throws Exception can be thrown
      */
     protected Resequencer createBatchResequencer(RouteContext routeContext,
             BatchResequencerConfig config) throws Exception {
@@ -261,12 +257,10 @@ public class ResequencerType extends ProcessorType<ProcessorType> {
      * Creates a {@link StreamResequencer} instance applying the given
      * <code>config</code>.
      * 
-     * @param routeContext
-     *            route context.
-     * @param config
-     *            stream resequencer configuration.
+     * @param routeContext route context.
+     * @param config stream resequencer configuration.
      * @return the configured stream resequencer.
-     * @throws Exception
+     * @throws Exception can be thrwon
      */
     protected StreamResequencer createStreamResequencer(RouteContext routeContext, 
             StreamResequencerConfig config) throws Exception {

@@ -18,7 +18,6 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.component.file.FileComponent;
 
 /**
  * User does not have write permissions so can't deleted consumed file.
@@ -55,7 +54,7 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
         // prepares the FTP Server by creating files on the server that we want to unit
         // test that we can pool and store as a local file
         String ftpUrl = "ftp://admin@localhost:" + getPort() + "/deletenoperm/?password=admin";
-        template.sendBodyAndHeader(ftpUrl, "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(ftpUrl, "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
 
 }

@@ -49,6 +49,7 @@ public class StaticMethodFallbackTypeConverter implements TypeConverter {
         return convertTo(type, null, value);
     }
 
+    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)
             : (T)ObjectHelper.invokeMethod(method, null, type, value, registry);

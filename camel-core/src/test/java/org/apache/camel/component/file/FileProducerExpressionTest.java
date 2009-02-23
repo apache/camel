@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -45,7 +46,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     public void testProduceBeanByHeader() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
-            FileComponent.HEADER_FILE_NAME, "${bean:myguidgenerator}.bak");
+            Exchange.FILE_NAME, "${bean:myguidgenerator}.bak");
 
         assertFileExists("target/filelanguage/123.bak");
     }
@@ -58,7 +59,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     public void testProducerDateByHeader() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
-            FileComponent.HEADER_FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+            Exchange.FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");

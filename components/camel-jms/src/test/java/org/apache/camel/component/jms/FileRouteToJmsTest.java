@@ -21,11 +21,10 @@ import javax.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
-import org.apache.camel.component.mock.MockEndpoint;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
+import org.apache.camel.component.mock.MockEndpoint;
 
 
 /**
@@ -42,7 +41,7 @@ public class FileRouteToJmsTest extends ContextTestSupport {
         mock.message(0).bodyAs(String.class).isEqualTo("Hello World");
 
         deleteDirectory("target/routefromfile");
-        template.sendBodyAndHeader("file://target/routefromfile", "Hello World", FileComponent.HEADER_FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/routefromfile", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         assertMockEndpointsSatisfied();
     }

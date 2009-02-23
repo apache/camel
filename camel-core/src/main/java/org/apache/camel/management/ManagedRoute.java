@@ -19,7 +19,6 @@ package org.apache.camel.management;
 import java.io.IOException;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.springframework.jmx.export.annotation.ManagedAttribute;
 import org.springframework.jmx.export.annotation.ManagedOperation;
@@ -29,15 +28,15 @@ import org.springframework.jmx.export.annotation.ManagedResource;
 public class ManagedRoute extends PerformanceCounter {
 
     public static final String VALUE_UNKNOWN = "Unknown";
-    private Route<? extends Exchange> route;
+    private Route route;
     private String description;
 
-    ManagedRoute(Route<? extends Exchange> route) {
+    ManagedRoute(Route route) {
         this.route = route;
         this.description = route.toString();
     }
 
-    public Route<? extends Exchange> getRoute() {
+    public Route getRoute() {
         return route;
     }
 

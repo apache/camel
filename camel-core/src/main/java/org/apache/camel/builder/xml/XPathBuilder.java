@@ -527,6 +527,7 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
     /**
      * Strategy method to extract the document from the exchange
      */
+    @SuppressWarnings("unchecked")
     protected Object getDocument(Exchange exchange) {
         Message in = exchange.getIn();
         Class type = getDocumentType();

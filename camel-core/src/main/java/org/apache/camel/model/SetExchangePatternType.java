@@ -71,9 +71,7 @@ public class SetExchangePatternType extends OutputType {
 
     @Override
     public String toString() {
-        return "setExchangePattern["
-                + "pattern: " + pattern
-                + "]";
+        return "setExchangePattern[pattern: " + pattern + "]";
     }
 
     @Override

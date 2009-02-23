@@ -99,6 +99,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
         if (node instanceof MulticastType) {
             // no need for a multicast node

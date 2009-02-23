@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.camel.component.file.FileComponent;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExchange;
@@ -231,7 +231,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             os = new FileOutputStream(temp);
 
             // set header with the path to the local work file            
-            exchange.getIn().setHeader(FileComponent.HEADER_FILE_LOCAL_WORK_PATH, local.getPath());
+            exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {            
             throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);

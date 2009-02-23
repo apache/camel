@@ -265,8 +265,7 @@ public class ResolverUtil<T> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays
-                .asList(packageNames));
+            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
         Test test = new IsA(parent);
@@ -294,8 +293,7 @@ public class ResolverUtil<T> {
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays
-                .asList(packageNames));
+            LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
         Test test = new AnnotatedWith(annotation, true);
@@ -515,7 +513,6 @@ public class ResolverUtil<T> {
      * @param test    a Test used to filter the classes that are discovered
      * @param parent  the parent package under which classes must be in order to
      *                be considered
-     * @param jarfile the jar file to be examined for classes
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
      */
@@ -550,6 +547,7 @@ public class ResolverUtil<T> {
      * @param test the test used to determine if the class matches
      * @param fqn  the fully qualified name of a class
      */
+    @SuppressWarnings("unchecked")
     protected void addIfMatching(Test test, String fqn) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');

@@ -88,7 +88,7 @@ public class DefaultMessage extends MessageSupport {
      *         the underlying inbound transport
      */
     protected Map<String, Object> createHeaders() {
-        HashMap<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>();
         populateInitialHeaders(map);
         return map;
     }
@@ -110,7 +110,7 @@ public class DefaultMessage extends MessageSupport {
      * @return return a newly constructed Map
      */
     protected Map<String, DataHandler> createAttachments() {
-        HashMap<String, DataHandler> map = new HashMap<String, DataHandler>();
+        Map<String, DataHandler> map = new HashMap<String, DataHandler>();
         populateInitialAttachments(map);
         return map;
     }

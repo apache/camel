@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileWriter;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
@@ -41,7 +42,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello Paris");
         mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello Paris", FileComponent.HEADER_FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
         mock.assertIsSatisfied();
     }
@@ -61,7 +62,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello London");
 
-        template.sendBodyAndHeader("file:target/reports", "Hello London", FileComponent.HEADER_FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/reports", "Hello London", Exchange.FILE_NAME, "london.txt");
 
         mock.assertIsSatisfied();
 

@@ -17,8 +17,8 @@
 package org.apache.camel.example.reportincident;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.language.bean.BeanLanguage;
 
@@ -55,7 +55,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
             // we need to convert the CXF payload to InputReportIncident that FilenameGenerator and velocity expects
             .convertBodyTo(InputReportIncident.class)
             // then set the file name using the FilenameGenerator bean
-            .setHeader(FileComponent.HEADER_FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
+            .setHeader(Exchange.FILE_NAME, BeanLanguage.bean(FilenameGenerator.class, "generateFilename"))
             // and create the mail body using velocity templating
             .to("velocity:MailBody.vm")
             // and store the file

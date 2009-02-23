@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.Injector;
 
 /**

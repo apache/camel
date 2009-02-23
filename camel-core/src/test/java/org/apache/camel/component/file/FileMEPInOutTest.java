@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -32,7 +33,7 @@ public class FileMEPInOutTest extends ContextTestSupport {
         mock.expectedFileExists("target/FileMEPInOutTest.txt", "Hello World");
 
         // request is InOut
-        template.requestBodyAndHeader("direct:in", "Hello World", FileComponent.HEADER_FILE_NAME,
+        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
             "FileMEPInOutTest.txt");
 
         assertMockEndpointsSatisfied();

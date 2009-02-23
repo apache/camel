@@ -177,8 +177,8 @@ public class MethodInfo {
                 Object[] answer = new Object[size];
                 Object body = exchange.getIn().getBody();
                 boolean multiParameterArray = false;
-                if (exchange.getIn().getHeader(BeanProcessor.MULTI_PARAMETER_ARRAY) != null) {
-                    multiParameterArray = exchange.getIn().getHeader(BeanProcessor.MULTI_PARAMETER_ARRAY, Boolean.class);
+                if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
+                    multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
                 }
                 for (int i = 0; i < size; i++) {
                     Object value = null;
@@ -275,8 +275,6 @@ public class MethodInfo {
 
     /**
      * Adds the current class and all of its base classes (apart from {@link Object} to the given list
-     * @param type
-     * @param result
      */
     protected void addTypeAndSuperTypes(Class<?> type, List<Class<?>> result) {
         for (Class<?> t = type; t != null && t != Object.class; t = t.getSuperclass()) {

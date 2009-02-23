@@ -119,6 +119,7 @@ public final class ObjectHelper {
      * @param b  the second object
      * @param ignoreCase  ignore case for string comparison
      */
+    @SuppressWarnings("unchecked")
     public static int compare(Object a, Object b, boolean ignoreCase) {
         if (a == b) {
             return 0;
@@ -411,8 +412,7 @@ public final class ObjectHelper {
         if (!list.isEmpty()) {
             Object value = list.get(0);
             if (value instanceof Boolean) {
-                Boolean flag = (Boolean)value;
-                return flag.booleanValue();
+                return (Boolean)value;
             } else {
                 // lets assume non-empty results are true
                 return true;
@@ -436,8 +436,7 @@ public final class ObjectHelper {
             return System.getProperty(name, defaultValue);
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Caught security exception accessing system property: " + name + ". Reason: " + e,
-                          e);
+                LOG.debug("Caught security exception accessing system property: " + name + ". Reason: " + e, e);
             }
             return defaultValue;
         }
@@ -518,7 +517,7 @@ public final class ObjectHelper {
         }
 
         if (clazz == null) {
-            LOG.warn("Could not find class: " + name);
+            LOG.warn("Cannot find class: " + name);
         }
 
         return clazz;
@@ -541,7 +540,7 @@ public final class ObjectHelper {
             return loader.loadClass(name);
         } catch (ClassNotFoundException e) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Can not load class: " + name + " using classloader: " + loader, e);
+                LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
             }
 
         }
@@ -759,16 +758,16 @@ public final class ObjectHelper {
                 closeable.close();
             } catch (IOException e) {
                 if (log != null) {
-                    log.warn("Could not close: " + name + ". Reason: " + e, e);
+                    log.warn("Cannot close: " + name + ". Reason: " + e, e);
                 }
             }
         }
     }
 
     /**
-     * Converts the given value to the required type or throw a meaningful
-     * exception
+     * Converts the given value to the required type or throw a meaningful exception
      */
+    @SuppressWarnings("unchecked")
     public static <T> T cast(Class<T> toType, Object value) {
         if (toType == boolean.class) {
             return (T)cast(Boolean.class, value);
@@ -850,8 +849,7 @@ public final class ObjectHelper {
      */
     public static boolean evaluateValuePredicate(Object value) {
         if (value instanceof Boolean) {
-            Boolean aBoolean = (Boolean)value;
-            return aBoolean.booleanValue();
+            return (Boolean)value;
         } else if (value instanceof String) {
             if ("true".equals(value)) {
                 return true;

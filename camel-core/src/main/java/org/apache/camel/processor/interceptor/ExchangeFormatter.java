@@ -28,6 +28,9 @@ public interface ExchangeFormatter {
 
     /**
      * Generates a string representation of the exchange
+     *
+     * @param exchange the exchange
+     * @return a string representation of the exchange
      */
     Object format(Exchange exchange);
 }

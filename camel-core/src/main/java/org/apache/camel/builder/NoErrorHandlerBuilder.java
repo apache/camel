@@ -29,6 +29,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
+
     public ErrorHandlerBuilder copy() {
         return this;
     }

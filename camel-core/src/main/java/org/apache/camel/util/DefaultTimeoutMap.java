@@ -52,6 +52,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         schedulePoll();
     }
 
+    @SuppressWarnings("unchecked")
     public Object get(Object key) {
         TimeoutMapEntry entry = null;
         synchronized (map) {
@@ -66,6 +67,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         return entry.getValue();
     }
 
+    @SuppressWarnings("unchecked")
     public void put(Object key, Object value, long timeoutMillis) {
         TimeoutMapEntry entry = new TimeoutMapEntry(key, value, timeoutMillis);
         synchronized (map) {
@@ -87,6 +89,7 @@ public class DefaultTimeoutMap implements TimeoutMap, Runnable {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Object[] getKeys() {
         Object[] keys = null;
         synchronized (map) {

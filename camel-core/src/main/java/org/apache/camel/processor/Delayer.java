@@ -71,7 +71,7 @@ public class Delayer extends DelayProcessorSupport {
         if (timeExpression != null) {
             Long longValue = timeExpression.evaluate(exchange, Long.class);
             if (longValue != null) {
-                time = longValue.longValue();
+                time = longValue;
             }
         }
         if (time <= 0) {

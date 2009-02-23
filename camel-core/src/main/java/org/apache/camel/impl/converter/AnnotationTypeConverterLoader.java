@@ -67,6 +67,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         this.resolver = resolverUtil;
     }
 
+    @SuppressWarnings("unchecked")
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
         resolver.findAnnotated(Converter.class, packageNames);
@@ -166,6 +167,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
+    @SuppressWarnings("unchecked")
     private CachingInjector handleHasConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
@@ -198,6 +200,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return injector;
     }
 
+    @SuppressWarnings("unchecked")
     private CachingInjector handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class type, CachingInjector injector, Method method) {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();

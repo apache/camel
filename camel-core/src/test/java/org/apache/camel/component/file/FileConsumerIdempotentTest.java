@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -31,7 +32,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     protected void setUp() throws Exception {
         deleteDirectory("target/idempotent");
         super.setUp();
-        template.sendBodyAndHeader("file://target/idempotent/", "Hello World", FileComponent.HEADER_FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file://target/idempotent/", "Hello World", Exchange.FILE_NAME, "report.txt");
     }
 
     @Override

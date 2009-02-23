@@ -63,12 +63,8 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     /**
      * Creates a new {@link StreamResequencer} instance.
      * 
-     * @param endpoint
-     *            endpoint to poll exchanges from.
-     * @param processor
-     *            next processor that processes re-ordered exchanges.
-     * @param comparator
-     *            a sequence element comparator for exchanges.
+     * @param processor next processor that processes re-ordered exchanges.
+     * @param comparator a sequence element comparator for exchanges.
      */
     public StreamResequencer(Processor processor, SequenceElementComparator<Exchange> comparator) {
         this.exceptionHandler = new LoggingExceptionHandler(getClass());
@@ -79,8 +75,6 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     /**
      * Returns this resequencer's exception handler.
-     * 
-     * @return this resequencer's exception handler.
      */
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
@@ -88,8 +82,6 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     /**
      * Returns the next processor.
-     * 
-     * @return the next processor.
      */
     public Processor getProcessor() {
         return processor;
@@ -113,8 +105,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
      * timeout via {@link ResequencerEngine#setTimeout(long)}. This value is
      * also used to define the polling timeout from the endpoint.
      * 
-     * @return this resequencer's timeout.
-     * (Processor) 
+     * @return this resequencer's timeout. (Processor)
      * @see ResequencerEngine#setTimeout(long)
      */
     public long getTimeout() {
@@ -153,11 +144,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     /**
      * Sends the <code>exchange</code> to the next <code>processor</code>.
      * 
-     * @param o
-     *            exchange to send.
+     * @param exchange exchange to send.
      */
-    public void sendElement(Exchange o) throws Exception {
-        processor.process(o);
+    public void sendElement(Exchange exchange) throws Exception {
+        processor.process(exchange);
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -173,7 +163,7 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         private volatile boolean cancelRequested;
         
         public Delivery() {
-            super("Delivery Thread");
+            super("Resequencer Delivery Thread");
         }
         
         @Override
