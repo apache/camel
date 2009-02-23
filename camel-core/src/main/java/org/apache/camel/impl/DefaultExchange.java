@@ -292,7 +292,7 @@ public class DefaultExchange implements Exchange {
 
     public String getExchangeId() {
         if (exchangeId == null) {
-            exchangeId = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+            exchangeId = createExchangeId();
         }
         return exchangeId;
     }
@@ -354,6 +354,14 @@ public class DefaultExchange implements Exchange {
             MessageSupport messageSupport = (MessageSupport)message;
             messageSupport.setExchange(this);
         }
+    }
+
+    protected String createExchangeId() {
+        String answer = in.createExchangeId();
+        if (answer == null) {
+            answer = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
+        }
+        return answer;
     }
 
 }

@@ -189,4 +189,16 @@ public class JmsMessage extends DefaultMessage {
         return value != null ? value.toString().replaceAll("[^a-zA-Z0-9\\.\\_\\-]", "_") : "";
     }
 
+    @Override
+    public String createExchangeId() {
+        if (jmsMessage != null) {
+            try {
+                return jmsMessage.getJMSMessageID();
+            } catch (JMSException e) {
+                throw new RuntimeCamelException("Failed to get JMSMessageID property", e);
+            }
+        }
+        return super.createExchangeId();
+
+    }
 }

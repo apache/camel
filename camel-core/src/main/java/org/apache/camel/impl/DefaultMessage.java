@@ -172,5 +172,8 @@ public class DefaultMessage extends MessageSupport {
     protected boolean hasPopulatedHeaders() {
         return headers != null;
     }
-    
+
+    public String createExchangeId() {
+        return null;
+    }
 }
