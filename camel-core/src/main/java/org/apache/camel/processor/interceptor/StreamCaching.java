@@ -54,4 +54,18 @@ public final class StreamCaching implements InterceptStrategy {
         }
         context.addInterceptStrategy(new StreamCaching());
     }
+    
+    /**
+     * Enable stream caching for a RouteContext
+     * 
+     * @param context the route context
+     */
+    public static void disable(RouteContext context) {
+        for (InterceptStrategy strategy : context.getInterceptStrategies()) {
+            if (strategy instanceof StreamCaching) {
+                context.getInterceptStrategies().remove(strategy);
+                return;
+            }
+        }        
+    }
 }

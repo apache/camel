@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
@@ -42,13 +43,14 @@ public class StreamCacheConverterTest extends TestCase {
         this.converter = new StreamCacheConverter();
     }
 
-    public void testConvertToStreamCacheStreamSource() throws TransformerException, FileNotFoundException {
+    public void testConvertToStreamCacheStreamSource() throws IOException, FileNotFoundException, TransformerException {
         StreamSource source = new StreamSource(getTestFileStream());
-        StreamSource cache = (StreamSource) converter.convertToStreamCache(source);
+        StreamCache cache = converter.convertToStreamCache(source);
         //assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
-        assertNotNull(converter.toString(cache));
-        assertNotNull(converter.toString(cache));
+        assertNotNull(converter.toString((Source)cache));
+        cache.reset();
+        assertNotNull(converter.toString((Source)cache));
     }
 
     public void testConvertToStreamCacheInputStream() throws IOException {
