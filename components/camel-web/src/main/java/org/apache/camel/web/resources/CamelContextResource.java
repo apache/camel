@@ -31,6 +31,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.web.model.Camel;
 
+import java.util.TreeMap;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
 /**
  * The root Camel resource from which all other resources can be navigated such as for <code>endpoints</code>
  * or <code>routes</code>
@@ -70,11 +75,19 @@ public class CamelContextResource {
         }
         return null;
     }
+
     @PreDestroy
     public void close() throws Exception {
         if (template != null) {
             template.stop();
         }
+    }
+
+    /**
+     * Returns the system properties
+     */
+    public Map getSystemProperties() {
+        return new TreeMap(System.getProperties());
     }
 
     // representations
@@ -105,6 +118,11 @@ public class CamelContextResource {
     @Path("routes")
     public RoutesResource getRoutesResource() {
         return new RoutesResource(this);
+    }
+
+    @Path("converters")
+    public ConvertersResource getConvertersResource() {
+        return new ConvertersResource(this);
     }
 /*
 

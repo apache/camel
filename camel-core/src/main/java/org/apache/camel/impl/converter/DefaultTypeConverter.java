@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.Exchange;
@@ -161,6 +162,38 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
     public void setInjector(Injector injector) {
         this.injector = injector;
+    }
+
+    public Set<Class> getFromClassMappings() {
+        // make sure we have loaded the converters
+        checkLoaded();
+
+        Set<Class> answer = new HashSet<Class>();
+        synchronized (typeMappings) {
+            for (TypeMapping mapping : typeMappings.keySet()) {
+                answer.add(mapping.getFromType());
+            }
+        }
+        return answer;
+    }
+
+    public Set<Class> getToClassMappings(Class fromClass) {
+        Set<Class> answer = new HashSet<Class>();
+        synchronized (typeMappings) {
+            for (TypeMapping mapping : typeMappings.keySet()) {
+                if (mapping.isApplicable(fromClass)) {
+                    answer.add(mapping.getToType());
+                }
+            }
+        }
+        return answer;
+    }
+
+    public Map<TypeMapping, TypeConverter> getTypeMappings() {
+        // make sure we have loaded the converters
+        checkLoaded();
+
+        return typeMappings;
     }
 
     protected <T> TypeConverter getOrFindTypeConverter(Class toType, Object value) {
@@ -323,6 +356,10 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         @Override
         public String toString() {
             return "[" + fromType + "=>" + toType + "]";
+        }
+
+        public boolean isApplicable(Class fromClass) {
+            return fromType.isAssignableFrom(fromClass);
         }
     }
 }
