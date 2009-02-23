@@ -55,7 +55,7 @@ public class AggregatorAndOnExceptionTest extends ContextTestSupport {
                                 return newExchange;
                             }
                         },
-                        header(Exchange.AGGREGATED_COUNT).isEqualTo(2)))
+                        header(Exchange.AGGREGATED_SIZE).isEqualTo(2)))
                     .batchTimeout(500L)
                     .to("mock:result");
             }

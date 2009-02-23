@@ -71,6 +71,9 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // use little delay to run unit test fast
+                errorHandler(deadLetterChannel().delay(25));
+
                 TryType tryType = from("direct:start").tryBlock().
                         process(validator).
                         to("mock:valid");

@@ -22,12 +22,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Header;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 public class MultiCastAggregatorTest extends ContextTestSupport {
 
@@ -83,7 +81,7 @@ public class MultiCastAggregatorTest extends ContextTestSupport {
                 from("direct:z").process(new AppendingProcessor("z")).to("direct:aggregator");
 
                 from("direct:aggregator").aggregate(header("cheese"), new BodyInAggregatingStrategy()).
-                completedPredicate(header(Exchange.AGGREGATED_COUNT).isEqualTo(3)).to("mock:result");
+                completedPredicate(header(Exchange.AGGREGATED_SIZE).isEqualTo(3)).to("mock:result");
                 // END SNIPPET: example
             }
         };
