@@ -25,6 +25,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.Registry;
@@ -56,10 +57,6 @@ public final class CamelContextHelper {
         } else {
             return endpoint;
         }
-    }
-
-    public static String getEndpointKey(String uri, Endpoint ep) {
-        return ep.isSingleton() ? uri : ("Ox" + Integer.toHexString(ep.hashCode()) + ":" + uri);
     }
 
     /**

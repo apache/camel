@@ -239,6 +239,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    public Map<String,Endpoint> getEndpointMap() {
+        synchronized (endpoints) {
+            return new HashMap<String,Endpoint>(endpoints);
+        }
+    }
+
     public Collection<Endpoint> getEndpoints(String uri) {
         Collection<Endpoint> answer = new ArrayList<Endpoint>();
         Collection<Endpoint> coll;
@@ -274,7 +280,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         synchronized (endpoints) {
             startServices(endpoint);
             oldEndpoint = endpoints.remove(uri);
-            endpoints.put(CamelContextHelper.getEndpointKey(uri, endpoint), endpoint);
+            endpoints.put(getEndpointKey(uri, endpoint), endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
             }
@@ -343,7 +349,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     if (answer != null) {
                         addService(answer);
 
-                        endpoints.put(CamelContextHelper.getEndpointKey(uri, answer), answer);
+                        endpoints.put(getEndpointKey(uri, answer), answer);
                         lifecycleStrategy.onEndpointAdd(answer);
                     }
                 } catch (Exception e) {
@@ -797,4 +803,22 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         
     }
+
+
+    protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
+        if (endpoint.isSingleton()) {
+            return uri;
+        }
+        else {
+            // lets try find the first endpoint key which is free
+            for (int counter = 0; true; counter++) {
+                String key = (counter > 0) ? uri + ":" + counter : uri;
+                if (!endpoints.containsKey(key)) {
+                    return key;
+                }
+            }
+        }
+    }
+
+
 }
