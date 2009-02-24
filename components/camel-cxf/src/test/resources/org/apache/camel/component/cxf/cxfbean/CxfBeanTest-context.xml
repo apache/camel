@@ -28,8 +28,10 @@
 		xmlns="http://camel.apache.org/schema/spring">
 	</camelContext>
 	
+	<!-- START SNIPPET: beanDefinition -->
 	<util:list id="customerServiceBean">
 		<bean class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 	</util:list>
+	<!-- END SNIPPET: beanDefinition -->
 	
 </beans>

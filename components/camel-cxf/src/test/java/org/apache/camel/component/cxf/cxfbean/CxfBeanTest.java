@@ -55,7 +55,9 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
 
             @Override
             public void configure() throws Exception {
+                // START SNIPPET: routeDefinition
                 from("jetty:http://localhost:9000?matchOnUriPrefix=true").to("cxfbean:customerServiceBean");   
+                // END SNIPPET: routeDefinition
 
             }
             
@@ -69,10 +71,12 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", getStringFromInputStream(in));
 
+        // START SNIPPET: clientInvocation
         url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
         in = url.openStream();
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", getStringFromInputStream(in));
-        
+        // END SNIPPET: clientInvocation
+
     }
 
     
