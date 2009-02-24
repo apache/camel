@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -37,7 +38,7 @@ import org.apache.cxf.transport.DestinationFactoryManager;
  *  
  * @version $Revision$
  */
-public class CxfBeanEndpoint extends ProcessorEndpoint {
+public class CxfBeanEndpoint extends ProcessorEndpoint implements HeaderFilterStrategyAware {
     private static final String URI_PREFIX = "cxfbean";
     private Server server;
     private Bus bus;
