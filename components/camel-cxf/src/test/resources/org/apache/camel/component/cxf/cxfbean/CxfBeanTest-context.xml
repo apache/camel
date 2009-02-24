@@ -24,15 +24,12 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
     ">
     
-	<camelContext id="camel"
+	<camelContext id="camelContext"
 		xmlns="http://camel.apache.org/schema/spring">
 	</camelContext>
 	
-	<bean id="routeBuilder"
-		class="org.apache.camel.component.cxf.jaxrs.CxfJaxrsConsumerTest$TestRouteBuilder" />
-	
-	<util:list id="resourceClasses">
-		<value>org.apache.camel.component.cxf.jaxrs.testbean.CustomerService</value>
+	<util:list id="customerServiceBean">
+		<bean class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
 	</util:list>
 	
 </beans>

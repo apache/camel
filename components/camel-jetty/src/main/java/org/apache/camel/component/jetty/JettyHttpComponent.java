@@ -27,6 +27,7 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -88,7 +89,7 @@ public class JettyHttpComponent extends HttpComponent {
         configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
         uri = httpUri.toString();
 
         JettyHttpEndpoint result = new JettyHttpEndpoint(this, uri, httpUri, params, getHttpConnectionManager(), httpClientConfigurer);
@@ -248,7 +249,7 @@ public class JettyHttpComponent extends HttpComponent {
     }
 
     protected CamelServlet createServletForConnector(Connector connector) throws Exception {
-        CamelServlet camelServlet = new CamelContinuationServlet();
+        CamelServlet camelServlet = new CamelContinuationServlet(isMatchOnUriPrefix());
         
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});

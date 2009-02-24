@@ -30,10 +30,19 @@ import javax.servlet.http.HttpServletResponse;
 public class CamelServlet extends HttpServlet {
 
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
+    private boolean matchOnUriPrefix;
 
-    public CamelServlet() {
+    /**
+     * @param matchOnUriPrefix the matchOnUriPrefix to set
+     */
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
+    public CamelServlet(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+    
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -64,7 +73,17 @@ public class CamelServlet extends HttpServlet {
 
     protected HttpConsumer resolve(HttpServletRequest request) {
         String path = request.getPathInfo();
-        return consumers.get(path);
+        HttpConsumer answer = consumers.get(path);
+               
+        if (answer == null && matchOnUriPrefix) {
+            for (String key : consumers.keySet()) {
+                if (path.startsWith(key)) {
+                    answer = consumers.get(key);
+                    break;
+                }
+            }
+        }
+        return answer;
     }
 
     public void connect(HttpConsumer consumer) {
@@ -74,5 +93,10 @@ public class CamelServlet extends HttpServlet {
     public void disconnect(HttpConsumer consumer) {
         consumers.remove(consumer.getPath());
     }
+
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+    
 
 }

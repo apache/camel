@@ -48,6 +48,10 @@ public class HttpProducer extends DefaultProducer {
     public static final String HTTP_URI = "http.uri";
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     public static final String QUERY = "org.apache.camel.component.http.query";    
+    public static final String PATH = "org.apache.camel.component.http.path";  
+    public static final String CONTENT_TYPE = "org.apache.camel.component.http.contentType";
+    public static final String CHARACTER_ENCODING = "org.apache.camel.component.http.characterEncoding";
+
     private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
 
