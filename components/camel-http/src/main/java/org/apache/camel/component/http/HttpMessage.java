@@ -77,9 +77,13 @@ public class HttpMessage extends DefaultMessage {
                 map.put(name, value);
             }
         }
-
-        // store the method and query as well
+        
+        // store the method and query and other info in headers
         map.put(HttpMethods.HTTP_METHOD, request.getMethod());
         map.put(HttpProducer.QUERY, request.getQueryString());
+        map.put(HttpProducer.PATH, request.getPathInfo());
+        map.put(HttpProducer.CONTENT_TYPE, request.getContentType());
+        map.put(HttpProducer.CHARACTER_ENCODING, request.getCharacterEncoding());
+
     }
 }

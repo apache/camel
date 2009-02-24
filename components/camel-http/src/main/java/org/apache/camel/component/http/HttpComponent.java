@@ -39,6 +39,7 @@ public class HttpComponent extends DefaultComponent {
     protected HttpClientConfigurer httpClientConfigurer;
     protected HttpConnectionManager httpConnectionManager = new MultiThreadedHttpConnectionManager();
     protected HttpBinding httpBinding;
+    private boolean matchOnUriPrefix;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -85,6 +86,8 @@ public class HttpComponent extends DefaultComponent {
         if (ref != null) {
             httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
         }
+        
+        matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
     }
     
     @Override
@@ -148,4 +151,9 @@ public class HttpComponent extends DefaultComponent {
     public void setHttpBinding(HttpBinding httpBinding) {
         this.httpBinding = httpBinding;
     }
+
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+    
 }

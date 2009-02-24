@@ -58,6 +58,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     CamelContext camelContext;
     Consumer consumer;
     String camelDestinationUri;
+
     private ProducerTemplate camelTemplate;
     private Endpoint distinationEndpoint;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -163,6 +164,10 @@ public class CamelDestination extends AbstractDestination implements Configurabl
             return "default" + BASE_BEAN_NAME_SUFFIX;
         }
         return endpointInfo.getName().toString() + BASE_BEAN_NAME_SUFFIX;
+    }
+    
+    public String getCamelDestinationUri() {
+        return camelDestinationUri;
     }
 
     private void initConfig() {

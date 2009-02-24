@@ -36,6 +36,11 @@ public class CamelContinuationServlet extends CamelServlet {
 
     private static final long serialVersionUID = 1L;
 
+     
+    public CamelContinuationServlet(boolean matchOnUriPrefix) {
+        super(matchOnUriPrefix);
+    }
+        
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {

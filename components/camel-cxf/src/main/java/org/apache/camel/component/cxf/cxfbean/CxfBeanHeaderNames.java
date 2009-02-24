@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.jaxrs;
-
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+package org.apache.camel.component.cxf.cxfbean;
 
 /**
- * A CXF Component that supports JAX-RS endpoints.
- * 
  * @version $Revision$
  */
-public class CxfJaxrsComponent extends DefaultComponent {
-
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map parameters) throws Exception {
-        
-        return new CxfJaxrsEndpoint(remaining, this);
-    }
+public interface CxfBeanHeaderNames {
+    
+    String VERB = "CamelCxfBeanVerb";
+    String CONTENT_TYPE = "CamelCxfBeanContextType";
+    String CHARACTER_ENCODING = "CamelCxfBeanCharacterEncoding";
+    String PATH = "CamelCxfBeanRequestPath";
+    String BASE_PATH = "CamelCxfBeanRequestBasePath";
 
 }

@@ -14,14 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.cxf.jaxrs;
+package org.apache.camel.component.cxf.cxfbean;
 
 import java.io.InputStream;
 import java.net.URL;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -39,37 +37,44 @@ import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTest
  * @version $Revision$
  */
 @ContextConfiguration
-public class CxfJaxrsConsumerTest extends AbstractJUnit38SpringContextTests {
-    
+public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String POST_REQUEST = "<Customer><name>Jack</name></Customer>";
     
     @Autowired
     protected CamelContext context;
     
-    public static class TestRouteBuilder extends RouteBuilder {
-        @Override
-        public void configure() throws Exception {
-            from("cxf-jaxrs://http://localhost:9000?resourceClassnames=#resourceClasses").process(new Processor() {
-                public void process(Exchange exchange) throws Exception {
-                    // TODO have not implemented passing exchange to processor.
-                }
-                    
-            });
-                
-        }
+    @Override
+    public void setUp() throws Exception {
+        RouteBuilder builder = createRouteBuilder();
+        context.addRoutes(builder);
     }
     
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+
+            @Override
+            public void configure() throws Exception {
+                from("jetty:http://localhost:9000?matchOnUriPrefix=true").to("cxfbean:customerServiceBean");   
+
+            }
+            
+        };
+    }   
+    
     public void testGetConsumer() throws Exception {
+        
         URL url = new URL("http://localhost:9000/customerservice/customers/123");
+
         InputStream in = url.openStream();
         assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}", getStringFromInputStream(in));
 
         url = new URL("http://localhost:9000/customerservice/orders/223/products/323");
         in = url.openStream();
         assertEquals("{\"Product\":{\"description\":\"product 323\",\"id\":323}}", getStringFromInputStream(in));
-
+        
     }
+
     
     public void testPutConsumer() throws Exception {
         PutMethod put = new PutMethod("http://localhost:9000/customerservice/customers");
@@ -109,5 +114,6 @@ public class CxfJaxrsConsumerTest extends AbstractJUnit38SpringContextTests {
         bos.close();
         return bos.getOut().toString();
     }
+
 
 }
