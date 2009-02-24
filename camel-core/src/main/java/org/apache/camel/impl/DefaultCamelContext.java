@@ -239,9 +239,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public Map<String,Endpoint> getEndpointMap() {
+    public Map<String, Endpoint> getEndpointMap() {
         synchronized (endpoints) {
-            return new HashMap<String,Endpoint>(endpoints);
+            return new HashMap<String, Endpoint>(endpoints);
         }
     }
 
@@ -808,8 +808,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
-        }
-        else {
+        } else {
             // lets try find the first endpoint key which is free
             for (int counter = 0; true; counter++) {
                 String key = (counter > 0) ? uri + ":" + counter : uri;

@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.config.BatchResequencerConfig;
@@ -53,7 +54,7 @@ public class JmsResequencerTest extends ContextTestSupport  {
                 in.setBody(body);
                 in.setHeader(headerName, headerValue);
                 in.setHeader("testCase", getName());
-                in.setHeader(Exchange.BEAN_METHOD_NAME, "execute");
+                in.setHeader(BeanProcessor.METHOD_NAME, "execute");
             }
         });
     }
