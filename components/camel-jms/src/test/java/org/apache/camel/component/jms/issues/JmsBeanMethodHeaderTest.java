@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jms.issues;
 
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -26,9 +25,9 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.

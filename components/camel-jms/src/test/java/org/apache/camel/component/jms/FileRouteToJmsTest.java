@@ -23,9 +23,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
 
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * Unit test that we can produce JMS message from files
