@@ -82,7 +82,7 @@ public class BeanTest extends LanguageTestSupport {
             return in.getHeader("foo");
         }
 
-        public boolean isFooHeaderAbc(@Header(name = "foo")String foo) {
+        public boolean isFooHeaderAbc(@Header("foo") String foo) {
             return "abc".equals(foo);
         }
     }

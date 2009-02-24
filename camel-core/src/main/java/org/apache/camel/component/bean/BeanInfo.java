@@ -430,12 +430,12 @@ public class BeanInfo {
                                                                          Annotation annotation) {
         if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
-            return ExpressionBuilder.propertyExpression(propertyAnnotation.name());
+            return ExpressionBuilder.propertyExpression(propertyAnnotation.value());
         } else if (annotation instanceof Properties) {
             return ExpressionBuilder.propertiesExpression();
         } else if (annotation instanceof Header) {
             Header headerAnnotation = (Header)annotation;
-            return ExpressionBuilder.headerExpression(headerAnnotation.name());
+            return ExpressionBuilder.headerExpression(headerAnnotation.value());
         } else if (annotation instanceof Headers) {
             return ExpressionBuilder.headersExpression();
         } else if (annotation instanceof OutHeaders) {

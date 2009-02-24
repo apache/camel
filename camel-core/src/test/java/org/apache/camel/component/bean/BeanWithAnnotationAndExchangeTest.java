@@ -62,7 +62,7 @@ public class BeanWithAnnotationAndExchangeTest extends ContextTestSupport {
     public static class MyBean {
 
         // START SNIPPET: e1
-        public void doSomething(@Header(name = "user") String user, @Body String body, Exchange exchange) {
+        public void doSomething(@Header("user") String user, @Body String body, Exchange exchange) {
             assertEquals("admin", user);
 
             exchange.getIn().setBody(body + "MyBean");

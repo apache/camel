@@ -84,7 +84,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     public static class ValidationBean {
         private static final transient Log LOG = LogFactory.getLog(ValidationBean.class);
 
-        public void someMethod(String body, @Header(name = "foo")
+        public void someMethod(String body, @Header("foo")
                                String header) throws ValidationException {
             if ("bar".equals(header)) {
                 LOG.info("someMethod() called with valid header and body: " + body);

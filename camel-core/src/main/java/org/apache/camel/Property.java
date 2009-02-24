@@ -32,5 +32,5 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.PARAMETER })
 public @interface Property {
-    String name();
+    String value();
 }
