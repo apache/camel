@@ -38,6 +38,7 @@ import java.lang.annotation.Target;
  * @see org.apache.camel.ExchangePattern
  * @see org.apache.camel.Exchange#getPattern()
  * @see InOut
+ * @see Pattern
  *
  * @version $Revision$
  */

@@ -86,7 +86,7 @@ public class ClaimCheckTest extends ContextTestSupport {
     
     // START SNIPPET: e3
     public static final class DataEnricherBean {
-        public void addDataBackIn(Exchange exchange, @Header(name = "claimCheck") String claimCheck) { 
+        public void addDataBackIn(Exchange exchange, @Header("claimCheck") String claimCheck) { 
             // query the data store using the claim check as the key and add the data
             // back into the message body
             exchange.getIn().setBody(dataStore.get(claimCheck));
