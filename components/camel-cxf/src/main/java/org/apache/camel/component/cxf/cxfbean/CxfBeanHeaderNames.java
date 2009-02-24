@@ -22,7 +22,7 @@ package org.apache.camel.component.cxf.cxfbean;
 public interface CxfBeanHeaderNames {
     
     String VERB = "CamelCxfBeanVerb";
-    String CONTENT_TYPE = "CamelCxfBeanContextType";
+    String CONTENT_TYPE = "CamelCxfBeanContentType";
     String CHARACTER_ENCODING = "CamelCxfBeanCharacterEncoding";
     String PATH = "CamelCxfBeanRequestPath";
     String BASE_PATH = "CamelCxfBeanRequestBasePath";
