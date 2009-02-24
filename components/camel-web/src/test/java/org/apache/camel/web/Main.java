@@ -30,11 +30,12 @@ import org.mortbay.jetty.webapp.WebAppContext;
  */
 public final class Main {
 
-    public static final int PORT = 8080;
+    public static int PORT = 9998;
 
     public static final String WEBAPP_DIR = "src/main/webapp";
 
     public static final String WEBAPP_CTX = "/";
+
     protected static Server server = new Server();
 
     private Main() {
@@ -42,18 +43,21 @@ public final class Main {
 
     public static void main(String[] args) throws Exception {
         // now lets start the web server
-        int port = PORT;
         if (args.length > 0) {
             String text = args[0];
-            port = Integer.parseInt(text);
+            int port = Integer.parseInt(text);
+            if (port > 0) {
+                PORT = port;
+            }
         }
-        System.out.println("Starting Web Server on port: " + port);
-        run(port);
+        start();
     }
 
-    public static void run(int port) throws Exception {
+    public static void start() throws Exception {
+        System.out.println("Starting Web Server on port: " + PORT);
+
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort(port);
+        connector.setPort(PORT);
         connector.setServer(server);
         WebAppContext context = new WebAppContext();
 
@@ -61,18 +65,25 @@ public final class Main {
         context.setContextPath(WEBAPP_CTX);
         context.setServer(server);
 
-        server.setHandlers(new Handler[] {context});
-        server.setConnectors(new Connector[] {connector});
+        server.setHandlers(new Handler[]{context});
+        server.setConnectors(new Connector[]{connector});
         server.start();
 
         System.out.println();
         System.out.println("==============================================================================");
-        System.out.println("Started the Camel REST Console: point your web browser at http://localhost:" + port + "/");
+        System.out.println("Started the Camel REST Console: point your web browser at " + getRootUrl());
         System.out.println("==============================================================================");
         System.out.println();
     }
 
     public static void stop() throws Exception {
         server.stop();
+    }
+
+    /**
+     * Returns the root URL of the application
+     */
+    public static String getRootUrl() {
+        return "http://localhost:" + PORT + WEBAPP_CTX;
     }
 }

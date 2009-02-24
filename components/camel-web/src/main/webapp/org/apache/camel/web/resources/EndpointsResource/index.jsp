@@ -9,13 +9,13 @@
 
 <ul>
   <c:forEach var="i" items="${it.endpoints}">
-    <li><a href='<c:url value="${i.href}"/>'>${i.uri}</a>
+    <li><a class='endpoint' href='<c:url value="${i.href}"/>'>${i.uri}</a>
   </c:forEach>
 </ul>
 
 <h2>Create New Endpoint</h2>
 
-<form action="<c:url value="/endpoints"/>" method="post">
+<form action="<c:url value="/endpoints"/>" method="post" name="createEndpoint">
   <table>
     <c:if test="${not empty it.error}">
       <tr>

@@ -24,12 +24,15 @@ import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
 import org.apache.camel.web.Main;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class TestSupport extends TestCase {
-    protected int port = 9998;
+    private static final transient Log LOG = LogFactory.getLog(TestSupport.class);
+
     protected ClientConfig clientConfig;
     protected Client client;
     protected WebResource resource;
@@ -37,26 +40,27 @@ public class TestSupport extends TestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        Main.run(port);
+        Main.start();
 
         clientConfig = new DefaultClientConfig();
         // use the following jaxb context resolver
         //cc.getProviderClasses().add(JAXBContextResolver.class);
         client = Client.create(clientConfig);
-        resource = client.resource("http://localhost:" + port + Main.WEBAPP_CTX);
-    }
-
-    protected WebResource resource(String uri) {
-        System.out.println("About to test URI: " + uri);
-        return resource.path(uri);
+        resource = client.resource(Main.getRootUrl());
     }
 
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+
         Main.stop();
     }
 
+
+    protected WebResource resource(String uri) {
+        LOG.info("About to test URI: " + uri);
+        return resource.path(uri);
+    }
     protected void assertHtmlResponse(String response) {
         assertNotNull("No text returned!", response);
 
