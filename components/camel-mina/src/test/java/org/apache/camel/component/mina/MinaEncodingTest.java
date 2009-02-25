@@ -35,7 +35,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class MinaEncodingTest extends ContextTestSupport {
 
     public void testTCPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = "mina:tcp://localhost:8080?encoding=UTF-8&sync=false";
+        final String uri = "mina:tcp://localhost:9080?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -55,7 +55,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     }
 
     public void testTCPEncodeUTF8InputIsString() throws Exception {
-        final String uri = "mina:tcp://localhost:8080?encoding=UTF-8&sync=false";
+        final String uri = "mina:tcp://localhost:9080?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -75,7 +75,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     }
 
     public void testTCPEncodeUTF8TextLineInputIsString() throws Exception {
-        final String uri = "mina:tcp://localhost:8080?textline=true&encoding=UTF-8&sync=false";
+        final String uri = "mina:tcp://localhost:9080?textline=true&encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -98,7 +98,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     // See TextLineEncoder#encode where the message is converted to String using .toString()
 
     public void testUDPEncodeUTF8InputIsBytes() throws Exception {
-        final String uri = "mina:udp://localhost:8080?encoding=UTF-8&sync=false";
+        final String uri = "mina:udp://localhost:9080?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -118,7 +118,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     }
 
     public void testUDPEncodeUTF8InputIsString() throws Exception {
-        final String uri = "mina:udp://localhost:8080?encoding=UTF-8&sync=false";
+        final String uri = "mina:udp://localhost:9080?encoding=UTF-8&sync=false";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).to("mock:result");
@@ -145,7 +145,7 @@ public class MinaEncodingTest extends ContextTestSupport {
         final String hello = "Hello Thai Elephant \u0E08";
         final String bye = "Hello Thai Elephant \u0E08";
 
-        final String uri = "mina:udp://localhost:8080?sync=true&encoding=UTF-8";
+        final String uri = "mina:udp://localhost:9080?sync=true&encoding=UTF-8";
         this.context.addRoutes(new RouteBuilder() {
             public void configure() {
                 from(uri).process(new Processor() {
@@ -172,7 +172,7 @@ public class MinaEncodingTest extends ContextTestSupport {
     }
 
     public void testInvalidEncoding() throws Exception {
-        final String uri = "mina:tcp://localhost:8080?textline=true&encoding=XXX&sync=false";
+        final String uri = "mina:tcp://localhost:9080?textline=true&encoding=XXX&sync=false";
 
         try {
             this.context.addRoutes(new RouteBuilder() {
