@@ -46,15 +46,15 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         endpointB = getMandatoryEndpoint("seda:test.b", SedaEndpoint.class);
         endpointC = getMandatoryEndpoint("seda:test.C", SedaEndpoint.class);
 
-        assertProduceConsumers("endpointA", endpointA, 0, 1);
-        assertProduceConsumers("endpointB", endpointB, 1, 0);
-        assertProduceConsumers("endpointC", endpointC, 0, 0);
+        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 1);
+        assertProducerAndConsumerCounts("endpointB", endpointB, 1, 0);
+        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 0);
 
         context.stopRoute(route);
 
-        assertProduceConsumers("endpointA", endpointA, 0, 0);
-        assertProduceConsumers("endpointB", endpointB, 0, 0);
-        assertProduceConsumers("endpointC", endpointC, 0, 0);
+        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 0);
+        assertProducerAndConsumerCounts("endpointB", endpointB, 0, 0);
+        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 0);
 
 
         // lets mutate the route...
@@ -62,9 +62,9 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         fromType.setUri("seda:test.C");
         context.startRoute(route);
 
-        assertProduceConsumers("endpointA", endpointA, 0, 0);
-        assertProduceConsumers("endpointB", endpointB, 1, 0);
-        assertProduceConsumers("endpointC", endpointC, 0, 1);
+        assertProducerAndConsumerCounts("endpointA", endpointA, 0, 0);
+        assertProducerAndConsumerCounts("endpointB", endpointB, 1, 0);
+        assertProducerAndConsumerCounts("endpointC", endpointC, 0, 1);
 
 
         // now lets check it works
@@ -76,7 +76,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    protected void assertProduceConsumers(String name, SedaEndpoint endpoint, int producerCount, int consumerCount) {
+    protected void assertProducerAndConsumerCounts(String name, SedaEndpoint endpoint, int producerCount, int consumerCount) {
         assertCollectionSize("Producers for " + name, endpoint.getProducers(), producerCount);
         assertCollectionSize("Consumers for " + name, endpoint.getConsumers(), consumerCount);
     }
