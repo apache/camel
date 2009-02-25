@@ -104,9 +104,12 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
         for (int i = 0; i < concurrentConsumers; i++) {
             executor.execute(this);
         }
+        endpoint.onStarted(this);
     }
 
     protected void doStop() throws Exception {
+        endpoint.onStopped(this);
+        
         executor.shutdownNow();
         executor = null;
     }

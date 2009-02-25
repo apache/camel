@@ -22,6 +22,9 @@ import java.util.List;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Service;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.bam.model.ActivityDefinition;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.model.ProcessInstance;
@@ -51,6 +54,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
     private Class entityType = ProcessInstance.class;
     private ProcessRules processRules = new ProcessRules();
     private ProcessDefinition processDefinition;
+    private ActivityMonitorEngine engine;
 
     protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
         this(jpaTemplate, transactionTemplate, createProcessName());
@@ -138,15 +142,23 @@ public abstract class ProcessBuilder extends RouteBuilder {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void populateRoutes(List<Route> routes) throws Exception {
-        boolean first = true;
-        for (ActivityBuilder builder : activityBuilders) {
-            Route route = builder.createRoute();
-            if (first) {
-                route.getServices().add(new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules()));
-                first = false;
-            }
-            routes.add(route);
+
+        // lets add the monitoring service - should there be an easier way??
+        if (engine == null) {
+            engine = new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules());
         }
+        CamelContext camelContext = getContext();
+        if (camelContext instanceof DefaultCamelContext) {
+            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
+            defaultCamelContext.addService(engine);
+        }
+
+        // lets create the routes for the activites
+        for (ActivityBuilder builder : activityBuilders) {
+            from(builder.getEndpoint()).process(builder.getProcessor());
+        }
+        super.populateRoutes(routes);
+
     }
 
     // Implementation methods

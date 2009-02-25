@@ -189,14 +189,6 @@ public interface CamelContext extends Service {
     List<Route> getRoutes();
 
     /**
-     * Adds a collection of routes to this context
-     *
-     * @param routes the routes to add
-     * @throws Exception if the routes could not be created for whatever reason
-     */
-    void addRoutes(Collection<Route> routes) throws Exception;
-
-    /**
      * Adds a collection of routes to this context using the given builder
      * to build them
      *
@@ -212,6 +204,23 @@ public interface CamelContext extends Service {
      * @throws Exception if the route definition could not be created for whatever reason
      */
     void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+
+    /**
+     * Removes a collection of route definitions from the context - stopping any previously running
+     * routes if any of them are actively running
+     */
+    void removeRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+
+    /**
+     * Starts the given route if it has been previously stopped
+     */
+    void startRoute(RouteType route) throws Exception;
+
+    /**
+     * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
+     * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
+     */
+    void stopRoute(RouteType route) throws Exception;
 
 
     // Properties

@@ -19,9 +19,12 @@ package org.apache.camel.component.seda;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -42,6 +45,8 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private BlockingQueue<Exchange> queue;
     private int size = 1000;
     private int concurrentConsumers = 1;
+    private Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
+    private Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
 
     public SedaEndpoint() {
     }
@@ -67,7 +72,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
     
     public Producer createProducer() throws Exception {
-        return new CollectionProducer(this, getQueue());
+        return new SedaProducer(this, getQueue());
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -105,7 +110,40 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         return true;
     }
 
+    /**
+     * Returns the current pending exchanges
+     */
     public List<Exchange> getExchanges() {
         return new ArrayList<Exchange>(getQueue());
+    }
+
+    /**
+     * Returns the current active consumers on this endpoint
+     */
+    public Set<SedaConsumer> getConsumers() {
+        return new HashSet<SedaConsumer>(consumers);
+    }
+
+    /**
+     * Returns the current active producers on this endpoint
+     */
+    public Set<SedaProducer> getProducers() {
+        return new HashSet<SedaProducer>(producers);
+    }
+    
+    void onStarted(SedaProducer producer) {
+        producers.add(producer);
+    }
+
+    void onStopped(SedaProducer producer) {
+        producers.remove(producer);
+    }
+
+    void onStarted(SedaConsumer consumer) {
+        consumers.add(consumer);
+    }
+
+    void onStopped(SedaConsumer consumer) {
+        consumers.remove(consumer);
     }
 }

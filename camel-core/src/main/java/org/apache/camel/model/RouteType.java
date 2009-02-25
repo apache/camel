@@ -74,7 +74,8 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         return "Route[" + inputs + " -> " + outputs + "]";
     }
 
-    public void addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
+    public List<RouteContext> addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
+        List<RouteContext> answer = new ArrayList<RouteContext>();
         setCamelContext(context);
 
         ErrorHandlerBuilder handler = context.getErrorHandlerBuilder();
@@ -83,8 +84,10 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         }
 
         for (FromType fromType : inputs) {
-            addRoutes(routes, fromType);
+            RouteContext routeContext = addRoutes(routes, fromType);
+            answer.add(routeContext);
         }
+        return answer;
     }
 
 
@@ -260,7 +263,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected void addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
+    protected RouteContext addRoutes(Collection<Route> routes, FromType fromType) throws Exception {
         RouteContext routeContext = new DefaultRouteContext(this, fromType, routes);
         routeContext.getEndpoint(); // force endpoint resolution
         if (camelContext != null) {
@@ -273,6 +276,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         }
 
         routeContext.commit();
+        return routeContext;
     }
 
     @Override

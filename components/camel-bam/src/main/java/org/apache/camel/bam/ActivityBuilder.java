@@ -22,6 +22,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.model.RouteType;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
@@ -52,12 +53,15 @@ public class ActivityBuilder implements ProcessorFactory {
         return processBuilder.createActivityProcessor(this);
     }
 
-    public Route createRoute() throws Exception {
+    /**
+     * Returns the processor of the route
+     */
+    public Processor getProcessor() throws Exception {
         Processor processor = createProcessor();
         if (processor == null) {
             throw new IllegalArgumentException("No processor created for ActivityBuilder: " + this);
         }
-        return new EventDrivenConsumerRoute(getEndpoint(), processor);
+        return processor;
     }
 
     // Builder methods
