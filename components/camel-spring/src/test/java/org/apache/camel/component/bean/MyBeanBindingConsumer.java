@@ -40,12 +40,12 @@ public class MyBeanBindingConsumer {
     }
 
     @MessageDriven(uri = "direct:startHeaderExpression")
-    public void doSomethingHeaderExpression(String payload, @Header(name = "number") int count) {
+    public void doSomethingHeaderExpression(String payload, @Header("number") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
     @MessageDriven(uri = "direct:startMany")
-    public void doSomethingManyExpression(String payload, @Constant(value = "5") int count, @Header(name = "number") int number) {
+    public void doSomethingManyExpression(String payload, @Constant(value = "5") int count, @Header("number") int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }
 
