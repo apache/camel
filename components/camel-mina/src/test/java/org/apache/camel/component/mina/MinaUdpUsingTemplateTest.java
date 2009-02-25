@@ -44,7 +44,7 @@ public class MinaUdpUsingTemplateTest extends ContextTestSupport {
 
     protected void sendUdpMessages() throws Exception {
         for (int i = 0; i < messageCount; i++) {
-            template.sendBody("mina:udp://127.0.0.1:4445", "Hello Message: " + i);
+            template.sendBody("mina:udp://127.0.0.1:4445?sync=false", "Hello Message: " + i);
         }
     }
 

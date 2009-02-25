@@ -53,9 +53,9 @@ public class MinaProducer extends DefaultProducer {
     public MinaProducer(MinaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.lazySessionCreation = endpoint.isLazySessionCreation();
-        this.timeout = endpoint.getTimeout();
-        this.sync = endpoint.isSync();
+        this.lazySessionCreation = endpoint.getConfiguration().isLazySessionCreation();
+        this.timeout = endpoint.getConfiguration().getTimeout();
+        this.sync = endpoint.getConfiguration().isSync();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -67,8 +67,8 @@ public class MinaProducer extends DefaultProducer {
         }
 
         // set the exchange encoding property
-        if (endpoint.getCharsetName() != null) {
-            exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getCharsetName());
+        if (endpoint.getConfiguration().getCharsetName() != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, endpoint.getConfiguration().getCharsetName());
         }
 
         Object body = MinaPayloadHelper.getIn(endpoint, exchange);

@@ -78,7 +78,7 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
         return "Endpoint[" + getEndpointUri() + "]";
     }
 
-    public String getEndpointUri() {
+    public String getEndpointUri() {        
         if (endpointUri == null) {
             endpointUri = createEndpointUri();
             if (endpointUri == null) {
@@ -196,6 +196,17 @@ public abstract class DefaultEndpoint<E extends Exchange> implements Endpoint<E>
 
     protected void setEndpointUri(String endpointUri) {
         this.endpointUri = endpointUri;
+    }
+    
+    /**
+     * Sets the endpointUri if it has not been specified yet via some kind of dependency injection mechanism.
+     * This allows dependency injection frameworks such as Spring or Guice to set the default endpoint URI in cases
+     * where it has not been explicitly configured using the name/context in which an Endpoint is created.
+     */
+    public void setEndpointUriIfNotSpecified(String value) {
+        if (endpointUri == null) {
+            setEndpointUri(value);
+        }
     }
     
     @Deprecated

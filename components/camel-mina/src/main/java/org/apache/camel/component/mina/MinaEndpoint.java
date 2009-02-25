@@ -17,13 +17,13 @@
 package org.apache.camel.component.mina;
 
 import java.net.SocketAddress;
-import java.nio.charset.Charset;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoAcceptorConfig;
 import org.apache.mina.common.IoConnector;
@@ -37,49 +37,45 @@ import org.apache.mina.common.IoSession;
  */
 public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
 
-    private static final long DEFAULT_TIMEOUT = 30000;
-    private long timeout = DEFAULT_TIMEOUT;
+    private SocketAddress address;
+    private IoAcceptor acceptor;
+    private IoConnector connector;
+    private IoAcceptorConfig acceptorConfig;
+    private IoConnectorConfig connectorConfig;
+    private MinaConfiguration configuration;
 
-    private final IoAcceptor acceptor;
-    private final SocketAddress address;
-    private final IoConnector connector;
-    private final IoAcceptorConfig acceptorConfig;
-    private final IoConnectorConfig connectorConfig;
-    private final boolean lazySessionCreation;
-    private final boolean transferExchange;
-    private final boolean sync;
-    private String charsetName;
+    public MinaEndpoint() {
+    }
 
-    public MinaEndpoint(String endpointUri, MinaComponent component, SocketAddress address,
-                        IoAcceptor acceptor, IoAcceptorConfig acceptorConfig, IoConnector connector,
-                        IoConnectorConfig connectorConfig, boolean lazySessionCreation, long timeout,
-                        boolean transferExchange, boolean sync) {
+    public MinaEndpoint(String endpointUri, MinaComponent component) {
         super(endpointUri, component);
-        this.address = address;
-        this.acceptor = acceptor;
-        this.acceptorConfig = acceptorConfig;
-        this.connectorConfig = connectorConfig;
-        this.connector = connector;
-        this.lazySessionCreation = lazySessionCreation;
-        if (timeout > 0) {
-            // override default timeout if provided
-            this.timeout = timeout;
-        }
-        this.transferExchange = transferExchange;
-        this.sync = sync;
     }
 
 
     @SuppressWarnings({"unchecked"})
     public Producer<MinaExchange> createProducer() throws Exception {
+        ObjectHelper.notNull(configuration, "configuration"); 
+        ObjectHelper.notNull(address, "address");
+        ObjectHelper.notNull(connector, "connector");
+        // wm protocol does not have config
+        if (!configuration.getProtocol().equalsIgnoreCase("vm")) {
+            ObjectHelper.notNull(connectorConfig, "connectorConfig");
+        }
         return new MinaProducer(this);
     }
 
     public Consumer<MinaExchange> createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(configuration, "configuration");
+        ObjectHelper.notNull(address, "address");
+        ObjectHelper.notNull(acceptor, "acceptor");
+        // wm protocol does not have config
+        if (!configuration.getProtocol().equalsIgnoreCase("vm")) {
+            ObjectHelper.notNull(acceptorConfig, "acceptorConfig");
+        }
         return new MinaConsumer(this, processor);
     }
 
-    @Override
+    
     public MinaExchange createExchange(ExchangePattern pattern) {
         return new MinaExchange(getCamelContext(), pattern, null);
     }
@@ -90,53 +86,58 @@ public class MinaEndpoint extends DefaultEndpoint<MinaExchange> {
         return exchange;
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
-    public IoAcceptor getAcceptor() {
-        return acceptor;
+
+    public MinaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(MinaConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     public SocketAddress getAddress() {
         return address;
     }
 
+    public void setAddress(SocketAddress address) {
+        this.address = address;
+    }
+
+    public IoAcceptor getAcceptor() {
+        return acceptor;
+    }
+
+    public void setAcceptor(IoAcceptor acceptor) {
+        this.acceptor = acceptor;
+    }
+
     public IoConnector getConnector() {
         return connector;
     }
 
-    public boolean isLazySessionCreation() {
-        return lazySessionCreation;
+    public void setConnector(IoConnector connector) {
+        this.connector = connector;
     }
 
     public IoAcceptorConfig getAcceptorConfig() {
         return acceptorConfig;
     }
 
+    public void setAcceptorConfig(IoAcceptorConfig acceptorConfig) {
+        this.acceptorConfig = acceptorConfig;
+    }
+
     public IoConnectorConfig getConnectorConfig() {
         return connectorConfig;
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public boolean isTransferExchange() {
-        return transferExchange;
-    }
-
-    public boolean isSync() {
-        return sync;
-    }
-
-    public void setCharsetName(String charset) {
-        this.charsetName = charset;
-    }
-
-    public String getCharsetName() {
-        return charsetName;
+    public void setConnectorConfig(IoConnectorConfig connectorConfig) {
+        this.connectorConfig = connectorConfig;
     }
 }
