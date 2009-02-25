@@ -65,7 +65,7 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
  */
 public class MinaComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(MinaComponent.class);
-    private MinaConfiguration configuration = new MinaConfiguration();
+    private MinaConfiguration configuration;
 
     public MinaComponent() {
     }
@@ -76,9 +76,15 @@ public class MinaComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        // must use copy as each endpoint can have different options
-        ObjectHelper.notNull(configuration, "configuration");
-        MinaConfiguration config = configuration.copy();
+        // Using the configuration which set by the component as a default one
+        // Since the configuration's properties will be set by the URI
+        // we need to copy or create a new MinaConfiguration here
+        MinaConfiguration config;
+        if (configuration != null) {        
+            config = configuration.copy();
+        } else {
+            config = new MinaConfiguration();
+        }
 
         URI u = new URI(remaining);
         config.setHost(u.getHost());
@@ -392,10 +398,7 @@ public class MinaComponent extends DefaultComponent {
     // Properties
     //-------------------------------------------------------------------------
 
-    public synchronized MinaConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = new MinaConfiguration();
-        }
+    public MinaConfiguration getConfiguration() {        
         return configuration;
     }
 
