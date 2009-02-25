@@ -34,8 +34,6 @@ public enum HttpMethods implements Expression {
     GET(GetMethod.class), POST(PostMethod.class), PUT(PutMethod.class), DELETE(DeleteMethod.class), HEAD(
         HeadMethod.class), OPTIONS(OptionsMethod.class), TRACE(TraceMethod.class);
 
-    public static final String HTTP_METHOD = "http.requestMethod";
-
     final Class<? extends HttpMethod> clazz;
     final boolean entity;
 

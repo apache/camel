@@ -17,12 +17,9 @@
 package org.apache.camel.component.http;
 
 import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -97,8 +94,8 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void doWriteResponse(Message message, HttpServletResponse response) throws IOException {
         // set the status code in the response. Default is 200.
-        if (message.getHeader(HttpProducer.HTTP_RESPONSE_CODE) != null) {
-            int code = message.getHeader(HttpProducer.HTTP_RESPONSE_CODE, Integer.class);
+        if (message.getHeader(HttpConstants.HTTP_RESPONSE_CODE) != null) {
+            int code = message.getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
             response.setStatus(code);
         }
         // set the content type in the response.
@@ -125,6 +122,7 @@ public class DefaultHttpBinding implements HttpBinding {
                 try {
                     ByteArrayOutputStream initialArray = new ByteArrayOutputStream();
                     int c;
+                    // TODO: Use a buffer to write faster instead of looping one char at a time
                     while ((c = is.read()) >= 0) {
                         initialArray.write(c);
                     }

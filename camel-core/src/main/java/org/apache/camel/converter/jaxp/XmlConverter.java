@@ -79,10 +79,9 @@ public class XmlConverter {
     private TransformerFactory transformerFactory;
 
     static {
-        // TODO: Use ObjectHelper.loadClass instead
         Class cl = null;
         try {
-            cl = Class.forName("org.apache.xalan.xsltc.trax.DOM2SAX");
+            cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX");
         } catch (Throwable t) {
             // do nothing here
         }
@@ -180,22 +179,6 @@ public class XmlConverter {
             return buffer.toString();
         }
     }
-
-    /**
-     * Converts the given input Node into text
-     */
-/*
-    @Converter
-    public String toString(NodeList nodeList) throws TransformerException {
-        StringWriter buffer = new StringWriter();
-        for (int i = 0, size = nodeList.getLength(); i < size; i++) {
-            Node node = nodeList.item(i);
-            Source source = new DOMSource(node);
-            toResult(source, new StreamResult(buffer));
-        }
-        return buffer.toString();
-    }
-*/
 
     /**
      * Converts the given input Node into text

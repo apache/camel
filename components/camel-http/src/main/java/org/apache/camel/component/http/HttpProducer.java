@@ -39,19 +39,10 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
-
 /**
  * @version $Revision$
  */
 public class HttpProducer extends DefaultProducer {
-    public static final String HTTP_URI = "http.uri";
-    public static final String HTTP_RESPONSE_CODE = "http.responseCode";
-    public static final String QUERY = "org.apache.camel.component.http.query";    
-    public static final String PATH = "org.apache.camel.component.http.path";  
-    public static final String CONTENT_TYPE = "org.apache.camel.component.http.contentType";
-    public static final String CHARACTER_ENCODING = "org.apache.camel.component.http.characterEncoding";
-
     private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
 
@@ -87,7 +78,7 @@ public class HttpProducer extends DefaultProducer {
                 Message answer = exchange.getOut(true);
 
                 answer.setHeaders(in.getHeaders());
-                answer.setHeader(HTTP_RESPONSE_CODE, responseCode);
+                answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
                 answer.setBody(extractResponseBody(method));
 
                 // propagate HTTP response headers
@@ -173,7 +164,7 @@ public class HttpProducer extends DefaultProducer {
      */
     protected HttpMethod createMethod(Exchange exchange) {
         // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
-        String queryString = exchange.getIn().getHeader(QUERY, String.class);
+        String queryString = exchange.getIn().getHeader(HttpConstants.HTTP_QUERY, String.class);
         if (queryString == null) {
             queryString = ((HttpEndpoint)getEndpoint()).getHttpUri().getQuery();
         }
@@ -181,7 +172,7 @@ public class HttpProducer extends DefaultProducer {
 
         // compute what method to use either GET or POST
         HttpMethods methodToUse;
-        HttpMethods m = exchange.getIn().getHeader(HTTP_METHOD, HttpMethods.class);
+        HttpMethods m = exchange.getIn().getHeader(HttpConstants.HTTP_METHOD, HttpMethods.class);
         if (m != null) {
             // always use what end-user provides in a header
             methodToUse = m;
@@ -193,7 +184,7 @@ public class HttpProducer extends DefaultProducer {
             methodToUse = requestEntity != null ? HttpMethods.POST : HttpMethods.GET;
         }
 
-        String uri = exchange.getIn().getHeader(HTTP_URI, String.class);
+        String uri = exchange.getIn().getHeader(HttpConstants.HTTP_URI, String.class);
         if (uri == null) {
             uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         }

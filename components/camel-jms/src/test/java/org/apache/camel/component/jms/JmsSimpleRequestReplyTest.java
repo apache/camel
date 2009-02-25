@@ -70,7 +70,7 @@ public class JmsSimpleRequestReplyTest extends ContextTestSupport {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("Bye World");
                         // the reply destination is set as a property on the exchange while we process it
-                        assertNotNull(exchange.getProperty(Constants.JMS_REPLY_DESTINATION));
+                        assertNotNull(exchange.getProperty(JmsConstants.JMS_REPLY_DESTINATION));
                     }
                 }).to("mock:result");
             }

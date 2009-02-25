@@ -32,13 +32,6 @@ public class CamelServlet extends HttpServlet {
     private ConcurrentHashMap<String, HttpConsumer> consumers = new ConcurrentHashMap<String, HttpConsumer>();
     private boolean matchOnUriPrefix;
 
-    /**
-     * @param matchOnUriPrefix the matchOnUriPrefix to set
-     */
-    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
-        this.matchOnUriPrefix = matchOnUriPrefix;
-    }
-
     public CamelServlet(boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
@@ -98,5 +91,8 @@ public class CamelServlet extends HttpServlet {
         return matchOnUriPrefix;
     }
     
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
 
 }
