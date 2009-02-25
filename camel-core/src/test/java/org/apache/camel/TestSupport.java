@@ -18,6 +18,7 @@ package org.apache.camel;
 
 import java.io.File;
 import java.util.List;
+import java.util.Collection;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;
@@ -292,7 +293,31 @@ public abstract class TestSupport extends TestCase {
      * Asserts that a list is of the given size
      */
     protected <T> List<T> assertListSize(List<T> list, int size) {
-        assertEquals("List should be of size: " + size + " but is: " + list, size, list.size());
+        return assertListSize("List", list, size);
+    }
+
+    /**
+     * Asserts that a list is of the given size
+     */
+    protected <T> List<T> assertListSize(String message, List<T> list, int size) {
+        assertEquals(message + " should be of size: "
+                + size + " but is: " + list, size, list.size());
+        return list;
+    }
+
+    /**
+     * Asserts that a list is of the given size
+     */
+    protected <T> Collection<T> assertCollectionSize(Collection<T> list, int size) {
+        return assertCollectionSize("List", list, size);
+    }
+
+    /**
+     * Asserts that a list is of the given size
+     */
+    protected <T> Collection<T> assertCollectionSize(String message, Collection<T> list, int size) {
+        assertEquals(message + " should be of size: "
+                + size + " but is: " + list, size, list.size());
         return list;
     }
 

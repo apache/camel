@@ -87,6 +87,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
      */
     public void setUri(String uri) {
         this.uri = uri;
+        clear();
     }
 
     public String getRef() {
@@ -101,6 +102,7 @@ public class FromType extends OptionalIdentifiedType<FromType> {
      */
     public void setRef(String ref) {
         this.ref = ref;
+        clear();
     }
 
     public Endpoint getEndpoint() {
@@ -136,4 +138,9 @@ public class FromType extends OptionalIdentifiedType<FromType> {
             return "no uri or ref supplied!";
         }
     }
+
+    protected void clear() {
+        this.endpoint = null;
+    }
+
 }
