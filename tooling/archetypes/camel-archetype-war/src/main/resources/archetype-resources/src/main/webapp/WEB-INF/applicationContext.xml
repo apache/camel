@@ -73,8 +73,14 @@
     <package>${package}</package>
     <route>
       <from uri="file:src/data?noop=true"/>
+      
+      <!-- Print the message to standard out, just as a test -->
+      <convertBodyTo type="java.lang.String"/>
+      <to uri="stream:out"/> 
+      
       <to uri="activemq:personnel.records"/>
     </route>
+
     <route>
       <from uri="activemq:personnel.records"/>
       <choice>
