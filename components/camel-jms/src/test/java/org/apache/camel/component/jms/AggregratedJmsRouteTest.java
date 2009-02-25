@@ -113,7 +113,7 @@ public class AggregratedJmsRouteTest extends ContextTestSupport {
                         result.setProperty("aggregated", old + 1);
                         return result;
                     }
-                }).completedPredicate(header("aggregated").isEqualTo(3))
+                }).completionPredicate(header("aggregated").isEqualTo(3))
                 .to("mock:reply");
             }
         };
