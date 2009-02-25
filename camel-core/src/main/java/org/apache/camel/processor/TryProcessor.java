@@ -16,6 +16,8 @@
  */
 package org.apache.camel.processor;
 
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -25,8 +27,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Implements try/catch/finally type processing
@@ -109,13 +109,14 @@ public class TryProcessor extends ServiceSupport implements Processor {
             if (catchClause.catches(e)) {
                 // lets attach the exception to the exchange
                 Exchange localExchange = exchange.copy();
-                localExchange.getIn().setHeader("caught.exception", e);
+                
+                localExchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
                 // give the rest of the pipeline another chance
                 localExchange.setException(null);
 
                 // do not catch any exception here, let it propagate up
                 catchClause.process(localExchange);
-                localExchange.getIn().removeHeader("caught.exception");
+                localExchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
                 ExchangeHelper.copyResults(exchange, localExchange);
                 return;
             }
