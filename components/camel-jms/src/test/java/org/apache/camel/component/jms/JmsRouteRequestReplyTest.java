@@ -351,10 +351,9 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
         runRequestReplyThreaded(endpoingUriA);
     }
 
-    // TODO: Fix this test for upgrading from active-5.0.0 to 5.1.0 (CAMEL-559)
-    /*public void testUseMessageIDAsCorrelationIDPersistReplyToMultiNode() throws Exception {
+    public void testUseMessageIDAsCorrelationIDPersistReplyToMultiNode() throws Exception {
         runRequestReplyThreaded(endpoingtReplyToUriA);
-    }*/
+    }
 
     public void testUseCorrelationIDPersistReplyToMultiNode() throws Exception {
         runRequestReplyThreaded(endpoingUriA);

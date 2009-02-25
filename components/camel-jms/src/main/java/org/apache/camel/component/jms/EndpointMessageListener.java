@@ -95,8 +95,7 @@ public class EndpointMessageListener implements MessageListener {
             rce = wrapRuntimeCamelException(e);
         }
         if (rce != null) {
-            LOG.warn(endpoint + " consumer caught an exception while processing "
-                     + "JMS message: " + message, rce);
+            LOG.warn(endpoint + " consumer caught an exception while processing JMS message: " + message, rce);
             throw rce;
         }
     }
@@ -105,7 +104,7 @@ public class EndpointMessageListener implements MessageListener {
         JmsExchange exchange = new JmsExchange(endpoint, endpoint.getExchangePattern(), getBinding(), message);
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
-            exchange.setProperty("org.apache.camel.jms.replyDestination", replyDestination);
+            exchange.setProperty(Constants.JMS_REPLY_DESTINATION, replyDestination);
             exchange.setPattern(ExchangePattern.InOut);
         }
         return exchange;
