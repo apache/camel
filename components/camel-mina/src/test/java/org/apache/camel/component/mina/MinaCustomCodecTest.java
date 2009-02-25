@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.mina;
 
+import java.nio.charset.Charset;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,6 +31,7 @@ import org.apache.mina.filter.codec.ProtocolDecoder;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.apache.mina.filter.codec.ProtocolEncoder;
 import org.apache.mina.filter.codec.ProtocolEncoderOutput;
+import org.apache.mina.filter.codec.textline.LineDelimiter;
 
 /**
  * Unit test with custom codec.
@@ -36,6 +39,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 public class MinaCustomCodecTest extends ContextTestSupport {
 
     protected String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+   
     protected String badUri = "mina:tcp://localhost:11300?sync=true&codec=XXX";
 
     public void testMyCodec() throws Exception {
@@ -47,6 +51,26 @@ public class MinaCustomCodecTest extends ContextTestSupport {
         assertEquals("Bye World", out);
 
         mock.assertIsSatisfied();
+    }
+    
+    public void testTCPEncodeUTF8InputIsString() throws Exception {
+        final String myUri = "mina:tcp://localhost:9080?encoding=UTF-8&sync=false";
+        this.context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from(myUri).to("mock:result");
+            }
+        });
+
+        MockEndpoint endpoint = getMockEndpoint("mock:result");
+
+        // include a UTF-8 char in the text \u0E08 is a Thai elephant
+        String body = "Hello Thai Elephant \u0E08";
+
+        endpoint.expectedMessageCount(1);
+        endpoint.expectedBodiesReceived(body);
+
+        template.sendBody(myUri, body);
+        assertMockEndpointsSatisfied();
     }
 
     public void testBadConfiguration() throws Exception {
@@ -60,14 +84,14 @@ public class MinaCustomCodecTest extends ContextTestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myCodec", new MyCodec());
+        jndi.bind("myCodec", new MyCodec());        
         return jndi;
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri).transform(constant("Bye World")).to("mock:result");
+                from(uri).transform(constant("Bye World")).to("mock:result");                
             }
         };
     }
@@ -79,8 +103,8 @@ public class MinaCustomCodecTest extends ContextTestSupport {
                 public void encode(IoSession ioSession, Object message, ProtocolEncoderOutput out)
                     throws Exception {
                     ByteBuffer bb = ByteBuffer.allocate(32).setAutoExpand(true);
-                    String s = (String) message;
-                    bb.put(s.getBytes());
+                    String s = (String) message;                    
+                    bb.put(s.getBytes("US-ASCII"));
                     bb.flip();
                     out.write(bb);
                 }
@@ -97,7 +121,7 @@ public class MinaCustomCodecTest extends ContextTestSupport {
                 protected boolean doDecode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
                     if (in.remaining() > 0) {
                         byte[] buf = MinaConverter.toByteArray(in);
-                        out.write(new String(buf));
+                        out.write(new String(buf, "US-ASCII"));
                         return true;
                     } else {
                         return false;
