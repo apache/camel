@@ -269,6 +269,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         installRoutes();
     }
 
+    @SuppressWarnings("unchecked")
     private <T> T getBeanForType(Class<T> clazz) {
         T bean = null;
         String[] names = getApplicationContext().getBeanNamesForType(clazz, true, true);
@@ -307,9 +308,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 throw wrapRuntimeCamelException(e);
             }
         }
-        /*
-         * if (context != null) { context.onApplicationEvent(event); }
-         */
     }
 
     // Properties
@@ -493,7 +491,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy to install all available routes into the context
      */
     protected void installRoutes() throws Exception {
-        if (autowireRouteBuilders != null && autowireRouteBuilders.booleanValue()) {
+        if (autowireRouteBuilders != null && autowireRouteBuilders) {
             Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
             if (builders != null) {
                 for (Object builder : builders.values()) {

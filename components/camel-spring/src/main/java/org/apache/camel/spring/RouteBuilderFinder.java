@@ -42,6 +42,7 @@ public class RouteBuilderFinder {
     private ApplicationContext applicationContext;    
     private BeanPostProcessor beanPostProcessor;
 
+    @SuppressWarnings("unchecked")
     public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader, BeanPostProcessor postProcessor, ResolverUtil resolverUtil) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
@@ -116,6 +117,7 @@ public class RouteBuilderFinder {
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     protected Routes instantiateBuilder(Class type) throws IllegalAccessException, InstantiationException {
         return (Routes) camelContext.getInjector().newInstance(type);
     }

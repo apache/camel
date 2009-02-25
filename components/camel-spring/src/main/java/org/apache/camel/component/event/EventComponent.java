@@ -18,9 +18,7 @@ package org.apache.camel.component.event;
 
 import java.util.Map;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultComponent;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -55,13 +53,12 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
         if (applicationContext instanceof ConfigurableApplicationContext) {
             return (ConfigurableApplicationContext)applicationContext;
         } else {
-            throw new IllegalArgumentException("Not created with a ConfigurableApplicationContext! Was: " + applicationContext);
+            throw new IllegalArgumentException("Class: " + applicationContext.getClass().getName() + " is not an instanceof ConfigurableApplicationContext.");
         }
     }
 
     protected EventEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this);
-        // getConfigurableApplicationContext().addApplicationListener(answer);
         return answer;
     }
 }

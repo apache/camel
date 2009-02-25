@@ -58,8 +58,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final transient Log LOG = LogFactory.getLog(SpringCamelContext.class);
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;
-    private boolean shouldStartContext =
-        ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE); // start context by default
+    private boolean shouldStartContext = ObjectHelper.getSystemProperty("shouldStartContext", Boolean.TRUE);
 
     public SpringCamelContext() {
     }

@@ -141,9 +141,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Thread interrupted: " + e, e);
-                }
+                Thread.currentThread().interrupt();
             }
         }
     }

@@ -65,7 +65,7 @@ public class MainRunner implements InitializingBean, Runnable {
             try {
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                LOG.info("Caught: " + e, e);
+                Thread.currentThread().interrupt();
             }
         }
         Method method = main.getMethod("main", String[].class);

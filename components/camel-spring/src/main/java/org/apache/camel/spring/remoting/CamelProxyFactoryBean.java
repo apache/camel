@@ -37,6 +37,7 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
     private Producer producer;
 
     @Override
+    @SuppressWarnings("unchecked")
     public void afterPropertiesSet() {
         super.afterPropertiesSet();
         try {
@@ -64,7 +65,6 @@ public class CamelProxyFactoryBean extends UrlBasedRemoteAccessor implements Fac
         this.producer = null;
         this.serviceProxy = null;
     }
-
 
     public Class getServiceInterface() {
         return super.getServiceInterface();

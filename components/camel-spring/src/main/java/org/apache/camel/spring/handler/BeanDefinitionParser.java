@@ -126,7 +126,6 @@ public class BeanDefinitionParser extends AbstractSingleBeanDefinitionParser {
      * @param element        the XML element that was the source of the bean definition's metadata
      */
     protected void postProcess(BeanDefinitionBuilder beanDefinition, Element element) {
-
     }
 
 }

@@ -50,7 +50,7 @@ public class SpringValidator extends ValidatingProcessor {
                 return new StreamSource(schemaResource.getInputStream(), schemaResource.getURL().toExternalForm());
             }
         } else {
-            throw new IllegalArgumentException("You must specify a schema, schemaFile, schemaResource, schemaSource or schemaUrl property");
+            return super.createSchemaSource();
         }
     }
 }
