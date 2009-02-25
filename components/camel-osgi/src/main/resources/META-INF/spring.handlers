@@ -14,5 +14,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+http\://camel.apache.org/schema/osgi=org.apache.camel.osgi.CamelNamespaceHandler
 
-http\://activemq.apache.org/camel/schema/osgi=org.apache.camel.osgi.CamelNamespaceHandler
