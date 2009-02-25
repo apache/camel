@@ -16,7 +16,6 @@
  */
 package org.apache.camel.loanbroker.queue.version;
 
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
@@ -26,18 +25,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 
-
-
 /**
  * The LoanBroker is a RouteBuilder which builds the whole loan message routing rules
  *
- * @version $
+ * @version $Revision$
  */
 public class LoanBroker extends RouteBuilder {
 
     /**
      * A main() so we can easily run these routing rules in our IDE
-     * @throws Exception
      */
     // START SNIPPET: starting
     public static void main(String... args) throws Exception {
@@ -89,7 +85,7 @@ public class LoanBroker extends RouteBuilder {
         // name of the aggregated message size.
         from("jms:queue:bankReplyQueue")
             .aggregate(header(Constants.PROPERTY_SSN), new BankResponseAggregationStrategy())
-            .completedPredicate(header(Exchange.AGGREGATED_SIZE).isEqualTo(3))
+            .completionPredicate(header(Exchange.AGGREGATED_SIZE).isEqualTo(3))
 
         // Here we do some translation and put the message back to loanReplyQueue
             .process(new Translator()).to("jms:queue:loanReplyQueue");
@@ -108,8 +104,6 @@ public class LoanBroker extends RouteBuilder {
         from("jms:queue2:bank1").process(new Bank("bank1"));
         from("jms:queue2:bank2").process(new Bank("bank2"));
         from("jms:queue2:bank3").process(new Bank("bank3"));
-        
-
     // END SNIPPET: dsl-2
     }
 }

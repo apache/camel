@@ -65,9 +65,9 @@
           <simple>header.cheese</simple>
         </correlationExpression>
         <to uri="mock:result"/>
-        <completedPredicate>
+        <completionPredicate>
           <method bean="bodyInAggregatorStrategy" method="isCompleted"/>
-        </completedPredicate>
+        </completionPredicate>
       </aggregate>
     </route>
   </camelContext>

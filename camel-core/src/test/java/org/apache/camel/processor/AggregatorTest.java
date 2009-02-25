@@ -91,18 +91,18 @@ public class AggregatorTest extends ContextTestSupport {
                 // in this sample we aggregate using our own strategy with a completion predicate
                 // stating that the aggregated header is equal to 5.
                 from("direct:predicate").aggregate(header("cheese"), new MyAggregationStrategy()).
-                    completedPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
+                        completionPredicate(header("aggregated").isEqualTo(5)).to("mock:result");
                 
                 // this sample is similar to the one above but it also illustrates the use of outBatchSize 
                 // to send exchanges to mock:endpoint in batches of 10.  
                 from("direct:outBatchPredicate").aggregate(header("cheese"), new MyAggregationStrategy()).
-                    completedPredicate(header("aggregated").isEqualTo(5)).outBatchSize(10).to("mock:result");
+                        completionPredicate(header("aggregated").isEqualTo(5)).outBatchSize(10).to("mock:result");
                 // END SNIPPET: ex
 
                 // turning off in batching (batchSize = 1) is a good way to test "out" batching.  Don't include
                 // in wiki snippet as it may not be a good example to follow.
                 from("direct:outBatchNoInBatching").aggregate(header("cheese"), new MyAggregationStrategy()).
-                completedPredicate(header("aggregated").isEqualTo(5)).batchSize(1).outBatchSize(10).to("mock:result");
+                        completionPredicate(header("aggregated").isEqualTo(5)).batchSize(1).outBatchSize(10).to("mock:result");
             }
         };
     }

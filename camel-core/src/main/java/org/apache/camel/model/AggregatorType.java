@@ -68,9 +68,8 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
     private String collectionRef;    
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
-    @XmlElement(name = "completedPredicate", required = false)
-    private ExpressionSubElementType completedPredicate;
-
+    @XmlElement(name = "completionPredicate", required = false)
+    private ExpressionSubElementType completionPredicate;
 
     public AggregatorType() {
     }
@@ -150,8 +149,8 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
             Expression aggregateExpression = getExpression().createExpression(routeContext);           
 
             Predicate predicate = null;
-            if (getCompletedPredicate() != null) {
-                predicate = getCompletedPredicate().createPredicate(routeContext);
+            if (getCompletionPredicate() != null) {
+                predicate = getCompletionPredicate().createPredicate(routeContext);
             }
             if (predicate != null) {
                 aggregator = new Aggregator(processor, aggregateExpression, strategy, predicate);
@@ -255,12 +254,12 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
         this.collectionRef = collectionRef;
     }
 
-    public void setCompletedPredicate(ExpressionSubElementType completedPredicate) {
-        this.completedPredicate = completedPredicate;
+    public void setCompletionPredicate(ExpressionSubElementType completionPredicate) {
+        this.completionPredicate = completionPredicate;
     }
 
-    public ExpressionSubElementType getCompletedPredicate() {
-        return completedPredicate;
+    public ExpressionSubElementType getCompletionPredicate() {
+        return completionPredicate;
     }
 
     public Boolean getGroupExchanges() {
@@ -367,10 +366,10 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
      *
      * @return the clause used to create the predicate
      */
-    public ExpressionClause<AggregatorType> completedPredicate() {
+    public ExpressionClause<AggregatorType> completionPredicate() {
         checkNoCompletedPredicate();
         ExpressionClause<AggregatorType> clause = new ExpressionClause<AggregatorType>(this);
-        setCompletedPredicate(new ExpressionSubElementType((Expression)clause));
+        setCompletionPredicate(new ExpressionSubElementType((Expression)clause));
         return clause;
     }
 
@@ -379,15 +378,15 @@ public class AggregatorType extends ProcessorType<AggregatorType> {
      *
      * @param predicate  the predicate
      */
-    public AggregatorType completedPredicate(Predicate predicate) {
+    public AggregatorType completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
-        setCompletedPredicate(new ExpressionSubElementType(predicate));
+        setCompletionPredicate(new ExpressionSubElementType(predicate));
         return this;
     }
 
     protected void checkNoCompletedPredicate() {
-        if (getCompletedPredicate() != null) {
-            throw new IllegalArgumentException("There is already a completedPredicate defined for this aggregator: " + this);
+        if (getCompletionPredicate() != null) {
+            throw new IllegalArgumentException("There is already a completionPredicate defined for this aggregator: " + this);
         }
     }
 

@@ -103,6 +103,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         try {
             cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
         } catch (Throwable t) {
+            // not running OSGi so we callback to the regular factory bean
         }
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
