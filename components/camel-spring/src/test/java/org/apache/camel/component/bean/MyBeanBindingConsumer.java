@@ -30,12 +30,12 @@ public class MyBeanBindingConsumer {
     private ProducerTemplate template;
 
     @MessageDriven(uri = "direct:startBeanExpression")
-    public void doSomethingBeanExpression(String payload, @Bean(value = "myCounter") int count) {
+    public void doSomethingBeanExpression(String payload, @Bean("myCounter") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
     @MessageDriven(uri = "direct:startConstantExpression")
-    public void doSomethingConstantExpression(String payload, @Constant(value = "5") int count) {
+    public void doSomethingConstantExpression(String payload, @Constant("5") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
@@ -45,7 +45,7 @@ public class MyBeanBindingConsumer {
     }
 
     @MessageDriven(uri = "direct:startMany")
-    public void doSomethingManyExpression(String payload, @Constant(value = "5") int count, @Header("number") int number) {
+    public void doSomethingManyExpression(String payload, @Constant("5") int count, @Header("number") int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }
 
