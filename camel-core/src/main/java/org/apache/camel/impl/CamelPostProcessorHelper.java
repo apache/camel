@@ -80,7 +80,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    protected void subscribeMethod(Method method, Object bean, String endpointUri, String endpointName) {
+    public void subscribeMethod(Method method, Object bean, String endpointUri, String endpointName) {
         // lets bind this method to a listener
         String injectionPointName = method.getName();
         Endpoint endpoint = getEndpointInjection(endpointUri, endpointName, injectionPointName, true);
