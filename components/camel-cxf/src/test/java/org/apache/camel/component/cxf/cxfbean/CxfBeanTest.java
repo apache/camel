@@ -56,7 +56,8 @@ public class CxfBeanTest extends AbstractJUnit38SpringContextTests {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: routeDefinition
-                from("jetty:http://localhost:9000?matchOnUriPrefix=true").to("cxfbean:customerServiceBean");   
+                from("jetty:http://localhost:9000?matchOnUriPrefix=true").
+                        to("cxfbean:customerServiceBean");
                 // END SNIPPET: routeDefinition
 
             }

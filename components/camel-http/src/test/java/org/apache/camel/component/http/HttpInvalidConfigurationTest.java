@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 
-import static org.apache.camel.component.http.HttpMethods.HTTP_METHOD;
 import static org.apache.camel.component.http.HttpMethods.POST;
 
 /**
@@ -44,7 +43,7 @@ public class HttpInvalidConfigurationTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").setHeader(HTTP_METHOD, POST).to("http://http://www.google.com");
+                from("direct:start").setHeader(HttpConstants.HTTP_METHOD, POST).to("http://http://www.google.com");
             }
         };
     }

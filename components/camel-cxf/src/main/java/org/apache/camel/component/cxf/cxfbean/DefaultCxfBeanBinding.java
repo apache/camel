@@ -83,7 +83,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
 
         if (answer == null) {
             // try http component header
-            answer = camelMessage.getHeader("org.apache.camel.component.http.path", String.class);
+            answer = camelMessage.getHeader("CamelHttpPath", String.class);
         }
         
         return answer;
@@ -104,7 +104,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
 
         if (answer == null) {
             // try http component header
-            answer = camelMessage.getHeader("http.requestMethod", String.class);
+            answer = camelMessage.getHeader("CamelHttpMethod", String.class);
         }
         
         return answer;
@@ -115,8 +115,7 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
        
         if (answer == null) {
             // try http component header
-            answer = camelMessage.getHeader("org.apache.camel.component.http.characterEncoding", 
-                    String.class);
+            answer = camelMessage.getHeader("CamelHttpCharacterEncoding", String.class);
         }
         
         return answer;
@@ -125,22 +124,19 @@ public class DefaultCxfBeanBinding implements CxfBeanBinding {
 
     protected String getRequestContentType(org.apache.camel.Message camelMessage) {
         String answer = camelMessage.getHeader(CxfBeanHeaderNames.CONTENT_TYPE, String.class);
+        if (answer != null) {
+            return answer;
+        }
+        
+        // try http component header
+        answer = camelMessage.getHeader("CamelHttpContentType", String.class);
 
         if (answer != null) {
             return answer;
         }
         
-        if (answer == null) {
-            // try http component header
-            answer = camelMessage.getHeader("org.apache.camel.component.http.contentType", String.class);
-        }
-        
-        if (answer != null) {
-            return answer;
-        }
-        
         // return default
-        return answer = "*/*";
+        return "*/*";
     }
 
 }

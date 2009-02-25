@@ -145,7 +145,7 @@ public class ValidatingProcessor implements Processor {
     }
 
     protected Source createSchemaSource() throws IOException {
-        throw new IllegalArgumentException("You must specify a schema, schemaFile, schemaSource or schemaUrl property");
+        throw new IllegalArgumentException("You must specify either a schema, schemaFile, schemaSource or schemaUrl property");
     }
 
     protected Schema createSchema() throws SAXException, IOException {

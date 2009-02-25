@@ -14,28 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
-
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
+package org.apache.camel.component.jms;
 
 /**
- * @version $Revision$
+ * Constants
  */
-public class HttpHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
-    
-    public HttpHeaderFilterStrategy() {
-        initialize();  
+public final class JmsConstants {
+
+    public static final String JMS_REPLY_DESTINATION = "CamelJmsReplyDestination";
+
+    private JmsConstants() {
+        // utility class
     }
 
-    protected void initialize() {
-        getOutFilter().add("content-length");
-        getOutFilter().add("content-type");        
-        getOutFilter().add(HttpConstants.HTTP_METHOD.toLowerCase());
-        getOutFilter().add(HttpConstants.HTTP_QUERY);
-        getOutFilter().add(HttpConstants.HTTP_RESPONSE_CODE.toLowerCase());
-        setLowerCase(true);
-        
-        // filter headers begin with "Camel" or "org.apache.camel"
-        setOutFilterPattern("([Camel|org\\.apache\\.camel])[\\.|a-z|A-z|0-9]*");
-    }
 }

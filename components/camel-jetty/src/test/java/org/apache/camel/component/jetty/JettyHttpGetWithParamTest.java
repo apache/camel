@@ -21,8 +21,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.component.http.HttpProducer;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -50,7 +50,7 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
         mock.expectedHeaderReceived("one", "einz");
         mock.expectedHeaderReceived("two", "twei");
 
-        template.sendBodyAndHeader(serverUri, "Hello World", HttpProducer.QUERY, "one=uno&two=dos");
+        template.sendBodyAndHeader(serverUri, "Hello World", HttpConstants.HTTP_QUERY, "one=uno&two=dos");
 
         assertMockEndpointsSatisfied();
     }

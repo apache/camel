@@ -63,9 +63,12 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             // lets store the result in the output message.
             LoadingByteArrayOutputStream bos = new LoadingByteArrayOutputStream();
             InputStream is = method.getResponseBodyAsStream();
-            IOUtils.copy(is, bos);
-            bos.flush();
-            is.close();
+            try {
+                IOUtils.copy(is, bos);
+                bos.flush();
+            } finally {
+                is.close();
+            }
             Message message = exchange.getIn();
             message.setBody(bos.createInputStream());
 
@@ -80,7 +83,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
                 }
             }
         
-            message.setHeader("http.responseCode", responseCode);
+            message.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
             return exchange;
         } catch (IOException e) {
             throw new RuntimeCamelException(e);
