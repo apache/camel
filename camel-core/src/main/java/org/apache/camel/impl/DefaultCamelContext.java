@@ -16,17 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import javax.naming.Context;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -56,16 +45,28 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.SystemHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
+import javax.naming.Context;
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
+
 /**
  * Represents the context used to configure routes and the policies to use.
  *
@@ -97,6 +98,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
+    private Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -112,9 +114,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 // if we can't instantiate the JMX enabled strategy then fallback to default
                 // could be because of missing .jars on the classpath
                 LOG.warn("Could not find needed classes for JMX lifecycle strategy."
-                    + " Needed class is in spring-context.jar using Spring 2.5 or newer ("
-                    + " spring-jmx.jar using Spring 2.0.x)."
-                    + " NoClassDefFoundError: " + e.getMessage());
+                        + " Needed class is in spring-context.jar using Spring 2.5 or newer ("
+                        + " spring-jmx.jar using Spring 2.0.x)."
+                        + " NoClassDefFoundError: " + e.getMessage());
             } catch (Exception e) {
                 LOG.warn("Could not create JMX lifecycle strategy, caused by: " + e.getMessage());
             }
@@ -293,7 +295,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 stopServices(oldEndpoint);
             } else {
                 for (Map.Entry entry : endpoints.entrySet()) {
-                    oldEndpoint = (Endpoint)entry.getValue();
+                    oldEndpoint = (Endpoint) entry.getValue();
                     if (!oldEndpoint.isSingleton() && uri.equals(oldEndpoint.getEndpointUri())) {
                         answer.add(oldEndpoint);
                         stopServices(oldEndpoint);
@@ -368,11 +370,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     // Route Management Methods
     // -----------------------------------------------------------------------
-    public List<Route> getRoutes() {
+    public synchronized List<Route> getRoutes() {
         if (routes == null) {
             routes = new ArrayList<Route>();
         }
-        return routes;
+        
+        // lets return a copy of the collection as objects are removed later
+        // when services are stopped
+        return new ArrayList<Route>(routes);
     }
 
     public void setRoutes(List<Route> routes) {
@@ -380,18 +385,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         throw new UnsupportedOperationException("Overriding existing routes is not supported yet, use addRoutes instead");
     }
 
-    public void addRoutes(Collection<Route> routes) throws Exception {
+    synchronized void removeRouteCollection(Collection<Route> routes) {
+         if (this.routes != null){
+             this.routes.removeAll(routes);
+         }
+    }
+
+    synchronized void addRouteCollection(Collection<Route> routes) throws Exception {
         if (this.routes == null) {
             this.routes = new ArrayList<Route>();
         }
 
         if (routes != null) {
             this.routes.addAll(routes);
+/*
+            TODO we should have notified the lifecycle strategy via the RouteService
 
             lifecycleStrategy.onRoutesAdd(routes);
             if (shouldStartRoutes()) {
                 startRoutes(routes);
             }
+*/
         }
     }
 
@@ -402,7 +416,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding routes from: " + builder + " routes: " + routeList);
         }
-        addRoutes(routeList);
+        //addRouteCollection(routeList);
     }
 
     public void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
@@ -410,7 +424,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (shouldStartRoutes()) {
             startRouteDefinitions(routeDefinitions);
         }
+    }
 
+    public void removeRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
+        this.routeDefinitions.removeAll(routeDefinitions);
+        for (RouteType routeDefinition : routeDefinitions) {
+            stopRoute(routeDefinition);
+        }
+
+    }
+
+    public void startRoute(RouteType route) throws Exception {
+        Collection<Route> routes = new ArrayList<Route>();
+        List<RouteContext> routeContexts = route.addRoutes(this, routes);
+        RouteService routeService = new RouteService(this, route, routeContexts, routes);
+        startRouteService(routeService);
+    }
+
+
+    public void stopRoute(RouteType route) throws Exception {
+        stopRouteService(route.idOrCreate());
     }
 
     /**
@@ -465,7 +498,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             // type converter is usually the default one that also is the registry
             if (typeConverter instanceof DefaultTypeConverter) {
                 typeConverterRegistry = (DefaultTypeConverter) typeConverter;
-            } 
+            }
         }
         return typeConverterRegistry;
     }
@@ -523,7 +556,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Sets the registry to the given JNDI context
      *
      * @param jndiContext is the JNDI context to use as the registry
-     *
      * @see #setRegistry(org.apache.camel.spi.Registry)
      */
     public void setJndiContext(Context jndiContext) {
@@ -651,23 +683,70 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
         startRouteDefinitions(routeDefinitions);
-        startRoutes(routes);
-        
+
+        // lets clear the starting flag as we are now started and we really do start up these services
+        notStarting();
+
+        synchronized (this) {
+            for (RouteService routeService : routeServices.values()) {
+                routeService.start();
+            }
+        }
+        //startRoutes(routes);
+
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
         if (list != null) {
-            Collection<Route> routes = new ArrayList<Route>();
             for (RouteType route : list) {
-                route.addRoutes(this, routes);
+                startRoute(route);
             }
-            addRoutes(routes);
         }
     }
 
-    protected void doStop() throws Exception {
+    /*
+        protected void startRoutes(Collection<Route> routeList) throws Exception {
+            if (routeList != null) {
+                for (Route route : routeList) {
+                    List<Service> services = route.getServicesForRoute();
+                    for (Service service : services) {
+                        addService(service);
+                    }
+                }
+            }
+        }
+
+    */
+
+
+    /**
+     * Starts the given route service
+     */
+    protected synchronized void startRouteService(RouteService routeService) throws Exception {
+        String key = routeService.getId();
+        stopRouteService(key);
+        routeServices.put(key, routeService);
+        if (shouldStartRoutes()) {
+            routeService.start();
+        }
+    }
+
+    /**
+     * Stops the route denoted by the given RouteType id
+     */
+    protected synchronized void stopRouteService(String key) throws Exception {
+        RouteService routeService = routeServices.remove(key);
+        if (routeService != null) {
+            routeService.stop();
+        }
+    }
+
+
+    protected synchronized  void doStop() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
+        stopServices(routeServices.values());
+
         stopServices(servicesToClose);
         if (components != null) {
             for (Component component : components.values()) {
@@ -677,16 +756,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
-    protected void startRoutes(Collection<Route> routeList) throws Exception {
-        if (routeList != null) {
-            for (Route route : routeList) {
-                List<Service> services = route.getServicesForRoute();
-                for (Service service : services) {
-                    addService(service);
-                }
-            }
-        }
-    }
 
     /**
      * Lets force some lazy initialization to occur upfront before we start any
@@ -797,7 +866,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public Map<String, DataFormatType> getDataFormats() {
         return dataFormats;
     }
-    
+
     public void setFactoryFinderClass(Class<? extends FactoryFinder> finderClass) {
         factoryFinderClass = finderClass;
     }
@@ -818,7 +887,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-        
+
     }
 
 

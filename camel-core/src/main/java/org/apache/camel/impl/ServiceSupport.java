@@ -48,7 +48,7 @@ public abstract class ServiceSupport implements Service {
                 }
                 doStart();
             } finally {
-                starting.set(false);
+                notStarting();
             }
         }
     }
@@ -109,6 +109,11 @@ public abstract class ServiceSupport implements Service {
     protected abstract void doStart() throws Exception;
 
     protected abstract void doStop() throws Exception;
+
+
+    protected void notStarting() {
+        starting.set(false);
+    }
 
     /**
      * Creates a new thread name with the given prefix
