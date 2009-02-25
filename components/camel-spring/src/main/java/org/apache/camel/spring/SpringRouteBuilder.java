@@ -46,6 +46,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
      * @param beanName the name of the bean in the application context
      * @return the bean
      */
+    @SuppressWarnings("unchecked")
     public <T> T bean(Class<T> type, String beanName) {
         ApplicationContext context = getApplicationContext();
         return (T)context.getBean(beanName, type);
@@ -59,6 +60,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
      * @param type the type of the bean
      * @return the bean
      */
+    @SuppressWarnings("unchecked")
     public <T> T bean(Class<T> type) {
         ApplicationContext context = getApplicationContext();
         String[] names = context.getBeanNamesForType(type, true, true);

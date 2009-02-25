@@ -45,6 +45,7 @@ public class XsltComponent extends ResourceBasedComponent {
         this.xmlConverter = xmlConverter;
     }
 
+    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         Resource resource = resolveMandatoryResource(remaining);
         if (log.isDebugEnabled()) {
@@ -72,7 +73,7 @@ public class XsltComponent extends ResourceBasedComponent {
             if (factoryClass != null) {
                 factory = (TransformerFactory) newInstance(factoryClass);
             } else {
-                log.warn("Can't find the TransformerFactoryClass with the class name " + transformerFactoryClassName);
+                log.warn("Cannot find the TransformerFactoryClass with the class name " + transformerFactoryClassName);
             }
         }
         

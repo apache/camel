@@ -57,7 +57,7 @@ public class ReflectionUtils extends org.springframework.util.ReflectionUtils {
                 f.setAccessible(oldAccessible);
             }
         } catch (IllegalArgumentException ex) {
-            throw new UnsupportedOperationException("Cannot inject value of class '" + value.getClass() + "' into " + f);
+            throw new UnsupportedOperationException("Cannot inject value of class: " + value.getClass() + " into: " + f);
         } catch (IllegalAccessException ex) {
             ReflectionUtils.handleReflectionException(ex);
         }

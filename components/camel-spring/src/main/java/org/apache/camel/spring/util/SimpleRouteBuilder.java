@@ -44,7 +44,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
         for (String fromUri : fromUris) {
             ProcessorType route = from(fromUri);
 
-            addBeanCall(route);
+            route = addBeanCall(route);
             for (String toUri : toUris) {
                 route = route.to(toUri);
             }
@@ -117,7 +117,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void addBeanCall(ProcessorType route) {
+    protected ProcessorType addBeanCall(ProcessorType route) {
         Class type = getBeanType();
         if (type != null) {
             if (beanMethod != null) {
@@ -132,6 +132,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
                 route = route.beanRef(beanRef);
             }
         }
+        return route;
     }
 
     protected List<String> singletonList(String value) {

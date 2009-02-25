@@ -103,7 +103,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         try {
             cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
         } catch (Throwable t) {
-            // not running OSGi so we callback to the regular factory bean
+            // not running with camel-osgi so we fallback to the regular factory bean
         }
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
@@ -237,8 +237,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 }
             }
 
-            // inject endpoints defined in routes where we can have set an id in the from/to types
-            injectWithinRoutesNodeIdsAsEndpoint(element, parserContext, contextId);
+            // register as endpoint defined indirectly in the routes by from/to types having id explict set
+            registerEndpointsWithIdsDefinedInFromToTypes(element, parserContext, contextId);
 
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element);
@@ -272,7 +272,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
-    protected void injectWithinRoutesNodeIdsAsEndpoint(Element element, ParserContext parserContext, String contextId) {
+    protected void registerEndpointsWithIdsDefinedInFromToTypes(Element element, ParserContext parserContext, String contextId) {
         NodeList list = element.getChildNodes();
         int size = list.getLength();
         for (int i = 0; i < size; i++) {
@@ -285,7 +285,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     registerEndpoint(childElement, parserContext, contextId);
                 }
                 // recursive
-                injectWithinRoutesNodeIdsAsEndpoint(childElement, parserContext, contextId);
+                registerEndpointsWithIdsDefinedInFromToTypes(childElement, parserContext, contextId);
             }
         }
     }
@@ -295,11 +295,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // must have an id to be registered
         if (ObjectHelper.isNotEmpty(id)) {
             BeanDefinition definition = endpointParser.parse(childElement, parserContext);
-            // TODO we can zap this?
-            definition.getPropertyValues()
-                .addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
-            // definition.getPropertyValues().addPropertyValue("context",
-            // builder.getBeanDefinition());
+            definition.getPropertyValues().addPropertyValue("camelContext", new RuntimeBeanReference(contextId));
             parserContext.registerComponent(new BeanComponentDefinition(definition, id));
         }
     }
