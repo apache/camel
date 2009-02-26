@@ -21,52 +21,50 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * An annotation used to identify in a POJO which property is link to a field of
- * a record (csv, ...).
- * The position (mandatory) identifies the position of the data in the record
+ * This annotation represents the root class of the model. When a message (FIX message
+ * containing key-value pairs) must be described in the model, we will use this
+ * annotation.
+
+ * The key pair separator (mandatory) defines the separator between the key and the value
+ * The pair separator (mandatory) allows to define which character separate the pairs from each other
  * The name is optional and could be used in the future to bind a property which a different name
- * The pattern (optional) allows to define the pattern of the data (useful for Date, ...)
- * The length (optional) allows to define for fixed length message the size of the data's block
- * The precision(optional) reflects the precision to be used with BigDecimal number
+ * The type (optional) allow to define the type of the message (e.g. FIX, EMX, ...)
+ * The version (optional) defines the version of the message (e.g. 4.1, ...)
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DataField {
+public @interface Message {
 
     /**
-     * position of the data in the record (mandatory)
-     * 
-     * @return int
-     */
-    int pos();
-
-    /**
-     * name of the field (optional)
+     * Name describing the message (optional)
      * 
      * @return String
      */
     String name() default "";
 
     /**
-     * pattern that the formater will use to transform the data (optional)
+     * Pair separator used to split the key value pairs in tokens (mandatory)
      * 
      * @return String
      */
-    String pattern() default "";
-
+    String pairSeparator();
+    
     /**
-     * length of the data block (useful for the fixedlength record) (optional in
-     * this version)
+     * Key value pair separator is used to split the values from their keys (mandatory)
      * 
-     * @return int
+     * @return String
      */
-    int length() default 0;
-
+    String keyValuePairSeparator();
+    
+    
     /**
-     * precision of the BigDecimal number to be created
-     * 
-     * @return int
+     * type is used to define the type of the message (e.g. FIX, EMX, ...) (optional)
      */
-    int precision() default 0;
+    String type() default "FIX";
+    
+    /**
+     * version defines the version of the message (e.g. 4.1, ...) (optional)
+     */
+    String version() default "4.1";
 
 }

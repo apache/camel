@@ -22,6 +22,7 @@ import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.util.ResolverUtil;
 
 /**
@@ -38,6 +39,7 @@ public class AnnotationModelLoader {
         annotations = new LinkedHashSet<Class<? extends Annotation>>();
         annotations.add(CsvRecord.class);
         annotations.add(Link.class);
+        annotations.add(Message.class);
     }
 
     public Set<Class<?>> loadModels(String packageName) throws Exception {

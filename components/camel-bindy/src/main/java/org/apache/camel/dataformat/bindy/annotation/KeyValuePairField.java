@@ -21,24 +21,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * An annotation used to identify in a POJO which property is link to a field of
- * a record (csv, ...).
- * The position (mandatory) identifies the position of the data in the record
- * The name is optional and could be used in the future to bind a property which a different name
- * The pattern (optional) allows to define the pattern of the data (useful for Date, ...)
- * The length (optional) allows to define for fixed length message the size of the data's block
- * The precision(optional) reflects the precision to be used with BigDecimal number
+ * An annotation used to identify in a POJO which property is link to a key value pair field
+ * The tag (mandatory) identifies the key of the key value pair (e.g. 8 equals the begin string in FIX
+ * The name (optional) could be used in the future to bind a property which a different name
+ * The pattern (optional) allows to define the pattern of the data (useful for Date, BigDecimal ...)
+ * The precision (optional) reflects the precision to be used with BigDecimal number
+ * The required (optional) field allows to define if the field is required or not. This property is
+ * not yet used but will be useful in the future with the validation
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DataField {
+public @interface KeyValuePairField {
 
     /**
-     * position of the data in the record (mandatory)
+     * tag identifying the field in the message (mandatory)
      * 
      * @return int
      */
-    int pos();
+    int tag();
 
     /**
      * name of the field (optional)
@@ -55,18 +55,12 @@ public @interface DataField {
     String pattern() default "";
 
     /**
-     * length of the data block (useful for the fixedlength record) (optional in
-     * this version)
-     * 
-     * @return int
-     */
-    int length() default 0;
-
-    /**
      * precision of the BigDecimal number to be created
      * 
      * @return int
      */
     int precision() default 0;
+    
+    boolean required() default false;
 
 }
