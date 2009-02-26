@@ -10,6 +10,8 @@
 
 <h2>Route  ${it.route.id}</h2>
 
+<p>${it.route.description.text}</p>
+
 <div class="route">
 <pre class="prettyprint"><c:out value="${it.routeXml}" escapeXml="true" />  
 </pre>
