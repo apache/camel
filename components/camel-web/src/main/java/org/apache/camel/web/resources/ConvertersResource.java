@@ -18,6 +18,7 @@
 package org.apache.camel.web.resources;
 
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -62,16 +63,9 @@ public class ConvertersResource extends CamelChildResourceSupport {
 */
 
     public ConvertersFromResource getConvertersFrom(@PathParam("type") String typeName) {
-        Class type;
-        try {
-            type = Thread.currentThread().getContextClassLoader().loadClass(typeName);
-        } catch (ClassNotFoundException e) {
-            try {
-                type = getClass().getClassLoader().loadClass(typeName);
-            } catch (ClassNotFoundException e1) {
-                LOG.debug("Could not find class " + typeName + ". Reason: " + e, e);
-                return null;
-            }
+        Class type = ObjectHelper.loadClass(typeName, getClass().getClassLoader());
+        if (type == null) {
+            return null;
         }
         return new ConvertersFromResource(getContextResource(), type);
     }

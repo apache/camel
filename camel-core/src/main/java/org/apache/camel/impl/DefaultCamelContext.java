@@ -422,6 +422,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
+        for (RouteType routeDefinition : routeDefinitions) {
+            routeDefinition.setCamelContext(this);
+        }
         this.routeDefinitions.addAll(routeDefinitions);
         if (shouldStartRoutes()) {
             startRouteDefinitions(routeDefinitions);
@@ -444,7 +447,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Returns the status of the service of the given ID or null if there is no service created yet
      */
     public ServiceStatus getRouteStatus(String key) {
-        RouteService routeService = routeServices.remove(key);
+        RouteService routeService = routeServices.get(key);
         if (routeService != null) {
             return routeService.getStatus();
         }

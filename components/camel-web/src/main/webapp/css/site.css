@@ -204,3 +204,19 @@ div.design_attribution, div.design_attribution a {
   text-align:center;
   color: #a0a0a0;
 }
+
+.Starting {
+  color: yellow;
+}
+
+.Started {
+  color: green;
+}
+
+.Stopped {
+  color: red;
+}
+
+.Stopping {
+  color: brown;
+}
