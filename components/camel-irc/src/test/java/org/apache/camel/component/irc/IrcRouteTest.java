@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class IrcRouteIntegration extends ContextTestSupport {
+public class IrcRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
@@ -38,7 +38,6 @@ public class IrcRouteIntegration extends ContextTestSupport {
         resultEndpoint.expectedBodiesReceived(body1, body2);
 
         resultEndpoint.assertIsSatisfied();
-        //Thread.sleep(10000);
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
         for (Exchange exchange : list) {
@@ -51,11 +50,8 @@ public class IrcRouteIntegration extends ContextTestSupport {
             public void configure() throws Exception {
                 from("irc://camel-con@irc.codehaus.org:6667/%23camel-test").
                         choice().
-                        when(header("irc.messageType").isEqualTo("PRIVMSG")).to("mock:result").
-                        when(header("irc.messageType").isEqualTo("JOIN")).to("seda:consumerJoined");
-
-                // TODO this causes errors on shutdown...
-                //otherwise().to("mock:otherIrcCommands");
+                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("mock:result").
+                        when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
 
                 from("seda:consumerJoined").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

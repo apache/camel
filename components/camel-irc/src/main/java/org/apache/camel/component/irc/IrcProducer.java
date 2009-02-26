@@ -17,7 +17,6 @@
 package org.apache.camel.component.irc;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -26,8 +25,9 @@ import org.schwering.irc.lib.IRCEventListener;
 
 public class IrcProducer extends DefaultProducer {
 
-    public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES", "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO",
-                                                          "WHOIS", "WHOWAS", "USERHOST"};
+    public static final String[] COMMANDS = new String[]{"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
+        "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
+
     private static final transient Log LOG = LogFactory.getLog(IrcProducer.class);
 
     private IRCConnection connection;
@@ -41,21 +41,16 @@ public class IrcProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
-        try {
-            final String msg = exchange.getIn().getBody(String.class);
-            if (isMessageACommand(msg)) {
-                connection.send(msg);
-            } else {
-                final String target = endpoint.getConfiguration().getTarget();
+        final String msg = exchange.getIn().getBody(String.class);
+        if (isMessageACommand(msg)) {
+            connection.send(msg);
+        } else {
+            String target = endpoint.getConfiguration().getTarget();
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("sending to: " + target + " message: " + msg);
-                }
-
-                connection.doPrivmsg(target, msg);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending to: " + target + " message: " + msg);
             }
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+            connection.doPrivmsg(target, msg);
         }
     }
 
@@ -66,18 +61,19 @@ public class IrcProducer extends DefaultProducer {
         ircErrorLogger = createIrcErrorLogger();
         connection.addIRCEventListener(ircErrorLogger);
 
-        final String target = endpoint.getConfiguration().getTarget();
-
-        LOG.debug("joining: " + target);
+        String target = endpoint.getConfiguration().getTarget();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Joining: " + target);
+        }
         connection.doJoin(target);
     }
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
         if (connection != null) {
             connection.removeIRCEventListener(ircErrorLogger);
         }
+        super.doStop();
     }
 
     protected boolean isMessageACommand(String msg) {

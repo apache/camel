@@ -17,6 +17,7 @@
 package org.apache.camel.component.irc;
 
 import java.net.URI;
+import java.util.Arrays;
 
 import org.apache.camel.RuntimeCamelException;
 
@@ -216,8 +217,6 @@ public class IrcConfiguration implements Cloneable {
     }
 
     public String toString() {
-        return "IrcConfiguration{" + "target='" + target + '\'' + ", hostname='" + hostname + '\'' + ", password='" + password + '\'' + ", nickname='" + nickname + '\'' + ", realname='" + realname
-               + '\'' + ", username='" + username + '\'' + ", persistent=" + persistent + ", colors=" + colors + ", onNick=" + onNick + ", onQuit=" + onQuit + ", onJoin=" + onJoin + ", onKick="
-               + onKick + ", onMode=" + onMode + ", onPart=" + onPart + ", onTopic=" + onTopic + ", onPrivmsg=" + onPrivmsg + ", ports=" + ports + '}';
+        return "IrcConfiguration[hostname: " + hostname + ", ports=" + Arrays.toString(ports) + ", target: " + target + ", username=" + username + "]";
     }
 }

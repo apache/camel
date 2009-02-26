@@ -50,28 +50,14 @@ public class IrcComponent extends DefaultComponent {
         configuration = new IrcConfiguration();
     }
 
-    public static IrcComponent ircComponent() {
-        return new IrcComponent();
-    }
-
     protected IrcEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        // lets make sure we copy the configuration as each endpoint can customize its own version
         IrcConfiguration config = getConfiguration().copy();
         config.configure(new URI(uri));
 
-        // lets make sure we copy the configuration as each endpoint can
-        // customize its own version
-        final IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
-
+        IrcEndpoint endpoint = new IrcEndpoint(uri, this, config);
         setProperties(endpoint.getConfiguration(), parameters);
         return endpoint;
-    }
-
-    public IrcConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(IrcConfiguration configuration) {
-        this.configuration = configuration;
     }
 
     public synchronized IRCConnection getIRCConnection(IrcConfiguration configuration) {
@@ -89,20 +75,20 @@ public class IrcComponent extends DefaultComponent {
     }
 
     protected IRCConnection createConnection(IrcConfiguration configuration) {
-        LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget() + " nick: " + configuration.getNickname() + " user: "
-                  + configuration.getUsername());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating Connection to " + configuration.getHostname() + " destination: " + configuration.getTarget()
+                    + " nick: " + configuration.getNickname() + " user: " + configuration.getUsername());
+        }
 
-        final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(), configuration.getNickname(), configuration.getUsername(),
-                                                     configuration.getRealname());
+        final IRCConnection conn = new IRCConnection(configuration.getHostname(), configuration.getPorts(), configuration.getPassword(),
+                                                     configuration.getNickname(), configuration.getUsername(), configuration.getRealname());
         conn.setEncoding("UTF-8");
-        // conn.setDaemon(true);
         conn.setColors(configuration.isColors());
         conn.setPong(true);
 
         try {
             conn.connect();
         } catch (Exception e) {
-            LOG.error("Failed to connect: " + e, e);
             throw new RuntimeCamelException(e);
         }
         return conn;
@@ -113,14 +99,13 @@ public class IrcComponent extends DefaultComponent {
             connection.doQuit();
             connection.close();
         } catch (Exception e) {
-            LOG.warn("Error closing connection.", e);
+            LOG.warn("Error during closing connection.", e);
         }
     }
 
     @Override
     protected synchronized void doStop() throws Exception {
-        // lets use a copy so we can clear the connections eagerly in case of
-        // exceptions
+        // lets use a copy so we can clear the connections eagerly in case of exceptions
         Map<String, IRCConnection> map = new HashMap<String, IRCConnection>(connectionCache);
         connectionCache.clear();
         for (Map.Entry<String, IRCConnection> entry : map.entrySet()) {
@@ -128,4 +113,13 @@ public class IrcComponent extends DefaultComponent {
         }
         super.doStop();
     }
+
+    public IrcConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(IrcConfiguration configuration) {
+        this.configuration = configuration;
+    }
+
 }

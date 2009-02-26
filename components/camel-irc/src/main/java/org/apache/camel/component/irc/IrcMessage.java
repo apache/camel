@@ -118,18 +118,18 @@ public class IrcMessage extends DefaultMessage {
 
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
-        map.put("irc.messageType", messageType);
+        map.put(IrcConstants.IRC_MESSAGE_TYPE, messageType);
         if (target != null) {
-            map.put("irc.target", target);
+            map.put(IrcConstants.IRC_TARGET, target);
         }
         if (whoWasKickedNick != null) {
-            map.put("irc.user.kicked", whoWasKickedNick);
+            map.put(IrcConstants.IRC_USER_KICKED, whoWasKickedNick);
         }
         if (user != null) {
-            map.put("irc.user.host", user.getHost());
-            map.put("irc.user.nick", user.getNick());
-            map.put("irc.user.servername", user.getServername());
-            map.put("irc.user.username", user.getUsername());
+            map.put(IrcConstants.IRC_USER_HOST, user.getHost());
+            map.put(IrcConstants.IRC_USER_NICK, user.getNick());
+            map.put(IrcConstants.IRC_USER_SERVERNAME, user.getServername());
+            map.put(IrcConstants.IRC_USER_USERNAME, user.getUsername());
         }
     }
 
