@@ -31,10 +31,6 @@ import org.apache.camel.component.feed.FeedPollingConsumer;
  * @version $Revision$
  */
 public class AtomEndpoint extends FeedEndpoint {
-    /**
-     * Header key for the {@link org.apache.abdera.model.Feed} object is stored on the in message on the exchange.
-     */
-    public static final String HEADER_ATOM_FEED = "org.apache.camel.component.atom.feed";
 
     public AtomEndpoint() {
     }
@@ -53,14 +49,14 @@ public class AtomEndpoint extends FeedEndpoint {
 
     @Override
     public Exchange createExchange(Object feed) {
-        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_ATOM_FEED);
+        Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
         exchange.getIn().setBody(((Feed)feed).getEntries());
         return exchange;
     }
 
     @Override
     public Exchange createExchange(Object feed, Object entry) {
-        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_ATOM_FEED);
+        Exchange exchange = createExchangeWithFeedHeader(feed, AtomConstants.ATOM_FEED);
         exchange.getIn().setBody(entry);
         return exchange;
     }
