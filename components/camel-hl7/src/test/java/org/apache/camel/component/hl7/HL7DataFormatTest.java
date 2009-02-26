@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.hl7;
+package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.model.v24.message.ADR_A19;
@@ -48,19 +48,17 @@ public class HL7DataFormatTest extends ContextTestSupport {
         mock.expectedMessageCount(1);
         mock.message(0).body().isInstanceOf(Message.class);
 
-        mock.expectedHeaderReceived("hl7.msh.sendingApplication", "MYSERVER");
-        mock.expectedHeaderReceived("hl7.msh.sendingFacility", "MYSENDERAPP");
-        mock.expectedHeaderReceived("hl7.msh.receivingApplication", "MYCLIENT");
-        mock.expectedHeaderReceived("hl7.msh.receivingFacility", "MYCLIENTAPP");
-        mock.expectedHeaderReceived("hl7.msh.timestamp", "200612211200");
-        mock.expectedHeaderReceived("hl7.msh.security", null);
-        mock.expectedHeaderReceived("hl7.msh.messageType", "QRY");
-        mock.expectedHeaderReceived("hl7.msh.triggerEvent", "A19");
-        mock.expectedHeaderReceived("hl7.msh.messageType", "QRY");
-        mock.expectedHeaderReceived("hl7.msh.triggerEvent", "A19");
-        mock.expectedHeaderReceived("hl7.msh.messageControl", "1234");
-        mock.expectedHeaderReceived("hl7.msh.processingId", "P");
-        mock.expectedHeaderReceived("hl7.msh.versionId", "2.4");
+        mock.expectedHeaderReceived(HL7Constants.HL7_SENDING_APPLICATION, "MYSERVER");
+        mock.expectedHeaderReceived(HL7Constants.HL7_SENDING_FACILITY, "MYSENDERAPP");
+        mock.expectedHeaderReceived(HL7Constants.HL7_RECEIVING_APPLICATION, "MYCLIENT");
+        mock.expectedHeaderReceived(HL7Constants.HL7_RECEIVING_FACILITY, "MYCLIENTAPP");
+        mock.expectedHeaderReceived(HL7Constants.HL7_TIMESTAMP, "200612211200");
+        mock.expectedHeaderReceived(HL7Constants.HL7_SECURITY, null);
+        mock.expectedHeaderReceived(HL7Constants.HL7_MESSAGE_TYPE, "QRY");
+        mock.expectedHeaderReceived(HL7Constants.HL7_TRIGGER_EVENT, "A19");
+        mock.expectedHeaderReceived(HL7Constants.HL7_MESSAGE_CONTROL, "1234");
+        mock.expectedHeaderReceived(HL7Constants.HL7_PROCESSING_ID, "P");
+        mock.expectedHeaderReceived(HL7Constants.HL7_VERSION_ID, "2.4");
 
         String body = createHL7AsString();
         template.sendBody("direct:unmarshal", body);

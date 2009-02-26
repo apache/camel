@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.hl7;
+package org.apache.camel.component.hl7;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
@@ -77,17 +76,17 @@ public class HL7DataFormat implements DataFormat {
 
         // add MSH fields as message out headers
         Terser terser = new Terser(message);
-        exchange.getOut().setHeader("hl7.msh.sendingApplication", terser.get("MSH-3"));
-        exchange.getOut().setHeader("hl7.msh.sendingFacility", terser.get("MSH-4"));
-        exchange.getOut().setHeader("hl7.msh.receivingApplication", terser.get("MSH-5"));
-        exchange.getOut().setHeader("hl7.msh.receivingFacility", terser.get("MSH-6"));
-        exchange.getOut().setHeader("hl7.msh.timestamp", terser.get("MSH-7"));
-        exchange.getOut().setHeader("hl7.msh.security", terser.get("MSH-8"));
-        exchange.getOut().setHeader("hl7.msh.messageType", terser.get("MSH-9-1"));
-        exchange.getOut().setHeader("hl7.msh.triggerEvent", terser.get("MSH-9-2"));
-        exchange.getOut().setHeader("hl7.msh.messageControl", terser.get("MSH-10"));
-        exchange.getOut().setHeader("hl7.msh.processingId", terser.get("MSH-11"));
-        exchange.getOut().setHeader("hl7.msh.versionId", terser.get("MSH-12"));
+        exchange.getOut().setHeader(HL7Constants.HL7_SENDING_APPLICATION, terser.get("MSH-3"));
+        exchange.getOut().setHeader(HL7Constants.HL7_SENDING_FACILITY, terser.get("MSH-4"));
+        exchange.getOut().setHeader(HL7Constants.HL7_RECEIVING_APPLICATION, terser.get("MSH-5"));
+        exchange.getOut().setHeader(HL7Constants.HL7_RECEIVING_FACILITY, terser.get("MSH-6"));
+        exchange.getOut().setHeader(HL7Constants.HL7_TIMESTAMP, terser.get("MSH-7"));
+        exchange.getOut().setHeader(HL7Constants.HL7_SECURITY, terser.get("MSH-8"));
+        exchange.getOut().setHeader(HL7Constants.HL7_MESSAGE_TYPE, terser.get("MSH-9-1"));
+        exchange.getOut().setHeader(HL7Constants.HL7_TRIGGER_EVENT, terser.get("MSH-9-2"));
+        exchange.getOut().setHeader(HL7Constants.HL7_MESSAGE_CONTROL, terser.get("MSH-10"));
+        exchange.getOut().setHeader(HL7Constants.HL7_PROCESSING_ID, terser.get("MSH-11"));
+        exchange.getOut().setHeader(HL7Constants.HL7_VERSION_ID, terser.get("MSH-12"));
         return message;
     }
 

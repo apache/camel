@@ -51,7 +51,7 @@ public class AMQPRouteTest extends ContextTestSupport {
     }
 
     // TODO fix this test
-    public void xtestJmsRouteWithObjectMessage() throws Exception {
+    public void testJmsRouteWithObjectMessage() throws Exception {
         PurchaseOrder expectedBody = new PurchaseOrder("Beer", 10);
 
         resultEndpoint.expectedBodiesReceived(expectedBody);

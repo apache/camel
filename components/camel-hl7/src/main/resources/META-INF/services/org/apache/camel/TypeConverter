@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-org.apache.camel.dataformat.hl7
+org.apache.camel.component.hl7

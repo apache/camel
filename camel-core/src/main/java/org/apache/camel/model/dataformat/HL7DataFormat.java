@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataFormat;
 public class HL7DataFormat extends DataFormatType {
 
     public HL7DataFormat() {
-        super("org.apache.camel.dataformat.hl7.HL7DataFormat");
+        super("org.apache.camel.component.hl7.HL7DataFormat");
     }
 
 }
