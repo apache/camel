@@ -24,11 +24,9 @@ import ca.uhn.hl7v2.model.v24.segment.MSA;
 import ca.uhn.hl7v2.model.v24.segment.MSH;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import ca.uhn.hl7v2.model.v24.segment.QRD;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.dataformat.hl7.HL7DataFormat;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 
@@ -127,11 +125,11 @@ public class HL7RouteTest extends ContextTestSupport {
                     // using choice as the content base router
                     .choice()
                         // where we choose that A19 queries invoke the handleA19 method on our hl7service bean
-                        .when(header("hl7.msh.triggerEvent").isEqualTo("A19"))
+                        .when(header("CamelHL7TriggerEvent").isEqualTo("A19"))
                             .beanRef("hl7service", "handleA19")
                             .to("mock:a19")
                         // and A01 should invoke the handleA01 method on our hl7service bean
-                        .when(header("hl7.msh.triggerEvent").isEqualTo("A01")).to("mock:a01")
+                        .when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("mock:a01")
                             .beanRef("hl7service", "handleA01")
                             .to("mock:a19")
                         // other types should go to mock:unknown

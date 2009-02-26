@@ -21,8 +21,6 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CharsetEncoder;
 
 import ca.uhn.hl7v2.model.Message;
-
-import org.apache.camel.dataformat.hl7.HL7Converter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ByteBuffer;
