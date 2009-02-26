@@ -82,7 +82,7 @@ public class FixedLengthEndpoint extends DefaultPollingEndpoint {
 
     public Parser createParser(Exchange exchange) throws InvalidPayloadException, IOException {
         Resource resource = getResource();
-        ObjectHelper.notNull(resource, "endpoint.resource");
+        ObjectHelper.notNull(resource, "resource");
         Reader bodyReader = ExchangeHelper.getMandatoryInBody(exchange, Reader.class);
         return createParser(resource, bodyReader);
     }
