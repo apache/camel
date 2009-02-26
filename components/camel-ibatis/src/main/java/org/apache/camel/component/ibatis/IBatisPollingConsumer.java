@@ -125,7 +125,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
         List data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
         if (useIterator) {
             for (Object object : data) {
-                if (!super.isStopped()) {
+                if (isRunAllowed()) {
                     process(object);
                 }
             }
