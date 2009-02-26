@@ -21,28 +21,25 @@ import java.util.List;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class IBatisProducer extends DefaultProducer {
+    private static final Log LOG = LogFactory.getLog(IBatisProducer.class);
     private String statement;
     private IBatisEndpoint endpoint;
 
     public IBatisProducer(IBatisEndpoint endpoint) {
         super(endpoint);
-        statement = endpoint.getStatement();
         this.endpoint = endpoint;
-    }
-
-    @Override
-    public Endpoint getEndpoint() {
-        return (IBatisEndpoint) super.getEndpoint();
+        this.statement = endpoint.getStatement();
     }
 
     /**
@@ -54,14 +51,21 @@ public class IBatisProducer extends DefaultProducer {
         if (body == null) {
             // must be a poll so lets do a query
             Message msg = exchange.getOut(true);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Querying for list: " + statement);
+            }
             List list = client.queryForList(statement);
             msg.setBody(list);
-            msg.setHeader("org.apache.camel.ibatis.queryName", statement);
+            msg.setHeader(IBatisConstants.IBATIS_STATEMENT_NAME, statement);
         } else {
             // lets handle arrays or collections of objects
             Iterator iter = ObjectHelper.createIterator(body);
             while (iter.hasNext()) {
-                client.insert(statement, iter.next());
+                Object value = iter.next();
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Inserting: " + value + " using statement: " + statement);
+                }
+                client.insert(statement, value);
             }
         }
     }

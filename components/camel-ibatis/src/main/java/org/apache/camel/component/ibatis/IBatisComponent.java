@@ -23,12 +23,9 @@ import java.util.Map;
 
 import com.ibatis.sqlmap.client.SqlMapClient;
 import com.ibatis.sqlmap.client.SqlMapClientBuilder;
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.ResourceBasedComponent;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 /**
@@ -77,6 +74,22 @@ public class IBatisComponent extends ResourceBasedComponent {
         this.sqlMapClient = sqlMapClient;
     }
 
+    /**
+     * Creates an IbatisEndpoint for use by an IbatisConsumer or IbatisProducer.
+     */
+    @Override
+    protected IBatisEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+        IBatisEndpoint answer = new IBatisEndpoint(uri, this, remaining);
+        setProperties(answer, parameters);
+        return answer;
+    }
+
+    private SqlMapClient createSqlMapClient() throws IOException {
+        Resource resource = resolveMandatoryResource(sqlMapConfig);
+        InputStream is = resource.getInputStream();
+        return SqlMapClientBuilder.buildSqlMapClient(new InputStreamReader(is));
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -96,7 +109,6 @@ public class IBatisComponent extends ResourceBasedComponent {
     
     /**
      * Sets the SqlMapClient
-     * @param sqlMapClient The client
      */
     public void setSqlMapClient(SqlMapClient sqlMapClient) {
         this.sqlMapClient = sqlMapClient;
@@ -104,26 +116,11 @@ public class IBatisComponent extends ResourceBasedComponent {
 
     /**
      * The Spring uri of the SqlMapConfig
-     * @return java.lang.String
      */
     public String getSqlMapConfig() {
         return sqlMapConfig;
     }
 
-    /**
-     * Creates an IbatisEndpoint for use by an IbatisConsumer or IbatisProducer.
-     */
-    @Override
-    protected IBatisEndpoint createEndpoint(String uri, String remaining, Map params) throws Exception {
-        return new IBatisEndpoint(uri, this, remaining, params);
-    }
-    
-    private SqlMapClient createSqlMapClient() throws IOException {
-        Resource resource = resolveMandatoryResource(sqlMapConfig);
-        InputStream is = resource.getInputStream();
-        return SqlMapClientBuilder.buildSqlMapClient(new InputStreamReader(is));
-    }
-    
     public boolean isUseTransactions() {
         return useTransactions;
     }

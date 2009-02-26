@@ -69,7 +69,9 @@ public class IBatisQueueTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // START SNIPPET: e1
                 from("ibatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
+                // END SNIPPET: e1
 
                 from("direct:start").to("ibatis:insertAccount");
             }

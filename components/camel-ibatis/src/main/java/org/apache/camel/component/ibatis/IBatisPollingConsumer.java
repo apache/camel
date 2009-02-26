@@ -28,7 +28,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision$
  * <pre>
  *  Ibatis Camel Component used to read data from a database.
  * 
@@ -91,14 +90,16 @@ import org.apache.commons.logging.LogFactory;
  * </tr>
  * <tbody> </table>
  *
- * @see strategy.IBatisProcessingStrategy
+ * @see org.apache.camel.component.ibatis.strategy.IBatisProcessingStrategy
  */
 public class IBatisPollingConsumer extends ScheduledPollConsumer {
-    private static Log logger = LogFactory.getLog(IBatisPollingConsumer.class);
+    private static final Log LOG = LogFactory.getLog(IBatisPollingConsumer.class);
+
     /**
      * Statement to run after data has been processed in the route
      */
     private String onConsume;
+
     /**
      * Process resultset individually or as a list
      */
@@ -118,6 +119,9 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
     @Override
     protected void poll() throws Exception {
         IBatisEndpoint endpoint = getEndpoint();
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Polling: " + endpoint);
+        }
         List data = endpoint.getProcessingStrategy().poll(this, getEndpoint());
         if (useIterator) {
             for (Object object : data) {
@@ -131,11 +135,9 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
     }
 
     /**
-     * delivers the content
+     * Delivers the content
      *
-     * @param data
-     *            a single row object if useIterator=true otherwise the entire
-     *            result set
+     * @param data a single row object if useIterator=true otherwise the entire result set
      */
     protected void process(final Object data) throws Exception {
         final IBatisEndpoint endpoint = getEndpoint();
@@ -143,9 +145,11 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
 
         Message msg = exchange.getIn();
         msg.setBody(data);
-        msg.setHeader("org.apache.camel.ibatis.queryName", endpoint.getStatement());
+        msg.setHeader(IBatisConstants.IBATIS_STATEMENT_NAME, endpoint.getStatement());
     
-        logger.debug("Setting message");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Processing exchange: " + exchange);
+        }
 
         getAsyncProcessor().process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
@@ -161,16 +165,16 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
     }
     
     /**
-     * Gets the statement to run after successful processing
-     * @return Name of the statement
+     * Gets the statement(s) to run after successful processing.
+     * Use comma to separate multiple statements.
      */
     public String getOnConsume() {
         return onConsume;
     }
 
     /**
-     * Sets the statement to run after successful processing
-     * @param onConsume The name of the statement
+     * Sets the statement to run after successful processing.
+     * Use comma to separate multiple statements.
      */
     public void setOnConsume(String onConsume) {
         this.onConsume = onConsume;
@@ -179,7 +183,6 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
 
     /**
      * Indicates how resultset should be delivered to the route
-     * @return boolean 
      */
     public boolean isUseIterator() {
         return useIterator;
@@ -189,7 +192,6 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
      * Sets how resultset should be delivered to route.
      * Indicates delivery as either a list or individual object.
      * defaults to true.
-     * @param useIterator
      */
     public void setUseIterator(boolean useIterator) {
         this.useIterator = useIterator;
