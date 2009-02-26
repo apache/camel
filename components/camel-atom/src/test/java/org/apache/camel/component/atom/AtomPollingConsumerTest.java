@@ -39,9 +39,9 @@ public class AtomPollingConsumerTest extends ContextTestSupport {
         Message in = exchange.getIn();
         assertNotNull(in);
         assertTrue(in.getBody() instanceof List);
-        assertTrue(in.getHeader(AtomEndpoint.HEADER_ATOM_FEED) instanceof Feed);
+        assertTrue(in.getHeader(AtomConstants.ATOM_FEED) instanceof Feed);
 
-        Feed feed = in.getHeader(AtomEndpoint.HEADER_ATOM_FEED, Feed.class);
+        Feed feed = in.getHeader(AtomConstants.ATOM_FEED, Feed.class);
         assertEquals("James Strachan", feed.getAuthor().getName());
 
         List entries = in.getBody(List.class);
