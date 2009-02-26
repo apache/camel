@@ -21,11 +21,13 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * This annotation represents the root class of the model When a CSV,
+ * This annotation represents the root class of the model. When a CSV,
  * fixed-length record must be described in the model we will use this
  * annotation and the separator (for csv record) to know how to split the data
- * during the unmarshal process a) separator (mandatory) b) name (optional) c)
- * skipfirstline (optional)
+ * during the unmarshal process
+ * The separator (mandatory)
+ * The name is optional and could be used in the future to bind a property which a different name
+ * The skipfirstline (optional) allows to skip the first line of the file/content received
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
