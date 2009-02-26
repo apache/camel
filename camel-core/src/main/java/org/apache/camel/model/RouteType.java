@@ -33,6 +33,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Route;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
@@ -72,6 +73,17 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
     @Override
     public String toString() {
         return "Route[" + inputs + " -> " + outputs + "]";
+    }
+
+
+    /**
+     * Returns the status of the route if it has been registered with a {@link CamelContext}
+     */
+    public ServiceStatus getStatus() {
+        if (camelContext != null) {
+            return camelContext.getRouteStatus(this);
+        }
+        return null;
     }
 
     public List<RouteContext> addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
