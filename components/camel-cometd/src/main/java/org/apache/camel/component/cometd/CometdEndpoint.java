@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Endpoint for Camel Cometd.
@@ -32,38 +33,38 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class CometdEndpoint extends DefaultEndpoint {
    
-    private String          resourceBase;
-    private int             timeout = 240000;
-    private int             interval;
-    private int             maxInterval = 30000;
-    private int             multiFrameInterval = 1500;
-    private boolean         jsonCommented = true;
-    private int             logLevel = 1;
-    private URI             uri;
+    private String resourceBase;
+    private int timeout = 240000;
+    private int interval;
+    private int maxInterval = 30000;
+    private int multiFrameInterval = 1500;
+    private boolean jsonCommented = true;
+    private int logLevel = 1;
+    private URI uri;
     private CometdComponent component;
     
-    @SuppressWarnings("unchecked")
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map parameters) {
-        super(uri);
+        super(uri, component);
         this.component = component;
         try {
             this.uri = new URI(uri);
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            throw new IllegalArgumentException(e);
         }
     }
 
     public Producer createProducer() throws Exception {
+        ObjectHelper.notNull(component, "component");
         CometdProducer producer = new CometdProducer(this);
         return producer;
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notNull(component, "component");
         CometdConsumer consumer =  new CometdConsumer(this, processor);
         return consumer;
     }
 
-    
     public void connect(CometdProducerConsumer prodcons) throws Exception {
         component.connect(prodcons);
     }
@@ -102,8 +103,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     public URI getUri() {
         return uri;
     }
-    
-    
+
     public String getResourceBase() {
         return resourceBase;
     }

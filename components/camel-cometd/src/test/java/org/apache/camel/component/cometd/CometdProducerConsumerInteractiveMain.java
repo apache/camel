@@ -18,19 +18,17 @@ package org.apache.camel.component.cometd;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
-public class CometdProducerConsumerInteractiveTest {
+public class CometdProducerConsumerInteractiveMain {
 
-    private static final String URI = "cometd://localhost:8080/service/test?resourceBase=./src/test/resources/webapp&"
+    private static final String URI = "cometd://0.0.0.0:8080/service/test?resourceBase=./src/test/resources/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
-    private static final String URIS = "cometds://localhost:8443/service/test?resourceBase=./src/test/resources/webapp&"
+    private static final String URIS = "cometds://0.0.0.0:8443/service/test?resourceBase=./src/test/resources/webapp&"
         + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     private CamelContext context;
@@ -38,7 +36,7 @@ public class CometdProducerConsumerInteractiveTest {
     private String pwd = "changeit";
     
     public static void main(String[] args) throws Exception {
-        CometdProducerConsumerInteractiveTest me = new CometdProducerConsumerInteractiveTest();
+        CometdProducerConsumerInteractiveMain me = new CometdProducerConsumerInteractiveMain();
         me.testCometdProducerConsumerInteractive();
     }
 

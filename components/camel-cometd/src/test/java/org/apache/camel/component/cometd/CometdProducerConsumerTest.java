@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class CometdProducerConsumerTest extends ContextTestSupport {
 
-    private static final String URI = "cometd://localhost:8080/service/test?resourceBase=./target/test-classes/webapp&"
+    private static final String URI = "cometd://0.0.0.0:8080/service/test?resourceBase=./target/test-classes/webapp&"
             + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
     public void testProducer() throws Exception {

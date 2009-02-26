@@ -19,8 +19,16 @@ package org.apache.camel.component.cometd;
 import org.mortbay.cometd.AbstractBayeux;
 
 public interface CometdProducerConsumer {
-    
+
+    /**
+     * Gets the endpoint
+     */
     CometdEndpoint getEndpoint();
-    void           setBayeux(AbstractBayeux bayeux);
+
+
+    /**
+     * Sets the bayeux to use.
+     */
+    void setBayeux(AbstractBayeux bayeux);
     
 }
