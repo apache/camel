@@ -42,7 +42,7 @@ public final class JAXBContextResolver implements ContextResolver<JAXBContext> {
         JSONConfiguration.Builder builder = JSONConfiguration.mapped();
         //JSONConfiguration.Builder builder = JSONConfiguration.natural();
 
-        this.packages = Constants.JAXB_CONTEXT_PACKAGES + ":org.apache.camel.web.model";
+        this.packages = org.apache.camel.web.resources.Constants.JAXB_PACKAGES;
         this.context = new JSONJAXBContext(builder.build(), packages);
     }
 
