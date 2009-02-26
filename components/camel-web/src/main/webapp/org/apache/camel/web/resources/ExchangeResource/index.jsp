@@ -22,7 +22,7 @@
         <c:forEach items="${it.properties}" var="entry">
           <tr>
             <td>${entry.key}</td>
-            <td><a title="${entry.value.class.canonicalName}">${entry.value}</a></td>
+            <td><a class="type" title="${entry.value.class.canonicalName}">${entry.value}</a></td>
           </tr>
         </c:forEach>
       </table>
@@ -39,7 +39,7 @@
         <c:forEach items="${it.headers}" var="entry">
           <tr>
             <td>${entry.key}</td>
-            <td><a title="${entry.value.class.canonicalName}">${entry.value}</a></td>
+            <td><a class="type" title="${entry.value.class.canonicalName}">${entry.value}</a></td>
           </tr>
         </c:forEach>
       </table>
@@ -52,7 +52,7 @@
   </tr>
   <tr>
     <td colspan="2">
-      <div class="message"><c:out value="${it.in.body}" escapeXml="true" /></div>
+      <div class="message"><a class="type" title="${it.in.body.class.canonicalName}"><c:out value="${it.in.body}" escapeXml="true" /></a></div>
     </td>
   </tr>
 </table>
