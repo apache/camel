@@ -21,13 +21,10 @@ import java.util.Date;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
-import org.apache.camel.model.RouteType;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.builder.ProcessorFactory;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
 
 /**
  * @version $Revision$
