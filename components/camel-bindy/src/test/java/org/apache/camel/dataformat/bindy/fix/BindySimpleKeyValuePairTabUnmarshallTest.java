@@ -42,7 +42,7 @@ public class BindySimpleKeyValuePairTabUnmarshallTest extends AbstractJUnit4Spri
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.tab");
 
         @Override
         @Bean
