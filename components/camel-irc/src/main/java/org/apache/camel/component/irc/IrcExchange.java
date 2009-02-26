@@ -47,26 +47,6 @@ public class IrcExchange extends DefaultExchange {
     }
 
     @Override
-    public IrcMessage getIn() {
-        return (IrcMessage) super.getIn();
-    }
-
-    @Override
-    public IrcMessage getOut() {
-        return (IrcMessage) super.getOut();
-    }
-
-    @Override
-    public IrcMessage getOut(boolean lazyCreate) {
-        return (IrcMessage) super.getOut(lazyCreate);
-    }
-
-    @Override
-    public IrcMessage getFault() {
-        return (IrcMessage) super.getFault();
-    }
-
-    @Override
     public IrcExchange newInstance() {
         return new IrcExchange(this, getBinding());
     }

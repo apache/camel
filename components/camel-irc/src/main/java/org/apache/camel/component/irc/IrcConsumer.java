@@ -37,15 +37,16 @@ public class IrcConsumer extends DefaultConsumer {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.connection = connection;
-        configuration = endpoint.getConfiguration();
+        this.configuration = endpoint.getConfiguration();
     }
 
     @Override
     protected void doStop() throws Exception {
-        String target = endpoint.getConfiguration().getTarget();
-        connection.doPart(target);
-        connection.removeIRCEventListener(listener);
-
+        if (connection != null) {
+            String target = endpoint.getConfiguration().getTarget();
+            connection.doPart(target);
+            connection.removeIRCEventListener(listener);
+        }
         super.doStop();
     }
 
@@ -54,9 +55,12 @@ public class IrcConsumer extends DefaultConsumer {
         super.doStart();
 
         String target = endpoint.getConfiguration().getTarget();
-        connection.addIRCEventListener(new FilteredIRCEventAdapter(target));
+        listener = new FilteredIRCEventAdapter(target);
+        connection.addIRCEventListener(listener);
 
-        LOG.debug("joining: " + target);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Joining: " + target);
+        }
         connection.doJoin(target);
     }
 
@@ -78,9 +82,7 @@ public class IrcConsumer extends DefaultConsumer {
                 try {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
-                    // TODO: what should we do when a processing failure
-                    // occurs??
-                    e.printStackTrace();
+                    handleException(e);
                 }
             }
         }
@@ -92,9 +94,7 @@ public class IrcConsumer extends DefaultConsumer {
                 try {
                     getProcessor().process(exchange);
                 } catch (Exception e) {
-                    // TODO: what should we do when a processing failure
-                    // occurs??
-                    e.printStackTrace();
+                    handleException(e);
                 }
             }
         }
@@ -107,9 +107,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }
@@ -123,9 +121,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }
@@ -139,9 +135,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }
@@ -155,9 +149,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }
@@ -171,9 +163,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }
@@ -187,9 +177,7 @@ public class IrcConsumer extends DefaultConsumer {
                     try {
                         getProcessor().process(exchange);
                     } catch (Exception e) {
-                        // TODO: what should we do when a processing failure
-                        // occurs??
-                        e.printStackTrace();
+                        handleException(e);
                     }
                 }
             }

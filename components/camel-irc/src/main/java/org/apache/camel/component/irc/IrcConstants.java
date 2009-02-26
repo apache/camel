@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.irc;
 
-public class IrcBinding {
+/**
+ * IRC Constants
+ */
+public final class IrcConstants {
+    public static final String IRC_MESSAGE_TYPE = "irc.messageType";
+    public static final String IRC_TARGET = "irc.target";
+    public static final String IRC_USER_KICKED = "irc.user.kicked";
+    public static final String IRC_USER_HOST = "irc.user.host";
+    public static final String IRC_USER_NICK = "irc.user.nick";
+    public static final String IRC_USER_SERVERNAME = "irc.user.servername";
+    public static final String IRC_USER_USERNAME = "irc.user.username";
 
-    public Object extractBodyFromIrc(IrcExchange exchange, IrcMessage message) {
-        String type = message.getMessageType();
-        String text = message.getMessage();
-        if (text != null) {
-            return text;
-        } else {
-            return type;
-        }
+    private IrcConstants() {
+        // Utility class
     }
 }
