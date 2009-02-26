@@ -16,6 +16,17 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
+import javax.naming.Context;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -50,22 +61,12 @@ import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.SystemHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.naming.Context;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -386,9 +387,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     synchronized void removeRouteCollection(Collection<Route> routes) {
-         if (this.routes != null){
-             this.routes.removeAll(routes);
-         }
+        if (this.routes != null) {
+            this.routes.removeAll(routes);
+        }
     }
 
     synchronized void addRouteCollection(Collection<Route> routes) throws Exception {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -27,6 +25,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Implements try/catch/finally type processing
