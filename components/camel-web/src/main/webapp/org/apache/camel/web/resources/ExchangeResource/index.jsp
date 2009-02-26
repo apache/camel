@@ -22,7 +22,7 @@
         <c:forEach items="${it.properties}" var="entry">
           <tr>
             <td>${entry.key}</td>
-            <td>${entry.value}</td>
+            <td><a title="${entry.value.class.canonicalName}">${entry.value}</a></td>
           </tr>
         </c:forEach>
       </table>
@@ -39,7 +39,7 @@
         <c:forEach items="${it.headers}" var="entry">
           <tr>
             <td>${entry.key}</td>
-            <td>${entry.value}</td>
+            <td><a title="${entry.value.class.canonicalName}">${entry.value}</a></td>
           </tr>
         </c:forEach>
       </table>
