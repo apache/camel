@@ -47,12 +47,12 @@
   </tr>
   <tr>
     <th colspan="2">
-      Message Body
+      Message Body is Java Class: ${it.in.body.class.canonicalName}
     </th>
   </tr>
   <tr>
     <td colspan="2">
-      <div class="message"><a class="type" title="${it.in.body.class.canonicalName}"><c:out value="${it.in.body}" escapeXml="true" /></a></div>
+      <div class="message"><c:out value="${it.in.body}" escapeXml="true" /></div>
     </td>
   </tr>
 </table>
