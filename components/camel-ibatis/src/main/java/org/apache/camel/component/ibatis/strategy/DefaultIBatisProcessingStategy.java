@@ -29,16 +29,11 @@ import org.apache.camel.component.ibatis.IBatisPollingConsumer;
  * Default strategy for consuming messages for a route
  */
 public class DefaultIBatisProcessingStategy implements IBatisProcessingStrategy {
-    /**
-     * Calls update on the SqlMapClient using the consumeStatement.
-     * Will call multiple statements if the consumeStatement is a comma separated list.
-     * The parameter passed to the statement is the original data delivered to the route.
-     */
-    public void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatement) throws Exception {
 
+    public void commit(IBatisEndpoint endpoint, Exchange exchange, Object data, String consumeStatements) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         boolean useTrans = endpoint.isUseTransactions();
-        String[] statements = consumeStatement.split(",");
+        String[] statements = consumeStatements.split(",");
         try {
             if (useTrans) {
                 client.startTransaction(Connection.TRANSACTION_REPEATABLE_READ);
