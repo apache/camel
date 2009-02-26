@@ -30,25 +30,4 @@ public final class CometdConverters {
         //Utility Class
     }
 
-    /**
-     * Converts the given JavaMail message to a String body.
-     * Can return null.
-     */
-/*    
-    @Converter
-    public static String toString(Message message) throws MessagingException, IOException {
-        Object content = message.getContent();
-        if (content instanceof MimeMultipart) {
-            MimeMultipart multipart = (MimeMultipart) content;
-            if (multipart.getCount() > 0) {
-                BodyPart part = multipart.getBodyPart(0);
-                content = part.getContent();
-            }
-        }
-        if (content != null) {
-            return content.toString();
-        }
-        return null;
-    }
-*/
 }

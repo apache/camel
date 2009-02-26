@@ -75,18 +75,14 @@ public class CometdComponent extends DefaultComponent {
 
     @SuppressWarnings("unchecked")
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map parameters) throws Exception {
+    protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         setProperties(this, parameters);
-        CometdEndpoint endpoint = new CometdEndpoint(this, uri, remaining,
-                parameters);
+        CometdEndpoint endpoint = new CometdEndpoint(this, uri, remaining, parameters);
         return endpoint;
     }
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
-     * 
-     * @throws Exception
      */
     public void connect(CometdProducerConsumer prodcon) throws Exception {
         // Make sure that there is a connector for the requested endpoint.
@@ -129,7 +125,7 @@ public class CometdComponent extends DefaultComponent {
      * processor.
      */
     public void disconnect(CometdProducerConsumer prodcon) throws Exception {
-        CometdEndpoint endpoint = (CometdEndpoint) prodcon.getEndpoint();
+        CometdEndpoint endpoint = prodcon.getEndpoint();
 
         String connectorKey = endpoint.getProtocol() + ":" + endpoint.getUri().getHost() + ":" + endpoint.getPort();
 
@@ -145,8 +141,7 @@ public class CometdComponent extends DefaultComponent {
         }
     }
 
-    protected ContinuationCometdServlet createServletForConnector(
-            Connector connector, CometdEndpoint endpoint) throws Exception {
+    protected ContinuationCometdServlet createServletForConnector(Connector connector, CometdEndpoint endpoint) throws Exception {
         ContinuationCometdServlet servlet = new ContinuationCometdServlet();
 
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
@@ -157,20 +152,17 @@ public class CometdComponent extends DefaultComponent {
         context.setResourceBase(endpoint.getResourceBase());
         context.addServlet(holder, "/cometd/*");
         context.addServlet("org.mortbay.jetty.servlet.DefaultServlet", "/");
+
         connector.start();
         context.start();
-        holder.setInitParameter("timeout", Integer.toString(endpoint
-                .getTimeout()));
-        holder.setInitParameter("interval", Integer.toString(endpoint
-                .getInterval()));
-        holder.setInitParameter("maxInterval", Integer.toString(endpoint
-                .getMaxInterval()));
-        holder.setInitParameter("multiFrameInterval", Integer.toString(endpoint
-                .getMultiFrameInterval()));
-        holder.setInitParameter("JSONCommented", Boolean.toString(endpoint
-                .isJsonCommented()));
-        holder.setInitParameter("logLevel", Integer.toString(endpoint
-                .getLogLevel()));
+
+        holder.setInitParameter("timeout", Integer.toString(endpoint.getTimeout()));
+        holder.setInitParameter("interval", Integer.toString(endpoint.getInterval()));
+        holder.setInitParameter("maxInterval", Integer.toString(endpoint.getMaxInterval()));
+        holder.setInitParameter("multiFrameInterval", Integer.toString(endpoint.getMultiFrameInterval()));
+        holder.setInitParameter("JSONCommented", Boolean.toString(endpoint.isJsonCommented()));
+        holder.setInitParameter("logLevel", Integer.toString(endpoint.getLogLevel()));
+
         return servlet;
     }
 

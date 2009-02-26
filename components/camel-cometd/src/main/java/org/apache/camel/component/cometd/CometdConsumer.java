@@ -18,7 +18,6 @@ package org.apache.camel.component.cometd;
 
 import dojox.cometd.Bayeux;
 import dojox.cometd.Client;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;

@@ -17,12 +17,11 @@
 package org.apache.camel.component.cometd;
 
 import java.util.Collection;
-import java.util.Iterator;
 
 import dojox.cometd.Client;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.cometd.AbstractBayeux;
@@ -33,11 +32,9 @@ import org.mortbay.cometd.AbstractBayeux;
  * @version $Revision$
  */
 public class CometdProducer extends DefaultProducer implements CometdProducerConsumer {
-
-    @SuppressWarnings("unused")
     private static final transient Log LOG = LogFactory.getLog(CometdProducer.class);
     
-    private AbstractBayeux       bayeux;  
+    private AbstractBayeux bayeux;
     private final CometdEndpoint endpoint;
 
     public CometdProducer(CometdEndpoint endpoint) {
@@ -58,9 +55,13 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
     }
 
     public void process(final Exchange exchange) {
+        ObjectHelper.notNull(bayeux, "bayeux");
+
         Collection<Client> clients = bayeux.getClients();
-        for (Iterator<Client> iterator = clients.iterator(); iterator.hasNext();) {
-            Client client = (Client) iterator.next();
+        for (Client client : clients) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Delivering to client id: " + client.getId() + " path:" + endpoint.getPath() + " exchange: " + exchange);
+            }
             client.deliver(client, endpoint.getPath(), exchange.getIn().getBody(), null);
         }
     }
