@@ -17,9 +17,14 @@
 package org.apache.camel.web.resources;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.transform.Result;
 
 import org.apache.camel.model.RouteType;
 import org.apache.camel.view.RouteDotGenerator;
@@ -33,6 +38,7 @@ import org.apache.camel.view.RouteDotGenerator;
 public class RouteResource extends CamelChildResourceSupport {
     private RouteType route;
 
+
     public RouteResource(RoutesResource routesResource, RouteType route) {
         super(routesResource.getContextResource());
         this.route = route;
@@ -45,6 +51,20 @@ public class RouteResource extends CamelChildResourceSupport {
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
     public RouteType getRoute() {
         return route;
+    }
+
+    /**
+     * Returns the XML text
+     */
+    public String getRouteXml() throws JAXBException {
+        JAXBContext context = JAXBContext.newInstance(Constants.JAXB_PACKAGES);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+        // TODO fix to use "" namespace prefix
+        // using this https://jaxb.dev.java.net/nonav/2.1.10/docs/vendorProperties.html#prefixmapper
+        StringWriter buffer = new StringWriter();
+        marshaller.marshal(route, buffer);
+        return buffer.toString();
     }
 
     /**
