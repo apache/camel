@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.Service;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -68,6 +69,26 @@ public abstract class ServiceSupport implements Service {
         }
     }
 
+    /**
+     * Returns the current status
+     */
+    public ServiceStatus getStatus() {
+        // lets check these in oldest first as these flags can be changing in a concurrent world
+        if (isStarting()) {
+            return ServiceStatus.Starting;
+        }
+        if (isStarted()) {
+            return ServiceStatus.Started;
+        }
+        if (isStopping()) {
+            return ServiceStatus.Stopping;
+        }
+        if (isStopped()) {
+            return ServiceStatus.Stopped;
+        }
+        return ServiceStatus.Created;
+    }
+    
     /**
      * @return true if this service has been started
      */

@@ -333,4 +333,9 @@ public interface CamelContext extends Service {
      * @return the factory finder
      */
     FactoryFinder createFactoryFinder(String path);
+
+    /**
+     * Returns the current status of the given route
+     */
+    ServiceStatus getRouteStatus(RouteType route);
 }
