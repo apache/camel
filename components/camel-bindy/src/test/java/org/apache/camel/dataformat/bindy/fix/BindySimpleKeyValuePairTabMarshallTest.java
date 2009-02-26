@@ -27,9 +27,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Header;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Order;
-import org.apache.camel.dataformat.bindy.model.fix.simple.Trailer;
+import org.apache.camel.dataformat.bindy.model.fix.tab.Header;
+import org.apache.camel.dataformat.bindy.model.fix.tab.Order;
+import org.apache.camel.dataformat.bindy.model.fix.tab.Trailer;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.junit.Test;
 import org.springframework.config.java.annotation.Bean;
@@ -43,7 +43,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends AbstractJUnit4Spring
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
     
-    private String result = "1=BE.CHM.0018=FIX 4.19=2010=22011=CHM0001-0122=434=135=048=BE000124567849=INVMGR54=156=BRKR58=this is a camel - bindy test";
+    private String result = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=0\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t";
     
     @Produce(uri = "direct:start")
     private ProducerTemplate template;
@@ -55,7 +55,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends AbstractJUnit4Spring
     public void testMarshallMessage() throws Exception {
         resultEndpoint.expectedBodiesReceived(result);
 
-        template.sendBody(generateModel());        
+        template.sendBody(generateModel());
 
         resultEndpoint.assertIsSatisfied();
     }
@@ -96,7 +96,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends AbstractJUnit4Spring
 
     @Configuration
     public static class ContextConfig extends SingleRouteCamelConfiguration {
-        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyKeyValuePairDataFormat camelDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.tab");
 
         @Override
         @Bean
