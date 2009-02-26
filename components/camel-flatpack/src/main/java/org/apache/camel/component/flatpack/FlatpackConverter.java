@@ -58,7 +58,7 @@ public final class FlatpackConverter {
     /**
      * Puts the values of the dataset into the map
      */
-    public static void putValues(Map<String, Object> map, DataSet dataSet) {
+    private static void putValues(Map<String, Object> map, DataSet dataSet) {
         boolean header = dataSet.isRecordID(FlatpackComponent.HEADER_ID);
         boolean trailer = dataSet.isRecordID(FlatpackComponent.TRAILER_ID);
 

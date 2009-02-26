@@ -61,6 +61,7 @@ public class FlatpackDataFormat implements DataFormat {
     private Resource definition;
     private boolean fixed;
 
+    @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         ObjectHelper.notNull(graph, "The object to marshal must be provided");
 
@@ -161,7 +162,7 @@ public class FlatpackDataFormat implements DataFormat {
     protected Parser createParser(Exchange exchange, Reader bodyReader) throws IOException {
         if (isFixed()) {
             Resource resource = getDefinition();
-            ObjectHelper.notNull(resource, "resource property");
+            ObjectHelper.notNull(resource, "resource");
             return getParserFactory().newFixedLengthParser(new InputStreamReader(resource.getInputStream()), bodyReader);
         } else {
             Resource resource = getDefinition();
@@ -176,7 +177,7 @@ public class FlatpackDataFormat implements DataFormat {
     private Writer createWriter(Exchange exchange, Map<String, Object> firstRow, OutputStream stream) throws JDOMException, IOException {
         if (isFixed()) {
             Resource resource = getDefinition();
-            ObjectHelper.notNull(resource, "resource property");
+            ObjectHelper.notNull(resource, "resource");
             FixedWriterFactory factory = new FixedWriterFactory(new InputStreamReader(resource.getInputStream()));
             return factory.createWriter(new OutputStreamWriter(stream));
         } else {
