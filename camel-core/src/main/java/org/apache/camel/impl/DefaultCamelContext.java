@@ -39,6 +39,7 @@ import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
@@ -435,6 +436,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     }
 
+    public ServiceStatus getRouteStatus(RouteType route) {
+        return getRouteStatus(route.idOrCreate());
+    }
+
+    /**
+     * Returns the status of the service of the given ID or null if there is no service created yet
+     */
+    public ServiceStatus getRouteStatus(String key) {
+        RouteService routeService = routeServices.remove(key);
+        if (routeService != null) {
+            return routeService.getStatus();
+        }
+        return null;
+    }
+
     public void startRoute(RouteType route) throws Exception {
         Collection<Route> routes = new ArrayList<Route>();
         List<RouteContext> routeContexts = route.addRoutes(this, routes);
@@ -444,8 +460,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
 
     public void stopRoute(RouteType route) throws Exception {
-        stopRouteService(route.idOrCreate());
+        stopRoute(route.idOrCreate());
     }
+
+    /**
+     * Stops the route denoted by the given RouteType id
+     */
+    public synchronized void stopRoute(String key) throws Exception {
+        RouteService routeService = routeServices.remove(key);
+        if (routeService != null) {
+            routeService.stop();
+        }
+    }
+
+
 
     /**
      * Adds a service, starting it so that it will be stopped with this context
@@ -726,22 +754,13 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      */
     protected synchronized void startRouteService(RouteService routeService) throws Exception {
         String key = routeService.getId();
-        stopRouteService(key);
+        stopRoute(key);
         routeServices.put(key, routeService);
         if (shouldStartRoutes()) {
             routeService.start();
         }
     }
 
-    /**
-     * Stops the route denoted by the given RouteType id
-     */
-    protected synchronized void stopRouteService(String key) throws Exception {
-        RouteService routeService = routeServices.remove(key);
-        if (routeService != null) {
-            routeService.stop();
-        }
-    }
 
 
     protected synchronized  void doStop() throws Exception {
