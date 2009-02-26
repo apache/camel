@@ -18,8 +18,11 @@ package org.apache.camel.web.resources;
 
 import java.io.IOException;
 import java.io.StringWriter;
+import java.util.List;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
@@ -77,5 +80,15 @@ public class RouteResource extends CamelChildResourceSupport {
         RouteDotGenerator generator = new RouteDotGenerator("/tmp/camel");
         return generator.getRoutesText(getCamelContext());
     }
+
+
+    /**
+     * Looks up an individual route
+     */
+    @Path("status")
+    public RouteStatusResource getRouteStatus() {
+        return new RouteStatusResource(this);
+    }
+
 
 }

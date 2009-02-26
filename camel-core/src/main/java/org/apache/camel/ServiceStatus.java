@@ -24,4 +24,12 @@ package org.apache.camel;
  */
 public enum ServiceStatus {
     Created, Starting, Started, Stopping, Stopped;
+
+    public boolean isStartable() {
+        return this != Starting && this != Started;
+    }
+
+    public boolean isStoppable() {
+        return this != Stopping && this != Stopped;
+    }
 }
