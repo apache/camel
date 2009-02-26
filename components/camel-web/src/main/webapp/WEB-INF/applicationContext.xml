@@ -27,6 +27,8 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
+      <description>This is an example route which you can start, stop and modify</description>
+      
       <from uri="seda:foo"/>
       <to uri="mock:results"/>
     </route>
