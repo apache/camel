@@ -10,7 +10,7 @@
 <table>
   <tr>
     <th>Route</th>
-    <th>Status</th>
+    <th colspan="2">Status</th>
   </tr>
 <ul>
   <c:forEach var="i" items="${it.routes}">
@@ -20,6 +20,18 @@
     </td>
     <td class="${i.status}">
       ${i.status}
+    </td>
+    <td>
+      <form action='<c:url value="/routes/${i.id}/status"/>' method="POST" name="setStatus">
+      <c:if test="${i.startable}">
+        <input type="hidden" name="status" value="start">
+        <input type="submit" value="Start">
+      </c:if>
+      <c:if test="${i.stoppable}">
+        <input type="hidden" name="status" value="stop">
+        <input type="submit" value="Stop">
+      </c:if>
+      </form>
     </td>
   </c:forEach>
 </ul>

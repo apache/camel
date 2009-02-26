@@ -81,11 +81,35 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
      */
     public ServiceStatus getStatus() {
         if (camelContext != null) {
-            return camelContext.getRouteStatus(this);
+            ServiceStatus answer = camelContext.getRouteStatus(this);
+            if (answer == null) {
+                answer = ServiceStatus.Stopped;
+            }
+            return answer;
         }
         return null;
     }
 
+    public boolean isStartable() {
+        ServiceStatus status = getStatus();
+        if (status == null) {
+            return true;
+        }
+        else {
+            return status.isStartable();
+        }
+    }
+
+    public boolean isStoppable() {
+        ServiceStatus status = getStatus();
+        if (status == null) {
+            return false;
+        }
+        else {
+            return status.isStoppable();
+        }
+    }
+    
     public List<RouteContext> addRoutes(CamelContext context, Collection<Route> routes) throws Exception {
         List<RouteContext> answer = new ArrayList<RouteContext>();
         setCamelContext(context);

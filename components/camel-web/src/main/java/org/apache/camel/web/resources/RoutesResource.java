@@ -71,7 +71,7 @@ public class RoutesResource extends CamelChildResourceSupport {
      * Looks up an individual route
      */
     @Path("{id}")
-    public RouteResource getEndpoint(@PathParam("id") String id) {
+    public RouteResource getRoute(@PathParam("id") String id) {
         List<RouteType> list = getRoutes();
         for (RouteType routeType : list) {
             if (routeType.getId().equals(id)) {

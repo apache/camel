@@ -113,6 +113,7 @@ public class EndpointsResource extends CamelChildResourceSupport {
     @POST
     @Consumes("application/x-www-form-urlencoded")
     public Response postUriForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
+        // TODO replace the Form class with an injected bean?
         System.out.println("Received form! " + formData);
         newUri = formData.getFirst("uri", String.class);
         EndpointResource endpoint = getEndpoint(newUri);
