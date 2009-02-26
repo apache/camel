@@ -17,8 +17,8 @@
 package org.apache.camel;
 
 import java.io.File;
-import java.util.List;
 import java.util.Collection;
+import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;

@@ -179,8 +179,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return answer;
     }
 
-    public Map<Class,TypeConverter> getToClassMappings(Class fromClass) {
-        Map<Class,TypeConverter> answer = new HashMap<Class,TypeConverter>();
+    public Map<Class, TypeConverter> getToClassMappings(Class fromClass) {
+        Map<Class, TypeConverter> answer = new HashMap<Class, TypeConverter>();
         synchronized (typeMappings) {
             for (Map.Entry<TypeMapping, TypeConverter> entry : typeMappings.entrySet()) {
                 TypeMapping mapping = entry.getKey();
