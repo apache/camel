@@ -26,8 +26,10 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExchangeProperty;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
+import org.apache.camel.util.ExchangeHelper;
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
@@ -146,7 +148,7 @@ public class DefaultExchange implements Exchange {
             validateExchangePropertyIsExpectedType(property, type, value);
         }
 
-        return getContext().getTypeConverter().convertTo(type, this, value);
+        return ExchangeHelper.convertToType(this, type, value);
     }
 
     @SuppressWarnings("unchecked")
