@@ -24,12 +24,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -66,7 +68,7 @@ public class JdbcProducer extends DefaultProducer {
                 setResultSet(exchange, rs);
             } else {
                 int updateCount = stmt.getUpdateCount();
-                exchange.getOut().setHeader("jdbc.updateCount", updateCount);
+                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
         } finally {
             try {
@@ -91,15 +93,11 @@ public class JdbcProducer extends DefaultProducer {
     protected void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
         ResultSetMetaData meta = rs.getMetaData();
 
-        HashMap<String, Object> props = new HashMap<String, Object>();
-        IntrospectionSupport.getProperties(meta, props, "jdbc.");
-        exchange.getOut().setHeaders(props);
-
         int count = meta.getColumnCount();
-        List<HashMap<String, Object>> data = new ArrayList<HashMap<String, Object>>();
+        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
         int rowNumber = 0;
         while (rs.next() && (readSize == 0 || rowNumber < readSize)) {
-            HashMap<String, Object> row = new HashMap<String, Object>();
+            Map<String, Object> row = new HashMap<String, Object>();
             for (int i = 0; i < count; i++) {
                 int columnNumber = i + 1;
                 String columnName = meta.getColumnName(columnNumber);
@@ -108,7 +106,7 @@ public class JdbcProducer extends DefaultProducer {
             data.add(row);
             rowNumber++;
         }
-
+        exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, rowNumber);
         exchange.getOut().setBody(data);
     }
 
