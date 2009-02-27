@@ -53,8 +53,8 @@ public class JcrProducer extends DefaultProducer {
     }
 
     private String getNodeName(Exchange exchange) {
-        if (exchange.getProperty(JcrConstants.NODE_NAME) != null) {
-            return exchange.getProperty(JcrConstants.NODE_NAME, String.class);
+        if (exchange.getProperty(JcrConstants.JCR_NODE_NAME) != null) {
+            return exchange.getProperty(JcrConstants.JCR_NODE_NAME, String.class);
         }
         return exchange.getExchangeId();
     }
