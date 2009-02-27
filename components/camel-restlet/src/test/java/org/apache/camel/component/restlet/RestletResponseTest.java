@@ -38,8 +38,8 @@ public class RestletResponseTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setHeader(RestletConstants.RESPONSE_CODE, "417");
-                        exchange.getOut().setHeader(RestletConstants.MEDIA_TYPE, "application/JSON");
+                        exchange.getOut().setHeader(RestletConstants.RESTLET_RESPONSE_CODE, "417");
+                        exchange.getOut().setHeader(RestletConstants.RESTLET_MEDIA_TYPE, "application/JSON");
                     }        
                 });
             }

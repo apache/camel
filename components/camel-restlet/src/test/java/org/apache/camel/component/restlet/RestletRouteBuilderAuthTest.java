@@ -31,8 +31,8 @@ public class RestletRouteBuilderAuthTest extends SpringTestSupport {
         final String id = "89531";
 
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(RestletConstants.LOGIN, "admin");
-        headers.put(RestletConstants.PASSWORD, "foo");
+        headers.put(RestletConstants.RESTLET_LOGIN, "admin");
+        headers.put(RestletConstants.RESTLET_PASSWORD, "foo");
         headers.put("id", id);
         
         String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
@@ -45,8 +45,8 @@ public class RestletRouteBuilderAuthTest extends SpringTestSupport {
 
     public void testhBasicAuthError() throws IOException {
         Map<String, Object> headers = new HashMap<String, Object>();
-        headers.put(RestletConstants.LOGIN, "admin");
-        headers.put(RestletConstants.PASSWORD, "bad");
+        headers.put(RestletConstants.RESTLET_LOGIN, "admin");
+        headers.put(RestletConstants.RESTLET_PASSWORD, "bad");
         headers.put("id", "xyz");
         String response = (String) template.requestBodyAndHeaders("direct:start-auth", 
                 "<order foo='1'/>", headers);
