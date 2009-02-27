@@ -28,7 +28,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.UncategorizedSQLException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 
@@ -88,6 +87,7 @@ public class SqlRouteTest extends ContextTestSupport {
     
     public void testListResult() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedHeaderReceived(SqlConstants.SQL_ROW_COUNT, "2");
         mock.expectedMessageCount(1);
         List<Object> body = new ArrayList<Object>();
         body.add("ASF");
@@ -121,16 +121,14 @@ public class SqlRouteTest extends ContextTestSupport {
         template.sendBody("direct:insert", new Object[] {10, "test", "test"});
         mock.assertIsSatisfied();
         try {
-            String projectName = (String)jdbcTemplate
-                .queryForObject("select project from projects where id = 10", String.class);
+            String projectName = (String)jdbcTemplate.queryForObject("select project from projects where id = 10", String.class);
             assertEquals("test", projectName);
         } catch (EmptyResultDataAccessException e) {
             fail("no row inserted");
         }
 
-        Integer actualUpdateCount = mock.getExchanges().get(0).getIn().getHeader(SqlProducer.UPDATE_COUNT,
-                                                                                 Integer.class);
-        assertEquals((Integer)1, actualUpdateCount);
+        Integer actualUpdateCount = mock.getExchanges().get(0).getIn().getHeader(SqlConstants.SQL_UPDATE_COUNT, Integer.class);
+        assertEquals((Integer) 1, actualUpdateCount);
     }
 
     public void testNoBody() throws Exception {

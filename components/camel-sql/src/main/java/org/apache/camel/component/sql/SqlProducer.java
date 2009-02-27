@@ -31,7 +31,6 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 public class SqlProducer extends DefaultProducer {
-    public static final String UPDATE_COUNT = "org.apache.camel.sql.update-count";
     private String query;
     private JdbcTemplate jdbcTemplate;
 
@@ -67,10 +66,11 @@ public class SqlProducer extends DefaultProducer {
                     RowMapperResultSetExtractor mapper = new RowMapperResultSetExtractor(new ColumnMapRowMapper());
                     List<?> result = (List<?>) mapper.extractData(ps.getResultSet());
                     exchange.getOut().setBody(result);
+                    exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, result.size());
                     // preserve headers
                     exchange.getOut().setHeaders(exchange.getIn().getHeaders());
                 } else {
-                    exchange.getIn().setHeader(UPDATE_COUNT, ps.getUpdateCount());
+                    exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                 }
 
                 // data is set on exchange so return null
