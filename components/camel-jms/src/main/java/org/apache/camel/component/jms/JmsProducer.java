@@ -58,7 +58,6 @@ public class JmsProducer extends DefaultProducer {
     private Requestor requestor;
     private AtomicBoolean started = new AtomicBoolean(false);
 
-
     private enum RequestorAffinity {
         PER_COMPONENT(0),
         PER_ENDPOINT(1),
@@ -67,7 +66,7 @@ public class JmsProducer extends DefaultProducer {
         private RequestorAffinity(int value) {
             this.value = value;
         }
-    };
+    }
 
     public JmsProducer(JmsEndpoint endpoint) {
         super(endpoint);
@@ -75,9 +74,9 @@ public class JmsProducer extends DefaultProducer {
         JmsConfiguration c = endpoint.getConfiguration();
         affinity = RequestorAffinity.PER_PRODUCER;
         if (c.getReplyTo() != null) {
-            if (c.getReplyToTempDestinationAffinity().equals(c.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT)) {
+            if (c.getReplyToTempDestinationAffinity().equals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT)) {
                 affinity = RequestorAffinity.PER_ENDPOINT;
-            } else if (c.getReplyToTempDestinationAffinity().equals(c.REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT)) {
+            } else if (c.getReplyToTempDestinationAffinity().equals(JmsConfiguration.REPLYTO_TEMP_DEST_AFFINITY_PER_COMPONENT)) {
                 affinity = RequestorAffinity.PER_COMPONENT;
             }
         }
@@ -197,9 +196,7 @@ public class JmsProducer extends DefaultProducer {
             if (destinationName != null) {
                 template.send(destinationName, messageCreator, callback);
             } else if (destination != null) {
-                // TODO cannot pass in callback using destination?
-                template.send(destination.toString(), messageCreator, callback);
-                // template.send(destination, messageCreator);
+                template.send(destination, messageCreator, callback);
             } else {
                 throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
             }
@@ -271,8 +268,7 @@ public class JmsProducer extends DefaultProducer {
                 out.setMessageId(out.getJmsMessage().getJMSMessageID());
             }
         } catch (JMSException e) {
-            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and "
-                     + "set it into Camel's MessageId", e);
+            LOG.warn("Unable to retrieve JMSMessageID from outgoing JMS Message and set it into Camel's MessageId", e);
         }
     }
 

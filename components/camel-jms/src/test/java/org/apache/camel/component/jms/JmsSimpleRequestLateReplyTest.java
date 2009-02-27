@@ -17,22 +17,20 @@
 package org.apache.camel.component.jms;
 
 import java.util.concurrent.CountDownLatch;
+import javax.jms.Destination;
+import javax.jms.JMSException;
 
 import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.TemporaryQueue;
 
 /**
  * A simple requesr / late reply test using InOptionalOut.
@@ -40,23 +38,17 @@ import javax.jms.TemporaryQueue;
 public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
 
     private static final Log LOG = LogFactory.getLog(JmsSimpleRequestLateReplyTest.class);
-
-    protected String expectedBody = "Late Reply";
-             
-    private final CountDownLatch latch = new CountDownLatch(1);
     private static Destination replyDestination;
     private static String cid;
+    protected String expectedBody = "Late Reply";
     protected ActiveMQComponent activeMQComponent;
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public void testRequestLateReplyUsingCustomDestinationHeaderForReply() throws Exception {
-        Runnable runnable = new SendLateReply();
-        doTest(runnable);
-
+        doTest(new SendLateReply());
     }
     
     public void testRequestLateReplyUsingDestinationEndpointForReply() throws Exception {
-        // use another thread to send the late reply to simulate that we do it later, not
-        // from the origianl route anyway
         doTest(new SendLateReplyUsingTemporaryEndpoint());
     }
 
@@ -97,6 +89,7 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
             }
 
             LOG.debug("Sending late reply");
+            // use some dummt queue as we override this with the property: JmsConstants.JMS_DESTINATION 
             template.send("activemq:dummy", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOnly);

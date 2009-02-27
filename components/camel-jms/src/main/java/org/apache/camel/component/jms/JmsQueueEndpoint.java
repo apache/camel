@@ -18,16 +18,14 @@ package org.apache.camel.component.jms;
 
 import java.util.Collections;
 import java.util.List;
+import javax.jms.JMSException;
+import javax.jms.Queue;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
-
-import javax.jms.Topic;
-import javax.jms.JMSException;
-import javax.jms.Queue;
 
 /**
  * An endpoint for a JMS Queue which is also browsable
