@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -44,6 +46,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class FallbackTypeConverter implements TypeConverter, TypeConverterAware {
     private static final transient Log LOG = LogFactory.getLog(FallbackTypeConverter.class);
+    private Map<Class, JAXBContext> contexts = new HashMap<Class, JAXBContext>();
     private TypeConverter parentTypeConverter;
     private boolean prettyPrint = true;
 
@@ -85,15 +88,19 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
 
     protected <T> boolean isJaxbType(Class<T> type) {
         XmlRootElement element = type.getAnnotation(XmlRootElement.class);
-        boolean jaxbType = element != null;
-        return jaxbType;
+        return element != null;
     }
 
     /**
      * Lets try parse via JAXB
      */
     protected <T> T unmarshall(Class<T> type, Object value) throws JAXBException {
+        if (value == null) {
+            throw new IllegalArgumentException("Cannot convert from null value to JAXBSource");
+        }
+
         JAXBContext context = createContext(type);
+        // must create a new instance of unmarshaller as its not thred safe
         Unmarshaller unmarshaller = context.createUnmarshaller();
 
         if (parentTypeConverter != null) {
@@ -136,6 +143,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
             } catch (NoTypeConversionAvailableException e) {
                 // lets try a stream
                 StringWriter buffer = new StringWriter();
+                // must create a new instance of marshaller as its not thred safe
                 Marshaller marshaller = context.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
                 marshaller.marshal(value, buffer);
@@ -172,8 +180,13 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return null;
     }
 
-    protected <T> JAXBContext createContext(Class<T> type) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(type);
+    protected synchronized <T> JAXBContext createContext(Class<T> type) throws JAXBException {
+        JAXBContext context = contexts.get(type);
+        if (context == null) {
+            context = JAXBContext.newInstance(type);
+            contexts.put(type, context);
+        }
         return context;
     }
+
 }
