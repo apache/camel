@@ -69,7 +69,7 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         // now lets output the results to the exchange
         Message out = exchange.getOut(true);
         out.setBody(buffer.toString());
-        out.setHeader("org.apache.camel.stringtemplate.resource", getResource());
+        out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE, getResource());
     }
     
 }

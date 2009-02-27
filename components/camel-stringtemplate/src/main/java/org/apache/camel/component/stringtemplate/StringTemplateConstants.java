@@ -14,18 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.freemarker;
+package org.apache.camel.component.stringtemplate;
 
 /**
- * Freemarker Constants
+ * StringTemplate constants.
  */
-public final class FreemarkerConstants {
+public final class StringTemplateConstants {
 
-    public static final String FREEMARKER_RESOURCE = "CamelFreemarkerResource";
+    public static final String STRINGTEMPLATE_RESOURCE = "CamelStringTemplateResource";
 
-    public static final String FREEMARKER_RESOURCE_URI = "CamelFreemarkerResourceUri";
-
-    private FreemarkerConstants() {
+    private StringTemplateConstants() {
         // Utility class
     }
 }
