@@ -20,11 +20,11 @@ package org.apache.camel.component.jcr;
  * JCR Constants.
  */
 public final class JcrConstants {
+
     /**
      * Property key for specifying the name of a node in the repository
      */
-    public static final String NODE_NAME = "org.apache.camel.component.jcr.node_name";
-
+    public static final String JCR_NODE_NAME = "CamelJcrNodeName";
 
     private JcrConstants() {
         // Utility class
