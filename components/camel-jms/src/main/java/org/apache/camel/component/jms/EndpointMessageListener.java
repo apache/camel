@@ -87,8 +87,9 @@ public class EndpointMessageListener implements MessageListener {
                 // process OK so get the reply
                 body = exchange.getOut(false);
             }
-            // send the reply
-            if (rce == null && body != null && !disableReplyTo) {
+
+            // send the reply if we got a response and the exchange is out capable
+            if (rce == null && body != null && !disableReplyTo && exchange.getPattern().isOutCapable()) {
                 sendReply(replyDestination, message, exchange, body);
             }
         } catch (Exception e) {
@@ -105,7 +106,10 @@ public class EndpointMessageListener implements MessageListener {
         // lets set to an InOut if we have some kind of reply-to destination
         if (replyDestination != null && !disableReplyTo) {
             exchange.setProperty(JmsConstants.JMS_REPLY_DESTINATION, replyDestination);
-            exchange.setPattern(ExchangePattern.InOut);
+            // only change pattern if not already out capable
+            if (!exchange.getPattern().isOutCapable()) {
+                exchange.setPattern(ExchangePattern.InOut);
+            }
         }
         return exchange;
     }
