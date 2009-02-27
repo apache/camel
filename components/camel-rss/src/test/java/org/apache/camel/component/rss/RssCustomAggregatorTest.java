@@ -42,7 +42,7 @@ public class RssCustomAggregatorTest extends ContextTestSupport {
         Message in = exchange.getIn();
         assertNotNull(in);
         assertTrue(in.getBody() instanceof SyndFeed);
-        assertTrue(in.getHeader(RssEndpoint.HEADER_RSS_FEED) instanceof SyndFeed);
+        assertTrue(in.getHeader(RssConstants.RSS_FEED) instanceof SyndFeed);
 
         SyndFeed body = in.getBody(SyndFeed.class);
         assertEquals(20, body.getEntries().size());

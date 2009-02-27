@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.List;
-
 import com.sun.syndication.feed.synd.SyndFeed;
 
 import org.apache.camel.ContextTestSupport;
@@ -37,9 +35,9 @@ public class RssPollingConsumerTest extends ContextTestSupport {
         Message in = exchange.getIn();
         assertNotNull(in);
         assertTrue(in.getBody() instanceof SyndFeed);
-        assertTrue(in.getHeader(RssEndpoint.HEADER_RSS_FEED) instanceof SyndFeed);
+        assertTrue(in.getHeader(RssConstants.RSS_FEED) instanceof SyndFeed);
 
-        SyndFeed feed = in.getHeader(RssEndpoint.HEADER_RSS_FEED, SyndFeed.class);
+        SyndFeed feed = in.getHeader(RssConstants.RSS_FEED, SyndFeed.class);
         assertTrue(feed.getAuthor().contains("Jonathan Anstey"));
 
         SyndFeed body = in.getBody(SyndFeed.class);

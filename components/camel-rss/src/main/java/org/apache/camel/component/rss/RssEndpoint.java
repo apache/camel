@@ -33,10 +33,6 @@ import org.apache.commons.logging.LogFactory;
  * 
  */
 public class RssEndpoint extends FeedEndpoint {
-    /**
-     * Header key for the {@link com.sun.syndication.feed.synd.SyndFeed} object is stored on the in message on the exchange.
-     */
-    public static final String HEADER_RSS_FEED = "org.apache.camel.component.rss.feed"; 
     protected static final transient Log LOG = LogFactory.getLog(RssEndpoint.class);
 
     public RssEndpoint() {
@@ -56,14 +52,14 @@ public class RssEndpoint extends FeedEndpoint {
     
     @Override
     public Exchange createExchange(Object feed) {
-        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
+        Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);
         exchange.getIn().setBody(feed);
         return exchange;
     }
 
     @Override
     public Exchange createExchange(Object feed, Object entry) {
-        Exchange exchange = createExchangeWithFeedHeader(feed, HEADER_RSS_FEED);
+        Exchange exchange = createExchangeWithFeedHeader(feed, RssConstants.RSS_FEED);
         SyndFeed newFeed;
         try {
             newFeed = (SyndFeed)((SyndFeed) feed).clone();
