@@ -19,12 +19,12 @@ package org.apache.camel.component.jms;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
+import javax.jms.JMSException;
 import javax.jms.Message;
+import javax.jms.Queue;
 import javax.jms.TemporaryQueue;
 import javax.jms.TemporaryTopic;
-import javax.jms.JMSException;
 import javax.jms.Topic;
-import javax.jms.Queue;
 
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
@@ -57,35 +57,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String selector;
     private JmsConfiguration configuration;
     private Requestor requestor;
-
-    /**
-     * Returns a new JMS endpoint for the given JMS destination using the configuration from the given JMS component
-     */
-    public static JmsEndpoint newInstance(Destination destination, JmsComponent component) throws JMSException {
-        JmsEndpoint answer = newInstance(destination);
-        JmsConfiguration newConfiguration = component.getConfiguration().copy();
-        answer.setConfiguration(newConfiguration);
-        answer.setCamelContext(component.getCamelContext());
-        return answer;
-    }
-
-    /**
-     * Returns a new JMS endpoint for the given JMS destination
-     */
-    public static JmsEndpoint newInstance(Destination destination) throws JMSException {
-        if (destination instanceof TemporaryQueue) {
-            return new JmsTemporaryQueueEndpoint((TemporaryQueue) destination);
-        }
-        if (destination instanceof TemporaryTopic) {
-            return new JmsTemporaryTopicEndpoint((TemporaryTopic) destination);
-        }
-        if (destination instanceof Queue) {
-            return new JmsQueueEndpoint((Queue) destination);
-        }
-        else {
-            return new JmsEndpoint((Topic) destination);
-        }
-    }
 
     public JmsEndpoint() {
         this(null, null);
@@ -122,6 +93,35 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this(endpointUri, destinationName, true);
     }
 
+
+    /**
+     * Returns a new JMS endpoint for the given JMS destination using the configuration from the given JMS component
+     */
+    public static JmsEndpoint newInstance(Destination destination, JmsComponent component) throws JMSException {
+        JmsEndpoint answer = newInstance(destination);
+        JmsConfiguration newConfiguration = component.getConfiguration().copy();
+        answer.setConfiguration(newConfiguration);
+        answer.setCamelContext(component.getCamelContext());
+        return answer;
+    }
+
+    /**
+     * Returns a new JMS endpoint for the given JMS destination
+     */
+    public static JmsEndpoint newInstance(Destination destination) throws JMSException {
+        if (destination instanceof TemporaryQueue) {
+            return new JmsTemporaryQueueEndpoint((TemporaryQueue) destination);
+        }
+        if (destination instanceof TemporaryTopic) {
+            return new JmsTemporaryTopicEndpoint((TemporaryTopic) destination);
+        }
+        if (destination instanceof Queue) {
+            return new JmsQueueEndpoint((Queue) destination);
+        } else {
+            return new JmsEndpoint((Topic) destination);
+        }
+    }
+
     public JmsProducer createProducer() throws Exception {
         return new JmsProducer(this);
     }
@@ -139,6 +139,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             } else if (destination != null) {
                 jmsTemplate.setDefaultDestination(destination);
             }
+            // TODO: Why is this destination resolver disabled for producer? Its enable for consumer!
             /*
             else {
                 DestinationResolver resolver = getDestinationResolver();

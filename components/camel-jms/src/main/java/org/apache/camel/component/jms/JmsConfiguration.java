@@ -33,7 +33,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.JmsException;
-import org.springframework.jms.connection.JmsResourceHolder;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.JmsTemplate;
@@ -52,7 +51,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.util.Assert;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
-
 /**
  * @version $Revision$
  */
@@ -146,7 +144,7 @@ public class JmsConfiguration implements Cloneable {
      */
     public JmsConfiguration copy() {
         try {
-            return (JmsConfiguration)clone();
+            return (JmsConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -171,29 +169,47 @@ public class JmsConfiguration implements Cloneable {
             execute(new SessionCallback() {
                 public Object doInJms(Session session) throws JMSException {
                     Destination destination = resolveDestinationName(session, destinationName);
-                    Assert.notNull(messageCreator, "MessageCreator must not be null");
-                    MessageProducer producer = createProducer(session, destination);
-                    Message message = null;
-                    try {
-                        message = messageCreator.createMessage(session);
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending created message: " + message);
-                        }
-                        doSend(producer, message);
-                        // Check commit - avoid commit call within a JTA transaction.
-                        if (session.getTransacted() && isSessionLocallyTransacted(session)) {
-                            // Transacted session created by this template -> commit.
-                            JmsUtils.commitIfNecessary(session);
-                        }
-                    } finally {
-                        JmsUtils.closeMessageProducer(producer);
-                    }
-                    if (message != null && callback != null) {
-                        callback.sent(message);
-                    }
-                    return null;
+                    return doSendToDestination(destination, messageCreator, callback, session);
                 }
             }, false);
+        }
+
+        public void send(final Destination destination,
+                         final MessageCreator messageCreator,
+                         final MessageSentCallback callback) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    return doSendToDestination(destination, messageCreator, callback, session);
+                }
+            }, false);
+        }
+
+        private Object doSendToDestination(final Destination destination,
+                                           final MessageCreator messageCreator,
+                                           final MessageSentCallback callback,
+                                           final Session session) throws JMSException {
+
+            Assert.notNull(messageCreator, "MessageCreator must not be null");
+            MessageProducer producer = createProducer(session, destination);
+            Message message = null;
+            try {
+                message = messageCreator.createMessage(session);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending created message: " + message);
+                }
+                doSend(producer, message);
+                // Check commit - avoid commit call within a JTA transaction.
+                if (session.getTransacted() && isSessionLocallyTransacted(session)) {
+                    // Transacted session created by this template -> commit.
+                    JmsUtils.commitIfNecessary(session);
+                }
+            } finally {
+                JmsUtils.closeMessageProducer(producer);
+            }
+            if (message != null && callback != null) {
+                callback.sent(message);
+            }
+            return null;
         }
 
         /**
@@ -228,8 +244,8 @@ public class JmsConfiguration implements Cloneable {
         }
 
         public void send(final String destinationName,
-                final MessageCreator messageCreator,
-                final MessageSentCallback callback) throws JmsException {
+                         final MessageCreator messageCreator,
+                         final MessageSentCallback callback) throws JmsException {
             execute(new SessionCallback() {
                 public Object doInJms(Session session) throws JMSException {
                     Destination destination = resolveDestinationName(session, destinationName);
@@ -278,10 +294,10 @@ public class JmsConfiguration implements Cloneable {
                 }
                 if (isPubSubDomain()) {
                     ((TopicPublisher) producer).publish(message, message.getJMSDeliveryMode(),
-                                                        message.getJMSPriority(), ttl);
+                            message.getJMSPriority(), ttl);
                 } else {
                     ((QueueSender) producer).send(message, message.getJMSDeliveryMode(),
-                                                  message.getJMSPriority(), ttl);
+                            message.getJMSPriority(), ttl);
                 }
             } else {
                 super.doSend(producer, message);
@@ -297,7 +313,7 @@ public class JmsConfiguration implements Cloneable {
     public JmsOperations createInOutTemplate(JmsEndpoint endpoint, boolean pubSubDomain, String destination, long requestTimeout) {
         JmsOperations answer = createInOnlyTemplate(endpoint, pubSubDomain, destination);
         if (answer instanceof JmsTemplate && requestTimeout > 0) {
-            JmsTemplate jmsTemplate = (JmsTemplate)answer;
+            JmsTemplate jmsTemplate = (JmsTemplate) answer;
             jmsTemplate.setExplicitQosEnabled(true);
             jmsTemplate.setTimeToLive(requestTimeout);
             jmsTemplate.setSessionTransacted(isTransactedInOut());
@@ -329,8 +345,8 @@ public class JmsConfiguration implements Cloneable {
         ConnectionFactory factory = getTemplateConnectionFactory();
 
         JmsTemplate template = useVersion102
-            ? new CamelJmsTeemplate102(this, factory, pubSubDomain)
-            : new CamelJmsTemplate(this, factory);
+                ? new CamelJmsTeemplate102(this, factory, pubSubDomain)
+                : new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
         if (destinationResolver != null) {
@@ -417,7 +433,7 @@ public class JmsConfiguration implements Cloneable {
      * {@link #createMessageListenerContainer(JmsEndpoint)}
      *
      * @param listenerConnectionFactory the connection factory to use for
-     *                consuming messages
+     *                                  consuming messages
      */
     public void setListenerConnectionFactory(ConnectionFactory listenerConnectionFactory) {
         this.listenerConnectionFactory = listenerConnectionFactory;
@@ -714,7 +730,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Should InOut operations (request reply) default to using transacted mode?
-     *
+     * <p/>
      * By default this is false as you need to commit the outgoing request before you can consume the input
      */
     public boolean isTransactedInOut() {
@@ -724,11 +740,11 @@ public class JmsConfiguration implements Cloneable {
     public void setTransactedInOut(boolean transactedInOut) {
         this.transactedInOut = transactedInOut;
     }
-    
+
     public boolean isLazyCreateTransactionManager() {
         return lazyCreateTransactionManager;
     }
-    
+
     public void setLazyCreateTransactionManager(boolean lazyCreating) {
         this.lazyCreateTransactionManager = lazyCreating;
     }
@@ -744,7 +760,7 @@ public class JmsConfiguration implements Cloneable {
      * and the use of JMS properties
      *
      * @param eagerLoadingOfProperties whether or not to enable eager loading of
-     *                JMS properties on inbound messages
+     *                                 JMS properties on inbound messages
      */
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
@@ -759,7 +775,7 @@ public class JmsConfiguration implements Cloneable {
      * messages are treated as InOnly rather than InOut requests.
      *
      * @param disableReplyTo whether or not to disable the use of JMSReplyTo
-     *                header indicating an InOut
+     *                       header indicating an InOut
      */
     public void setDisableReplyTo(boolean disableReplyTo) {
         this.disableReplyTo = disableReplyTo;
@@ -801,6 +817,7 @@ public class JmsConfiguration implements Cloneable {
     public void setRequestMapPurgePollTimeMillis(long requestMapPurgePollTimeMillis) {
         this.requestMapPurgePollTimeMillis = requestMapPurgePollTimeMillis;
     }
+
     public JmsProviderMetadata getProviderMetadata() {
         return providerMetadata;
     }
@@ -893,7 +910,7 @@ public class JmsConfiguration implements Cloneable {
 
         if (container instanceof DefaultMessageListenerContainer) {
             // this includes DefaultMessageListenerContainer102
-            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer)container;
+            DefaultMessageListenerContainer listenerContainer = (DefaultMessageListenerContainer) container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
@@ -939,7 +956,7 @@ public class JmsConfiguration implements Cloneable {
             }
         } else if (container instanceof SimpleMessageListenerContainer) {
             // this includes SimpleMessageListenerContainer102
-            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer)container;
+            SimpleMessageListenerContainer listenerContainer = (SimpleMessageListenerContainer) container;
             if (concurrentConsumers >= 0) {
                 listenerContainer.setConcurrentConsumers(concurrentConsumers);
             }
@@ -963,7 +980,7 @@ public class JmsConfiguration implements Cloneable {
         // independently configured
         JmsOperations operations = listener.getTemplate();
         if (operations instanceof JmsTemplate) {
-            JmsTemplate template = (JmsTemplate)operations;
+            JmsTemplate template = (JmsTemplate) operations;
             template.setDeliveryPersistent(isReplyToDeliveryPersistent());
         }
     }
@@ -1038,9 +1055,9 @@ public class JmsConfiguration implements Cloneable {
     protected ConnectionFactory createTemplateConnectionFactory() {
         return getConnectionFactory();
     }
-    
+
     /**
-     * Factory method which which allows derived classes to customize the lazy 
+     * Factory method which which allows derived classes to customize the lazy
      * transcationManager creation
      */
     protected PlatformTransactionManager createTransactionManager() {
@@ -1108,10 +1125,10 @@ public class JmsConfiguration implements Cloneable {
     public void setReplyTo(String replyToDestination) {
         if (!replyToDestination.startsWith(QUEUE_PREFIX)) {
             throw new IllegalArgumentException("ReplyTo destination value has to be of type queue; "
-                                              + "e.g: \"queue:replyQueue\"");
+                    + "e.g: \"queue:replyQueue\"");
         }
         this.replyToDestination =
-            removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
+                removeStartingCharacters(replyToDestination.substring(QUEUE_PREFIX.length()), '/');
     }
 
     public String getReplyToDestinationSelectorName() {
