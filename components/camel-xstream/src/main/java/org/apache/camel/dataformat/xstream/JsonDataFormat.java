@@ -14,12 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.dataformat.xstream;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -46,13 +46,11 @@ public class JsonDataFormat extends AbstractXStreamWrapper {
     private final MappedXMLInputFactory mif;
     
     public JsonDataFormat() {
-        final HashMap nstjsons = new HashMap();
+        final Map nstjsons = new HashMap();
         mof = new MappedXMLOutputFactory(nstjsons);
         mif = new MappedXMLInputFactory(nstjsons);
     }
-    
-    
-    
+
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {        
         return new StaxWriter(new QNameMap(), mof.createXMLStreamWriter(stream));
     }
