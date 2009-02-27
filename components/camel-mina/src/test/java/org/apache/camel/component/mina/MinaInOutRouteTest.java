@@ -53,7 +53,7 @@ public class MinaInOutRouteTest extends ContextTestSupport {
                 });
 
                 from("direct:in")
-                        .to("mina:tcp://localhost:8080?sync=true")
+                        .to("mina:tcp://localhost:8080?sync=true&lazySessionCreation=true")
                         .to("mock:result");
             }
         };

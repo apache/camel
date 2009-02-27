@@ -31,7 +31,7 @@ public class MinaInOnlyRouteTest extends ContextTestSupport {
     public void testInOnlyUsingMina() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye Claus");
-        mock.setResultWaitTime(5000);
+        mock.setResultWaitTime(5000);        
 
         assertMockEndpointsSatisfied();
     }
@@ -48,8 +48,9 @@ public class MinaInOnlyRouteTest extends ContextTestSupport {
                 });
 
                 from("timer://start?period=10000&delay=2000")
-                        .setBody(constant("Claus"))
-                        .to("mina:tcp://localhost:8080?sync=true").to("mock:result");
+                        .setBody(constant("Claus"))                
+                        .to("mina:tcp://localhost:8080?sync=true&lazySessionCreation=true")
+                        .to("mock:result");
             }
         };
     }
