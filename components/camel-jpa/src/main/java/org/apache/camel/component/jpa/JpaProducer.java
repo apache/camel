@@ -59,6 +59,5 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
-        exchange.setProperty("CamelJpaValue", values);
     }
 }
