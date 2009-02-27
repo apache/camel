@@ -25,6 +25,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
 
+import javax.jms.Topic;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+
 /**
  * An endpoint for a JMS Queue which is also browsable
  *
@@ -36,6 +40,11 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
     private int maximumBrowseSize = -1;
     private final QueueBrowseStrategy queueBrowseStrategy;
 
+    public JmsQueueEndpoint(Queue destination) throws JMSException {
+        this("jms:queue:" + destination.getQueueName(), null);
+        setDestination(destination);
+    }
+    
     public JmsQueueEndpoint(String uri, JmsComponent component, String destination,
             JmsConfiguration configuration) {
         this(uri, component, destination, configuration, null);

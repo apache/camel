@@ -147,7 +147,10 @@ public class JmsProducer extends DefaultProducer {
         final org.apache.camel.Message in = exchange.getIn();
 
         String destinationName = endpoint.getDestinationName();
-        Destination destination = endpoint.getDestination();
+        Destination destination = exchange.getProperty(JmsConstants.JMS_DESTINATION, Destination.class);
+        if (destination == null) {
+            destination = endpoint.getDestination();
+        }
         if (exchange.getPattern().isOutCapable()) {
 
             testAndSetRequestor();
@@ -245,11 +248,11 @@ public class JmsProducer extends DefaultProducer {
                     return message;
                 }
             };
-            if (destinationName != null) {
-                getInOnlyTemplate().send(destinationName, messageCreator);
-            } else if (destination != null) {
+            if (destination != null) {
                 getInOnlyTemplate().send(destination, messageCreator);
-            } else {
+            } else if (destinationName != null) {
+                getInOnlyTemplate().send(destinationName, messageCreator);
+            } else  {
                 throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
             }
 
