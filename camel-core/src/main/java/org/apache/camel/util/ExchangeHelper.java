@@ -203,6 +203,10 @@ public final class ExchangeHelper {
             Message out = source.getOut(false);
             if (out != null) {
                 result.getOut(true).copyFrom(out);
+            } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
+                // special case where the result is InOptionalOut and with no OUT response
+                // so we should return null to indicate this fact
+                result.setOut(null);
             } else {
                 // no results so lets copy the last input
                 // as the final processor on a pipeline might not

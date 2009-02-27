@@ -83,9 +83,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Exchange send(Endpoint endpoint, Exchange exchange) {
-        Exchange convertedExchange = exchange;
-        producerCache.send(endpoint, convertedExchange);
-        return convertedExchange;
+        producerCache.send(endpoint, exchange);
+        return exchange;
     }
 
     public Exchange send(Endpoint endpoint, Processor processor) {
@@ -340,7 +339,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected Endpoint resolveMandatoryEndpoint(String endpointUri) {
-        Endpoint endpoint = null;
+        Endpoint endpoint;
 
         if (isUseEndpointCache()) {
             synchronized (endpointCache) {
@@ -414,8 +413,14 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             boolean notOut = pattern != null && !pattern.isOutCapable();
             boolean hasOut = result.getOut(false) != null;
             if (hasOut && !notOut) {
+                // we have a response in out and the pattern is out capable
                 answer = result.getOut().getBody();
+            } else if (!hasOut && result.getPattern() == ExchangePattern.InOptionalOut) {
+                // special case where the result is InOptionalOut and with no OUT response
+                // so we should return null to indicate this fact
+                answer = null;
             } else {
+                // use IN as the response
                 answer = result.getIn().getBody();
             }
         }
