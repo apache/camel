@@ -30,7 +30,7 @@ public class RestletHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         
         // OUT filters (from Camel headers to Restlet headers)
         // filter headers used internally by this component
-        getOutFilter().add(RestletConstants.LOGIN);
-        getOutFilter().add(RestletConstants.PASSWORD);
+        getOutFilter().add(RestletConstants.RESTLET_LOGIN);
+        getOutFilter().add(RestletConstants.RESTLET_PASSWORD);
     }
 }
