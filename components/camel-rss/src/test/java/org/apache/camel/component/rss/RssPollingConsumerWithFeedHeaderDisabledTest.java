@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.rss;
 
-import java.util.List;
-
-import com.sun.syndication.feed.synd.SyndFeed;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -36,7 +32,7 @@ public class RssPollingConsumerWithFeedHeaderDisabledTest extends ContextTestSup
         Exchange exchange = mock.getExchanges().get(0);
         Message in = exchange.getIn();
         assertNotNull(in);
-        assertNull(in.getHeader(RssEndpoint.HEADER_RSS_FEED));
+        assertNull(in.getHeader(RssConstants.RSS_FEED));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
