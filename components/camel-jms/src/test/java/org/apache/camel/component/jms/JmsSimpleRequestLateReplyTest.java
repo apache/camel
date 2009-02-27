@@ -24,10 +24,15 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.TemporaryQueue;
 
 /**
  * A simple requesr / late reply test using InOptionalOut.
@@ -36,22 +41,35 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
 
     private static final Log LOG = LogFactory.getLog(JmsSimpleRequestLateReplyTest.class);
 
-    protected String componentName = "activemq";
-
+    protected String expectedBody = "Late Reply";
+             
     private final CountDownLatch latch = new CountDownLatch(1);
-    private static String replyDestination;
+    private static Destination replyDestination;
     private static String cid;
+    protected ActiveMQComponent activeMQComponent;
 
-    public void testRequetLateReply() throws Exception {
+    public void testRequestLateReplyUsingCustomDestinationHeaderForReply() throws Exception {
+        Runnable runnable = new SendLateReply();
+        doTest(runnable);
+
+    }
+    
+    public void testRequestLateReplyUsingDestinationEndpointForReply() throws Exception {
         // use another thread to send the late reply to simulate that we do it later, not
         // from the origianl route anyway
-        Thread sender = new Thread(new SendLateReply());
+        doTest(new SendLateReplyUsingTemporaryEndpoint());
+    }
+
+    protected void doTest(Runnable runnable) throws InterruptedException {
+        // use another thread to send the late reply to simulate that we do it later, not
+        // from the origianl route anyway
+        Thread sender = new Thread(runnable);
         sender.start();
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
 
-        Exchange out = template.request("activemq:queue:hello", new Processor() {
+        Exchange out = template.request(getQueueEndpointName(), new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // we expect a response so InOut
                 exchange.setPattern(ExchangePattern.InOut);
@@ -62,8 +80,7 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
         result.assertIsSatisfied();
 
         assertNotNull(out);
-        // TODO: We should get this late reply to work
-        //assertEquals("Late Reply", out.getOut().getBody());
+        assertEquals(expectedBody, out.getOut().getBody());
     }
 
     private class SendLateReply implements Runnable {
@@ -80,23 +97,61 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
             }
 
             LOG.debug("Sending late reply");
-            template.send(componentName + ":" + replyDestination, new Processor() {
+            template.send("activemq:dummy", new Processor() {
                 public void process(Exchange exchange) throws Exception {
                     exchange.setPattern(ExchangePattern.InOnly);
-                    exchange.getIn().setBody("Late reply");
-                    exchange.getIn().setHeader("JMSCorrelationID", cid);
+                    exchange.setProperty(JmsConstants.JMS_DESTINATION, replyDestination);
+                    
+                    Message in = exchange.getIn();
+                    in.setBody(expectedBody);
+                    in.setHeader("JMSCorrelationID", cid);
                 }
             });
         }
     }
 
+    private class SendLateReplyUsingTemporaryEndpoint implements Runnable {
+
+        public void run() {
+            try {
+                LOG.debug("Wating for latch");
+                latch.await();
+
+                // wait 1 sec after latch before sending he late replay
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                // ignore
+            }
+
+            LOG.debug("Sending late reply");
+
+            try {
+                JmsEndpoint endpoint = JmsEndpoint.newInstance(replyDestination, activeMQComponent);
+
+                template.send(endpoint, new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.setPattern(ExchangePattern.InOnly);
+
+                        Message in = exchange.getIn();
+                        in.setBody(expectedBody);
+                        in.setHeader("JMSCorrelationID", cid);
+                    }
+                });
+
+            } catch (JMSException e) {
+                LOG.error("Failed to create the endpoint for " + replyDestination);
+            }
+        }
+    }
+
+
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        activeMQComponent = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
         // as this is a unit test I dont want to wait 20 sec before timeout occurs, so we use 10
-        amq.getConfiguration().setRequestTimeout(10000);
-        camelContext.addComponent(componentName, amq);
+        activeMQComponent.getConfiguration().setRequestTimeout(10000);
+        camelContext.addComponent("activemq", activeMQComponent);
 
         return camelContext;
     }
@@ -105,12 +160,13 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // set the MEP to InOptionalOut as we might not be able to send a reply
-                from(componentName + ":queue:hello").setExchangePattern(ExchangePattern.InOptionalOut).process(new Processor() {
+                from(getQueueEndpointName()).setExchangePattern(ExchangePattern.InOptionalOut).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        assertEquals("Hello World", exchange.getIn().getBody());
+                        Message in = exchange.getIn();
+                        assertEquals("Hello World", in.getBody());
 
-                        replyDestination = exchange.getProperty(JmsConstants.JMS_REPLY_DESTINATION, String.class);
-                        cid = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+                        replyDestination = in.getHeader(JmsConstants.JMS_REPLY_DESTINATION, Destination.class);
+                        cid = in.getHeader("JMSCorrelationID", String.class);
 
                         LOG.debug("ReplyDestination: " + replyDestination);
                         LOG.debug("JMSCorrelationID: " + cid);
@@ -122,4 +178,11 @@ public class JmsSimpleRequestLateReplyTest extends ContextTestSupport {
             }
         };
     }
+
+
+    protected String getQueueEndpointName() {
+        // lets use a different queue name for each test
+        return "activemq:queue:hello." + getName();
+    }
+
 }

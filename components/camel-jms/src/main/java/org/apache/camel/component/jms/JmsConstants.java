@@ -21,7 +21,8 @@ package org.apache.camel.component.jms;
  */
 public final class JmsConstants {
 
-    public static final String JMS_REPLY_DESTINATION = "CamelJmsReplyDestination";
+    public static final String JMS_REPLY_DESTINATION = "JMSReplyTo"; //"CamelJmsReplyDestination";
+    public static final String JMS_DESTINATION = "JMSDestination";
 
     private JmsConstants() {
         // utility class
