@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jcr;
 
-import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -28,8 +27,7 @@ import org.apache.camel.impl.DefaultProducer;
 
 public class JcrProducer extends DefaultProducer {
 
-    public JcrProducer(JcrEndpoint jcrEndpoint) throws LoginException,
-            RepositoryException {
+    public JcrProducer(JcrEndpoint jcrEndpoint) throws RepositoryException {
         super(jcrEndpoint);
     }
 
@@ -55,8 +53,8 @@ public class JcrProducer extends DefaultProducer {
     }
 
     private String getNodeName(Exchange exchange) {
-        if (exchange.getProperty(JcrComponent.NODE_NAME) != null) {
-            return exchange.getProperty(JcrComponent.NODE_NAME).toString();
+        if (exchange.getProperty(JcrConstants.NODE_NAME) != null) {
+            return exchange.getProperty(JcrConstants.NODE_NAME, String.class);
         }
         return exchange.getExchangeId();
     }
@@ -69,7 +67,7 @@ public class JcrProducer extends DefaultProducer {
         return baseNode;
     }
 
-    protected Session openSession() throws LoginException, RepositoryException {
+    protected Session openSession() throws RepositoryException {
         return getJcrEndpoint().getRepository().login(getJcrEndpoint().getCredentials());
     }
 

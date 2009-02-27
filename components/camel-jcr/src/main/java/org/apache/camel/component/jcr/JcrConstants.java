@@ -16,19 +16,17 @@
  */
 package org.apache.camel.component.jcr;
 
-import java.util.Map;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-
 /**
- * A component for integrating with JSR-170 (JCR) compliant content repositories
+ * JCR Constants.
  */
-public class JcrComponent extends DefaultComponent {
+public final class JcrConstants {
+    /**
+     * Property key for specifying the name of a node in the repository
+     */
+    public static final String NODE_NAME = "org.apache.camel.component.jcr.node_name";
 
-    @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map properties) throws Exception {
-        return new JcrEndpoint(uri, this);
+
+    private JcrConstants() {
+        // Utility class
     }
-
 }

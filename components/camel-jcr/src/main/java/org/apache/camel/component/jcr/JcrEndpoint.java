@@ -38,7 +38,6 @@ public class JcrEndpoint extends DefaultEndpoint {
     private Repository repository;
     private String base;
 
-    @SuppressWarnings("unchecked")
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
         super(endpointUri, component);
         try {
@@ -46,7 +45,7 @@ public class JcrEndpoint extends DefaultEndpoint {
             if (uri.getUserInfo() != null && uri.getAuthority() != null) {
                 this.credentials = new SimpleCredentials(uri.getUserInfo(), uri.getAuthority().toCharArray());
             }
-            this.repository = (Repository) component.getCamelContext().getRegistry().lookup(uri.getHost());
+            this.repository = component.getCamelContext().getRegistry().lookup(uri.getHost(), Repository.class);
             if (repository == null) {
                 throw new RuntimeCamelException("No JCR repository defined under '" + uri.getHost() + "'");
             }
@@ -71,16 +70,10 @@ public class JcrEndpoint extends DefaultEndpoint {
         throw new RuntimeCamelException("No consumer endpoint support for JCR available");
     }
 
-    /**
-     * Creates a new {@link Producer} 
-     */
     public Producer createProducer() throws Exception {
         return new JcrProducer(this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public boolean isSingleton() {
         return false;
     }
