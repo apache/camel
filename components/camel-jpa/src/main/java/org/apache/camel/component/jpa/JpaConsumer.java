@@ -41,7 +41,7 @@ public class JpaConsumer extends ScheduledPollConsumer {
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;
     private QueryFactory queryFactory;
-    private DeleteHandler<Object> deleteHandler;
+    private DeleteHandler deleteHandler;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -144,7 +144,7 @@ public class JpaConsumer extends ScheduledPollConsumer {
      * be processed
      * 
      * @param entity the entity to be locked
-     * @param entityManager
+     * @param entityManager entity manager
      * @return true if the entity was locked
      */
     protected boolean lockEntity(Object entity, EntityManager entityManager) {
