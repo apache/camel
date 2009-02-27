@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.xstream;
 
-
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -44,7 +43,6 @@ import org.apache.camel.spi.DataFormat;
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     
     public XStreamDataFormat() {
-        super();
     }
 
     public XStreamDataFormat(XStream xstream) {
