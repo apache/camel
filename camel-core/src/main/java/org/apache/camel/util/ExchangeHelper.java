@@ -30,6 +30,10 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.CamelContext;
+import org.apache.camel.TypeConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -37,6 +41,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
  * @version $Revision$
  */
 public final class ExchangeHelper {
+    private static final transient Log LOG = LogFactory.getLog(ExchangeHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -177,7 +182,19 @@ public final class ExchangeHelper {
      * not be converted
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
-        return exchange.getContext().getTypeConverter().convertTo(type, exchange, value);
+        CamelContext camelContext = exchange.getContext();
+        if (camelContext != null) {
+            TypeConverter converter = camelContext.getTypeConverter();
+            if (converter != null) {
+                return converter.convertTo(type, exchange, value);
+            }
+        }
+        LOG.warn("No CamelContext and type converter available to convert types for exchange " + exchange);
+
+        if (type.isInstance(value)) {
+            return type.cast(value);
+        }
+        return null;
     }
 
     /**
