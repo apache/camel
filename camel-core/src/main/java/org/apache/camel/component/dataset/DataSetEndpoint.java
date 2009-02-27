@@ -41,8 +41,8 @@ public class DataSetEndpoint extends MockEndpoint implements Service {
     private static final transient Log LOG = LogFactory.getLog(DataSetEndpoint.class);
     private DataSet dataSet;
     private AtomicInteger receivedCounter = new AtomicInteger();
-    private long produceDelay = -1;
-    private long consumeDelay = -1;
+    private long produceDelay;
+    private long consumeDelay;
     private long startTime;
     private long preloadSize;
 

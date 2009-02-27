@@ -20,8 +20,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.processor.ThroughputLogger;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * DataSet consumer.
@@ -29,7 +27,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DataSetConsumer extends DefaultConsumer {
-    private static final transient Log LOG = LogFactory.getLog(DataSetConsumer.class);
     private DataSetEndpoint endpoint;
     private Processor reporter;
 
@@ -65,15 +62,18 @@ public class DataSetConsumer extends DefaultConsumer {
 
                 try {
                     long delay = endpoint.getProduceDelay();
-                    if (delay < 3) {
+                    if (delay >= 0 && delay < 3) {
                         // if no delay set then we must sleep at lest for 3 millis to avoid concurrency
                         // issues with extremely high throughput
                         delay = 3;
                     }
-                    Thread.sleep(delay);
+                    // to allow -1 to force none delay at all
+                    if (delay > 0) {
+                        Thread.sleep(delay);
+                    }
                 } catch (InterruptedException e) {
-                    // ignore and just log to debug
-                    LOG.debug(e);
+                    Thread.currentThread().interrupt();
+                    break;
                 }
                 if (reporter != null) {
                     reporter.process(exchange);
