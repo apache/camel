@@ -16,16 +16,15 @@
  */
 package org.apache.camel.itest.jms;
 
-import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 
 /**
@@ -36,6 +35,9 @@ import org.apache.camel.util.jndi.JndiContext;
 public class JmsHttpJmsTest extends ContextTestSupport {
 
     public void testJmsHttpJms() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(1);
+
         template.sendBody("jms:in", "Hello World");
 
         Endpoint endpoint = context.getEndpoint("jms:out");
@@ -44,15 +46,17 @@ public class JmsHttpJmsTest extends ContextTestSupport {
                 assertEquals("Bye World", exchange.getIn().getBody(String.class));
             }
         });
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("jms:in").to("http://localhost:9600/myservice").to("jms:out");
+                from("jms:in").to("http://localhost:9080/myservice").convertBodyTo(String.class).to("jms:out", "mock:result");
 
-                from("jetty:http://localhost:9600/myservice").transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:9080/myservice").transform().constant("Bye World");
             }
         };
     }
@@ -62,8 +66,9 @@ public class JmsHttpJmsTest extends ContextTestSupport {
         JndiContext answer = new JndiContext();
 
         // add ActiveMQ with embedded broker
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
-        answer.bind("jms", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        amq.setCamelContext(context);
+        answer.bind("jms", amq);
         return answer;
     }
 
