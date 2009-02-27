@@ -17,6 +17,8 @@
 package org.apache.camel.component.restlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Map;
 
 import javax.xml.transform.dom.DOMSource;
@@ -165,8 +167,26 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     public void populateRestletResponseFromExchange(Exchange exchange,
             Response response) {
         
+        Message out = null;
+        if (exchange.isFailed()) {
+            // 500 for internal server error which can be overridden by response code in header
+            response.setStatus(Status.valueOf(500));
+            out = exchange.getFault(false);
+            if (out == null) {
+                Throwable t = exchange.getException();
+                if (t != null) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    t.printStackTrace(pw);
+                    response.setEntity(sw.toString(), MediaType.TEXT_PLAIN);
+                    return;
+                }
+            } 
+        } else {
+            out = exchange.getOut();
+        }
+        
         // get content type
-        Message out = exchange.getOut();
         MediaType mediaType = out.getHeader(RestletConstants.MEDIA_TYPE, MediaType.class);
         if (mediaType == null) {
             Object body = out.getBody();
