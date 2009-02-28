@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 
 public class GenericFileExchange<T> extends DefaultExchange {
 
@@ -62,11 +63,19 @@ public class GenericFileExchange<T> extends DefaultExchange {
     protected void populateHeaders(GenericFile<T> file) {
         if (file != null) {
             getIn().setHeader("CamelFileName", file.getFileName());
+            getIn().setHeader("CamelFileAbsolute", file.isAbsolute());
             getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFileName());
             // set the parent if there is a parent folder
-            if (file.getRelativeFileName().lastIndexOf(File.separator) != -1) {
+            if (file.isAbsolute()) {
+                String parent = file.getAbsoluteFileName().substring(0, file.getAbsoluteFileName().lastIndexOf(File.separator));
+                if (ObjectHelper.isNotEmpty(parent)) {
+                    getIn().setHeader("CamelFileParent", parent);
+                }
+            } else if (file.getRelativeFileName().lastIndexOf(File.separator) != -1) {
                 String parent = file.getRelativeFileName().substring(0, file.getRelativeFileName().lastIndexOf(File.separator));
-                getIn().setHeader("CamelFileParent", parent);
+                if (ObjectHelper.isNotEmpty(parent)) {
+                    getIn().setHeader("CamelFileParent", parent);
+                }
             }
             getIn().setHeader("CamelFilePath", file.getRelativeFileName());
             getIn().setHeader("CamelFileCanonicalPath", file.getCanonicalFileName());

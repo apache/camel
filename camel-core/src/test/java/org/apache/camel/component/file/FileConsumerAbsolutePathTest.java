@@ -24,25 +24,23 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for the FileRenameStrategy using move options with absolute paths
+ * Unit test for consuming from an absolute path
  */
-public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTestSupport {
+public class FileConsumerAbsolutePathTest extends ContextTestSupport {
 
     private String base;
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/done");
         deleteDirectory("target/reports");
         // use current dir as base as aboslute path
-        base = new File("").getAbsolutePath() + "/target";
+        base = new File("").getAbsolutePath() + "/target/reports";
         super.setUp();
     }
 
-    public void testRenameSuccess() throws Exception {
+    public void testConsumeFromAbsolutePath() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Paris");
-        mock.expectedFileExists("./target/done/paris.txt", "Hello Paris");
 
         template.sendBodyAndHeader("file:target/reports", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
@@ -52,7 +50,7 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/reports?moveExpression=" + base + "/done/${file:name}&consumer.delay=5000").to("mock:report");
+                from("file://" + base + "?delete=true").to("mock:report");
             }
         };
     }

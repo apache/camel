@@ -35,7 +35,8 @@ public class GenericFile<T> implements Serializable {
     private long fileLength;
     private long lastModified;
     private T file;
-    private GenericFileBinding<T> binding;    
+    private GenericFileBinding<T> binding;
+    private boolean absolute;
 
     @Override
     public GenericFile<T> clone() {
@@ -56,22 +57,23 @@ public class GenericFile<T> implements Serializable {
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+        result.setAbsolute(source.isAbsolute());
         result.setAbsoluteFileName(source.getAbsoluteFileName());
         result.setCanonicalFileName(source.getCanonicalFileName());
-        result.setRelativeFileName(source.getRelativeFileName());              
-        result.setFileName(source.getFileName());        
+        result.setRelativeFileName(source.getRelativeFileName());
+        result.setFileName(source.getFileName());
         result.setFileLength(source.getFileLength());
         result.setLastModified(source.getLastModified());
         result.setFile(source.getFile());
         result.setBody(source.getBody());
         result.setBinding(source.getBinding());
         return result;
-    }    
-    
+    }
+
     public boolean needToNormalize() {
         return true;
     }
-    
+
     public String getFileSeparator() {
         return File.separator;
     }
@@ -84,13 +86,28 @@ public class GenericFile<T> implements Serializable {
      */
     public void changeFileName(String newName) {
         newName = needToNormalize()
-            // must normalize path to cater for Windows and other OS
-            ? FileUtil.normalizePath(newName)
-            // for the remote file we don't need to do that     
-            : newName;
+                // must normalize path to cater for Windows and other OS
+                ? FileUtil.normalizePath(newName)
+                // for the remote file we don't need to do that
+                : newName;
 
+        // is it relative or absolute
+        boolean absolute = isAbsolutePath(newName);
+
+        if (absolute) {
+            setAbsolute(true);
+            setAbsoluteFileName(newName);
+            // no relative filename for absolute files
+            setRelativeFileName(null);
+            String fileName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
+            setFileName(fileName);
+            return;
+        }
+
+        // the rest is complex relative path computation
+        setAbsolute(false);
         setAbsoluteFileName(getParent() + getFileSeparator() + newName);
-        
+
         // relative name is a bit more complex to set as newName itself can contain
         // folders we need to consider as well
         String baseNewName = null;
@@ -115,6 +132,15 @@ public class GenericFile<T> implements Serializable {
         }
 
         setFileName(newName);
+    }
+
+    private boolean isAbsolutePath(String path) {
+        if (file instanceof File) {
+            // let java.io.File deal with it as its better than me
+            return new File(path).isAbsolute();
+        }
+        // otherwise absolute is considered if we start with the separator
+        return path.startsWith(getFileSeparator());
     }
 
     public String getRelativeFileName() {
@@ -165,7 +191,7 @@ public class GenericFile<T> implements Serializable {
         getBinding().setBody(this, os);
     }
 
-    public String getParent() {       
+    public String getParent() {
         if (getAbsoluteFileName().lastIndexOf(getFileSeparator()) > 0) {
             return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(getFileSeparator()));
         } else {
@@ -186,10 +212,10 @@ public class GenericFile<T> implements Serializable {
 
     public void setAbsoluteFileName(String absoluteFileName) {
         this.absoluteFileName = needToNormalize()
-            // must normalize path to cater for Windows and other OS
-            ? FileUtil.normalizePath(absoluteFileName)
-            // we don't need to do that for Remote File
-            : absoluteFileName;
+                // must normalize path to cater for Windows and other OS
+                ? FileUtil.normalizePath(absoluteFileName)
+                // we don't need to do that for Remote File
+                : absoluteFileName;
     }
 
     public String getAbsoluteFileName() {
@@ -204,8 +230,16 @@ public class GenericFile<T> implements Serializable {
         this.canonicalFileName = canonicalFileName;
     }
 
+    public boolean isAbsolute() {
+        return absolute;
+    }
+
+    public void setAbsolute(boolean absolute) {
+        this.absolute = absolute;
+    }
+
     @Override
     public String toString() {
-        return "GenericFile[" + relativeFileName + "]";
+        return "GenericFile[" + (absolute ? absoluteFileName : relativeFileName) + "]";
     }
 }

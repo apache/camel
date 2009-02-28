@@ -62,8 +62,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             
             exclusive = operations.renameFile(file.getAbsoluteFileName(), newFile.getAbsoluteFileName());
             if (exclusive) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Acquired exclusive read lock to file: " + file);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Acquired exclusive read lock to file: " + file);
                 }
                 // rename it back so we can read it
                 operations.renameFile(newFile.getAbsoluteFileName(), file.getAbsoluteFileName());
