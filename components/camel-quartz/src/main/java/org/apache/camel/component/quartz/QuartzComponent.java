@@ -17,11 +17,13 @@
 package org.apache.camel.component.quartz;
 
 import java.net.URI;
+import java.text.ParseException;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.quartz.CronTrigger;
@@ -29,11 +31,15 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
+import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 /**
  * A <a href="http://camel.apache.org/quartz.html">Quartz Component</a>
+ * <p/>
+ * For a bried tutorial on setting cron expression see
+ * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
  * 
  * @version $Revision:520964 $
  */
@@ -56,37 +62,30 @@ public class QuartzComponent extends DefaultComponent {
 
         // lets split the remaining into a group/name
         URI u = new URI(uri);
+        String path = ObjectHelper.after(u.getPath(), "/");
+        String host = u.getHost();
+        String cron = getAndRemoveParameter(parameters, "cron", String.class);
+
+        // group can be optional, if so set it to Camel
         String name;
-        String group = "Camel";
-        String path = u.getPath();
-        CronTrigger cronTrigger = null;
-        if (path != null && path.length() > 1) {
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            int idx = path.indexOf('/');
-            if (idx > 0) {
-                cronTrigger = new CronTrigger();
-                name = path.substring(0, idx);
-                String cronExpression = path.substring(idx + 1);
-                // lets allow / instead of spaces and allow $ instead of ?
-                cronExpression = cronExpression.replace('/', ' ');
-                cronExpression = cronExpression.replace('$', '?');
-                LOG.debug("Creating cron trigger: " + cronExpression);
-                cronTrigger.setCronExpression(cronExpression);
-                answer.setTrigger(cronTrigger);
-            } else {
-                name = path;
-            }
-            group = u.getHost();
+        String group;
+        if (ObjectHelper.isNotEmpty(path) && ObjectHelper.isNotEmpty(host)) {
+            group = host;
+            name = path;
         } else {
-            name = u.getHost();
+            group = "Camel";
+            name = host;
         }
 
-        Trigger trigger = cronTrigger;
-        if (trigger == null) {
-            trigger = answer.getTrigger();
+        // create the trigger either cron or simple
+        Trigger trigger;
+        if (ObjectHelper.isNotEmpty(cron)) {
+            trigger = createCronTrigger(cron);
+        } else {
+            trigger = new SimpleTrigger();
         }
+        answer.setTrigger(trigger);
+
         trigger.setName(name);
         trigger.setGroup(group);
 
@@ -99,15 +98,28 @@ public class QuartzComponent extends DefaultComponent {
         return answer;
     }
 
+    protected CronTrigger createCronTrigger(String path) throws ParseException {
+        // replace _ back to space so its a cron expression
+        String s = path.replaceAll("_", " ");
+        CronTrigger cron = new CronTrigger();
+        cron.setCronExpression(s);
+        return cron;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        getScheduler().start();
+        if (scheduler == null) {
+            scheduler = getScheduler();
+        }
+        LOG.debug("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+        scheduler.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (scheduler != null) {
+            LOG.debug("Shutting down Quartz scheduler: " + scheduler.getSchedulerName());
             scheduler.shutdown();
         }
         super.doStop();
@@ -153,7 +165,7 @@ public class QuartzComponent extends DefaultComponent {
 
     protected Scheduler createScheduler() throws SchedulerException {
         Scheduler scheduler = getFactory().getScheduler();
-        scheduler.getContext().put(QuartzEndpoint.CONTEXT_KEY, getCamelContext());
+        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT, getCamelContext());
         return scheduler;
     }
 }

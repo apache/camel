@@ -16,19 +16,16 @@
  */
 package org.apache.camel.component.quartz;
 
-import org.quartz.Job;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
-
 /**
- * @version $Revision$
+ * Quartz constants.
  */
-public class CamelJob implements Job {
-    public void execute(JobExecutionContext context) throws JobExecutionException {
-        QuartzEndpoint component = (QuartzEndpoint) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
-        if (component == null) {
-            throw new JobExecutionException("No quartz endpoint available for key: " + QuartzConstants.QUARTZ_ENDPOINT);
-        }
-        component.onJobExecute(context);
+public final class QuartzConstants {
+
+    public static final String QUARTZ_ENDPOINT = "CamelQuartzEndpoint";
+
+    public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
+
+    private QuartzConstants() {
+        // Utility class
     }
 }
