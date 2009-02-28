@@ -46,11 +46,19 @@ public class QuartzEndpointConfigureTest extends ContextTestSupport {
     }
 
     public void testConfigureCronExpression() throws Exception {
-        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName/0/0/12/*/*/$");
+        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName?cron=0_0/5_12-18_?_*_MON-FRI");
         CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());
         assertEquals("getName()", "myTimerName", trigger.getName());
         assertEquals("getGroup()", "myGroup", trigger.getGroup());
-        assertEquals("cron expression", "0 0 12 * * ?", trigger.getCronExpression());
+        assertEquals("cron expression", "0 0/5 12-18 ? * MON-FRI", trigger.getCronExpression());
+    }
+
+    public void testConfigureAnotherCronExpression() throws Exception {
+        QuartzEndpoint endpoint = resolveMandatoryEndpoint("quartz://myGroup/myTimerName?cron=0_0_*_*_*_?");
+        CronTrigger trigger = assertIsInstanceOf(CronTrigger.class, endpoint.getTrigger());
+        assertEquals("getName()", "myTimerName", trigger.getName());
+        assertEquals("getGroup()", "myGroup", trigger.getGroup());
+        assertEquals("cron expression", "0 0 * * * ?", trigger.getCronExpression());
     }
 
     @Override

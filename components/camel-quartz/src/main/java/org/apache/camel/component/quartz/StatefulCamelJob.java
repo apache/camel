@@ -36,8 +36,8 @@ public class StatefulCamelJob implements StatefulJob {
             throw new JobExecutionException("Failed to obtain scheduler context for job " + context.getJobDetail().getName());
         }
 
-        CamelContext camelContext = (CamelContext) schedulerContext.get(QuartzEndpoint.CONTEXT_KEY);
-        String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzEndpoint.ENDPOINT_KEY);
+        CamelContext camelContext = (CamelContext) schedulerContext.get(QuartzConstants.QUARTZ_CAMEL_CONTEXT);
+        String endpointUri = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_ENDPOINT);
         QuartzEndpoint quartzEndpoint = (QuartzEndpoint) camelContext.getEndpoint(endpointUri);
         quartzEndpoint.onJobExecute(context);
     }

@@ -34,7 +34,6 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
 
 /**
@@ -43,9 +42,6 @@ import org.quartz.Trigger;
  * @version $Revision:520964 $
  */
 public class QuartzEndpoint extends DefaultEndpoint {
-    public static final String ENDPOINT_KEY = "org.apache.camel.quartz";
-    public static final String CONTEXT_KEY = "org.apache.camel.CamelContext";
-    
     private static final transient Log LOG = LogFactory.getLog(QuartzEndpoint.class);
 
     private Scheduler scheduler;
@@ -95,7 +91,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         if (trigger.getStartTime() == null) {
             trigger.setStartTime(new Date());
         }
-        detail.getJobDataMap().put(ENDPOINT_KEY, isStateful() ? getEndpointUri() : this);
+        detail.getJobDataMap().put(QuartzConstants.QUARTZ_ENDPOINT, isStateful() ? getEndpointUri() : this);
         if (detail.getJobClass() == null) {
             detail.setJobClass(isStateful() ? StatefulCamelJob.class : CamelJob.class);
         }
@@ -186,9 +182,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public Trigger getTrigger() {
-        if (trigger == null) {
-            trigger = createTrigger();
-        }
         return trigger;
     }
 
@@ -211,6 +204,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     // Implementation methods
     // -------------------------------------------------------------------------
     public synchronized void consumerStarted(final QuartzConsumer consumer) throws SchedulerException {
+        ObjectHelper.notNull(trigger, "trigger");
         getLoadBalancer().addProcessor(consumer.getProcessor());
 
         // if we have not yet added our default trigger, then lets do it
@@ -221,6 +215,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public synchronized void consumerStopped(final QuartzConsumer consumer) throws SchedulerException {
+        ObjectHelper.notNull(trigger, "trigger");
         getLoadBalancer().removeProcessor(consumer.getProcessor());
         if (getLoadBalancer().getProcessors().isEmpty() && started) {
             removeTrigger(getTrigger(), getJobDetail());
@@ -236,7 +231,4 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return new JobDetail();
     }
 
-    protected Trigger createTrigger() {
-        return new SimpleTrigger();
-    }
 }
