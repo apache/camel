@@ -137,6 +137,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         while (true) {
             // we can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Rejected execution as we are not started for exchange: " + exchange);
+                }
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
                 }
@@ -175,7 +178,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 MessageHelper.resetStreamCache(exchange.getIn());
 
                 // wait until we should redeliver
-                data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
+                try {
+                    data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
+                } catch (InterruptedException e) {
+                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                    // continue from top
+                    continue;
+                }
 
                 // letting onRedeliver be executed
                 deliverToRedeliveryProcessor(exchange, callback, data);

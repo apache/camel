@@ -138,21 +138,16 @@ public class RedeliveryPolicy extends DelayPolicy {
      * @param redeliveryDelay  previous redelivery delay
      * @param redeliveryCounter  number of previous redelivery attempts
      * @return the calculate delay
+     * @throws InterruptedException is thrown if the sleep is interruped likely because of shutdown
      */
-    public long sleep(long redeliveryDelay, int redeliveryCounter) {
+    public long sleep(long redeliveryDelay, int redeliveryCounter) throws InterruptedException {
         redeliveryDelay = calculateRedeliveryDelay(redeliveryDelay, redeliveryCounter);
 
         if (redeliveryDelay > 0) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sleeping for: " + redeliveryDelay + " millis until attempting redelivery");
             }
-            try {
-                Thread.sleep(redeliveryDelay);
-            } catch (InterruptedException e) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Thread interrupted: " + e, e);
-                }
-            }
+            Thread.sleep(redeliveryDelay);
         }
         return redeliveryDelay;
     }
@@ -202,8 +197,6 @@ public class RedeliveryPolicy extends DelayPolicy {
         for (String group : groups) {
             long delay = Long.valueOf(ObjectHelper.after(group, ":"));
             int count = Integer.valueOf(ObjectHelper.before(group, ":"));
-            
-
             if (count > redeliveryCounter) {
                 break;
             } else {

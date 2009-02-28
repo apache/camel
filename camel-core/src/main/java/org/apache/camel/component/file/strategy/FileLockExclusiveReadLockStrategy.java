@@ -84,7 +84,11 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
 
                     exclusive = true;
                 } else {
-                    sleep();
+                    boolean interrupted = sleep();
+                    if (interrupted) {
+                        // we were interrputed while sleeping, we are likely being shutdown so return false
+                        return false;
+                    }
                 }
             }
         } catch (IOException e) {
@@ -97,7 +101,11 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot acquire read lock. Will try again.", e);
             }
-            sleep();
+            boolean interrupted = sleep();
+            if (interrupted) {
+                // we were interrputed while sleeping, we are likely being shutdown so return false
+                return false;
+            }
         }
 
         return true;
@@ -122,12 +130,14 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
         }
     }
 
-    private void sleep() {
+    private boolean sleep() {
         LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
         try {
             Thread.sleep(1000);
+            return true;
         } catch (InterruptedException e) {
-            // ignore
+            LOG.debug("Sleep interrupted while waiting for exclusive read lock");
+            return false;
         }
     }
 

@@ -68,7 +68,11 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
                 // rename it back so we can read it
                 operations.renameFile(newFile.getAbsoluteFileName(), file.getAbsoluteFileName());
             } else {
-                sleep();
+                boolean interrupted = sleep();
+                if (interrupted) {
+                    // we were interrputed while sleeping, we are likely being shutdown so return false
+                    return false;
+                }
             }
         }
 
@@ -80,12 +84,14 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         // noop
     }
 
-    private void sleep() {
+    private boolean sleep() {
         LOG.trace("Exclusive read lock not granted. Sleeping for 1000 millis.");
         try {
             Thread.sleep(1000);
+            return true;
         } catch (InterruptedException e) {
-            // ignore
+            LOG.debug("Sleep interrupted while waiting for exclusive read lock");
+            return false;
         }
     }
 
