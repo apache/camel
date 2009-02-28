@@ -105,6 +105,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setFile(file);
         answer.setFileLength(file.length());
         answer.setFileName(file.getName());
+        answer.setAbsolute(file.isAbsolute());
         answer.setAbsoluteFileName(file.getAbsolutePath());
         try {
             answer.setCanonicalFileName(file.getCanonicalPath());
@@ -112,10 +113,14 @@ public class FileConsumer extends GenericFileConsumer<File> {
             // ignore
         }
         answer.setLastModified(file.lastModified());
-        if (file.getParent() != null) {
-            answer.setRelativeFileName(file.getParent() + File.separator + file.getName());
+        if (file.isAbsolute()) {
+            answer.setRelativeFileName(null);
         } else {
-            answer.setRelativeFileName(file.getName());
+            if (file.getParent() != null) {
+                answer.setRelativeFileName(file.getParent() + File.separator + file.getName());
+            } else {
+                answer.setRelativeFileName(file.getName());
+            }
         }
         // use file as body as we have converters if needed as stream
         answer.setBody(file);

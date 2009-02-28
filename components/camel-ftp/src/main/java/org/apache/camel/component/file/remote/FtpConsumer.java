@@ -100,6 +100,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             answer.setLastModified(file.getTimestamp().getTimeInMillis());
         }
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
+        // all ftp files is consider as relative
+        answer.setAbsolute(false);
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
         answer.setAbsoluteFileName(absoluteFileName);
 

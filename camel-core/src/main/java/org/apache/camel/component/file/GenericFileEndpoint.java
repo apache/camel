@@ -420,7 +420,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         message.setBody(file);
 
         // compute the name that was written, it should be relative to the endpoint configuraion
-        String name = file.getRelativeFileName();
+        String name = file.isAbsolute() ? file.getAbsoluteFileName() : file.getRelativeFileName();
 
         if (isDirectory() && name.startsWith(getConfiguration().getFile())) {
             // remove the file path configured on the endpoint for directory=true
