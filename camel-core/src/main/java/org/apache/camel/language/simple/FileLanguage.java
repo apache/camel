@@ -30,6 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  * <li><tt>file:name.ext</tt> to access the file name extension</li>
  * <li><tt>file:parent</tt> to access the parent file name</li>
  * <li><tt>file:path</tt> to access the file path name</li>
+ * <li><tt>file:absolute</tt> is the file regarded as absolute or relative</li>
  * <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
  * <li><tt>file:canonical.path</tt> to access the canonical path name</li>
  * <li><tt>file:length</tt> to access the file length as a Long type</li>
@@ -66,6 +67,8 @@ public class FileLanguage extends SimpleLanguageSupport {
                 return FileExpressionBuilder.fileParentExpression();
             } else if (ObjectHelper.equal(remainder, "path")) {
                 return FileExpressionBuilder.filePathExpression();
+            } else if (ObjectHelper.equal(remainder, "absolute")) {
+                return FileExpressionBuilder.fileAbsoluteExpression();
             } else if (ObjectHelper.equal(remainder, "absolute.path")) {
                 return FileExpressionBuilder.fileAbsolutePathExpression();
             } else if (ObjectHelper.equal(remainder, "canonical.path")) {
