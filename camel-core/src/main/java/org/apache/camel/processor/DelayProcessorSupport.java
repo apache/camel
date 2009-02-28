@@ -73,7 +73,8 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
      * @param exchange the exchange being processed
      */
     protected void waitUntil(long time, Exchange exchange) throws Exception {
-        while (true) {
+        // only run is we are started
+        while (isRunAllowed()) {
             long delay = time - currentSystemTime();
             if (delay < 0) {
                 return;
@@ -109,7 +110,7 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
      * case differently
      */
     protected void handleSleepInteruptedException(InterruptedException e) {
-        LOG.debug("Sleep interupted: " + e, e);
+        LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
     }
 
     protected long currentSystemTime() {
