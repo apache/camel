@@ -21,38 +21,27 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
+ * Delayer while shutting down so its interrupted and will also stop.
+ *
  * @version $Revision$
  */
-public class DelayerTest extends ContextTestSupport {
+public class DelayerWhileShutdownTest extends ContextTestSupport {
 
     public void testSendingMessageGetsDelayed() throws Exception {
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
-        resultEndpoint.expectedMessageCount(0);
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Short delay");
 
-        template.sendBodyAndHeader("seda:a", "<hello>world!</hello>", "JMSTimestamp", System.currentTimeMillis());
-        resultEndpoint.assertIsSatisfied();
+        template.sendBody("seda:a", "Long delay");
+        template.sendBody("seda:b", "Short delay");
 
-        // now if we wait a bit longer we should receive the message!
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.assertIsSatisfied();
-
-        template.sendBody("seda:b", "<hello>world!</hello>");
-        resultEndpoint.assertIsSatisfied();
-
-        // now if we wait a bit longer we should receive the message!
-        resultEndpoint.expectedMessageCount(1);
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: ex
-                from("seda:a").delay(header("JMSTimestamp"), 3000).to("mock:result");
-                // END SNIPPET: ex
-                // START SNIPPET: ex2
-                from("seda:b").delay(3000).to("mock:result");
-                // END SNIPPET: ex2
+                from("seda:a").delay(5000).to("mock:result");
+                from("seda:b").delay(10).to("mock:result");
             }
         };
     }
