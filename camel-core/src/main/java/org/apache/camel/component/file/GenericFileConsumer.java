@@ -94,7 +94,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (total > 0 && log.isDebugEnabled()) {
             log.debug("Total " + total + " files to consume");
         }
-        for (int index = 0; index < total; index++) {
+        for (int index = 0; index < total && isRunAllowed(); index++) {
+            // only loop if we are started (allowed to run)
             GenericFileExchange<T> exchange = exchanges.get(index);
             // add current index and total as headers
             exchange.getIn().setHeader(Exchange.FILE_BATCH_INDEX, index);

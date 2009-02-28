@@ -94,8 +94,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         ServiceStatus status = getStatus();
         if (status == null) {
             return true;
-        }
-        else {
+        } else {
             return status.isStartable();
         }
     }
@@ -104,8 +103,7 @@ public class RouteType extends ProcessorType<ProcessorType> implements CamelCont
         ServiceStatus status = getStatus();
         if (status == null) {
             return false;
-        }
-        else {
+        } else {
             return status.isStoppable();
         }
     }
