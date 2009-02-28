@@ -101,6 +101,8 @@ public class QuartzComponent extends DefaultComponent {
     protected CronTrigger createCronTrigger(String path) throws ParseException {
         // replace _ back to space so its a cron expression
         String s = path.replaceAll("_", " ");
+        // replace + back to space so its a cron expression
+        s = s.replaceAll("\\+", " ");
         CronTrigger cron = new CronTrigger();
         cron.setCronExpression(s);
         return cron;
