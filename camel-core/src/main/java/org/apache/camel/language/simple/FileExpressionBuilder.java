@@ -134,6 +134,19 @@ public final class FileExpressionBuilder {
         };
     }
 
+    public static Expression fileAbsoluteExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader("CamelFileAbsolute", Boolean.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:absolute";
+            }
+        };
+    }
+
     public static Expression fileCanoicalPathExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

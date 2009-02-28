@@ -25,7 +25,6 @@ import java.util.GregorianCalendar;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
@@ -66,6 +65,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:name.noext}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
+        assertExpression("${file:absolute}", file.isAbsolute());
         assertExpression("${file:absolute.path}", file.getAbsolutePath());
         assertExpression("${file:canonical.path}", file.getCanonicalPath());
         assertExpression("${file:length}", file.length());
