@@ -318,7 +318,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             public void run() {
                 assertTrue("No header with name " + headerName + " found.", actualHeader != null);
 
-                assertEquals("Header of message", headerValue, actualHeader);
+                assertEquals("Header of message", headerValue, actualHeader.toString());
             }
         });
     }
