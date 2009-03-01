@@ -29,7 +29,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -121,8 +120,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 // retrieve the per-route intercept for this route
                 InstrumentationProcessor interceptor = interceptorMap.get(route.getEndpoint());
                 if (interceptor == null) {
-                    LOG.warn("Instrumentation processor not found for route endpoint "
-                             + route.getEndpoint());
+                    LOG.warn("Instrumentation processor not found for route endpoint: " + route.getEndpoint());
                 } else {
                     interceptor.setCounter(mr);
                 }
@@ -187,9 +185,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
         
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
-
-        routeContext.setErrorHandlerWrappingStrategy(
-                new InstrumentationErrorHandlerWrappingStrategy(counterMap));
+        routeContext.setErrorHandlerWrappingStrategy(new InstrumentationErrorHandlerWrappingStrategy(routeContext, counterMap));
 
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the

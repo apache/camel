@@ -1985,7 +1985,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         ObjectHelper.notNull(target, "target", this);
         ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
         if (strategy != null) {
-            return strategy.wrapProcessorInErrorHandler(routeContext, this, target);
+            return strategy.wrapProcessorInErrorHandler(this, target);
         }
         return getErrorHandlerBuilder().createErrorHandler(routeContext, target);
     }

@@ -29,13 +29,14 @@ import org.apache.camel.spi.RouteContext;
 public class InstrumentationErrorHandlerWrappingStrategy implements ErrorHandlerWrappingStrategy {
 
     private Map<ProcessorType, PerformanceCounter> counterMap;
+    private RouteContext routeContext;
 
-    public InstrumentationErrorHandlerWrappingStrategy(Map<ProcessorType, PerformanceCounter> counterMap) {
+    public InstrumentationErrorHandlerWrappingStrategy(RouteContext routeContext, Map<ProcessorType, PerformanceCounter> counterMap) {
         this.counterMap = counterMap;
+        this.routeContext = routeContext;
     }
 
-    public Processor wrapProcessorInErrorHandler(RouteContext routeContext, ProcessorType processorType,
-                                                 Processor target) throws Exception {
+    public Processor wrapProcessorInErrorHandler(ProcessorType processorType, Processor target) throws Exception {
 
         // don't wrap our instrumentation interceptors
         if (counterMap.containsKey(processorType)) {
