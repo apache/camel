@@ -24,7 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.model.LoggingLevel;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;

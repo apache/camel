@@ -28,7 +28,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.ExceptionType;
-import org.apache.camel.model.LoggingLevel;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;

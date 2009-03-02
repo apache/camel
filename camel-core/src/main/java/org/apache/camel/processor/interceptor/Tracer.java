@@ -22,8 +22,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
 

@@ -19,8 +19,8 @@ package org.apache.camel.component.log;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.util.IntrospectionSupport;
