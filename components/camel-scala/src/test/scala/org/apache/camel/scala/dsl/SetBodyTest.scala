@@ -45,7 +45,7 @@ class SetBodyTest extends ScalaTestSupport {
     }    
   }
     
-  val builder = new RouteBuilder with languages.El {
+  val builder = new RouteBuilder {
      //START SNIPPET: simple
      "direct:a" setbody "pong" to "mock:a"
      "direct:c" setbody el("${in.body.name}") to "mock:c"

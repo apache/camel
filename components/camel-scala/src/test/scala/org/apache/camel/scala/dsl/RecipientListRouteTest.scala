@@ -41,7 +41,7 @@ class RecipientListRouteTest extends ScalaTestSupport {
     "mock:d" assert()
   }
    
-  val builder = new RouteBuilder with languages.JXPath {
+  val builder = new RouteBuilder {
     //START SNIPPET: simple
     "direct:a" recipients(_.in(classOf[String]).substring(21))
     //END SNIPPET: simple

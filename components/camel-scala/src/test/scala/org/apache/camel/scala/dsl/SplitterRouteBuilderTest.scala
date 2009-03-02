@@ -17,7 +17,6 @@
 package org.apache.camel.scala.dsl;
  
 import org.w3c.dom.Document
-import languages.XPath
 import scala.dsl.builder.RouteBuilder
 
 /**
@@ -41,7 +40,7 @@ class SplitterRouteBuilderTest extends ScalaTestSupport {
 
   val builder =
     //START SNIPPET: xpath
-    new RouteBuilder with XPath {
+    new RouteBuilder {
     //END SNIPPET: xpath
        //START SNIPPET: simple
        "direct:a" as(classOf[Document]) splitter(xpath("/persons/person")) to "mock:a"
