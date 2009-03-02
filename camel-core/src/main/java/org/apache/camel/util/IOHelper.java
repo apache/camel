@@ -17,6 +17,8 @@
 package org.apache.camel.util;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * IO helper class.
@@ -46,4 +48,15 @@ public final class IOHelper {
         answer.initCause(cause);
         return answer;
     }
+
+    public static void copy(InputStream stream, OutputStream os) throws IOException {
+        byte[] data = new byte[4096];
+        int read = stream.read(data);
+        while (read != -1) {
+            os.write(data, 0, read);
+            read = stream.read(data);
+        }
+        os.flush();
+    }
+
 }

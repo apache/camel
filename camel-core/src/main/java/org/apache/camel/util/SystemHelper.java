@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util;
 
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -49,7 +48,8 @@ public final class SystemHelper {
      */
     public static boolean isSystemProperty(String name) {
         String text = getSystemProperty(name);
-        return ObjectConverter.toBool(text);
+        Boolean answer = ObjectHelper.toBoolean(text);
+        return answer != null ? answer : false;
     }
 
 }
