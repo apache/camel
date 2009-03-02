@@ -30,14 +30,13 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.Pattern;
 import org.apache.camel.impl.ExpressionAdapter;
-import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.processor.RecipientList;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import static org.apache.camel.util.ObjectHelper.asString;
+
 /**
  * Information about a method to be used for invocation.
  *
@@ -67,7 +66,7 @@ public class MethodInfo {
             pattern = oneway.value();
         }
         if (method.getAnnotation(org.apache.camel.RecipientList.class) != null) {
-            recipientList = new RecipientList(new ConstantExpression(null));
+            recipientList = new RecipientList();
         }
     }
 
@@ -245,6 +244,7 @@ public class MethodInfo {
      * on an annotation which is also annotated
      *
      * @param annotatedElement the element to look for the annotation
+     * @param depth the current depth
      * @return the first matching annotation or null if none could be found
      */
     protected Pattern getPatternAnnotation(AnnotatedElement annotatedElement, int depth) {
