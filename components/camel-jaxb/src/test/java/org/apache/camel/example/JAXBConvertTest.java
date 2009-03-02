@@ -18,15 +18,14 @@ package org.apache.camel.example;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-
 import javax.xml.bind.UnmarshalException;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StreamCache;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
