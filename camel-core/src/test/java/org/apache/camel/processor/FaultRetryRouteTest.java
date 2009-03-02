@@ -23,7 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.LoggingLevel;
+import org.apache.camel.LoggingLevel;
 
 public class FaultRetryRouteTest extends ContextTestSupport {
     protected MockEndpoint a;

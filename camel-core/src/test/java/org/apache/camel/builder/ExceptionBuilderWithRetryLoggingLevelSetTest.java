@@ -17,23 +17,14 @@
 package org.apache.camel.builder;
 
 import java.io.IOException;
-import java.net.ConnectException;
-import java.security.GeneralSecurityException;
-import java.security.KeyException;
-import java.security.KeyManagementException;
 
 import javax.naming.Context;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.LoggingLevel;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.util.jndi.JndiContext;
-import org.apache.commons.logging.Log;
 
 /**
  * Unit test to test exception configuration

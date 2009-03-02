@@ -18,8 +18,8 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.impl.DefaultExchangeFormatter;
-import org.apache.camel.model.LoggingLevel;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
