@@ -30,7 +30,7 @@ import org.mortbay.jetty.webapp.WebAppContext;
  */
 public final class Main {
 
-    public static int PORT = 9998;
+    public static int mainPort = 9998;
 
     public static final String WEBAPP_DIR = "src/main/webapp";
 
@@ -47,17 +47,17 @@ public final class Main {
             String text = args[0];
             int port = Integer.parseInt(text);
             if (port > 0) {
-                PORT = port;
+                mainPort = port;
             }
         }
         start();
     }
 
     public static void start() throws Exception {
-        System.out.println("Starting Web Server on port: " + PORT);
+        System.out.println("Starting Web Server on port: " + mainPort);
 
         SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setPort(PORT);
+        connector.setPort(mainPort);
         connector.setServer(server);
         WebAppContext context = new WebAppContext();
 
@@ -84,6 +84,6 @@ public final class Main {
      * Returns the root URL of the application
      */
     public static String getRootUrl() {
-        return "http://localhost:" + PORT + WEBAPP_CTX;
+        return "http://localhost:" + mainPort + WEBAPP_CTX;
     }
 }

@@ -19,8 +19,8 @@ package org.apache.camel.web.resources;
 import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -59,8 +59,7 @@ public class CamelChildResourceSupport {
         TypeConverterRegistry converterRegistry = getCamelContext().getTypeConverterRegistry();
         if (converterRegistry instanceof DefaultTypeConverter) {
             return (DefaultTypeConverter) converterRegistry;
-        }
-        else {
+        } else {
             LOG.info("Not a default type converter as it is: " + converterRegistry);
         }
         return null;
