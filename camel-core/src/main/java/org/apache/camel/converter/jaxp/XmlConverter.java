@@ -53,8 +53,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import org.apache.camel.Converter;
-import org.apache.camel.converter.IOConverter;
-import org.apache.camel.converter.NIOConverter;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
 
 
@@ -292,17 +291,19 @@ public class XmlConverter {
     }
 
     @Converter
-    public StreamSource toStreamSource(byte[] in) throws TransformerException {
+    public StreamSource toStreamSource(byte[] in, Exchange exchange) throws TransformerException {
         if (in != null) {
-            return new StreamSource(IOConverter.toInputStream(in));
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, in);
+            return new StreamSource(is);
         }
         return null;
     }
 
     @Converter
-    public StreamSource toStreamSource(ByteBuffer in) throws TransformerException {
+    public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) throws TransformerException {
         if (in != null) {
-            return new StreamSource(NIOConverter.toInputStream(in));
+            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, in);
+            return new StreamSource(is);
         }
         return null;
     }

@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class DelayProcessorSupport extends DelegateProcessor {
-    private static final transient Log LOG = LogFactory.getLog(Delayer.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
     private CountDownLatch stoppedLatch = new CountDownLatch(1);
     private boolean fastStop = true;
 
@@ -95,8 +95,8 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
         if (delay <= 0) {
             return;
         }
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Sleeping for: " + delay + " millis");
+        if (log.isTraceEnabled()) {
+            log.trace("Sleeping for: " + delay + " millis");
         }
         if (isFastStop()) {
             stoppedLatch.await(delay, TimeUnit.MILLISECONDS);
@@ -110,7 +110,9 @@ public abstract class DelayProcessorSupport extends DelegateProcessor {
      * case differently
      */
     protected void handleSleepInteruptedException(InterruptedException e) {
-        LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+        if (log.isDebugEnabled()) {
+            log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+        }
     }
 
     protected long currentSystemTime() {
