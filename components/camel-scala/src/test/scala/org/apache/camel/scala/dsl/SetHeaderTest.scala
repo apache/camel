@@ -45,7 +45,7 @@ class SetHeaderTest extends ScalaTestSupport {
     }    
   }
     
-  val builder = new RouteBuilder with languages.El {
+  val builder = new RouteBuilder {
      //START SNIPPET: simple
      "direct:a" setheader("response", "pong?") to "mock:a"
      "direct:c" setheader("genus",el("${in.body.genus}")) to "mock:c"

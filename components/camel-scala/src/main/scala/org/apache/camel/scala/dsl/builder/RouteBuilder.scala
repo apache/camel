@@ -25,10 +25,12 @@ import _root_.scala.reflect.Manifest
 
 import org.apache.camel.scala.dsl._
 
+import org.apache.camel.scala.dsl.languages.Languages
+
 /**
  * Scala RouteBuilder implementation
  */
-class RouteBuilder extends Preamble with DSL with Routes {
+class RouteBuilder extends Preamble with DSL with Routes with Languages {
 
   val builder = new org.apache.camel.builder.RouteBuilder {
     override def configure() =  {}
