@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
@@ -51,8 +50,8 @@ public class StringDataFormat implements DataFormat {
         stream.write(bytes);
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
-        byte[] bytes = IOConverter.toBytes(stream);
+    public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
+        byte[] bytes = ExchangeHelper.convertToType(exchange, byte[].class, stream);
 
         String answer;
         if (charset != null) {

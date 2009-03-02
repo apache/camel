@@ -24,9 +24,9 @@ import java.util.zip.DeflaterOutputStream;
 import java.util.zip.InflaterInputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 
 public class ZipDataFormat implements DataFormat {
 
@@ -40,32 +40,29 @@ public class ZipDataFormat implements DataFormat {
         this.compressionLevel = compressionLevel;
     }
 
-    public void marshal(Exchange exchange, Object graph, OutputStream stream)
-        throws Exception {
-
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
-        if (is == null) {
-            throw new IllegalArgumentException("Cannot get the inputstream for ZipDataFormat mashalling");
-        }
 
         DeflaterOutputStream zipOutput = new DeflaterOutputStream(stream, new Deflater(compressionLevel));
         try {
-            IOConverter.copy(is, zipOutput);
+            IOHelper.copy(is, zipOutput);
         } finally {
             zipOutput.close();
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream stream)
-        throws Exception {
-
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         InputStream is = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         InflaterInputStream unzipInput = new InflaterInputStream(is);
         
         // Create an expandable byte array to hold the inflated data
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOConverter.copy(unzipInput, bos);
-        return bos.toByteArray();
+        try {
+            IOHelper.copy(unzipInput, bos);
+            return bos.toByteArray();
+        } finally {
+            bos.close();
+        }
     }
 
 }

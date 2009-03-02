@@ -23,8 +23,8 @@ import java.io.ObjectOutput;
 import java.io.OutputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * The <a href="http://camel.apache.org/data-format.html">data format</a>
@@ -35,7 +35,7 @@ import org.apache.camel.spi.DataFormat;
 public class SerializationDataFormat implements DataFormat {
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
-        ObjectOutput out = IOConverter.toObjectOutput(stream);
+        ObjectOutput out = ExchangeHelper.convertToType(exchange, ObjectOutput.class, stream);
         try {
             out.writeObject(graph);
         } finally {
@@ -49,7 +49,7 @@ public class SerializationDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
-        ObjectInput in = IOConverter.toObjectInput(stream);
+        ObjectInput in = ExchangeHelper.convertToType(exchange, ObjectInput.class, stream);
         try {
             return in.readObject();
         } finally {

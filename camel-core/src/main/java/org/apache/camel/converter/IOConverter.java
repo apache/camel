@@ -49,6 +49,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.CollectionStringBuffer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -269,7 +270,7 @@ public final class IOConverter {
     public static byte[] toBytes(InputStream stream) throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            copy(stream, bos);
+            IOHelper.copy(stream, bos);
             return bos.toByteArray();
         } finally {
             ObjectHelper.close(bos, "stream", LOG);
@@ -289,16 +290,6 @@ public final class IOConverter {
     @Converter
     public static InputStream toInputStream(ByteArrayOutputStream os) {
         return new ByteArrayInputStream(os.toByteArray());
-    }
-
-    public static void copy(InputStream stream, OutputStream os) throws IOException {
-        byte[] data = new byte[4096];
-        int read = stream.read(data);
-        while (read != -1) {
-            os.write(data, 0, read);
-            read = stream.read(data);
-        }
-        os.flush();
     }
 
 }

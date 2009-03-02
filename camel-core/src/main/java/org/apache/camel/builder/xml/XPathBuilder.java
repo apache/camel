@@ -51,7 +51,6 @@ import static org.apache.camel.builder.xml.Namespaces.DEFAULT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.IN_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.OUT_NAMESPACE;
 import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmptyNamespace;
-import static org.apache.camel.converter.ObjectConverter.toBoolean;
 
 /**
  * Creates an XPath expression builder which creates a nodeset result by default.
@@ -97,12 +96,13 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
 
     public boolean matches(Exchange exchange) {
         Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
-        return toBoolean(booleanResult);
+        return exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
     }
 
     public void assertMatches(String text, Exchange exchange) throws AssertionError {
         Object booleanResult = evaluateAs(exchange, XPathConstants.BOOLEAN);
-        if (!toBoolean(booleanResult)) {
+        Boolean answer = exchange.getContext().getTypeConverter().convertTo(Boolean.class, booleanResult);
+        if (answer == null) {
             throw new AssertionError(this + " failed on " + exchange + " as returned <" + booleanResult + ">");
         }
     }

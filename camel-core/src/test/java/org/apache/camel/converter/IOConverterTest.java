@@ -20,10 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 import junit.framework.TestCase;
+import org.apache.camel.util.IOHelper;
 
 /**
  * Test case for {@link IOConverter}
@@ -32,7 +31,7 @@ public class IOConverterTest extends TestCase {
 
     private static final byte[] TESTDATA = "My test data".getBytes();
 
-    public void testToBytes() throws FileNotFoundException, IOException {
+    public void testToBytes() throws Exception {
         File file = new File("src/test/resources/org/apache/camel/converter/dummy.txt");
         byte[] data = IOConverter.toBytes(new FileInputStream(file));
         assertEquals("get the wrong byte size", file.length(), data.length);
@@ -40,10 +39,10 @@ public class IOConverterTest extends TestCase {
         assertEquals('!', (char) data[data.length - 1]);
     }
 
-    public void testCopy() throws IOException {
+    public void testCopy() throws Exception {
         ByteArrayInputStream bis = new ByteArrayInputStream(TESTDATA);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        IOConverter.copy(bis, bos);
+        IOHelper.copy(bis, bos);
         assertEquals(TESTDATA, bos.toByteArray());
     }
 
