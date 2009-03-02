@@ -14,13 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.spi;
 
 import org.apache.camel.Exchange;
 
 /**
- * A plugin used to turn an {@link Exchange} into a String
- * so it can be logged to a file
+ * A plugin used to turn an {@link Exchange} into a String representation
+ * usually to be used for logging or tracing purposes.
  *
  * @version $Revision$
  */

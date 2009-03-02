@@ -22,20 +22,15 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
+import org.apache.camel.language.tokenizer.TokenizeLanguage;
 import org.apache.camel.spi.RouteContext;
-import static org.apache.camel.builder.Builder.body;
-import static org.apache.camel.builder.Builder.header;
-import static org.apache.camel.builder.ExpressionBuilder.regexTokenizeExpression;
-import static org.apache.camel.builder.ExpressionBuilder.tokenizeExpression;
-import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * For expressions and predicates using a body or header tokenzier
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "tokenizer")
+@XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TokenizerExpression extends ExpressionType {
     @XmlAttribute(required = true)
@@ -46,6 +41,11 @@ public class TokenizerExpression extends ExpressionType {
     private Boolean regex;
 
     public TokenizerExpression() {
+    }
+
+    @Override
+    public String getLanguage() {
+        return "tokenize";
     }
 
     public String getToken() {
@@ -74,17 +74,13 @@ public class TokenizerExpression extends ExpressionType {
 
     @Override
     public Expression createExpression(RouteContext routeContext) {
-        Expression exp = headerName == null ? body() : header(headerName);
-        if (regex != null && regex) {
-            return regexTokenizeExpression(exp, token);
-        } else {
-            return tokenizeExpression(exp, token);
+        TokenizeLanguage language = new TokenizeLanguage();
+        language.setToken(token);
+        language.setHeaderName(headerName);
+        if (regex != null) {
+            language.setRegex(regex);
         }
-    }
-
-    @Override
-    public Predicate createPredicate(RouteContext routeContext) {
-        return toPredicate(createExpression(routeContext));
+        return language.createExpression();
     }
 
     @Override

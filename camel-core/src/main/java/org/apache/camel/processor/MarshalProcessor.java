@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Marshals the body of the incoming message using the given
@@ -37,6 +38,8 @@ public class MarshalProcessor implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        ObjectHelper.notNull(dataFormat, "dataFormat");
+
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         Message in = exchange.getIn();
         Object body = in.getBody();

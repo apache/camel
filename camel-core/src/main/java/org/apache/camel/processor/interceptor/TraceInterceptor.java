@@ -28,6 +28,7 @@ import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.IntrospectionSupport;

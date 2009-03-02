@@ -112,12 +112,12 @@ public class ProducerCache extends ServiceSupport {
     }
 
     public static boolean isProcessedSync(Exchange exchange) {
-        Boolean rc = exchange.getProperty(ProducerCache.class.getName() + ".SYNC", Boolean.class);
+        Boolean rc = exchange.getProperty(Exchange.PROCESSED_SYNC, Boolean.class);
         return rc == null ? false : rc;
     }
 
-    public static void setProcessedSync(Exchange exchange, boolean b) {
-        exchange.setProperty(ProducerCache.class.getName() + ".SYNC", b ? Boolean.TRUE : Boolean.FALSE);
+    public static void setProcessedSync(Exchange exchange, boolean sync) {
+        exchange.setProperty(Exchange.PROCESSED_SYNC, sync ? Boolean.TRUE : Boolean.FALSE);
     }
 
     /**
