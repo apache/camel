@@ -17,8 +17,13 @@
 package org.apache.camel.component.rmi;
 
 import java.rmi.registry.Registry;
+import java.rmi.NotBoundException;
+import java.rmi.AccessException;
+import java.rmi.RemoteException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoSuchBeanException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.ParameterMappingStrategy;
 import org.apache.camel.component.bean.RegistryBean;
 
@@ -40,7 +45,15 @@ public class RmiRegistryBean extends RegistryBean {
     }
 
     @Override
-    protected Object lookupBean() throws Exception {
-        return registry.lookup(getName());
+    protected Object lookupBean() throws NoSuchBeanException {
+        try {
+            return registry.lookup(getName());
+        } catch (NotBoundException e) {
+            throw new NoSuchBeanException(getName(), e);
+        } catch (AccessException e) {
+            throw new RuntimeCamelException(e);
+        } catch (RemoteException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

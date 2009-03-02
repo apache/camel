@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -53,15 +54,14 @@ public class RegistryBean implements BeanHolder {
         return "bean: " + name;
     }
 
-
     public ConstantBeanHolder createCacheHolder() throws Exception {
         return new ConstantBeanHolder(getBean(), getBeanInfo());
     }
 
-    public Object getBean() throws NoBeanAvailableException {
+    public Object getBean() throws NoSuchBeanException {
         Object value = lookupBean();
         if (value == null) {
-            throw new NoBeanAvailableException(name);
+            throw new NoSuchBeanException(name);
         }
         if (value != bean) {
             bean = value;

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 
 /**
@@ -25,7 +26,7 @@ import org.apache.camel.Processor;
  */
 public interface BeanHolder {
 
-    Object getBean() throws NoBeanAvailableException;
+    Object getBean() throws NoSuchBeanException;
 
     Processor getProcessor();
 
