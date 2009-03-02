@@ -29,7 +29,7 @@
             <!-- will tokenize the body by comma and sort it -->
             <sort>
                 <expression>
-                    <tokenizer token=","/>
+                    <tokenize token=","/>
                 </expression>
             </sort>
             <to uri="mock:result"/>
@@ -40,7 +40,7 @@
             <!-- will tokenize the body by comma and sort it using the comparator -->
             <sort comparatorRef="myReverseComparator">
                 <expression>
-                    <tokenizer token=","/>
+                    <tokenize token=","/>
                 </expression>
             </sort>
             <to uri="mock:result"/>

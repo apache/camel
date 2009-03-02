@@ -16,15 +16,11 @@
  */
 package org.apache.camel.model.dataformat;
 
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -39,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlType(name = "dataFormatType")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DataFormatType extends IdentifiedType implements DataFormat {
+public class DataFormatType extends IdentifiedType {
     @XmlTransient
     private DataFormat dataFormat;
     @XmlTransient
@@ -56,33 +52,46 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
         this.dataFormatTypeName = dataFormatTypeName;
     }
 
+    /**
+     * Factory method to create the data format
+     * @param routeContext route context
+     * @param type the data format type
+     * @param ref  reference to lookup for a data format
+     * @return the data format or null if not possible to create
+     */
     public static DataFormat getDataFormat(RouteContext routeContext, DataFormatType type, String ref) {
         if (type == null) {
             notNull(ref, "ref or dataFormatType");
-            DataFormat dataFormat = routeContext.lookup(ref, DataFormat.class);
-            
+
+            DataFormat dataFormat = lookup(routeContext, ref, DataFormat.class);
             if (dataFormat == null) {
-                dataFormat = routeContext.getDataFormat(ref);
+                // lookup type and create the data format from it
+                type = lookup(routeContext, ref, DataFormatType.class);
+                if (type == null) {
+                    type = routeContext.getDataFormat(ref);
+                }
+                if (type != null) {
+                    dataFormat = type.createDataFormat(routeContext);
+                }
             }
-            
-            if (dataFormat instanceof DataFormatType) {
-                type = (DataFormatType)dataFormat;
-            } else {
-                return dataFormat;
+
+            if (dataFormat == null) {
+                throw new IllegalArgumentException("Cannot find data format in registry with ref: " + ref);
             }
+
+            return dataFormat;
+        } else {
+            return type.getDataFormat(routeContext);
         }
-        return type.getDataFormat(routeContext);
     }
 
-
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        ObjectHelper.notNull(dataFormat, "dataFormat");
-        dataFormat.marshal(exchange, graph, stream);
-    }
-
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        ObjectHelper.notNull(dataFormat, "dataFormat");
-        return dataFormat.unmarshal(exchange, stream);
+    private static <T> T lookup(RouteContext routeContext, String ref, Class<T> type) {
+        try {
+            return routeContext.lookup(ref, type);
+        } catch (Exception e) {
+            // need to ignore not same type and return it as null
+            return null;
+        }
     }
 
     public DataFormat getDataFormat(RouteContext routeContext) {
@@ -122,10 +131,9 @@ public class DataFormatType extends IdentifiedType implements DataFormat {
         try {
             IntrospectionSupport.setProperty(bean, name, value);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean
-                                               + ". Reason: " + e, e);
+            throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);
         }
     }
 
-
 }
+

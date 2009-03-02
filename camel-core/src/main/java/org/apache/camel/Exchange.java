@@ -52,6 +52,8 @@ public interface Exchange {
     String LOOP_INDEX = "CamelLoopIndex";
     String LOOP_SIZE = "CamelLoopSize";
 
+    String PROCESSED_SYNC = "CamelProcessedSync";
+
     String REDELIVERED = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
 

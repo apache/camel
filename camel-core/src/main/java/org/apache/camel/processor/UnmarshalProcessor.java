@@ -23,6 +23,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Unmarshals the body of the incoming message using the given
@@ -38,6 +39,8 @@ public class UnmarshalProcessor implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        ObjectHelper.notNull(dataFormat, "dataFormat");
+
         InputStream stream = ExchangeHelper.getMandatoryInBody(exchange, InputStream.class);
         try {
             // lets setup the out message before we invoke the dataFormat

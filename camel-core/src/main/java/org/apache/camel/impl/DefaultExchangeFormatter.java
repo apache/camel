@@ -17,7 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.interceptor.ExchangeFormatter;
+import org.apache.camel.spi.ExchangeFormatter;
 
 /**
  * A default {@link ExchangeFormatter} which just uses the {@link org.apache.camel.Exchange} <tt>toString()</tt> method
@@ -32,6 +32,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     public Object format(Exchange exchange) {
-        return exchange;
+        return exchange.toString();
     }
 }

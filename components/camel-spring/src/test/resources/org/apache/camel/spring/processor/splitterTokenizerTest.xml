@@ -27,7 +27,7 @@
         <route>
             <from uri="direct:start"/>
             <split>
-                <tokenizer token="@"/>
+                <tokenize token="@"/>
                 <to uri="mock:result"/>
             </split>
         </route>
