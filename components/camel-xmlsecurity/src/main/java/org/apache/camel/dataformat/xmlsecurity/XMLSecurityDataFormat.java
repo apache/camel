@@ -38,6 +38,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
@@ -122,7 +123,7 @@ public class XMLSecurityDataFormat implements DataFormat {
 
         DOMSource source = new DOMSource(document);
         try {
-            IOConverter.copy(IOConverter.toInputStrean(source), stream);
+            IOHelper.copy(IOConverter.toInputStrean(source), stream);
         } finally {
             stream.close();
         }
@@ -161,7 +162,7 @@ public class XMLSecurityDataFormat implements DataFormat {
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            IOConverter.copy(IOConverter.toInputStrean(source), bos);
+            IOHelper.copy(IOConverter.toInputStrean(source), bos);
         } finally {
             bos.close();
         }
