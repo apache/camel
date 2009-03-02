@@ -16,6 +16,9 @@
  */
 package org.apache.camel.web.resources;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import javax.annotation.PreDestroy;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,16 +28,11 @@ import javax.ws.rs.core.MediaType;
 import com.sun.jersey.api.view.ImplicitProduces;
 import com.sun.jersey.spi.inject.Inject;
 import com.sun.jersey.spi.resource.Singleton;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.web.model.Camel;
-
-import java.util.TreeMap;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * The root Camel resource from which all other resources can be navigated such as for <code>endpoints</code>

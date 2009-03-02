@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,23 +16,22 @@
  */
 package org.apache.camel.web.htmlunit;
 
+import java.util.List;
+
 import org.apache.camel.web.htmlunit.pages.EndpointsPage;
 import org.apache.camel.web.htmlunit.pages.SendMessagePage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.openqa.selenium.lift.Finders.link;
+import org.openqa.selenium.WebElement;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.not;
+import static org.openqa.selenium.By.xpath;
 import static org.openqa.selenium.lift.Finders.links;
-import static org.openqa.selenium.lift.Finders.title;
 import static org.openqa.selenium.lift.Matchers.atLeast;
 import static org.openqa.selenium.lift.Matchers.text;
-import org.openqa.selenium.WebElement;
-import static org.openqa.selenium.By.xpath;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-
-import java.util.List;
 
 /**
  * @version $Revision: 1.1 $
@@ -79,7 +77,7 @@ public class CreateEndpointTest extends HtmlTestSupport {
         findElement(xpath("//a[@class='message']")).click();
 
         String actualMessage = findElement(xpath("//div[@class='message']")).getText();
-        LOG.info("Found message body: " +actualMessage);
+        LOG.info("Found message body: " + actualMessage);
 
         assertThat(actualMessage, containsString(messageBody));
 

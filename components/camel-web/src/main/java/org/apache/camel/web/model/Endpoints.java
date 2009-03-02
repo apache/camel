@@ -16,18 +16,19 @@
  */
 package org.apache.camel.web.model;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.util.ObjectHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -63,8 +64,8 @@ public class Endpoints {
     public void load(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext has not been injected!");
 
-        Map<String,Endpoint> map = camelContext.getEndpointMap();
-        Set<Map.Entry<String,Endpoint>> entries = map.entrySet();
+        Map<String, Endpoint> map = camelContext.getEndpointMap();
+        Set<Map.Entry<String, Endpoint>> entries = map.entrySet();
         for (Map.Entry<String, Endpoint> entry : entries) {
             addEndpoint(createEndpointLink(entry.getKey(), entry.getValue()));
         }
