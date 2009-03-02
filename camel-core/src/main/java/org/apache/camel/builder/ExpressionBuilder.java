@@ -34,9 +34,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.ExpressionAdapter;
-import org.apache.camel.language.bean.BeanLanguage;
-import org.apache.camel.language.simple.SimpleLanguage;
-import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.spi.Language;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a>.
@@ -679,13 +677,13 @@ public final class ExpressionBuilder {
                     String key = command.substring(command.lastIndexOf(".") + 1);
                     date = exchange.getIn().getHeader(key, Date.class);
                     if (date == null) {
-                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                        throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);
                     }
                 } else if (command.startsWith("out.header.")) {
                     String key = command.substring(command.lastIndexOf(".") + 1);
                     date = exchange.getOut().getHeader(key, Date.class);
                     if (date == null) {
-                        throw new IllegalArgumentException("Could not find java.util.Date object at " + command);
+                        throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);
                     }
                 } else {
                     throw new IllegalArgumentException("Command not supported for dateExpression: " + command);
@@ -702,17 +700,19 @@ public final class ExpressionBuilder {
         };
     }
 
-    public static Expression simpleExpression(final String simple) {
+    public static Expression simpleExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // resolve language using context to have a clear separation of packages
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
-                return SimpleLanguage.simple(simple).evaluate(exchange);
+                Language language = exchange.getContext().resolveLanguage("simple");
+                return language.createExpression(expression).evaluate(exchange);
             }
 
             @Override
             public String toString() {
-                return "simple(" + simple + ")";
+                return "simple(" + expression + ")";
             }
         };
     }
@@ -720,9 +720,11 @@ public final class ExpressionBuilder {
     public static Expression beanExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
+                // resolve language using context to have a clear separation of packages
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
-                return BeanLanguage.bean(expression).evaluate(exchange);
+                Language language = exchange.getContext().resolveLanguage("bean");
+                return language.createExpression(expression).evaluate(exchange);
             }
 
             @Override
@@ -744,8 +746,7 @@ public final class ExpressionBuilder {
         if (value instanceof Readable) {
             scanner = new Scanner((Readable)value);
         } else if (value instanceof InputStream) {
-            scanner = charset == null ? new Scanner((InputStream)value)
-                    : new Scanner((InputStream)value, charset);
+            scanner = charset == null ? new Scanner((InputStream)value) : new Scanner((InputStream)value, charset);
         } else if (value instanceof File) {
             try {
                 scanner = charset == null ? new Scanner((File)value) : new Scanner((File)value, charset);
@@ -755,8 +756,7 @@ public final class ExpressionBuilder {
         } else if (value instanceof String) {
             scanner = new Scanner((String)value);
         } else if (value instanceof ReadableByteChannel) {
-            scanner = charset == null ? new Scanner((ReadableByteChannel)value)
-                    : new Scanner((ReadableByteChannel)value, charset);
+            scanner = charset == null ? new Scanner((ReadableByteChannel)value) : new Scanner((ReadableByteChannel)value, charset);
         }
 
         if (scanner == null) {
@@ -770,6 +770,7 @@ public final class ExpressionBuilder {
         if (scanner == null) {
             scanner = new Scanner("");
         }
+
         return scanner;
     }
 

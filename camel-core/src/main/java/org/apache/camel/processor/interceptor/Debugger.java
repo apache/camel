@@ -24,7 +24,6 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.commons.logging.Log;
@@ -52,13 +51,10 @@ public class Debugger implements InterceptStrategy {
      * @return the debugger or null if none can be found
      */
     public static Debugger getDebugger(CamelContext context) {
-        if (context instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
-            List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
-            for (InterceptStrategy interceptStrategy : list) {
-                if (interceptStrategy instanceof Debugger) {
-                    return (Debugger)interceptStrategy;
-                }
+        List<InterceptStrategy> list = context.getInterceptStrategies();
+        for (InterceptStrategy interceptStrategy : list) {
+            if (interceptStrategy instanceof Debugger) {
+                return (Debugger)interceptStrategy;
             }
         }
         return null;

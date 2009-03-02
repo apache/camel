@@ -23,7 +23,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -53,13 +52,10 @@ public class Tracer implements InterceptStrategy {
      * @return the tracer or null if none can be found
      */
     public static Tracer getTracer(CamelContext context) {
-        if (context instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
-            List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
-            for (InterceptStrategy interceptStrategy : list) {
-                if (interceptStrategy instanceof Tracer) {
-                    return (Tracer)interceptStrategy;
-                }
+        List<InterceptStrategy> list = context.getInterceptStrategies();
+        for (InterceptStrategy interceptStrategy : list) {
+            if (interceptStrategy instanceof Tracer) {
+                return (Tracer)interceptStrategy;
             }
         }
         return null;

@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ProcessorType;
 import org.apache.camel.spi.InterceptStrategy;
 
@@ -46,20 +45,16 @@ public class Delayer implements InterceptStrategy {
      * @return the delayer or null if none can be found
      */
     public static DelayInterceptor getDelayer(CamelContext context) {
-        if (context instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
-            List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
-            for (InterceptStrategy interceptStrategy : list) {
-                if (interceptStrategy instanceof DelayInterceptor) {
-                    return (DelayInterceptor)interceptStrategy;
-                }
+        List<InterceptStrategy> list = context.getInterceptStrategies();
+        for (InterceptStrategy interceptStrategy : list) {
+            if (interceptStrategy instanceof DelayInterceptor) {
+                return (DelayInterceptor)interceptStrategy;
             }
         }
         return null;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target)
-        throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
         DelayInterceptor delayer = new DelayInterceptor(processorType, target, this);
         return delayer;
     }
