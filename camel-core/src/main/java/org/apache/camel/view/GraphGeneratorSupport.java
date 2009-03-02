@@ -43,7 +43,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public abstract class GraphGeneratorSupport {
-    private static final transient Log LOG = LogFactory.getLog(RouteDotGenerator.class);
+    protected final transient Log log = LogFactory.getLog(getClass());
     protected String dir;
     protected int clusterCounter;
     protected String extension;
