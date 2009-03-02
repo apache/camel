@@ -23,7 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.StreamCache;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.InterceptorType;
 import org.apache.camel.processor.DelegateProcessor;

@@ -20,11 +20,8 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * The <a href="http://activemq.apache.org/bean.html">Bean Component</a>
@@ -33,7 +30,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class BeanComponent extends DefaultComponent {
-    private static final transient Log LOG = LogFactory.getLog(BeanComponent.class);
     private ParameterMappingStrategy parameterMappingStrategy;
 
     public BeanComponent() {
@@ -71,7 +67,8 @@ public class BeanComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
-        endpoint.setCache(ObjectConverter.toBool(parameters.remove("cache")));
+        Boolean cache = getAndRemoveParameter(parameters, "cache", Boolean.class, Boolean.FALSE);
+        endpoint.setCache(cache);
         Processor processor = endpoint.getProcessor();
         setProperties(processor, parameters);
         return endpoint;

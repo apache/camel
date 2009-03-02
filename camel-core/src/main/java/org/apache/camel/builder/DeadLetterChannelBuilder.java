@@ -17,8 +17,8 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Processor;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.Processor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;

@@ -19,7 +19,7 @@ package org.apache.camel.component.log;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
 

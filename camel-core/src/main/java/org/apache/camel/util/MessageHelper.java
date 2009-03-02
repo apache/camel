@@ -18,7 +18,7 @@ package org.apache.camel.util;
 
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.converter.stream.StreamCache;
+import org.apache.camel.StreamCache;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
