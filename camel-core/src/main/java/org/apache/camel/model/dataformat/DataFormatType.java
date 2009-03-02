@@ -71,7 +71,7 @@ public class DataFormatType extends IdentifiedType {
                     type = routeContext.getDataFormat(ref);
                 }
                 if (type != null) {
-                    dataFormat = type.createDataFormat(routeContext);
+                    dataFormat = type.getDataFormat(routeContext);
                 }
             }
 

@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  */
 public interface BeanHolder {
 
-    Object getBean() throws Exception;
+    Object getBean() throws NoBeanAvailableException;
 
     Processor getProcessor();
 

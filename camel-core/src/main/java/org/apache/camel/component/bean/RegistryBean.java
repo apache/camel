@@ -58,7 +58,7 @@ public class RegistryBean implements BeanHolder {
         return new ConstantBeanHolder(getBean(), getBeanInfo());
     }
 
-    public Object getBean() throws Exception {
+    public Object getBean() throws NoBeanAvailableException {
         Object value = lookupBean();
         if (value == null) {
             throw new NoBeanAvailableException(name);
@@ -124,7 +124,7 @@ public class RegistryBean implements BeanHolder {
         return BeanInfo.createParameterMappingStrategy(context);
     }
 
-    protected Object lookupBean() throws Exception {
+    protected Object lookupBean() {
         return registry.lookup(name);
     }
 }
