@@ -43,7 +43,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeExpressionException;
-import org.apache.camel.converter.stream.StreamCache;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;

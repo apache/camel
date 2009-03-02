@@ -19,7 +19,6 @@ package org.apache.camel.component.mock;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,7 +40,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -434,11 +432,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 assertTrue("The file should exists: " + name, file.exists());
 
                 if (content != null) {
-                    try {
-                        assertEquals("Content of file: " + name, content, IOConverter.toString(file));
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    String body = getCamelContext().getTypeConverter().convertTo(String.class, file);
+                    assertEquals("Content of file: " + name, content, body);
                 }
             }
         });
