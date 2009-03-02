@@ -295,6 +295,13 @@ public interface CamelContext extends Service {
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
 
     /**
+     * Gets the interceptor strategies
+     *
+     * @return the list of current interceptor strategies
+     */
+    List<InterceptStrategy> getInterceptStrategies();
+
+    /**
      * Gets the default error handler builder which is inherited by the routes
      *
      * @return the builder

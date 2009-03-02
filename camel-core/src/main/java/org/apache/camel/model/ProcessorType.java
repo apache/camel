@@ -47,7 +47,6 @@ import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionType;
@@ -1940,10 +1939,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
         List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
         CamelContext camelContext = routeContext.getCamelContext();
-        if (camelContext instanceof DefaultCamelContext) {
-            DefaultCamelContext defaultCamelContext = (DefaultCamelContext) camelContext;
-            strategies.addAll(defaultCamelContext.getInterceptStrategies());
-        }
+        strategies.addAll(camelContext.getInterceptStrategies());
         strategies.addAll(routeContext.getInterceptStrategies());
         for (InterceptStrategy strategy : strategies) {
             if (strategy != null) {
