@@ -16,8 +16,8 @@
  */
 package org.apache.camel.spring.example;
 
+import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
-import org.apache.camel.MessageDriven;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -33,7 +33,7 @@ public class MyConsumer {
     @EndpointInject(uri = "mock:result")
     private ProducerTemplate destination;
 
-    @MessageDriven(uri = "direct:start")
+    @Consume(uri = "direct:start")
     public void doSomething(String body) {
         ObjectHelper.notNull(destination, "destination");
 

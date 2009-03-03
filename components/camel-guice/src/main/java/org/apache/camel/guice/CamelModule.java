@@ -20,7 +20,6 @@ import com.google.inject.jsr250.Jsr250Module;
 import com.google.inject.matcher.Matchers;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
-import org.apache.camel.MessageDriven;
 import org.apache.camel.Routes;
 import org.apache.camel.guice.impl.ConsumerInjection;
 import org.apache.camel.guice.impl.EndpointInjector;
@@ -58,8 +57,6 @@ public class CamelModule extends Jsr250Module {
         ConsumerInjection consumerInjection = new ConsumerInjection();
         requestInjection(consumerInjection);
 
-
-        bindConstructorInterceptor(Matchers.methodAnnotatedWith(MessageDriven.class), consumerInjection);
         bindConstructorInterceptor(Matchers.methodAnnotatedWith(Consume.class), consumerInjection);
     }
 

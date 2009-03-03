@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.Consume;
 import org.apache.camel.Header;
-import org.apache.camel.MessageDriven;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.language.Bean;
 import org.apache.camel.language.Constant;
@@ -29,22 +29,22 @@ public class MyBeanBindingConsumer {
 
     private ProducerTemplate template;
 
-    @MessageDriven(uri = "direct:startBeanExpression")
+    @Consume(uri = "direct:startBeanExpression")
     public void doSomethingBeanExpression(String payload, @Bean("myCounter") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
-    @MessageDriven(uri = "direct:startConstantExpression")
+    @Consume(uri = "direct:startConstantExpression")
     public void doSomethingConstantExpression(String payload, @Constant("5") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
-    @MessageDriven(uri = "direct:startHeaderExpression")
+    @Consume(uri = "direct:startHeaderExpression")
     public void doSomethingHeaderExpression(String payload, @Header("number") int count) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count);
     }
 
-    @MessageDriven(uri = "direct:startMany")
+    @Consume(uri = "direct:startMany")
     public void doSomethingManyExpression(String payload, @Constant("5") int count, @Header("number") int number) {
         template.sendBodyAndHeader("mock:result", "Bye " + payload, "count", count * number);
     }

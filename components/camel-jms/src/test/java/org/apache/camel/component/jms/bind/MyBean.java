@@ -18,9 +18,9 @@ package org.apache.camel.component.jms.bind;
 
 import java.util.Map;
 
+import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Headers;
-import org.apache.camel.MessageDriven;
 import org.apache.camel.ProducerTemplate;
 
 /**
@@ -32,7 +32,7 @@ public class MyBean {
     @EndpointInject(uri = "mock:result")
     private ProducerTemplate producer;
 
-    @MessageDriven(uri = "activemq:Test.BindingQueue")
+    @Consume(uri = "activemq:Test.BindingQueue")
     public void myMethod(@Headers Map headers, String body) {
         this.headers = headers;
         this.body = body;
