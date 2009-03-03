@@ -99,6 +99,7 @@ public class GenericFile<T> implements Serializable {
             setAbsoluteFileName(newName);
             // no relative filename for absolute files
             setRelativeFileName(null);
+            setCanonicalFileName(null);
             String fileName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
             setFileName(fileName);
             return;
@@ -107,6 +108,7 @@ public class GenericFile<T> implements Serializable {
         // the rest is complex relative path computation
         setAbsolute(false);
         setAbsoluteFileName(getParent() + getFileSeparator() + newName);
+        setCanonicalFileName(null);
 
         // relative name is a bit more complex to set as newName itself can contain
         // folders we need to consider as well
@@ -116,7 +118,7 @@ public class GenericFile<T> implements Serializable {
             newName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
         }
 
-        if (relativeFileName.indexOf(getFileSeparator()) != -1) {
+        if (relativeFileName != null && relativeFileName.indexOf(getFileSeparator()) != -1) {
             String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(File.separator));
             if (baseNewName != null) {
                 setRelativeFileName(relative + getFileSeparator() + baseNewName + getFileSeparator() + newName);
