@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>4</version>
+    <version>5</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
