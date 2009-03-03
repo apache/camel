@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.MessageDriven;
+import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.camel.RecipientList;
  */
 public class RouterBean {
 
-    @MessageDriven(uri = "direct:start")
+    @Consume(uri = "direct:start")
     @RecipientList
     public String[] route(String body) {
         System.out.println("RouteBean called with body: " + body);

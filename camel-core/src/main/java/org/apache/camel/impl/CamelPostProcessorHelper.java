@@ -25,7 +25,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consume;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.MessageDriven;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -67,12 +66,6 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public void consumerInjection(Method method, Object bean) {
-        MessageDriven annotation = method.getAnnotation(MessageDriven.class);
-        if (annotation != null) {
-            LOG.info("Creating a consumer for: " + annotation);
-            subscribeMethod(method, bean, annotation.uri(), annotation.name());
-        }
-
         Consume consume = method.getAnnotation(Consume.class);
         if (consume != null) {
             LOG.info("Creating a consumer for: " + consume);
@@ -87,8 +80,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         if (endpoint != null) {
             try {
                 Processor processor = createConsumerProcessor(bean, method, endpoint);
-                LOG.info("Created processor: " + processor);
                 Consumer consumer = endpoint.createConsumer(processor);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Created processor: " + processor + " for consumer: " + consumer);
+                }
                 startService(consumer);
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -145,7 +140,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                         throw createProxyInstantiationRuntimeException(type, endpoint, e);
                     }
                 } else {
-                    throw new IllegalArgumentException("Invalid type: " + type.getName() + " which cannot be injected via @EndpointInject for " + endpoint);
+                    throw new IllegalArgumentException("Invalid type: " + type.getName()
+                            + " which cannot be injected via @EndpointInject/@Produce for: " + endpoint);
                 }
             }
             return null;
@@ -157,8 +153,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     /**
-     * Factory method to create a started {@link org.apache.camel.PollingConsumer} to be injected
-     * into a POJO
+     * Factory method to create a started {@link org.apache.camel.PollingConsumer} to be injected into a POJO
      */
     protected PollingConsumer createInjectionPollingConsumer(Endpoint endpoint) {
         try {
@@ -171,8 +166,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     /**
-     * A Factory method to create a started {@link org.apache.camel.Producer} to be injected into
-     * a POJO
+     * A Factory method to create a started {@link org.apache.camel.Producer} to be injected into a POJO
      */
     protected Producer createInjectionProducer(Endpoint endpoint) {
         try {
