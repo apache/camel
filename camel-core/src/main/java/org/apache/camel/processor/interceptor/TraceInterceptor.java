@@ -173,7 +173,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
                 // load the jpa event class
                 synchronized (this) {
                     if (jpaTraceEventMessageClass == null) {
-                        jpaTraceEventMessageClass = ObjectHelper.loadClass(JPA_TRACE_EVENT_MESSAGE);
+                        jpaTraceEventMessageClass = exchange.getContext().getClassResolver().resolveClass(JPA_TRACE_EVENT_MESSAGE);
                         if (jpaTraceEventMessageClass == null) {
                             throw new IllegalArgumentException("Cannot find class: " + JPA_TRACE_EVENT_MESSAGE
                                     + ". Make sure camel-jpa.jar is in the classpath.");

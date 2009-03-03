@@ -30,6 +30,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.FactoryFinder;
@@ -54,9 +55,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private boolean loaded;
 
-    public DefaultTypeConverter(Injector injector) {
-        typeConverterLoaders.add(new AnnotationTypeConverterLoader());
+    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector) {
         this.injector = injector;
+
+        typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
+
         // add to string first as it will then be last in the last as to string can nearly
         // always convert something to a string so we want it only as the last resort
         addFallbackTypeConverter(new ToStringTypeConverter());

@@ -17,8 +17,6 @@
 package org.apache.camel.osgi;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Set;
 
 import org.apache.camel.Converter;
@@ -30,21 +28,19 @@ import org.osgi.framework.BundleContext;
 public class OsgiResolverUtilTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
         BundleContext  context = getActivator().getBundle().getBundleContext();
-        OsgiResolverUtil resolver  = new OsgiResolverUtil(context);
+        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
              
         String[] packageNames = {"org.apache.camel.osgi.test"};
-        resolver.findAnnotated(Converter.class, packageNames);
-        Set<Class> classes = resolver.getClasses();
+        Set<Class> classes = resolver.findAnnotated(Converter.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyTypeConverter.class));
     }
     
     public void testOsgiResolverFindImplementationTest() {
         BundleContext  context = getActivator().getBundle().getBundleContext();
-        OsgiResolverUtil resolver  = new OsgiResolverUtil(context);
+        OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);
         String[] packageNames = {"org.apache.camel.osgi.test"};
-        resolver.findImplementations(Routes.class, packageNames);
-        Set<Class> classes = resolver.getClasses();
+        Set<Class> classes = resolver.findImplementations(Routes.class, packageNames);
         assertEquals("There should find a class", classes.size(), 1);
         assertTrue("Find a wrong class", classes.contains(MyRouteBuilder.class));
     }

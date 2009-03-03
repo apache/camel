@@ -24,6 +24,7 @@ import java.io.ObjectOutputStream;
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.StringSource;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
 
@@ -31,7 +32,7 @@ import org.apache.camel.util.ReflectionInjector;
  * @version $Revision$
  */
 public class StringSourceTest extends TestCase {
-    protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());
+    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector());
     protected String expectedBody = "<hello>world!</hello>";
 
     public void testSerialization() throws Exception {

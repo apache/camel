@@ -14,17 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Enumeration;
 
 /**
- * WebSphere specific resolver util to handle loading annotated resources in JAR files.
- * @deprecated
+ * WebSphere specific resolver to handle loading annotated resources in JAR files.
  */
-public class WebSphereResolverUtil extends ResolverUtil {
+public class WebSpherePacakageScanClassResolver extends DefaultPackageScanClassResolver {
 
     private String resourcePath;
 
@@ -33,7 +32,7 @@ public class WebSphereResolverUtil extends ResolverUtil {
      *
      * @param resourcePath  the fixed resource path to use for fetching camel jars in WebSphere.
      */
-    public WebSphereResolverUtil(String resourcePath) {
+    public WebSpherePacakageScanClassResolver(String resourcePath) {
         this.resourcePath = resourcePath;
     }
 
@@ -56,7 +55,7 @@ public class WebSphereResolverUtil extends ResolverUtil {
      * @param loader  the classloader
      * @param packageName   the packagename for the package to load
      * @return  URL's for the given package
-     * @throws IOException is thrown by the classloader
+     * @throws java.io.IOException is thrown by the classloader
      */
     @Override
     @SuppressWarnings("unchecked")

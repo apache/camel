@@ -14,18 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.osgi;
+package org.apache.camel.spi;
 
-import org.apache.camel.osgi.test.MockTypeConverterRegistry;
+/**
+ * Filter that can be used with the {@link org.apache.camel.spi.PackageScanClassResolver} resolver.
+ */
+public interface PackageScanFilter {
 
-public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
-    
-    public void testLoad() throws Exception {
-        OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getResolver());
-        MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
-        loader.load(registry);
-        assertEquals("There should have a fallback converter", registry.getFallbackTypeConverters().size(), 1);
-        assertEquals("There should have a coverter", registry.getTypeConverters().size(), 1);
-    }
-
+    /**
+     * Does the given class match
+     *
+     * @param type the class
+     * @return true to include this class, false to skip it.
+     */
+    boolean matches(Class type);
 }

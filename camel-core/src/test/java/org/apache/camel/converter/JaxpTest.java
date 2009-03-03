@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.commons.logging.Log;
@@ -39,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class JaxpTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(JaxpTest.class);
-    protected TypeConverter converter = new DefaultTypeConverter(new ReflectionInjector());
+    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector());
 
     public void testConvertToDocument() throws Exception {
         Document document = converter

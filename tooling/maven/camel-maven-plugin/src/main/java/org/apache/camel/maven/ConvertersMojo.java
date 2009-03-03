@@ -31,6 +31,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.ReportingTypeConverterLoader;
 import org.apache.camel.impl.ReportingTypeConverterLoader.TypeMapping;
 import org.apache.camel.impl.ReportingTypeConverterRegistry;
@@ -212,8 +213,7 @@ public class ConvertersMojo extends AbstractMavenReport {
         } catch (RendererException e) {
             throw new MojoExecutionException("Error while rendering report.", e);
         } catch (MojoFailureException e) {
-            throw new MojoExecutionException(
-                    "Cannot find skin artifact for report.", e);
+            throw new MojoExecutionException("Cannot find skin artifact for report.", e);
         } catch (MavenReportException e) {
             throw new MojoExecutionException("Error generating report.", e);
         }
@@ -244,12 +244,10 @@ public class ConvertersMojo extends AbstractMavenReport {
             ClassLoader newClassLoader = mojo.createClassLoader(oldClassLoader);
             Thread.currentThread().setContextClassLoader(newClassLoader);
 
-            ReportingTypeConverterLoader loader = new ReportingTypeConverterLoader();
+            ReportingTypeConverterLoader loader = new ReportingTypeConverterLoader(new DefaultPackageScanClassResolver());
             ReportingTypeConverterRegistry registry = new ReportingTypeConverterRegistry();
             loader.load(registry);
-            getLog().error(
-                    "FOUND type mapping; count = "
-                            + loader.getTypeConversions().length);
+            getLog().error("FOUND type mapping; count = " + loader.getTypeConversions().length);
 
             String[] errors = registry.getErrors();
             for (String error : errors) {
@@ -268,16 +266,12 @@ public class ConvertersMojo extends AbstractMavenReport {
     private boolean createOutputDirectory(final File outputDir) {
         if (outputDir.exists()) {
             if (!outputDir.isDirectory()) {
-                getLog().error(
-                        "File with same name already exists: "
-                                + outputDir.getAbsolutePath());
+                getLog().error("File with same name already exists: " + outputDir.getAbsolutePath());
                 return false;
             }
         } else {
             if (!outputDir.mkdirs()) {
-                getLog().error(
-                        "Cannot make output directory at: "
-                                + outputDir.getAbsolutePath());
+                getLog().error("Cannot make output directory at: " + outputDir.getAbsolutePath());
                 return false;
             }
         }

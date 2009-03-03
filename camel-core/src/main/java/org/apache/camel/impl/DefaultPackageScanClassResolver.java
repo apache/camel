@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,84 +25,32 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * ResolverUtil is used to locate classes that are available in the/a class path
- * and meet arbitrary conditions. The two most common conditions are that a
- * class implements/extends another class, or that is it annotated with a
- * specific annotation. However, through the use of the {@link Test} class it is
- * possible to search using arbitrary conditions.
- * <p/>
- * A ClassLoader is used to locate all locations (directories and jar files) in
- * the class path that contain classes within certain packages, and then to load
- * those classes and check them. By default the ClassLoader returned by
- * {@code Thread.currentThread().getContextClassLoader()} is used, but this can
- * be overridden by calling {@link #setClassLoaders(Set)} prior to
- * invoking any of the {@code find()} methods.
- * <p/>
- * General searches are initiated by calling the
- * {@link #find(org.apache.camel.util.ResolverUtil.Test, String)}} method and supplying a package
- * name and a Test instance. This will cause the named package <b>and all
- * sub-packages</b> to be scanned for classes that meet the test. There are
- * also utility methods for the common use cases of scanning multiple packages
- * for extensions of particular classes, or classes annotated with a specific
- * annotation.
- * <p/>
- * The standard usage pattern for the ResolverUtil class is as follows:
- * <pre>
- * resolverUtil&lt;ActionBean&gt; resolver = new ResolverUtil&lt;ActionBean&gt;();
- * resolver.findImplementation(ActionBean.class, pkg1, pkg2);
- * resolver.find(new CustomTest(), pkg1);
- * resolver.find(new CustomTest(), pkg2);
- * collection&lt;ActionBean&gt; beans = resolver.getClasses();
- * </pre>
- *
- * @author Tim Fennell
- * @deprecated please use {@link org.apache.camel.spi.PackageScanClassResolver} instead.
+ * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class ResolverUtil<T> {
-    protected static final transient Log LOG = LogFactory.getLog(ResolverUtil.class);
+public class DefaultPackageScanClassResolver implements PackageScanClassResolver {
 
-    /**
-     * A simple interface that specifies how to test classes to determine if
-     * they are to be included in the results produced by the ResolverUtil.
-     */
-    public static interface Test {
-        /**
-         * Will be called repeatedly with candidate classes. Must return True if
-         * a class is to be included in the results, false otherwise.
-         */
-        boolean matches(Class type);
-    }
-
-    /**
-     * A Test that checks to see if each class is assignable to the provided
-     * class. Note that this test will match the parent type itself if it is
-     * presented for matching.
-     */
-    public static class IsA implements Test {
+    public static class IsA implements PackageScanFilter {
         private Class parent;
 
-        /**
-         * Constructs an IsA test using the supplied Class as the parent
-         * class/interface.
-         */
         public IsA(Class parentType) {
             this.parent = parentType;
         }
 
-        /**
-         * Returns true if type is assignable to the parent type supplied in the
-         * constructor.
-         */
         public boolean matches(Class type) {
             return type != null && parent.isAssignableFrom(type);
         }
@@ -113,33 +61,19 @@ public class ResolverUtil<T> {
         }
     }
 
-    /**
-     * A Test that checks to see if each class is annotated with a specific
-     * annotation. If it is, then the test returns true, otherwise false.
-     */
-    public static class AnnotatedWith implements Test {
+    public static class AnnotatedWith implements PackageScanFilter {
         private Class<? extends Annotation> annotation;
         private boolean checkMetaAnnotations;
 
-        /**
-         * Constructs an AnnotatedWith test for the specified annotation type.
-         */
         public AnnotatedWith(Class<? extends Annotation> annotation) {
             this(annotation, false);
         }
 
-        /**
-         * Constructs an AnnotatedWith test for the specified annotation type.
-         */
         public AnnotatedWith(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
             this.annotation = annotation;
             this.checkMetaAnnotations = checkMetaAnnotations;
         }
 
-        /**
-         * Returns true if the type is annotated with the class provided to the
-         * constructor.
-         */
         public boolean matches(Class type) {
             return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
         }
@@ -154,34 +88,24 @@ public class ResolverUtil<T> {
      * A Test that checks to see if each class is annotated with a specific
      * annotation. If it is, then the test returns true, otherwise false.
      */
-    public static class AnnotatedWithAny implements Test {
+    public static class AnnotatedWithAny implements PackageScanFilter {
         private Set<Class<? extends Annotation>> annotations;
         private boolean checkMetaAnnotations;
 
-        /**
-         * Constructs an AnnotatedWithAny test for any of the specified annotation types.
-         */
         public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations) {
             this(annotations, false);
         }
 
-        /**
-         * Constructs an AnnotatedWithAny test for any of the specified annotation types.
-         */
         public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
             this.annotations = annotations;
             this.checkMetaAnnotations = checkMetaAnnotations;
         }
 
-        /**
-         * Returns true if the type is annotated with the class provided to the
-         * constructor.
-         */
         public boolean matches(Class type) {
             if (type == null) {
                 return false;
             }
-            for (Class annotation : annotations) {
+            for (Class<? extends Annotation> annotation : annotations) {
                 if (ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
                     return true;
                 }
@@ -195,36 +119,13 @@ public class ResolverUtil<T> {
         }
     }
 
-    /**
-     * The set of matches being accumulated.
-     */
-    private Set<Class<? extends T>> matches = new HashSet<Class<? extends T>>();
-
-    /**
-     * The ClassLoader to use when looking for classes. If null then the
-     * ClassLoader returned by Thread.currentThread().getContextClassLoader()
-     * will be used.
-     */
+    protected static final transient Log LOG = LogFactory.getLog(DefaultPackageScanClassResolver.class);
     private Set<ClassLoader> classLoaders;
 
-    /**
-     * Provides access to the classes discovered so far. If no calls have been
-     * made to any of the {@code find()} methods, this set will be empty.
-     *
-     * @return the set of classes that have been discovered.
-     */
-    public Set<Class<? extends T>> getClasses() {
-        return matches;
+    public void addClassLoader(ClassLoader classLoader) {
+        getClassLoaders().add(classLoader);
     }
 
-
-    /**
-     * Returns the classloaders that will be used for scanning for classes. If no
-     * explicit ClassLoader has been set by the calling, the context class
-     * loader will and the one that has loaded this class ResolverUtil be used.
-     *
-     * @return the ClassLoader instances that will be used to scan for classes
-     */
     public Set<ClassLoader> getClassLoaders() {
         if (classLoaders == null) {
             classLoaders = new HashSet<ClassLoader>();
@@ -232,146 +133,118 @@ public class ResolverUtil<T> {
             if (ccl != null) {
                 classLoaders.add(ccl);
             }
-            classLoaders.add(ResolverUtil.class.getClassLoader());
+            classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());
         }
         return classLoaders;
     }
 
-    /**
-     * Sets the ClassLoader instances that should be used when scanning for
-     * classes. If none is set then the context classloader will be used.
-     *
-     * @param classLoaders a ClassLoader to use when scanning for classes
-     */
     public void setClassLoaders(Set<ClassLoader> classLoaders) {
         this.classLoaders = classLoaders;
     }
 
-    /**
-     * Attempts to discover classes that are assignable to the type provided. In
-     * the case that an interface is provided this method will collect
-     * implementations. In the case of a non-interface class, subclasses will be
-     * collected. Accumulated classes can be accessed by calling
-     * {@link #getClasses()}.
-     *
-     * @param parent       the class of interface to find subclasses or
-     *                     implementations of
-     * @param packageNames one or more package names to scan (including
-     *                     subpackages) for classes
-     */
-    public void findImplementations(Class parent, String... packageNames) {
+    @SuppressWarnings("unchecked")
+    public Set<Class> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
-            return;
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
-        }
-
-        Test test = new IsA(parent);
-        for (String pkg : packageNames) {
-            find(test, pkg);
-        }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + getClasses());
-        }
-    }
-
-    /**
-     * Attempts to discover classes that are annotated with to the annotation.
-     * Accumulated classes can be accessed by calling {@link #getClasses()}.
-     *
-     * @param annotation   the annotation that should be present on matching
-     *                     classes
-     * @param packageNames one or more package names to scan (including
-     *                     subpackages) for classes
-     */
-    public void findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
-        if (packageNames == null) {
-            return;
+            return Collections.EMPTY_SET;
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
-        Test test = new AnnotatedWith(annotation, true);
+        PackageScanFilter test = new AnnotatedWith(annotation, true);
+        Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
-            find(test, pkg);
+            find(test, pkg, classes);
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + getClasses());
+            LOG.debug("Found: " + classes);
         }
+
+        return classes;
     }
 
-    /**
-     * Attempts to discover classes that are annotated with any of the annotation.
-     * Accumulated classes can be accessed by calling {@link #getClasses()}.
-     *
-     * @param annotations  the annotations that should be present on matching
-     *                     classes
-     * @param packageNames one or more package names to scan (including
-     *                     subpackages) for classes
-     */
-    public void findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
+    @SuppressWarnings("unchecked")
+    public Set<Class> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
-            return;
+            return Collections.EMPTY_SET;
         }
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
         }
 
-        Test test = new AnnotatedWithAny(annotations, true);
+        PackageScanFilter test = new AnnotatedWithAny(annotations, true);
+        Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
-            find(test, pkg);
+            find(test, pkg, classes);
         }
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Found: " + getClasses());
+            LOG.debug("Found: " + classes);
         }
+
+        return classes;
     }
 
-    /**
-     * Scans for classes starting at the package provided and descending into
-     * subpackages. Each class is offered up to the Test as it is discovered,
-     * and if the Test returns true the class is retained. Accumulated classes
-     * can be fetched by calling {@link #getClasses()}.
-     *
-     * @param test        an instance of {@link Test} that will be used to filter
-     *                    classes
-     * @param packageName the name of the package from which to start scanning
-     *                    for classes, e.g. {@code net.sourceforge.stripes}
-     */
-    public void find(Test test, String packageName) {
+    @SuppressWarnings("unchecked")
+    public Set<Class> findImplementations(Class parent, String... packageNames) {
+        if (packageNames == null) {
+            return Collections.EMPTY_SET;
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
+        }
+
+        PackageScanFilter test = new IsA(parent);
+        Set<Class> classes = new LinkedHashSet<Class>();
+        for (String pkg : packageNames) {
+            find(test, pkg, classes);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found: " + classes);
+        }
+
+        return classes;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Set<Class> findByFilter(PackageScanFilter filter, String... packageNames) {
+        if (packageNames == null) {
+            return Collections.EMPTY_SET;
+        }
+
+        Set<Class> classes = new LinkedHashSet<Class>();
+        for (String pkg : packageNames) {
+            find(filter, pkg, classes);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found: " + classes);
+        }
+
+        return classes;
+    }
+
+
+    protected void find(PackageScanFilter test, String packageName, Set<Class> classes) {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
 
-        LOG.debug("Using only regular classloaders");
         for (ClassLoader classLoader : set) {            
-            find(test, packageName, classLoader);            
+            find(test, packageName, classLoader, classes);
         }
     }
 
-    
-
-    /**
-     * Tries to find the reosurce in the package using the class loader.
-     * <p/>
-     * Will handle both plain URL based classloaders and OSGi bundle loaders.
-     *
-     * @param test what to find
-     * @param packageName the package to search in
-     * @param loader the class loader     
-     */
-    protected void find(Test test, String packageName, ClassLoader loader) {
+    protected void find(PackageScanFilter test, String packageName, ClassLoader loader, Set<Class> classes) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Searching for: " + test + " in package: " + packageName + " using classloader: "
                     + loader.getClass().getName());
-        }        
+        }
 
         Enumeration<URL> urls;
         try {
@@ -423,7 +296,7 @@ public class ResolverUtil<T> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading from directory: " + file);
                     }
-                    loadImplementationsInDirectory(test, packageName, file);
+                    loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
                     InputStream stream;
                     if (urlPath.startsWith("http:")) {
@@ -441,7 +314,7 @@ public class ResolverUtil<T> {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Loading from jar: " + file);
                     }
-                    loadImplementationsInJar(test, packageName, stream, urlPath);
+                    loadImplementationsInJar(test, packageName, stream, urlPath, classes);
                 }
             } catch (IOException ioe) {
                 LOG.warn("Could not read entries in url: " + url, ioe);
@@ -467,7 +340,7 @@ public class ResolverUtil<T> {
         return loader.getResources(packageName);
     }
 
-    
+
 
 
     /**
@@ -484,7 +357,7 @@ public class ResolverUtil<T> {
      *                 <i>parent</i> would be <i>org/apache</i>
      * @param location a File object representing a directory
      */
-    private void loadImplementationsInDirectory(Test test, String parent, File location) {
+    private void loadImplementationsInDirectory(PackageScanFilter test, String parent, File location, Set<Class> classes) {
         File[] files = location.listFiles();
         StringBuilder builder = null;
 
@@ -497,9 +370,9 @@ public class ResolverUtil<T> {
                 String packageOrClass = parent == null ? name : builder.toString();
 
                 if (file.isDirectory()) {
-                    loadImplementationsInDirectory(test, packageOrClass, file);
+                    loadImplementationsInDirectory(test, packageOrClass, file, classes);
                 } else if (name.endsWith(".class")) {
-                    addIfMatching(test, packageOrClass);
+                    addIfMatching(test, packageOrClass, classes);
                 }
             }
         }
@@ -516,7 +389,7 @@ public class ResolverUtil<T> {
      * @param stream  the inputstream of the jar file to be examined for classes
      * @param urlPath the url of the jar file to be examined for classes
      */
-    private void loadImplementationsInJar(Test test, String parent, InputStream stream, String urlPath) {
+    private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream, String urlPath, Set<Class> classes) {
         JarInputStream jarStream = null;
         try {
             jarStream = new JarInputStream(stream);
@@ -527,7 +400,7 @@ public class ResolverUtil<T> {
                 if (name != null) {
                     name = name.trim();
                     if (!entry.isDirectory() && name.startsWith(parent) && name.endsWith(".class")) {
-                        addIfMatching(test, name);
+                        addIfMatching(test, name, classes);
                     }
                 }
             }
@@ -548,7 +421,7 @@ public class ResolverUtil<T> {
      * @param fqn  the fully qualified name of a class
      */
     @SuppressWarnings("unchecked")
-    protected void addIfMatching(Test test, String fqn) {
+    protected void addIfMatching(PackageScanFilter test, String fqn, Set<Class> classes) {
         try {
             String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
             Set<ClassLoader> set = getClassLoaders();
@@ -563,7 +436,7 @@ public class ResolverUtil<T> {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Found class: " + type + " in classloader: " + classLoader);
                         }
-                        matches.add((Class<T>)type);
+                        classes.add(type);
                     }
                     found = true;
                     break;

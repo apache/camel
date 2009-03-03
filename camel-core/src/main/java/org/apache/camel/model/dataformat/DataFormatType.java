@@ -26,7 +26,6 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Represents the base XML type for DataFormat.
@@ -61,7 +60,7 @@ public class DataFormatType extends IdentifiedType {
      */
     public static DataFormat getDataFormat(RouteContext routeContext, DataFormatType type, String ref) {
         if (type == null) {
-            notNull(ref, "ref or dataFormatType");
+            ObjectHelper.notNull(ref, "ref or dataFormatType");
 
             DataFormat dataFormat = lookup(routeContext, ref, DataFormat.class);
             if (dataFormat == null) {
@@ -109,7 +108,7 @@ public class DataFormatType extends IdentifiedType {
     @SuppressWarnings("unchecked")
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (dataFormatTypeName != null) {
-            Class type = ObjectHelper.loadClass(dataFormatTypeName, getClass().getClassLoader());
+            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(dataFormatTypeName);
             if (type == null) {
                 throw new IllegalArgumentException("The class " + dataFormatTypeName + " is not on the classpath! Cannot use the dataFormat " + this);
             }

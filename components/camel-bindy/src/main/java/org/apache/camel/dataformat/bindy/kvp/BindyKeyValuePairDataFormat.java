@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -53,23 +54,24 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
+        BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
         
         for (Map<String, Object> model : models) {
-
-            String result = getFactory().unbind(model);
+            String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
         }
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+        BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
         // Create POJO where messages data will be saved
-        Map<String, Object> model = getFactory().factory();
+        Map<String, Object> model = factory.factory();
 
         InputStreamReader in = new InputStreamReader(inputStream);
 
@@ -77,8 +79,8 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         Scanner scanner = new Scanner(in);
 
         // Retrieve the pair separator defined to split the record
-        ObjectHelper.notEmpty(getFactory().getPairSeparator(), "The separator has not been defined in the annotation @Message.");
-        String separator = getFactory().getPairSeparator();
+        ObjectHelper.notEmpty(factory.getPairSeparator(), "The separator has not been defined in the annotation @Message.");
+        String separator = factory.getPairSeparator();
 
         int count = 0;
         try {
@@ -102,10 +104,10 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
                 List<String> result = Arrays.asList(line.split(separator));
                 
                 // Bind data from message with model classes
-                getFactory().bind(result, model);
+                factory.bind(result, model);
 
                 // Link objects together
-                getFactory().link(model);
+                factory.link(model);
 
                 // Add objects graph to the list
                 models.add(model);
@@ -128,9 +130,9 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     /**
      * Method used to create the singleton of the BindyKeyValuePairFactory
      */
-    public BindyKeyValuePairFactory getFactory() throws Exception {
+    public BindyKeyValuePairFactory getFactory(PackageScanClassResolver resolver) throws Exception {
         if (modelFactory == null) {
-            modelFactory = new BindyKeyValuePairFactory(this.packageName);
+            modelFactory = new BindyKeyValuePairFactory(resolver, this.packageName);
         }
         return modelFactory;
     }

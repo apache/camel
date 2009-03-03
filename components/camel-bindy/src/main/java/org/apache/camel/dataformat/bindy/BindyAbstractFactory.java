@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,15 +35,15 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
-    protected Set<Class<?>> models;
+    protected Set<Class> models;
     protected Map<String, Field> mapAnnotedLinkField = new LinkedHashMap<String, Field>();    
 
     private AnnotationModelLoader modelsLoader;
     
     private String packageName;
 
-    public BindyAbstractFactory(String packageName) throws Exception {
-        modelsLoader = new AnnotationModelLoader();
+    public BindyAbstractFactory(PackageScanClassResolver resolver, String packageName) throws Exception {
+        this.modelsLoader = new AnnotationModelLoader(resolver);
         this.packageName = packageName;
         initModel();
     }

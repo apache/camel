@@ -17,7 +17,6 @@
 package org.apache.camel.osgi;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,10 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
-import org.apache.camel.spring.RouteBuilderFinder;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.FactoryFinder;
-import org.apache.camel.util.ResolverUtil;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -51,28 +47,17 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     protected SpringCamelContext createContext() {
         SpringCamelContext context = super.createContext();
         if (bundleContext != null) {
+            context.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
-            addOsgiAnnotationTypeConverterLoader(context, bundleContext);
             context.setFactoryFinderClass(OsgiFactoryFinder.class);
+            addOsgiAnnotationTypeConverterLoader(context);
         }
         
         return context;
     }    
     
-    /**
-     * The factory method for create the ResolverUtil
-     * @return a new instance of ResolverUtil
-     */
-    protected ResolverUtil createResolverUtil() {
-        if (bundleContext != null) {
-            return new OsgiResolverUtil(bundleContext);
-        } else {
-            return new ResolverUtil();
-        }
-    }
-    
-    protected void addOsgiAnnotationTypeConverterLoader(SpringCamelContext context, BundleContext bundleContext) {
+    protected void addOsgiAnnotationTypeConverterLoader(SpringCamelContext context) {
         DefaultTypeConverter typeConverter = (DefaultTypeConverter) context.getTypeConverter();
         List<TypeConverterLoader> typeConverterLoaders = typeConverter.getTypeConverterLoaders();
         // Remove the AnnotationTypeConverterLoader
@@ -86,7 +71,9 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         if (atLoader != null) {
             typeConverterLoaders.remove(atLoader);
         }
-        typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
+
+        // add our osgi annotation loader
+        typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(context.getPackageScanClassResolver()));
     }    
     
 }

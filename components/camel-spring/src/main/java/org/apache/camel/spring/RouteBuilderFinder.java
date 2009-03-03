@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.apache.camel.Routes;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.ResolverUtil;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -38,30 +38,22 @@ public class RouteBuilderFinder {
     private static final transient Log LOG = LogFactory.getLog(RouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
-    private ResolverUtil resolver;
+    private PackageScanClassResolver resolver;
     private ApplicationContext applicationContext;    
     private BeanPostProcessor beanPostProcessor;
 
     @SuppressWarnings("unchecked")
-    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader, BeanPostProcessor postProcessor, ResolverUtil resolverUtil) {
+    public RouteBuilderFinder(SpringCamelContext camelContext, String[] packages, ClassLoader classLoader,
+                              BeanPostProcessor postProcessor, PackageScanClassResolver resolver) {
         this.camelContext = camelContext;
         this.applicationContext = camelContext.getApplicationContext();
         this.packages = packages;
         this.beanPostProcessor = postProcessor;
-        this.resolver = resolverUtil;
-        // lets add all the available class loaders just in case of weirdness
-        // we could make this more strict once we've worked out all the gremlins
-        // in servicemix-camel
-        Set set = resolver.getClassLoaders();
-        set.clear();
-        set.add(classLoader);
-/*
-        set.add(classLoader);
-        set.add(applicationContext.getClassLoader());
-        set.add(getClass().getClassLoader());
-*/
+        this.resolver = resolver;
+        // add our provided loader as well
+        resolver.addClassLoader(classLoader);
     }
-  
+
     public String[] getPackages() {
         return packages;
     }
@@ -70,13 +62,11 @@ public class RouteBuilderFinder {
         return applicationContext;
     }
 
-
     /**
      * Appends all the {@link RouteBuilder} instances that can be found on the classpath
      */
     public void appendBuilders(List<Routes> list) throws IllegalAccessException, InstantiationException {
-        resolver.findImplementations(Routes.class, packages);
-        Set<Class> classes = resolver.getClasses();
+        Set<Class> classes = resolver.findImplementations(Routes.class, packages);
         for (Class aClass : classes) {
             if (shouldIgnoreBean(aClass)) {
                 continue;

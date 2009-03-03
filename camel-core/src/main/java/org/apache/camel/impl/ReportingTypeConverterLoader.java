@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,6 +46,10 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
 
     };
     private List<TypeMapping> typeMappings = new ArrayList<TypeMapping>();
+
+    public ReportingTypeConverterLoader(PackageScanClassResolver resolver) {
+        super(resolver);
+    }
 
     public TypeMapping[] getTypeConversions() {
         Collections.sort(typeMappings, COMPARE_LAST_LOADED_FIRST);
