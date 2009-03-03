@@ -38,8 +38,8 @@ public class QuartzCronRouteTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: e1
                 // triggers every 2th second at precise 00,02,04,06..58
-                // notice we must use _ as space when configurd using URI parameter
-                from("quartz://myGroup/myTimerName?cron=0/2_*_*_*_*_?").to("mock:result");
+                // notice we must use + as space when configurd using URI parameter
+                from("quartz://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("mock:result");
                 // END SNIPPET: e1
             }
         };

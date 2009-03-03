@@ -99,12 +99,10 @@ public class QuartzComponent extends DefaultComponent {
     }
 
     protected CronTrigger createCronTrigger(String path) throws ParseException {
-        // replace _ back to space so its a cron expression
-        String s = path.replaceAll("_", " ");
         // replace + back to space so its a cron expression
-        s = s.replaceAll("\\+", " ");
+        path = path.replaceAll("\\+", " ");
         CronTrigger cron = new CronTrigger();
-        cron.setCronExpression(s);
+        cron.setCronExpression(path);
         return cron;
     }
 
@@ -114,14 +112,18 @@ public class QuartzComponent extends DefaultComponent {
         if (scheduler == null) {
             scheduler = getScheduler();
         }
-        LOG.debug("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Starting Quartz scheduler: " + scheduler.getSchedulerName());
+        }
         scheduler.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         if (scheduler != null) {
-            LOG.debug("Shutting down Quartz scheduler: " + scheduler.getSchedulerName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Shutting down Quartz scheduler: " + scheduler.getSchedulerName());
+            }
             scheduler.shutdown();
         }
         super.doStop();
@@ -151,11 +153,11 @@ public class QuartzComponent extends DefaultComponent {
         this.scheduler = scheduler;
     }
 
-    public Map getTriggers() {
+    public Map<Trigger, JobDetail> getTriggers() {
         return triggers;
     }
 
-    public void setTriggers(final Map triggers) {
+    public void setTriggers(final Map<Trigger, JobDetail> triggers) {
         this.triggers = triggers;
     }
 
