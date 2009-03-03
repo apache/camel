@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.rmi.registry.Registry;
-import java.rmi.NotBoundException;
 import java.rmi.AccessException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.Registry;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchBeanException;
