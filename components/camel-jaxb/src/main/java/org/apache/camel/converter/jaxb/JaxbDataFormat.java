@@ -51,8 +51,8 @@ public class JaxbDataFormat implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
-        try {
-            // must create a new instance of marshaller as its not thred safe
+        try {            
+            // must create a new instance of marshaller as its not thread safe
             getContext().createMarshaller().marshal(graph, stream);
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
@@ -61,7 +61,7 @@ public class JaxbDataFormat implements DataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, ClassNotFoundException {
         try {
-            // must create a new instance of unmarshaller as its not thred safe
+            // must create a new instance of unmarshaller as its not thread safe
             Object answer = getContext().createUnmarshaller().unmarshal(stream);
             if (answer instanceof JAXBElement && isIgnoreJAXBElement()) {
                 answer = ((JAXBElement)answer).getValue();
