@@ -36,11 +36,11 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
     }
     
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
-        System.out.println(" Adding the type converter" + typeConverter);
+        typeConverters.add(typeConverter);
     }
 
     public void addFallbackTypeConverter(TypeConverter typeConverter) {
-        System.out.println(" Adding the fall back type converter" + typeConverter);
+        fallbackTypeConverters.add(typeConverter);
     }
 
     public TypeConverter lookup(Class toType, Class fromType) {       
