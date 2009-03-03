@@ -17,16 +17,12 @@
 package org.apache.camel.component.cxf;
 
 import java.lang.reflect.Proxy;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.namespace.QName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.common.classloader.ClassLoaderUtils;
@@ -66,30 +62,11 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     private void init(CxfEndpointBean bean) throws Exception {
         this.bean = bean;
         
-        // set properties from bean which can be overridden by endpoint URI
-        setPropertiesBean();
-        
         // create configurer
         configurer = new ConfigurerImpl(((SpringCamelContext)getCamelContext())
             .getApplicationContext());
     }
 
-    /**
-     * Read properties from the CxfEndpointBean and copy them to the 
-     * properties of this class.  Note that the properties values can 
-     * be overridden by values in URI query as the DefaultComponent 
-     * will perform "setProperties" later (after the constructor). 
-     */
-    private void setPropertiesBean() throws Exception {
-        if (bean.getProperties() != null) {
-            Map<String, Object> copy = new HashMap<String, Object>();
-            copy.putAll(bean.getProperties());
-            
-            // pass the copy the method modifies the properties map
-            IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), 
-                    this, copy);      
-        }
-    }
     
     /**
      * 

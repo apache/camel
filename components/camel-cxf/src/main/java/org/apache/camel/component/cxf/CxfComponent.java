@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -60,6 +61,16 @@ public class CxfComponent extends DefaultComponent {
                     CxfEndpointBean.class);
 
             result = new CxfSpringEndpoint(this, bean);
+           
+            // Apply Spring bean properties (including # notation referenced bean).  Note that the
+            // Spring bean properties values can be overridden by property defined in URI query.
+            // The super class (DefaultComponent) will invoke "setProperties" after this method 
+            // with to apply properties defined by URI query. 
+            if (bean.getProperties() != null) {
+                Map<String, Object> copy = new HashMap<String, Object>();
+                copy.putAll(bean.getProperties());     
+                setProperties(result, copy);      
+            }
             
         } else {
             // endpoint URI does not specify a bean
