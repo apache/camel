@@ -27,11 +27,10 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -43,11 +42,9 @@ import org.apache.commons.logging.LogFactory;
 public class StreamCacheConverter {
     private static final transient Log LOG = LogFactory.getLog(StreamCacheConverter.class);
 
-    private XmlConverter converter = new XmlConverter();
-
     @Converter
-    public StreamCache convertToStreamCache(StreamSource source) throws IOException {
-        return new StreamSourceCache(source);
+    public StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
+        return new StreamSourceCache(source, exchange);
     }
     
     @Converter
@@ -63,18 +60,21 @@ public class StreamCacheConverter {
     }
     
     @Converter
-    public StreamCache convertToStreamCache(SAXSource source) throws TransformerException {
-        return new SourceCache(converter.toString(source));
+    public StreamCache convertToStreamCache(SAXSource source, Exchange exchange) throws TransformerException {
+        String data = exchange.getContext().getTypeConverter().convertTo(String.class, source);
+        return new SourceCache(data);
     }
 
     @Converter
-    public StreamCache convertToStreamCache(InputStream stream) throws IOException {
-        return new InputStreamCache(IOConverter.toBytes(stream));
+    public StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
+        byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, stream);
+        return new InputStreamCache(bytes);
     }
 
     @Converter
-    public StreamCache convertToStreamCache(Reader reader) throws IOException {
-        return new ReaderCache(IOConverter.toString(reader));
+    public StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
+        String data = exchange.getContext().getTypeConverter().convertTo(String.class, reader);
+        return new ReaderCache(data);
     }
 
     /*
@@ -104,17 +104,20 @@ public class StreamCacheConverter {
         InputStreamCache inputStreamCache;
         ReaderCache readCache;
         
-        public StreamSourceCache(StreamSource source) throws IOException {
+        public StreamSourceCache(StreamSource source, Exchange exchange) throws IOException {
             if (source.getInputStream() != null) {
-                inputStreamCache = new InputStreamCache(IOConverter.toBytes(source.getInputStream()));
+                byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, source.getInputStream());
+                inputStreamCache = new InputStreamCache(bytes);
                 setInputStream(inputStreamCache);
                 setSystemId(source.getSystemId());
             }
             if (source.getReader() != null) {
-                readCache = new ReaderCache(IOConverter.toString(source.getReader()));
+                String data = exchange.getContext().getTypeConverter().convertTo(String.class, source.getReader());
+                readCache = new ReaderCache(data);
                 setReader(readCache);
             }
         }
+
         public void reset() {
             if (inputStreamCache != null) {
                 inputStreamCache.reset();
@@ -144,7 +147,7 @@ public class StreamCacheConverter {
             try {
                 super.reset();
             } catch (IOException e) {
-                LOG.warn("Exception is thrown when resets the ReaderCache", e);
+                LOG.warn("Cannot reset cache", e);
             }
         }
 
