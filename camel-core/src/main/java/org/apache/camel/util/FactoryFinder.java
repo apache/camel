@@ -32,6 +32,8 @@ import org.apache.camel.spi.Injector;
  * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
  */
 public class FactoryFinder {
+    // TODO: Extract interface to SPI
+
     protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
     private final String path;    
 

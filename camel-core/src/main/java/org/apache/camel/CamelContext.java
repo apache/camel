@@ -24,11 +24,13 @@ import java.util.concurrent.Callable;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RouteType;
 import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.FactoryFinder;
@@ -345,4 +347,25 @@ public interface CamelContext extends Service {
      * Returns the current status of the given route
      */
     ServiceStatus getRouteStatus(RouteType route);
+
+    /**
+     * Returns the class resolver to be used for loading/lookup of classes.
+     */
+    ClassResolver getClassResolver();
+
+    /**
+     * Returns the package scanning class resolver
+     */
+    PackageScanClassResolver getPackageScanClassResolver();
+
+    /**
+     * Sets the class resolver to be use
+     */
+    void setClassResolver(ClassResolver resolver);
+
+    /**
+     * Sets the package scanning class resolver to use
+     */
+    void setPackageScanClassResolver(PackageScanClassResolver resolver);
+
 }

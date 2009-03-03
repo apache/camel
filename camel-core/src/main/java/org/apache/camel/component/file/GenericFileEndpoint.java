@@ -131,7 +131,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
         if (factory == null) {
             // use default
-            factory = ObjectHelper.loadClass(DEFAULT_STRATEGYFACTORY_CLASS);
+            factory = this.getCamelContext().getClassResolver().resolveClass(DEFAULT_STRATEGYFACTORY_CLASS);
             if (factory == null) {
                 throw new TypeNotPresentException(DEFAULT_STRATEGYFACTORY_CLASS + " class not found", null);
             }

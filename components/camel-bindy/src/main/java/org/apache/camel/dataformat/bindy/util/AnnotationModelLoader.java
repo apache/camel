@@ -23,18 +23,18 @@ import java.util.Set;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
-import org.apache.camel.util.ResolverUtil;
+import org.apache.camel.spi.PackageScanClassResolver;
 
 /**
  * Annotation based loader for model classes with Bindy annotations.
  */
 public class AnnotationModelLoader {
 
-    private ResolverUtil<Object> resolver;
+    private PackageScanClassResolver resolver;
     private Set<Class<? extends Annotation>> annotations;
 
-    public AnnotationModelLoader() {
-        resolver = new ResolverUtil<Object>();
+    public AnnotationModelLoader(PackageScanClassResolver resolver) {
+        this.resolver = resolver;
 
         annotations = new LinkedHashSet<Class<? extends Annotation>>();
         annotations.add(CsvRecord.class);
@@ -42,9 +42,8 @@ public class AnnotationModelLoader {
         annotations.add(Message.class);
     }
 
-    public Set<Class<?>> loadModels(String packageName) throws Exception {
-        resolver.findAnnotated(annotations, packageName);
-        return resolver.getClasses();
+    public Set<Class> loadModels(String packageName) throws Exception {
+        return resolver.findAnnotated(annotations, packageName);
     }
 
 }

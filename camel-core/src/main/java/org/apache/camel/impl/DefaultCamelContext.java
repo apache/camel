@@ -49,6 +49,7 @@ import org.apache.camel.model.dataformat.DataFormatType;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
@@ -56,6 +57,7 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -101,6 +103,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
     private Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
+    private ClassResolver classResolver;
+    private PackageScanClassResolver packageScanClassResolver;
 
     public DefaultCamelContext() {
         name = NAME_PREFIX + ++nameSuffix;
@@ -127,6 +131,21 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 LOG.warn("Cannot use JMX lifecycle strategy. Using DefaultLifecycleStrategy instead.");
                 lifecycleStrategy = new DefaultLifecycleStrategy();
             }
+        }
+
+        if (classResolver == null) {
+            classResolver = new DefaultClassResolver();
+        }
+
+        if (packageScanClassResolver == null) {
+            // use WebSphere specific resolver if running on WebSphere
+            if (WebSpherePacakageScanClassResolver.isWebSphereClassLoader(this.getClass().getClassLoader())) {
+                LOG.info("Using WebSphere specific PackageScanClassResolver");
+                packageScanClassResolver = new WebSpherePacakageScanClassResolver("META-INF/services/org/apache/camel/TypeConverter");
+            } else {
+                packageScanClassResolver = new DefaultPackageScanClassResolver();
+            }
+
         }
     }
 
@@ -764,9 +783,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-
-
-    protected synchronized  void doStop() throws Exception {
+    protected synchronized void doStop() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
         stopServices(routeServices.values());
 
@@ -778,7 +795,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
-
 
     /**
      * Lets force some lazy initialization to occur upfront before we start any
@@ -802,7 +818,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        DefaultTypeConverter answer = new DefaultTypeConverter(getInjector());
+        DefaultTypeConverter answer = new DefaultTypeConverter(packageScanClassResolver, getInjector());
         typeConverterRegistry = answer;
         return answer;
     }
@@ -910,9 +926,23 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }
-
     }
 
+    public ClassResolver getClassResolver() {
+        return classResolver;
+    }
+
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
+    }
+
+    public PackageScanClassResolver getPackageScanClassResolver() {
+        return packageScanClassResolver;
+    }
+
+    public void setPackageScanClassResolver(PackageScanClassResolver packageScanClassResolver) {
+        this.packageScanClassResolver = packageScanClassResolver;
+    }
 
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {

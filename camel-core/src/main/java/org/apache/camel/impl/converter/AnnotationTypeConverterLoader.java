@@ -34,10 +34,9 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResolverUtil;
-import org.apache.camel.util.WebSphereResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,28 +49,17 @@ import org.apache.commons.logging.LogFactory;
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
     private static final transient Log LOG = LogFactory.getLog(AnnotationTypeConverterLoader.class);
-    protected ResolverUtil resolver;
+    protected PackageScanClassResolver resolver;
     private Set<Class> visitedClasses = new HashSet<Class>();
 
-    public AnnotationTypeConverterLoader() {
-        // use WebSphere specific resolver if running on WebSphere
-        if (WebSphereResolverUtil.isWebSphereClassLoader(this.getClass().getClassLoader())) {
-            LOG.info("Using WebSphere specific ResolverUtil");
-            resolver = new WebSphereResolverUtil(META_INF_SERVICES);
-        } else {
-            resolver = new ResolverUtil();
-        }
-    }
-
-    public AnnotationTypeConverterLoader(ResolverUtil resolverUtil) {
-        this.resolver = resolverUtil;
+    public AnnotationTypeConverterLoader(PackageScanClassResolver resolver) {
+        this.resolver = resolver;
     }
 
     @SuppressWarnings("unchecked")
     public void load(TypeConverterRegistry registry) throws Exception {
         String[] packageNames = findPackageNames();
-        resolver.findAnnotated(Converter.class, packageNames);
-        Set<Class> classes = resolver.getClasses();
+        Set<Class> classes = resolver.findAnnotated(Converter.class, packageNames);
         for (Class type : classes) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Loading converter class: " + ObjectHelper.name(type));

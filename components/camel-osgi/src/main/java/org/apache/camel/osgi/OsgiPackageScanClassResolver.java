@@ -22,25 +22,19 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.util.ResolverUtil;
-import org.apache.camel.util.ResolverUtil.Test;
+import org.apache.camel.impl.DefaultPackageScanClassResolver;
+import org.apache.camel.spi.PackageScanFilter;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
-public class OsgiResolverUtil extends ResolverUtil {
+public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolver {
     private Bundle bundle;
     
-    public OsgiResolverUtil(BundleContext context) {
+    public OsgiPackageScanClassResolver(BundleContext context) {
         bundle = context.getBundle();
     }
-    
-    /**
-     * Returns the classloaders that will be used for scanning for classes. 
-     * Here we just add BundleDelegatingClassLoader here
-     *
-     * @return the ClassLoader instances that will be used to scan for classes
-     */
+
     public Set<ClassLoader> getClassLoaders() {
         Set<ClassLoader> classLoaders = super.getClassLoaders();
         // Using the Activator's bundle to make up a class loader
@@ -49,54 +43,37 @@ public class OsgiResolverUtil extends ResolverUtil {
         return classLoaders;
     }
     
-    /**
-     * Scans for classes starting at the package provided and descending into
-     * subpackages. Each class is offered up to the Test as it is discovered,
-     * and if the Test returns true the class is retained. Accumulated classes
-     * can be fetched by calling {@link #getClasses()}.
-     *
-     * @param test        an instance of {@link Test} that will be used to filter
-     *                    classes
-     * @param packageName the name of the package from which to start scanning
-     *                    for classes, e.g. {@code net.sourceforge.stripes}
-     */
-    public void find(Test test, String packageName) {
+    public void find(PackageScanFilter test, String packageName, Set<Class> classes) {
         packageName = packageName.replace('.', '/');
-
         Set<ClassLoader> set = getClassLoaders();
-
         ClassLoader osgiClassLoader = getOsgiClassLoader(set);
 
         if (osgiClassLoader != null) {
             // if we have an osgi bundle loader use this one only
             LOG.debug("Using only osgi bundle classloader");
-            findInOsgiClassLoader(test, packageName, osgiClassLoader);
+            findInOsgiClassLoader(test, packageName, osgiClassLoader, classes);
         } else {
             LOG.debug("Using only regular classloaders");
             for (ClassLoader classLoader : set) {
                 if (!isOsgiClassloader(classLoader)) {
-                    find(test, packageName, classLoader);
+                    find(test, packageName, classLoader, classes);
                 }
             }
         }
     }
 
-    
-    private void findInOsgiClassLoader(Test test, String packageName, ClassLoader osgiClassLoader) {
+    private void findInOsgiClassLoader(PackageScanFilter test, String packageName, ClassLoader osgiClassLoader, Set<Class> classes) {
         try {
             Method mth = osgiClassLoader.getClass().getMethod("getBundle", new Class[]{});
             if (mth != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Loading from osgi buindle using classloader: " + osgiClassLoader);
                 }
-                loadImplementationsInBundle(test, packageName, osgiClassLoader, mth);
-                return;
+                loadImplementationsInBundle(test, packageName, osgiClassLoader, mth, classes);
             }
         } catch (NoSuchMethodException e) {
             LOG.warn("It's not an osgi bundle classloader: " + osgiClassLoader);
-            return;
         }
-        
     }
 
     /**
@@ -126,13 +103,13 @@ public class OsgiResolverUtil extends ResolverUtil {
         return false;
     }
     
-    private void loadImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
+    private void loadImplementationsInBundle(PackageScanFilter test, String packageName, ClassLoader loader, Method mth, Set<Class> classes) {
         // Use an inner class to avoid a NoClassDefFoundError when used in a non-osgi env
         Set<String> urls = OsgiUtil.getImplementationsInBundle(test, packageName, loader, mth);
         if (urls != null) {
             for (String url : urls) {
                 // substring to avoid leading slashes
-                addIfMatching(test, url);
+                addIfMatching(test, url, classes);
             }
         }
     }
@@ -141,7 +118,8 @@ public class OsgiResolverUtil extends ResolverUtil {
         private OsgiUtil() {
             // Helper class
         }
-        static Set<String> getImplementationsInBundle(Test test, String packageName, ClassLoader loader, Method mth) {
+        @SuppressWarnings("unchecked")
+        static Set<String> getImplementationsInBundle(PackageScanFilter test, String packageName, ClassLoader loader, Method mth) {
             try {
                 org.osgi.framework.Bundle bundle = (org.osgi.framework.Bundle) mth.invoke(loader);
                 org.osgi.framework.Bundle[] bundles = bundle.getBundleContext().getBundles();
@@ -154,7 +132,6 @@ public class OsgiResolverUtil extends ResolverUtil {
                     while (paths != null && paths.hasMoreElements()) {
                         URL path = paths.nextElement();
                         String pathString = path.getPath();
-                        pathString.indexOf(packageName);
                         urls.add(pathString.substring(pathString.indexOf(packageName)));
                     }
                 }

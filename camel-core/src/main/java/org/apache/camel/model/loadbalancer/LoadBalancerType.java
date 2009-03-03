@@ -31,7 +31,6 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Represents an XML &lt;loadBalance/&gt; element
@@ -58,7 +57,7 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
 
     public static LoadBalancer getLoadBalancer(RouteContext routeContext, LoadBalancerType type, String ref) {
         if (type == null) {
-            notNull(ref, "ref or LoadBalancerType");
+            ObjectHelper.notNull(ref, "ref or LoadBalancerType");
             LoadBalancer loadBalancer = routeContext.lookup(ref, LoadBalancer.class);
             if (loadBalancer instanceof LoadBalancerType) {
                 type = (LoadBalancerType) loadBalancer;
@@ -103,7 +102,7 @@ public class LoadBalancerType extends IdentifiedType implements LoadBalancer {
     @SuppressWarnings("unchecked")
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {
         if (loadBalancerTypeName != null) {
-            Class type = ObjectHelper.loadClass(loadBalancerTypeName, getClass().getClassLoader());
+            Class type = routeContext.getCamelContext().getClassResolver().resolveClass(loadBalancerTypeName);
             if (type == null) {
                 throw new IllegalArgumentException("Cannot find class: " + loadBalancerTypeName + " in the classpath");
             }

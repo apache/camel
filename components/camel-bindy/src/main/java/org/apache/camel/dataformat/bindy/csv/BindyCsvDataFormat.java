@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,22 +53,24 @@ public class BindyCsvDataFormat implements DataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
+        BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
 
         for (Map<String, Object> model : models) {
-            String result = getFactory().unbind(model);
+            String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
         }
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
+        BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
         // Create POJO where CSV data will be stored
-        Map<String, Object> model = getFactory().factory();
+        Map<String, Object> model = factory.factory();
 
         InputStreamReader in = new InputStreamReader(inputStream);
 
@@ -74,14 +78,14 @@ public class BindyCsvDataFormat implements DataFormat {
         Scanner scanner = new Scanner(in);
 
         // Retrieve the separator defined to split the record
-        String separator = getFactory().getSeparator();
+        String separator = factory.getSeparator();
         ObjectHelper.notEmpty(separator, "The separator has not been defined in the annotation @Record or not instantiated during initModel.");
 
         int count = 0;
         try {
 
             // If the first line of the CSV file contains columns name, then we skip this line
-            if (getFactory().getSkipFirstLine()) {
+            if (factory.getSkipFirstLine()) {
                 scanner.nextLine();
             }
 
@@ -104,10 +108,10 @@ public class BindyCsvDataFormat implements DataFormat {
                 List<String> result = Arrays.asList(line.split(separator));
                 
                 // Bind data from CSV record with model classes
-                getFactory().bind(result, model);
+                factory.bind(result, model);
 
                 // Link objects together
-                getFactory().link(model);
+                factory.link(model);
 
                 // Add objects graph to the list
                 models.add(model);
@@ -130,9 +134,9 @@ public class BindyCsvDataFormat implements DataFormat {
     /**
      * Method used to create the singleton of the BindyCsvFactory
      */
-    public BindyCsvFactory getFactory() throws Exception {
+    public BindyCsvFactory getFactory(PackageScanClassResolver resolver) throws Exception {
         if (modelFactory == null) {
-            modelFactory = new BindyCsvFactory(this.packageName);
+            modelFactory = new BindyCsvFactory(resolver, packageName);
         }
         return modelFactory;
     }

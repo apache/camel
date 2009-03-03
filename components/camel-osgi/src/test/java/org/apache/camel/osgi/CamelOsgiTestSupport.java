@@ -24,6 +24,7 @@ import org.springframework.osgi.mock.MockBundleContext;
 public class CamelOsgiTestSupport extends TestCase {
     private Activator testActivator;
     private MockBundleContext bundleContext = new MockBundleContext();
+    private OsgiPackageScanClassResolver resolver = new OsgiPackageScanClassResolver(bundleContext);
     private MockBundle bundle = new CamelMockBundle();
     
     public void setUp() throws Exception {        
@@ -44,4 +45,7 @@ public class CamelOsgiTestSupport extends TestCase {
         return bundleContext;
     }
 
+    public OsgiPackageScanClassResolver getResolver() {
+        return resolver;
+    }
 }

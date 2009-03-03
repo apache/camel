@@ -47,10 +47,11 @@ import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.LifecycleStrategy;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ProcessorTypeHelper;
-import org.apache.camel.util.ResolverUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -150,6 +151,16 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void afterPropertiesSet() throws Exception {
         // TODO there should be a neater way to do this!
+
+        // set the resolvers first
+        PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
+        if (packageResolver != null) {
+            getContext().setPackageScanClassResolver(packageResolver);
+        }
+        ClassResolver classResolver = getBeanForType(ClassResolver.class);
+        if (classResolver != null) {
+            getContext().setClassResolver(classResolver);
+        }
 
         Debugger debugger = getBeanForType(Debugger.class);
         if (debugger != null) {
@@ -521,19 +532,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      */
     protected void findRouteBuilders() throws Exception, InstantiationException {
         if (getPackages() != null && getPackages().length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), getPackages(), getContextClassLoaderOnStart(), getBeanPostProcessor(), createResolverUtil());
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), getPackages(), getContextClassLoaderOnStart(),
+                    getBeanPostProcessor(), getContext().getPackageScanClassResolver());
             finder.appendBuilders(getAdditionalBuilders());
         }
     }
     
-    /**
-     * The factory method for create the ResolverUtil
-     * @return a new instance of ResolverUtil
-     */
-    protected ResolverUtil createResolverUtil() {
-        return new ResolverUtil();
-    }
-
     public void setDataFormats(DataFormatsType dataFormats) {
         this.dataFormats = dataFormats;
     }

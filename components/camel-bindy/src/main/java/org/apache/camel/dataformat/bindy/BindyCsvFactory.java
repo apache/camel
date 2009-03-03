@@ -27,6 +27,7 @@ import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,9 +47,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private String separator;
     private boolean skipFirstLine;
 
-    public BindyCsvFactory(String packageName) throws Exception {
-        
-        super(packageName);
+    public BindyCsvFactory(PackageScanClassResolver resolver, String packageName) throws Exception {
+        super(resolver, packageName);
         
         // initialize specific parameters of the csv model
         initCsvModel();
