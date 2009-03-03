@@ -14,34 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.osgi;
+package org.apache.camel.osgi.test;
 
-import junit.framework.TestCase;
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.mock.MockBundle;
-import org.springframework.osgi.mock.MockBundleContext;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CamelOsgiTestSupport extends TestCase {
-    private Activator testActivator;
-    private MockBundleContext bundleContext = new MockBundleContext();
-    private MockBundle bundle = new CamelMockBundle();
+import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.converter.TypeConverterRegistry;
+import org.apache.camel.spi.Injector;
+
+public class MockTypeConverterRegistry implements TypeConverterRegistry {
+    private List<TypeConverter> typeConverters = new ArrayList<TypeConverter>();    
     
-    public void setUp() throws Exception {        
-        bundleContext.setBundle(bundle);
-        testActivator = new Activator();
-        testActivator.start(bundleContext);
+    public List<TypeConverter> getTypeConverters() {
+        return typeConverters;
     }
     
-    public void tearDown() throws Exception {
-        testActivator.stop(bundleContext);
+    public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
+        typeConverters.add(typeConverter);
     }
     
-    public Activator getActivator() {
-        return testActivator;
+    public TypeConverter lookup(Class toType, Class fromType) {       
+        return null;
     }
-    
-    public BundleContext getBundleContext() {
-        return bundleContext;
+
+    public void setInjector(Injector injector) {
+       // do nothing
+    }
+
+    public Injector getInjector() {
+        return null;
     }
 
 }
+
