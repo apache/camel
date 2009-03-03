@@ -77,6 +77,7 @@ public class JmsMessage extends DefaultMessage {
         }
         setBody(that.getBody());
         getHeaders().putAll(that.getHeaders());
+        getAttachments().putAll(that.getAttachments());
     }
 
     /**
