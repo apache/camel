@@ -19,6 +19,11 @@ package org.apache.camel.osgi.test;
 import java.util.Collection;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.FallbackConverter;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 
 @Converter
@@ -48,7 +53,29 @@ public final class MyTypeConverter {
             return answer.booleanValue();
         }
         return false;
-    }    
+    }
+    
+    @FallbackConverter
+    public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
+        // use a fallback type converter so we can convert the embedded body if the value is GenericFile
+        if (GenericFile.class.isAssignableFrom(value.getClass())) {
+            GenericFile file = (GenericFile) value;
+            Class from = file.getBody().getClass();
+
+            // maybe from is already the type we want
+            if (from.isAssignableFrom(type)) {
+                return file.getBody();
+            }
+            // no then try to lookup a type converter
+            TypeConverter tc = registry.lookup(type, from);
+            if (tc != null) {
+                Object body = file.getBody();
+                return tc.convertTo(type, exchange, body);
+            }
+        }
+        
+        return null;
+    }
     
 
 }

@@ -16,32 +16,16 @@
  */
 package org.apache.camel.osgi;
 
-import junit.framework.TestCase;
-import org.osgi.framework.BundleContext;
-import org.springframework.osgi.mock.MockBundle;
-import org.springframework.osgi.mock.MockBundleContext;
+import org.apache.camel.osgi.test.MockTypeConverterRegistry;
 
-public class CamelOsgiTestSupport extends TestCase {
-    private Activator testActivator;
-    private MockBundleContext bundleContext = new MockBundleContext();
-    private MockBundle bundle = new CamelMockBundle();
+public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
     
-    public void setUp() throws Exception {        
-        bundleContext.setBundle(bundle);
-        testActivator = new Activator();
-        testActivator.start(bundleContext);
-    }
-    
-    public void tearDown() throws Exception {
-        testActivator.stop(bundleContext);
-    }
-    
-    public Activator getActivator() {
-        return testActivator;
-    }
-    
-    public BundleContext getBundleContext() {
-        return bundleContext;
+    public void testLoad() throws Exception {
+        OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getBundleContext());
+        MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
+        loader.load(registry);
+        assertEquals("There should have a fallback converter", registry.getFallbackTypeConverters().size(), 1);
+        assertEquals("There should have a coverter", registry.getTypeConverters().size(), 1);
     }
 
 }
