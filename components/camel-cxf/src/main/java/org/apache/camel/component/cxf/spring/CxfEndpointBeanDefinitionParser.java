@@ -73,25 +73,36 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         }
     }
 
+    /**
+     * Override mapToProperty() to handle the '#' reference notation ourselves.  We put those 
+     * properties with '#' in property map and let component to invoke setProperties() on the
+     * endpoint. 
+     */
+    @Override
+    protected void mapToProperty(BeanDefinitionBuilder bean, String propertyName, String val) {
+        if (ID_ATTRIBUTE.equals(propertyName)) {
+            return;
+        }
+
+        if (org.springframework.util.StringUtils.hasText(val)) {
+            if (val.startsWith("#")) {
+                Map<String, Object> map = getPropertyMap(bean);
+                map.put(propertyName, val);
+            } else {
+                bean.addPropertyValue(propertyName, val);
+            }
+        }
+        
+    }
 
     @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         super.doParse(element, ctx, bean);
         bean.setLazyInit(false);
         
-        // put the id into the properties
-        PropertyValue propertyValue = (PropertyValue)bean.getBeanDefinition().getPropertyValues()
-            .getPropertyValue("properties");
-        
-        Map<String, Object> map = null;
-        if (propertyValue == null) {
-            map = new HashMap<String, Object>();
-            bean.addPropertyValue("properties", map);
-        } else {
-            map = (Map<String, Object>)propertyValue.getValue();
-        }
-        String id = resolveId(element, bean.getBeanDefinition(), ctx);
-        map.put("beanId", id);        
+        // put the bean id into the property map
+        Map<String, Object> map = getPropertyMap(bean);
+        map.put("beanId", resolveId(element, bean.getBeanDefinition(), ctx));        
     }
 
     @Override
@@ -110,6 +121,21 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     @Override
     protected boolean hasBusProperty() {
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    private Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean) {
+        PropertyValue propertyValue = (PropertyValue)bean.getBeanDefinition().getPropertyValues()
+            .getPropertyValue("properties");
+        
+        Map<String, Object> map = null;
+        if (propertyValue == null) {
+            map = new HashMap<String, Object>();
+            bean.addPropertyValue("properties", map);
+        } else {
+            map = (Map<String, Object>)propertyValue.getValue();
+        }
+        return map;
     }
     
     // To make the CxfEndpointBean clear without touching any Spring relates class 
