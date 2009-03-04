@@ -112,6 +112,8 @@ public class MockEndpointTest extends ContextTestSupport {
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         resultEndpoint.expectedMessageCount(6);
+        // wait at most 2 sec to speedup unit testing 
+        resultEndpoint.setResultWaitTime(2000);
         resultEndpoint.assertIsNotSatisfied();
     }
 
@@ -141,7 +143,6 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
         
         resultEndpoint.reset();
-        
         // assert failure when value is different
         resultEndpoint.expectedHeaderReceived("header", "value1");
         sendHeader("header", "value");
@@ -162,10 +163,21 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();                       
     }
     
+    public void testExpectationOfHeaderWithNumber() throws InterruptedException {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.reset();
+
+        // assert we can assert using other than string, eg numbers
+        resultEndpoint.expectedHeaderReceived("number", 123);
+        sendHeader("number", 123);
+        resultEndpoint.assertIsSatisfied();
+
+        resultEndpoint.assertIsNotSatisfied();
+    }
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
-            template.sendBodyAndHeader("direct:a", createTestMessage(counter),
-                    "counter", counter);
+            template.sendBodyAndHeader("direct:a", createTestMessage(counter), "counter", counter);
         }
     }
 
@@ -181,7 +193,7 @@ public class MockEndpointTest extends ContextTestSupport {
         return list;
     }   
     
-    protected void sendHeader(String name, String value) {
+    protected void sendHeader(String name, Object value) {
         template.sendBodyAndHeader("direct:a", "body", name, value);
     }
 

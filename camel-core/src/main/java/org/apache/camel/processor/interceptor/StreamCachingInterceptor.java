@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.model.InterceptorType;
 import org.apache.camel.processor.DelegateProcessor;
@@ -64,39 +63,28 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
             }
         }
     }
-    
+
     @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // Change the body to StreamCache if possible
-        // important to lookup for the type converter to avoid excessive overhead of trying to covnert if not possible
-        // as Camel will throw NoTypeConversionAvailableException that we just ignores. So we want to avoid this
-        // exception handling as it hurts performance dramatically for high throughput
-        // See also MessageSupport#getBody and CAMEL-1417
-        Object body = exchange.getIn().getBody();
-        if (body != null) {
-            TypeConverter tc = exchange.getContext().getTypeConverterRegistry().lookup(StreamCache.class, body.getClass());
-            if (tc != null) {
-                try {
-                    StreamCache newBody = tc.convertTo(StreamCache.class, exchange, body);
-                    if (newBody != null) {
-                        exchange.getIn().setBody(newBody);
-                    }
-                    MessageHelper.resetStreamCache(exchange.getIn());
-                } catch (NoTypeConversionAvailableException ex) {
-                    // ignore if in is not of StreamCache type
-                }
+        try {
+            StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
+            if (newBody != null) {
+                exchange.getIn().setBody(newBody);
             }
+            MessageHelper.resetStreamCache(exchange.getIn());
+        } catch (NoTypeConversionAvailableException ex) {
+            // ignore if in is not of StreamCache type
         }
 
         return proceed(exchange, callback);
     }
 
-    public boolean proceed(Exchange exchange, AsyncCallback callback) {        
-        if (getProcessor() instanceof AsyncProcessor) {            
+    public boolean proceed(Exchange exchange, AsyncCallback callback) {
+        if (getProcessor() instanceof AsyncProcessor) {
             return ((AsyncProcessor) getProcessor()).process(exchange, callback);
         } else {
             try {

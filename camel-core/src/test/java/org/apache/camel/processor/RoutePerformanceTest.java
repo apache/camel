@@ -38,6 +38,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount((int) dataSet.getSize());
+        endpoint.expectedHeaderReceived("foo", 123);
 
         assertMockEndpointsSatisfied();
 
