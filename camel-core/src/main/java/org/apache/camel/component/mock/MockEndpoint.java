@@ -74,7 +74,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private List actualBodyValues;
     private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private String headerName;
-    private String headerValue;
+    private Object headerValue;
     private Object actualHeader;
     private Processor reporter;
 
@@ -308,7 +308,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Adds an expectation that the given header name & value are received by this
      * endpoint
      */
-    public void expectedHeaderReceived(String name, String value) {
+    public void expectedHeaderReceived(final String name, final Object value) {
         this.headerName = name;
         this.headerValue = value;
 
@@ -316,7 +316,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             public void run() {
                 assertTrue("No header with name " + headerName + " found.", actualHeader != null);
 
-                assertEquals("Header of message", headerValue, actualHeader.toString());
+                Object actualValue = getCamelContext().getTypeConverter().convertTo(actualHeader.getClass(), headerValue);
+                assertEquals("Header of message", actualValue, actualHeader);
             }
         });
     }
