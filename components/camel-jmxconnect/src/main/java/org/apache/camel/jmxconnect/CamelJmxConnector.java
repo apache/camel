@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,19 +17,30 @@
 package org.apache.camel.jmxconnect;
 
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
+import javax.management.ListenerNotFoundException;
+import javax.management.MBeanServerConnection;
+import javax.management.NotificationBroadcaster;
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.NotificationEmitter;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.remote.JMXConnectionNotification;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServerErrorException;
+import javax.management.remote.JMXServiceURL;
+import javax.security.auth.Subject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import javax.management.*;
-import javax.management.remote.*;
-import javax.security.auth.Subject;
-import java.io.IOException;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * <p>
@@ -47,7 +57,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @version $Revision$
  */
 public class CamelJmxConnector implements JMXConnector, CamelContextAware {
-    private static final Log log = LogFactory.getLog(JMXConnector.class);
+    private static final Log LOG = LogFactory.getLog(JMXConnector.class);
     private NotificationBroadcasterSupport connectionNotifier = new NotificationBroadcasterSupport();
     private AtomicLong notificationNumber = new AtomicLong();
     private Map env;
@@ -122,7 +132,7 @@ public class CamelJmxConnector implements JMXConnector, CamelContextAware {
 
                 sendConnectionNotificationOpened();
             } catch (Exception e) {
-                log.error("Failed to connect: " + e, e);
+                LOG.error("Failed to connect: " + e, e);
                 IOException ioe = new IOException(e.getMessage());
                 throw ioe;
             }
@@ -215,7 +225,7 @@ public class CamelJmxConnector implements JMXConnector, CamelContextAware {
                 sendConnectionNotificationClosed();
                 proxy.destroy();
             } catch (Exception e) {
-                log.error("Failed to destroy proxy: " + e, e);
+                LOG.error("Failed to destroy proxy: " + e, e);
                 throw new IOException(e.getMessage());
             }
         }
@@ -280,7 +290,7 @@ public class CamelJmxConnector implements JMXConnector, CamelContextAware {
      * @see NotificationEmitter#removeNotificationListener
      */
     public void removeConnectionNotificationListener(NotificationListener l, NotificationFilter f, Object handback)
-            throws ListenerNotFoundException {
+        throws ListenerNotFoundException {
         connectionNotifier.removeNotificationListener(l, f, handback);
     }
 
@@ -301,7 +311,7 @@ public class CamelJmxConnector implements JMXConnector, CamelContextAware {
 
     public CamelContext getCamelContext() {
         if (camelContext == null) {
-            log.warn("No CamelContext injected so creating a default implementation");
+            LOG.warn("No CamelContext injected so creating a default implementation");
             // TODO should we barf or create a default one?
             camelContext = new DefaultCamelContext();
         }

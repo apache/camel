@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,33 +17,46 @@
 package org.apache.camel.jmxconnect;
 
 
-import junit.framework.TestCase;
-import org.apache.activemq.broker.BrokerFactory;
-import org.apache.activemq.broker.BrokerService;
-
-import javax.management.*;
-import javax.management.monitor.GaugeMonitor;
-import javax.management.remote.*;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import javax.management.Attribute;
+import javax.management.MBeanInfo;
+import javax.management.MBeanServer;
+import javax.management.MBeanServerConnection;
+import javax.management.MBeanServerFactory;
+import javax.management.Notification;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+import javax.management.monitor.GaugeMonitor;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXConnectorServer;
+import javax.management.remote.JMXConnectorServerFactory;
+import javax.management.remote.JMXServiceURL;
+
+import junit.framework.TestCase;
+import org.apache.activemq.broker.BrokerFactory;
+import org.apache.activemq.broker.BrokerService;
 
 /**
  * @version $Revision$
  */
 public class JmxRemoteTest extends TestCase {
+    protected String serverServiceUrl = "service:jmx:camel:///activemq:foo";
+    protected String clientServiceUrl = "service:jmx:camel:///activemq:foo";
+    protected String brokerUrl = "broker:(tcp://localhost:61616)/localhost?persistent=false";
     private MBeanServer server;
     private BrokerService broker;
     private JMXConnectorServer connectorServer;
     private JMXConnector connector;
     private ObjectName serviceName;
     private SimpleService service;
-    protected String serverServiceUrl = "service:jmx:camel:///activemq:foo";
-    protected String clientServiceUrl = "service:jmx:camel:///activemq:foo";
-    protected String brokerUrl = "broker:(tcp://localhost:61616)/localhost?persistent=false";
+    
 
     protected void setUp() throws Exception {
         broker = BrokerFactory.createBroker(new URI(brokerUrl));
@@ -112,7 +124,7 @@ public class JmxRemoteTest extends TestCase {
 
     // TODO not implemented yet!
     // need server side push, the client needs to register with a replyToEndpoint
-    public void DISABLED_testNotificationsJmx() throws Exception {
+    public void xtestNotificationsJmx() throws Exception {
 
         // Now let's register a Monitor
         // We would like to know if we have peaks in activity, so we can use JMX's

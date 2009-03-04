@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,6 +16,17 @@
  */
 package org.apache.camel.jmxconnect;
 
+import java.util.Iterator;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import javax.management.ListenerNotFoundException;
+import javax.management.Notification;
+import javax.management.NotificationBroadcasterSupport;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.ObjectName;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -24,16 +34,11 @@ import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.management.*;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 /**
  * @version $Revision$
  */
 public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDelegate implements Processor {
-    private static final Log log = LogFactory.getLog(MBeanCamelServerConnectionClient.class);
+    private static final Log LOG = LogFactory.getLog(MBeanCamelServerConnectionClient.class);
     private MBeanCamelServerConnection serverConnection;
     private Endpoint replyToEndpoint;
     private List listeners = new CopyOnWriteArrayList();
@@ -57,7 +62,7 @@ public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDeleg
 
         // TODO need to create an endpoint for replies!!!
         if (replyToEndpoint == null) {
-            log.error("no replyToDestination for replies to be received!");
+            LOG.error("no replyToDestination for replies to be received!");
         }
         serverConnection.addNotificationListener(id, name, replyToEndpoint);
     }
@@ -70,7 +75,7 @@ public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDeleg
      * Remove a Notification Listener
      */
     public void removeNotificationListener(ObjectName name, NotificationListener listener)
-            throws ListenerNotFoundException {
+        throws ListenerNotFoundException {
         for (Iterator i = listeners.iterator(); i.hasNext();) {
             ListenerInfo li = (ListenerInfo) i.next();
             if (li.getListener() == listener) {
@@ -103,7 +108,7 @@ public class MBeanCamelServerConnectionClient extends MBeanServerConnectionDeleg
         if (notification != null) {
             localNotifier.sendNotification(notification);
         } else {
-            log.warn("Received message which is not a Notification: " + exchange);
+            LOG.warn("Received message which is not a Notification: " + exchange);
         }
     }
 }

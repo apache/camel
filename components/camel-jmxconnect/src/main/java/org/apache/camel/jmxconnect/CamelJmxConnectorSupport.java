@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,17 +17,22 @@
 package org.apache.camel.jmxconnect;
 
 
-import javax.management.remote.JMXServiceURL;
 import java.io.IOException;
 import java.net.MalformedURLException;
+
+import javax.management.remote.JMXServiceURL;
 
 /**
  * @version $Revision$
  */
-public class CamelJmxConnectorSupport {
+public final class CamelJmxConnectorSupport {
     public static final String DEFAULT_DESTINATION_PREFIX = "org.apache.camel.jmxconnect.";
     public static final String MBEAN_SERVER_NAME = "*";
     public static final String MBEAN_GROUP_NAME = "*";
+    
+    private CamelJmxConnectorSupport() {
+        // helper class
+    }
 
     public static String getEndpointUri(JMXServiceURL serviceURL, String expectedProtocol) throws IOException {
         String protocol = serviceURL.getProtocol();
