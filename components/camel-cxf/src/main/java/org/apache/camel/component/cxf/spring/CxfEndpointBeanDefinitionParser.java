@@ -55,11 +55,17 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void mapElement(ParserContext ctx, BeanDefinitionBuilder bean, Element el, String name) {
         if ("properties".equals(name)) {
-            Map<?, ?> map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
+            Map map = ctx.getDelegate().parseMapElement(el, bean.getBeanDefinition());
+            Map props = getPropertyMap(bean, false);
+            if (props != null) {
+                map.putAll(props);
+            }
             bean.addPropertyValue("properties", map);
+            
         } else if ("binding".equals(name)) {
             setFirstChildAsProperty(el, ctx, bean, "bindingConfig");
         } else if ("inInterceptors".equals(name) || "inFaultInterceptors".equals(name)
@@ -86,7 +92,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
 
         if (org.springframework.util.StringUtils.hasText(val)) {
             if (val.startsWith("#")) {
-                Map<String, Object> map = getPropertyMap(bean);
+                Map<String, Object> map = getPropertyMap(bean, true);
                 map.put(propertyName, val);
             } else {
                 bean.addPropertyValue(propertyName, val);
@@ -101,7 +107,7 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
         bean.setLazyInit(false);
         
         // put the bean id into the property map
-        Map<String, Object> map = getPropertyMap(bean);
+        Map<String, Object> map = getPropertyMap(bean, true);
         map.put("beanId", resolveId(element, bean.getBeanDefinition(), ctx));        
     }
 
@@ -124,14 +130,16 @@ public class CxfEndpointBeanDefinitionParser extends AbstractBeanDefinitionParse
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean) {
+    private Map<String, Object> getPropertyMap(BeanDefinitionBuilder bean, boolean lazyInstantiation) {
         PropertyValue propertyValue = (PropertyValue)bean.getBeanDefinition().getPropertyValues()
             .getPropertyValue("properties");
         
         Map<String, Object> map = null;
         if (propertyValue == null) {
-            map = new HashMap<String, Object>();
-            bean.addPropertyValue("properties", map);
+            if (lazyInstantiation) {
+                map = new HashMap<String, Object>();
+                bean.addPropertyValue("properties", map);
+            }
         } else {
             map = (Map<String, Object>)propertyValue.getValue();
         }
