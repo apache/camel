@@ -14,29 +14,36 @@
 		License.
 	-->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
-	
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/camel-cxf.xsd
     ">
     
-    <bean id="myServiceClass" class="org.apache.camel.component.cxf.HelloServiceImpl"/>
-    
-	<cxf:cxfEndpoint id="fromEndpoint" address="http://localhost:9000/helloworld"
+	<bean id="myServiceClass" class="org.apache.camel.component.cxf.HelloServiceImpl" />
+	
+	<cxf:cxfEndpoint id="fromEndpointWithProps" address="http://localhost:9004/helloworld"
+		serviceClass="#myServiceClass">
+		<cxf:properties>
+			<entry key="dataFormat" value="PAYLOAD" />
+		</cxf:properties>
+	</cxf:cxfEndpoint>
+	
+	<cxf:cxfEndpoint id="fromEndpoint" address="http://localhost:9003/helloworld"
 		serviceClass="#myServiceClass" />
-		
+
 	<cxf:cxfEndpoint id="toEndpoint" address="http://localhost:9002/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService" />
-
-	<camelContext id="camelContext"
-		xmlns="http://camel.apache.org/schema/spring">
+		
+	<camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
 		<route>
-			<from uri="cxf:bean:fromEndpoint"/>
-			<to uri="cxf:bean:toEndpoint"/>
+			<from uri="cxf:bean:fromEndpoint" />
+			<to uri="cxf:bean:toEndpoint" />
+		</route>
+		<route>
+			<from uri="cxf:bean:fromEndpointWithProps" />
+			<to uri="cxf:bean:toEndpoint?dataFormat=PAYLOAD" />
 		</route>
 	</camelContext>
-
 </beans>
