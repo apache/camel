@@ -30,7 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 
 public class Camel715ThreadProcessorTest extends TestCase {
-    private static final int ITERS = 20000;
+    private static final int ITERS = 50000;
 
     class SendingProcessor implements Processor {
         int iterationNumber;
