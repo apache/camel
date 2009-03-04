@@ -34,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
+import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.RouteContext;
@@ -139,7 +140,10 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         if (predicate == null) {
             if (expressionType != null) {
                 predicate = expressionType.createPredicate(routeContext);
-            } else {
+            } else if (expressionValue != null) {
+                predicate = PredicateBuilder.toPredicate(expressionValue);
+            } else if (getExpression() != null) {
+                ObjectHelper.notNull("language", getLanguage());
                 CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
                 predicate = language.createPredicate(getExpression());
@@ -153,7 +157,8 @@ public class ExpressionType implements Expression<Exchange>, Predicate<Exchange>
         if (expressionValue == null) {
             if (expressionType != null) {
                 expressionValue = expressionType.createExpression(routeContext);
-            } else {
+            } else if (getExpression() != null) {
+                ObjectHelper.notNull("language", getLanguage());
                 CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
                 expressionValue = language.createExpression(getExpression());

@@ -46,6 +46,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistry {
     private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
     private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
+    private final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     private Injector injector;
     private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
@@ -65,12 +66,32 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return typeConverterLoaders;
     }    
     
+    /**
+     * Is there <b>NOT</b> a type converter registered being able to converter the
+     * given value to the type
+     * @param toType  the type to convert to
+     * @param fromType  the type to convert from
+     * @return <tt>true</tt> if there is <b>NOT</b> a converter, <tt>false</tt> if there is
+     */
+    @SuppressWarnings("unchecked")
+    public boolean hasNoConverterFor(Class toType, Class fromType) {
+        TypeMapping key = new TypeMapping(toType, fromType);
+        // we must only look in misses and not do the acutal convertions
+        // as for stream it can be impossible to re-read them and this
+        // method should not cause any overhead
+        return misses.containsKey(key);
+    }
+
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        return doConvertTo(type, exchange, value);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
                 + " -> " + type.getCanonicalName() + " with value: " + value);
@@ -115,6 +136,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             if (primitiveType != type) {
                 return (T) convertTo(primitiveType, exchange, value);
             }
+        }
+
+        synchronized (misses) {
+            TypeMapping key = new TypeMapping(type, value.getClass());
+            misses.put(key, key);
         }
 
         // Could not find suitable conversion
