@@ -166,7 +166,7 @@ public class ExpressionType implements Expression, Predicate {
         if (expressionValue == null) {
             if (expressionType != null) {
                 expressionValue = expressionType.createExpression(routeContext);
-            } else if (getExpression() != null){
+            } else if (getExpression() != null) {
                 ObjectHelper.notNull("language", getLanguage());
                 CamelContext camelContext = routeContext.getCamelContext();
                 Language language = camelContext.resolveLanguage(getLanguage());
