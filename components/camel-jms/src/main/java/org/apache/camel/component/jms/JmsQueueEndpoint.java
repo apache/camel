@@ -93,10 +93,10 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         return queueBrowseStrategy.browse(template, queue, this);
     }
 
-    protected static QueueBrowseStrategy createQueueBrowseStrategy() {
+    protected QueueBrowseStrategy createQueueBrowseStrategy() {
         QueueBrowseStrategy answer = null;
         try {
-            answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy();
+            answer = JmsComponent.tryCreateDefaultQueueBrowseStrategy(getCamelContext());
         } catch (Throwable e) {
             LOG.debug("Caught exception trying to create default QueueBrowseStrategy. "
                       + "This could be due to spring 2.0.x on classpath? Cause: " + e, e);

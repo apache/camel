@@ -17,14 +17,12 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
-
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A JPA Component
@@ -57,11 +55,14 @@ public class JpaComponent extends DefaultComponent {
 
         // lets interpret the next string as a class
         if (path != null) {
-            Class<?> type = ObjectHelper.loadClass(path);
+            // provide the class loader of this component to work in OSGi environments as camel-jpa must be able
+            // to resolve the entity classes
+            Class<?> type = getCamelContext().getClassResolver().resolveClass(path, JpaComponent.class.getClassLoader());
             if (type != null) {
                 endpoint.setEntityType(type);
             }
         }
+
         return endpoint;
     }
 }
