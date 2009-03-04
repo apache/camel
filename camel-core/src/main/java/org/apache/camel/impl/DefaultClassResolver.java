@@ -18,14 +18,11 @@ package org.apache.camel.impl;
 
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
- * Default class resolver that uses regular classloaders, and does NOT work in OSGi platforms.
+ * Default class resolver that uses regular class loader to load classes.
  */
 public class DefaultClassResolver implements ClassResolver {
-    private static final transient Log LOG = LogFactory.getLog(DefaultClassResolver.class);
 
     public Class resolveClass(String name) {
         return loadClass(name, DefaultClassResolver.class.getClassLoader());
@@ -80,35 +77,8 @@ public class DefaultClassResolver implements ClassResolver {
     }
 
     protected Class loadClass(String name, ClassLoader loader) {
-        // try context class loader first
-        Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
-        if (clazz == null) {
-            // then the provided loader
-            clazz = doLoadClass(name, loader);
-        }
-        if (clazz == null) {
-            // and fallback to the loader the loaded the ObjectHelper class
-            clazz = doLoadClass(name, ObjectHelper.class.getClassLoader());
-        }
-
-        return clazz;
-    }
-
-    private static Class<?> doLoadClass(String name, ClassLoader loader) {
         ObjectHelper.notEmpty(name, "name");
-        if (loader == null) {
-            return null;
-        }
-        try {
-            return loader.loadClass(name);
-        } catch (ClassNotFoundException e) {
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Cannot load class: " + name + " using classloader: " + loader, e);
-            }
-
-        }
-        return null;
+        return ObjectHelper.loadClass(name, loader);
     }
-
 
 }

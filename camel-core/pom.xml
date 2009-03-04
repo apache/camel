@@ -42,6 +42,7 @@
 	<camel.osgi.import>
 		!javax.xml.bind.annotation.adapters,
 		org.apache.xalan.xsltc.trax;resolution:=optional,
+        org.apache.camel.spring.util;resolution:=optional,
 		*
     </camel.osgi.import>
   </properties>

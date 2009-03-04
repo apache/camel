@@ -21,7 +21,6 @@ import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorType;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A simple {@link RouteBuilder} which can be configured directly with one or more from URIs, zero or more to URIs
@@ -96,7 +95,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
     public Class getBeanType() {
         if (beanType == null) {
             if (beanClass != null) {
-                beanType = ObjectHelper.loadClass(beanClass, getClass().getClassLoader());
+                beanType = getContext().getClassResolver().resolveClass(beanClass, getClass().getClassLoader());
             }
         }
         return beanType;

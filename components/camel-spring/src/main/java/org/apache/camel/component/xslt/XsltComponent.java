@@ -25,7 +25,6 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.component.ResourceBasedComponent;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.util.ObjectHelper;
 import org.springframework.core.io.Resource;
 
 /**
@@ -69,11 +68,12 @@ public class XsltComponent extends ResourceBasedComponent {
         String transformerFactoryClassName = getAndRemoveParameter(parameters, "transformerFactoryClass", String.class);
         TransformerFactory factory = null;
         if (transformerFactoryClassName != null) {
-            Class factoryClass = ObjectHelper.loadClass(transformerFactoryClassName);
+            // provide the class loader of this component to work in OSGi environments
+            Class factoryClass = getCamelContext().getClassResolver().resolveClass(transformerFactoryClassName, XsltComponent.class.getClassLoader());
             if (factoryClass != null) {
                 factory = (TransformerFactory) newInstance(factoryClass);
             } else {
-                log.warn("Cannot find the TransformerFactoryClass with the class name " + transformerFactoryClassName);
+                log.warn("Cannot find the TransformerFactoryClass with the class name: " + transformerFactoryClassName);
             }
         }
         

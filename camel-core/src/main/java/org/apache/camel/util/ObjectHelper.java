@@ -490,7 +490,6 @@ public final class ObjectHelper {
      *
      * @param name the name of the class to load
      * @return the class or null if it could not be loaded
-     * @deprecated use ClassResolver instead
      */
     public static Class<?> loadClass(String name) {
         return loadClass(name, ObjectHelper.class.getClassLoader());
@@ -504,7 +503,6 @@ public final class ObjectHelper {
      * @param loader the class loader to use after the thread context class
      *                loader
      * @return the class or null if it could not be loaded
-     * @deprecated use ClassResolver instead
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
         // try context class loader first
@@ -532,7 +530,6 @@ public final class ObjectHelper {
      * @param name    the name of the class to load
      * @param loader  a provided loader (may be null)
      * @return the class, or null if it could not be loaded
-     * @deprecated use ClassResolver instead
      */
     private static Class<?> doLoadClass(String name, ClassLoader loader) {
         ObjectHelper.notEmpty(name, "name");

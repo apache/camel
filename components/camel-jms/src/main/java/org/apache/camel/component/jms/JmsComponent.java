@@ -49,8 +49,7 @@ import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
  *
  * @version $Revision:520964 $
  */
-public class JmsComponent extends DefaultComponent implements ApplicationContextAware,
-    HeaderFilterStrategyAware {
+public class JmsComponent extends DefaultComponent implements ApplicationContextAware, HeaderFilterStrategyAware {
 
     private static final transient Log LOG = LogFactory.getLog(JmsComponent.class);
     private static final String DEFAULT_QUEUE_BROWSE_STRATEGY = "org.apache.camel.component.jms.DefaultQueueBrowseStrategy";
@@ -329,7 +328,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
             if (!attemptedToCreateQueueBrowserStrategy) {
                 attemptedToCreateQueueBrowserStrategy = true;
                 try {
-                    queueBrowseStrategy = tryCreateDefaultQueueBrowseStrategy();
+                    queueBrowseStrategy = tryCreateDefaultQueueBrowseStrategy(getCamelContext());
                 } catch (Throwable e) {
                     LOG.warn("Could not instantiate the QueueBrowseStrategy are you using Spring 2.0.x"
                         + " by any chance? Error: " + e, e);
@@ -458,15 +457,16 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
      *
      * @return the queue browse strategy or null if it cannot be supported
      */
-    protected static QueueBrowseStrategy tryCreateDefaultQueueBrowseStrategy() {
+    protected static QueueBrowseStrategy tryCreateDefaultQueueBrowseStrategy(CamelContext context) {
         // lets try instantiate the default implementation
-        Class<?> type = ObjectHelper.loadClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
+        // use the class loading this class from camel-jms to work in OSGi environments as the camel-jms
+        // should import the spring-jms jars.
+        Class<?> type = context.getClassResolver().resolveClass(DEFAULT_QUEUE_BROWSE_STRATEGY, JmsComponent.class.getClassLoader());
         if (type == null) {
-            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY
-                     + " maybe you are on Spring 2.0.x?");
+            LOG.warn("Could not load class: " + DEFAULT_QUEUE_BROWSE_STRATEGY + " maybe you are on Spring 2.0.x?");
             return null;
         } else {
-            return (QueueBrowseStrategy)ObjectHelper.newInstance(type);
+            return ObjectHelper.newInstance(type, QueueBrowseStrategy.class);
         }
     }
 
