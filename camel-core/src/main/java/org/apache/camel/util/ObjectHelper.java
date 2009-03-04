@@ -505,6 +505,9 @@ public final class ObjectHelper {
      * @return the class or null if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
+        // must clean the name so its pure java name, eg remoing \n or whatever people can do in the Spring XML
+        name = normalizeClassName(name);
+
         // try context class loader first
         Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
         if (clazz == null) {
@@ -874,6 +877,25 @@ public final class ObjectHelper {
         } else {
             return new RuntimeCamelException(e);
         }
+    }
+
+    /**
+     * Cleans the string to pure java identifier so we can use it for loading class names.
+     * <p/>
+     * Especially from Sping DSL people can have \n \t or other characters that otherwise
+     * would result in ClassNotFoundException
+     *
+     * @param name the class name
+     * @return normalized classname that can be load by a class loader.
+     */
+    public static String normalizeClassName(String name) {
+        StringBuffer sb = new StringBuffer(name.length());
+        for (char ch : name.toCharArray()) {
+            if (ch == '.' || Character.isJavaIdentifierPart(ch)) {
+                sb.append(ch);
+            }
+        }
+        return sb.toString();
     }
 
 }
