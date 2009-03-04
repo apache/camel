@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +16,28 @@
  */
 package org.apache.camel.jmxconnect;
 
-import javax.management.*;
 import java.io.IOException;
 import java.util.Set;
+
+import javax.management.Attribute;
+import javax.management.AttributeList;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.InstanceNotFoundException;
+import javax.management.IntrospectionException;
+import javax.management.InvalidAttributeValueException;
+import javax.management.ListenerNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MBeanInfo;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServerConnection;
+import javax.management.NotCompliantMBeanException;
+import javax.management.NotificationFilter;
+import javax.management.NotificationListener;
+import javax.management.ObjectInstance;
+import javax.management.ObjectName;
+import javax.management.QueryExp;
+import javax.management.ReflectionException;
 
 /**
  * Acts as a delegate for the MBeanServerConnection
@@ -35,20 +53,33 @@ public class MBeanServerConnectionDelegate implements MBeanServerConnection {
 
     }
 
-    public ObjectInstance createMBean(String className, ObjectName name) throws ReflectionException, InstanceAlreadyExistsException, MBeanRegistrationException, MBeanException, NotCompliantMBeanException, IOException {
+    public ObjectInstance createMBean(String className, ObjectName name)
+        throws ReflectionException, InstanceAlreadyExistsException,
+        MBeanRegistrationException, MBeanException, NotCompliantMBeanException,
+        IOException {
         return connection.createMBean(className, name);
     }
 
-    public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName) throws ReflectionException, InstanceAlreadyExistsException, MBeanRegistrationException, MBeanException, NotCompliantMBeanException, InstanceNotFoundException, IOException {
+    public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName)
+        throws ReflectionException, InstanceAlreadyExistsException,
+        MBeanRegistrationException, MBeanException, NotCompliantMBeanException,
+        InstanceNotFoundException, IOException {
+        
         return connection.createMBean(className, name, loaderName);
     }
 
-    public ObjectInstance createMBean(String className, ObjectName name, Object[] params, String[] signature) throws ReflectionException, InstanceAlreadyExistsException, MBeanRegistrationException, MBeanException, NotCompliantMBeanException, IOException {
+    public ObjectInstance createMBean(String className, ObjectName name, Object[] params, String[] signature)
+        throws ReflectionException, InstanceAlreadyExistsException,
+        MBeanRegistrationException, MBeanException, NotCompliantMBeanException,
+        IOException {
         return connection.createMBean(className, name, params, signature);
     }
 
 
-    public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName, Object[] params, String[] signature) throws ReflectionException, InstanceAlreadyExistsException, MBeanRegistrationException, MBeanException, NotCompliantMBeanException, InstanceNotFoundException, IOException {
+    public ObjectInstance createMBean(String className, ObjectName name, ObjectName loaderName, Object[] params, String[] signature)
+        throws ReflectionException, InstanceAlreadyExistsException,
+        MBeanRegistrationException, MBeanException, NotCompliantMBeanException,
+        InstanceNotFoundException, IOException {
         return connection.createMBean(className, name, loaderName, params, signature);
     }
 
@@ -85,7 +116,10 @@ public class MBeanServerConnectionDelegate implements MBeanServerConnection {
         return connection.getAttributes(name, attributes);
     }
 
-    public void setAttribute(ObjectName name, Attribute attribute) throws InstanceNotFoundException, AttributeNotFoundException, InvalidAttributeValueException, MBeanException, ReflectionException, IOException {
+    public void setAttribute(ObjectName name, Attribute attribute) 
+        throws InstanceNotFoundException, AttributeNotFoundException,
+        InvalidAttributeValueException, MBeanException, ReflectionException,
+        IOException {
         connection.setAttribute(name, attribute);
 
     }

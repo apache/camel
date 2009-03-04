@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,20 +17,21 @@
 package org.apache.camel.jmxconnect;
 
 
+import java.util.Map;
+
+import javax.management.Notification;
+import javax.management.NotificationListener;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.ProducerTemplate;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.management.Notification;
-import javax.management.NotificationListener;
-import java.util.Map;
-
 /**
  * @version $Revision$
  */
 class ServerListenerInfo implements NotificationListener {
-    private static final Log log = LogFactory.getLog(ServerListenerInfo.class);
+    private static final Log LOG = LogFactory.getLog(ServerListenerInfo.class);
     private final String id;
     private final Map holder;
     private final ProducerTemplate template;
@@ -53,7 +53,7 @@ class ServerListenerInfo implements NotificationListener {
     public void handleNotification(Notification notification, Object handback) {
         System.out.println("Should be sending notification: " + notification);
         if (replyToEndpoint == null) {
-            log.warn("No replyToDestination for replies to be received so cannot send notification: " + notification);
+            LOG.warn("No replyToDestination for replies to be received so cannot send notification: " + notification);
         } else {
             template.sendBody(replyToEndpoint, notification);
         }
