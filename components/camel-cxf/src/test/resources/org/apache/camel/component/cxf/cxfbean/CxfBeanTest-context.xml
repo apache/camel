@@ -15,12 +15,12 @@
 	-->
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
+	xmlns:cxf="http://camel.apache.org/schema/cxf"
 	xmlns:util="http://www.springframework.org/schema/util"
 	xsi:schemaLocation="
        http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
        http://camel.apache.org/schema/spring  http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.0.xsd
     ">
     

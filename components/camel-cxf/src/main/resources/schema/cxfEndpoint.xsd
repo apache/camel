@@ -17,12 +17,12 @@
   specific language governing permissions and limitations
   under the License.
 -->
-<xsd:schema xmlns="http://camel.apache.org/schema/cxfEndpoint"
+<xsd:schema xmlns="http://camel.apache.org/schema/cxf"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:beans="http://www.springframework.org/schema/beans"
   xmlns:cxf-beans="http://cxf.apache.org/configuration/beans"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  targetNamespace="http://camel.apache.org/schema/cxfEndpoint" 
+  targetNamespace="http://camel.apache.org/schema/cxf" 
   elementFormDefault="qualified"
   attributeFormDefault="unqualified">
 
