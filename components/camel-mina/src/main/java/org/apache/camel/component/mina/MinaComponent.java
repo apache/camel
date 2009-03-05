@@ -22,6 +22,7 @@ import java.net.URI;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -29,12 +30,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.ByteBuffer;
+import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
+import org.apache.mina.common.IoFilter;
 import org.apache.mina.common.IoServiceConfig;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.LoggingFilter;
@@ -122,6 +124,7 @@ public class MinaComponent extends DefaultComponent {
     protected MinaEndpoint createVmEndpoint(String uri, MinaConfiguration configuration) {
         boolean minaLogger = configuration.isMinaLogger();
         boolean sync = configuration.isSync();
+        List<IoFilter> filters = configuration.getFilters();
 
         IoAcceptor acceptor = new VmPipeAcceptor();
         SocketAddress address = new VmPipeAddress(configuration.getPort());
@@ -132,12 +135,14 @@ public class MinaComponent extends DefaultComponent {
         if (minaLogger) {
             connector.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, connector.getFilterChain());
 
         // acceptor connectorConfig
         configureCodecFactory("MinaConsumer", acceptor.getDefaultConfig(), configuration);
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, acceptor.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
         endpoint.setAddress(address);
@@ -159,6 +164,7 @@ public class MinaComponent extends DefaultComponent {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         boolean sync = configuration.isSync();
+        List<IoFilter> filters = configuration.getFilters();
 
         IoAcceptor acceptor = new SocketAcceptor();
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
@@ -170,6 +176,8 @@ public class MinaComponent extends DefaultComponent {
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, connectorConfig.getFilterChain());
+
         // set connect timeout to mina in seconds
         connectorConfig.setConnectTimeout((int) (timeout / 1000));
 
@@ -181,6 +189,7 @@ public class MinaComponent extends DefaultComponent {
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
         endpoint.setAddress(address);
@@ -229,6 +238,7 @@ public class MinaComponent extends DefaultComponent {
         long timeout = configuration.getTimeout();
         boolean transferExchange = configuration.isTransferExchange();
         boolean sync = configuration.isSync();
+        List<IoFilter> filters = configuration.getFilters();
 
         IoAcceptor acceptor = new DatagramAcceptor();
         SocketAddress address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
@@ -243,6 +253,7 @@ public class MinaComponent extends DefaultComponent {
         if (minaLogger) {
             connectorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, connectorConfig.getFilterChain());
         // set connect timeout to mina in seconds
         connectorConfig.setConnectTimeout((int) (timeout / 1000));
 
@@ -253,6 +264,7 @@ public class MinaComponent extends DefaultComponent {
         if (minaLogger) {
             acceptorConfig.getFilterChain().addLast("logger", new LoggingFilter());
         }
+        appendIoFiltersToChain(filters, acceptorConfig.getFilterChain());
 
         MinaEndpoint endpoint = new MinaEndpoint(uri, this);
         endpoint.setAddress(address);
@@ -393,6 +405,14 @@ public class MinaComponent extends DefaultComponent {
         }
 
         return Charset.forName(encoding);
+    }
+
+    private void appendIoFiltersToChain(List<IoFilter> filters, DefaultIoFilterChainBuilder filterChain) {
+        if (filters != null && filters.size() > 0) {
+            for (IoFilter ioFilter : filters) {
+                filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
+            }
+        }
     }
 
     // Properties
