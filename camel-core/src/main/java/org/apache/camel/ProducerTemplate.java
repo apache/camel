@@ -408,6 +408,15 @@ public interface ProducerTemplate extends Service {
     Exchange request(String endpointUri, Processor processor);
 
     /**
+     * Sends the body to the default endpoint and returns the result content
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param body the payload to send
+     * @return the result (see class javadoc)
+     */
+    Object requestBody(Object body);
+
+    /**
      * Send the body to an endpoint returning any result output body.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *

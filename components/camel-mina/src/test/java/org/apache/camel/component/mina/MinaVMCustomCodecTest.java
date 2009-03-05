@@ -23,8 +23,8 @@ public class MinaVMCustomCodecTest extends MinaCustomCodecTest {
 
     @Override
     protected void setUp() throws Exception {
-        uri = "mina:vm://localhost:11301?sync=true&codec=myCodec";
-        badUri = "mina:vm://localhost:11301?sync=true&codec=XXX";
+        uri = "mina:vm://localhost:11301?sync=true&codec=#myCodec";
+        badUri = "mina:vm://localhost:11301?sync=true&codec=#XXX";
         super.setUp();
     }
 

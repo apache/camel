@@ -35,7 +35,7 @@ import org.apache.mina.filter.codec.ProtocolEncoderOutput;
  */
 public class MinaNoResponseFromServerTest extends ContextTestSupport {
 
-    private String uri = "mina:tcp://localhost:11300?sync=true&codec=myCodec";
+    private String uri = "mina:tcp://localhost:11300?sync=true&codec=#myCodec";
 
     public void testNoResponse() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
