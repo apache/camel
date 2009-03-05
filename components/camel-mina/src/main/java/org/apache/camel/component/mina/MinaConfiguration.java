@@ -17,8 +17,10 @@
 package org.apache.camel.component.mina;
 
 import java.nio.charset.Charset;
+import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.mina.common.IoFilter;
 
 /**
  * Mina configuration
@@ -36,6 +38,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean lazySessionCreation;
     private boolean transferExchange;
     private boolean minaLogger;
+    private List<IoFilter> filters;
 
     /**
      * Returns a copy of this configuration
@@ -155,4 +158,13 @@ public class MinaConfiguration implements Cloneable {
     public void setMinaLogger(boolean minaLogger) {
         this.minaLogger = minaLogger;
     }
+
+    public List<IoFilter> getFilters() {
+        return filters;
+    }
+
+    public void setFilters(List<IoFilter> filters) {
+        this.filters = filters;
+    }
+    
 }
