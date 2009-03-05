@@ -99,12 +99,11 @@ public class RunMojo extends AbstractExecMojo {
     protected String dotDir;
 
     /**
-     * Allows the DOT file generation to be disabled
+     * Allows the DOT file generation to be enabled
      *
-     * @parameter expression="true"
-     * @readonly
+     * @parameter expression="false"
      */
-    protected boolean dotEnabled;
+    protected boolean useDot;
 
     /**
      * @component
@@ -337,7 +336,7 @@ public class RunMojo extends AbstractExecMojo {
 
         // lets create the command line arguments to pass in...
         List<String> args = new ArrayList<String>();
-        if (dotDir != null && dotEnabled) {
+        if (dotDir != null && useDot) {
             args.add("-o");
             args.add(dotDir);
         }
