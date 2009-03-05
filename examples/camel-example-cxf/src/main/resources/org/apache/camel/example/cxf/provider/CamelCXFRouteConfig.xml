@@ -17,10 +17,10 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:cxf="http://camel.apache.org/schema/cxfEndpoint"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
-       http://camel.apache.org/schema/cxfEndpoint http://camel.apache.org/schema/cxf/camel-cxf.xsd
+       http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
@@ -49,7 +49,7 @@
    <camelContext id="test_context" xmlns="http://camel.apache.org/schema/spring">
        <route>
             <from uri="cxf:bean:soapMessageEndpoint"/>
-            <to uri="bean:testBean?methodName=processSOAP"/>
+            <to uri="bean:testBean?method=processSOAP"/>
         </route>
    </camelContext>
 
