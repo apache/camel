@@ -67,7 +67,7 @@ public class WebSpherePacakageScanClassResolver extends DefaultPackageScanClassR
             // Special WebSphere trick to load a file that exists in the JAR and then let it go from there.
             // The trick is that we just need the URL's for the .jars that contains the type
             // converters that is annotated. So by searching for this resource WebSphere is able to find
-            // it and return the URL to the .jar file with the resource. Then the default ResolverUtil
+            // it and return the URL to the .jar file with the resource. Then the DefaultPackageScanClassResolver
             // can take it from there and find the classes that are annotated.
             enumeration = loader.getResources(resourcePath);
         }

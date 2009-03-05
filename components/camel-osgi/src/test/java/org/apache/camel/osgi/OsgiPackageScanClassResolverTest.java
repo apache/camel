@@ -25,7 +25,7 @@ import org.apache.camel.osgi.test.MyRouteBuilder;
 import org.apache.camel.osgi.test.MyTypeConverter;
 import org.osgi.framework.BundleContext;
 
-public class OsgiResolverUtilTest extends CamelOsgiTestSupport {
+public class OsgiPackageScanClassResolverTest extends CamelOsgiTestSupport {
     public void testOsgiResolverFindAnnotatedTest() throws IOException {
         BundleContext  context = getActivator().getBundle().getBundleContext();
         OsgiPackageScanClassResolver resolver  = new OsgiPackageScanClassResolver(context);

@@ -44,81 +44,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class DefaultPackageScanClassResolver implements PackageScanClassResolver {
 
-    public static class IsA implements PackageScanFilter {
-        private Class parent;
-
-        public IsA(Class parentType) {
-            this.parent = parentType;
-        }
-
-        public boolean matches(Class type) {
-            return type != null && parent.isAssignableFrom(type);
-        }
-
-        @Override
-        public String toString() {
-            return "is assignable to " + parent.getSimpleName();
-        }
-    }
-
-    public static class AnnotatedWith implements PackageScanFilter {
-        private Class<? extends Annotation> annotation;
-        private boolean checkMetaAnnotations;
-
-        public AnnotatedWith(Class<? extends Annotation> annotation) {
-            this(annotation, false);
-        }
-
-        public AnnotatedWith(Class<? extends Annotation> annotation, boolean checkMetaAnnotations) {
-            this.annotation = annotation;
-            this.checkMetaAnnotations = checkMetaAnnotations;
-        }
-
-        public boolean matches(Class type) {
-            return type != null && ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations);
-        }
-
-        @Override
-        public String toString() {
-            return "annotated with @" + annotation.getSimpleName();
-        }
-    }
-
-    /**
-     * A Test that checks to see if each class is annotated with a specific
-     * annotation. If it is, then the test returns true, otherwise false.
-     */
-    public static class AnnotatedWithAny implements PackageScanFilter {
-        private Set<Class<? extends Annotation>> annotations;
-        private boolean checkMetaAnnotations;
-
-        public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations) {
-            this(annotations, false);
-        }
-
-        public AnnotatedWithAny(Set<Class<? extends Annotation>> annotations, boolean checkMetaAnnotations) {
-            this.annotations = annotations;
-            this.checkMetaAnnotations = checkMetaAnnotations;
-        }
-
-        public boolean matches(Class type) {
-            if (type == null) {
-                return false;
-            }
-            for (Class<? extends Annotation> annotation : annotations) {
-                if (ObjectHelper.hasAnnotation(type, annotation, checkMetaAnnotations)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return "annotated with any @[" + annotations + "]";
-        }
-    }
-
     protected static final transient Log LOG = LogFactory.getLog(DefaultPackageScanClassResolver.class);
     private Set<ClassLoader> classLoaders;
 
@@ -152,7 +77,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for annotations of " + annotation.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new AnnotatedWith(annotation, true);
+        PackageScanFilter test = new AnnotatedWithPackageScanFilter(annotation, true);
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -175,7 +100,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for annotations of " + annotations + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new AnnotatedWithAny(annotations, true);
+        PackageScanFilter test = new AnnotatedWithAnyPackageScanFilter(annotations, true);
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -198,7 +123,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             LOG.debug("Searching for implementations of " + parent.getName() + " in packages: " + Arrays.asList(packageNames));
         }
 
-        PackageScanFilter test = new IsA(parent);
+        PackageScanFilter test = new AssignableToPackageScanFilter(parent);
         Set<Class> classes = new LinkedHashSet<Class>();
         for (String pkg : packageNames) {
             find(test, pkg, classes);
@@ -325,7 +250,7 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
     /**
      * Strategy to get the resources by the given classloader.
      * <p/>
-     * Notice that in WebSphere platforms there is a {@link org.apache.camel.util.WebSphereResolverUtil}
+     * Notice that in WebSphere platforms there is a {@link WebSpherePacakageScanClassResolver}
      * to take care of WebSphere's odditiy of resource loading.
      *
      * @param loader  the classloader
