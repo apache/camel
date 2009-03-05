@@ -67,7 +67,7 @@ public class FileConsumerCommitRenameStrategyTest extends ContextTestSupport {
         mock.assertIsSatisfied();
 
         // sleep to let the file consumer do its renaming
-        Thread.sleep(100);
+        Thread.sleep(200);
 
         // content of file should be Hello London
         String content = IOConverter.toString(new File("./target/done/london.txt"));
