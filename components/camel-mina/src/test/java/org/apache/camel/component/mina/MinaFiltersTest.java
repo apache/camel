@@ -33,7 +33,7 @@ import org.apache.mina.common.IoFilterAdapter;
 import org.apache.mina.common.IoSession;
 
 /**
- * For unit testing the <tt>logger</tt> option.
+ * For unit testing the <tt>filters</tt> option.
  */
 public class MinaFiltersTest extends ContextTestSupport {
 
