@@ -24,7 +24,10 @@
     <!-- START SNIPPET: e1 -->
     <!-- Creating mina endpoints is a bit complex so we reuse MinaComponnet
          as a factory bean to create our endpoint, this is the easiest to do -->
-    <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent"/>
+    <bean id="myMinaFactory" class="org.apache.camel.component.mina.MinaComponent">
+        <!-- we must provide a camel context so we refer to it by its id -->
+        <constructor-arg index="0" ref="myCamel"/>
+    </bean>
 
     <!-- This is our mina endpoint configured with spring, we will use the factory above
          to create it for us. The goal is to invoke the createEndpoint method with the
@@ -32,8 +35,8 @@
     <bean id="myMinaEndpoint"
           factory-bean="myMinaFactory"
           factory-method="createEndpoint">
-        <constructor-arg index="0" ref="myCamel"/>
-        <constructor-arg index="1" ref="myMinaConfig"/>
+        <!-- and here we can pass it our configuration -->
+        <constructor-arg index="0" ref="myMinaConfig"/>
     </bean>
 
     <!-- this is our mina configuration with plain properties -->
