@@ -23,12 +23,9 @@
     ">
 
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-<!--
-    <route>
-      <from uri="seda:a"/>
-      <to uri="seda:b"/>
-     </route>
--->
+    <properties>
+       <property key="org.apache.camel.test" value="this is a test"/>
+    </properties>
     <beanPostProcessor/>
   </camelContext>
 

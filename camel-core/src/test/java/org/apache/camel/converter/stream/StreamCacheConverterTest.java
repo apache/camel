@@ -17,6 +17,9 @@
 package org.apache.camel.converter.stream;
 
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -59,6 +62,24 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         //assert re-readability of the cached InputStream
         assertNotNull(IOConverter.toString(cache));
         assertNotNull(IOConverter.toString(cache));
+    }
+    
+    public void testConvertToStreamCacheInpuStreamWithFileCache() throws Exception {
+        // set up the properties
+        Map<String, String> properties = new HashMap<String, String>();
+        properties.put(CachedOutputStream.THRESHOLD, "1");
+        exchange.getContext().setProperties(properties);
+        InputStream is = getTestFileStream();
+        InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
+        assertNotNull(IOConverter.toString(cache));
+        try {
+            // since the stream is closed you delete the temp file
+            // reset will not work any more
+            cache.reset();
+            fail("except the exception here");
+        } catch (Exception exception) {
+            // do nothing
+        }
     }
 
 

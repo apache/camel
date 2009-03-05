@@ -42,6 +42,7 @@ import org.apache.camel.model.ProcessorType;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteType;
+import org.apache.camel.model.config.PropertiesType;
 import org.apache.camel.model.dataformat.DataFormatsType;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Delayer;
@@ -89,16 +90,18 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private String errorHandlerRef;
     @XmlAttribute(required = false)
     private Boolean shouldStartContext = Boolean.TRUE;
+    @XmlElement(name = "properties", required = false)
+    private PropertiesType properties;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
-    private CamelJMXAgentType camelJMXAgent;
+    private CamelJMXAgentType camelJMXAgent;    
     @XmlElements({
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false)})
-    private List beans;
+    private List beans;    
     @XmlElement(name = "routeBuilderRef", required = false)
     private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
     @XmlElement(name = "endpoint", required = false)
@@ -110,7 +113,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlElement(name = "intercept", required = false)
     private List<InterceptType> intercepts = new ArrayList<InterceptType>();
     @XmlElement(name = "route", required = false)
-    private List<RouteType> routes = new ArrayList<RouteType>();
+    private List<RouteType> routes = new ArrayList<RouteType>();    
     @XmlTransient
     private SpringCamelContext context;
     @XmlTransient
@@ -151,7 +154,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void afterPropertiesSet() throws Exception {
         // TODO there should be a neater way to do this!
-
+        if (properties != null) {
+            getContext().setProperties(properties.asMap());
+        }
         // set the resolvers first
         PackageScanClassResolver packageResolver = getBeanForType(PackageScanClassResolver.class);
         if (packageResolver != null) {
@@ -381,6 +386,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
+    }
+    
+    public PropertiesType getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(PropertiesType properties) {        
+        this.properties = properties;
     }
 
     public String[] getPackages() {
