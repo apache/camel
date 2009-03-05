@@ -119,7 +119,7 @@ public class GenericFile<T> implements Serializable {
         }
 
         if (relativeFileName != null && relativeFileName.indexOf(getFileSeparator()) != -1) {
-            String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(File.separator));
+            String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(getFileSeparator()));
             if (baseNewName != null) {
                 setRelativeFileName(relative + getFileSeparator() + baseNewName + getFileSeparator() + newName);
             } else {

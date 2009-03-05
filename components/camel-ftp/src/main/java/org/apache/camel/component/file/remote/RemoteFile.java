@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file.remote;
 
-import java.io.File;
-
 import org.apache.camel.component.file.GenericFile;
 
 /**
@@ -43,11 +41,13 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     }
     
     public String getFileSeparator() {
+        // always use / as separator for FTP
         return "/";
     }
 
     public RemoteFile<T> copyFrom(RemoteFile<T> source) {
         RemoteFile<T> result = (RemoteFile<T>) source.clone();
+        result.setAbsolute(source.isAbsolute());
         result.setAbsoluteFileName(source.getAbsoluteFileName());
         result.setRelativeFileName(source.getRelativeFileName());
         result.setFileName(source.getFileName());
