@@ -68,7 +68,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         Object bean = beanHolder.getBean();
-        exchange.setProperty("org.apache.camel.bean.BeanHolder", beanHolder);
+        exchange.setProperty(Exchange.BEAN_HOLDER, beanHolder);
 
         Processor processor = getProcessor();
         BeanInfo beanInfo = beanHolder.getBeanInfo();

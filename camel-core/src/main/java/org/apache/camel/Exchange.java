@@ -31,6 +31,7 @@ import org.apache.camel.spi.UnitOfWork;
 public interface Exchange {
 
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
+    String BEAN_HOLDER = "CamelBeanHolder";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";
 
     String AGGREGATED_SIZE = "CamelAggregatedSize";

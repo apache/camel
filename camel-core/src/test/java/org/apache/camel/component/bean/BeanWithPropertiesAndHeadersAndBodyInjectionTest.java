@@ -50,7 +50,7 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
 
         assertEquals("Should not fail", false, out.isFailed());
 
-        BeanHolder holder = out.getProperty("org.apache.camel.bean.BeanHolder", BeanHolder.class);
+        BeanHolder holder = out.getProperty(Exchange.BEAN_HOLDER, BeanHolder.class);
         assertNotNull("BeanHolder is missing", holder);
         assertEquals(myBean, holder.getBean());
 
