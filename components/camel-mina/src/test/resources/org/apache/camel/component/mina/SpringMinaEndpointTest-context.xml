@@ -32,7 +32,8 @@
     <bean id="myMinaEndpoint"
           factory-bean="myMinaFactory"
           factory-method="createEndpoint">
-        <constructor-arg index="0" ref="myMinaConfig"/>
+        <constructor-arg index="0" ref="myCamel"/>
+        <constructor-arg index="1" ref="myMinaConfig"/>
     </bean>
 
     <!-- this is our mina configuration with plain properties -->
@@ -44,7 +45,7 @@
     </bean>
     <!-- END SNIPPET: e1 -->
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
         <!-- START SNIPPET: e2 -->
         <route>
             <!-- here we route from or mina endpoint we have defined above -->

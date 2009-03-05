@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.mina.common.IoFilter;
+import org.apache.mina.filter.codec.ProtocolCodecFactory;
 
 /**
  * Mina configuration
@@ -32,7 +33,7 @@ public class MinaConfiguration implements Cloneable {
     private boolean sync = true;
     private boolean textline;
     private TextLineDelimiter textlineDelimiter;
-    private String codec;
+    private ProtocolCodecFactory codec;
     private String encoding;
     private long timeout = 30000;
     private boolean lazySessionCreation;
@@ -111,11 +112,11 @@ public class MinaConfiguration implements Cloneable {
         this.textlineDelimiter = textlineDelimiter;
     }
 
-    public String getCodec() {
+    public ProtocolCodecFactory getCodec() {
         return codec;
     }
 
-    public void setCodec(String codec) {
+    public void setCodec(ProtocolCodecFactory codec) {
         this.codec = codec;
     }
 

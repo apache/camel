@@ -206,6 +206,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return send(endpoint, ExchangePattern.InOut, processor);
     }
 
+    public Object requestBody(Object body) {
+        return sendBody(getMandatoryDefaultEndpoint(), ExchangePattern.InOut, body);
+    }
+
     public Object requestBody(Endpoint endpoint, Object body) {
         return sendBody(endpoint, ExchangePattern.InOut, body);
     }
