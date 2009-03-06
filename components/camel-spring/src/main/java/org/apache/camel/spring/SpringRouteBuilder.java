@@ -17,11 +17,13 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.apache.camel.spring.spi.TransactionInterceptor;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -30,7 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version $Revision$
  */
-public abstract class SpringRouteBuilder extends RouteBuilder {
+public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
     public TransactionInterceptor transactionInterceptor() {
@@ -95,7 +97,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder {
     /**
      * Sets the application context to use to lookup beans
      */
-    public void setApplicationContext(ApplicationContext applicationContext) {
+    public void setApplicationContext(ApplicationContext applicationContext) {        
         this.applicationContext = applicationContext;
     }
 
