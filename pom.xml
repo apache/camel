@@ -101,7 +101,7 @@
     <camel.osgi.exclude.dependencies>true</camel.osgi.exclude.dependencies>
   </properties>
 
-  <url>http://apache.apache.org/camel/</url>
+  <url>http://camel.apache.org</url>
 
   <organization>
     <name>Apache Software Foundation</name>
@@ -119,23 +119,28 @@
   <mailingLists>
     <mailingList>
       <name>Development List</name>
-      <subscribe>camel-dev@activemq.apache.org</subscribe>
-      <unsubscribe>camel-dev@activemq.apache.org</unsubscribe>
-      <post>camel-dev@activemq.apache.org</post>
+      <subscribe>dev-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>dev-unsubscribe@camel.apache.org</unsubscribe>
+      <post>dev@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>User List</name>
-      <subscribe>camel-user@activemq.apache.org</subscribe>
-      <unsubscribe>camel-user@activemq.apache.org</unsubscribe>
-      <post>camel-user@activemq.apache.org</post>
+      <subscribe>users-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>users-unsubscribe@camel.apache.org</unsubscribe>
+      <post>users@camel.apache.org</post>
     </mailingList>
     <mailingList>
       <name>Commits List</name>
-      <subscribe>camel-commits@activemq.apache.org</subscribe>
-      <unsubscribe>camel-commits@activemq.apache.org</unsubscribe>
-      <post>camel-commits@activemq.apache.org</post>
+      <subscribe>commits-subscribe@camel.apache.org</subscribe>
+      <unsubscribe>commits-unsubscribe@camel.apache.org</unsubscribe>
+      <post>commits@camel.apache.org</post>
     </mailingList>
   </mailingLists>
+
+  <issueManagement>
+    <system>jira</system>
+    <url>https://issues.apache.org/activemq/browse/CAMEL</url>
+  </issueManagement>
 
   <distributionManagement>
     <repository>
@@ -165,9 +170,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/activemq/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/activemq/camel/trunk/</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</developerConnection>
+    <url>http://svn.apache.org/viewvc/camel/trunk/</url>
   </scm>
 
   <dependencyManagement>
