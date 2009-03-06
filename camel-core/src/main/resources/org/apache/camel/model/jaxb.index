@@ -23,7 +23,7 @@ DelayerDefinition
 DescriptionDefinition
 EnricherDefinition
 ExceptionDefinition
-ExpressionSubElementDefinition
+ExpressionSubElementType
 FilterDefinition
 FinallyDefinition
 FromDefinition
