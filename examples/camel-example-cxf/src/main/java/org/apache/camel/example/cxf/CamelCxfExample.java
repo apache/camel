@@ -64,6 +64,8 @@ public final class CamelCxfExample {
             // START SNIPPET: e3
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
+                    // Here we just pass the exception back , don't need to use errorHandler
+                    errorHandler(noErrorHandler());
                     from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
                 }
             });
