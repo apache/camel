@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import java.util.List;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ExceptionDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -41,7 +41,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     @Override
-    public void addErrorHandlers(ExceptionType exception) {
+    public void addErrorHandlers(ExceptionDefinition exception) {
         if (handler != null) {
             handler.addErrorHandlers(exception);
         }
@@ -52,8 +52,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         if (handler == null) {
             handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
-            List<ExceptionType> list = getExceptions();
-            for (ExceptionType exceptionType : list) {
+            List<ExceptionDefinition> list = getExceptions();
+            for (ExceptionDefinition exceptionType : list) {
                 handler.addErrorHandlers(exceptionType);
             }
         }

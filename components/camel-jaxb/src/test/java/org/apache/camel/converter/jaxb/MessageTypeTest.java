@@ -30,7 +30,7 @@ public class MessageTypeTest extends ExchangeTestSupport {
     protected JAXBContext jaxbContext;
 
     public void testCamelToJaxbUsingExplicitJaxbConverter() throws Exception {
-        MessageType messageType = JaxbConverter.toMessageType(exchange);
+        MessageDefinition messageType = JaxbConverter.toMessageType(exchange);
 
         assertNotNull("Should have created a valid message Type");
 

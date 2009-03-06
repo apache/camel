@@ -24,12 +24,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ExceptionDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * The default strategy used in Camel to resolve the {@link org.apache.camel.model.ExceptionType} that should
+ * The default strategy used in Camel to resolve the {@link org.apache.camel.model.ExceptionDefinition} that should
  * handle the thrown exception.
  * <p/>
  * <b>Selection strategy:</b>
@@ -39,7 +39,7 @@ import org.apache.commons.logging.LogFactory;
  * by is selected first, ending with the thrown exception itself. The method {@link #createExceptionIterator(Throwable)}
  * provides the Iterator used for the walking.</li>
  * <li>The exception type must be configured with an Exception that is an instance of the thrown exception, this
- * is tested using the {@link #filter(org.apache.camel.model.ExceptionType, Class, Throwable)} method.
+ * is tested using the {@link #filter(org.apache.camel.model.ExceptionDefinition, Class, Throwable)} method.
  * By default the filter uses <tt>instanceof</tt> test.</li>
  * <li>If the exception type has <b>exactly</b> the thrown exception then its selected as its an exact match</li>
  * <li>Otherwise the type that has an exception that is the closets super of the thrown exception is selected
@@ -47,8 +47,8 @@ import org.apache.commons.logging.LogFactory;
  * </ul>
  * <p/>
  * <b>Fine grained matching:</b>
- * <br/> If the {@link ExceptionType} has a when defined with an expression the type is also matches against
- * the current exchange using the {@link #matchesWhen(org.apache.camel.model.ExceptionType, org.apache.camel.Exchange)}
+ * <br/> If the {@link ExceptionDefinition} has a when defined with an expression the type is also matches against
+ * the current exchange using the {@link #matchesWhen(org.apache.camel.model.ExceptionDefinition, org.apache.camel.Exchange)}
  * method. This can be used to for more fine grained matching, so you can e.g. define multiple sets of
  * exception types with the same exception class(es) but have a predicate attached to select which to select at runtime.
  */
@@ -56,13 +56,13 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultExceptionPolicyStrategy.class);
 
-    public ExceptionType getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
+    public ExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionDefinition> exceptionPolicices, Exchange exchange,
                                             Throwable exception) {
 
         // recursive up the tree using the iterator
         Iterator<Throwable> it = createExceptionIterator(exception); 
         while (it.hasNext()) {
-            ExceptionType type = findMatchedExceptionPolicy(exceptionPolicices, exchange, it.next());
+            ExceptionDefinition type = findMatchedExceptionPolicy(exceptionPolicices, exchange, it.next());
             if (type != null) {
                 return type;
             }
@@ -73,7 +73,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     }
 
 
-    private ExceptionType findMatchedExceptionPolicy(Map<ExceptionPolicyKey, ExceptionType> exceptionPolicices, Exchange exchange,
+    private ExceptionDefinition findMatchedExceptionPolicy(Map<ExceptionPolicyKey, ExceptionDefinition> exceptionPolicices, Exchange exchange,
                                                Throwable exception) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
@@ -82,15 +82,15 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
         int targetLevel = getInheritanceLevel(exception.getClass());
         // candidate is the best candidate found so far to return
-        ExceptionType candidate = null;
+        ExceptionDefinition candidate = null;
         // difference in inheritance level between the current candidate and the thrown exception (target level)
         int candidateDiff = Integer.MAX_VALUE;
 
         // loop through all the entries and find the best candidates to use
-        Set<Map.Entry<ExceptionPolicyKey, ExceptionType>> entries = exceptionPolicices.entrySet();
-        for (Map.Entry<ExceptionPolicyKey, ExceptionType> entry : entries) {
+        Set<Map.Entry<ExceptionPolicyKey, ExceptionDefinition>> entries = exceptionPolicices.entrySet();
+        for (Map.Entry<ExceptionPolicyKey, ExceptionDefinition> entry : entries) {
             Class clazz = entry.getKey().getExceptionClass();
-            ExceptionType type = entry.getValue();
+            ExceptionDefinition type = entry.getValue();
 
             if (filter(type, clazz, exception)) {
 
@@ -139,7 +139,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param exception      the thrown exception
      * @return <tt>true</tt> if the to current exception class is a candidate, <tt>false</tt> to skip it.
      */
-    protected boolean filter(ExceptionType type, Class exceptionClass, Throwable exception) {
+    protected boolean filter(ExceptionDefinition type, Class exceptionClass, Throwable exception) {
         // must be instance of check to ensure that the exceptionClass is one type of the thrown exception
         return exceptionClass.isInstance(exception);
     }
@@ -157,7 +157,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @param exchange the current {@link Exchange}
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
-    protected boolean matchesWhen(ExceptionType type, Exchange exchange) {
+    protected boolean matchesWhen(ExceptionDefinition type, Exchange exchange) {
         if (type.getOnWhen() == null || type.getOnWhen().getExpression() == null) {
             // if no predicate then it's always a match
             return true;
@@ -167,7 +167,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     /**
      * Strategy method creating the iterator to walk the exception in the order Camel should use
-     * for find the {@link ExceptionType} should be used.
+     * for find the {@link ExceptionDefinition} should be used.
      * <p/>
      * The default iterator will walk from the bottom upwards
      * (the last caused by going upwards to the exception)

@@ -16,8 +16,8 @@
  */
 package org.apache.camel.scala.dsl.builder;
 
-import org.apache.camel.model.{ChoiceType, ProcessorType}
-import org.apache.camel.model.dataformat.DataFormatType
+import org.apache.camel.model.{ChoiceDefinition, ProcessorDefinition}
+import org.apache.camel.model.dataformat.DataFormatDefinition
 import org.apache.camel.Routes
 
 import collection.mutable.Stack
@@ -73,7 +73,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
   def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
   def otherwise = stack.top.otherwise
-  def marshal(format: DataFormatType) = stack.top.marshal(format)
+  def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
   def multicast = stack.top.multicast
   def process(function: Exchange => Unit) = stack.top.process(function)
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
@@ -83,7 +83,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
   def thread(count: Int) = stack.top.thread(count)
-  def unmarshal(format: DataFormatType) = stack.top.unmarshal(format)
+  def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
   // implementing the Routes interface to allow RouteBuilder to be discovered by Spring

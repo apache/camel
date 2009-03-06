@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "header")
-public class HeaderExpression extends ExpressionType {
+public class HeaderExpression extends ExpressionDefinition {
     public HeaderExpression() {
     }
 

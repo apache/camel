@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.spi.RouteContext;
 
@@ -36,28 +36,28 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionNode extends ProcessorType<ProcessorType> {
+public class ExpressionNode extends ProcessorDefinition<ProcessorDefinition> {
     @XmlElementRef
-    private ExpressionType expression;
+    private ExpressionDefinition expression;
     @XmlElementRef
-    private List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+    private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
     public ExpressionNode() {
     }
 
-    public ExpressionNode(ExpressionType expression) {
+    public ExpressionNode(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
     public ExpressionNode(Expression expression) {
         if (expression != null) {
-            setExpression(new ExpressionType(expression));
+            setExpression(new ExpressionDefinition(expression));
         }
     }
 
     public ExpressionNode(Predicate predicate) {
         if (predicate != null) {
-            setExpression(new ExpressionType(predicate));
+            setExpression(new ExpressionDefinition(predicate));
         }
     }
 
@@ -66,19 +66,19 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
         return "exp";
     }
       
-    public ExpressionType getExpression() {
+    public ExpressionDefinition getExpression() {
         return expression;
     }
 
-    public void setExpression(ExpressionType expression) {
+    public void setExpression(ExpressionDefinition expression) {
         this.expression = expression;
     }
 
-    public List<ProcessorType> getOutputs() {
+    public List<ProcessorDefinition> getOutputs() {
         return outputs;
     }
 
-    public void setOutputs(List<ProcessorType> outputs) {
+    public void setOutputs(List<ProcessorDefinition> outputs) {
         this.outputs = outputs;
     }
 
@@ -96,7 +96,7 @@ public class ExpressionNode extends ProcessorType<ProcessorType> {
     }
 
     @Override
-    protected void configureChild(ProcessorType output) {
+    protected void configureChild(ProcessorDefinition output) {
         super.configureChild(output);
         if (isInheritErrorHandler()) {
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());

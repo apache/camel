@@ -45,7 +45,7 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     @XmlID
     private String id;
     @XmlElement(required = false)
-    private Description description;
+    private DescriptionDefinition description;
 
 
     /**
@@ -62,11 +62,11 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
         this.id = value;
     }
 
-    public Description getDescription() {
+    public DescriptionDefinition getDescription() {
         return description;
     }
 
-    public void setDescription(Description description) {
+    public void setDescription(DescriptionDefinition description) {
         this.description = description;
     }
 
@@ -97,13 +97,13 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
         }
         if (text != null) {
             if (description == null) {
-                description = new Description();
+                description = new DescriptionDefinition();
             }
             description.setText(text);
         }
         if (lang != null) {
             if (description == null) {
-                description = new Description();
+                description = new DescriptionDefinition();
             }
             description.setLang(lang);
         }

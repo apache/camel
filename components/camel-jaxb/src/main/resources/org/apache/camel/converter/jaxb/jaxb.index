@@ -14,11 +14,11 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-ExchangeType
-HeaderType
+ExchangeDefinition
+HeaderDefinition
 IntegerHeader
-ObjectHeader
 LongHeader
-MessageType
+MessageDefinition
+ObjectHeader
 PropertyType
 StringHeader

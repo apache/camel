@@ -16,10 +16,10 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ChoiceType
+import org.apache.camel.model.ChoiceDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SChoiceType(val target: ChoiceType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ChoiceType] {
+class SChoiceType(val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ChoiceDefinition] {
   
   val unwrap = target
   

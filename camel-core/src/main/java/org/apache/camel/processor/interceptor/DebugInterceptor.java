@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 
 /**
@@ -31,7 +31,7 @@ import org.apache.camel.processor.DelegateProcessor;
  * @version $Revision$
  */
 public class DebugInterceptor extends DelegateProcessor {
-    private final ProcessorType node;
+    private final ProcessorDefinition node;
     private final List<Exchange> exchanges;
     private final List<ExceptionEvent> exceptions;
     private Predicate traceFilter;
@@ -39,7 +39,7 @@ public class DebugInterceptor extends DelegateProcessor {
     private boolean traceExceptions = true;
     private boolean enabled = true;
 
-    public DebugInterceptor(ProcessorType node, Processor target, List<Exchange> exchanges, List<ExceptionEvent> exceptions) {
+    public DebugInterceptor(ProcessorDefinition node, Processor target, List<Exchange> exchanges, List<ExceptionEvent> exceptions) {
         super(target);
         this.node = node;
         this.exchanges = exchanges;
@@ -67,7 +67,7 @@ public class DebugInterceptor extends DelegateProcessor {
         }
     }
 
-    public ProcessorType getNode() {
+    public ProcessorDefinition getNode() {
         return node;
     }
 

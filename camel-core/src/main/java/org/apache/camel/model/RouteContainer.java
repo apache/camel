@@ -21,7 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlElementRef;
 
 /**
- * Container to hold {@link org.apache.camel.model.RouteType Route}.
+ * Container to hold {@link org.apache.camel.model.RouteDefinition Route}.
  *
  * @version $Revision$
  */
@@ -33,12 +33,12 @@ public interface RouteContainer {
      * @return the routes
      */
     @XmlElementRef
-    List<RouteType> getRoutes();
+    List<RouteDefinition> getRoutes();
 
     /**
      * Sets the routes to use
      *
      * @param routes the routes
      */
-    void setRoutes(List<RouteType> routes);
+    void setRoutes(List<RouteDefinition> routes);
 }

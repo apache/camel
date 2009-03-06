@@ -34,7 +34,7 @@ import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.model.InterceptorRef;
-import org.apache.camel.model.InterceptorType;
+import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 
 public class StreamCachingInterceptorTest extends ContextTestSupport {
@@ -127,7 +127,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
     }
 
     public void testNoStreamCaching() throws Exception {
-        List<InterceptorType> interceptors = new LinkedList<InterceptorType>();
+        List<InterceptorDefinition> interceptors = new LinkedList<InterceptorDefinition>();
         InterceptorRef streamCache = new InterceptorRef(new StreamCachingInterceptor());
         interceptors.add(streamCache);
         interceptors.add(new InterceptorRef(new DelegateProcessor()));

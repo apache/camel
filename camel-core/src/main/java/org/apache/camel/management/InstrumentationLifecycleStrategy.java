@@ -33,9 +33,9 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.ExceptionType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -155,17 +155,17 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorType, PerformanceCounter> counterMap =
-            new HashMap<ProcessorType, PerformanceCounter>();
+        Map<ProcessorDefinition, PerformanceCounter> counterMap =
+            new HashMap<ProcessorDefinition, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter
         // The performance counter are MBeans that we register with MBeanServer.
         // These performance counter will be embedded
         // to InstrumentationProcessor and wrap the appropriate processor
         // by InstrumentationInterceptStrategy.
-        RouteType route = routeContext.getRoute();
+        RouteDefinition route = routeContext.getRoute();
         
-        for (ProcessorType processor : route.getOutputs()) {
+        for (ProcessorDefinition processor : route.getOutputs()) {
             ObjectName name = null;
             try {
                 // get the mbean name
@@ -191,7 +191,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // set up the interceptorMap for onRoutesAdd() method to register the
         // ManagedRoute MBeans.
 
-        RouteType routeType = routeContext.getRoute();
+        RouteDefinition routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             if (routeType.getInputs().size() > 1) {
                 LOG.warn("Add InstrumentationProcessor to first input only.");
@@ -199,12 +199,12 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
             Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();
 
-            List<ProcessorType> exceptionHandlers = new ArrayList<ProcessorType>();
-            List<ProcessorType> outputs = new ArrayList<ProcessorType>();
+            List<ProcessorDefinition> exceptionHandlers = new ArrayList<ProcessorDefinition>();
+            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
             // separate out the exception handers in the outputs
-            for (ProcessorType output : routeType.getOutputs()) {
-                if (output instanceof ExceptionType) {
+            for (ProcessorDefinition output : routeType.getOutputs()) {
+                if (output instanceof ExceptionDefinition) {
                     exceptionHandlers.add(output);
                 } else {
                     outputs.add(output);
@@ -222,7 +222,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             routeType.intercept(processor);
 
             // add the output
-            for (ProcessorType processorType : outputs) {
+            for (ProcessorDefinition processorType : outputs) {
                 routeType.addOutput(processorType);
             }
 

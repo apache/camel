@@ -16,13 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.LoopType
+import org.apache.camel.model.LoopDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's LoopType
+ * Scala enrichment for Camel's LoopDefinition
  */
-class SLoopType(val target: LoopType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[LoopType] {
+class SLoopType(val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[LoopDefinition] {
  
   val unwrap = target
   

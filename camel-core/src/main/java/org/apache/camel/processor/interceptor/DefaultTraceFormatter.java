@@ -18,7 +18,7 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
@@ -43,7 +43,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showOutBodyType;
     private boolean showException = true;
 
-    public Object format(final TraceInterceptor interceptor, final ProcessorType node, final Exchange exchange) {
+    public Object format(final TraceInterceptor interceptor, final ProcessorDefinition node, final Exchange exchange) {
         Message in = exchange.getIn();
         Message out = exchange.getOut(false);
 
@@ -210,7 +210,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
         return unitOfWork.getId();
     }
 
-    protected String getNodeMessage(ProcessorType node) {
+    protected String getNodeMessage(ProcessorDefinition node) {
         String message = node.getShortName() + "(" + node.getLabel() + ")";
         if (nodeLength > 0) {
             return String.format("%1$-" + nodeLength + "." + nodeLength + "s", message);
@@ -226,7 +226,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
      * <br/>or
      * <br/><tt>ID-mojo/39713-1225468755256/2-0 -> transform(body)</tt>
      */
-    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorType currentNode, Exchange exchange) {
+    protected String extractBreadCrumb(TraceInterceptor interceptor, ProcessorDefinition currentNode, Exchange exchange) {
         String id = "";
         String result;
         
@@ -249,7 +249,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
         String from = "";
         if (showNode && exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            ProcessorType prev = tuow.getLastInterceptedNode();
+            ProcessorDefinition prev = tuow.getLastInterceptedNode();
             if (prev != null) {
                 from = getNodeMessage(prev);
             } else if (exchange.getFromEndpoint() != null) {

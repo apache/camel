@@ -20,8 +20,13 @@ package org.apache.camel.model;
  * @version $Revision: 1.1 $
  */
 public final class Constants {
-    public static final String JAXB_CONTEXT_PACKAGES = "org.apache.camel:org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat" 
-                                                       + ":org.apache.camel.model.language:org.apache.camel.model.loadbalancer";
+    public static final String JAXB_CONTEXT_PACKAGES = 
+        "org.apache.camel:" + 
+        "org.apache.camel.model:" + 
+        "org.apache.camel.model.config:" + 
+        "org.apache.camel.model.dataformat:" + 
+        "org.apache.camel.model.language:" + 
+        "org.apache.camel.model.loadbalancer";
 
     private Constants() {
     }

@@ -22,8 +22,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.seda.SedaEndpoint;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.RouteDefinition;
 
 /**
  * This test stops a route, mutates it then restarts it
@@ -37,9 +37,9 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
     protected Object expectedBody = "<hello>world!</hello>";
 
     public void testStartRouteThenStopMutateAndStartRouteAgain() throws Exception {
-        List<RouteType> routes = context.getRouteDefinitions();
+        List<RouteDefinition> routes = context.getRouteDefinitions();
         assertCollectionSize("Route", routes, 1);
-        RouteType route = routes.get(0);
+        RouteDefinition route = routes.get(0);
 
         endpointA = getMandatoryEndpoint("seda:test.a", SedaEndpoint.class);
         endpointB = getMandatoryEndpoint("seda:test.b", SedaEndpoint.class);
@@ -57,7 +57,7 @@ public class StartAndStopRoutesTest extends ContextTestSupport {
 
 
         // lets mutate the route...
-        FromType fromType = assertOneElement(route.getInputs());
+        FromDefinition fromType = assertOneElement(route.getInputs());
         fromType.setUri("seda:test.C");
         context.startRoute(route);
 

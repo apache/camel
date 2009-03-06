@@ -17,7 +17,7 @@
 package org.apache.camel.spi;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 
  /**
   * The purpose of this interface is to allow an implementation to wrap
@@ -30,7 +30,7 @@ public interface InterceptStrategy {
 
     /**
      * This method is invoked by
-     * {@link ProcessorType#wrapProcessor(RouteContext, Processor)}
+     * {@link ProcessorDefinition#wrapProcessor(RouteContext, Processor)}
      * to give the implementor an opportunity to wrap the target processor
      * in a route.
      *
@@ -39,6 +39,6 @@ public interface InterceptStrategy {
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(ProcessorType processorType,
+    Processor wrapProcessorInInterceptors(ProcessorDefinition processorType,
             Processor target) throws Exception;
 }

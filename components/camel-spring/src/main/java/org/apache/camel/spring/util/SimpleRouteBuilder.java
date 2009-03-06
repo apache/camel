@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A simple {@link RouteBuilder} which can be configured directly with one or more from URIs, zero or more to URIs
@@ -41,7 +41,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
             throw new IllegalArgumentException("the fromUris property must contain at least one valid URI");
         }
         for (String fromUri : fromUris) {
-            ProcessorType route = from(fromUri);
+            ProcessorDefinition route = from(fromUri);
 
             route = addBeanCall(route);
             for (String toUri : toUris) {
@@ -116,7 +116,7 @@ public class SimpleRouteBuilder extends RouteBuilder {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected ProcessorType addBeanCall(ProcessorType route) {
+    protected ProcessorDefinition addBeanCall(ProcessorDefinition route) {
         Class type = getBeanType();
         if (type != null) {
             if (beanMethod != null) {

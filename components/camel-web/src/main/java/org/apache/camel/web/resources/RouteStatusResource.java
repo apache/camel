@@ -29,7 +29,7 @@ import com.sun.jersey.api.representation.Form;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RouteDefinition;
 
 /**
  * Represents the status of a single single Camel Route which is used to implement one or more
@@ -44,7 +44,7 @@ public class RouteStatusResource {
         this.routeResource = routeResource;
     }
 
-    public RouteType getRoute() {
+    public RouteDefinition getRoute() {
         return routeResource.getRoute();
     }
 

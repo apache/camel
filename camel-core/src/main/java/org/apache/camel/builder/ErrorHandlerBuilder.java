@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import java.util.List;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ExceptionDefinition;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -43,12 +43,12 @@ public interface ErrorHandlerBuilder {
      * Adds error handler for the given exception type
      * @param exception  the exception to handle
      */
-    void addErrorHandlers(ExceptionType exception);
+    void addErrorHandlers(ExceptionDefinition exception);
 
     /**
      * Adds the error handlers for the given list of exception types
      * @param exceptions  the list of exceptions to handle
      */
-    void setErrorHandlers(List<ExceptionType> exceptions);
+    void setErrorHandlers(List<ExceptionDefinition> exceptions);
 
 }

@@ -16,20 +16,20 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ProcessorType
-import org.apache.camel.model.FilterType
-import org.apache.camel.model.ChoiceType
-import org.apache.camel.model.IdempotentConsumerType
+import org.apache.camel.model.ProcessorDefinition
+import org.apache.camel.model.FilterDefinition
+import org.apache.camel.model.ChoiceDefinition
+import org.apache.camel.model.IdempotentConsumerDefinition
 
-import org.apache.camel.model.dataformat.DataFormatType
+import org.apache.camel.model.dataformat.DataFormatDefinition
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 abstract class SAbstractType extends DSL {
   
-  type RawProcessorType = ProcessorType[P] forSome {type P}
+  type RawProcessorDefinition = ProcessorDefinition[P] forSome {type P}
   
-  val target : ProcessorType[T] forSome {type T}
+  val target : ProcessorDefinition[T] forSome {type T}
   implicit val builder: RouteBuilder
   implicit def expressionBuilder(expression: Exchange => Any) = new ScalaExpression(expression)
   
@@ -50,7 +50,7 @@ abstract class SAbstractType extends DSL {
     
   def as[Target](toType: Class[Target]) = {
     target.convertBodyTo(toType)
-    new SProcessorType(target.asInstanceOf[RawProcessorType])
+    new SProcessorType(target.asInstanceOf[RawProcessorDefinition])
   }
   
   def attempt : STryType = new STryType(target.tryBlock)
@@ -59,7 +59,7 @@ abstract class SAbstractType extends DSL {
     new SSplitterType(target.split(expression))
     
   def recipients(expression: Exchange => Any) = 
-    new SProcessorType(target.recipientList(expression).asInstanceOf[RawProcessorType])
+    new SProcessorType(target.recipientList(expression).asInstanceOf[RawProcessorDefinition])
 
   def apply(block: => Unit) = {
     builder.build(this, block)
@@ -67,9 +67,9 @@ abstract class SAbstractType extends DSL {
   }
 
   def bean(bean: Any) = bean match {
-    case cls: Class[_] => new SProcessorType(target.bean(cls).asInstanceOf[RawProcessorType])
-    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[RawProcessorType])
-    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[RawProcessorType])
+    case cls: Class[_] => new SProcessorType(target.bean(cls).asInstanceOf[RawProcessorDefinition])
+    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[RawProcessorDefinition])
+    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[RawProcessorDefinition])
   }
   
   def choice = new SChoiceType(target.choice)
@@ -79,12 +79,12 @@ abstract class SAbstractType extends DSL {
   
   def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerType(target.idempotentConsumer(expression, null))
   
-  def inOnly = new SProcessorType(target.inOnly.asInstanceOf[RawProcessorType])
-  def inOut = new SProcessorType(target.inOut.asInstanceOf[RawProcessorType])
+  def inOnly = new SProcessorType(target.inOnly.asInstanceOf[RawProcessorDefinition])
+  def inOut = new SProcessorType(target.inOut.asInstanceOf[RawProcessorDefinition])
  
   def loop(expression: Exchange => Any) = new SLoopType(target.loop(expression))
   
-  def marshal(format: DataFormatType) = {
+  def marshal(format: DataFormatDefinition) = {
     target.marshal(format)
     this
   }
@@ -104,13 +104,13 @@ abstract class SAbstractType extends DSL {
   
   def resequence(expression: Exchange => Any) = new SResequencerType(target.resequence(expression))
   
-  def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+  def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
   
-  def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorType[P] forSome {type P}])
+  def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
   
   def thread(count: Int) = new SThreadType(target.thread(count))
   
-  def unmarshal(format: DataFormatType) = {
+  def unmarshal(format: DataFormatDefinition) = {
     target.unmarshal(format)
     this
   }

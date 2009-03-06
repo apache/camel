@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.Expression;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
@@ -32,7 +32,7 @@ import org.apache.camel.model.language.XQueryExpression;
  * 
  * @version $Revision$
  */
-public class ExpressionClause<T> extends ExpressionType {
+public class ExpressionClause<T> extends ExpressionDefinition {
     private T result;
     private String language;
 

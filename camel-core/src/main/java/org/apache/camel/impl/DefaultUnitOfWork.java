@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.spi.UnitOfWork;
@@ -40,7 +40,7 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
     private String id;
     private List<Synchronization> synchronizations;
     private List<AsyncCallback> asyncCallbacks;
-    private List<ProcessorType> routeList;
+    private List<ProcessorDefinition> routeList;
 
     public DefaultUnitOfWork() {
     }
@@ -99,21 +99,21 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return id;
     }
 
-    public synchronized void addInterceptedNode(ProcessorType node) {
+    public synchronized void addInterceptedNode(ProcessorDefinition node) {
         if (routeList == null) {
-            routeList = new ArrayList<ProcessorType>();
+            routeList = new ArrayList<ProcessorDefinition>();
         }
         routeList.add(node);
     }
 
-    public synchronized ProcessorType getLastInterceptedNode() {
+    public synchronized ProcessorDefinition getLastInterceptedNode() {
         if (routeList == null || routeList.isEmpty()) {
             return null;
         }
         return routeList.get(routeList.size() - 1);
     }
 
-    public List<ProcessorType> getInterceptedNodes() {
+    public List<ProcessorDefinition> getInterceptedNodes() {
         return Collections.unmodifiableList(routeList);
     }
 

@@ -18,8 +18,8 @@ package org.apache.camel.web.resources;
 
 import java.util.List;
 
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 
 
 /**
@@ -33,9 +33,9 @@ public class RoutesTest extends TestSupport {
         System.out.println("Routes XML: " + text);
         assertNotNull("XML should not be null", text);
 
-        RoutesType routes = resource.path("routes").accept("application/xml").get(RoutesType.class);
+        RoutesDefinition routes = resource.path("routes").accept("application/xml").get(RoutesDefinition.class);
         assertNotNull("Should have found routes", routes);
-        List<RouteType> routeList = routes.getRoutes();
+        List<RouteDefinition> routeList = routes.getRoutes();
         assertNotNull("Should have more than one route", routeList.size() > 0);
         System.out.println("Have routes: " + routeList);
     }

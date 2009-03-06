@@ -19,7 +19,7 @@ package org.apache.camel.management;
 import java.util.Map;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
@@ -34,13 +34,13 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
-    private Map<ProcessorType, PerformanceCounter> counterMap;
+    private Map<ProcessorDefinition, PerformanceCounter> counterMap;
 
-    public InstrumentationInterceptStrategy(Map<ProcessorType, PerformanceCounter> counterMap) {
+    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> counterMap) {
         this.counterMap = counterMap;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
         Processor retval = target;
         PerformanceCounter counter = counterMap.get(processorType);
 

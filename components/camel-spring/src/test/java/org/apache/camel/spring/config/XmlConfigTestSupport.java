@@ -20,9 +20,9 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TestSupport;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,18 +35,18 @@ public class XmlConfigTestSupport extends TestSupport {
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);
 
-        List<RouteType> routes = context.getRouteDefinitions();
+        List<RouteDefinition> routes = context.getRouteDefinitions();
         LOG.debug("Found routes: " + routes);
 
         assertEquals("One Route should be found", 1, routes.size());
 
-        for (RouteType route : routes) {
-            List<FromType> inputs = route.getInputs();
+        for (RouteDefinition route : routes) {
+            List<FromDefinition> inputs = route.getInputs();
             assertEquals("Number of inputs", 1, inputs.size());
-            FromType fromType = inputs.get(0);
+            FromDefinition fromType = inputs.get(0);
             assertEquals("from URI", "seda:test.a", fromType.getEndpoint().getEndpointUri());
 
-            List<ProcessorType> outputs = route.getOutputs();
+            List<ProcessorDefinition> outputs = route.getOutputs();
             assertEquals("Number of outputs", 1, outputs.size());
         }
     }

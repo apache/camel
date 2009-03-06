@@ -30,7 +30,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "xmlBeans")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLBeansDataFormat extends DataFormatType {
+public class XMLBeansDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
 

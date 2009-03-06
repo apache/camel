@@ -25,8 +25,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.view.RouteDotGenerator;
 
 /**
@@ -46,11 +46,11 @@ public class RoutesResource extends CamelChildResourceSupport {
      */
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public RoutesType getRouteDefinitions() {
-        RoutesType answer = new RoutesType();
+    public RoutesDefinition getRouteDefinitions() {
+        RoutesDefinition answer = new RoutesDefinition();
         CamelContext camelContext = getCamelContext();
         if (camelContext != null) {
-            List<RouteType> list = camelContext.getRouteDefinitions();
+            List<RouteDefinition> list = camelContext.getRouteDefinitions();
             answer.setRoutes(list);
         }
         return answer;
@@ -72,8 +72,8 @@ public class RoutesResource extends CamelChildResourceSupport {
      */
     @Path("{id}")
     public RouteResource getRoute(@PathParam("id") String id) {
-        List<RouteType> list = getRoutes();
-        for (RouteType routeType : list) {
+        List<RouteDefinition> list = getRoutes();
+        for (RouteDefinition routeType : list) {
             if (routeType.getId().equals(id)) {
                 return new RouteResource(this, routeType);
             }
@@ -84,7 +84,7 @@ public class RoutesResource extends CamelChildResourceSupport {
 
     // Properties
     //-------------------------------------------------------------------------
-    public List<RouteType> getRoutes() {
+    public List<RouteDefinition> getRoutes() {
         return getRouteDefinitions().getRoutes();
     }
 }

@@ -27,7 +27,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlRootElement(name = "serialization")
-public class SerializationDataFormat extends DataFormatType {
+public class SerializationDataFormat extends DataFormatDefinition {
 
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {

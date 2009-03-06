@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "javaScript")
-public class JavaScriptExpression extends ExpressionType {
+public class JavaScriptExpression extends ExpressionDefinition {
     public JavaScriptExpression() {
     }
 

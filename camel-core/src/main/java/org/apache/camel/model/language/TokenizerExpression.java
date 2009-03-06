@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "tokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TokenizerExpression extends ExpressionType {
+public class TokenizerExpression extends ExpressionDefinition {
     @XmlAttribute(required = true)
     private String token;
     @XmlAttribute(required = false)

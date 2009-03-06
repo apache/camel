@@ -64,13 +64,13 @@ public final class JaxbConverter {
     }
 
     @Converter
-    public static MessageType toMessageType(Exchange exchange) {
+    public static MessageDefinition toMessageType(Exchange exchange) {
         return toMessageType(exchange.getIn());
     }
 
     @Converter
-    public static MessageType toMessageType(Message in) {
-        MessageType answer = new MessageType();
+    public static MessageDefinition toMessageType(Message in) {
+        MessageDefinition answer = new MessageDefinition();
         answer.copyFrom(in);
         return answer;
     }

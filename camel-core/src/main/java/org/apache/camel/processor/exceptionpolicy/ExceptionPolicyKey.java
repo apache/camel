@@ -16,7 +16,7 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import org.apache.camel.model.WhenType;
+import org.apache.camel.model.WhenDefinition;
 
 /**
  * Exception policy key is a compound key for storing:
@@ -27,9 +27,9 @@ import org.apache.camel.model.WhenType;
 public final class ExceptionPolicyKey {
 
     private final Class exceptionClass;
-    private final WhenType when;
+    private final WhenDefinition when;
 
-    public ExceptionPolicyKey(Class exceptionClass, WhenType when) {
+    public ExceptionPolicyKey(Class exceptionClass, WhenDefinition when) {
         this.exceptionClass = exceptionClass;
         this.when = when;
     }
@@ -38,7 +38,7 @@ public final class ExceptionPolicyKey {
         return exceptionClass;
     }
 
-    public WhenType getWhen() {
+    public WhenDefinition getWhen() {
         return when;
     }
 
@@ -46,7 +46,7 @@ public final class ExceptionPolicyKey {
         return new ExceptionPolicyKey(exceptionClass, null);
     }
 
-    public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenType when) {
+    public static ExceptionPolicyKey newInstance(Class exceptionClass, WhenDefinition when) {
         return new ExceptionPolicyKey(exceptionClass, when);
     }
 

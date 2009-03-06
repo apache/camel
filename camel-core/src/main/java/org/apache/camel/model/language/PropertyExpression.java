@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision: 630591 $
  */
 @XmlRootElement(name = "property")
-public class PropertyExpression extends ExpressionType {
+public class PropertyExpression extends ExpressionDefinition {
     public PropertyExpression() {
     }
 

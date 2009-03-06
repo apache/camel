@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "objectHeader")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class ObjectHeader extends HeaderType {
+public class ObjectHeader extends HeaderDefinition {
     @XmlAnyElement(lax = true)
     private Object value;
 

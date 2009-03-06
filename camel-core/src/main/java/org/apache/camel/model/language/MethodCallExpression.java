@@ -35,7 +35,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "method")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class MethodCallExpression extends ExpressionType {
+public class MethodCallExpression extends ExpressionDefinition {
     @XmlAttribute(required = false)
     private String bean;
     @XmlAttribute(required = false)

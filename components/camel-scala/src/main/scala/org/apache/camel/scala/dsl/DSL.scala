@@ -16,7 +16,7 @@
  */
 package org.apache.camel.scala.dsl 
 
-import org.apache.camel.model.dataformat.DataFormatType
+import org.apache.camel.model.dataformat.DataFormatDefinition
 
 /**
  * Defines the 'keywords' in our Scala DSL
@@ -34,7 +34,7 @@ trait DSL {
   def inOut(): SProcessorType
   def loadbalance : SLoadBalanceType
   def loop(expression: Exchange => Any) : SLoopType
-  def marshal(format : DataFormatType) : DSL
+  def marshal(format : DataFormatDefinition) : DSL
   def multicast : SMulticastType
   def otherwise : DSL
   def process(function: Exchange => Unit) : DSL
@@ -46,7 +46,7 @@ trait DSL {
   def thread(number: Int) : SThreadType
   def throttle(frequency: Frequency) : SThrottlerType
   def to(uris: String*) : DSL
-  def unmarshal(format: DataFormatType) : DSL
+  def unmarshal(format: DataFormatDefinition) : DSL
   def when(filter: Exchange => Boolean) : SChoiceType
   def -->(uris: String*) : DSL
 

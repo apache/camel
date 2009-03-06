@@ -23,15 +23,15 @@ package org.apache.camel.model;
  * @version $Revision$
  */
 public class NodeFactory {
-    public FilterType createFilter() {
-        return new FilterType();
+    public FilterDefinition createFilter() {
+        return new FilterDefinition();
     }
 
-    public LoopType createLoop() {
-        return new LoopType();
+    public LoopDefinition createLoop() {
+        return new LoopDefinition();
     }
 
-    public RouteType createRoute() {
-        return new RouteType();
+    public RouteDefinition createRoute() {
+        return new RouteDefinition();
     }
 }

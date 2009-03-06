@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "longHeader")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class LongHeader extends HeaderType {
+public class LongHeader extends HeaderDefinition {
     @XmlAttribute(name = "value")
     private Long number;
 

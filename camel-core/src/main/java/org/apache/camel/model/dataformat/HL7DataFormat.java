@@ -29,7 +29,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "hl7")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class HL7DataFormat extends DataFormatType {
+public class HL7DataFormat extends DataFormatDefinition {
 
     public HL7DataFormat() {
         super("org.apache.camel.component.hl7.HL7DataFormat");

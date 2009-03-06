@@ -23,7 +23,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.RoutingSlipType;
+import org.apache.camel.model.RoutingSlipDefinition;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,7 +42,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     private ProducerCache producerCache = new ProducerCache();
 
     public RoutingSlip(String header) {
-        this(header, RoutingSlipType.DEFAULT_DELIMITER);
+        this(header, RoutingSlipDefinition.DEFAULT_DELIMITER);
     }
 
     public RoutingSlip(String header, String uriDelimiter) {

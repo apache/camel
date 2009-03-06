@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.model.InterceptorRef;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -48,12 +48,12 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     private static final String TRACE_EVENT = "CamelTraceEvent";
     private Logger logger;
     private Producer traceEventProducer;
-    private final ProcessorType node;
+    private final ProcessorDefinition node;
     private final Tracer tracer;
     private TraceFormatter formatter;
     private Class jpaTraceEventMessageClass;
 
-    public TraceInterceptor(ProcessorType node, Processor target, TraceFormatter formatter, Tracer tracer) {
+    public TraceInterceptor(ProcessorDefinition node, Processor target, TraceFormatter formatter, Tracer tracer) {
         super(target);
         this.tracer = tracer;
         this.node = node;
@@ -77,7 +77,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         }
     }
 
-    public TraceInterceptor(ProcessorType node, Processor target, Tracer tracer) {
+    public TraceInterceptor(ProcessorDefinition node, Processor target, Tracer tracer) {
         this(node, target, null, tracer);
     }
 
@@ -133,7 +133,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
 
     // Properties
     //-------------------------------------------------------------------------
-    public ProcessorType getNode() {
+    public ProcessorDefinition getNode() {
         return node;
     }
 
@@ -239,7 +239,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
     /**
      * Returns true if the given node should be logged in the trace list
      */
-    protected boolean shouldLogNode(ProcessorType node) {
+    protected boolean shouldLogNode(ProcessorDefinition node) {
         if (node == null) {
             return false;
         }

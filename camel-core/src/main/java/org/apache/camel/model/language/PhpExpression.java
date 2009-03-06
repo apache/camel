@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "php")
-public class PhpExpression extends ExpressionType {
+public class PhpExpression extends ExpressionDefinition {
     public PhpExpression() {
     }
 

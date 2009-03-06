@@ -17,7 +17,7 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * Formatter to format trace logs when tracing {@link Exchange} during routing.
@@ -32,5 +32,5 @@ public interface TraceFormatter {
      * @param exchange       the current exchange
      * @return the log message
      */
-    Object format(TraceInterceptor interceptor, ProcessorType node, Exchange exchange);
+    Object format(TraceInterceptor interceptor, ProcessorDefinition node, Exchange exchange);
 }

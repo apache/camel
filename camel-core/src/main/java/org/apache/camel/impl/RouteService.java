@@ -22,12 +22,12 @@ import java.util.List;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents the runtime objects for a given {@link RouteType} so that it can be stopped independently
+ * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
  * of other routes
  *
  * @version $Revision: 1.1 $
@@ -35,12 +35,12 @@ import org.apache.camel.spi.RouteContext;
 public class RouteService extends ServiceSupport {
 
     private final DefaultCamelContext camelContext;
-    private final RouteType routeType;
+    private final RouteDefinition routeType;
     private final List<RouteContext> routeContexts;
     private final Collection<Route> routes;
     private String id;
 
-    public RouteService(DefaultCamelContext camelContext, RouteType routeType, List<RouteContext> routeContexts, Collection<Route> routes) {
+    public RouteService(DefaultCamelContext camelContext, RouteDefinition routeType, List<RouteContext> routeContexts, Collection<Route> routes) {
         this.camelContext = camelContext;
         this.routeType = routeType;
         this.routeContexts = routeContexts;
@@ -60,7 +60,7 @@ public class RouteService extends ServiceSupport {
         return routeContexts;
     }
 
-    public RouteType getRouteType() {
+    public RouteDefinition getRouteType() {
         return routeType;
     }
 

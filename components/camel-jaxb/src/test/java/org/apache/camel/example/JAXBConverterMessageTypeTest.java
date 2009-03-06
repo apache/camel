@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxb.MessageType;
+import org.apache.camel.converter.jaxb.MessageDefinition;
 import org.apache.camel.impl.DefaultCamelContext;
 
 /**
@@ -31,7 +31,7 @@ public class JAXBConverterMessageTypeTest extends TestCase {
     protected TypeConverter converter = context.getTypeConverter();
 
     public void testConverter() throws Exception {
-        MessageType message = converter.convertTo(MessageType.class, "<message><hello>bar</hello></message>");
+        MessageDefinition message = converter.convertTo(MessageDefinition.class, "<message><hello>bar</hello></message>");
         assertNotNull("Message should not be null!", message);
     }
 

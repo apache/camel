@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
 
 @XmlRootElement(name = "zip")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ZipDataFormat extends DataFormatType {
+public class ZipDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = false)
     private int compressionLevel = Deflater.BEST_SPEED;

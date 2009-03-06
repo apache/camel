@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "groovy")
-public class GroovyExpression extends ExpressionType {
+public class GroovyExpression extends ExpressionDefinition {
     public GroovyExpression() {
     }
 

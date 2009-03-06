@@ -20,7 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.jaxb.MessageType;
+import org.apache.camel.converter.jaxb.MessageDefinition;
 
 /**
  * @version $Revision$
@@ -52,7 +52,7 @@ public class DumpToXmlTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("file:src/test/data?noop=true").convertBodyTo(MessageType.class).to("file:target/camel/dump");
+                from("file:src/test/data?noop=true").convertBodyTo(MessageDefinition.class).to("file:target/camel/dump");
             }
         };
     }

@@ -16,7 +16,7 @@
 ## ------------------------------------------------------------------------
 ConstantExpression
 ELExpression
-ExpressionType
+ExpressionDefinition
 GroovyExpression
 HeaderExpression
 JavaScriptExpression

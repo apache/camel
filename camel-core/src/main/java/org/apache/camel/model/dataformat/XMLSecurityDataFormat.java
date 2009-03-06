@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "secureXML")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XMLSecurityDataFormat extends DataFormatType {
+public class XMLSecurityDataFormat extends DataFormatDefinition {
 
     private static final transient String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 

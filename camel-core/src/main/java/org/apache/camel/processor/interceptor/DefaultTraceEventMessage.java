@@ -21,7 +21,7 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.TraceableUnitOfWork;
 import org.apache.camel.util.MessageHelper;
 
@@ -53,7 +53,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
      * @param toNode the node where this trace is intercepted
      * @param exchange the current {@link Exchange}
      */
-    public DefaultTraceEventMessage(final Date timestamp, final ProcessorType toNode, final Exchange exchange) {
+    public DefaultTraceEventMessage(final Date timestamp, final ProcessorDefinition toNode, final Exchange exchange) {
         Message in = exchange.getIn();
 
         // false because we don't want to introduce side effects
@@ -81,7 +81,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
 
     // Implementation
     //---------------------------------------------------------------
-    private String extractNode(ProcessorType node) {
+    private String extractNode(ProcessorDefinition node) {
         return node.getShortName() + "(" + node.getLabel() + ")";
     }
 
@@ -92,7 +92,7 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     private String extractPreviousNode(Exchange exchange) {
         if (exchange.getUnitOfWork() instanceof TraceableUnitOfWork) {
             TraceableUnitOfWork tuow = (TraceableUnitOfWork) exchange.getUnitOfWork();
-            ProcessorType last = tuow.getLastInterceptedNode();
+            ProcessorDefinition last = tuow.getLastInterceptedNode();
             return last != null ? extractNode(last) : null;
         }
         return null;

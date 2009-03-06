@@ -20,7 +20,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.TryType;
+import org.apache.camel.model.TryDefinition;
 
 /**
  * No catch blocks but handle all should work
@@ -74,7 +74,7 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
                 // use little delay to run unit test fast
                 errorHandler(deadLetterChannel().delay(25));
 
-                TryType tryType = from("direct:start").tryBlock().
+                TryDefinition tryType = from("direct:start").tryBlock().
                         process(validator).
                         to("mock:valid");
                 tryType.finallyBlock().to("mock:all");
