@@ -58,11 +58,11 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElement(name = "retryUntil", required = false)
-    private ExpressionSubElementDefinition retryUntil;
+    private ExpressionSubElementType retryUntil;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
-    private ExpressionSubElementDefinition handled;
+    private ExpressionSubElementType handled;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
     @XmlElementRef
@@ -397,11 +397,11 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
         return handledPolicy;
     }
 
-    public void setHandled(ExpressionSubElementDefinition handled) {
+    public void setHandled(ExpressionSubElementType handled) {
         this.handled = handled;
     }
 
-    public ExpressionSubElementDefinition getHandled() {
+    public ExpressionSubElementType getHandled() {
         return handled;
     }    
 
@@ -417,11 +417,11 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
         this.onWhen = onWhen;
     }
 
-    public ExpressionSubElementDefinition getRetryUntil() {
+    public ExpressionSubElementType getRetryUntil() {
         return retryUntil;
     }
 
-    public void setRetryUntil(ExpressionSubElementDefinition retryUntil) {
+    public void setRetryUntil(ExpressionSubElementType retryUntil) {
         this.retryUntil = retryUntil;
     }
 

@@ -47,7 +47,7 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefinition> {
     @XmlElement(name = "correlationExpression", required = false)
-    private ExpressionSubElementDefinition correlationExpression;
+    private ExpressionSubElementType correlationExpression;
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
@@ -69,7 +69,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
     @XmlElement(name = "completionPredicate", required = false)
-    private ExpressionSubElementDefinition completionPredicate;
+    private ExpressionSubElementType completionPredicate;
 
     public AggregatorDefinition() {
     }
@@ -254,11 +254,11 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
         this.collectionRef = collectionRef;
     }
 
-    public void setCompletionPredicate(ExpressionSubElementDefinition completionPredicate) {
+    public void setCompletionPredicate(ExpressionSubElementType completionPredicate) {
         this.completionPredicate = completionPredicate;
     }
 
-    public ExpressionSubElementDefinition getCompletionPredicate() {
+    public ExpressionSubElementType getCompletionPredicate() {
         return completionPredicate;
     }
 
@@ -369,7 +369,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
     public ExpressionClause<AggregatorDefinition> completionPredicate() {
         checkNoCompletedPredicate();
         ExpressionClause<AggregatorDefinition> clause = new ExpressionClause<AggregatorDefinition>(this);
-        setCompletionPredicate(new ExpressionSubElementDefinition((Expression)clause));
+        setCompletionPredicate(new ExpressionSubElementType((Expression)clause));
         return clause;
     }
 
@@ -380,7 +380,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      */
     public AggregatorDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
-        setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
+        setCompletionPredicate(new ExpressionSubElementType(predicate));
         return this;
     }
 
@@ -390,11 +390,11 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
         }
     }
 
-    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
+    public void setCorrelationExpression(ExpressionSubElementType correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
 
-    public ExpressionSubElementDefinition getCorrelationExpression() {
+    public ExpressionSubElementType getCorrelationExpression() {
         return correlationExpression;
     }
 
