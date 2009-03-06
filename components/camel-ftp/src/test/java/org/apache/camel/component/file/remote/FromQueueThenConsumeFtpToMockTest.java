@@ -30,12 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
 
     // START SNIPPET: e1
-    // we use directory=false to indicate we only want to consume a single file
     // we use delay=5000 to use 5 sec delay between pools to avoid polling a second time before we stop the consumer
     // this is because we only want to run a single poll and get the file
-    // file=getme/ is the path to the folder where the file is
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "?password=admin&binary=false&directory=false&consumer.delay=5000&file=getme/";
+        return "ftp://admin@localhost:" + getPort() + "/getme?password=admin&binary=false&delay=5000";
     }
     // END SNIPPET: e1
 
@@ -82,7 +80,8 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
                         String filename = exchange.getIn().getHeader("myfile", String.class);
 
                         // construct the total url for the ftp consumer
-                        String url = getFtpUrl() + filename;
+                        // set a regex pattern to only consume the file we want
+                        String url = getFtpUrl() + "&regexPattern=" + filename;
 
                         // create a ftp endpoint
                         Endpoint ftp = context.getEndpoint(url);

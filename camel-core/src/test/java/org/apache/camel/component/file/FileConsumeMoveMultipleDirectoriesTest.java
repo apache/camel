@@ -22,32 +22,39 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for consuming the same filename only.
+ * Unit test for consuming multiple directories.
  */
-public class FileConsumeFileOnlyTest extends ContextTestSupport {
+public class FileConsumeMoveMultipleDirectoriesTest extends ContextTestSupport {
+
+    private String fileUrl = "file://target/multidir/?recursive=true&initialDelay=2000&delay=5000" +
+            "&excludeNamePostfix=old&moveExpression=done/${file:name}.old";
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/fileonly");
+        deleteDirectory("target/multidir");
         super.setUp();
-        template.sendBodyAndHeader("file://target/fileonly", "Hello World", Exchange.FILE_NAME, "report.txt");
-        template.sendBodyAndHeader("file://target/fileonly", "Bye World", Exchange.FILE_NAME, "report2.txt");
-        template.sendBodyAndHeader("file://target/fileonly/2008", "2008 Report", Exchange.FILE_NAME, "report2008.txt");
+        template.sendBodyAndHeader(fileUrl, "Bye World", Exchange.FILE_NAME, "bye.txt");
+        template.sendBodyAndHeader(fileUrl, "Hello World", Exchange.FILE_NAME, "sub/hello.txt");
+        template.sendBodyAndHeader(fileUrl, "Godday World", Exchange.FILE_NAME, "sub/sub2/godday.txt");
     }
 
-    public void testConsumeFileOnly() throws Exception {
+    public void testMultiDir() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World");
+        mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Godday World");
+
+        mock.expectedFileExists("target/multidir/done/bye.txt.old");
+        mock.expectedFileExists("target/multidir/done/sub/hello.txt.old");
+        mock.expectedFileExists("target/multidir/done/sub/sub2/godday.txt.old");
 
         assertMockEndpointsSatisfied();
     }
 
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/fileonly/report.txt?directory=false&recursive=false&delete=true").to("mock:result");
+                from(fileUrl).to("mock:result");
             }
         };
     }
+
 }

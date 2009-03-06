@@ -39,18 +39,12 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
 
         template.send("direct:report", exchange);
 
-        File file = new File("target/reports/report.txt/" + id).getAbsoluteFile();
-        assertEquals("File should exists", true, file.exists());
-    }
-
-    public void testProducerWithConfiguedFileNameInEndpointURI() throws Exception {
-        template.sendBody("direct:report2", "This is another good report");
-        File file = new File("target/report2.txt").getAbsoluteFile();
+        File file = new File("target/reports/" + id).getAbsoluteFile();
         assertEquals("File should exists", true, file.exists());
     }
 
     public void testProducerWithHeaderFileName() throws Exception {
-        template.sendBody("direct:report3", "This is super good report");
+        template.sendBody("direct:report2", "This is super good report");
         File file = new File("target/report-super.txt").getAbsoluteFile();
         assertEquals("File should exists", true, file.exists());
     }
@@ -58,11 +52,9 @@ public class FilerProducerFileNamesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:report").to("file:target/reports/report.txt");
+                from("direct:report").to("file:target/reports/");
 
-                from("direct:report2").to("file:target/report2.txt?autoCreate=false&directory=false");
-
-                from("direct:report3").setHeader(Exchange.FILE_NAME, constant("report-super.txt")).to("file:target/");
+                from("direct:report2").setHeader(Exchange.FILE_NAME, constant("report-super.txt")).to("file:target/");
             }
         };
     }

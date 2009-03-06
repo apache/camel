@@ -372,14 +372,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.append = append;
     }
 
-    public boolean isDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(boolean directory) {
-        this.directory = directory;
-    }
-
     public boolean isAutoCreate() {
         return autoCreate;
     }
@@ -422,12 +414,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         // compute the name that was written, it should be relative to the endpoint configuraion
         String name = file.isAbsolute() ? file.getAbsoluteFileName() : file.getRelativeFileName();
 
-        if (isDirectory() && name.startsWith(getConfiguration().getFile())) {
+        if (name.startsWith(getConfiguration().getFile())) {
             // remove the file path configured on the endpoint for directory=true
             name = name.substring(getConfiguration().getFile().length());
-        } else if (!isDirectory()) {
-            // use the filename for directory=false
-            name = file.getFileName();
         }
 
         if (name.startsWith(File.separator) || name.startsWith("/")) {

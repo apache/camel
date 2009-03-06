@@ -32,12 +32,13 @@ import org.apache.camel.converter.IOConverter;
 public class FromFtpDirectoryToBinaryFilesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin&directory=true"
-                + "&binary=true&consumer.useFixedDelay=false&recursive=false&consumer.delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/incoming/?password=admin"
+                + "&binary=true&useFixedDelay=false&recursive=false&delay=5000";
     }
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory(FTP_ROOT_DIR + "incoming");
         super.setUp();
         prepareFtpServer();
     }

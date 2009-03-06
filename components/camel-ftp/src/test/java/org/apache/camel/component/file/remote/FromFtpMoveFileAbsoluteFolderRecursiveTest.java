@@ -16,45 +16,41 @@
  */
 package org.apache.camel.component.file.remote;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to poll a file from the FTP server and not a folder as most test is.
+ * Unit test based on end user problem with SFTP on Windows
  */
-public class FromFtpPollFileOnlyTest extends FtpServerTestSupport {
+public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin";
-    }
-
-    public void testPollFileOnly() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("Hello World from FTPServer");
-
-        mock.assertIsSatisfied();
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false&excludeNamePostfix=.old"
+                + "&moveExpression=/done/${file:name}.old&initialDelay=5000&delay=5000";
     }
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory(FTP_ROOT_DIR + "movefile");
         super.setUp();
         prepareFtpServer();
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating a file on the server that we want to unit
-        // test that we can pool and store as a local file
-        Endpoint endpoint = context.getEndpoint("ftp://admin@localhost:" + getPort() + "/fileonly/?password=admin&binary=false");
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World from FTPServer");
-        exchange.getIn().setHeader(Exchange.FILE_NAME, "report.txt");
-        Producer producer = endpoint.createProducer();
-        producer.start();
-        producer.process(exchange);
-        producer.stop();
+        template.sendBodyAndHeader(getFtpUrl(), "Hello", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Bye", Exchange.FILE_NAME, "bye/bye.txt");
+        template.sendBodyAndHeader(getFtpUrl(), "Goodday", Exchange.FILE_NAME, "goodday/goodday.txt");
+    }
+
+    public void testPollFileAndShouldBeMoved() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
+        mock.expectedFileExists(FTP_ROOT_DIR + "done/hello.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "done/bye/bye.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "done/goodday/goodday.txt.old");
+
+        mock.assertIsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

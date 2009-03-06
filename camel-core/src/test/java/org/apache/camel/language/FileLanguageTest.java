@@ -113,7 +113,7 @@ public class FileLanguageTest extends LanguageTestSupport {
 
         // get the file handle
         file = new File("target/filelanguage/hello.txt");
-        GenericFile<File> gf = FileConsumer.asGenericFile(file);
+        GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
         GenericFileExchange<File> answer = new GenericFileExchange<File>(endpoint, ExchangePattern.InOut);

@@ -141,10 +141,13 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Building directory: " + directory);
+        }
         try {
             String originalDirectory = client.printWorkingDirectory();
 
-            boolean success = false;
+            boolean success;
             try {
                 // maybe the full directory already exsits
                 success = client.changeWorkingDirectory(directory);
@@ -158,14 +161,14 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                         success = buildDirectoryChunks(directory);
                     }
                 }
+
+                return success;
             } finally {
                 // change back to original directory
                 if (originalDirectory != null) {
                     client.changeWorkingDirectory(originalDirectory);
                 }
             }
-
-            return success;
         } catch (IOException e) {
             throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
@@ -317,7 +320,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
     private boolean buildDirectoryChunks(String dirName) throws IOException {
         final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/|\\\\");
+        final String[] dirs = dirName.split("/|\\\\");
 
         boolean success = false;
         for (String dir : dirs) {

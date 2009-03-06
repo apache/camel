@@ -21,14 +21,18 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * File consumer.
  */
 public class FileConsumer extends GenericFileConsumer<File> {
 
+    private String rootPath;
+
     public FileConsumer(GenericFileEndpoint<File> endpoint, Processor processor, GenericFileOperations<File> operations) {
         super(endpoint, processor, operations);
+        this.rootPath = endpoint.getConfiguration().getFile();
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<File>> fileList) {
@@ -57,7 +61,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
         for (File file : files) {
             // createa a generic file
-            GenericFile<File> gf = asGenericFile(file);
+            GenericFile<File> gf = asGenericFile(rootPath, file);
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && isValidFile(gf, true)) {
@@ -84,7 +88,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         // createa a generic file
-        GenericFile<File> gf = asGenericFile(file);
+        GenericFile<File> gf = asGenericFile(rootPath, file);
 
         if (isValidFile(gf, false)) {
             // matched file so add
@@ -98,9 +102,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
      * @param file the source file
      * @return wrapped as a GenericFile
      */
-    public static GenericFile<File> asGenericFile(File file) {
+    public static GenericFile<File> asGenericFile(String rootPath, File file) {
         GenericFile<File> answer = new GenericFile<File>();
         // use file specific binding
+        answer.setEndpointPath(rootPath);
         answer.setBinding(new FileBinding());
         answer.setFile(file);
         answer.setFileLength(file.length());
@@ -116,10 +121,18 @@ public class FileConsumer extends GenericFileConsumer<File> {
         if (file.isAbsolute()) {
             answer.setRelativeFileName(null);
         } else {
-            if (file.getParent() != null) {
-                answer.setRelativeFileName(file.getParent() + File.separator + file.getName());
+            // skip root path
+            File path;
+            if (file.getPath().startsWith(rootPath)) {
+                path = new File(ObjectHelper.after(file.getPath(), rootPath + File.separator));
             } else {
-                answer.setRelativeFileName(file.getName());
+                path = new File(file.getPath());
+            }
+
+            if (path.getParent() != null) {
+                answer.setRelativeFileName(path.getParent() + File.separator + file.getName());
+            } else {
+                answer.setRelativeFileName(path.getName());
             }
         }
         // use file as body as we have converters if needed as stream
