@@ -67,21 +67,31 @@ public class FileOperations implements GenericFileOperations<File> {
         ObjectHelper.notNull(endpoint, "endpoint");       
 
         // always create endpoint defined directory
-        if (endpoint.isAutoCreate() && endpoint.isDirectory() && !endpoint.getFile().exists()) {
+        if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
             endpoint.getFile().mkdirs();
+        }
+
+        if (ObjectHelper.isEmpty(directory)) {
+            // no directory to build so return true to indicate ok
+            return true;
         }
 
         File path;
         if (absolute) {
             path = new File(directory);
+        } else if (endpoint.getFile().equals(new File(directory))) {
+            // its just the root path
+            path = endpoint.getFile();
         } else {
-            // skip trailing endpoint configued filename as we always start with the endoint file
-            // for creating relative directories
-            if (directory.startsWith(endpoint.getFile().getPath())) {
-                directory = directory.substring(endpoint.getFile().getPath().length());
+            String afterRoot = ObjectHelper.after(directory, endpoint.getFile().getPath());
+            if (ObjectHelper.isNotEmpty(afterRoot)) {
+                // dir is under the root path
+                path = new File(endpoint.getFile(), afterRoot);
+            } else {
+                // dir is relative to the root path
+                path = new File(endpoint.getFile(), directory);
             }
-            path = new File(endpoint.getFile(), directory);
-        }       
+        }
 
         if (path.isDirectory() && path.exists()) {
             // the directory already exists

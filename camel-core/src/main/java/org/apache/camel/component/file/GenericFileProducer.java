@@ -173,21 +173,17 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         String endpointFile = endpoint.getConfiguration().getFile();
-        if (endpoint.isDirectory()) {
-            // Its a directory so we should use it as a base path for the filename
-            // If the path isn't empty, we need to add a trailing / if it isn't already there
-            String baseDir = "";
-            if (endpointFile.length() > 0) {
-                baseDir = endpointFile + (endpointFile.endsWith(File.separator) ? "" : File.separator);
-            }
-            if (name != null) {
-                answer = baseDir + name;
-            } else {
-                // use a generated filename if no name provided
-                answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
-            }
+        // Its a directory so we should use it as a base path for the filename
+        // If the path isn't empty, we need to add a trailing / if it isn't already there
+        String baseDir = "";
+        if (endpointFile.length() > 0) {
+            baseDir = endpointFile + (endpointFile.endsWith(File.separator) ? "" : File.separator);
+        }
+        if (name != null) {
+            answer = baseDir + name;
         } else {
-            answer = endpointFile;
+            // use a generated filename if no name provided
+            answer = baseDir + endpoint.getGeneratedFileName(exchange.getIn());
         }
 
         // must normalize path to cater for Windows and other OS

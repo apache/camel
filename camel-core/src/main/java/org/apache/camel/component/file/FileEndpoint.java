@@ -46,6 +46,11 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         ObjectHelper.notNull(operations, "operations");
         ObjectHelper.notNull(file, "file");
 
+        // we assume its a file if the name has a dot in it (eg foo.txt)
+        if (file.getName().contains(".")) {
+            throw new IllegalArgumentException("Only directory is supported. File must be configured as a directory: " + file);
+        }
+
         FileConsumer result = new FileConsumer(this, processor, operations);
 
         if (isDelete() && getMoveExpression() != null) {
@@ -62,14 +67,6 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         if (isIdempotent() && idempotentRepository == null) {
             log.info("Using default memory based idempotent repository with cache max size: " + DEFAULT_IDEMPOTENT_CACHE_SIZE);
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
-        }
-
-        // fix wrong directory option if its a file
-        if (isDirectory() && file.isFile()) {
-            if (log.isDebugEnabled()) {
-                log.debug(file + " is not a directory so setting option directory=false");
-            }
-            setDirectory(false);
         }
 
         configureConsumer(result);

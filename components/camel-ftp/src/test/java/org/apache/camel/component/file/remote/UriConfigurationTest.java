@@ -40,7 +40,6 @@ public class UriConfigurationTest extends TestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(true, ftpEndpoint.isDirectory());
     }
 
     public void testSftpConfigurationDefaults() {
@@ -55,11 +54,10 @@ public class UriConfigurationTest extends TestSupport {
         assertNull(config.getUsername());
         assertNull(config.getPassword());
         assertEquals(false, config.isBinary());
-        assertEquals(true, sftpEndpoint.isDirectory());
     }
 
     public void testFtpExplicitConfiguration() {
-        Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
+        Endpoint endpoint = context.getEndpoint("ftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(FtpEndpoint.class, endpoint);
         FtpEndpoint ftpEndpoint = (FtpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) ftpEndpoint.getConfiguration();
@@ -70,11 +68,10 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, ftpEndpoint.isDirectory());
     }
 
     public void testSftpExplicitConfiguration() {
-        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false");
+        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
         SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
         RemoteFileConfiguration config = (RemoteFileConfiguration) sftpEndpoint.getConfiguration();
@@ -85,7 +82,6 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, sftpEndpoint.isDirectory());
     }
 
     public void testRemoteFileEndpointFiles() {
@@ -108,7 +104,7 @@ public class UriConfigurationTest extends TestSupport {
     }
 
     public void testSftpKnownHostsFileConfiguration() {
-        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&directory=false&knownHostsFile=/home/janstey/.ssh/known_hosts");
+        Endpoint endpoint = context.getEndpoint("sftp://user@hostname:1021/some/file?password=secret&binary=true&knownHostsFile=/home/janstey/.ssh/known_hosts");
         assertIsInstanceOf(SftpEndpoint.class, endpoint);
         SftpEndpoint sftpEndpoint = (SftpEndpoint) endpoint;
         SftpConfiguration config = (SftpConfiguration) sftpEndpoint.getConfiguration();
@@ -119,7 +115,6 @@ public class UriConfigurationTest extends TestSupport {
         assertEquals("user", config.getUsername());
         assertEquals("secret", config.getPassword());
         assertEquals(true, config.isBinary());
-        assertEquals(false, sftpEndpoint.isDirectory());
         assertEquals("/home/janstey/.ssh/known_hosts", config.getKnownHostsFile());
     }
 }

@@ -28,8 +28,11 @@ import org.apache.commons.net.ftp.FTPFile;
  */
 public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
+    private String endpointPath;
+
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
+        this.endpointPath = endpoint.getConfiguration().getFile();
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
@@ -47,14 +50,15 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
         List<FTPFile> files = operations.listFiles(fileName);
         for (FTPFile file : files) {
-            RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
             if (file.isDirectory()) {
+                RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
                     String directory = fileName + "/" + file.getName();
                     pollDirectory(directory, fileList);
                 }
             } else if (file.isFile()) {
+                RemoteFile<FTPFile> remote = asRemoteFile(fileName, file);
                 if (isValidFile(remote, false)) {
                     // matched file so add
                     fileList.add(remote);
@@ -93,6 +97,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 
+        answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileName(file.getName());
         answer.setFileLength(file.getSize());

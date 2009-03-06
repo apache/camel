@@ -52,8 +52,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/report.txt?directory=false&autoCreate=false"
-                     + "&moveExpression=${id}.bak").to("mock:result");
+                from("file://target/filelanguage/?excludeNamePostfix=.bak" +
+                        "&moveExpression=${id}.bak").to("mock:result");
             }
         });
         context.start();
@@ -77,7 +77,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/report2.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/?excludeNamePostfix=.bak"
                      + "&moveExpression=backup-${id}-${file:name.noext}.bak").to("mock:result");
             }
         });
@@ -102,7 +102,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/report3.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/?excludeNamePostfix=.bak"
                       + "&moveExpression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
             }
         });
@@ -120,7 +120,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/report4.txt?directory=false&autoCreate=false"
+                from("file://target/filelanguage/?excludeNamePostfix=.bak"
                      + "&moveExpression=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -141,11 +141,11 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 // configured by java using java beans setters
                 FileEndpoint endpoint = new FileEndpoint();
                 endpoint.setCamelContext(context);
-                endpoint.setFile(new File("target/filelanguage/report5.txt"));
+                endpoint.setFile(new File("target/filelanguage/"));
                 endpoint.setOperations(new FileOperations(endpoint));
-                endpoint.setDirectory(false);
                 endpoint.setAutoCreate(false);
                 endpoint.setMoveExpression(BeanLanguage.bean("myguidgenerator"));
+                endpoint.setExcludeNamePostfix(".bak");
 
                 from(endpoint).to("mock:result");
             }

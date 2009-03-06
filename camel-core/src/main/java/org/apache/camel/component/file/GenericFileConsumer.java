@@ -63,12 +63,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
 
         String name = endpoint.getConfiguration().getFile();
-        boolean isDirectory = endpoint.isDirectory();
-        if (isDirectory) {
-            pollDirectory(name, files);
-        } else {
-            pollFile(name, files);
-        }
+        pollDirectory(name, files);
 
         // sort files using file comparator if provided
         if (endpoint.getSorter() != null) {

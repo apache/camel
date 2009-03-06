@@ -68,7 +68,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         }
         
         // make parent folder if missing
-        boolean mkdir = operations.buildDirectory(to.getParent(), true);
+        boolean mkdir = operations.buildDirectory(to.getParent(), to.isAbsolute());
         
         if (!mkdir) {
             throw new GenericFileOperationFailedException("Cannot create directory: " + to.getParent() + " (could be because of denied permissions)");

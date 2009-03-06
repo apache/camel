@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.Serializable;
+import java.io.IOException;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -28,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class GenericFile<T> implements Serializable {
 
+    private String endpointPath;
     private String absoluteFileName;
     private String canonicalFileName;
     private String relativeFileName;
@@ -57,6 +59,7 @@ public class GenericFile<T> implements Serializable {
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
+        result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
         result.setAbsoluteFileName(source.getAbsoluteFileName());
         result.setCanonicalFileName(source.getCanonicalFileName());
@@ -85,64 +88,58 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        newName = needToNormalize()
-                // must normalize path to cater for Windows and other OS
-                ? FileUtil.normalizePath(newName)
-                // for the remote file we don't need to do that
-                : newName;
+        newName = needToNormalize() ? FileUtil.normalizePath(newName) : newName;
 
         // is it relative or absolute
         boolean absolute = isAbsolutePath(newName);
+        boolean nameChangeOnly = newName.indexOf(getFileSeparator()) == -1;
 
+        File file = new File(newName);
         if (absolute) {
             setAbsolute(true);
-            setAbsoluteFileName(newName);
-            // no relative filename for absolute files
+            setFileName(file.getName());
+            try {
+                setCanonicalFileName(file.getCanonicalPath());
+            } catch (IOException e) {
+                // ignore
+            }
             setRelativeFileName(null);
-            setCanonicalFileName(null);
-            String fileName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
-            setFileName(fileName);
-            return;
-        }
-
-        // the rest is complex relative path computation
-        setAbsolute(false);
-        setAbsoluteFileName(getParent() + getFileSeparator() + newName);
-        setCanonicalFileName(null);
-
-        // relative name is a bit more complex to set as newName itself can contain
-        // folders we need to consider as well
-        String baseNewName = null;
-        if (newName.indexOf(getFileSeparator()) != -1) {
-            baseNewName = newName.substring(0, newName.lastIndexOf(getFileSeparator()));
-            newName = newName.substring(newName.lastIndexOf(getFileSeparator()) + 1);
-        }
-
-        if (relativeFileName != null && relativeFileName.indexOf(getFileSeparator()) != -1) {
-            String relative = relativeFileName.substring(0, relativeFileName.lastIndexOf(getFileSeparator()));
-            if (baseNewName != null) {
-                setRelativeFileName(relative + getFileSeparator() + baseNewName + getFileSeparator() + newName);
-            } else {
-                setRelativeFileName(relative + getFileSeparator() + newName);
-            }
+            setAbsoluteFileName(file.getAbsolutePath());
         } else {
-            if (baseNewName != null) {
-                setRelativeFileName(baseNewName + getFileSeparator() + newName);
-            } else {
-                setRelativeFileName(newName);
+            setAbsolute(false);
+            setFileName(file.getName());
+            try {
+                setCanonicalFileName(file.getCanonicalPath());
+            } catch (IOException e) {
+                // ignore
             }
-        }
 
-        setFileName(newName);
+            if (nameChangeOnly) {
+                setRelativeFileName(changeNameOnly(getRelativeFileName(), file.getName()));
+            } else {
+                if (file.getParent() != null) {
+                    setRelativeFileName(file.getParent() + getFileSeparator() + file.getName());
+                } else {
+                    setRelativeFileName(file.getName());
+                }
+            }
+
+            // construct a pseudo absolute filename that the file operations uses
+            setAbsoluteFileName(endpointPath + getFileSeparator() + getRelativeFileName());
+        } 
+    }
+
+    private String changeNameOnly(String path, String name) {
+        int pos = path.lastIndexOf(getFileSeparator());
+        if (pos != -1) {
+            return path.substring(0, pos + 1) + name;
+        } else {
+            return name;
+        }
     }
 
     private boolean isAbsolutePath(String path) {
-        if (file instanceof File) {
-            // let java.io.File deal with it as its better than me
-            return new File(path).isAbsolute();
-        }
-        // otherwise absolute is considered if we start with the separator
-        return path.startsWith(getFileSeparator());
+        return new File(path).isAbsolute();
     }
 
     public String getRelativeFileName() {
@@ -150,7 +147,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setRelativeFileName(String relativeFileName) {
-        this.relativeFileName = relativeFileName;
+        this.relativeFileName = needToNormalize() ? FileUtil.normalizePath(relativeFileName) : relativeFileName;
     }
 
     public String getFileName() {
@@ -194,10 +191,14 @@ public class GenericFile<T> implements Serializable {
     }
 
     public String getParent() {
-        if (getAbsoluteFileName().lastIndexOf(getFileSeparator()) > 0) {
-            return getAbsoluteFileName().substring(0, getAbsoluteFileName().lastIndexOf(getFileSeparator()));
+        if (isAbsolute()) {
+            String name = getAbsoluteFileName();
+            File path = new File(name);
+            return path.getParent();
         } else {
-            return "";
+            String name = getRelativeFileName();
+            File path = new File(endpointPath, name);
+            return path.getParent();
         }
     }
 
@@ -213,11 +214,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setAbsoluteFileName(String absoluteFileName) {
-        this.absoluteFileName = needToNormalize()
-                // must normalize path to cater for Windows and other OS
-                ? FileUtil.normalizePath(absoluteFileName)
-                // we don't need to do that for Remote File
-                : absoluteFileName;
+        this.absoluteFileName = needToNormalize() ? FileUtil.normalizePath(absoluteFileName) : absoluteFileName;
     }
 
     public String getAbsoluteFileName() {
@@ -229,7 +226,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setCanonicalFileName(String canonicalFileName) {
-        this.canonicalFileName = canonicalFileName;
+        this.canonicalFileName = needToNormalize() ? FileUtil.normalizePath(canonicalFileName) : canonicalFileName;
     }
 
     public boolean isAbsolute() {
@@ -238,6 +235,14 @@ public class GenericFile<T> implements Serializable {
 
     public void setAbsolute(boolean absolute) {
         this.absolute = absolute;
+    }
+
+    public String getEndpointPath() {
+        return endpointPath;
+    }
+
+    public void setEndpointPath(String endpointPath) {
+        this.endpointPath = needToNormalize() ? FileUtil.normalizePath(endpointPath) : endpointPath;
     }
 
     @Override

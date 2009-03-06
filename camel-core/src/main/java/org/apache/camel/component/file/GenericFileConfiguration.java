@@ -35,7 +35,7 @@ public class GenericFileConfiguration {
         return file;
     }
 
-    public void setFile(String file) { 
+    public void setFile(String file) {
         this.file = needToNormalize()
             // must normalize path to cater for Windows and other OS
             ? FileUtil.normalizePath(file)
