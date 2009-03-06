@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.Injector;
@@ -181,7 +181,7 @@ public interface CamelContext extends Service {
      *
      * @return list of the current route definitions
      */
-    List<RouteType> getRouteDefinitions();
+    List<RouteDefinition> getRouteDefinitions();
 
     /**
      * Returns the current routes in this context
@@ -205,24 +205,24 @@ public interface CamelContext extends Service {
      * @param routeDefinitions the route definitions to add
      * @throws Exception if the route definition could not be created for whatever reason
      */
-    void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+    void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
      * Removes a collection of route definitions from the context - stopping any previously running
      * routes if any of them are actively running
      */
-    void removeRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception;
+    void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception;
 
     /**
      * Starts the given route if it has been previously stopped
      */
-    void startRoute(RouteType route) throws Exception;
+    void startRoute(RouteDefinition route) throws Exception;
 
     /**
      * Stops the given route. It will remain in the list of route definitions return by {@link #getRouteDefinitions()}
      * unless you use the {@link #removeRouteDefinitions(java.util.Collection)}
      */
-    void stopRoute(RouteType route) throws Exception;
+    void stopRoute(RouteDefinition route) throws Exception;
 
 
     // Properties
@@ -321,14 +321,14 @@ public interface CamelContext extends Service {
      * Sets the data formats that can be referenced in the routes.
      * @param dataFormats the data formats
      */
-    void setDataFormats(Map<String, DataFormatType> dataFormats);
+    void setDataFormats(Map<String, DataFormatDefinition> dataFormats);
 
     /**
      * Gets the data formats that can be referenced in the routes.
      *
      * @return the data formats available
      */
-    Map<String, DataFormatType> getDataFormats();
+    Map<String, DataFormatDefinition> getDataFormats();
     
     /**
      * Sets the properties that can be referenced in the camel context
@@ -356,7 +356,7 @@ public interface CamelContext extends Service {
     /**
      * Returns the current status of the given route
      */
-    ServiceStatus getRouteStatus(RouteType route);
+    ServiceStatus getRouteStatus(RouteDefinition route);
 
     /**
      * Returns the class resolver to be used for loading/lookup of classes.

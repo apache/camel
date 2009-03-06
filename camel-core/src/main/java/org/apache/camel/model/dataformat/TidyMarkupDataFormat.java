@@ -32,7 +32,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "tidyMarkup")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class TidyMarkupDataFormat extends DataFormatType {
+public class TidyMarkupDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = false)
     private Class<?> dataObjectType;

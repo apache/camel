@@ -29,7 +29,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CsvDataFormat extends DataFormatType {
+public class CsvDataFormat extends DataFormatDefinition {
 
     public CsvDataFormat() {
         super("org.apache.camel.dataformat.csv.CsvDataFormat");

@@ -27,7 +27,7 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.view.RouteDotGenerator;
 
 /**
@@ -37,10 +37,10 @@ import org.apache.camel.view.RouteDotGenerator;
  * @version $Revision: 1.1 $
  */
 public class RouteResource extends CamelChildResourceSupport {
-    private RouteType route;
+    private RouteDefinition route;
 
 
-    public RouteResource(RoutesResource routesResource, RouteType route) {
+    public RouteResource(RoutesResource routesResource, RouteDefinition route) {
         super(routesResource.getContextResource());
         this.route = route;
     }
@@ -50,7 +50,7 @@ public class RouteResource extends CamelChildResourceSupport {
      */
     @GET
     @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
-    public RouteType getRoute() {
+    public RouteDefinition getRoute() {
         return route;
     }
 

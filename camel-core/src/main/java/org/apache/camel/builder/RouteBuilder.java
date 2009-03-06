@@ -26,12 +26,12 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ChoiceType;
-import org.apache.camel.model.ExceptionType;
-import org.apache.camel.model.InterceptType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
@@ -43,7 +43,7 @@ import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
  */
 public abstract class RouteBuilder extends BuilderSupport implements Routes {
     private AtomicBoolean initialized = new AtomicBoolean(false);
-    private RoutesType routeCollection = new RoutesType();
+    private RoutesDefinition routeCollection = new RoutesDefinition();
     private List<Route> routes = new ArrayList<Route>();
 
     public RouteBuilder() {
@@ -75,8 +75,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param uri  the from uri
      * @return the builder
      */
-    public RouteType from(String uri) {
-        RouteType answer = routeCollection.from(uri);
+    public RouteDefinition from(String uri) {
+        RouteDefinition answer = routeCollection.from(uri);
         configureRoute(answer);
         return answer;
     }
@@ -87,8 +87,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param endpoint  the from endpoint
      * @return the builder
      */
-    public RouteType from(Endpoint endpoint) {
-        RouteType answer = routeCollection.from(endpoint);
+    public RouteDefinition from(Endpoint endpoint) {
+        RouteDefinition answer = routeCollection.from(endpoint);
         configureRoute(answer);
         return answer;
     }
@@ -99,8 +99,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param uris  the from uris
      * @return the builder
      */
-    public RouteType from(String... uris) {
-        RouteType answer = routeCollection.from(uris);
+    public RouteDefinition from(String... uris) {
+        RouteDefinition answer = routeCollection.from(uris);
         configureRoute(answer);
         return answer;
     }
@@ -111,8 +111,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param endpoints  the from endpoints
      * @return the builder
      */
-    public RouteType from(Endpoint... endpoints) {
-        RouteType answer = routeCollection.from(endpoints);
+    public RouteDefinition from(Endpoint... endpoints) {
+        RouteDefinition answer = routeCollection.from(endpoints);
         configureRoute(answer);
         return answer;
     }
@@ -152,11 +152,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds a route for an interceptor; use the {@link ProcessorType#proceed()} method
+     * Adds a route for an interceptor; use the {@link ProcessorDefinition#proceed()} method
      * to continue processing the underlying route being intercepted.
      * @return the builder
      */
-    public InterceptType intercept() {
+    public InterceptDefinition intercept() {
         return routeCollection.intercept();
     }
 
@@ -167,7 +167,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param predicate  the predicate
      * @return the builder
      */
-    public ChoiceType intercept(Predicate predicate) {
+    public ChoiceDefinition intercept(Predicate predicate) {
         return routeCollection.intercept(predicate);
     }
 
@@ -178,7 +178,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param exception exception to catch
      * @return the builder
      */
-    public ExceptionType onException(Class exception) {
+    public ExceptionDefinition onException(Class exception) {
         return routeCollection.onException(exception);
     }
 
@@ -189,8 +189,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param exceptions list of exceptions to catch
      * @return the builder
      */
-    public ExceptionType onException(Class... exceptions) {
-        ExceptionType last = null;
+    public ExceptionDefinition onException(Class... exceptions) {
+        ExceptionDefinition last = null;
         for (Class ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
         }
@@ -252,11 +252,11 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
         camelContext.addRouteDefinitions(routeCollection.getRoutes());
     }
 
-    public void setRouteCollection(RoutesType routeCollection) {
+    public void setRouteCollection(RoutesDefinition routeCollection) {
         this.routeCollection = routeCollection;
     }
 
-    public RoutesType getRouteCollection() {
+    public RoutesDefinition getRouteCollection() {
         return this.routeCollection;
     }
 
@@ -281,7 +281,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
         return new DefaultCamelContext();
     }
 
-    protected void configureRoute(RouteType route) {
+    protected void configureRoute(RouteDefinition route) {
         route.setGroup(getClass().getName());
     }
 

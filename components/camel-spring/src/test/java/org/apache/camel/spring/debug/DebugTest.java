@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.DebugInterceptor;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.spring.Main;
@@ -58,7 +58,7 @@ public class DebugTest extends TestCase {
         DebugInterceptor o2 = assertHasInterceptor("o2");
 
         // now lets get the routes
-        List<RouteType> routes = main.getRouteDefinitions();
+        List<RouteDefinition> routes = main.getRouteDefinitions();
         assertEquals("Number of routes", 1, routes.size());
 
         // now lets send a message

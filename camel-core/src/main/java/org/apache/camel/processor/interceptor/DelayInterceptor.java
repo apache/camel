@@ -18,7 +18,7 @@ package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelayProcessorSupport;
 
 /**
@@ -26,10 +26,10 @@ import org.apache.camel.processor.DelayProcessorSupport;
  */
 public class DelayInterceptor extends DelayProcessorSupport {
 
-    private final ProcessorType node;
+    private final ProcessorDefinition node;
     private Delayer delayer;
 
-    public DelayInterceptor(ProcessorType node, Processor target, Delayer delayer) {
+    public DelayInterceptor(ProcessorDefinition node, Processor target, Delayer delayer) {
         super(target);
         this.node = node;
         this.delayer = delayer;

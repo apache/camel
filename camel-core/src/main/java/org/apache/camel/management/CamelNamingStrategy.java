@@ -28,7 +28,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -143,11 +143,11 @@ public class CamelNamingStrategy {
     }
 
     /**
-     * Implements the naming strategy for a {@link ProcessorType}.
-     * The convention used for a {@link ProcessorType} ObjectName is:
+     * Implements the naming strategy for a {@link ProcessorDefinition}.
+     * The convention used for a {@link ProcessorDefinition} ObjectName is:
      * <tt>&lt;domain&gt;:context=&lt;context-name&gt;,route=&lt;route-name&gt;,type=processor,name=&lt;processor-name&gt;,nodeid=&lt;node-id&gt;</tt>
      */
-    public ObjectName getObjectName(RouteContext routeContext, ProcessorType processor)
+    public ObjectName getObjectName(RouteContext routeContext, ProcessorDefinition processor)
         throws MalformedObjectNameException {
         Endpoint ep = routeContext.getEndpoint();
         String ctxid;

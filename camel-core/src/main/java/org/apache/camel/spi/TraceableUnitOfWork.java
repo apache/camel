@@ -18,7 +18,7 @@ package org.apache.camel.spi;
 
 import java.util.List;
 
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * A Unit of work that is also traceable with the
@@ -34,17 +34,17 @@ public interface TraceableUnitOfWork extends UnitOfWork {
      *
      * @param node the node
      */
-    void addInterceptedNode(ProcessorType node);
+    void addInterceptedNode(ProcessorDefinition node);
 
     /**
      * Gets the last intercepted node, is <tt>null</tt> if no last exists.
      */
-    ProcessorType getLastInterceptedNode();
+    ProcessorDefinition getLastInterceptedNode();
 
     /**
      * Gets the current list of intercepted nodes, representing the route path the
      * current {@link org.apache.camel.Exchange} has taken.
      */
-    List<ProcessorType> getInterceptedNodes();
+    List<ProcessorDefinition> getInterceptedNodes();
 
 }

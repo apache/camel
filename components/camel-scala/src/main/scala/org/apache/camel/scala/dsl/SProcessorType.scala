@@ -16,10 +16,10 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ProcessorType
+import org.apache.camel.model.ProcessorDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SProcessorType(val target: ProcessorType[P] forSome {type P})(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ProcessorType[P] forSome {type P}] {
+class SProcessorType(val target: ProcessorDefinition[P] forSome {type P})(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ProcessorDefinition[P] forSome {type P}] {
   
   val unwrap = target
 

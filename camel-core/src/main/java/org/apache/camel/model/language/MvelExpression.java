@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "mvel")
-public class MvelExpression extends ExpressionType {
+public class MvelExpression extends ExpressionDefinition {
     public MvelExpression() {
     }
 

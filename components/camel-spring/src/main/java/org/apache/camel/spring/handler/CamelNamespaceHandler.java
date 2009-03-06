@@ -30,9 +30,9 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.SendType;
-import org.apache.camel.model.config.PropertiesType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -44,7 +44,7 @@ import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.CamelContextFactoryBean;
-import org.apache.camel.spring.CamelJMXAgentType;
+import org.apache.camel.spring.CamelJMXAgentDefinition;
 import org.apache.camel.spring.CamelTemplateFactoryBean;
 import org.apache.camel.spring.EndpointFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
@@ -94,7 +94,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
 
         // jmx agent
-        addBeanDefinitionParser("jmxAgent", CamelJMXAgentType.class);
+        addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class);
 
         // endpoint
         addBeanDefinitionParser("endpoint", EndpointFactoryBean.class);
@@ -167,11 +167,11 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         Set<Class> classes = new HashSet<Class>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(ExchangePattern.class);
-        classes.add(org.apache.camel.model.RouteType.class);
+        classes.add(org.apache.camel.model.RouteDefinition.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);     
-        classes.add(org.apache.camel.model.dataformat.DataFormatType.class);
-        classes.add(org.apache.camel.model.language.ExpressionType.class);
-        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerType.class);
+        classes.add(org.apache.camel.model.dataformat.DataFormatDefinition.class);
+        classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
+        classes.add(org.apache.camel.model.loadbalancer.LoadBalancerDefinition.class);
         return classes;
     }
 
@@ -283,7 +283,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 Element childElement = (Element)child;
                 Object object = binder.getJAXBNode(child);
                 // we only want from/to types to be registered as endpoints
-                if (object instanceof FromType || object instanceof SendType) {
+                if (object instanceof FromDefinition || object instanceof SendDefinition) {
                     registerEndpoint(childElement, parserContext, contextId);
                 }
                 // recursive

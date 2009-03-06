@@ -29,7 +29,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "flatpack")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FlatpackDataFormat extends DataFormatType {
+public class FlatpackDataFormat extends DataFormatDefinition {
 
     public FlatpackDataFormat() {
         super("org.apache.camel.component.flatpack.FlatpackDataFormat");

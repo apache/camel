@@ -29,10 +29,10 @@ import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.ProceedProcessor;
@@ -47,8 +47,8 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 public class DefaultRouteContext implements RouteContext {
-    private RouteType route;
-    private FromType from;
+    private RouteDefinition route;
+    private FromDefinition from;
     private Collection<Route> routes;
     private Endpoint endpoint;
     private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
@@ -58,7 +58,7 @@ public class DefaultRouteContext implements RouteContext {
     private ErrorHandlerWrappingStrategy errorHandlerWrappingStrategy;
     private boolean routeAdded;
 
-    public DefaultRouteContext(RouteType route, FromType from, Collection<Route> routes) {
+    public DefaultRouteContext(RouteDefinition route, FromDefinition from, Collection<Route> routes) {
         this.route = route;
         this.from = from;
         this.routes = routes;
@@ -70,7 +70,7 @@ public class DefaultRouteContext implements RouteContext {
     public DefaultRouteContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         routes = new ArrayList<Route>();
-        route = new RouteType("temporary");
+        route = new RouteDefinition("temporary");
     }
 
     public Endpoint getEndpoint() {
@@ -80,11 +80,11 @@ public class DefaultRouteContext implements RouteContext {
         return endpoint;
     }
 
-    public FromType getFrom() {
+    public FromDefinition getFrom() {
         return from;
     }
 
-    public RouteType getRoute() {
+    public RouteDefinition getRoute() {
         return route;
     }
 
@@ -95,7 +95,7 @@ public class DefaultRouteContext implements RouteContext {
         return camelContext;
     }
 
-    public Processor createProcessor(ProcessorType node) throws Exception {
+    public Processor createProcessor(ProcessorDefinition node) throws Exception {
         return node.createOutputsProcessor(this);
     }
 
@@ -194,8 +194,8 @@ public class DefaultRouteContext implements RouteContext {
         this.routeAdded = routeAdded;
     }
 
-    public DataFormatType getDataFormat(String ref) {
-        Map<String, DataFormatType> dataFormats = getCamelContext().getDataFormats();
+    public DataFormatDefinition getDataFormat(String ref) {
+        Map<String, DataFormatDefinition> dataFormats = getCamelContext().getDataFormats();
         if (dataFormats != null) {
             return dataFormats.get(ref);
         } else {

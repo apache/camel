@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PolicyRef extends OutputType<ProcessorType> {
+public class PolicyRef extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
@@ -34,10 +34,10 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  * @version $Revision$
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
-    private Map<ExceptionPolicyKey, ExceptionType> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, ExceptionType>();
+    private Map<ExceptionPolicyKey, ExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, ExceptionDefinition>();
     private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
-    public void addExceptionPolicy(ExceptionType exceptionType) {
+    public void addExceptionPolicy(ExceptionDefinition exceptionType) {
         Processor processor = exceptionType.getErrorHandler();
         addChildService(processor);
 
@@ -53,7 +53,7 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
      * Attempts to invoke the handler for this particular exception if one is available
      */
     protected boolean customProcessorForException(Exchange exchange, Throwable exception) throws Exception {
-        ExceptionType policy = getExceptionPolicy(exchange, exception);
+        ExceptionDefinition policy = getExceptionPolicy(exchange, exception);
         if (policy != null) {
             Processor processor = policy.getErrorHandler();
             if (processor != null) {
@@ -65,13 +65,13 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
     }
 
     /**
-     * Attempts to find the best suited {@link ExceptionType} to be used for handling the given thrown exception.
+     * Attempts to find the best suited {@link ExceptionDefinition} to be used for handling the given thrown exception.
      *
      * @param exchange  the exchange
      * @param exception the exception that was thrown
      * @return the best exception type to handle this exception, <tt>null</tt> if none found.
      */
-    protected ExceptionType getExceptionPolicy(Exchange exchange, Throwable exception) {
+    protected ExceptionDefinition getExceptionPolicy(Exchange exchange, Throwable exception) {
         if (exceptionPolicy == null) {
             throw new IllegalStateException("The exception policy has not been set");
         }
@@ -80,7 +80,7 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
     }
 
     /**
-     * Sets the strategy to use for resolving the {@link ExceptionType} to use
+     * Sets the strategy to use for resolving the {@link ExceptionDefinition} to use
      * for handling thrown exceptions.
      */
     public void setExceptionPolicy(ExceptionPolicyStrategy exceptionPolicy) {

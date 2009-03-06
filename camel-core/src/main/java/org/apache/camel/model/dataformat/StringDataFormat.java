@@ -31,7 +31,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "string")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StringDataFormat extends DataFormatType {
+public class StringDataFormat extends DataFormatDefinition {
 
     @XmlAttribute(required = false)
     private String charset;

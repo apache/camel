@@ -29,7 +29,7 @@ import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "failOver")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class FailOverLoadBalanceStrategy extends LoadBalancerType {    
+public class FailOverLoadBalanceStrategy extends LoadBalancerDefinition {    
     @XmlAttribute
     private String failedException;
     

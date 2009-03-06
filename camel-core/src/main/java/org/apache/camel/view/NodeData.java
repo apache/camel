@@ -19,19 +19,19 @@ package org.apache.camel.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.model.AggregatorType;
+import org.apache.camel.model.AggregatorDefinition;
 import org.apache.camel.model.BeanRef;
-import org.apache.camel.model.ChoiceType;
-import org.apache.camel.model.FilterType;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.OtherwiseType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RecipientListType;
-import org.apache.camel.model.ResequencerType;
-import org.apache.camel.model.RoutingSlipType;
-import org.apache.camel.model.SplitterType;
-import org.apache.camel.model.ToType;
-import org.apache.camel.model.WhenType;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.FilterDefinition;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.OtherwiseDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RecipientListDefinition;
+import org.apache.camel.model.ResequencerDefinition;
+import org.apache.camel.model.RoutingSlipDefinition;
+import org.apache.camel.model.SplitterDefinition;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.WhenDefinition;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -51,7 +51,7 @@ public class NodeData {
     public String nodeType;
     public boolean nodeWritten;
     public String url;
-    public List<ProcessorType> outputs;
+    public List<ProcessorDefinition> outputs;
     public String association = "property";
     private final String imagePrefix;
 
@@ -60,62 +60,62 @@ public class NodeData {
         this.id = id;
         this.imagePrefix = imagePrefix;
 
-        if (node instanceof ProcessorType) {
-            ProcessorType processorType = (ProcessorType)node;
+        if (node instanceof ProcessorDefinition) {
+            ProcessorDefinition processorType = (ProcessorDefinition)node;
             this.edgeLabel = processorType.getLabel();
         }
-        if (node instanceof FromType) {
-            FromType fromType = (FromType)node;
+        if (node instanceof FromDefinition) {
+            FromDefinition fromType = (FromDefinition)node;
             this.tooltop = fromType.getLabel();
             this.label = removeQueryString(this.tooltop);
             this.url = "http://camel.apache.org/message-endpoint.html";
-        } else if (node instanceof ToType) {
-            ToType toType = (ToType)node;
+        } else if (node instanceof ToDefinition) {
+            ToDefinition toType = (ToDefinition)node;
             this.tooltop = toType.getLabel();
             this.label = removeQueryString(this.tooltop);
             this.edgeLabel = "";
             this.url = "http://camel.apache.org/message-endpoint.html";
-        } else if (node instanceof FilterType) {
+        } else if (node instanceof FilterDefinition) {
             this.image = imagePrefix + "MessageFilterIcon.png";
             this.label = "Filter";
             this.nodeType = "Message Filter";
-        } else if (node instanceof WhenType) {
+        } else if (node instanceof WhenDefinition) {
             this.image = imagePrefix + "MessageFilterIcon.png";
             this.nodeType = "When Filter";
             this.label = "When";
             this.url = "http://camel.apache.org/content-based-router.html";
-        } else if (node instanceof OtherwiseType) {
+        } else if (node instanceof OtherwiseDefinition) {
             this.nodeType = "Otherwise";
             this.edgeLabel = "";
             this.url = "http://camel.apache.org/content-based-router.html";
             this.tooltop = "Otherwise";
-        } else if (node instanceof ChoiceType) {
+        } else if (node instanceof ChoiceDefinition) {
             this.image = imagePrefix + "ContentBasedRouterIcon.png";
             this.nodeType = "Content Based Router";
             this.label = "Choice";
             this.edgeLabel = "";
 
-            ChoiceType choice = (ChoiceType)node;
-            List<ProcessorType> outputs = new ArrayList<ProcessorType>(choice.getWhenClauses());
+            ChoiceDefinition choice = (ChoiceDefinition)node;
+            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>(choice.getWhenClauses());
             if (choice.getOtherwise() != null) {
                 outputs.add(choice.getOtherwise());
             }
             this.outputs = outputs;
-        } else if (node instanceof RecipientListType) {
+        } else if (node instanceof RecipientListDefinition) {
             this.image = imagePrefix + "RecipientListIcon.png";
             this.nodeType = "Recipient List";
-        } else if (node instanceof RoutingSlipType) {
+        } else if (node instanceof RoutingSlipDefinition) {
             this.image = imagePrefix + "RoutingTableIcon.png";
             this.nodeType = "Routing Slip";
             this.url = "http://camel.apache.org/routing-slip.html";
-            this.tooltop = ((RoutingSlipType) node).getHeaderName();
-        } else if (node instanceof SplitterType) {
+            this.tooltop = ((RoutingSlipDefinition) node).getHeaderName();
+        } else if (node instanceof SplitterDefinition) {
             this.image = imagePrefix + "SplitterIcon.png";
             this.nodeType = "Splitter";
-        } else if (node instanceof AggregatorType) {
+        } else if (node instanceof AggregatorDefinition) {
             this.image = imagePrefix + "AggregatorIcon.png";
             this.nodeType = "Aggregator";
-        } else if (node instanceof ResequencerType) {
+        } else if (node instanceof ResequencerDefinition) {
             this.image = imagePrefix + "ResequencerIcon.png";
             this.nodeType = "Resequencer";
         } else if (node instanceof BeanRef) {
@@ -162,8 +162,8 @@ public class NodeData {
         if (isEmpty(this.url) && isNotEmpty(this.nodeType)) {
             this.url = "http://camel.apache.org/" + this.nodeType.toLowerCase().replace(' ', '-') + ".html";
         }
-        if (node instanceof ProcessorType && this.outputs == null) {
-            ProcessorType processorType = (ProcessorType)node;
+        if (node instanceof ProcessorDefinition && this.outputs == null) {
+            ProcessorDefinition processorType = (ProcessorDefinition)node;
             this.outputs = processorType.getOutputs();
         }
     }

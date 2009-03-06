@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "ognl")
-public class OgnlExpression extends ExpressionType {
+public class OgnlExpression extends ExpressionDefinition {
     public OgnlExpression() {
     }
 

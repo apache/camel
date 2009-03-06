@@ -30,9 +30,9 @@ import org.apache.camel.builder.RouteBuilder;
 public class GenerateXmFromCamelContextlTest extends ContextTestSupport {
 
     public void testCreateRouteFromCamelCOntext() throws Exception {
-        List<RouteType> list = context.getRouteDefinitions();
+        List<RouteDefinition> list = context.getRouteDefinitions();
         assertEquals("Size of list " + list, 1, list.size());
-        RouteType routeType = list.get(0);
+        RouteDefinition routeType = list.get(0);
 
         log.info("Found route: " + routeType);
 

@@ -19,7 +19,7 @@ package org.apache.camel.management;
 import java.util.Map;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -28,15 +28,15 @@ import org.apache.camel.spi.RouteContext;
  */
 public class InstrumentationErrorHandlerWrappingStrategy implements ErrorHandlerWrappingStrategy {
 
-    private Map<ProcessorType, PerformanceCounter> counterMap;
+    private Map<ProcessorDefinition, PerformanceCounter> counterMap;
     private RouteContext routeContext;
 
-    public InstrumentationErrorHandlerWrappingStrategy(RouteContext routeContext, Map<ProcessorType, PerformanceCounter> counterMap) {
+    public InstrumentationErrorHandlerWrappingStrategy(RouteContext routeContext, Map<ProcessorDefinition, PerformanceCounter> counterMap) {
         this.counterMap = counterMap;
         this.routeContext = routeContext;
     }
 
-    public Processor wrapProcessorInErrorHandler(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorType, Processor target) throws Exception {
 
         // don't wrap our instrumentation interceptors
         if (counterMap.containsKey(processorType)) {

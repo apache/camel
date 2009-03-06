@@ -24,7 +24,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * @version $Revision$
@@ -112,7 +112,7 @@ public class TraceFormatterTest extends ContextTestSupport {
     // as this is a test we just create a simple string with * around the body
     class MyTraceFormatter implements TraceFormatter {
 
-        public Object format(TraceInterceptor interceptor, ProcessorType node, Exchange exchange) {
+        public Object format(TraceInterceptor interceptor, ProcessorDefinition node, Exchange exchange) {
             return "***" + exchange.getIn().getBody(String.class) + "***";
         }
     }

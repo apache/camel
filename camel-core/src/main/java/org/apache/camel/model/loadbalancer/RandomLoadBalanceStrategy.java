@@ -26,7 +26,7 @@ import org.apache.camel.spi.RouteContext;
  * Represents an XML &lt;random/&gt; element
  */
 @XmlRootElement(name = "random")
-public class RandomLoadBalanceStrategy extends LoadBalancerType {
+public class RandomLoadBalanceStrategy extends LoadBalancerDefinition {
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

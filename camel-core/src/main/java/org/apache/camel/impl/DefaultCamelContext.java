@@ -44,8 +44,8 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -95,12 +95,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
     private LifecycleStrategy lifecycleStrategy;
-    private List<RouteType> routeDefinitions = new ArrayList<RouteType>();
+    private List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
-    private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
+    private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private Map<String, String> properties = new HashMap<String, String>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
     private Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
@@ -441,8 +441,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         //addRouteCollection(routeList);
     }
 
-    public void addRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
-        for (RouteType routeDefinition : routeDefinitions) {
+    public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        for (RouteDefinition routeDefinition : routeDefinitions) {
             routeDefinition.setCamelContext(this);
         }
         this.routeDefinitions.addAll(routeDefinitions);
@@ -451,15 +451,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public void removeRouteDefinitions(Collection<RouteType> routeDefinitions) throws Exception {
+    public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         this.routeDefinitions.removeAll(routeDefinitions);
-        for (RouteType routeDefinition : routeDefinitions) {
+        for (RouteDefinition routeDefinition : routeDefinitions) {
             stopRoute(routeDefinition);
         }
 
     }
 
-    public ServiceStatus getRouteStatus(RouteType route) {
+    public ServiceStatus getRouteStatus(RouteDefinition route) {
         return getRouteStatus(route.idOrCreate());
     }
 
@@ -474,7 +474,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return null;
     }
 
-    public void startRoute(RouteType route) throws Exception {
+    public void startRoute(RouteDefinition route) throws Exception {
         Collection<Route> routes = new ArrayList<Route>();
         List<RouteContext> routeContexts = route.addRoutes(this, routes);
         RouteService routeService = new RouteService(this, route, routeContexts, routes);
@@ -482,7 +482,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
 
-    public void stopRoute(RouteType route) throws Exception {
+    public void stopRoute(RouteDefinition route) throws Exception {
         stopRoute(route.idOrCreate());
     }
 
@@ -626,7 +626,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.lifecycleStrategy = lifecycleStrategy;
     }
 
-    public List<RouteType> getRouteDefinitions() {
+    public List<RouteDefinition> getRouteDefinitions() {
         return routeDefinitions;
     }
 
@@ -749,9 +749,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
-    protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
+    protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
         if (list != null) {
-            for (RouteType route : list) {
+            for (RouteDefinition route : list) {
                 startRoute(route);
             }
         }
@@ -899,11 +899,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return isStarted() && !isStarting();
     }
 
-    public void setDataFormats(Map<String, DataFormatType> dataFormats) {
+    public void setDataFormats(Map<String, DataFormatDefinition> dataFormats) {
         this.dataFormats = dataFormats;
     }
 
-    public Map<String, DataFormatType> getDataFormats() {
+    public Map<String, DataFormatDefinition> getDataFormats() {
         return dataFormats;
     }
 

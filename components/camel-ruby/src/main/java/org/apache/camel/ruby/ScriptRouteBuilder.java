@@ -19,8 +19,8 @@ package org.apache.camel.ruby;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
     private static final transient Log LOG = LogFactory.getLog(ScriptRouteBuilder.class);
-    protected ProcessorType node;
+    protected ProcessorDefinition node;
 
     public ScriptRouteBuilder() {
     }
@@ -42,27 +42,27 @@ public abstract class ScriptRouteBuilder extends RouteBuilder {
     }
 
     @Override
-    protected void configureRoute(RouteType route) {
+    protected void configureRoute(RouteDefinition route) {
         super.configureRoute(route);
         this.node = route;
     }
 
-    public ProcessorType to(String uri) {
+    public ProcessorDefinition to(String uri) {
         return getNode().to(uri);
     }
     
-    public ProcessorType to(Endpoint endpoint) {
+    public ProcessorDefinition to(Endpoint endpoint) {
         return getNode().to(endpoint);
     }
 
-    public ProcessorType getNode() {
+    public ProcessorDefinition getNode() {
         if (node == null) {
             throw new IllegalStateException("You must define a route first via the from() method");
         }
         return node;
     }
 
-    public void setNode(ProcessorType node) {
+    public void setNode(ProcessorDefinition node) {
         this.node = node;
 
         LOG.info("Node is now: " + node);

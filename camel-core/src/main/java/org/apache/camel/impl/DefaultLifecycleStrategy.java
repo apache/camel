@@ -24,8 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -51,16 +51,16 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        RouteType routeType = routeContext.getRoute();
+        RouteDefinition routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             // configure the outputs
-            List<ProcessorType> outputs = new ArrayList<ProcessorType>(routeType.getOutputs());
+            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>(routeType.getOutputs());
 
             // clearing the outputs
             routeType.clearOutput();
 
             // add the output configure the outputs with the routeType
-            for (ProcessorType processorType : outputs) {
+            for (ProcessorDefinition processorType : outputs) {
                 routeType.addOutput(processorType);
             }
         }

@@ -20,11 +20,11 @@ import java.util.zip.Deflater;
 
 import org.w3c.dom.Node;
 
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
-import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
@@ -44,7 +44,7 @@ import org.apache.camel.spi.DataFormat;
  *
  * @version $Revision$
  */
-public class DataFormatClause<T extends ProcessorType> {
+public class DataFormatClause<T extends ProcessorDefinition> {
     private final T processorType;
     private final Operation operation;
 
@@ -245,7 +245,7 @@ public class DataFormatClause<T extends ProcessorType> {
     }
 
     @SuppressWarnings("unchecked")
-    private T dataFormat(DataFormatType dataFormatType) {
+    private T dataFormat(DataFormatDefinition dataFormatType) {
         switch (operation) {
         case Unmarshal:
             return (T)processorType.unmarshal(dataFormatType);

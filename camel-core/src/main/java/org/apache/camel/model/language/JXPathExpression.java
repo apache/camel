@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "jxpath")
-public class JXPathExpression extends ExpressionType {
+public class JXPathExpression extends ExpressionDefinition {
     public JXPathExpression() {
     }
 

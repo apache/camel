@@ -23,7 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
@@ -61,7 +61,7 @@ public class Tracer implements InterceptStrategy {
         return null;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
         // Force the creation of an id, otherwise the id is not available when the trace formatter is
         // outputting trace information
         String id = processorType.idOrCreate();

@@ -28,7 +28,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "rss")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RssDataFormat extends DataFormatType {
+public class RssDataFormat extends DataFormatDefinition {
 
     public RssDataFormat() {
         super("org.apache.camel.dataformat.rss.RssDataFormat");

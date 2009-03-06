@@ -21,7 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.TryType;
+import org.apache.camel.model.TryDefinition;
 
 /**
  * Test finallyBlock
@@ -66,7 +66,7 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                TryType tryType = from("direct:start").tryBlock().
+                TryDefinition tryType = from("direct:start").tryBlock().
                         process(validator).
                         to("mock:valid");
                 tryType.handle(ValidationException.class).to("mock:invalid");

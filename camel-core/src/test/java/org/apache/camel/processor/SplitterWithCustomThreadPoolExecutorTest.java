@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.SplitterType;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.SplitterDefinition;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
@@ -38,10 +38,10 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         assertTrue(threadPoolExecutor.getMaximumPoolSize() == customThreadPoolExecutor.getMaximumPoolSize());
     }
     
-    protected SplitterType getSplitter() {
-        SplitterType result = null;
-        List<RouteType> routeDefinitions = context.getRouteDefinitions();          
-        for (RouteType routeType : routeDefinitions) {
+    protected SplitterDefinition getSplitter() {
+        SplitterDefinition result = null;
+        List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();          
+        for (RouteDefinition routeType : routeDefinitions) {
             result = firstSplitterType(routeType.getOutputs());
             if (result != null) {
                 break;
@@ -50,12 +50,12 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }    
     
-    protected SplitterType firstSplitterType(List<ProcessorType> outputs) {
-        SplitterType result = null;
+    protected SplitterDefinition firstSplitterType(List<ProcessorDefinition> outputs) {
+        SplitterDefinition result = null;
         
-        for (ProcessorType processorType : outputs) {
-            if (processorType instanceof SplitterType) {
-                result = (SplitterType) processorType;
+        for (ProcessorDefinition processorType : outputs) {
+            if (processorType instanceof SplitterDefinition) {
+                result = (SplitterDefinition) processorType;
             } else {
                 result = firstSplitterType(processorType.getOutputs());
             }

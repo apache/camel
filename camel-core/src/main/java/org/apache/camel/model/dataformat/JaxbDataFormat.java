@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "jaxb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JaxbDataFormat extends DataFormatType {
+public class JaxbDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private String contextPath;
     @XmlAttribute(required = false)

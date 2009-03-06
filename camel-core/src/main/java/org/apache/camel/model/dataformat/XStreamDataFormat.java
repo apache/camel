@@ -30,7 +30,7 @@ import org.apache.camel.spi.DataFormat;
  */
 @XmlRootElement(name = "xstream")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class XStreamDataFormat extends DataFormatType {
+public class XStreamDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = false)
     private Boolean prettyPrint;
 

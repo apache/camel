@@ -21,10 +21,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.MulticastType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.MulticastDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 
 /**
@@ -37,7 +37,7 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         super(dir, ".xml");
     }
 
-    protected void generateFile(PrintWriter writer, Map<String, List<RouteType>> map) {
+    protected void generateFile(PrintWriter writer, Map<String, List<RouteDefinition>> map) {
         writer.println("<?xml version='1.0' encoding='UTF-8'?>");
         writer.println("<Graph>");
         writer.println();
@@ -51,15 +51,15 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         writer.println("</Graph>");
     }
 
-    protected void printRoutes(PrintWriter writer, Map<String, List<RouteType>> map) {
-        Set<Map.Entry<String, List<RouteType>>> entries = map.entrySet();
-        for (Map.Entry<String, List<RouteType>> entry : entries) {
+    protected void printRoutes(PrintWriter writer, Map<String, List<RouteDefinition>> map) {
+        Set<Map.Entry<String, List<RouteDefinition>>> entries = map.entrySet();
+        for (Map.Entry<String, List<RouteDefinition>> entry : entries) {
             String group = entry.getKey();
             printRoutes(writer, group, entry.getValue());
         }
     }
 
-    protected void printRoutes(PrintWriter writer, String group, List<RouteType> routes) {
+    protected void printRoutes(PrintWriter writer, String group, List<RouteDefinition> routes) {
         group = encode(group);
         if (group != null) {
             int idx = group.lastIndexOf('.');
@@ -70,10 +70,10 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
             writer.println("<Node id='" + group + "' name='" + name + "' description='" + group + "' nodeType='group'/>");
             writer.println("<Edge fromID='root' toID='" + group + "'/>");
         }
-        for (RouteType route : routes) {
-            List<FromType> inputs = route.getInputs();
+        for (RouteDefinition route : routes) {
+            List<FromDefinition> inputs = route.getInputs();
             boolean first = true;
-            for (FromType input : inputs) {
+            for (FromDefinition input : inputs) {
                 NodeData nodeData = getNodeData(input);
                 if (first) {
                     first = false;
@@ -87,24 +87,24 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
     }
 
-    protected void printRoute(PrintWriter writer, final RouteType route, NodeData nodeData) {
+    protected void printRoute(PrintWriter writer, final RouteDefinition route, NodeData nodeData) {
         printNode(writer, nodeData);
 
         // TODO we should add a transactional client / event driven consumer / polling client
 
         NodeData from = nodeData;
-        for (ProcessorType output : route.getOutputs()) {
+        for (ProcessorDefinition output : route.getOutputs()) {
             NodeData newData = printNode(writer, from, output);
             from = newData;
         }
     }
 
     @SuppressWarnings("unchecked")
-    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorType node) {
-        if (node instanceof MulticastType) {
+    protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition node) {
+        if (node instanceof MulticastDefinition) {
             // no need for a multicast node
-            List<ProcessorType> outputs = node.getOutputs();
-            for (ProcessorType output : outputs) {
+            List<ProcessorDefinition> outputs = node.getOutputs();
+            for (ProcessorDefinition output : outputs) {
                 printNode(writer, fromData, output);
             }
             return fromData;
@@ -127,9 +127,9 @@ public class XmlGraphGenerator extends GraphGeneratorSupport {
         }
 
         // now lets write any children
-        List<ProcessorType> outputs = toData.outputs;
+        List<ProcessorDefinition> outputs = toData.outputs;
         if (outputs != null) {
-            for (ProcessorType output : outputs) {
+            for (ProcessorDefinition output : outputs) {
                 NodeData newData = printNode(writer, toData, output);
                 if (!isMulticastNode(node)) {
                     toData = newData;

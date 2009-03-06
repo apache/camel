@@ -18,8 +18,8 @@ ArtixDSContentType
 ArtixDSDataFormat
 CsvDataFormat
 HL7DataFormat
-DataFormatType
-DataFormatsType
+DataFormatDefinition
+DataFormatsDefinition
 JaxbDataFormat
 JsonDataFormat
 RssDataFormat

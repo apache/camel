@@ -34,7 +34,7 @@ import org.apache.commons.logging.LogFactory;
  */
 @XmlRootElement(name = "artixDS")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ArtixDSDataFormat extends DataFormatType {
+public class ArtixDSDataFormat extends DataFormatDefinition {
     private static final transient Log LOG = LogFactory.getLog(ArtixDSDataFormat.class);
 
     @XmlAttribute(required = false)

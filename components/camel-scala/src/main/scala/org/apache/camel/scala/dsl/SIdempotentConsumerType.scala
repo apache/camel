@@ -16,14 +16,14 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.IdempotentConsumerType
+import org.apache.camel.model.IdempotentConsumerDefinition
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's IdempotentConsumerType
+ * Scala enrichment for Camel's IdempotentConsumerDefinition
  */
-class SIdempotentConsumerType(val target: IdempotentConsumerType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[IdempotentConsumerType] {
+class SIdempotentConsumerType(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[IdempotentConsumerDefinition] {
   
   val unwrap = target
   

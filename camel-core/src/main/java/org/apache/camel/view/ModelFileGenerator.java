@@ -44,8 +44,8 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
 
 public class ModelFileGenerator {
@@ -61,7 +61,7 @@ public class ModelFileGenerator {
     /**
      * Write the specified 'routeTypes' to 'fileName' as XML using JAXB.
      */
-    public void marshalRoutesUsingJaxb(String fileName, List<RouteType> routeTypes) throws IOException {
+    public void marshalRoutesUsingJaxb(String fileName, List<RouteDefinition> routeTypes) throws IOException {
         OutputStream outputStream = outputStream(fileName);
 
         try {
@@ -72,7 +72,7 @@ public class ModelFileGenerator {
             root.setAttribute("xmlns", Namespaces.DEFAULT_NAMESPACE);
             doc.appendChild(root);
 
-            for (RouteType routeType : routeTypes) {
+            for (RouteDefinition routeType : routeTypes) {
                 addJaxbElementToNode(root, routeType);
             }
 
@@ -127,7 +127,7 @@ public class ModelFileGenerator {
      * Return the root element name for the list of routes.
      */
     private String rootElementName() {
-        XmlRootElement annotation = (RoutesType.class).getAnnotation(XmlRootElement.class);
+        XmlRootElement annotation = (RoutesDefinition.class).getAnnotation(XmlRootElement.class);
         if (annotation != null) {
             String elementName = annotation.name();
             if (ObjectHelper.isNotEmpty(elementName)) {

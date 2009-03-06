@@ -23,8 +23,8 @@ import javax.xml.bind.JAXBContext;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.RoutesType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.web.resources.CamelContextResource;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -38,12 +38,12 @@ public class CamelRouteTest extends TestCase {
 
     public void testCanMarshalRoutes() throws Exception {
         CamelContextResource resource = new CamelContextResource(camelContext);
-        RoutesType routes = resource.getRoutesResource().getRouteDefinitions();
-        List<RouteType> list = routes.getRoutes();
+        RoutesDefinition routes = resource.getRoutesResource().getRouteDefinitions();
+        List<RouteDefinition> list = routes.getRoutes();
         System.out.println("Found routes: " + list);
 
         // now lets marshall to XML
-        JAXBContext context = JAXBContext.newInstance(RoutesType.class.getPackage().getName());
+        JAXBContext context = JAXBContext.newInstance(RoutesDefinition.class.getPackage().getName());
         StringWriter out = new StringWriter();
         context.createMarshaller().marshal(routes, out);
         String xml = out.toString();

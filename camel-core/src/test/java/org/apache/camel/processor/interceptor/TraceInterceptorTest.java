@@ -19,7 +19,7 @@ package org.apache.camel.processor.interceptor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.easymock.classextension.EasyMock;
 
 public class TraceInterceptorTest extends ContextTestSupport {
@@ -45,7 +45,7 @@ public class TraceInterceptorTest extends ContextTestSupport {
 
     public void testTracerInterceptor() throws Exception {
         EasyMock.reset(formatter);
-        formatter.format(EasyMock.isA(TraceInterceptor.class), EasyMock.isA(ProcessorType.class), EasyMock.isA(Exchange.class));
+        formatter.format(EasyMock.isA(TraceInterceptor.class), EasyMock.isA(ProcessorDefinition.class), EasyMock.isA(Exchange.class));
         EasyMock.expectLastCall().andReturn("Test").atLeastOnce();
         EasyMock.replay(formatter);
         template.sendBody("direct:a", "<hello>world!</hello>");

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.TryType
+import org.apache.camel.model.TryDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's TryType
+ * Scala enrichment for Camel's TryDefinition
  */
-class STryType(val target: TryType)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[TryType] {
+class STryType(val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[TryDefinition] {
   
   val unwrap = target
   

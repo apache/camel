@@ -34,16 +34,16 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
-import org.apache.camel.model.ExceptionType;
+import org.apache.camel.model.ExceptionDefinition;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.InterceptType;
-import org.apache.camel.model.ProceedType;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.ProceedDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderRef;
 import org.apache.camel.model.RouteContainer;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.config.PropertiesType;
-import org.apache.camel.model.dataformat.DataFormatsType;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.config.PropertiesDefinition;
+import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
@@ -91,29 +91,29 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private Boolean shouldStartContext = Boolean.TRUE;
     @XmlElement(name = "properties", required = false)
-    private PropertiesType properties;
+    private PropertiesDefinition properties;
     @XmlElement(name = "package", required = false)
     private String[] packages = {};
-    @XmlElement(name = "jmxAgent", type = CamelJMXAgentType.class, required = false)
-    private CamelJMXAgentType camelJMXAgent;    
+    @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
+    private CamelJMXAgentDefinition camelJMXAgent;    
     @XmlElements({
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
         @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false),
-        @XmlElement(name = "proxy", type = CamelProxyFactoryType.class, required = false),
-        @XmlElement(name = "export", type = CamelServiceExporterType.class, required = false)})
+        @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
+        @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false)})
     private List beans;    
     @XmlElement(name = "routeBuilderRef", required = false)
     private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
-    private DataFormatsType dataFormats;
+    private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
-    private List<ExceptionType> exceptionClauses = new ArrayList<ExceptionType>();
+    private List<ExceptionDefinition> exceptionClauses = new ArrayList<ExceptionDefinition>();
     @XmlElement(name = "intercept", required = false)
-    private List<InterceptType> intercepts = new ArrayList<InterceptType>();
+    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlElement(name = "route", required = false)
-    private List<RouteType> routes = new ArrayList<RouteType>();    
+    private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();    
     @XmlTransient
     private SpringCamelContext context;
     @XmlTransient
@@ -210,17 +210,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // setup the intercepts
-        for (RouteType route : routes) {
+        for (RouteDefinition route : routes) {
 
             if (exceptionClauses != null) {
                 route.getOutputs().addAll(exceptionClauses);
             }    
             
-            for (InterceptType intercept : intercepts) {
-                List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>();
-                List<ProcessorType<?>> exceptionHandlers = new ArrayList<ProcessorType<?>>();
-                for (ProcessorType output : route.getOutputs()) {
-                    if (output instanceof ExceptionType) {
+            for (InterceptDefinition intercept : intercepts) {
+                List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+                List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
+                for (ProcessorDefinition output : route.getOutputs()) {
+                    if (output instanceof ExceptionDefinition) {
                         exceptionHandlers.add(output);
                     } else {
                         outputs.add(output);
@@ -235,13 +235,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 
                 // add the interceptor but we must do some pre configuration beforehand
                 intercept.afterPropertiesSet();
-                InterceptType proxy = intercept.createProxy();
+                InterceptDefinition proxy = intercept.createProxy();
                 route.addOutput(proxy);
                 route.pushBlock(proxy.getProceed());
 
                 // if there is a proceed in the interceptor proxy then we should add
                 // the current outputs to out route so we will proceed and continue to route to them
-                ProceedType proceed = ProcessorTypeHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedType.class);
+                ProceedDefinition proceed = ProcessorTypeHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
                 if (proceed != null) {
                     proceed.getOutputs().addAll(outputs);
                 }
@@ -339,19 +339,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.context = context;
     }
 
-    public List<RouteType> getRoutes() {
+    public List<RouteDefinition> getRoutes() {
         return routes;
     }
 
-    public void setRoutes(List<RouteType> routes) {
+    public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
 
-    public List<InterceptType> getIntercepts() {
+    public List<InterceptDefinition> getIntercepts() {
         return intercepts;
     }
 
-    public void setIntercepts(List<InterceptType> intercepts) {
+    public void setIntercepts(List<InterceptDefinition> intercepts) {
         this.intercepts = intercepts;
     }
 
@@ -388,11 +388,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.applicationContext = applicationContext;
     }
     
-    public PropertiesType getProperties() {
+    public PropertiesDefinition getProperties() {
         return properties;
     }
     
-    public void setProperties(PropertiesType properties) {        
+    public void setProperties(PropertiesDefinition properties) {        
         this.properties = properties;
     }
 
@@ -420,7 +420,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return beanPostProcessor;
     }
 
-    public void setCamelJMXAgent(CamelJMXAgentType agent) {
+    public void setCamelJMXAgent(CamelJMXAgentDefinition agent) {
         camelJMXAgent = agent;
     }
 
@@ -440,7 +440,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.delay = delay;
     }
 
-    public CamelJMXAgentType getCamelJMXAgent() {
+    public CamelJMXAgentDefinition getCamelJMXAgent() {
         return camelJMXAgent;
     }
 
@@ -551,19 +551,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
     }
     
-    public void setDataFormats(DataFormatsType dataFormats) {
+    public void setDataFormats(DataFormatsDefinition dataFormats) {
         this.dataFormats = dataFormats;
     }
 
-    public DataFormatsType getDataFormats() {
+    public DataFormatsDefinition getDataFormats() {
         return dataFormats;
     }
 
-    public void setExceptionClauses(List<ExceptionType> exceptionClauses) {
+    public void setExceptionClauses(List<ExceptionDefinition> exceptionClauses) {
         this.exceptionClauses = exceptionClauses;
     }
 
-    public List<ExceptionType> getExceptionClauses() {
+    public List<ExceptionDefinition> getExceptionClauses() {
         return exceptionClauses;
     }
 }

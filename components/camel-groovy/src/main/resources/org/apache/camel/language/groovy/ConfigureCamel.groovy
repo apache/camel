@@ -17,8 +17,8 @@
  */
 package org.apache.camel.language.groovy
 
-import org.apache.camel.model.ChoiceType;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 
 /**
  * @version $Revision: 1.1 $
@@ -32,14 +32,14 @@ class ConfigureCamel implements Runnable {
     void run() {
         ExpandoMetaClass.enableGlobally();
 
-        ProcessorType.metaClass.filter = { filter ->
+        ProcessorDefinition.metaClass.filter = { filter ->
             if (filter instanceof Closure) {
                 filter = CamelGroovyMethods.toExpression(filter)
             }
             delegate.filter(filter);
         }
 
-        ChoiceType.metaClass.when = { filter ->
+        ChoiceDefinition.metaClass.when = { filter ->
             if (filter instanceof Closure) {
                 filter = CamelGroovyMethods.toExpression(filter)
             }

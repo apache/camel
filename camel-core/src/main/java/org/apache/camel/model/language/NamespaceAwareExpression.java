@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class NamespaceAwareExpression extends ExpressionType implements NamespaceAware {
+public abstract class NamespaceAwareExpression extends ExpressionDefinition implements NamespaceAware {
     @XmlTransient
     private Map<String, String> namespaces;
 

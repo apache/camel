@@ -24,7 +24,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -115,7 +115,7 @@ public class Debugger implements InterceptStrategy {
     }
 
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
         String id = processorType.idOrCreate();
         if (logExchanges) {
             TraceInterceptor traceInterceptor = new TraceInterceptor(processorType, target, tracer);

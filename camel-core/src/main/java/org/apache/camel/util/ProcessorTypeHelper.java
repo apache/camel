@@ -18,9 +18,9 @@ package org.apache.camel.util;
 
 import java.util.List;
 
-import org.apache.camel.model.ChoiceType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.WhenType;
+import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.WhenDefinition;
 
 /**
  * Helper class for ProcessorType and the other model classes.
@@ -39,28 +39,28 @@ public final class ProcessorTypeHelper {
      * @return         the first found type, or <tt>null</tt> if not found
      */
     @SuppressWarnings("unchecked")
-    public static <T> T findFirstTypeInOutputs(List<ProcessorType> outputs, Class<T> type) {
+    public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
         if (outputs == null || outputs.isEmpty()) {
             return null;
         }
 
-        for (ProcessorType out : outputs) {
+        for (ProcessorDefinition out : outputs) {
             if (type.isInstance(out)) {
                 return type.cast(out);
             }
 
             // special for choice
-            if (out instanceof ChoiceType) {
-                ChoiceType choice = (ChoiceType) out;
-                for (WhenType when : choice.getWhenClauses()) {
-                    List<ProcessorType> children = when.getOutputs();
+            if (out instanceof ChoiceDefinition) {
+                ChoiceDefinition choice = (ChoiceDefinition) out;
+                for (WhenDefinition when : choice.getWhenClauses()) {
+                    List<ProcessorDefinition> children = when.getOutputs();
                     T child = findFirstTypeInOutputs(children, type);
                     if (child != null) {
                         return child;
                     }
                 }
 
-                List<ProcessorType> children = choice.getOtherwise().getOutputs();
+                List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
                 T child = findFirstTypeInOutputs(children, type);
                 if (child != null) {
                     return child;
@@ -68,7 +68,7 @@ public final class ProcessorTypeHelper {
             }
 
             // try children as well
-            List<ProcessorType> children = out.getOutputs();
+            List<ProcessorDefinition> children = out.getOutputs();
             T child = findFirstTypeInOutputs(children, type);
             if (child != null) {
                 return child;

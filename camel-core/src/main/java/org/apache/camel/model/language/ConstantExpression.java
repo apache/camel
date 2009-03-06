@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  *
  */
 @XmlRootElement(name = "constant")
-public class ConstantExpression extends ExpressionType {
+public class ConstantExpression extends ExpressionDefinition {
     public ConstantExpression() {
     }
 

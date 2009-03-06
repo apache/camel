@@ -23,10 +23,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Intercept;
 import org.apache.camel.Processor;
-import org.apache.camel.model.FromType;
-import org.apache.camel.model.ProcessorType;
-import org.apache.camel.model.RouteType;
-import org.apache.camel.model.dataformat.DataFormatType;
+import org.apache.camel.model.FromDefinition;
+import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.dataformat.DataFormatDefinition;
 
 /**
  * The context used to activate new routing rules
@@ -47,14 +47,14 @@ public interface RouteContext {
      *
      * @return the from type
      */
-    FromType getFrom();
+    FromDefinition getFrom();
 
     /**
      * Get the route type
      *
      * @return the route type
      */
-    RouteType getRoute();
+    RouteDefinition getRoute();
 
     /**
      * Gets the camel context
@@ -70,7 +70,7 @@ public interface RouteContext {
      * @return the created processor
      * @throws Exception can be thrown
      */
-    Processor createProcessor(ProcessorType node) throws Exception;
+    Processor createProcessor(ProcessorDefinition node) throws Exception;
 
     /**
      * Resolves an endpoint from the URI
@@ -161,7 +161,7 @@ public interface RouteContext {
     void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
 
     /**
-     * If this flag is true, {@link ProcessorType#addRoutes(RouteContext, java.util.Collection)}
+     * If this flag is true, {@link ProcessorDefinition#addRoutes(RouteContext, java.util.Collection)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.
      *
@@ -182,5 +182,5 @@ public interface RouteContext {
      * @param ref  the ref name to lookup
      * @return the found object
      */
-    DataFormatType getDataFormat(String ref);
+    DataFormatDefinition getDataFormat(String ref);
 }

@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.model.language.ExpressionType;
+import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 
 /**
@@ -29,50 +29,50 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
  */
 @XmlRootElement(name = "sticky")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class StickyLoadBalanceStrategy extends LoadBalancerType {
-    @XmlElement(required = true, name = "expression", type = ExpressionType.class)
-    private ExpressionType expressionType;
-    @XmlElement(required = false, name = "loadBalancer", type = LoadBalancerType.class)
-    private LoadBalancerType loadBalancerType;
+public class StickyLoadBalanceStrategy extends LoadBalancerDefinition {
+    @XmlElement(required = true, name = "expression", type = ExpressionDefinition.class)
+    private ExpressionDefinition expressionType;
+    @XmlElement(required = false, name = "loadBalancer", type = LoadBalancerDefinition.class)
+    private LoadBalancerDefinition loadBalancerType;
 
     public StickyLoadBalanceStrategy() {
         super("org.apache.camel.processor.loadbalancer.StickyLoadBalancer");
     }
 
-    public StickyLoadBalanceStrategy(ExpressionType expressionType) {
+    public StickyLoadBalanceStrategy(ExpressionDefinition expressionType) {
         this();
         this.expressionType = expressionType;
     }
 
-    public StickyLoadBalanceStrategy(ExpressionType expressionType, LoadBalancerType loadBalancerType) {
+    public StickyLoadBalanceStrategy(ExpressionDefinition expressionType, LoadBalancerDefinition loadBalancerType) {
         this();
         this.expressionType = expressionType;
         this.loadBalancerType = loadBalancerType;
     }
 
-    public void setExpressionType(ExpressionType expressionType) {
+    public void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
     }
 
-    public ExpressionType getExpressionType() {
+    public ExpressionDefinition getExpressionType() {
         return expressionType;
     }
 
-    public void setLoadBalancerType(LoadBalancerType loadBalancerType) {
+    public void setLoadBalancerType(LoadBalancerDefinition loadBalancerType) {
         this.loadBalancerType = loadBalancerType;
     }
 
-    public LoadBalancerType getLoadBalancerType() {
+    public LoadBalancerDefinition getLoadBalancerType() {
         return loadBalancerType;
     }
 
     @Override
     protected void configureLoadBalancer(LoadBalancer loadBalancer) {
-        ExpressionType expression = getExpressionType();
+        ExpressionDefinition expression = getExpressionType();
         if (expression != null) {
             setProperty(loadBalancer, "correlationExpression", expression);
         }
-        LoadBalancerType type = getLoadBalancerType();
+        LoadBalancerDefinition type = getLoadBalancerType();
         if (type != null) {
             setProperty(loadBalancer, "loadBalancer", type);
         }

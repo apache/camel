@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "simple")
-public class SimpleExpression extends ExpressionType {
+public class SimpleExpression extends ExpressionDefinition {
     public SimpleExpression() {
     }
 

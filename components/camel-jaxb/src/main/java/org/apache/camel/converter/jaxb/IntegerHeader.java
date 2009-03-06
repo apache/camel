@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name = "intHeader")
 @XmlAccessorType(value = XmlAccessType.FIELD)
-public class IntegerHeader extends HeaderType {
+public class IntegerHeader extends HeaderDefinition {
     @XmlAttribute(name = "value")
     private Integer number;
 

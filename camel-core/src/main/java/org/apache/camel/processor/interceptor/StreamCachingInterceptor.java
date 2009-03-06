@@ -25,7 +25,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.model.InterceptorRef;
-import org.apache.camel.model.InterceptorType;
+import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;
@@ -54,9 +54,9 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
      *
      * @param interceptors the list of interceptors
      */
-    public static void noStreamCaching(List<InterceptorType> interceptors) {
+    public static void noStreamCaching(List<InterceptorDefinition> interceptors) {
         for (int i = 0; i < interceptors.size(); i++) {
-            InterceptorType interceptor = interceptors.get(i);
+            InterceptorDefinition interceptor = interceptors.get(i);
             if (interceptor instanceof InterceptorRef
                 && ((InterceptorRef)interceptor).getInterceptor() instanceof StreamCachingInterceptor) {
                 interceptors.remove(interceptor);

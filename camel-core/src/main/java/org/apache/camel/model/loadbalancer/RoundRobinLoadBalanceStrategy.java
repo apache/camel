@@ -25,7 +25,7 @@ import org.apache.camel.spi.RouteContext;
  * Represents an XML &lt;roundRobin/&gt; element
  */
 @XmlRootElement(name = "roundRobin")
-public class RoundRobinLoadBalanceStrategy extends LoadBalancerType {
+public class RoundRobinLoadBalanceStrategy extends LoadBalancerDefinition {
 
     @Override
     protected LoadBalancer createLoadBalancer(RouteContext routeContext) {

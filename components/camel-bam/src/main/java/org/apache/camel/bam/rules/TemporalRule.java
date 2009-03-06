@@ -28,8 +28,8 @@ import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.OutputType;
-import org.apache.camel.model.RouteType;
+import org.apache.camel.model.OutputDefinition;
+import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.Time;
 import org.apache.commons.logging.Log;
@@ -50,7 +50,7 @@ public class TemporalRule extends ServiceSupport {
     private long expectedMillis;
     private long overdueMillis;
     private Processor overdueAction;
-    private OutputType overdueProcessors = new OutputType();
+    private OutputDefinition overdueProcessors = new OutputDefinition();
 
     public TemporalRule(TimeExpression first, TimeExpression second) {
         this.first = first;
@@ -66,14 +66,14 @@ public class TemporalRule extends ServiceSupport {
         return this;
     }
 
-    public OutputType errorIfOver(Time builder) {
+    public OutputDefinition errorIfOver(Time builder) {
         return errorIfOver(builder.toMillis());
     }
 
-    public OutputType errorIfOver(long millis) {
+    public OutputDefinition errorIfOver(long millis) {
         overdueMillis = millis;
         if (overdueProcessors == null) {
-            overdueProcessors = new OutputType();
+            overdueProcessors = new OutputDefinition();
         }
         return overdueProcessors;
     }
@@ -91,7 +91,7 @@ public class TemporalRule extends ServiceSupport {
 
             // TOOD refactor to avoid this messyness...
             ArrayList<Route> list = new ArrayList<Route>();
-            RouteType route = new RouteType();
+            RouteDefinition route = new RouteDefinition();
             route.setCamelContext(first.getBuilder().getProcessBuilder().getContext());
             RouteContext routeContext = new DefaultRouteContext(route, null, list);
 

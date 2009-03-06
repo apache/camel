@@ -17,7 +17,7 @@
 package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -34,7 +34,7 @@ public final class StreamCaching implements InterceptStrategy {
     }
 
     @SuppressWarnings("unchecked")
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
         return new StreamCachingInterceptor(target);
     }
     

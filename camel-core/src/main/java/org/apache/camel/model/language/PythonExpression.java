@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @version $Revision$
  */
 @XmlRootElement(name = "python")
-public class PythonExpression extends ExpressionType {
+public class PythonExpression extends ExpressionDefinition {
     public PythonExpression() {
     }
 

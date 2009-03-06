@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "json")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class JsonDataFormat extends DataFormatType {
+public class JsonDataFormat extends DataFormatDefinition {
     
     @XmlAttribute(required = false)
     private Boolean prettyPrint;

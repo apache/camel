@@ -34,7 +34,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "interceptor")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptorRef extends InterceptorType {
+public class InterceptorRef extends InterceptorDefinition {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient

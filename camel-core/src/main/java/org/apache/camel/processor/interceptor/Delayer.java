@@ -20,7 +20,7 @@ import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
-import org.apache.camel.model.ProcessorType;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 
 /**
@@ -54,7 +54,7 @@ public class Delayer implements InterceptStrategy {
         return null;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorType processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
         DelayInterceptor delayer = new DelayInterceptor(processorType, target, this);
         return delayer;
     }
