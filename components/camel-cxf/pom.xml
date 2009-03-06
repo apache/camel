@@ -93,13 +93,7 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-core</artifactId>
-      <version>${cxf-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>${cxf-version}</version>      
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
@@ -131,78 +125,13 @@
       <artifactId>cxf-rt-management</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-testutils</artifactId>
-      <version>${cxf-version}</version>
-      <scope>test</scope>
-    </dependency>
+    
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-tools-common</artifactId>
-      <version>${cxf-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.sun.xml.bind</groupId>
-          <artifactId>jaxb-impl</artifactId>
-        </exclusion>
-      </exclusions>
+      <version>${cxf-version}</version>     
     </dependency>
-
-    <!-- TODO for some reason the jaxb used by CXF is unavailable so we have to provide our own -->
-    <dependency>
-      <groupId>com.sun.xml.bind</groupId>
-      <artifactId>jaxb-impl</artifactId>
-      <version>${jaxb-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml</groupId>
-          <artifactId>jsr173</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.jws</groupId>
-          <artifactId>jsr181-api</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>javax.xml.bind</groupId>
-      <artifactId>jaxb-api</artifactId>
-      <version>${jaxb-api-version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.xml</groupId>
-          <artifactId>jsr173</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.activation</groupId>
-          <artifactId>activation</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.mortbay.jetty</groupId>
-      <artifactId>jetty</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <!--dependency>
-    	<groupId>org.codehaus.woodstox</groupId>
-    	<artifactId>wstx-asl</artifactId>
-    	<version>3.2.4</version>
-    	<exclusions>
-    		<exclusion>
-    			<groupId>stax</groupId>
-    			<artifactId>stax-api</artifactId>
-    		</exclusion>
-    	</exclusions>
-    </dependency-->
-
+    
     <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-core</artifactId>
@@ -218,6 +147,31 @@
        <artifactId>spring-context</artifactId>
      </dependency>
      
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-testutils</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mortbay.jetty</groupId>
+      <artifactId>jetty</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>test</scope>
+    </dependency>
+    
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <scope>test</scope>
+    </dependency>
+         
      <dependency>
        <groupId>org.springframework</groupId>
        <artifactId>spring-test</artifactId>
