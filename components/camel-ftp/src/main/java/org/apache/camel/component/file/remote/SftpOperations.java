@@ -39,6 +39,7 @@ import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -144,6 +145,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
+        // for FTP we can not use leading / for refering to files
+        name = FileUtil.stripLeadingSeparator(name);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
@@ -156,6 +160,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        // for FTP we can not use leading / for refering to files
+        from = FileUtil.stripLeadingSeparator(from);
+        to = FileUtil.stripLeadingSeparator(to);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + from + " to: " + to);
         }
@@ -168,8 +176,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
-        // ignore absolute as all dirs are relative with FTP
+        // for FTP we can not use leading / for refering to files
+        directory = FileUtil.stripLeadingSeparator(directory);
 
+        // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
         String originalDirectory = getCurrentDirectory();

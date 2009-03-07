@@ -308,4 +308,11 @@ public final class FileUtil {
         return results;
     }
 
+    public static String stripLeadingSeparator(String name) {
+        if (name.startsWith("/") || name.startsWith(File.separator)) {
+            return name.substring(1);
+        }
+        return name;
+    }
+
 }
