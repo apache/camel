@@ -47,7 +47,7 @@ public class FileConsumerIncludeNameTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/include/?includeNamePrefix=report&includeNamePostfix=txt")
+                from("file://target/include/?include=^report.*txt$")
                     .to("mock:result");
             }
         };

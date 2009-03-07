@@ -51,7 +51,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected GenericFileOperations<T> operations;
     protected GenericFileConfiguration configuration;
 
-    protected boolean directory = true;
     protected String localWorkDirectory;
     protected boolean autoCreate = true;
     protected int bufferSize = 128 * 1024;
@@ -60,11 +59,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean recursive;
     protected boolean delete;
     protected String tempPrefix;
-    protected String excludeNamePrefix;
-    protected String excludeNamePostfix;
-    protected String includeNamePrefix;
-    protected String includeNamePostfix;
-    protected String regexPattern;
+    protected String include;
+    protected String exclude;
     protected Expression fileExpression;
     protected Expression moveExpression;
     protected Expression preMoveExpression;
@@ -157,38 +153,6 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.noop = noop;
     }
 
-    public String getExcludeNamePrefix() {
-        return excludeNamePrefix;
-    }
-
-    public void setExcludeNamePrefix(String excludeNamePrefix) {
-        this.excludeNamePrefix = excludeNamePrefix;
-    }
-
-    public String getExcludeNamePostfix() {
-        return excludeNamePostfix;
-    }
-
-    public void setExcludeNamePostfix(String excludeNamePostfix) {
-        this.excludeNamePostfix = excludeNamePostfix;
-    }
-
-    public String getIncludeNamePrefix() {
-        return includeNamePrefix;
-    }
-
-    public void setIncludeNamePrefix(String includeNamePrefix) {
-        this.includeNamePrefix = includeNamePrefix;
-    }
-
-    public String getIncludeNamePostfix() {
-        return includeNamePostfix;
-    }
-
-    public void setIncludeNamePostfix(String includeNamePostfix) {
-        this.includeNamePostfix = includeNamePostfix;
-    }
-
     public boolean isRecursive() {
         return recursive;
     }
@@ -197,12 +161,20 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.recursive = recursive;
     }
 
-    public String getRegexPattern() {
-        return regexPattern;
+    public String getInclude() {
+        return include;
     }
 
-    public void setRegexPattern(String regexPattern) {
-        this.regexPattern = regexPattern;
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    public String getExclude() {
+        return exclude;
+    }
+
+    public void setExclude(String exclude) {
+        this.exclude = exclude;
     }
 
     public boolean isDelete() {
