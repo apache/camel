@@ -70,7 +70,6 @@ public class GenericFileExchange<T> extends DefaultExchange {
                 getIn().setHeader("CamelFilePath", file.getEndpointPath() + File.separator + file.getRelativeFileName());
             }
             getIn().setHeader("CamelFileParent", file.getParent());
-            getIn().setHeader("CamelFileCanonicalPath", file.getCanonicalFileName());
 
             if (file.getFileLength() > 0) {
                 getIn().setHeader("CamelFileLength", file.getFileLength());

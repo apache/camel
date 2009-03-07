@@ -74,7 +74,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             client.connect(host, port);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
 
         // must enter passive mode directly after connect
@@ -96,11 +96,11 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 LOG.trace("User " + (username != null ? username : "anonymous") + " logged in: " + login);
             }
             if (!login) {
-                throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString());
+                throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString());
             }
             client.setFileType(config.isBinary() ? FTPClient.BINARY_FILE_TYPE : FTPClient.ASCII_FILE_TYPE);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
 
         return true;
@@ -114,7 +114,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             client.disconnect();
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -128,7 +128,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             return client.deleteFile(name);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -143,7 +143,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             return client.rename(from, to);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -180,7 +180,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
                 }
             }
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -202,7 +202,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             target.setBody(os);
             return client.retrieveFile(name, os);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             ObjectHelper.close(os, "retrieve: " + name, LOG);
         }
@@ -225,19 +225,19 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             // delete any existing files
             if (temp.exists()) {
                 if (!temp.delete()) {
-                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
                 }
             }
             if (local.exists()) {
                 if (!local.delete()) {
-                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + local);
+                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
                 }                
             }
            
 
             // create new temp local work file
             if (!temp.createNewFile()) {
-                throw new RemoteFileOperationFailedException("Cannot create new local work file: " + temp);
+                throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
             }
 
             // store content as a file in the local work directory in the temp handle
@@ -247,7 +247,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
 
         } catch (Exception e) {            
-            throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);
+            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
         boolean result;
@@ -258,7 +258,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             result = client.retrieveFile(name, os);
             
         } catch (IOException e) {            
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }  finally {
             // need to close the stream before rename it
             ObjectHelper.close(os, "retrieve: " + name, LOG);
@@ -266,7 +266,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             
         // rename temp to local after we have retrieved the data
         if (!temp.renameTo(local)) {                
-            throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+            throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
         }
         
 
@@ -278,7 +278,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             return client.storeFile(name, is);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         } finally {
             ObjectHelper.close(is, "store: " + name, LOG);
         }
@@ -288,7 +288,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             return client.printWorkingDirectory();
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -296,7 +296,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             client.changeWorkingDirectory(newDirectory);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -316,7 +316,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             list.addAll(Arrays.asList(files));
             return list;
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 
@@ -324,7 +324,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             return this.client.deleteFile(name);
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
+            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
     }
 

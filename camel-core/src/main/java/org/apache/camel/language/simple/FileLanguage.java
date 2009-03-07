@@ -32,7 +32,6 @@ import org.apache.camel.util.ObjectHelper;
  * <li><tt>file:path</tt> to access the file path name</li>
  * <li><tt>file:absolute</tt> is the file regarded as absolute or relative</li>
  * <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
- * <li><tt>file:canonical.path</tt> to access the canonical path name</li>
  * <li><tt>file:length</tt> to access the file length as a Long type</li>
  * <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
  * <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
@@ -71,8 +70,6 @@ public class FileLanguage extends SimpleLanguageSupport {
                 return FileExpressionBuilder.fileAbsoluteExpression();
             } else if (ObjectHelper.equal(remainder, "absolute.path")) {
                 return FileExpressionBuilder.fileAbsolutePathExpression();
-            } else if (ObjectHelper.equal(remainder, "canonical.path")) {
-                return FileExpressionBuilder.fileCanoicalPathExpression();
             } else if (ObjectHelper.equal(remainder, "length")) {
                 return FileExpressionBuilder.fileSizeExpression();
             } else if (ObjectHelper.equal(remainder, "modified")) {

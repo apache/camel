@@ -31,7 +31,6 @@ public class GenericFile<T> implements Serializable {
 
     private String endpointPath;
     private String absoluteFileName;
-    private String canonicalFileName;
     private String relativeFileName;
     private String fileName;
     private long fileLength;
@@ -62,7 +61,6 @@ public class GenericFile<T> implements Serializable {
         result.setEndpointPath(source.getEndpointPath());
         result.setAbsolute(source.isAbsolute());
         result.setAbsoluteFileName(source.getAbsoluteFileName());
-        result.setCanonicalFileName(source.getCanonicalFileName());
         result.setRelativeFileName(source.getRelativeFileName());
         result.setFileName(source.getFileName());
         result.setFileLength(source.getFileLength());
@@ -98,22 +96,13 @@ public class GenericFile<T> implements Serializable {
         if (absolute) {
             setAbsolute(true);
             setFileName(file.getName());
-            try {
-                setCanonicalFileName(file.getCanonicalPath());
-            } catch (IOException e) {
-                // ignore
-            }
             setRelativeFileName(null);
             setAbsoluteFileName(file.getAbsolutePath());
         } else {
             setAbsolute(false);
             setFileName(file.getName());
-            try {
-                setCanonicalFileName(file.getCanonicalPath());
-            } catch (IOException e) {
-                // ignore
-            }
 
+            // relative name is a bit more complex for relative files
             if (nameChangeOnly) {
                 setRelativeFileName(changeNameOnly(getRelativeFileName(), file.getName()));
             } else {
@@ -219,14 +208,6 @@ public class GenericFile<T> implements Serializable {
 
     public String getAbsoluteFileName() {
         return absoluteFileName;
-    }
-
-    public String getCanonicalFileName() {
-        return canonicalFileName;
-    }
-
-    public void setCanonicalFileName(String canonicalFileName) {
-        this.canonicalFileName = needToNormalize() ? FileUtil.normalizePath(canonicalFileName) : canonicalFileName;
     }
 
     public boolean isAbsolute() {

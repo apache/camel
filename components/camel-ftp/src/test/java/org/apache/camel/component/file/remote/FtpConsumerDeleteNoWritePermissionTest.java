@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 
 /**
  * User does not have write permissions so can't deleted consumed file.
@@ -45,7 +46,7 @@ public class FtpConsumerDeleteNoWritePermissionTest extends FtpServerTestSupport
             // give consumer time to try to delete the file
             Thread.sleep(1000);
             consumer.stop();
-        } catch (RemoteFileOperationFailedException fofe) {
+        } catch (GenericFileOperationFailedException fofe) {
             // expected, ignore
         }
     }

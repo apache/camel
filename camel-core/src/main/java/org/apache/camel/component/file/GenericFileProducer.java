@@ -119,10 +119,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 int lastPathIndex = fileName.lastIndexOf(File.separator);
                 if (lastPathIndex != -1) {
                     String directory = fileName.substring(0, lastPathIndex);
-                    if (directory.startsWith(File.separator)) {
-                        // skip trailing /
-                        directory = directory.substring(1);
-                    }
+                    // skip trailing /
+                    directory = FileUtil.stripLeadingSeparator(directory);
                     if (!operations.buildDirectory(directory, false)) {
                         log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
                     }

@@ -36,24 +36,17 @@ public class FileConsumer extends GenericFileConsumer<File> {
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<File>> fileList) {
-        File fileOrDirectory = new File(fileName);
+        File directory = new File(fileName);
 
-        if (!fileOrDirectory.exists()) {
-            return;
-        }
-
-        // could be a file and not a directory so delegate to poll file instead
-        // this happens if end user has specified a filename in the URI but have not
-        // set directory=false as an option
-        if (fileOrDirectory.isFile()) {
-            pollFile(fileName, fileList);
+        if (!directory.exists() || !directory.isDirectory()) {
+            log.warn("Cannot poll directory as file does not exists or is not a directory: " + directory);
             return;
         }
 
         if (log.isTraceEnabled()) {
-            log.trace("Polling directory: " + fileOrDirectory.getPath());
+            log.trace("Polling directory: " + directory.getPath());
         }
-        File[] files = fileOrDirectory.listFiles();
+        File[] files = directory.listFiles();
 
         if (files == null || files.length == 0) {
             // no files in this directory to poll
@@ -66,8 +59,8 @@ public class FileConsumer extends GenericFileConsumer<File> {
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && isValidFile(gf, true)) {
                     // recursive scan and add the sub files and folders
-                    String directory = fileName + "/" + file.getName();
-                    pollDirectory(directory, fileList);
+                    String subDirectory = fileName + File.separator + file.getName();
+                    pollDirectory(subDirectory, fileList);
                 }
             } else if (file.isFile()) {
                 if (isValidFile(gf, false)) {
@@ -75,7 +68,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
                     fileList.add(gf);
                 }
             } else {
-                log.debug("Ignoring unsupported file type " + file);
+                log.debug("Ignoring unsupported file type for file: " + file);
             }
         }
     }
@@ -113,11 +106,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setFileName(file.getName());
         answer.setAbsolute(file.isAbsolute());
         answer.setAbsoluteFileName(file.getAbsolutePath());
-        try {
-            answer.setCanonicalFileName(file.getCanonicalPath());
-        } catch (IOException e) {
-            // ignore
-        }
         answer.setLastModified(file.lastModified());
         if (file.isAbsolute()) {
             answer.setRelativeFileName(null);

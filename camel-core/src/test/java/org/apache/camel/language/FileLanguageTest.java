@@ -67,7 +67,6 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression("${file:path}", file.getPath());
         assertExpression("${file:absolute}", file.isAbsolute());
         assertExpression("${file:absolute.path}", file.getAbsolutePath());
-        assertExpression("${file:canonical.path}", file.getCanonicalPath());
         assertExpression("${file:length}", file.length());
 
         // modified is a Date object
