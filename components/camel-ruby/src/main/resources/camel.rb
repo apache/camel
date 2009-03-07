@@ -20,7 +20,7 @@ module Camel
 
   include_class "org.apache.camel.impl.DefaultCamelContext"
   include_class "org.apache.camel.impl.ExpressionSupport"
-  include_class "org.apache.camel.model.RouteType"
+  include_class "org.apache.camel.model.RouteDefinition"
   include_class "org.apache.camel.ruby.ScriptRouteBuilder"
 
   class RubyRouteBuilder < ScriptRouteBuilder
