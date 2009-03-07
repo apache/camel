@@ -26,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpMoveFileAbsoluteFolderRecursiveTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false&excludeNamePostfix=.old"
-                + "&moveExpression=/done/${file:name}.old&initialDelay=5000&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false&exclude=.*old"
+                + "&move=/done/${file:name}.old&initialDelay=2500&delay=5000";
     }
 
     @Override

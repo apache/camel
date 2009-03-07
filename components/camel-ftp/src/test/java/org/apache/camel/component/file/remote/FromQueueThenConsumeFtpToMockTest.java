@@ -80,8 +80,8 @@ public class FromQueueThenConsumeFtpToMockTest extends FtpServerTestSupport {
                         String filename = exchange.getIn().getHeader("myfile", String.class);
 
                         // construct the total url for the ftp consumer
-                        // set a regex pattern to only consume the file we want
-                        String url = getFtpUrl() + "&regexPattern=" + filename;
+                        // add the fileName option with the file we want to consume
+                        String url = getFtpUrl() + "&fileName=" + filename;
 
                         // create a ftp endpoint
                         Endpoint ftp = context.getEndpoint(url);

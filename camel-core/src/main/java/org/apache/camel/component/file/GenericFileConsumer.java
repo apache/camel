@@ -329,7 +329,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         // use file expression for a simple dynamic file filter
-        if (endpoint.getFileExpression() != null) {
+        if (endpoint.getFileName() != null) {
             evaluteFileExpression();
             if (fileExpressionResult != null) {
                 if (!name.equals(fileExpressionResult)) {
@@ -345,7 +345,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (fileExpressionResult == null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = new DefaultExchange(endpoint.getCamelContext());
-            fileExpressionResult = (String) endpoint.getFileExpression().evaluate(dummy);
+            fileExpressionResult = (String) endpoint.getFileName().evaluate(dummy);
         }
     }
 

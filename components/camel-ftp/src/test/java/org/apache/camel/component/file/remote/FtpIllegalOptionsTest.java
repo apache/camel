@@ -24,7 +24,7 @@ public class FtpIllegalOptionsTest extends ContextTestSupport {
 
     public void testIllegalOptions() throws Exception {
         try {
-            context.getEndpoint("ftp://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("ftp://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });
@@ -34,7 +34,7 @@ public class FtpIllegalOptionsTest extends ContextTestSupport {
         }
 
         try {
-            context.getEndpoint("file://target?moveExpression=../done/${file:name}&delete=true").createConsumer(new Processor() {
+            context.getEndpoint("file://target?move=../done/${file:name}&delete=true").createConsumer(new Processor() {
                 public void process(Exchange exchange) throws Exception {
                 }
             });

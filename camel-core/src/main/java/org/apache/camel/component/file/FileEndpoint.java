@@ -48,13 +48,13 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         // we assume its a file if the name has a dot in it (eg foo.txt)
         if (file.getName().contains(".")) {
-            throw new IllegalArgumentException("Only directory is supported. File must be configured as a directory: " + file);
+            throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid starting directory: " + file);
         }
 
         FileConsumer result = new FileConsumer(this, processor, operations);
 
-        if (isDelete() && getMoveExpression() != null) {
-            throw new IllegalArgumentException("You cannot set both delete=true and moveExpression options");
+        if (isDelete() && getMove() != null) {
+            throw new IllegalArgumentException("You cannot set both delete=true and move options");
         }
 
         // if noop=true then idempotent should also be configured

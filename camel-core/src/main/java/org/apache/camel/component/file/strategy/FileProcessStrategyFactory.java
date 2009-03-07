@@ -35,8 +35,8 @@ public final class FileProcessStrategyFactory {
         // We assume a value is present only if its value not null for String and 'true' for boolean
         boolean isNoop = params.get("noop") != null;
         boolean isDelete = params.get("delete") != null;
-        Expression moveExpression = (Expression) params.get("moveExpression");
-        Expression preMoveExpression = (Expression) params.get("preMoveExpression");
+        Expression moveExpression = (Expression) params.get("move");
+        Expression preMoveExpression = (Expression) params.get("preMove");
 
         if (isNoop) {
             GenericFileNoOpProcessStrategy<File> strategy = new GenericFileNoOpProcessStrategy<File>();

@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpRegexPatternTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/regexp?password=admin&regexPattern=report.*";
+        return "ftp://admin@localhost:" + getPort() + "/regexp?password=admin&include=report.*";
     }
 
     public void testFtpRegexPattern() throws Exception {

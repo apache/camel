@@ -53,7 +53,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProduceBeanByExpression() throws Exception {
-        template.sendBody(getFtpUrl() + "&fileExpression=${bean:myguidgenerator}.bak", "Hello World");
+        template.sendBody(getFtpUrl() + "&fileName=${bean:myguidgenerator}.bak", "Hello World");
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/123.bak");
     }
@@ -72,7 +72,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
     }
 
     public void testProducerDateByExpression() throws Exception {
-        template.sendBody(getFtpUrl() + "&fileExpression=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
+        template.sendBody(getFtpUrl() + "&fileName=myfile-${date:now:yyyyMMdd}.txt", "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-" + date + ".txt");
@@ -80,14 +80,14 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     public void testProducerComplexByExpression() throws Exception {
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
-        template.sendBody(getFtpUrl() + "&fileExpression=" + expression, "Hello World");
+        template.sendBody(getFtpUrl() + "&fileName=" + expression, "Hello World");
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists(FTP_ROOT_DIR + "filelanguageinbox/myfile-123-" + date + ".txt");
     }
 
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&fileExpression=myfile-${in.header.foo}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${in.header.foo}.txt",
                 "Hello World", "foo", "abc");
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/myfile-abc.txt");
@@ -98,7 +98,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&fileExpression=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
                 "Hello World", "birthday", date);
 
         assertFileExists(FTP_ROOT_DIR + "filelanguage/mybirthday-19740420.txt");
