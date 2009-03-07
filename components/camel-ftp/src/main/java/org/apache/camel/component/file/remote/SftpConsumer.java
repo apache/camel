@@ -28,8 +28,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
+    private String endpointPath;
+
     public SftpConsumer(RemoteFileEndpoint<ChannelSftp.LsEntry> endpoint, Processor processor, RemoteFileOperations<ChannelSftp.LsEntry> operations) {
         super(endpoint, processor, operations);
+        this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
@@ -79,35 +82,48 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
         // list the files in the fold and poll the first file
         List<ChannelSftp.LsEntry> list = operations.listFiles(fileName);
-        ChannelSftp.LsEntry file = list.get(0);
-        if (file != null) {
-            RemoteFile<ChannelSftp.LsEntry> remoteFile = asRemoteFile(directory, file);
-            if (isValidFile(remoteFile, false)) {
-                // matched file so add
-                fileList.add(remoteFile);
+        if (list.size() > 0) {
+            ChannelSftp.LsEntry file = list.get(0);
+            if (file != null) {
+                RemoteFile<ChannelSftp.LsEntry> remoteFile = asRemoteFile(directory, file);
+                if (isValidFile(remoteFile, false)) {
+                    // matched file so add
+                    fileList.add(remoteFile);
+                }
+            }
+        } else {
+            if (log.isTraceEnabled()) {
+                log.trace("Polled [" + fileName + "]. No files found");
             }
         }
     }
 
     private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String directory, ChannelSftp.LsEntry file) {
-        RemoteFile<ChannelSftp.LsEntry> remote = new RemoteFile<ChannelSftp.LsEntry>();
-        remote.setFile(file);
-        remote.setFileName(file.getFilename());
-        remote.setFileLength(file.getAttrs().getSize());
-        remote.setLastModified(file.getAttrs().getMTime() * 1000L);
-        remote.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
-        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
-        remote.setAbsoluteFileName(absoluteFileName);
+        RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
 
-        // the relative filename
-        String ftpBasePath = endpoint.getConfiguration().getFile();
-        String relativePath = absoluteFileName.substring(ftpBasePath.length());
+        answer.setEndpointPath(endpointPath);
+        answer.setFile(file);
+        answer.setFileName(file.getFilename());
+        answer.setFileLength(file.getAttrs().getSize());
+        answer.setLastModified(file.getAttrs().getMTime() * 1000L);
+        answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
+
+        // all ftp files is considered as relative
+        answer.setAbsolute(false);
+
+        // create a pseudo absolute name
+        String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
+        answer.setAbsoluteFileName(absoluteFileName);
+
+        // the relative filename, skip the leading endpoint configured path
+        String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
         if (relativePath.startsWith("/")) {
+            // skip trailing /
             relativePath = relativePath.substring(1);
         }
-        remote.setRelativeFileName(relativePath);
+        answer.setRelativeFileName(relativePath);
 
-        return remote;
+        return answer;
     }
 
 }

@@ -20,7 +20,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 
 public class ExchangePatternProcessor implements AsyncProcessor {
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;

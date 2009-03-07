@@ -16,10 +16,8 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.spi.Registry;
-
 /**
- * A runtime exception if a given bean could not be found in the {@link Registry}
+ * A runtime exception if a given bean could not be found in the {@link org.apache.camel.spi.Registry}
  *
  * @version $Revision$
  */

@@ -16,13 +16,14 @@
  */
 package org.apache.camel.util.concurrent;
 
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.AbstractQueuedSynchronizer;
 
 /**
- * An alternative to a {@link CountDownLatch} -- this implementation also supports incrementing
- * the latch count while counting down.  It can also be used to count up to 0 from a negative integer.
+ * An alternative to a {@link java.util.concurrent.CountDownLatch}.
+ * <p/>
+ * This implementation also supports incrementing the latch count while counting down.
+ * It can also be used to count up to 0 from a negative integer.
  */
 public class CountingLatch {
 

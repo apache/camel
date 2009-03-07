@@ -16,13 +16,11 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.util.ExchangeHelper;
-
 /**
  * An exception caused when a mandatory header is not available on a message
  * {@link Exchange}
  *
- * @see ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
+ * @see org.apache.camel.util.ExchangeHelper#getMandatoryHeader(Exchange, String, Class)
  *
  * @version $Revision$
  */

@@ -27,8 +27,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.spi.Injector;
-import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -276,7 +274,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Creates a new instance of the given type using the {@link Injector} on the given
+     * Creates a new instance of the given type using the {@link org.apache.camel.spi.Injector} on the given
      * {@link CamelContext}
      */
     public  <T> T newInstance(Class<T> beanType) {
@@ -284,7 +282,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Look up the given named bean in the {@link Registry} on the
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
      */
     public Object lookup(String name) {
@@ -292,7 +290,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Look up the given named bean of the given type in the {@link Registry} on the
+     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
      */
     public <T> T lookup(String name, Class<T> beanType) {
@@ -300,7 +298,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Look up the given named bean in the {@link Registry} on the
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws exception if not found.
      */
     public Object mandatoryLookup(String name) {
@@ -308,7 +306,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     }
 
     /**
-     * Look up the given named bean of the given type in the {@link Registry} on the
+     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws exception if not found.
      */
     public <T> T mandatoryLookup(String name, Class<T> beanType) {

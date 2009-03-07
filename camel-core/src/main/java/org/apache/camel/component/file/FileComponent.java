@@ -36,7 +36,7 @@ public class FileComponent extends GenericFileComponent<File> {
         result.setFile(file);
 
         GenericFileConfiguration config = new GenericFileConfiguration();
-        config.setFile(file.getPath());
+        config.setDirectory(file.getPath());
         result.setConfiguration(config);
 
         FileOperations operations = new FileOperations();

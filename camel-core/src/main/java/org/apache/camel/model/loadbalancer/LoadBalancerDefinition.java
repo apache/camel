@@ -76,8 +76,7 @@ public class LoadBalancerDefinition extends IdentifiedType implements LoadBalanc
         try {
             IntrospectionSupport.setProperty(bean, name, value);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Failed to set property " + 
-                name + " on " + bean + ". Reason: " + e, e);
+            throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }
     }
 

@@ -17,12 +17,12 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Expression;
 
 /**
- * A helper class for developers wishing to implement an {@link Expression} using Java code with a minimum amount
- * of code to write so that the developer only needs to implement one of the
- * {@link #evaluate(Exchange)} or {@link #evaluate(org.apache.camel.Exchange, Class)} methods.
+ * A helper class for developers wishing to implement an {@link org.apache.camel.Expression}
+ * using Java code with a minimum amount of code to write so that the developer only needs
+ * to implement one of the {@link #evaluate(Exchange)} or
+ * {@link #evaluate(org.apache.camel.Exchange, Class)} methods.
  *
  * @version $Revision$
  */

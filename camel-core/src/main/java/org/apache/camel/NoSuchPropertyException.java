@@ -16,13 +16,11 @@
  */
 package org.apache.camel;
 
-import org.apache.camel.util.ExchangeHelper;
-
 /**
  * An exception caused when a mandatory property is not available on a message
  * {@link Exchange}
  * 
- * @see ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
+ * @see org.apache.camel.util.ExchangeHelper#getMandatoryProperty(Exchange, String, Class)
  * 
  * @version $Revision$
  */

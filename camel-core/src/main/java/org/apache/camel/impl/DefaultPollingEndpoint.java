@@ -19,12 +19,10 @@ package org.apache.camel.impl;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 
 /**
- * A base class for an endpoint which the default consumer mode is to use a {@link PollingConsumer}
+ * A base class for an endpoint which the default consumer mode is to use a {@link org.apache.camel.PollingConsumer}
  *
  * @version $Revision$
  */

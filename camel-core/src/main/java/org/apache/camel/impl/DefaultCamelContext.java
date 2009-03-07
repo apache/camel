@@ -85,7 +85,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
-    private List<Service> servicesToClose = new ArrayList<Service>();
+    private final List<Service> servicesToClose = new ArrayList<Service>();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
     private ExchangeConverter exchangeConverter;
@@ -95,7 +95,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private Registry registry;
     private LifecycleStrategy lifecycleStrategy;
-    private List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+    private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
     private Long delay;
@@ -103,7 +103,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private Map<String, String> properties = new HashMap<String, String>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
-    private Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
+    private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
     private ClassResolver classResolver;
     private PackageScanClassResolver packageScanClassResolver;
 

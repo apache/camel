@@ -17,8 +17,8 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.Serializable;
 import java.io.IOException;
+import java.io.Serializable;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;

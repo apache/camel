@@ -21,30 +21,35 @@ import org.apache.camel.util.FileUtil;
 
 public class GenericFileConfiguration {
 
-    private String file;
+    private String directory;
 
     public boolean needToNormalize() {
         return true;
     }
 
     public void configure(URI uri) {
-        setFile(uri.getPath());
+        setDirectory(uri.getPath());
     }
 
-    public String getFile() {
-        return file;
+    public String getDirectory() {
+        return directory;
     }
 
-    public void setFile(String file) {
-        this.file = needToNormalize()
+    public void setDirectory(String directory) {
+        this.directory = needToNormalize()
             // must normalize path to cater for Windows and other OS
-            ? FileUtil.normalizePath(file)
-            // for the remote file we don't need to do that   
-            : file;        
+            ? FileUtil.normalizePath(directory)
+            // for the remote directory we don't need to do that
+            : directory;
+
+        // endpoint directory must not be null
+        if (this.directory == null) {
+            this.directory = "";
+        }
     }
 
     public String toString() {
-        return file;
+        return directory;
     }
 
 }

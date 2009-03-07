@@ -32,7 +32,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
     public FtpConsumer(RemoteFileEndpoint<FTPFile> endpoint, Processor processor, RemoteFileOperations<FTPFile> fileOperations) {
         super(endpoint, processor, fileOperations);
-        this.endpointPath = endpoint.getConfiguration().getFile();
+        this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<FTPFile>> fileList) {
@@ -105,15 +105,18 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             answer.setLastModified(file.getTimestamp().getTimeInMillis());
         }
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
-        // all ftp files is consider as relative
+
+        // all ftp files is considered as relative
         answer.setAbsolute(false);
+
+        // create a pseudo absolute name
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
         answer.setAbsoluteFileName(absoluteFileName);
 
-        // the relative filename
-        String ftpBasePath = endpoint.getConfiguration().getFile();
-        String relativePath = absoluteFileName.substring(ftpBasePath.length());
+        // the relative filename, skip the leading endpoint configured path
+        String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
         if (relativePath.startsWith("/")) {
+            // skip trailing /
             relativePath = relativePath.substring(1);
         }
         answer.setRelativeFileName(relativePath);

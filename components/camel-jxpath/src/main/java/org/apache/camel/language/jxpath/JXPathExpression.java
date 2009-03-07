@@ -18,7 +18,6 @@ package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
 import org.apache.camel.language.ExpressionEvaluationException;
 import org.apache.commons.jxpath.CompiledExpression;
@@ -30,7 +29,7 @@ import org.apache.commons.jxpath.JXPathException;
  */
 public class JXPathExpression extends ExpressionSupport {
 
-    private String expression;
+    private final String expression;
     private CompiledExpression compiledExpression;
     private final Class<?> type;
 
@@ -69,7 +68,7 @@ public class JXPathExpression extends ExpressionSupport {
 
     @Override
     protected String assertionFailureMessage(Exchange exchange) {
-        return expression.toString();
+        return expression;
     }
 
     /*

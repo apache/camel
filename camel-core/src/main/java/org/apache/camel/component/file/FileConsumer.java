@@ -28,11 +28,11 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class FileConsumer extends GenericFileConsumer<File> {
 
-    private String rootPath;
+    private String endpointPath;
 
     public FileConsumer(GenericFileEndpoint<File> endpoint, Processor processor, GenericFileOperations<File> operations) {
         super(endpoint, processor, operations);
-        this.rootPath = endpoint.getConfiguration().getFile();
+        this.endpointPath = endpoint.getConfiguration().getDirectory();
     }
 
     protected void pollDirectory(String fileName, List<GenericFile<File>> fileList) {
@@ -61,7 +61,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
         for (File file : files) {
             // createa a generic file
-            GenericFile<File> gf = asGenericFile(rootPath, file);
+            GenericFile<File> gf = asGenericFile(endpointPath, file);
 
             if (file.isDirectory()) {
                 if (endpoint.isRecursive() && isValidFile(gf, true)) {
@@ -88,7 +88,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
 
         // createa a generic file
-        GenericFile<File> gf = asGenericFile(rootPath, file);
+        GenericFile<File> gf = asGenericFile(endpointPath, file);
 
         if (isValidFile(gf, false)) {
             // matched file so add
@@ -99,13 +99,14 @@ public class FileConsumer extends GenericFileConsumer<File> {
     /**
      * Creates a new GenericFile<File> based on the given file.
      *
+     * @param endpointPath the starting directory the endpoint was configued with
      * @param file the source file
      * @return wrapped as a GenericFile
      */
-    public static GenericFile<File> asGenericFile(String rootPath, File file) {
+    public static GenericFile<File> asGenericFile(String endpointPath, File file) {
         GenericFile<File> answer = new GenericFile<File>();
         // use file specific binding
-        answer.setEndpointPath(rootPath);
+        answer.setEndpointPath(endpointPath);
         answer.setBinding(new FileBinding());
         answer.setFile(file);
         answer.setFileLength(file.length());
@@ -121,10 +122,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
         if (file.isAbsolute()) {
             answer.setRelativeFileName(null);
         } else {
-            // skip root path
             File path;
-            if (file.getPath().startsWith(rootPath)) {
-                path = new File(ObjectHelper.after(file.getPath(), rootPath + File.separator));
+            if (file.getPath().startsWith(endpointPath)) {
+                // skip duplicate endpoint path
+                path = new File(ObjectHelper.after(file.getPath(), endpointPath + File.separator));
             } else {
                 path = new File(file.getPath());
             }

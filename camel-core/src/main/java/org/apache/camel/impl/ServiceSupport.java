@@ -33,10 +33,10 @@ import org.apache.camel.util.ServiceHelper;
  */
 public abstract class ServiceSupport implements Service {
     private static int threadCounter;
-    private AtomicBoolean started = new AtomicBoolean(false);
-    private AtomicBoolean starting = new AtomicBoolean(false);
-    private AtomicBoolean stopping = new AtomicBoolean(false);
-    private AtomicBoolean stopped = new AtomicBoolean(false);
+    private final AtomicBoolean started = new AtomicBoolean(false);
+    private final AtomicBoolean starting = new AtomicBoolean(false);
+    private final AtomicBoolean stopping = new AtomicBoolean(false);
+    private final AtomicBoolean stopped = new AtomicBoolean(false);
     private Collection childServices;
     private String version;
 

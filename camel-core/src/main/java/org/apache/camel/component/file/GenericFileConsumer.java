@@ -62,7 +62,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         // gather list of files to process
         List<GenericFile<T>> files = new ArrayList<GenericFile<T>>();
 
-        String name = endpoint.getConfiguration().getFile();
+        String name = endpoint.getConfiguration().getDirectory();
         pollDirectory(name, files);
 
         // sort files using file comparator if provided
