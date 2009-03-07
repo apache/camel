@@ -101,7 +101,7 @@ public class CsvRouteTest extends ContextTestSupport {
                 // END SNIPPET: marshalRoute
 
                 // START SNIPPET: unmarshalRoute
-                from("file:src/test/resources/daltons.csv?noop=true").
+                from("file:src/test/resources/?fileName=daltons.csv&noop=true").
                     unmarshal().csv().
                     to("mock:daltons");
                 // END SNIPPET: unmarshalRoute
