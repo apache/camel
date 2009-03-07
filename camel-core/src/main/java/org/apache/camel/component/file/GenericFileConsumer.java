@@ -283,15 +283,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * <p/>
      * Will always return <tt>false</tt> for certain files/folders:
      * <ul>
-     * <li>Starting with a dot</li>
-     * <li>lock files</li>
+     *   <li>Starting with a dot</li>
+     *   <li>lock files</li>
      * </ul>
      * And then <tt>true</tt> for directories.
      *
      * @param file        the remote file
      * @param isDirectory wether the file is a directory or a file
-     * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if
-     *         not
+     * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
         String name = file.getFileName();
@@ -317,30 +316,14 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             }
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getRegexPattern())) {
-            if (!name.matches(endpoint.getRegexPattern())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getExclude())) {
+            if (name.matches(endpoint.getExclude())) {
                 return false;
             }
         }
 
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePrefix())) {
-            if (name.startsWith(endpoint.getExcludeNamePrefix())) {
-                return false;
-            }
-        }
-        if (ObjectHelper.isNotEmpty(endpoint.getExcludeNamePostfix())) {
-            if (name.endsWith(endpoint.getExcludeNamePostfix())) {
-                return false;
-            }
-        }
-
-        if (ObjectHelper.isNotEmpty(endpoint.getIncludeNamePrefix())) {
-            if (!name.startsWith(endpoint.getIncludeNamePrefix())) {
-                return false;
-            }
-        }
-        if (ObjectHelper.isNotEmpty(endpoint.getIncludeNamePostfix())) {
-            if (!name.endsWith(endpoint.getIncludeNamePostfix())) {
+        if (ObjectHelper.isNotEmpty(endpoint.getInclude())) {
+            if (!name.matches(endpoint.getInclude())) {
                 return false;
             }
         }

@@ -52,7 +52,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?excludeNamePostfix=.bak"
+                from("file://target/filelanguage/?exclude=.*bak"
                         + "&moveExpression=${id}.bak").to("mock:result");
             }
         });
@@ -77,7 +77,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?excludeNamePostfix=.bak"
+                from("file://target/filelanguage/?exclude=.*bak"
                      + "&moveExpression=backup-${id}-${file:name.noext}.bak").to("mock:result");
             }
         });
@@ -102,7 +102,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?excludeNamePostfix=.bak"
+                from("file://target/filelanguage/?exclude=.*bak"
                       + "&moveExpression=backup/${bean:myguidgenerator.guid}.txt").to("mock:result");
             }
         });
@@ -120,7 +120,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?excludeNamePostfix=.bak"
+                from("file://target/filelanguage/?exclude=.*bak"
                      + "&moveExpression=../backup/${file:name}.bak").to("mock:result");
             }
         });
@@ -145,7 +145,7 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
                 endpoint.setOperations(new FileOperations(endpoint));
                 endpoint.setAutoCreate(false);
                 endpoint.setMoveExpression(BeanLanguage.bean("myguidgenerator"));
-                endpoint.setExcludeNamePostfix(".bak");
+                endpoint.setExclude(".*bak");
 
                 from(endpoint).to("mock:result");
             }
