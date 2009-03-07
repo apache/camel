@@ -54,6 +54,17 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         setPort(uri.getPort());
     }
 
+    @Override
+    public void setDirectory(String directory) {
+        // let super do its work first
+        super.setDirectory(directory);
+
+        // for FTP we must not start with a / root, so skip it if its there
+        if (getDirectory().startsWith("/")) {
+            setDirectory(getDirectory().substring(1));
+        }
+    }
+
     /**
      * Returns human readable server information for logging purpose
      */
