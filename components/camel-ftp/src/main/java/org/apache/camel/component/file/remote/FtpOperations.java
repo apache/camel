@@ -119,6 +119,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean deleteFile(FTPClient client, String name) throws GenericFileOperationFailedException {
+        // for FTP we can not use leading / for refering to files
+        name = FileUtil.stripLeadingSeparator(name);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
@@ -130,6 +133,10 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
+        // for FTP we can not use leading / for refering to files
+        from = FileUtil.stripLeadingSeparator(from);
+        to = FileUtil.stripLeadingSeparator(to);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + from + " to: " + to);
         }
@@ -141,6 +148,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
+        // for FTP we can not use leading / for refering to files
+        directory = FileUtil.stripLeadingSeparator(directory);
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Building directory: " + directory);
         }

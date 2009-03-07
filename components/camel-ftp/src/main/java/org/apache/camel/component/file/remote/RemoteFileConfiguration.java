@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.net.URI;
 
 import org.apache.camel.component.file.GenericFileConfiguration;
+import org.apache.camel.util.FileUtil;
 
 /**
  * Configuration of the FTP server
@@ -60,9 +61,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         super.setDirectory(directory);
 
         // for FTP we must not start with a / root, so skip it if its there
-        if (getDirectory().startsWith("/")) {
-            setDirectory(getDirectory().substring(1));
-        }
+        super.setDirectory(FileUtil.stripLeadingSeparator(getDirectory()));
     }
 
     /**

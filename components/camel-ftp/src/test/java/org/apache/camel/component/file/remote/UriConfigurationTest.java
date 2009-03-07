@@ -90,17 +90,17 @@ public class UriConfigurationTest extends TestSupport {
         assertRemoteFileEndpointFile("ftp://hostname/foo", "foo");
         assertRemoteFileEndpointFile("ftp://hostname/", "");
         assertRemoteFileEndpointFile("ftp://hostname", "");
-        assertRemoteFileEndpointFile("ftp://hostname//", "");
-        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "foo/bar");
-        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "foo/bar");
+        assertRemoteFileEndpointFile("ftp://hostname//", "/");
+        assertRemoteFileEndpointFile("ftp://hostname//foo/bar", "/foo/bar");
+        assertRemoteFileEndpointFile("sftp://user@hostname:123//foo/bar?password=secret", "/foo/bar");
         assertRemoteFileEndpointFile("sftp://user@hostname:123?password=secret", "");
         assertRemoteFileEndpointFile("sftp://hostname/foo/bar", "foo/bar");
         assertRemoteFileEndpointFile("sftp://hostname/foo/", "foo/");
         assertRemoteFileEndpointFile("sftp://hostname/foo", "foo");
         assertRemoteFileEndpointFile("sftp://hostname/", "");
         assertRemoteFileEndpointFile("sftp://hostname", "");
-        assertRemoteFileEndpointFile("sftp://hostname//", "");
-        assertRemoteFileEndpointFile("sftp://hostname//foo/bar", "foo/bar");
+        assertRemoteFileEndpointFile("sftp://hostname//", "/");
+        assertRemoteFileEndpointFile("sftp://hostname//foo/bar", "/foo/bar");
     }
 
     private void assertRemoteFileEndpointFile(String endpointUri, String expectedFile) {
