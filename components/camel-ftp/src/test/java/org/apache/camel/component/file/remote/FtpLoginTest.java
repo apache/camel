@@ -21,6 +21,7 @@ import java.io.File;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.component.file.GenericFileOperationFailedException;
 
 /**
  * Unit test for login failure due bad password and login with accepted password
@@ -36,8 +37,8 @@ public class FtpLoginTest extends FtpServerTestSupport {
     public void testBadLogin() throws Exception {
         try {
             uploadFile("dummy", "cantremeber");
-            fail("Should have thrown a RemoteFileOperationFailedException");
-        } catch (RemoteFileOperationFailedException e) {
+            fail("Should have thrown a GenericFileOperationFailedException");
+        } catch (GenericFileOperationFailedException e) {
             // expected
             assertEquals(530, e.getCode());
         }

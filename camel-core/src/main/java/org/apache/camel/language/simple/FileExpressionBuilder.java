@@ -147,19 +147,6 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static Expression fileCanoicalPathExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileCanonicalPath", String.class);
-            }
-
-            @Override
-            public String toString() {
-                return "file:canonical.path";
-            }
-        };
-    }
-
     public static Expression fileSizeExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {

@@ -78,7 +78,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return true;
 
         } catch (JSchException e) {
-            throw new RemoteFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
+            throw new GenericFileOperationFailedException("Cannot connect to " + configuration.remoteServerInformation(), e);
         }
     }
 
@@ -155,7 +155,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.rm(name);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot delete file: " + name, e);
+            throw new GenericFileOperationFailedException("Cannot delete file: " + name, e);
         }
     }
 
@@ -171,7 +171,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.rename(from, to);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
+            throw new GenericFileOperationFailedException("Cannot rename file from: " + from + " to: " + to, e);
         }
     }
 
@@ -207,9 +207,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
                 }
             }
         } catch (IOException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory: " + directory, e);
+            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot build directory: " + directory, e);
+            throw new GenericFileOperationFailedException("Cannot build directory: " + directory, e);
         } finally {
             // change back to original directory
             if (originalDirectory != null) {
@@ -250,7 +250,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         try {
             return channel.pwd();
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot get current directory", e);
+            throw new GenericFileOperationFailedException("Cannot get current directory", e);
         }
     }
 
@@ -258,7 +258,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         try {
             channel.cd(path);
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot change current directory to: " + path, e);
+            throw new GenericFileOperationFailedException("Cannot change current directory to: " + path, e);
         }
     }
 
@@ -280,7 +280,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
             return list;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot list directory: " + path, e);
+            throw new GenericFileOperationFailedException("Cannot list directory: " + path, e);
         }
     }
 
@@ -302,7 +302,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.get(name, os);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot retrieve file: " + name, e);
+            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         }
     }
 
@@ -323,18 +323,18 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             // delete any existing files
             if (temp.exists()) {
                 if (!temp.delete()) {
-                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + temp);
+                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + temp);
                 }
             }
             if (local.exists()) {
                 if (!local.delete()) {
-                    throw new RemoteFileOperationFailedException("Cannot delete existing local work file: " + local);
+                    throw new GenericFileOperationFailedException("Cannot delete existing local work file: " + local);
                 }
             }
 
             // create new temp local work file
             if (!temp.createNewFile()) {
-                throw new RemoteFileOperationFailedException("Cannot create new local work file: " + temp);
+                throw new GenericFileOperationFailedException("Cannot create new local work file: " + temp);
             }
 
             // store content as a file in the local work directory in the temp handle
@@ -344,7 +344,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             exchange.getIn().setHeader("CamelFileLocalWorkPath", local.getPath());
 
         } catch (Exception e) {
-            throw new RemoteFileOperationFailedException("Cannot create new local work file: " + local);
+            throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
         }
 
         try {
@@ -355,10 +355,10 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             // rename temp to local after we have retrieved the data
             if (!temp.renameTo(local)) {
-                throw new RemoteFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
+                throw new GenericFileOperationFailedException("Cannot rename local work file from: " + temp + " to: " + local);
             }
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot retrieve file: " + name, e);
+            throw new GenericFileOperationFailedException("Cannot retrieve file: " + name, e);
         } finally {
             ObjectHelper.close(os, "retrieve: " + name, LOG);
         }
@@ -372,9 +372,9 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             channel.put(in, name);
             return true;
         } catch (SftpException e) {
-            throw new RemoteFileOperationFailedException("Cannot store file: " + name, e);
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         } catch (InvalidPayloadException e) {
-            throw new RemoteFileOperationFailedException("Cannot store file: " + name, e);
+            throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
         }
     }
 
