@@ -22,7 +22,7 @@ package org.apache.camel.util;
  * @version $Revision$
  */
 public class CollectionStringBuffer {
-    private StringBuffer buffer = new StringBuffer();
+    private final StringBuffer buffer = new StringBuffer();
     private String separator;
     private boolean first = true;
 

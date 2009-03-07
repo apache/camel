@@ -47,11 +47,11 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 public class DefaultRouteContext implements RouteContext {
-    private RouteDefinition route;
+    private final RouteDefinition route;
     private FromDefinition from;
-    private Collection<Route> routes;
+    private final Collection<Route> routes;
     private Endpoint endpoint;
-    private List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
+    private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
     private Interceptor lastInterceptor;
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();

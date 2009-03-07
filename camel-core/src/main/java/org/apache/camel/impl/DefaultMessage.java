@@ -23,10 +23,9 @@ import java.util.Set;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 
 /**
- * The default implementation of {@link Message}
+ * The default implementation of {@link org.apache.camel.Message}
  *
  * @version $Revision$
  */

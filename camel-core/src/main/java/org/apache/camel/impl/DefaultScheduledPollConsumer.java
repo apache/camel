@@ -18,7 +18,6 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,7 +25,8 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 
 /**
- * A default implementation of an event driven {@link Consumer} which uses the {@link PollingConsumer}
+ * A default implementation of an event driven {@link org.apache.camel.Consumer} which uses the
+ * {@link PollingConsumer}
  *
  * @version $Revision$
  */

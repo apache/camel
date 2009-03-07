@@ -52,8 +52,8 @@ public class FileConsumerMoveExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/filelanguage/?excludeNamePostfix=.bak" +
-                        "&moveExpression=${id}.bak").to("mock:result");
+                from("file://target/filelanguage/?excludeNamePostfix=.bak"
+                        + "&moveExpression=${id}.bak").to("mock:result");
             }
         });
         context.start();

@@ -99,7 +99,7 @@ public class UriConfigurationTest extends TestSupport {
         RemoteFileEndpoint endpoint = resolveMandatoryEndpoint(context, endpointUri, RemoteFileEndpoint.class);
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
-        String file = endpoint.getConfiguration().getFile();
+        String file = endpoint.getConfiguration().getDirectory();
         assertEquals("For uri: " + endpointUri + " the file is not equal", expectedFile, file);
     }
 

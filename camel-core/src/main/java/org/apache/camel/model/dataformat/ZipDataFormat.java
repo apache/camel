@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.model.dataformat;
-
 
 import java.util.zip.Deflater;
 
@@ -28,6 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 
+/**
+ * Represents the ZIP XML {@link org.apache.camel.spi.DataFormat}
+ */
 @XmlRootElement(name = "zip")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ZipDataFormat extends DataFormatDefinition {

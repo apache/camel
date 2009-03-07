@@ -103,7 +103,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     public void setFile(File file) {
         this.file = file;
         // update configuration as well
-        getConfiguration().setFile(file.getPath());
+        getConfiguration().setDirectory(file.getPath());
     }
 
     @Override

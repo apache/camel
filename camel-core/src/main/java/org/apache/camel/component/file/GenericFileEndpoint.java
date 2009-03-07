@@ -411,12 +411,12 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
 
-        // compute the name that was written, it should be relative to the endpoint configuraion
+        // compute the name that was written
         String name = file.isAbsolute() ? file.getAbsoluteFileName() : file.getRelativeFileName();
 
-        if (name.startsWith(getConfiguration().getFile())) {
-            // remove the file path configured on the endpoint for directory=true
-            name = name.substring(getConfiguration().getFile().length());
+        // skip leading endpoint configured directory
+        if (name.startsWith(getConfiguration().getDirectory())) {
+            name = ObjectHelper.after(name, getConfiguration().getDirectory());
         }
 
         if (name.startsWith(File.separator) || name.startsWith("/")) {
@@ -451,6 +451,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         if (readLockTimeout > 0) {
             params.put("readLockTimeout", readLockTimeout);
         }
+
         return params;
     }
 

@@ -18,7 +18,6 @@ package org.apache.camel.util;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
-import java.util.logging.Level;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

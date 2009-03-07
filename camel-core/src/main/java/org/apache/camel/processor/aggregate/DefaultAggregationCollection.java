@@ -17,7 +17,6 @@
 package org.apache.camel.processor.aggregate;
 
 import java.util.AbstractCollection;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A {@link Collection} which aggregates exchanges together using a correlation
+ * A {@link java.util.Collection} which aggregates exchanges together using a correlation
  * expression so that there is only a single message exchange sent for a single
  * correlation key.
  *

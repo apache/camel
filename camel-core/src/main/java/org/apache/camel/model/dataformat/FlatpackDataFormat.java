@@ -20,8 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.DataFormat;
-
 /**
  * Represents a <a href="http://camel.apache.org/flatpack.html">Flatpack</a> {@link org.apache.camel.spi.DataFormat}.
  * 

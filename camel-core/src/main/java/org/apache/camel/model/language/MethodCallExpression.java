@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.bean.BeanExpression;

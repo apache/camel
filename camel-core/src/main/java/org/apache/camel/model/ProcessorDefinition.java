@@ -52,7 +52,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.Enricher;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -1709,7 +1708,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *            aggregation strategy to aggregate input data and additional
      *            data.
      * @return this processor type
-     * @see Enricher
+     * @see org.apache.camel.processor.Enricher
      */
     @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {

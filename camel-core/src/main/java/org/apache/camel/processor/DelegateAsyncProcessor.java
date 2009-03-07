@@ -20,13 +20,12 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.spi.Policy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * A Delegate pattern which delegates processing to a nested AsyncProcessor which can
- * be useful for implementation inheritance when writing an {@link Policy}
+ * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
  */
 public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProcessor {
     protected AsyncProcessor processor;

@@ -20,7 +20,6 @@ import java.util.Collection;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.LifecycleStrategy;

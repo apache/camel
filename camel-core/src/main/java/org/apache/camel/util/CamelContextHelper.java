@@ -24,10 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.Language;
-import org.apache.camel.spi.Registry;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -129,7 +126,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Creates a new instance of the given type using the {@link Injector} on the given
+     * Creates a new instance of the given type using the {@link org.apache.camel.spi.Injector} on the given
      * {@link CamelContext}
      */
     public static <T> T newInstance(CamelContext context, Class<T> beanType) {
@@ -137,7 +134,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link Registry} on the
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
      */
     public static Object lookup(CamelContext context, String name) {
@@ -145,7 +142,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean of the given type in the {@link Registry} on the
+     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext}
      */
     public static <T> T lookup(CamelContext context, String name, Class<T> beanType) {
@@ -153,7 +150,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean in the {@link Registry} on the
+     * Look up the given named bean in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws IllegalArgumentException if not found.
      */
     public static Object mandatoryLookup(CamelContext context, String name) {
@@ -163,7 +160,7 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Look up the given named bean of the given type in the {@link Registry} on the
+     * Look up the given named bean of the given type in the {@link org.apache.camel.spi.Registry} on the
      * {@link CamelContext} or throws IllegalArgumentException if not found.
      */
     public static <T> T mandatoryLookup(CamelContext context, String name, Class<T> beanType) {

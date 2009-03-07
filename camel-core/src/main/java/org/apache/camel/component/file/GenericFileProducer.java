@@ -172,7 +172,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = expression.evaluate(exchange, String.class);
         }
 
-        String endpointFile = endpoint.getConfiguration().getFile();
+        String endpointFile = endpoint.getConfiguration().getDirectory();
         // Its a directory so we should use it as a base path for the filename
         // If the path isn't empty, we need to add a trailing / if it isn't already there
         String baseDir = "";

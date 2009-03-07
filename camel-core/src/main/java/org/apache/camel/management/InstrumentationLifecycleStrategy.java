@@ -56,7 +56,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
     // A map (Endpoint -> InstrumentationProcessor) to facilitate
     // adding per-route interceptor and registering ManagedRoute MBean
-    private Map<Endpoint, InstrumentationProcessor> interceptorMap =
+    private final Map<Endpoint, InstrumentationProcessor> interceptorMap =
         new HashMap<Endpoint, InstrumentationProcessor>();
 
     public InstrumentationLifecycleStrategy() {
