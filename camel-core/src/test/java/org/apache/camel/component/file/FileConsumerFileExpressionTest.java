@@ -54,7 +54,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("file://target/filelanguage/bean/"
-                      + "?fileExpression=${bean:counter.next}.txt&delete=true").to("mock:result");
+                      + "?fileName=${bean:counter.next}.txt&delete=true").to("mock:result");
             }
         });
         context.start();
@@ -77,7 +77,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file://target/filelanguage/date/"
-                      + "?fileExpression=myfile-${date:now:yyyyMMdd}.txt").to("mock:result");
+                      + "?fileName=myfile-${date:now:yyyyMMdd}.txt").to("mock:result");
                 // END SNIPPET: e1
             }
         });

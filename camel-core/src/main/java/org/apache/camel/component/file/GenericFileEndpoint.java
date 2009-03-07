@@ -61,9 +61,9 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected String tempPrefix;
     protected String include;
     protected String exclude;
-    protected Expression fileExpression;
-    protected Expression moveExpression;
-    protected Expression preMoveExpression;
+    protected Expression fileName;
+    protected Expression move;
+    protected Expression preMove;
     protected boolean idempotent;
     protected IdempotentRepository idempotentRepository;
     protected GenericFileFilter<T> filter;
@@ -185,52 +185,52 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         this.delete = delete;
     }
 
-    public Expression getMoveExpression() {
-        return moveExpression;
+    public Expression getMove() {
+        return move;
     }
 
-    public void setMoveExpression(Expression moveExpression) {
-        this.moveExpression = moveExpression;
+    public void setMove(Expression move) {
+        this.move = move;
     }
 
     /**
      * Sets the move expression based on
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
-    public void setMoveExpression(String fileLanguageExpression) {
-        this.moveExpression = FileLanguage.file(fileLanguageExpression);
+    public void setMove(String fileLanguageExpression) {
+        this.move = FileLanguage.file(fileLanguageExpression);
     }
 
-    public Expression getPreMoveExpression() {
-        return preMoveExpression;
+    public Expression getPreMove() {
+        return preMove;
     }
 
-    public void setPreMoveExpression(Expression preMoveExpression) {
-        this.preMoveExpression = preMoveExpression;
+    public void setPreMove(Expression preMove) {
+        this.preMove = preMove;
     }
 
     /**
      * Sets the pre move expression based on
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
-    public void setPreMoveExpression(String fileLanguageExpression) {
-        this.preMoveExpression = FileLanguage.file(fileLanguageExpression);
+    public void setPreMove(String fileLanguageExpression) {
+        this.preMove = FileLanguage.file(fileLanguageExpression);
     }
 
-    public Expression getFileExpression() {
-        return fileExpression;
+    public Expression getFileName() {
+        return fileName;
     }
 
-    public void setFileExpression(Expression fileExpression) {
-        this.fileExpression = fileExpression;
+    public void setFileName(Expression fileName) {
+        this.fileName = fileName;
     }
 
     /**
      * Sets the file expression based on
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
-    public void setFileExpression(String fileLanguageExpression) {
-        this.fileExpression = FileLanguage.file(fileLanguageExpression);
+    public void setFileName(String fileLanguageExpression) {
+        this.fileName = FileLanguage.file(fileLanguageExpression);
     }
 
     public boolean isIdempotent() {
@@ -408,11 +408,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         if (isDelete()) {
             params.put("delete", Boolean.toString(true));
         }
-        if (moveExpression != null) {
-            params.put("moveExpression", moveExpression);
+        if (move != null) {
+            params.put("move", move);
         }
-        if (preMoveExpression != null) {
-            params.put("preMoveExpression", preMoveExpression);
+        if (preMove != null) {
+            params.put("preMove", preMove);
         }
         if (exclusiveReadLockStrategy != null) {
             params.put("exclusiveReadLockStrategy", exclusiveReadLockStrategy);

@@ -51,7 +51,7 @@ public class FileConsumerAbsolutePathWithRelativeMoveTest extends ContextTestSup
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://" + base + "?moveExpression=../done/${file:name}").to("mock:report");
+                from("file://" + base + "?move=../done/${file:name}").to("mock:report");
             }
         };
     }

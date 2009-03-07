@@ -26,7 +26,7 @@ public class FtpConsumerExcludeNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/excludename?password=admin"
-                + "&excludeNamePrefix=secret&excludeNamePostfix=xml";
+                + "&exclude=secret.*|.*xml";
     }
 
     @Override

@@ -61,8 +61,13 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
         afterPropertiesSet();
         RemoteFileConsumer<T> consumer = buildConsumer(processor, (RemoteFileOperations<T>) operations);
 
-        if (isDelete() && getMoveExpression() != null) {
-            throw new IllegalArgumentException("You cannot both set delete=true and moveExpression options");
+        // we assume its a file if the name has a dot in it (eg foo.txt)
+        if (configuration.getDirectory().contains(".")) {
+            throw new IllegalArgumentException("Only directory is supported. Endpoint must be configured with a valid directory: " + configuration.getDirectory());
+        }
+
+        if (isDelete() && getMove() != null) {
+            throw new IllegalArgumentException("You cannot both set delete=true and move options");
         }
         // if noop=true then idempotent should also be configured
         if (isNoop() && !isIdempotent()) {

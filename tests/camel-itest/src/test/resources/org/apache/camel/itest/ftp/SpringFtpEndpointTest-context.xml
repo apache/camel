@@ -40,7 +40,7 @@
         <property name="username" value="admin"/>
         <property name="password" value="admin"/>
         <property name="protocol" value="ftp"/>
-        <property name="file" value="helloftp"/>
+        <property name="directory" value="helloftp"/>
     </bean>
     <!-- END SNIPPET: e1 -->
 

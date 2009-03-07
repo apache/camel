@@ -26,7 +26,7 @@ public class FtpConsumerIncludeNameTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/includename?password=admin"
-                + "&includeNamePrefix=report&excludeNamePostfix=xml";
+                + "&include=report.*&exclude=.*xml";
     }
 
     @Override

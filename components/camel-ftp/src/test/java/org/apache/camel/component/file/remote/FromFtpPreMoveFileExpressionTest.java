@@ -26,13 +26,13 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to test preMoveExpression option.
+ * Unit test to test preMove option.
  */
 public class FromFtpPreMoveFileExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&consumer.delay=5000"
-                + "&preMoveExpression=../inprogress/${file:name.noext}.bak";
+                + "&preMove=../inprogress/${file:name.noext}.bak";
     }
 
     @Override

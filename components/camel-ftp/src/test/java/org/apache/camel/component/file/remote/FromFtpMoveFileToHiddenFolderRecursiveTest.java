@@ -27,7 +27,7 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
-                + "&moveExpression=.done/${file:name}&initialDelay=3000&delay=5000";
+                + "&move=.done/${file:name}&initialDelay=3000&delay=5000";
     }
 
     @Override

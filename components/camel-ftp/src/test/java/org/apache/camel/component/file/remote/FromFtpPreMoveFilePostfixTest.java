@@ -31,7 +31,7 @@ public class FromFtpPreMoveFilePostfixTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false"
-                + "&preMoveExpression=${file:name}.old";
+                + "&preMove=${file:name}.old";
     }
 
     @Override

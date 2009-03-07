@@ -154,7 +154,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
 
         // expression support
-        Expression expression = endpoint.getFileExpression();
+        Expression expression = endpoint.getFileName();
         if (name != null) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
