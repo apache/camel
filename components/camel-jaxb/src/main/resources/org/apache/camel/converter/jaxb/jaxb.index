@@ -20,5 +20,5 @@ IntegerHeader
 LongHeader
 MessageDefinition
 ObjectHeader
-PropertyType
+PropertyDefinition
 StringHeader
