@@ -16,21 +16,14 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ChoiceDefinition
+import org.apache.camel.model.ThreadDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SChoiceType(val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ChoiceDefinition] {
-  
+/**
+ * Scala enrichment for Camel's ThreadDefinition
+ */
+class SThreadDefinition(val target: ThreadDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ThreadDefinition] {
+ 
   val unwrap = target
   
-  override def otherwise = {
-    target.otherwise
-    this
-  }
-  
-  override def when(filter: Exchange => Boolean) = {
-    target.when(new ScalaPredicate(filter))
-    this
-  }
-
 }

@@ -16,11 +16,19 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.MulticastDefinition
+import org.apache.camel.model.LoadBalanceDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SMulticastType(val target: MulticastDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[MulticastDefinition] {
-  
+/**
+ * Scala enrichment for Camel's LoadBalanceDefinition
+ */
+class SLoadBalanceDefinition(val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoadBalanceDefinition] {
+ 
   val unwrap = target
+  
+  def roundrobin = {
+    target.roundRobin
+    this;
+  }
   
 }

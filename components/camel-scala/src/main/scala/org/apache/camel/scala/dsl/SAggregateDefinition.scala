@@ -1,4 +1,4 @@
-/**
+/*
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -16,19 +16,40 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ResequenceDefinition
+import org.apache.camel.model.AggregateDefinition
+import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SResequencerType(val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ResequenceDefinition] {
+/**
+ * Scala wrapper for Camel AggregateDefinition
+ */
+class SAggregateDefinition(val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[AggregateDefinition] {
   
   val unwrap = target
   
-  def batch(count: Int) = {
-    val config = new BatchResequencerConfig()
-    config.setBatchSize(count)
-    target.batch(config)
+  def strategy(function: (Exchange, Exchange) => Exchange) = {
+    println("testing")
+    target.setAggregationStrategy(
+      new AggregationStrategy() {
+        def aggregate(oldExchange: Exchange, newExchange: Exchange) ={
+          println(oldExchange + " + " + newExchange)
+          try {
+            val result = function(oldExchange, newExchange)
+            println(" -> " + result)
+            result
+          } catch {
+            case e:Exception => println(e); e.printStackTrace()
+          }
+          null
+        }
+      }
+    )
     this
   }
 
+  def batch(count: Int) = {
+    target.batchSize(count)
+    this
+  }
 }

@@ -16,26 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.TryDefinition
+import org.apache.camel.model.RouteDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-/**
- * Scala enrichment for Camel's TryDefinition
- */
-class STryType(val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[TryDefinition] {
-  
+class SRouteDefinition(val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[RouteDefinition] {
+ 
   val unwrap = target
   
-  override def apply(block: => Unit) : STryType = super.apply(block).asInstanceOf[STryType]
-  
-  def handle[Target](exception: Class[Target]) = {
-    target.handle(exception)
-    this
-  }
-  
-  def ensure = {
-    target.finallyBlock
-    this
-  }
- 
+  def ==>(block: => Unit) = apply(this, block)
+
 }

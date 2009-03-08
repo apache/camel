@@ -23,31 +23,31 @@ import org.apache.camel.model.dataformat.DataFormatDefinition
  */
 trait DSL {
   
-  def aggregate(expression: Exchange => Any) : SAggregatorType
+  def aggregate(expression: Exchange => Any) : SAggregateDefinition
   def as[Target](toType: Class[Target]) : DSL
-  def attempt : STryType
+  def attempt : STryDefinition
   def bean(bean: Any) : DSL
-  def choice : SChoiceType
-  def delay(delay: Period) : SDelayerType
-  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerType
-  def inOnly(): SProcessorType
-  def inOut(): SProcessorType
-  def loadbalance : SLoadBalanceType
-  def loop(expression: Exchange => Any) : SLoopType
+  def choice : SChoiceDefinition
+  def delay(delay: Period) : SDelayDefinition
+  def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
+  def inOnly(): SProcessorDefinition
+  def inOut(): SProcessorDefinition
+  def loadbalance : SLoadBalanceDefinition
+  def loop(expression: Exchange => Any) : SLoopDefinition
   def marshal(format : DataFormatDefinition) : DSL
-  def multicast : SMulticastType
+  def multicast : SMulticastDefinition
   def otherwise : DSL
   def process(function: Exchange => Unit) : DSL
   def recipients(expression: Exchange => Any) : DSL
-  def resequence(expression: Exchange => Any) : SResequencerType
+  def resequence(expression: Exchange => Any) : SResequenceDefinition
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
-  def split(expression: Exchange => Any) : SSplitterType
-  def thread(number: Int) : SThreadType
-  def throttle(frequency: Frequency) : SThrottlerType
+  def split(expression: Exchange => Any) : SSplitDefinition
+  def thread(number: Int) : SThreadDefinition
+  def throttle(frequency: Frequency) : SThrottleDefinition
   def to(uris: String*) : DSL
   def unmarshal(format: DataFormatDefinition) : DSL
-  def when(filter: Exchange => Boolean) : SChoiceType
+  def when(filter: Exchange => Boolean) : SChoiceDefinition
   def -->(uris: String*) : DSL
 
 }

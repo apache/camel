@@ -45,21 +45,21 @@ abstract class SAbstractDefinition extends DSL {
     this
   }
   
-  def when(filter: Exchange => Boolean) : SChoiceType =
-    new SChoiceType(target.choice).when(filter)
+  def when(filter: Exchange => Boolean) : SChoiceDefinition =
+    new SChoiceDefinition(target.choice).when(filter)
     
   def as[Target](toType: Class[Target]) = {
     target.convertBodyTo(toType)
-    new SProcessorType(target.asInstanceOf[RawProcessorDefinition])
+    new SProcessorDefinition(target.asInstanceOf[RawProcessorDefinition])
   }
   
-  def attempt : STryType = new STryType(target.tryBlock)
+  def attempt : STryDefinition = new STryDefinition(target.tryBlock)
   
   def split(expression: Exchange => Any) = 
-    new SSplitterType(target.split(expression))
+    new SSplitDefinition(target.split(expression))
     
   def recipients(expression: Exchange => Any) = 
-    new SProcessorType(target.recipientList(expression).asInstanceOf[RawProcessorDefinition])
+    new SProcessorDefinition(target.recipientList(expression).asInstanceOf[RawProcessorDefinition])
 
   def apply(block: => Unit) = {
     builder.build(this, block)
@@ -67,54 +67,54 @@ abstract class SAbstractDefinition extends DSL {
   }
 
   def bean(bean: Any) = bean match {
-    case cls: Class[_] => new SProcessorType(target.bean(cls).asInstanceOf[RawProcessorDefinition])
-    case ref: String => new SProcessorType(target.beanRef(ref).asInstanceOf[RawProcessorDefinition])
-    case obj: Any => new SProcessorType(target.bean(obj).asInstanceOf[RawProcessorDefinition])
+    case cls: Class[_] => new SProcessorDefinition(target.bean(cls).asInstanceOf[RawProcessorDefinition])
+    case ref: String => new SProcessorDefinition(target.beanRef(ref).asInstanceOf[RawProcessorDefinition])
+    case obj: Any => new SProcessorDefinition(target.bean(obj).asInstanceOf[RawProcessorDefinition])
   }
   
-  def choice = new SChoiceType(target.choice)
+  def choice = new SChoiceDefinition(target.choice)
     
-  def otherwise : SChoiceType = 
+  def otherwise : SChoiceDefinition = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
   
-  def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerType(target.idempotentConsumer(expression, null))
+  def idempotentconsumer(expression: Exchange => Any) = new SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))
   
-  def inOnly = new SProcessorType(target.inOnly.asInstanceOf[RawProcessorDefinition])
-  def inOut = new SProcessorType(target.inOut.asInstanceOf[RawProcessorDefinition])
+  def inOnly = new SProcessorDefinition(target.inOnly.asInstanceOf[RawProcessorDefinition])
+  def inOut = new SProcessorDefinition(target.inOut.asInstanceOf[RawProcessorDefinition])
  
-  def loop(expression: Exchange => Any) = new SLoopType(target.loop(expression))
+  def loop(expression: Exchange => Any) = new SLoopDefinition(target.loop(expression))
   
   def marshal(format: DataFormatDefinition) = {
     target.marshal(format)
     this
   }
   
-  def multicast = new SMulticastType(target.multicast)
+  def multicast = new SMulticastDefinition(target.multicast)
   
   def process(function: Exchange => Unit) = {
     target.process(new ScalaProcessor(function))
     this
   }
  
-  def throttle(frequency: Frequency) = new SThrottlerType(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
+  def throttle(frequency: Frequency) = new SThrottleDefinition(target.throttle(frequency.count).timePeriodMillis(frequency.period.milliseconds))
   
-  def loadbalance = new SLoadBalanceType(target.loadBalance)
+  def loadbalance = new SLoadBalanceDefinition(target.loadBalance)
   
-  def delay(period: Period) = new SDelayerType(target.delay(period.milliseconds))
+  def delay(period: Period) = new SDelayDefinition(target.delay(period.milliseconds))
   
-  def resequence(expression: Exchange => Any) = new SResequencerType(target.resequence(expression))
+  def resequence(expression: Exchange => Any) = new SResequenceDefinition(target.resequence(expression))
   
-  def setbody(expression: Exchange => Any) = new SProcessorType(target.setBody(expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
+  def setbody(expression: Exchange => Any) = new SProcessorDefinition(target.setBody(expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
   
-  def setheader(name: String, expression: Exchange => Any) = new SProcessorType(target.setHeader(name, expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
+  def setheader(name: String, expression: Exchange => Any) = new SProcessorDefinition(target.setHeader(name, expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
   
-  def thread(count: Int) = new SThreadType(target.thread(count))
+  def thread(count: Int) = new SThreadDefinition(target.thread(count))
   
   def unmarshal(format: DataFormatDefinition) = {
     target.unmarshal(format)
     this
   }
   
-  def aggregate(expression: Exchange => Any) = new SAggregatorType(target.aggregate(expression))
+  def aggregate(expression: Exchange => Any) = new SAggregateDefinition(target.aggregate(expression))
 
 }

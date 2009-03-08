@@ -38,7 +38,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
 
   val stack = new Stack[DSL];
 
-  implicit def stringToRoute(target: String) : SRouteType = new SRouteType(builder.from(target), this)  
+  implicit def stringToRoute(target: String) : SRouteDefinition = new SRouteDefinition(builder.from(target), this)  
   implicit def unwrap[W](wrapper: Wrapper[W]) = wrapper.unwrap
   implicit def constantToExpression(value: Any) : (Exchange => Any) = (exchange: Exchange) => value 
 
@@ -53,9 +53,9 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
     stack.pop()
   }
 
-  def from(uri: String) = new SRouteType(builder.from(uri), this)
+  def from(uri: String) = new SRouteDefinition(builder.from(uri), this)
   def handle[E](block: => Unit)(implicit manifest: Manifest[E]) = {
-    val exception = new SExceptionType(builder.onException(manifest.erasure))(this)
+    val exception = new SOnExceptionDefinition(builder.onException(manifest.erasure))(this)
     exception.apply(block)
   }
 
