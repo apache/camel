@@ -28,7 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;
@@ -276,7 +276,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         exchange.setProperty(Exchange.EXCEPTION_CAUGHT, e);
 
         // find the error handler to use (if any)
-        ExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
+        OnExceptionDefinition exceptionPolicy = getExceptionPolicy(exchange, e);
         if (exceptionPolicy != null) {
             data.currentRedeliveryPolicy = exceptionPolicy.createRedeliveryPolicy(exchange.getContext(), data.currentRedeliveryPolicy);
             data.handledPredicate = exceptionPolicy.getHandledPolicy();

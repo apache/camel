@@ -16,33 +16,18 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-import org.apache.camel.processor.HandleFaultProcessor;
+import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;handleFault/&gt; element
- *
+ * Base class for interceptor types.
+ * 
  * @version $Revision$
  */
-@XmlRootElement(name = "handleFault")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class HandleFaultDefinition extends InterceptorDefinition {
+@XmlType(name = "interceptorType")
+public abstract class AbstractInterceptorDefinition extends OutputDefinition implements Block {
 
-    public HandleFaultDefinition() {
-        super(new HandleFaultProcessor());
-    }
-
-    @Override
-    public String getShortName() {
-        return "handleFault";
-    }
-
-    @Override
-    public String toString() {
-        return "HandleFault[" + getLabel() + "]";
-    }
-
+    public abstract DelegateProcessor createInterceptor(RouteContext routeContext) throws Exception;
 }

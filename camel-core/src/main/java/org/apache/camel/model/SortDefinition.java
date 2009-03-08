@@ -44,7 +44,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
     @XmlAttribute(required = false)
     private String comparatorRef;
     @XmlElement(name = "expression", required = false)
-    private ExpressionSubElementType expression;
+    private ExpressionSubElementDefinition expression;
 
     public SortDefinition() {
     }
@@ -125,7 +125,7 @@ public class SortDefinition extends OutputDefinition<SortDefinition> {
     }
 
     public void setExpression(Expression expression) {
-        this.expression = new ExpressionSubElementType(expression);
+        this.expression = new ExpressionSubElementDefinition(expression);
     }
 
     /**

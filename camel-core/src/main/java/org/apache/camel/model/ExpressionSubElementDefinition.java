@@ -32,7 +32,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "expression")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExpressionSubElementType {
+public class ExpressionSubElementDefinition {
     @XmlElementRef
     private ExpressionDefinition expressionType;
     @XmlTransient
@@ -40,14 +40,14 @@ public class ExpressionSubElementType {
     @XmlTransient
     private Predicate predicate;
 
-    public ExpressionSubElementType() {
+    public ExpressionSubElementDefinition() {
     }
 
-    public ExpressionSubElementType(Expression expression) {
+    public ExpressionSubElementDefinition(Expression expression) {
         this.expression = expression;
     }
 
-    public ExpressionSubElementType(Predicate predicate) {
+    public ExpressionSubElementDefinition(Predicate predicate) {
         this.predicate = predicate;
     }   
     

@@ -267,7 +267,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.ExceptionDefinition}
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
      * to use for a given thrown exception
      */
     public ExceptionPolicyStrategy getExceptionPolicyStrategy() {

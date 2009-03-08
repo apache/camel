@@ -19,7 +19,7 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandlerSupport;
 
 /**
@@ -28,23 +28,23 @@ import org.apache.camel.processor.ErrorHandlerSupport;
  * @version $Revision$
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
-    private List<ExceptionDefinition> exceptions = new ArrayList<ExceptionDefinition>();
+    private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
 
-    public void addErrorHandlers(ExceptionDefinition exception) {
+    public void addErrorHandlers(OnExceptionDefinition exception) {
         exceptions.add(exception);
     }
 
     protected void configure(ErrorHandlerSupport handler) {
-        for (ExceptionDefinition exception : exceptions) {
+        for (OnExceptionDefinition exception : exceptions) {
             handler.addExceptionPolicy(exception);
         }
     }
 
-    public List<ExceptionDefinition> getExceptions() {
+    public List<OnExceptionDefinition> getExceptions() {
         return exceptions;
     }
 
-    public void setErrorHandlers(List<ExceptionDefinition> exceptions) {
+    public void setErrorHandlers(List<OnExceptionDefinition> exceptions) {
         this.exceptions.clear();
         this.exceptions.addAll(exceptions);
     }

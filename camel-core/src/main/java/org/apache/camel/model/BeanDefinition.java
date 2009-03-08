@@ -36,24 +36,24 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "bean")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class BeanRef extends OutputDefinition<ProcessorDefinition> {
+public class BeanDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private String ref;
     @XmlAttribute(required = false)
     private String method;
     @XmlAttribute(required = false)
-    private Class beanType;
+    private Class<?> beanType;
     @XmlTransient
     private Object bean;
 
-    public BeanRef() {
+    public BeanDefinition() {
     }
 
-    public BeanRef(String ref) {
+    public BeanDefinition(String ref) {
         this.ref = ref;
     }
 
-    public BeanRef(String ref, String method) {
+    public BeanDefinition(String ref, String method) {
         this.ref = ref;
         this.method = method;
     }
@@ -104,7 +104,7 @@ public class BeanRef extends OutputDefinition<ProcessorDefinition> {
      * @param ref  the bean's id in the registry
      * @return the builder
      */
-    public BeanRef ref(String ref) {
+    public BeanDefinition ref(String ref) {
         setRef(ref);
         return this;
     }
@@ -115,7 +115,7 @@ public class BeanRef extends OutputDefinition<ProcessorDefinition> {
      * @param method  the bean's method name which wants camel to call
      * @return the builder
      */
-    public BeanRef method(String method) {
+    public BeanDefinition method(String method) {
         setMethod(method);
         return this;
     }
@@ -126,7 +126,7 @@ public class BeanRef extends OutputDefinition<ProcessorDefinition> {
      * @param bean the instance of the bean
      * @return the builder
      */
-    public BeanRef bean(Object bean) {
+    public BeanDefinition bean(Object bean) {
         setBean(bean);
         return this;
     }
@@ -137,7 +137,7 @@ public class BeanRef extends OutputDefinition<ProcessorDefinition> {
      * @param beanType the Class of the bean
      * @return the builder
      */
-    public BeanRef beanType(Class beanType) {
+    public BeanDefinition beanType(Class beanType) {
         setBean(beanType);
         return this;
     }

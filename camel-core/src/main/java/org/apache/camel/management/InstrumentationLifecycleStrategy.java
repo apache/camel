@@ -33,7 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.InstrumentationAgent;
@@ -204,7 +204,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
             // separate out the exception handers in the outputs
             for (ProcessorDefinition output : routeType.getOutputs()) {
-                if (output instanceof ExceptionDefinition) {
+                if (output instanceof OnExceptionDefinition) {
                     exceptionHandlers.add(output);
                 } else {
                     outputs.add(output);

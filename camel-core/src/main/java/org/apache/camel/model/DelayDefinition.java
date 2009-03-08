@@ -36,22 +36,22 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "delay")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class DelayerDefinition extends ExpressionNode {
+public class DelayDefinition extends ExpressionNode {
     @XmlAttribute
     private Long delayTime = 0L;
 
-    public DelayerDefinition() {
+    public DelayDefinition() {
     }
 
-    public DelayerDefinition(Expression processAtExpression) {
+    public DelayDefinition(Expression processAtExpression) {
         super(processAtExpression);
     }
 
-    public DelayerDefinition(ExpressionDefinition processAtExpression) {
+    public DelayDefinition(ExpressionDefinition processAtExpression) {
         super(processAtExpression);
     }
 
-    public DelayerDefinition(Expression processAtExpression, long delayTime) {
+    public DelayDefinition(Expression processAtExpression, long delayTime) {
         super(processAtExpression);
         this.delayTime = delayTime;
     }
@@ -69,7 +69,7 @@ public class DelayerDefinition extends ExpressionNode {
      * @param delay delay time in millis
      * @return the builder
      */
-    public DelayerDefinition delayTime(Long delay) {
+    public DelayDefinition delayTime(Long delay) {
         setDelayTime(delay);
         return this;
     }
@@ -78,7 +78,7 @@ public class DelayerDefinition extends ExpressionNode {
      * Set the expression that the delayer will use
      * @return the builder
      */
-    public ExpressionClause<DelayerDefinition> expression() {
+    public ExpressionClause<DelayDefinition> expression() {
         return ExpressionClause.createAndSetExpression(this);
     }
 

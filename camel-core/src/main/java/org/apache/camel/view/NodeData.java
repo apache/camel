@@ -19,17 +19,17 @@ package org.apache.camel.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.model.AggregatorDefinition;
-import org.apache.camel.model.BeanRef;
+import org.apache.camel.model.AggregateDefinition;
+import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.FilterDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.OtherwiseDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RecipientListDefinition;
-import org.apache.camel.model.ResequencerDefinition;
+import org.apache.camel.model.ResequenceDefinition;
 import org.apache.camel.model.RoutingSlipDefinition;
-import org.apache.camel.model.SplitterDefinition;
+import org.apache.camel.model.SplitDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.WhenDefinition;
 
@@ -109,17 +109,17 @@ public class NodeData {
             this.nodeType = "Routing Slip";
             this.url = "http://camel.apache.org/routing-slip.html";
             this.tooltop = ((RoutingSlipDefinition) node).getHeaderName();
-        } else if (node instanceof SplitterDefinition) {
+        } else if (node instanceof SplitDefinition) {
             this.image = imagePrefix + "SplitterIcon.png";
             this.nodeType = "Splitter";
-        } else if (node instanceof AggregatorDefinition) {
+        } else if (node instanceof AggregateDefinition) {
             this.image = imagePrefix + "AggregatorIcon.png";
             this.nodeType = "Aggregator";
-        } else if (node instanceof ResequencerDefinition) {
+        } else if (node instanceof ResequenceDefinition) {
             this.image = imagePrefix + "ResequencerIcon.png";
             this.nodeType = "Resequencer";
-        } else if (node instanceof BeanRef) {
-            BeanRef beanRef = (BeanRef) node;
+        } else if (node instanceof BeanDefinition) {
+            BeanDefinition beanRef = (BeanDefinition) node;
 
             // TODO
             //this.image = imagePrefix + "Bean.png";

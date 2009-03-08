@@ -16,18 +16,90 @@
  */
 package org.apache.camel.model;
 
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.RouteContext;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * Base class for interceptor types.
- * 
+ *
  * @version $Revision$
  */
-@XmlType(name = "interceptorType")
-public abstract class InterceptorDefinition extends OutputDefinition implements Block {
+@XmlRootElement(name = "interceptor")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class InterceptorDefinition extends AbstractInterceptorDefinition {
+    @XmlAttribute(required = true)
+    private String ref;
+    @XmlTransient
+    private DelegateProcessor interceptor;
 
-    public abstract DelegateProcessor createInterceptor(RouteContext routeContext) throws Exception;
+    public InterceptorDefinition() {
+    }
+
+    public InterceptorDefinition(String ref) {
+        setRef(ref);
+    }
+
+    public InterceptorDefinition(DelegateProcessor interceptor) {
+        this.interceptor = interceptor;
+    }
+
+    @Override
+    public String toString() {
+        return "Interceptor[" + getLabel() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "interceptor";
+    }
+
+    @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        DelegateProcessor processor = createInterceptor(routeContext);
+        Processor child = createOutputsProcessor(routeContext);
+        processor.setProcessor(child);
+        return processor;
+    }
+
+    public DelegateProcessor createInterceptor(RouteContext routeContext) {
+        if (interceptor == null) {
+            interceptor = routeContext.lookup(getRef(), DelegateProcessor.class);
+        }
+        notNull(interceptor, "registry entry called " + getRef(), this);
+        return interceptor;
+    }
+
+    public String getRef() {
+        return ref;
+    }
+
+    public void setRef(String ref) {
+        this.ref = ref;
+    }
+
+    public String getLabel() {
+        if (ref != null) {
+            return "ref: " + ref;
+        } else if (interceptor != null) {
+            return interceptor.toString();
+        } else {
+            return "";
+        }
+    }
+    
+    /**
+     * Get the underlying {@link DelegateProcessor} implementation
+     */
+    @XmlTransient
+    public DelegateProcessor getInterceptor() {
+        return interceptor;
+    }
 }

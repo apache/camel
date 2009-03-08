@@ -31,16 +31,16 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "routeBuilderRef")
+@XmlRootElement(name = "routeBuilder")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RouteBuilderRef extends IdentifiedType {
+public class RouteBuilderDefinition extends IdentifiedType {
     @XmlAttribute(required = true)
     private String ref;
 
-    public RouteBuilderRef() {
+    public RouteBuilderDefinition() {
     }
 
-    public RouteBuilderRef(String ref) {
+    public RouteBuilderDefinition(String ref) {
         this.ref = ref;
     }
 

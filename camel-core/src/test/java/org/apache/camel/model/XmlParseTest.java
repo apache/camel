@@ -39,7 +39,7 @@ public class XmlParseTest extends XmlTestSupport {
     public void testParseProcessorXml() throws Exception {
         RouteDefinition route = assertOneRoute("processor.xml");
         assertFrom(route, "seda:a");
-        ProcessorRef to = assertOneProcessorInstanceOf(ProcessorRef.class, route);
+        ProcessDefinition to = assertOneProcessorInstanceOf(ProcessDefinition.class, route);
         assertEquals("Processor ref", "myProcessor", to.getRef());
     }
 
@@ -195,7 +195,7 @@ public class XmlParseTest extends XmlTestSupport {
         RouteDefinition route = assertOneRoute("splitter.xml");
         assertFrom(route, "seda:a");
 
-        SplitterDefinition splitter = assertOneProcessorInstanceOf(SplitterDefinition.class, route);
+        SplitDefinition splitter = assertOneProcessorInstanceOf(SplitDefinition.class, route);
         assertExpression(splitter.getExpression(), "xpath", "/foo/bar");
         assertChildTo("to", splitter, "seda:b");
     }
@@ -220,7 +220,7 @@ public class XmlParseTest extends XmlTestSupport {
 
     public void testParseBatchResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerBatch.xml");
-        ResequencerDefinition resequencer = assertOneProcessorInstanceOf(ResequencerDefinition.class, route);
+        ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
         assertNull(resequencer.getStreamConfig());
         assertNotNull(resequencer.getBatchConfig());
         assertEquals(500, resequencer.getBatchConfig().getBatchSize());
@@ -229,7 +229,7 @@ public class XmlParseTest extends XmlTestSupport {
 
     public void testParseStreamResequencerXml() throws Exception {
         RouteDefinition route = assertOneRoute("resequencerStream.xml");
-        ResequencerDefinition resequencer = assertOneProcessorInstanceOf(ResequencerDefinition.class, route);
+        ResequenceDefinition resequencer = assertOneProcessorInstanceOf(ResequenceDefinition.class, route);
         assertNotNull(resequencer.getStreamConfig());
         assertNull(resequencer.getBatchConfig());
         assertEquals(1000, resequencer.getStreamConfig().getCapacity());
@@ -306,12 +306,12 @@ public class XmlParseTest extends XmlTestSupport {
         assertNotNull(rt);
 
         // Rely on the fact that reference ids are unique
-        List<InterceptorDefinition> interceptors = rt.getInterceptors();
+        List<AbstractInterceptorDefinition> interceptors = rt.getInterceptors();
         assertEquals("Interceptor count does not match", names.length, interceptors.size());
 
         Set<String> refs = new HashSet<String>();
-        for (InterceptorDefinition it : interceptors) {
-            InterceptorRef ir = assertIsInstanceOf(InterceptorRef.class, it);
+        for (AbstractInterceptorDefinition it : interceptors) {
+            InterceptorDefinition ir = assertIsInstanceOf(InterceptorDefinition.class, it);
             refs.add(ir.getRef());
         }
         for (String name : names) {

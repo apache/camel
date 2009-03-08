@@ -45,9 +45,9 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefinition> {
+public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition> {
     @XmlElement(name = "correlationExpression", required = false)
-    private ExpressionSubElementType correlationExpression;
+    private ExpressionSubElementDefinition correlationExpression;
     @XmlTransient
     private ExpressionDefinition expression;
     @XmlElementRef
@@ -69,28 +69,28 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
     @XmlAttribute(required = false)
     private Boolean groupExchanges;
     @XmlElement(name = "completionPredicate", required = false)
-    private ExpressionSubElementType completionPredicate;
+    private ExpressionSubElementDefinition completionPredicate;
 
-    public AggregatorDefinition() {
+    public AggregateDefinition() {
     }
 
-    public AggregatorDefinition(Predicate predicate) {
+    public AggregateDefinition(Predicate predicate) {
         if (predicate != null) {
             setExpression(new ExpressionDefinition(predicate));
         }
     }    
     
-    public AggregatorDefinition(Expression correlationExpression) {
+    public AggregateDefinition(Expression correlationExpression) {
         if (correlationExpression != null) {
             setExpression(new ExpressionDefinition(correlationExpression));
         }
     }
 
-    public AggregatorDefinition(ExpressionDefinition correlationExpression) {
+    public AggregateDefinition(ExpressionDefinition correlationExpression) {
         this.expression = correlationExpression;
     }
 
-    public AggregatorDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+    public AggregateDefinition(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
         this(correlationExpression);
         this.aggregationStrategy = aggregationStrategy;
     }
@@ -111,8 +111,8 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
         return createAggregator(routeContext);
     }
 
-    public ExpressionClause<AggregatorDefinition> createAndSetExpression() {
-        ExpressionClause<AggregatorDefinition> clause = new ExpressionClause<AggregatorDefinition>(this);
+    public ExpressionClause<AggregateDefinition> createAndSetExpression() {
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(this);
         this.setExpression(clause);
         return clause;
     }
@@ -254,11 +254,11 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
         this.collectionRef = collectionRef;
     }
 
-    public void setCompletionPredicate(ExpressionSubElementType completionPredicate) {
+    public void setCompletionPredicate(ExpressionSubElementDefinition completionPredicate) {
         this.completionPredicate = completionPredicate;
     }
 
-    public ExpressionSubElementType getCompletionPredicate() {
+    public ExpressionSubElementDefinition getCompletionPredicate() {
         return completionPredicate;
     }
 
@@ -279,7 +279,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param batchSize  the batch size
      * @return builder
      */
-    public AggregatorDefinition batchSize(int batchSize) {
+    public AggregateDefinition batchSize(int batchSize) {
         setBatchSize(batchSize);
         return this;
     }
@@ -290,7 +290,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param batchSize  the batch size
      * @return builder
      */
-    public AggregatorDefinition outBatchSize(int batchSize) {
+    public AggregateDefinition outBatchSize(int batchSize) {
         setOutBatchSize(batchSize);
         return this;
     }
@@ -301,7 +301,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param batchTimeout  the timeout in millis
      * @return the builder
      */
-    public AggregatorDefinition batchTimeout(long batchTimeout) {
+    public AggregateDefinition batchTimeout(long batchTimeout) {
         setBatchTimeout(batchTimeout);
         return this;
     }
@@ -312,7 +312,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param aggregationCollection  the aggregate collection to use
      * @return the builder
      */
-    public AggregatorDefinition aggregationCollection(AggregationCollection aggregationCollection) {
+    public AggregateDefinition aggregationCollection(AggregationCollection aggregationCollection) {
         setAggregationCollection(aggregationCollection);
         return this;
     }
@@ -323,7 +323,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param aggregationStrategy  the aggregate strategy to use
      * @return the builder
      */
-    public AggregatorDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+    public AggregateDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
@@ -334,7 +334,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param collectionRef  reference to the aggregate collection to lookup in the registry
      * @return the builder
      */
-    public AggregatorDefinition collectionRef(String collectionRef) {
+    public AggregateDefinition collectionRef(String collectionRef) {
         setCollectionRef(collectionRef);
         return this;
     }
@@ -345,7 +345,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      * @param strategyRef  reference to the strategy to lookup in the registry
      * @return the builder
      */
-    public AggregatorDefinition strategyRef(String strategyRef) {
+    public AggregateDefinition strategyRef(String strategyRef) {
         setStrategyRef(strategyRef);
         return this;
     }
@@ -356,7 +356,7 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      *
      * @return the builder
      */
-    public AggregatorDefinition groupExchanges() {
+    public AggregateDefinition groupExchanges() {
         setGroupExchanges(true);
         return this;
     }
@@ -366,10 +366,10 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      *
      * @return the clause used to create the predicate
      */
-    public ExpressionClause<AggregatorDefinition> completionPredicate() {
+    public ExpressionClause<AggregateDefinition> completionPredicate() {
         checkNoCompletedPredicate();
-        ExpressionClause<AggregatorDefinition> clause = new ExpressionClause<AggregatorDefinition>(this);
-        setCompletionPredicate(new ExpressionSubElementType((Expression)clause));
+        ExpressionClause<AggregateDefinition> clause = new ExpressionClause<AggregateDefinition>(this);
+        setCompletionPredicate(new ExpressionSubElementDefinition((Expression)clause));
         return clause;
     }
 
@@ -378,9 +378,9 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
      *
      * @param predicate  the predicate
      */
-    public AggregatorDefinition completionPredicate(Predicate predicate) {
+    public AggregateDefinition completionPredicate(Predicate predicate) {
         checkNoCompletedPredicate();
-        setCompletionPredicate(new ExpressionSubElementType(predicate));
+        setCompletionPredicate(new ExpressionSubElementDefinition(predicate));
         return this;
     }
 
@@ -390,11 +390,11 @@ public class AggregatorDefinition extends ProcessorDefinition<AggregatorDefiniti
         }
     }
 
-    public void setCorrelationExpression(ExpressionSubElementType correlationExpression) {
+    public void setCorrelationExpression(ExpressionSubElementDefinition correlationExpression) {
         this.correlationExpression = correlationExpression;
     }
 
-    public ExpressionSubElementType getCorrelationExpression() {
+    public ExpressionSubElementDefinition getCorrelationExpression() {
         return correlationExpression;
     }
 

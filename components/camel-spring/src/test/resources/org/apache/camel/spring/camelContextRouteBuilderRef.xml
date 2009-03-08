@@ -24,7 +24,7 @@
     
   <!-- START SNIPPET: example5 -->
   <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring">
-    <routeBuilderRef ref="myBuilder" />    
+    <routeBuilder ref="myBuilder" />    
   </camelContext>
   
   <bean id="myBuilder" class="org.apache.camel.spring.example.test1.MyRouteBuilder"/>

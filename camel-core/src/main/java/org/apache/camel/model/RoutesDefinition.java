@@ -46,11 +46,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
-    private List<InterceptorDefinition> interceptors = new ArrayList<InterceptorDefinition>();
+    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlTransient
-    private List<ExceptionDefinition> exceptions = new ArrayList<ExceptionDefinition>();
+    private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
@@ -71,11 +71,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         this.routes = routes;
     }
 
-    public List<InterceptorDefinition> getInterceptors() {
+    public List<AbstractInterceptorDefinition> getInterceptors() {
         return interceptors;
     }
 
-    public void setInterceptors(List<InterceptorDefinition> interceptors) {
+    public void setInterceptors(List<AbstractInterceptorDefinition> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -87,11 +87,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         this.intercepts = intercepts;
     }
 
-    public List<ExceptionDefinition> getExceptions() {
+    public List<OnExceptionDefinition> getExceptions() {
         return exceptions;
     }
 
-    public void setExceptions(List<ExceptionDefinition> exceptions) {
+    public void setExceptions(List<OnExceptionDefinition> exceptions) {
         this.exceptions = exceptions;
     }
 
@@ -194,8 +194,8 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         // lets configure the route
         route.setCamelContext(getCamelContext());
         route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
-        List<InterceptorDefinition> list = getInterceptors();
-        for (InterceptorDefinition interceptorType : list) {
+        List<AbstractInterceptorDefinition> list = getInterceptors();
+        for (AbstractInterceptorDefinition interceptorType : list) {
             route.addInterceptor(interceptorType);
         }
         List<InterceptDefinition> intercepts = getIntercepts();
@@ -218,7 +218,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
      * @return the builder
      */
     public RoutesDefinition intercept(DelegateProcessor interceptor) {
-        getInterceptors().add(new InterceptorRef(interceptor));
+        getInterceptors().add(new InterceptorDefinition(interceptor));
         return this;
     }
 
@@ -251,8 +251,8 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
      * @param exception  the exception
      * @return the builder
      */
-    public ExceptionDefinition onException(Class exception) {
-        ExceptionDefinition answer = new ExceptionDefinition(exception);
+    public OnExceptionDefinition onException(Class exception) {
+        OnExceptionDefinition answer = new OnExceptionDefinition(exception);
         getExceptions().add(answer);
         return answer;
     }

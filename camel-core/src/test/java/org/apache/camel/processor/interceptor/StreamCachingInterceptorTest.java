@@ -32,8 +32,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.model.AbstractInterceptorDefinition;
 import org.apache.camel.model.InterceptorDefinition;
-import org.apache.camel.model.InterceptorRef;
 import org.apache.camel.processor.DelegateProcessor;
 
 public class StreamCachingInterceptorTest extends ContextTestSupport {
@@ -126,10 +126,10 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
     }
 
     public void testNoStreamCaching() throws Exception {
-        List<InterceptorDefinition> interceptors = new LinkedList<InterceptorDefinition>();
-        InterceptorRef streamCache = new InterceptorRef(new StreamCachingInterceptor());
+        List<AbstractInterceptorDefinition> interceptors = new LinkedList<AbstractInterceptorDefinition>();
+        InterceptorDefinition streamCache = new InterceptorDefinition(new StreamCachingInterceptor());
         interceptors.add(streamCache);
-        interceptors.add(new InterceptorRef(new DelegateProcessor()));
+        interceptors.add(new InterceptorDefinition(new DelegateProcessor()));
         StreamCachingInterceptor.noStreamCaching(interceptors);
         assertEquals(1, interceptors.size());
         assertFalse(interceptors.contains(streamCache));
