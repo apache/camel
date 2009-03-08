@@ -98,12 +98,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @Override
     public String toString() {
         String expressionString = (getExpression() != null) ? getExpression().getLabel() : "";     
-        return "Aggregator[" + expressionString + " -> " + getOutputs() + "]";
+        return "Aggregate[" + expressionString + " -> " + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "aggregator";
+        return "aggregate";
     }
     
     @Override

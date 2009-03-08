@@ -58,7 +58,7 @@ public class DelayDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Delayer[on: " + getExpression() + " delay: " + delayTime + " -> " + getOutputs() + "]";
+        return "Delay[on: " + getExpression() + " delay: " + delayTime + " -> " + getOutputs() + "]";
     }
     
     // Fluent API
@@ -84,7 +84,7 @@ public class DelayDefinition extends ExpressionNode {
 
     @Override
     public String getShortName() {
-        return "delayer";
+        return "delay";
     }
 
     public Long getDelayTime() {

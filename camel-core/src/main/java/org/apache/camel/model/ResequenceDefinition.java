@@ -63,7 +63,7 @@ public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinitio
 
     @Override
     public String getShortName() {
-        return "resequencer";
+        return "resequence";
     }
     
     // Fluent API

@@ -70,12 +70,12 @@ public class SplitDefinition extends ExpressionNode {
 
     @Override
     public String toString() {
-        return "Splitter[" + getExpression() + " -> " + getOutputs() + "]";
+        return "Split[" + getExpression() + " -> " + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "splitter";
+        return "split";
     }
 
     @Override

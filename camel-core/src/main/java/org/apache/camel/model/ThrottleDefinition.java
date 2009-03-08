@@ -53,13 +53,13 @@ public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition>
 
     @Override
     public String toString() {
-        return "Throttler[" + getMaximumRequestsPerPeriod() + " request per " + getTimePeriodMillis()
+        return "Throttle[" + getMaximumRequestsPerPeriod() + " request per " + getTimePeriodMillis()
                + " millis -> " + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "throttler";
+        return "throttle";
     }
 
     @Override
