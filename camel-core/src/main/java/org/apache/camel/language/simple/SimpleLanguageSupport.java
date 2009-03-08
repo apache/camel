@@ -28,7 +28,6 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.ValueBuilder;
-import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -97,8 +96,7 @@ public abstract class SimpleLanguageSupport implements Language {
             rightConverted = ExpressionBuilder.convertToExpression(right, left);
         }
 
-        return new ExpressionAdapter() {
-            @Override
+        return new Expression() {
             public Object evaluate(final Exchange exchange) {
                 Predicate predicate = null;
                 if (operator == EQ) {
@@ -145,6 +143,11 @@ public abstract class SimpleLanguageSupport implements Language {
                     throw new IllegalArgumentException("Unsupported operator: " + operator + " for expression: " + expression);
                 }
                 return predicate.matches(exchange);
+            }
+
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Object result = evaluate(exchange);
+                return exchange.getContext().getTypeConverter().convertTo(type, result);
             }
 
             @Override

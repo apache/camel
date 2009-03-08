@@ -18,18 +18,20 @@ package org.apache.camel.language.bean;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
+import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.BeanHolder;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.bean.ConstantBeanHolder;
 import org.apache.camel.component.bean.RegistryBean;
-import org.apache.camel.impl.ExpressionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Evaluates an expression using a bean method invocation
  *
  * @version $Revision$
  */
-public class BeanExpression extends ExpressionSupport {
+public class BeanExpression implements Expression, Predicate {
     private String beanName;
     private String method;
     private Object bean;
@@ -78,5 +80,18 @@ public class BeanExpression extends ExpressionSupport {
         } catch (Exception e) {
             throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
         }
+    }
+
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
+        Object result = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    }
+
+    public boolean matches(Exchange exchange) {
+        Object value = evaluate(exchange);
+        return ObjectHelper.evaluateValuePredicate(value);
+    }
+
+    public void assertMatches(String text, Exchange exchange) throws AssertionError {
     }
 }
