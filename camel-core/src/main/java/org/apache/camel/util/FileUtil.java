@@ -24,8 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -308,6 +310,9 @@ public final class FileUtil {
         return results;
     }
 
+    /**
+     * Strip any leading separators
+     */
     public static String stripLeadingSeparator(String name) {
         if (name == null) {
             return null;
@@ -318,6 +323,9 @@ public final class FileUtil {
         return name;
     }
 
+    /**
+     * Strips any leading paths
+     */
     public static String stripPath(String name) {
         if (name == null) {
             return null;
@@ -330,6 +338,38 @@ public final class FileUtil {
             return name.substring(pos + 1);
         }
         return name;
+    }
+
+    /**
+     * Compacts a path by stacking it and reducing <tt>..</tt>
+     */
+    public static String compactPath(String path) {
+        // only normalize path if it contains .. as we want to avoid: path/../sub/../sub2 as this can leads to trouble
+        if (path.indexOf("..") == -1) {
+            return path;
+        }
+
+        Stack<String> stack = new Stack<String>();
+        String[] parts = path.split(File.separator);
+        for (String part : parts) {
+            if (part.equals("..") && !stack.isEmpty()) {
+                // only pop if there is a previous path
+                stack.pop();
+            } else {
+                stack.push(part);
+            }
+        }
+
+        // build path based on stack
+        StringBuilder sb = new StringBuilder();
+        for (Iterator it = stack.iterator(); it.hasNext();) {
+            sb.append(it.next());
+            if (it.hasNext()) {
+                sb.append(File.separator);
+            }
+        }
+
+        return sb.toString();
     }
 
 }

@@ -101,8 +101,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setEndpointPath(endpointPath);
         answer.setBinding(new FileBinding());
         answer.setFile(file);
-        answer.setFileLength(file.length());
+        answer.setFileName(file.getName());
         answer.setFileNameOnly(file.getName());
+        answer.setFileLength(file.length());
         answer.setAbsolute(file.isAbsolute());
         answer.setAbsoluteFilePath(file.getAbsolutePath());
         answer.setLastModified(file.lastModified());
@@ -125,9 +126,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
         }
 
-        // name is the relative path as we want to preserve leading paths relative to the endpoint path
-        answer.setFileName(answer.getRelativeFilePath());
-        
         // use file as body as we have converters if needed as stream
         answer.setBody(file);
         return answer;
