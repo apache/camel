@@ -58,6 +58,16 @@ public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
     }
     
     @Override
+    public String toString() {
+        return "Enrich[" + resourceUri + " " + aggregationStrategy + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "enrich";
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = routeContext.resolveEndpoint(resourceUri);
         Enricher enricher = new Enricher(null, endpoint.createProducer());
