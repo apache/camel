@@ -22,7 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's LoadBalanceDefinition
  */
-class SLoadBalanceType(val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[LoadBalanceDefinition] {
+class SLoadBalanceType(val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoadBalanceDefinition] {
  
   val unwrap = target
   

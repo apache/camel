@@ -23,7 +23,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's IdempotentConsumerDefinition
  */
-class SIdempotentConsumerType(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[IdempotentConsumerDefinition] {
+class SIdempotentConsumerType(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[IdempotentConsumerDefinition] {
   
   val unwrap = target
   

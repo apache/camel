@@ -19,7 +19,7 @@ package org.apache.camel.scala.dsl;
 import org.apache.camel.model.MulticastDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SMulticastType(val target: MulticastDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[MulticastDefinition] {
+class SMulticastType(val target: MulticastDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[MulticastDefinition] {
   
   val unwrap = target
   

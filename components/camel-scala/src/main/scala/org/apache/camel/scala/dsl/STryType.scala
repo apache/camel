@@ -22,7 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's TryDefinition
  */
-class STryType(val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[TryDefinition] {
+class STryType(val target: TryDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[TryDefinition] {
   
   val unwrap = target
   

@@ -22,7 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's DelayDefinition
  */
-class SDelayerType(val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[DelayDefinition] {
+class SDelayerType(val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[DelayDefinition] {
  
   val unwrap = target
 
