@@ -324,6 +324,19 @@ public final class FileUtil {
     }
 
     /**
+     * Strip any trailing separators
+     */
+    public static String stripTrailingSeparator(String name) {
+        if (name == null) {
+            return null;
+        }
+        if (name.endsWith("/") || name.endsWith(File.separator)) {
+            return name.substring(0, name.length() - 1);
+        }
+        return name;
+    }
+
+    /**
      * Strips any leading paths
      */
     public static String stripPath(String name) {
