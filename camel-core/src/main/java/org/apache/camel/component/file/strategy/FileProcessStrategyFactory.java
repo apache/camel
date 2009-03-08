@@ -61,10 +61,10 @@ public final class FileProcessStrategyFactory {
             }
             return strategy;
         } else {
-            // default strategy will move files in a .camel/ subfolder
+            // default strategy will move files in a .camel/ subfolder where the file was consumed
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            Expression exp = FileLanguage.file(".camel/${file:name}");
+            Expression exp = FileLanguage.file("${file:parent}/.camel/${file:onlyname}");
             strategy.setCommitRenamer(new GenericFileExpressionRenamer<File>(exp));
             return strategy;
         }

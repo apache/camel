@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.File;
 import java.net.URI;
+
 import org.apache.camel.util.FileUtil;
 
 public class GenericFileConfiguration {
@@ -46,6 +48,9 @@ public class GenericFileConfiguration {
         if (this.directory == null) {
             this.directory = "";
         }
+        
+        // strip tailing slash
+        this.directory = FileUtil.stripTrailingSeparator(this.directory);
     }
 
     public String toString() {

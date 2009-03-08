@@ -98,8 +98,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
     public static GenericFile<File> asGenericFile(String endpointPath, File file) {
         GenericFile<File> answer = new GenericFile<File>();
         // use file specific binding
-        answer.setEndpointPath(endpointPath);
         answer.setBinding(new FileBinding());
+
+        answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileName(file.getName());
         answer.setFileNameOnly(file.getName());
