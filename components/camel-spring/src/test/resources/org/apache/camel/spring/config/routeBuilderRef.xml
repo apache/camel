@@ -26,7 +26,7 @@
 
   <!-- START SNIPPET: example5 -->
   <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring" autowireRouteBuilders="false">
-    <routeBuilderRef ref="configuredRouteBuilder"/>
+    <routeBuilder ref="configuredRouteBuilder"/>
   </camelContext>
   <!-- END SNIPPET: example5 -->
 

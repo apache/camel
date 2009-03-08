@@ -40,7 +40,7 @@ import org.apache.camel.spi.RouteContext;
  * @version $Revision$
  */
 @XmlRootElement(name = "resequence")
-public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ResequenceDefinition extends ProcessorDefinition<ProcessorDefinition> {
     @XmlElementRef
     private List<ExpressionDefinition> expressions = new ArrayList<ExpressionDefinition>();
     @XmlElementRef
@@ -52,11 +52,11 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
     @XmlTransient
     private List<Expression> expressionList;
 
-    public ResequencerDefinition() {
+    public ResequenceDefinition() {
         this(null);
     }
 
-    public ResequencerDefinition(List<Expression> expressions) {
+    public ResequenceDefinition(List<Expression> expressions) {
         this.expressionList = expressions;
         this.batch();
     }
@@ -74,7 +74,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      *
      * @return the builder
      */
-    public ResequencerDefinition stream() {
+    public ResequenceDefinition stream() {
         return stream(StreamResequencerConfig.getDefault());
     }
 
@@ -84,7 +84,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      *
      * @return the builder
      */
-    public ResequencerDefinition batch() {
+    public ResequenceDefinition batch() {
         return batch(BatchResequencerConfig.getDefault());
     }
 
@@ -95,7 +95,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param config  the config
      * @return the builder
      */
-    public ResequencerDefinition stream(StreamResequencerConfig config) {
+    public ResequenceDefinition stream(StreamResequencerConfig config) {
         this.streamConfig = config;
         this.batchConfig = null;
         return this;
@@ -108,7 +108,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param config  the config
      * @return the builder
      */
-    public ResequencerDefinition batch(BatchResequencerConfig config) {
+    public ResequenceDefinition batch(BatchResequencerConfig config) {
         this.batchConfig = config;
         this.streamConfig = null;
         return this;
@@ -120,7 +120,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param expression  the expression
      * @return the builder
      */
-    public ResequencerDefinition expression(ExpressionDefinition expression) {
+    public ResequenceDefinition expression(ExpressionDefinition expression) {
         expressions.add(expression);
         return this;
     }
@@ -130,7 +130,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param timeout  timeout in millis
      * @return the builder
      */
-    public ResequencerDefinition timeout(long timeout) {
+    public ResequenceDefinition timeout(long timeout) {
         if (batchConfig != null) {
             batchConfig.setBatchTimeout(timeout);
         } else {
@@ -144,7 +144,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param batchSize  the batch size
      * @return the builder
      */
-    public ResequencerDefinition size(int batchSize) {
+    public ResequenceDefinition size(int batchSize) {
         if (batchConfig == null) {
             throw new IllegalStateException("size() only supported for batch resequencer");
         }
@@ -158,7 +158,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param capacity  the capacity
      * @return the builder
      */
-    public ResequencerDefinition capacity(int capacity) {
+    public ResequenceDefinition capacity(int capacity) {
         if (streamConfig == null) {
             throw new IllegalStateException("capacity() only supported for stream resequencer");
         }
@@ -173,7 +173,7 @@ public class ResequencerDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @param comparator  the comparator
      * @return the builder
      */
-    public ResequencerDefinition comparator(ExpressionResultComparator comparator) {
+    public ResequenceDefinition comparator(ExpressionResultComparator comparator) {
         if (streamConfig == null) {
             throw new IllegalStateException("comparator() only supported for stream resequencer");
         }

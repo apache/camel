@@ -34,12 +34,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.ProceedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteBuilderRef;
+import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
@@ -102,14 +102,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false)})
     private List beans;    
-    @XmlElement(name = "routeBuilderRef", required = false)
-    private List<RouteBuilderRef> builderRefs = new ArrayList<RouteBuilderRef>();
+    @XmlElement(name = "routeBuilder", required = false)
+    private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "endpoint", required = false)
     private List<EndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
-    private List<ExceptionDefinition> exceptionClauses = new ArrayList<ExceptionDefinition>();
+    private List<OnExceptionDefinition> exceptionClauses = new ArrayList<OnExceptionDefinition>();
     @XmlElement(name = "intercept", required = false)
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlElement(name = "route", required = false)
@@ -220,7 +220,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
                 List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
                 for (ProcessorDefinition output : route.getOutputs()) {
-                    if (output instanceof ExceptionDefinition) {
+                    if (output instanceof OnExceptionDefinition) {
                         exceptionHandlers.add(output);
                     } else {
                         outputs.add(output);
@@ -444,11 +444,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return camelJMXAgent;
     }
 
-    public List<RouteBuilderRef> getBuilderRefs() {
+    public List<RouteBuilderDefinition> getBuilderRefs() {
         return builderRefs;
     }
 
-    public void setBuilderRefs(List<RouteBuilderRef> builderRefs) {
+    public void setBuilderRefs(List<RouteBuilderDefinition> builderRefs) {
         this.builderRefs = builderRefs;
     }
 
@@ -532,7 +532,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         // lets add route builders added from references
         if (builderRefs != null) {
-            for (RouteBuilderRef builderRef : builderRefs) {
+            for (RouteBuilderDefinition builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
                 getContext().addRoutes(builder);
             }
@@ -559,11 +559,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return dataFormats;
     }
 
-    public void setExceptionClauses(List<ExceptionDefinition> exceptionClauses) {
+    public void setExceptionClauses(List<OnExceptionDefinition> exceptionClauses) {
         this.exceptionClauses = exceptionClauses;
     }
 
-    public List<ExceptionDefinition> getExceptionClauses() {
+    public List<OnExceptionDefinition> getExceptionClauses() {
         return exceptionClauses;
     }
 }

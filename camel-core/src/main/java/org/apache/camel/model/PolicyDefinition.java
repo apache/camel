@@ -23,47 +23,46 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;process/&gt; element
+ * Represents an XML &lt;policy/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "process")
+@XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ProcessorRef extends OutputDefinition<ProcessorDefinition> {
+public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient
-    private Processor processor;
+    private Policy policy;
 
-    public ProcessorRef() {
+    public PolicyDefinition() {
     }
 
-    public ProcessorRef(Processor processor) {
-        this.processor = processor;
-    }
-
-    @Override
-    public String getShortName() {
-        return "process";
+    public PolicyDefinition(Policy policy) {
+        this.policy = policy;
     }
 
     @Override
     public String toString() {
-        return "process["
-                + ((ref != null) ? "ref: " + ref : processor)
-                + "]";
+        return "Policy[" + description() + "]";
+    }
+
+    @Override
+    public String getShortName() {
+        return "policy";
     }
 
     @Override
     public String getLabel() {
         if (ref != null) {
             return "ref: " + ref;
-        } else if (processor != null) {
-            return processor.toString();
+        } else if (policy != null) {
+            return policy.toString();
         } else {
             return "";
         }
@@ -78,12 +77,26 @@ public class ProcessorRef extends OutputDefinition<ProcessorDefinition> {
     }
 
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
-        if (processor == null) {
-            ObjectHelper.notNull(ref, "ref", this);
-            processor = routeContext.lookup(getRef(), Processor.class);
-            ObjectHelper.notNull(processor, "registry entry called " + getRef(), this);
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Processor childProcessor = createOutputsProcessor(routeContext);
+
+        Policy policy = resolvePolicy(routeContext);
+        ObjectHelper.notNull(policy, "policy", this);
+        return policy.wrap(childProcessor);
+    }
+
+    protected Policy resolvePolicy(RouteContext routeContext) {
+        if (policy == null) {
+            policy = routeContext.lookup(getRef(), Policy.class);
         }
-        return processor;
+        return policy;
+    }
+
+    protected String description() {
+        if (policy != null) {
+            return policy.toString();
+        } else {
+            return "ref: " + ref;
+        }
     }
 }

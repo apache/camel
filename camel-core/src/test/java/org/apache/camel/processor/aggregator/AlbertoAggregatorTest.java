@@ -28,7 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.AggregatorDefinition;
+import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -183,7 +183,7 @@ public class AlbertoAggregatorTest extends ContextTestSupport {
                         constant(BROTHERS_TYPE)).to("direct:joinBrothers");
 
                 // Join all brothers lists and remove surname and type headers
-                AggregatorDefinition agg =
+                AggregateDefinition agg =
                         from("direct:joinBrothers").aggregate(header(TYPE_HEADER),
                                 brothersAggregator);
 

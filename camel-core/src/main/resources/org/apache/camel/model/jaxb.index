@@ -14,16 +14,16 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-AggregatorDefinition
-BeanRef
+AggregateDefinition
+BeanDefinition
 CatchDefinition
 ChoiceDefinition
 ConvertBodyDefinition
-DelayerDefinition
+DelayDefinition
 DescriptionDefinition
-EnricherDefinition
-ExceptionDefinition
-ExpressionSubElementType
+EnrichDefinition
+OnExceptionDefinition
+ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
@@ -31,8 +31,8 @@ HandleFaultDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
+AbstractInterceptorDefinition
 InterceptorDefinition
-InterceptorRef
 InterceptDefinition
 LoadBalanceDefinition
 LoopDefinition
@@ -41,15 +41,15 @@ MulticastDefinition
 OptionalIdentifiedType
 OtherwiseDefinition
 PipelineDefinition
-PolicyRef
+PolicyDefinition
 ProceedDefinition
-ProcessorRef
+ProcessDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition
 RemoveHeaderDefinition
 RemovePropertyDefinition
-ResequencerDefinition
-RouteBuilderRef
+ResequenceDefinition
+RouteBuilderDefinition
 RouteDefinition
 RoutesDefinition
 RoutingSlipDefinition
@@ -59,10 +59,10 @@ SetHeaderDefinition
 SetOutHeaderDefinition
 SetPropertyDefinition
 SortDefinition
-SplitterDefinition
+SplitDefinition
 StopDefinition
 ThreadDefinition
-ThrottlerDefinition
+ThrottleDefinition
 ThrowFaultDefinition
 ToDefinition
 TransformDefinition

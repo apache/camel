@@ -24,7 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.model.InterceptorRef;
+import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Logger;
@@ -243,7 +243,7 @@ public class TraceInterceptor extends DelegateProcessor implements ExchangeForma
         if (node == null) {
             return false;
         }
-        if (!tracer.isTraceInterceptors() && (node instanceof InterceptStrategy || node instanceof InterceptorRef)) {
+        if (!tracer.isTraceInterceptors() && (node instanceof InterceptStrategy || node instanceof InterceptorDefinition)) {
             return false;
         }
         return true;

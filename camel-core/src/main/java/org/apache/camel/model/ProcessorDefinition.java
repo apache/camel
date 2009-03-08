@@ -79,7 +79,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition parent;
-    private List<InterceptorDefinition> interceptors = new ArrayList<InterceptorDefinition>();
+    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     private String errorHandlerRef;
 
     // else to use an optional attribute in JAXB2
@@ -759,8 +759,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause builder for the expression on which to split
      */
-    public ExpressionClause<SplitterDefinition> split() {
-        SplitterDefinition answer = new SplitterDefinition();
+    public ExpressionClause<SplitDefinition> split() {
+        SplitDefinition answer = new SplitDefinition();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -775,8 +775,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param expression  the expression on which to split the message
      * @return the builder
      */
-    public SplitterDefinition split(Expression expression) {
-        SplitterDefinition answer = new SplitterDefinition(expression);
+    public SplitDefinition split(Expression expression) {
+        SplitDefinition answer = new SplitDefinition(expression);
         addOutput(answer);
         return answer;
     }
@@ -791,8 +791,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param aggregationStrategy  the strategy used to aggregate responses for every part
      * @return the builder
      */
-    public SplitterDefinition split(Expression expression, AggregationStrategy aggregationStrategy) {
-        SplitterDefinition answer = new SplitterDefinition(expression);
+    public SplitDefinition split(Expression expression, AggregationStrategy aggregationStrategy) {
+        SplitDefinition answer = new SplitDefinition(expression);
         addOutput(answer);
         answer.setAggregationStrategy(aggregationStrategy);
         return answer;
@@ -804,10 +804,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause for the expressions on which to compare messages in order
      */
-    public ExpressionClause<ResequencerDefinition> resequence() {
-        ResequencerDefinition answer = new ResequencerDefinition();
+    public ExpressionClause<ResequenceDefinition> resequence() {
+        ResequenceDefinition answer = new ResequenceDefinition();
         addOutput(answer);
-        ExpressionClause<ResequencerDefinition> clause = new ExpressionClause<ResequencerDefinition>(answer);
+        ExpressionClause<ResequenceDefinition> clause = new ExpressionClause<ResequenceDefinition>(answer);
         answer.expression(clause);
         return clause;
     }
@@ -819,7 +819,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param expression the expression on which to compare messages in order
      * @return the builder
      */
-    public ResequencerDefinition resequence(Expression expression) {
+    public ResequenceDefinition resequence(Expression expression) {
         return resequence(Collections.<Expression>singletonList(expression));
     }
 
@@ -830,8 +830,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequencerDefinition resequence(List<Expression> expressions) {
-        ResequencerDefinition answer = new ResequencerDefinition(expressions);
+    public ResequenceDefinition resequence(List<Expression> expressions) {
+        ResequenceDefinition answer = new ResequenceDefinition(expressions);
         addOutput(answer);
         return answer;
     }
@@ -843,7 +843,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param expressions the list of expressions on which to compare messages in order
      * @return the builder
      */
-    public ResequencerDefinition resequencer(Expression... expressions) {
+    public ResequenceDefinition resequencer(Expression... expressions) {
         List<Expression> list = new ArrayList<Expression>();
         list.addAll(Arrays.asList(expressions));
         return resequence(list);
@@ -855,8 +855,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause to be used as builder to configure the correlation expression
      */
-    public ExpressionClause<AggregatorDefinition> aggregate() {
-        AggregatorDefinition answer = new AggregatorDefinition();
+    public ExpressionClause<AggregateDefinition> aggregate() {
+        AggregateDefinition answer = new AggregateDefinition();
         addOutput(answer);
         return answer.createAndSetExpression();
     }
@@ -868,8 +868,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param aggregationStrategy the strategy used for the aggregation
      * @return the expression clause to be used as builder to configure the correlation expression
      */
-    public ExpressionClause<AggregatorDefinition> aggregate(AggregationStrategy aggregationStrategy) {
-        AggregatorDefinition answer = new AggregatorDefinition();
+    public ExpressionClause<AggregateDefinition> aggregate(AggregationStrategy aggregationStrategy) {
+        AggregateDefinition answer = new AggregateDefinition();
         answer.setAggregationStrategy(aggregationStrategy);
         addOutput(answer);
         return answer.createAndSetExpression();
@@ -882,8 +882,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param aggregationCollection the collection used to perform the aggregation
      * @return the builder
      */
-    public AggregatorDefinition aggregate(AggregationCollection aggregationCollection) {
-        AggregatorDefinition answer = new AggregatorDefinition();
+    public AggregateDefinition aggregate(AggregationCollection aggregationCollection) {
+        AggregateDefinition answer = new AggregateDefinition();
         answer.setAggregationCollection(aggregationCollection);
         addOutput(answer);
         return answer;
@@ -899,8 +899,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *                              <code>header("JMSCorrelationID")</code>
      * @return the builder
      */
-    public AggregatorDefinition aggregate(Expression correlationExpression) {
-        AggregatorDefinition answer = new AggregatorDefinition(correlationExpression);
+    public AggregateDefinition aggregate(Expression correlationExpression) {
+        AggregateDefinition answer = new AggregateDefinition(correlationExpression);
         addOutput(answer);
         return answer;
     }
@@ -916,8 +916,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param aggregationStrategy the strategy used for the aggregation
      * @return the builder
      */
-    public AggregatorDefinition aggregate(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
-        AggregatorDefinition answer = new AggregatorDefinition(correlationExpression, aggregationStrategy);
+    public AggregateDefinition aggregate(Expression correlationExpression, AggregationStrategy aggregationStrategy) {
+        AggregateDefinition answer = new AggregateDefinition(correlationExpression, aggregationStrategy);
         addOutput(answer);
         return answer;
     }
@@ -930,7 +930,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *                             should be convertable to long as time in millis
      * @return the builder
      */
-    public DelayerDefinition delay(Expression processAtExpression) {
+    public DelayDefinition delay(Expression processAtExpression) {
         return delay(processAtExpression, 0L);
     }
 
@@ -943,8 +943,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param delay                the delay in milliseconds which is added to the processAtExpression
      * @return the builder
      */
-    public DelayerDefinition delay(Expression processAtExpression, long delay) {
-        DelayerDefinition answer = new DelayerDefinition(processAtExpression, delay);
+    public DelayDefinition delay(Expression processAtExpression, long delay) {
+        DelayDefinition answer = new DelayDefinition(processAtExpression, delay);
         addOutput(answer);
         return answer;
     }
@@ -955,8 +955,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the expression clause to create the expression
      */
-    public ExpressionClause<DelayerDefinition> delay() {
-        DelayerDefinition answer = new DelayerDefinition();
+    public ExpressionClause<DelayDefinition> delay() {
+        DelayDefinition answer = new DelayDefinition();
         addOutput(answer);
         return ExpressionClause.createAndSetExpression(answer);
     }
@@ -968,7 +968,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param delay  the default delay in millis
      * @return the builder
      */
-    public DelayerDefinition delay(long delay) {
+    public DelayDefinition delay(long delay) {
         return delay(null, delay);
     }
 
@@ -983,8 +983,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param maximumRequestCount  the maximum messages 
      * @return the builder
      */
-    public ThrottlerDefinition throttle(long maximumRequestCount) {
-        ThrottlerDefinition answer = new ThrottlerDefinition(maximumRequestCount);
+    public ThrottleDefinition throttle(long maximumRequestCount) {
+        ThrottleDefinition answer = new ThrottleDefinition(maximumRequestCount);
         addOutput(answer);
         return answer;
     }
@@ -1064,7 +1064,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type interceptor(String ref) {
-        InterceptorRef interceptor = new InterceptorRef(ref);
+        InterceptorDefinition interceptor = new InterceptorDefinition(ref);
         intercept(interceptor);
         return (Type) this;
     }
@@ -1092,7 +1092,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type intercept(DelegateProcessor interceptor) {
-        intercept(new InterceptorRef(interceptor));
+        intercept(new InterceptorDefinition(interceptor));
         return (Type) this;
     }
 
@@ -1112,7 +1112,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param  interceptor  the interceptor
      */
-    public void intercept(InterceptorDefinition interceptor) {
+    public void intercept(AbstractInterceptorDefinition interceptor) {
         addOutput(interceptor);
         pushBlock(interceptor);
     }
@@ -1122,7 +1122,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param interceptor  the interceptor
      */
-    public void addInterceptor(InterceptorDefinition interceptor) {
+    public void addInterceptor(AbstractInterceptorDefinition interceptor) {
         interceptors.add(interceptor);
     }
 
@@ -1132,7 +1132,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param interceptor  the interceptor
      */
     public void addInterceptor(DelegateProcessor interceptor) {
-        addInterceptor(new InterceptorRef(interceptor));
+        addInterceptor(new InterceptorDefinition(interceptor));
     }
 
     /**
@@ -1227,8 +1227,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param exceptionType  the exception to catch
      * @return the exception builder to configure
      */
-    public ExceptionDefinition onException(Class exceptionType) {
-        ExceptionDefinition answer = new ExceptionDefinition(exceptionType);
+    public OnExceptionDefinition onException(Class exceptionType) {
+        OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
         addOutput(answer);
         return answer;
     }
@@ -1252,8 +1252,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the policy builder to configure
      */
-    public PolicyRef policies() {
-        PolicyRef answer = new PolicyRef();
+    public PolicyDefinition policies() {
+        PolicyDefinition answer = new PolicyDefinition();
         addOutput(answer);
         return answer;
     }
@@ -1266,8 +1266,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * @param policy  the policy to apply
      * @return the policy builder to configure
      */
-    public PolicyRef policy(Policy policy) {
-        PolicyRef answer = new PolicyRef(policy);
+    public PolicyDefinition policy(Policy policy) {
+        PolicyDefinition answer = new PolicyDefinition(policy);
         addOutput(answer);
         return answer;
     }
@@ -1321,7 +1321,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type process(Processor processor) {
-        ProcessorRef answer = new ProcessorRef(processor);
+        ProcessDefinition answer = new ProcessDefinition(processor);
         addOutput(answer);
         return (Type) this;
     }
@@ -1336,7 +1336,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type processRef(String ref) {
-        ProcessorRef answer = new ProcessorRef();
+        ProcessDefinition answer = new ProcessDefinition();
         answer.setRef(ref);
         addOutput(answer);
         return (Type) this;
@@ -1351,7 +1351,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean) {
-        BeanRef answer = new BeanRef();
+        BeanDefinition answer = new BeanDefinition();
         answer.setBean(bean);
         addOutput(answer);
         return (Type) this;
@@ -1367,7 +1367,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type bean(Object bean, String method) {
-        BeanRef answer = new BeanRef();
+        BeanDefinition answer = new BeanDefinition();
         answer.setBean(bean);
         answer.setMethod(method);
         addOutput(answer);
@@ -1383,7 +1383,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type bean(Class beanType) {
-        BeanRef answer = new BeanRef();
+        BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         addOutput(answer);
         return (Type) this;
@@ -1399,7 +1399,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type bean(Class beanType, String method) {
-        BeanRef answer = new BeanRef();
+        BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         answer.setMethod(method);
         addOutput(answer);
@@ -1415,7 +1415,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type beanRef(String ref) {
-        BeanRef answer = new BeanRef(ref);
+        BeanDefinition answer = new BeanDefinition(ref);
         addOutput(answer);
         return (Type) this;
     }
@@ -1430,7 +1430,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type beanRef(String ref, String method) {
-        BeanRef answer = new BeanRef(ref, method);
+        BeanDefinition answer = new BeanDefinition(ref, method);
         addOutput(answer);
         return (Type) this;
     }
@@ -1712,7 +1712,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy) {
-        addOutput(new EnricherDefinition(aggregationStrategy, resourceUri));
+        addOutput(new EnrichDefinition(aggregationStrategy, resourceUri));
         return (Type)this;
     }
     
@@ -1946,7 +1946,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             }
         }
 
-        List<InterceptorDefinition> list = routeContext.getRoute().getInterceptors();
+        List<AbstractInterceptorDefinition> list = routeContext.getRoute().getInterceptors();
         if (interceptors != null) {
             list.addAll(interceptors);
         }
@@ -1954,7 +1954,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         Collections.reverse(list);
         Set<Processor> interceptors = new HashSet<Processor>();
         interceptors.add(target);
-        for (InterceptorDefinition interceptorType : list) {
+        for (AbstractInterceptorDefinition interceptorType : list) {
             DelegateProcessor interceptor = interceptorType.createInterceptor(routeContext);
             if (!interceptors.contains(interceptor)) {
                 interceptors.add(interceptor);
@@ -2033,7 +2033,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             processor = output.wrapProcessorInInterceptors(routeContext, processor);
 
             ProcessorDefinition currentProcessor = this;
-            if (!(currentProcessor instanceof ExceptionDefinition || currentProcessor instanceof TryDefinition)) {
+            if (!(currentProcessor instanceof OnExceptionDefinition || currentProcessor instanceof TryDefinition)) {
                 processor = output.wrapInErrorHandler(routeContext, processor);
             }
 

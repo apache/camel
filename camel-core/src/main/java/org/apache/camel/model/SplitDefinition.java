@@ -43,7 +43,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "split")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SplitterDefinition extends ExpressionNode {
+public class SplitDefinition extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     @XmlAttribute(required = false)
@@ -57,14 +57,14 @@ public class SplitterDefinition extends ExpressionNode {
     @XmlAttribute(required = false)
     private Boolean streaming = false;
     
-    public SplitterDefinition() {
+    public SplitDefinition() {
     }
 
-    public SplitterDefinition(Expression expression) {
+    public SplitDefinition(Expression expression) {
         super(expression);
     }
 
-    public SplitterDefinition(ExpressionDefinition expression) {
+    public SplitDefinition(ExpressionDefinition expression) {
         super(expression);
     }
 
@@ -120,7 +120,7 @@ public class SplitterDefinition extends ExpressionNode {
      *
      * @return the builder
      */
-    public ExpressionClause<SplitterDefinition> expression() {
+    public ExpressionClause<SplitDefinition> expression() {
         return ExpressionClause.createAndSetExpression(this);
     }
     /**
@@ -128,7 +128,7 @@ public class SplitterDefinition extends ExpressionNode {
      *
      * @return the builder
      */
-    public SplitterDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
+    public SplitDefinition aggregationStrategy(AggregationStrategy aggregationStrategy) {
         setAggregationStrategy(aggregationStrategy);
         return this;
     }
@@ -138,7 +138,7 @@ public class SplitterDefinition extends ExpressionNode {
      *
      * @return the builder
      */
-    public SplitterDefinition parallelProcessing() {
+    public SplitDefinition parallelProcessing() {
         setParallelProcessing(true);
         return this;
     }
@@ -151,18 +151,18 @@ public class SplitterDefinition extends ExpressionNode {
      *
      * @return the builder
      */
-    public SplitterDefinition parallelProcessing(boolean parallelProcessing) {
+    public SplitDefinition parallelProcessing(boolean parallelProcessing) {
         setParallelProcessing(parallelProcessing);
         return this;
     }
     
     /**
      * Enables streaming. 
-     * See {@link SplitterDefinition#setStreaming(boolean)} for more information
+     * See {@link SplitDefinition#setStreaming(boolean)} for more information
      *
      * @return the builder
      */
-    public SplitterDefinition streaming() {
+    public SplitDefinition streaming() {
         setStreaming(true);
         return this;
     }
@@ -173,7 +173,7 @@ public class SplitterDefinition extends ExpressionNode {
      * @param executor the executor
      * @return the builder
      */
-    public SplitterDefinition executor(Executor executor) {
+    public SplitDefinition executor(Executor executor) {
         setExecutor(executor);
         return this;
     }

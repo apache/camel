@@ -51,18 +51,18 @@ import static org.apache.camel.builder.PredicateBuilder.toPredicate;
  */
 @XmlRootElement(name = "onException")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefinition> {
 
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
     @XmlElement(name = "retryUntil", required = false)
-    private ExpressionSubElementType retryUntil;
+    private ExpressionSubElementDefinition retryUntil;
     @XmlElement(name = "redeliveryPolicy", required = false)
     private RedeliveryPolicyDefinition redeliveryPolicy;
     @XmlElement(name = "handled", required = false)
-    private ExpressionSubElementType handled;
+    private ExpressionSubElementDefinition handled;
     @XmlAttribute(name = "onRedeliveryRef", required = false)
     private String onRedeliveryRef;
     @XmlElementRef
@@ -78,14 +78,14 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
     @XmlTransient
     private Processor onRedelivery;
 
-    public ExceptionDefinition() {
+    public OnExceptionDefinition() {
     }
 
-    public ExceptionDefinition(List<Class> exceptionClasses) {
+    public OnExceptionDefinition(List<Class> exceptionClasses) {
         this.exceptionClasses = exceptionClasses;
     }
 
-    public ExceptionDefinition(Class exceptionType) {
+    public OnExceptionDefinition(Class exceptionType) {
         exceptionClasses = new ArrayList<Class>();
         exceptionClasses.add(exceptionType);
     }
@@ -139,7 +139,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
     //-------------------------------------------------------------------------
 
     @Override
-    public ExceptionDefinition onException(Class exceptionType) {
+    public OnExceptionDefinition onException(Class exceptionType) {
         getExceptionClasses().add(exceptionType);
         return this;
     }
@@ -150,7 +150,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param handled  handled or not
      * @return the builder
      */
-    public ExceptionDefinition handled(boolean handled) {
+    public OnExceptionDefinition handled(boolean handled) {
         ConstantLanguage constant = new ConstantLanguage();
         return handled(constant.createPredicate(Boolean.toString(handled)));
     }
@@ -161,7 +161,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param handled  predicate that determines true or false
      * @return the builder
      */
-    public ExceptionDefinition handled(Predicate handled) {
+    public OnExceptionDefinition handled(Predicate handled) {
         setHandledPolicy(handled);
         return this;
     }
@@ -172,7 +172,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param handled  expression that determines true or false
      * @return the builder
      */
-    public ExceptionDefinition handled(Expression handled) {
+    public OnExceptionDefinition handled(Expression handled) {
         setHandledPolicy(toPredicate(handled));
         return this;
     }
@@ -186,7 +186,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param predicate  predicate that determines true or false
      * @return the builder
      */
-    public ExceptionDefinition onWhen(Predicate predicate) {
+    public OnExceptionDefinition onWhen(Predicate predicate) {
         setOnWhen(new WhenDefinition(predicate));
         return this;
     }
@@ -200,9 +200,9 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      *
      * @return the expression clause to configure
      */
-    public ExpressionClause<ExceptionDefinition> onWhen() {
+    public ExpressionClause<OnExceptionDefinition> onWhen() {
         onWhen = new WhenDefinition();
-        ExpressionClause<ExceptionDefinition> clause = new ExpressionClause<ExceptionDefinition>(this);
+        ExpressionClause<OnExceptionDefinition> clause = new ExpressionClause<OnExceptionDefinition>(this);
         onWhen.setExpression(clause);
         return clause;
     }
@@ -213,7 +213,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param until predicate that determines when to stop retrying
      * @return the builder
      */
-    public ExceptionDefinition retryUntil(Predicate until) {
+    public OnExceptionDefinition retryUntil(Predicate until) {
         setRetryUntilPolicy(until);
         return this;
     }
@@ -224,7 +224,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param until expression that determines when to stop retrying
      * @return the builder
      */
-    public ExceptionDefinition retryUntil(Expression until) {
+    public OnExceptionDefinition retryUntil(Expression until) {
         setRetryUntilPolicy(toPredicate(until));
         return this;
     }
@@ -235,7 +235,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param backOffMultiplier  the back off multiplier
      * @return the builder
      */
-    public ExceptionDefinition backOffMultiplier(double backOffMultiplier) {
+    public OnExceptionDefinition backOffMultiplier(double backOffMultiplier) {
         getOrCreateRedeliveryPolicy().backOffMultiplier(backOffMultiplier);
         return this;
     }
@@ -246,7 +246,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param collisionAvoidanceFactor  the factor
      * @return the builder
      */
-    public ExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
+    public OnExceptionDefinition collisionAvoidanceFactor(double collisionAvoidanceFactor) {
         getOrCreateRedeliveryPolicy().collisionAvoidanceFactor(collisionAvoidanceFactor);
         return this;
     }
@@ -257,7 +257,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param collisionAvoidancePercent  the percentage
      * @return the builder
      */
-    public ExceptionDefinition collisionAvoidancePercent(short collisionAvoidancePercent) {
+    public OnExceptionDefinition collisionAvoidancePercent(short collisionAvoidancePercent) {
         getOrCreateRedeliveryPolicy().collisionAvoidancePercent(collisionAvoidancePercent);
         return this;
     }
@@ -268,7 +268,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param delay  delay in millis
      * @return the builder
      */
-    public ExceptionDefinition redeliveryDelay(long delay) {
+    public OnExceptionDefinition redeliveryDelay(long delay) {
         getOrCreateRedeliveryPolicy().redeliveryDelay(delay);
         return this;
     }
@@ -279,7 +279,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param retriesExhaustedLogLevel  the logging level
      * @return the builder
      */
-    public ExceptionDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+    public OnExceptionDefinition retriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
         getOrCreateRedeliveryPolicy().retriesExhaustedLogLevel(retriesExhaustedLogLevel);
         return this;
     }
@@ -290,7 +290,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param retryAttemptedLogLevel  the logging level
      * @return the builder
      */
-    public ExceptionDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+    public OnExceptionDefinition retryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
         getOrCreateRedeliveryPolicy().retryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
@@ -306,7 +306,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param maximumRedeliveries  the value
      * @return the builder
      */
-    public ExceptionDefinition maximumRedeliveries(int maximumRedeliveries) {
+    public OnExceptionDefinition maximumRedeliveries(int maximumRedeliveries) {
         getOrCreateRedeliveryPolicy().maximumRedeliveries(maximumRedeliveries);
         return this;
     }
@@ -316,7 +316,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      *
      * @return the builder
      */
-    public ExceptionDefinition useCollisionAvoidance() {
+    public OnExceptionDefinition useCollisionAvoidance() {
         getOrCreateRedeliveryPolicy().useCollisionAvoidance();
         return this;
     }
@@ -326,7 +326,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      *
      * @return the builder
      */
-    public ExceptionDefinition useExponentialBackOff() {
+    public OnExceptionDefinition useExponentialBackOff() {
         getOrCreateRedeliveryPolicy().useExponentialBackOff();
         return this;
     }
@@ -337,7 +337,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param maximumRedeliveryDelay  the delay in millis
      * @return the builder
      */
-    public ExceptionDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
+    public OnExceptionDefinition maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getOrCreateRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
     }
@@ -347,7 +347,7 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
      * <p/>
      * Can be used to change the {@link org.apache.camel.Exchange} <b>before</b> its being redelivered.
      */
-    public ExceptionDefinition onRedelivery(Processor processor) {
+    public OnExceptionDefinition onRedelivery(Processor processor) {
         setOnRedelivery(processor);
         return this;
     }
@@ -397,11 +397,11 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
         return handledPolicy;
     }
 
-    public void setHandled(ExpressionSubElementType handled) {
+    public void setHandled(ExpressionSubElementDefinition handled) {
         this.handled = handled;
     }
 
-    public ExpressionSubElementType getHandled() {
+    public ExpressionSubElementDefinition getHandled() {
         return handled;
     }    
 
@@ -417,11 +417,11 @@ public class ExceptionDefinition extends ProcessorDefinition<ProcessorDefinition
         this.onWhen = onWhen;
     }
 
-    public ExpressionSubElementType getRetryUntil() {
+    public ExpressionSubElementDefinition getRetryUntil() {
         return retryUntil;
     }
 
-    public void setRetryUntil(ExpressionSubElementType retryUntil) {
+    public void setRetryUntil(ExpressionSubElementDefinition retryUntil) {
         this.retryUntil = retryUntil;
     }
 

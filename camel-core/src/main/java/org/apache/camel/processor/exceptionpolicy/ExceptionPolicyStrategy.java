@@ -19,10 +19,10 @@ package org.apache.camel.processor.exceptionpolicy;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 
 /**
- * A strategy to determine which {@link org.apache.camel.model.ExceptionDefinition} should handle the thrown
+ * A strategy to determine which {@link org.apache.camel.model.OnExceptionDefinition} should handle the thrown
  * exception.
  *
  * @see org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy DefaultExceptionPolicy
@@ -30,14 +30,14 @@ import org.apache.camel.model.ExceptionDefinition;
 public interface ExceptionPolicyStrategy {
 
     /**
-     * Resolves the {@link org.apache.camel.model.ExceptionDefinition} that should handle the thrown exception.
+     * Resolves the {@link org.apache.camel.model.OnExceptionDefinition} that should handle the thrown exception.
      *
      * @param exceptionPolicices the configured exception policies to resolve from
      * @param exchange           the exchange
      * @param exception          the exception that was thrown
      * @return the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
-    ExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionDefinition> exceptionPolicices, Exchange exchange,
+    OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices, Exchange exchange,
                                             Throwable exception);
 
 }

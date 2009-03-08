@@ -33,7 +33,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnricherDefinition extends OutputDefinition<EnricherDefinition> {
+public class EnrichDefinition extends OutputDefinition<EnrichDefinition> {
 
     @XmlAttribute(name = "uri", required = true)
     private String resourceUri;
@@ -44,15 +44,15 @@ public class EnricherDefinition extends OutputDefinition<EnricherDefinition> {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     
-    public EnricherDefinition() {
+    public EnrichDefinition() {
         this(null, null);
     }
     
-    public EnricherDefinition(String resourceUri) {
+    public EnrichDefinition(String resourceUri) {
         this(null, resourceUri);
     }
     
-    public EnricherDefinition(AggregationStrategy aggregationStrategy, String resourceUri) {
+    public EnrichDefinition(AggregationStrategy aggregationStrategy, String resourceUri) {
         this.aggregationStrategy = aggregationStrategy;
         this.resourceUri = resourceUri;
     }

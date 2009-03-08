@@ -25,7 +25,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.SplitterDefinition;
+import org.apache.camel.model.SplitDefinition;
 
 public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport {
 
@@ -38,8 +38,8 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         assertTrue(threadPoolExecutor.getMaximumPoolSize() == customThreadPoolExecutor.getMaximumPoolSize());
     }
     
-    protected SplitterDefinition getSplitter() {
-        SplitterDefinition result = null;
+    protected SplitDefinition getSplitter() {
+        SplitDefinition result = null;
         List<RouteDefinition> routeDefinitions = context.getRouteDefinitions();          
         for (RouteDefinition routeType : routeDefinitions) {
             result = firstSplitterType(routeType.getOutputs());
@@ -50,12 +50,12 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
         return result;
     }    
     
-    protected SplitterDefinition firstSplitterType(List<ProcessorDefinition> outputs) {
-        SplitterDefinition result = null;
+    protected SplitDefinition firstSplitterType(List<ProcessorDefinition> outputs) {
+        SplitDefinition result = null;
         
         for (ProcessorDefinition processorType : outputs) {
-            if (processorType instanceof SplitterDefinition) {
-                result = (SplitterDefinition) processorType;
+            if (processorType instanceof SplitDefinition) {
+                result = (SplitDefinition) processorType;
             } else {
                 result = firstSplitterType(processorType.getOutputs());
             }

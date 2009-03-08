@@ -52,7 +52,7 @@ import org.apache.commons.logging.LogFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
     private static final transient Log LOG = LogFactory.getLog(RouteDefinition.class);
-    private List<InterceptorDefinition> interceptors = new ArrayList<InterceptorDefinition>();
+    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;
@@ -218,12 +218,12 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     // Properties
     // -----------------------------------------------------------------------
 
-    public List<InterceptorDefinition> getInterceptors() {
+    public List<AbstractInterceptorDefinition> getInterceptors() {
         return interceptors;
     }
 
     @XmlTransient
-    public void setInterceptors(List<InterceptorDefinition> interceptors) {
+    public void setInterceptors(List<AbstractInterceptorDefinition> interceptors) {
         this.interceptors = interceptors;
     }
 
@@ -321,14 +321,14 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
             output.setErrorHandlerBuilder(getErrorHandlerBuilder());
         }
 
-        List<InterceptorDefinition> interceptors = getInterceptors();
-        for (InterceptorDefinition interceptor : interceptors) {
+        List<AbstractInterceptorDefinition> interceptors = getInterceptors();
+        for (AbstractInterceptorDefinition interceptor : interceptors) {
             output.addInterceptor(interceptor);
         }
     }
 
     @Override
-    public void addInterceptor(InterceptorDefinition interceptor) {
+    public void addInterceptor(AbstractInterceptorDefinition interceptor) {
         getInterceptors().add(interceptor);
     }
 

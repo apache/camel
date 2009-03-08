@@ -27,7 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -178,7 +178,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param exception exception to catch
      * @return the builder
      */
-    public ExceptionDefinition onException(Class exception) {
+    public OnExceptionDefinition onException(Class exception) {
         return routeCollection.onException(exception);
     }
 
@@ -189,8 +189,8 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param exceptions list of exceptions to catch
      * @return the builder
      */
-    public ExceptionDefinition onException(Class... exceptions) {
-        ExceptionDefinition last = null;
+    public OnExceptionDefinition onException(Class... exceptions) {
+        OnExceptionDefinition last = null;
         for (Class ex : exceptions) {
             last = last == null ? onException(ex) : last.onException(ex);
         }

@@ -36,7 +36,7 @@ import org.apache.camel.spi.RouteContext;
  */
 @XmlRootElement(name = "throttle")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ThrottlerDefinition extends ProcessorDefinition<ProcessorDefinition> {
+public class ThrottleDefinition extends ProcessorDefinition<ProcessorDefinition> {
     @XmlAttribute
     private Long maximumRequestsPerPeriod;
     @XmlAttribute
@@ -44,10 +44,10 @@ public class ThrottlerDefinition extends ProcessorDefinition<ProcessorDefinition
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
 
-    public ThrottlerDefinition() {
+    public ThrottleDefinition() {
     }
 
-    public ThrottlerDefinition(long maximumRequestsPerPeriod) {
+    public ThrottleDefinition(long maximumRequestsPerPeriod) {
         this.maximumRequestsPerPeriod = maximumRequestsPerPeriod;
     }
 
@@ -82,7 +82,7 @@ public class ThrottlerDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param timePeriodMillis  period in millis
      * @return the builder
      */
-    public ThrottlerDefinition timePeriodMillis(long timePeriodMillis) {
+    public ThrottleDefinition timePeriodMillis(long timePeriodMillis) {
         setTimePeriodMillis(timePeriodMillis);
         return this;
     }
@@ -93,7 +93,7 @@ public class ThrottlerDefinition extends ProcessorDefinition<ProcessorDefinition
      * @param maximumRequestsPerPeriod  the maximum request count number per time period
      * @return the builder
      */
-    public ThrottlerDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
+    public ThrottleDefinition maximumRequestsPerPeriod(Long maximumRequestsPerPeriod) {
         setMaximumRequestsPerPeriod(maximumRequestsPerPeriod);
         return this;
     }

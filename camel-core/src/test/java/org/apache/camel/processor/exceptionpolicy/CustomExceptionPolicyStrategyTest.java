@@ -25,7 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.ExceptionDefinition;
+import org.apache.camel.model.OnExceptionDefinition;
 
 /**
  * Unit test with a user plugged in exception policy to use instead of default.
@@ -41,7 +41,7 @@ public class CustomExceptionPolicyStrategyTest extends ContextTestSupport {
     // START SNIPPET e2
     public static class MyPolicy implements ExceptionPolicyStrategy {
 
-        public ExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, ExceptionDefinition> exceptionPolicices,
+        public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
                                                 Exchange exchange,
                                                 Throwable exception) {
             // This is just an example that always forces the exception type configured
