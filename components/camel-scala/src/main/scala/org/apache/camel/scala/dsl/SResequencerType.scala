@@ -20,7 +20,7 @@ import org.apache.camel.model.ResequenceDefinition
 import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SResequencerType(val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ResequenceDefinition] {
+class SResequencerType(val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ResequenceDefinition] {
   
   val unwrap = target
   

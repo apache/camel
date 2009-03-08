@@ -24,7 +24,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala wrapper for Camel AggregateDefinition
  */
-class SAggregatorType(val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[AggregateDefinition] {
+class SAggregatorType(val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[AggregateDefinition] {
   
   val unwrap = target
   

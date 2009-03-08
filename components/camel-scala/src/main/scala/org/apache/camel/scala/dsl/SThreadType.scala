@@ -22,7 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's ThreadDefinition
  */
-class SThreadType(val target: ThreadDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ThreadDefinition] {
+class SThreadType(val target: ThreadDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ThreadDefinition] {
  
   val unwrap = target
   

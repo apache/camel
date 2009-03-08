@@ -22,7 +22,7 @@ import org.apache.camel.scala.dsl.builder.RouteBuilder
 /**
  * Scala enrichment for Camel's ThrottleDefinition
  */
-class SThrottlerType(val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ThrottleDefinition] {
+class SThrottlerType(val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ThrottleDefinition] {
  
   val unwrap = target
   

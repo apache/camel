@@ -71,7 +71,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
-  def splitter(expression: Exchange => Any) = stack.top.splitter(expression)
+  def split(expression: Exchange => Any) = stack.top.split(expression)
   def otherwise = stack.top.otherwise
   def marshal(format: DataFormatDefinition) = stack.top.marshal(format)
   def multicast = stack.top.multicast

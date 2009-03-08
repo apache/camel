@@ -42,7 +42,7 @@ trait DSL {
   def resequence(expression: Exchange => Any) : SResequencerType
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
-  def splitter(expression: Exchange => Any) : SSplitterType
+  def split(expression: Exchange => Any) : SSplitterType
   def thread(number: Int) : SThreadType
   def throttle(frequency: Frequency) : SThrottlerType
   def to(uris: String*) : DSL

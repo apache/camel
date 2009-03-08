@@ -25,7 +25,7 @@ import org.apache.camel.model.dataformat.DataFormatDefinition
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-abstract class SAbstractType extends DSL {
+abstract class SAbstractDefinition extends DSL {
   
   type RawProcessorDefinition = ProcessorDefinition[P] forSome {type P}
   
@@ -55,7 +55,7 @@ abstract class SAbstractType extends DSL {
   
   def attempt : STryType = new STryType(target.tryBlock)
   
-  def splitter(expression: Exchange => Any) = 
+  def split(expression: Exchange => Any) = 
     new SSplitterType(target.split(expression))
     
   def recipients(expression: Exchange => Any) = 
