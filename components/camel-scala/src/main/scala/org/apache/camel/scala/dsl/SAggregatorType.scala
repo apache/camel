@@ -16,15 +16,15 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.AggregatorDefinition
+import org.apache.camel.model.AggregateDefinition
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala wrapper for Camel AggregatorDefinition
+ * Scala wrapper for Camel AggregateDefinition
  */
-class SAggregatorType(val target: AggregatorDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[AggregatorDefinition] {
+class SAggregatorType(val target: AggregateDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[AggregateDefinition] {
   
   val unwrap = target
   

@@ -16,13 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ExceptionDefinition
+import org.apache.camel.model.OnExceptionDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's ExceptionDefinition
+ * Scala enrichment for Camel's OnExceptionDefinition
  */
-class SExceptionType(val target: ExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ExceptionDefinition] {
+class SExceptionType(val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[OnExceptionDefinition] {
   
   val unwrap = target
    
