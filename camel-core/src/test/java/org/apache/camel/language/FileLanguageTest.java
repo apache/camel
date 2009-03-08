@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
@@ -119,8 +118,9 @@ public class FileLanguageTest extends LanguageTestSupport {
         GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);
-        GenericFileExchange<File> answer = new GenericFileExchange<File>(endpoint, ExchangePattern.InOut);
-        answer.setGenericFile(gf);
+
+        GenericFileExchange<File> answer = endpoint.createExchange(gf);
+        endpoint.configureMessage(gf, answer.getIn());
 
         Calendar cal = GregorianCalendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
