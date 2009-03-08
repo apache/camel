@@ -32,6 +32,7 @@
 
   <properties>
     <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
+    <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
   </properties>
 
   <dependencies>
@@ -44,6 +45,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
       <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
     </dependency>
   </dependencies>
 

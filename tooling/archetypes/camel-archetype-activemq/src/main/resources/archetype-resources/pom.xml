@@ -34,6 +34,7 @@
     <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
     <activemq-version>$ACTIVEMQ_VERSION_REPLACEME$</activemq-version>
     <xbean-spring-version>$XBEAN_VERSION_REPLACEME$</xbean-spring-version>
+    <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
   </properties>
 
   <dependencies>
@@ -67,6 +68,11 @@
       <artifactId>xbean-spring</artifactId>
       <version>${xbean-spring-version}</version>
     </dependency>    
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
+    </dependency>
   </dependencies>
 
   <build>
