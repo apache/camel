@@ -18,8 +18,6 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 import java.io.Serializable;
-import java.util.Stack;
-import java.util.Iterator;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -82,38 +80,6 @@ public class GenericFile<T> implements Serializable {
         return File.separator;
     }
 
-    public static String normalizePath(String path) {
-        return path;
-
-        // TODO: not needed
-/*        // only normalize path if it contains .. as we want to avoid: path/../sub/../sub2 as this can leads to trouble
-        if (path.indexOf("..") == -1) {
-            return path;
-        }
-
-        Stack<String> stack = new Stack<String>();
-        String[] parts = path.split(File.separator);
-        for (String part : parts) {
-            if (part.equals("..") && !stack.isEmpty()) {
-                // only pop if there is a previous path
-                stack.pop();
-            } else {
-                stack.push(part);
-            }
-        }
-
-        // build path based on stack
-        StringBuilder sb = new StringBuilder();
-        for (Iterator it = stack.iterator(); it.hasNext();) {
-            sb.append(it.next());
-            if (it.hasNext()) {
-                sb.append(File.separator);
-            }
-        }
-
-        return sb.toString();*/
-    }
-
     /**
      * Changes the name of this remote file. This method alters the absolute and
      * relative names as well.
@@ -173,8 +139,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setRelativeFilePath(String relativeFilePath) {
-        String path = normalizePath(relativeFilePath);
-        this.relativeFilePath = needToNormalize() ? FileUtil.normalizePath(path) : path;
+        this.relativeFilePath = needToNormalize() ? FileUtil.normalizePath(relativeFilePath) : relativeFilePath;
     }
 
     public String getFileName() {
@@ -241,8 +206,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setAbsoluteFilePath(String absoluteFilePath) {
-        String path = normalizePath(absoluteFilePath);
-        this.absoluteFilePath = needToNormalize() ? FileUtil.normalizePath(path) : path;
+        this.absoluteFilePath = needToNormalize() ? FileUtil.normalizePath(absoluteFilePath) : absoluteFilePath;
     }
 
     public String getAbsoluteFilePath() {
