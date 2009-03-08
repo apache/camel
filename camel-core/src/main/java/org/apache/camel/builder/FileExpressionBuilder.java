@@ -15,24 +15,23 @@
  * limitations under the License.
  */
 
-package org.apache.camel.language.simple;
+package org.apache.camel.builder;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.language.constant.ConstantLanguage;
-import org.apache.camel.util.FileUtil;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a> based
  * on files.
  * <p/>
- * This expression expects the headers from the {@link FileLanguage} on the <b>IN</b> message.
+ * This expression expects the headers from the {@link org.apache.camel.language.simple.FileLanguage} on the <b>IN</b> message.
  *
  * @see org.apache.camel.language.simple.FileLanguage
  */

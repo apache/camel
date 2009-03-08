@@ -17,6 +17,7 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
+import org.apache.camel.builder.FileExpressionBuilder;
 import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.util.ObjectHelper;
 
