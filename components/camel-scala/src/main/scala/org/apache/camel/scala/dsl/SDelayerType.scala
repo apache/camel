@@ -16,13 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.DelayerDefinition
+import org.apache.camel.model.DelayDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's DelayerDefinition
+ * Scala enrichment for Camel's DelayDefinition
  */
-class SDelayerType(val target: DelayerDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[DelayerDefinition] {
+class SDelayerType(val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[DelayDefinition] {
  
   val unwrap = target
 

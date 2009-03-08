@@ -16,13 +16,13 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.ThrottlerDefinition
+import org.apache.camel.model.ThrottleDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's ThrottlerDefinition
+ * Scala enrichment for Camel's ThrottleDefinition
  */
-class SThrottlerType(val target: ThrottlerDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ThrottlerDefinition] {
+class SThrottlerType(val target: ThrottleDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[ThrottleDefinition] {
  
   val unwrap = target
   

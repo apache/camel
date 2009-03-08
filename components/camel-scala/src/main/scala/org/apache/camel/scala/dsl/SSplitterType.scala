@@ -16,10 +16,10 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.SplitterDefinition
+import org.apache.camel.model.SplitDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SSplitterType(val target: SplitterDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[SplitterDefinition] {
+class SSplitterType(val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractType with Wrapper[SplitDefinition] {
   
   val unwrap = target
 
