@@ -427,7 +427,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         } else {
             newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
         }
-        if (e != null) {
+        if (data.currentRedeliveryPolicy.isLogStackTrace() && e != null) {
             logger.log(message, e, newLogLevel);
         } else {
             logger.log(message, newLogLevel);

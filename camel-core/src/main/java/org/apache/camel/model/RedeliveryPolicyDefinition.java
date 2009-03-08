@@ -54,6 +54,8 @@ public class RedeliveryPolicyDefinition {
     private LoggingLevel retriesExhaustedLogLevel;
     @XmlAttribute
     private LoggingLevel retryAttemptedLogLevel;
+    @XmlAttribute
+    private Boolean logStackTrace;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (ref != null) {
@@ -90,6 +92,9 @@ public class RedeliveryPolicyDefinition {
         }
         if (maximumRedeliveryDelay != null) {
             answer.setMaximumRedeliveryDelay(maximumRedeliveryDelay);
+        }
+        if (logStackTrace != null) {
+            answer.setLogStackTrace(logStackTrace);
         }
         return answer;
     }
@@ -165,6 +170,19 @@ public class RedeliveryPolicyDefinition {
         setRetryAttemptedLogLevel(retryAttemptedLogLevel);
         return this;
     }
+
+    /**
+     * Sets wheter stack traces should be logged, can be used to reduce verbose.
+     *
+     * @param logStackTrace  wheter stack traces should be logged or not
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logStackTrace(boolean logStackTrace) {
+        setLogStackTrace(logStackTrace);
+        return this;
+    }
+
+
         
     /**
      * Sets the maximum redeliveries
@@ -305,5 +323,13 @@ public class RedeliveryPolicyDefinition {
 
     public void setRef(String ref) {
         this.ref = ref;
+    }
+
+    public Boolean getLogStackTrace() {
+        return logStackTrace;
+    }
+
+    public void setLogStackTrace(Boolean logStackTrace) {
+        this.logStackTrace = logStackTrace;
     }
 }

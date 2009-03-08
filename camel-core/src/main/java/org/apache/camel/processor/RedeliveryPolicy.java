@@ -44,6 +44,7 @@ import org.apache.commons.logging.LogFactory;
  *   <li>useCollisionAvoidance = false</li>
  *   <li>retriesExhaustedLogLevel = LoggingLevel.ERROR</li>
  *   <li>retryAttemptedLogLevel = LoggingLevel.ERROR</li>
+ *   <li>logStrackTrace = true</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -81,6 +82,7 @@ public class RedeliveryPolicy extends DelayPolicy {
     protected boolean useCollisionAvoidance;
     protected LoggingLevel retriesExhaustedLogLevel = LoggingLevel.ERROR;
     protected LoggingLevel retryAttemptedLogLevel = LoggingLevel.ERROR;
+    protected boolean logStackTrace = true;
     protected String delayPattern;
 
     public RedeliveryPolicy() {
@@ -93,6 +95,7 @@ public class RedeliveryPolicy extends DelayPolicy {
             + ", maximumRedeliveryDelay=" + maximumRedeliveryDelay
             + ", retriesExhaustedLogLevel=" + retriesExhaustedLogLevel
             + ", retryAttemptedLogLevel=" + retryAttemptedLogLevel
+            + ", logTraceStace=" + logStackTrace
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -282,6 +285,14 @@ public class RedeliveryPolicy extends DelayPolicy {
     }    
     
     /**
+     * Sets the logging level to use for log messages when retries are attempted.
+     */
+    public RedeliveryPolicy logStackTrace(boolean logStackTrace) {
+        setLogStackTrace(logStackTrace);
+        return this;
+    }
+
+    /**
      * Sets the delay pattern with delay intervals.
      */
     public RedeliveryPolicy delayPattern(String delayPattern) {
@@ -413,5 +424,16 @@ public class RedeliveryPolicy extends DelayPolicy {
      */
     public void setDelayPattern(String delayPattern) {
         this.delayPattern = delayPattern;
+    }
+
+    public boolean isLogStackTrace() {
+        return logStackTrace;
+    }
+
+    /**
+     * Sets wheter stack traces should be logged or not
+     */
+    public void setLogStackTrace(boolean logStackTrace) {
+        this.logStackTrace = logStackTrace;
     }
 }
