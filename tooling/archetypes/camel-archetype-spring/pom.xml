@@ -46,10 +46,10 @@
             </goals>
             <configuration>
               <tasks>
-                <replace
-                  file="${project.build.directory}/classes/archetype-resources/pom.xml"
-                  token="$CAMEL_VERSION_REPLACEME$"
-                  value="${project.version}" casesensitive="true">
+                <replace casesensitive="true"
+                  file="${project.build.directory}/classes/archetype-resources/pom.xml">
+                  <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" />
+                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" /> 
                 </replace>
               </tasks>
             </configuration>

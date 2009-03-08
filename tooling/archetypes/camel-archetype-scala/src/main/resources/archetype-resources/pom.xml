@@ -34,6 +34,7 @@
     <camel-version>$CAMEL_VERSION_REPLACEME$</camel-version>
     <scala-version>$SCALA_VERSION_REPLACEME$</scala-version>
     <scala-plugin-version>$SCALA_PLUGIN_VERSION_REPLACEME$</scala-plugin-version>
+    <log4j-version>$LOG4J_VERSION_REPLACEME$</log4j-version>
   </properties>
 
   <build>
@@ -129,6 +130,11 @@
       <type>test-jar</type>
       <scope>test</scope>
       <version>${camel-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId> 
+      <artifactId>log4j</artifactId> 
+      <version>${log4j-version}</version> 
     </dependency>
   </dependencies>
 </project>
