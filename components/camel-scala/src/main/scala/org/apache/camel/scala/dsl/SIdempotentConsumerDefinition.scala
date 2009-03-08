@@ -16,14 +16,20 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.OnExceptionDefinition
+import org.apache.camel.model.IdempotentConsumerDefinition
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's OnExceptionDefinition
+ * Scala enrichment for Camel's IdempotentConsumerDefinition
  */
-class SExceptionType(val target: OnExceptionDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[OnExceptionDefinition] {
+class SIdempotentConsumerDefinition(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[IdempotentConsumerDefinition] {
   
   val unwrap = target
+  
+  def memory(size: Int) = { 
+    target.setMessageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(size))
+    this
+  }
    
 }

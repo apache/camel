@@ -16,19 +16,14 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.LoadBalanceDefinition
+import org.apache.camel.model.LoopDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's LoadBalanceDefinition
+ * Scala enrichment for Camel's LoopDefinition
  */
-class SLoadBalanceType(val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoadBalanceDefinition] {
+class SLoopDefinition(val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoopDefinition] {
  
   val unwrap = target
-  
-  def roundrobin = {
-    target.roundRobin
-    this;
-  }
   
 }

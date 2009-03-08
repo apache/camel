@@ -16,11 +16,19 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.SplitDefinition
+import org.apache.camel.model.ResequenceDefinition
+import org.apache.camel.model.config.BatchResequencerConfig
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SSplitterType(val target: SplitDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[SplitDefinition] {
+class SResequenceDefinition(val target: ResequenceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ResequenceDefinition] {
   
   val unwrap = target
+  
+  def batch(count: Int) = {
+    val config = new BatchResequencerConfig()
+    config.setBatchSize(count)
+    target.batch(config)
+    this
+  }
 
 }

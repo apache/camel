@@ -16,20 +16,21 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.IdempotentConsumerDefinition
-import org.apache.camel.processor.idempotent.MemoryIdempotentRepository
+import org.apache.camel.model.ChoiceDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-/**
- * Scala enrichment for Camel's IdempotentConsumerDefinition
- */
-class SIdempotentConsumerType(val target: IdempotentConsumerDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[IdempotentConsumerDefinition] {
+class SChoiceDefinition(val target: ChoiceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ChoiceDefinition] {
   
   val unwrap = target
   
-  def memory(size: Int) = { 
-    target.setMessageIdRepository(MemoryIdempotentRepository.memoryIdempotentRepository(size))
+  override def otherwise = {
+    target.otherwise
     this
   }
-   
+  
+  override def when(filter: Exchange => Boolean) = {
+    target.when(new ScalaPredicate(filter))
+    this
+  }
+
 }

@@ -16,13 +16,11 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.RouteDefinition
+import org.apache.camel.model.ProcessorDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
-class SRouteType(val target: RouteDefinition, val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[RouteDefinition] {
- 
-  val unwrap = target
+class SProcessorDefinition(val target: ProcessorDefinition[P] forSome {type P})(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[ProcessorDefinition[P] forSome {type P}] {
   
-  def ==>(block: => Unit) = apply(this, block)
+  val unwrap = target
 
 }

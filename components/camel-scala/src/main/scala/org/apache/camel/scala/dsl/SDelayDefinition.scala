@@ -16,14 +16,31 @@
  */
 package org.apache.camel.scala.dsl;
 
-import org.apache.camel.model.LoopDefinition
+import org.apache.camel.model.DelayDefinition
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Scala enrichment for Camel's LoopDefinition
+ * Scala enrichment for Camel's DelayDefinition
  */
-class SLoopType(val target: LoopDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[LoopDefinition] {
+class SDelayDefinition(val target: DelayDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[DelayDefinition] {
  
   val unwrap = target
+
+  def ms = this
+  def milliseconds = ms
+    
+  def sec = {
+    valueInMs *= 1000
+    this
+  }
+  def seconds = sec
   
+  def min = {
+    valueInMs *= (60 * 1000)
+    this
+  }
+  def minutes = min
+  
+  def valueInMs : Long = target.getDelayTime().asInstanceOf[Long]
+  def valueInMs_=(period: Long) = target.setDelayTime(period)
 }
