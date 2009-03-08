@@ -383,19 +383,15 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
 
-        // compute the name that was written
-        String name = file.isAbsolute() ? file.getAbsoluteFileName() : file.getRelativeFileName();
+        // compute name to set on header that should be relative to starting directory
+        String name = file.isAbsolute() ? file.getAbsoluteFilePath() : file.getRelativeFilePath();
 
         // skip leading endpoint configured directory
         if (name.startsWith(getConfiguration().getDirectory())) {
-            name = ObjectHelper.after(name, getConfiguration().getDirectory());
+            name = ObjectHelper.after(name, getConfiguration().getDirectory() + File.separator);
         }
 
-        if (name.startsWith(File.separator) || name.startsWith("/")) {
-            // skip trailing /
-            name = name.substring(1);
-        }
-
+        // adjust filename
         message.setHeader(Exchange.FILE_NAME, name);
     }
 

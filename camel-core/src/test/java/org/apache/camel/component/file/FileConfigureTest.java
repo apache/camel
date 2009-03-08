@@ -21,10 +21,8 @@ import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.ResolveEndpointFailedException;
-import org.apache.camel.impl.DefaultMessage;
 
 /**
  * @version $Revision$
@@ -40,17 +38,17 @@ public class FileConfigureTest extends ContextTestSupport {
     };
 
     public void testUriConfigurations() throws Exception {
-        assertFileEndpoint("file://target/foo/bar", EXPECT_PATH);
-        assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH);
-        assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH);
-        assertFileEndpoint("file:target/foo/bar", EXPECT_PATH);
-        assertFileEndpoint("file://target/foo/bar/", EXPECT_PATH);
-        assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH);
-        assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH);
-        assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH);
-        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH);
-        assertFileEndpoint("file:/", File.separator);
-        assertFileEndpoint("file:///", File.separator);
+        assertFileEndpoint("file://target/foo/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/foo/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/foo/bar?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/foo/bar", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/foo/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file://target/foo/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/foo/bar/?delete=true", EXPECT_PATH, false);
+        assertFileEndpoint("file:target/foo/bar/", EXPECT_PATH, false);
+        assertFileEndpoint("file:/target/foo/bar/", File.separator + EXPECT_PATH + File.separator + EXPECT_FILE, true);
+        assertFileEndpoint("file:/", File.separator, true);
+        assertFileEndpoint("file:///", File.separator, true);
     }
 
     public void testConsumerConfigurations() throws Exception {
@@ -76,19 +74,20 @@ public class FileConfigureTest extends ContextTestSupport {
         return endpoint.createConsumer(DUMMY_PROCESSOR);
     }
 
-    private void assertFileEndpoint(String endpointUri, String expectedPath) throws IOException {
+    private void assertFileEndpoint(String endpointUri, String expectedPath, boolean absolute) throws IOException {
         FileEndpoint endpoint = resolveMandatoryEndpoint(endpointUri, FileEndpoint.class);
         assertNotNull("Could not find endpoint: " + endpointUri, endpoint);
 
-        File file = endpoint.getFile();
-        String path = file.getPath();
-        assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
+        // TODO: absolute also
+        if (!absolute) {
+            File file = endpoint.getFile();
+            String path = file.getPath();
+            assertDirectoryEquals("For uri: " + endpointUri + " the file is not equal", expectedPath, path);
 
-        file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
-        GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file);
+            file = new File(expectedPath + (expectedPath.endsWith(File.separator) ? "" : File.separator) + EXPECT_FILE);
+            GenericFile<File> consumedFile = FileConsumer.asGenericFile(endpoint.getFile().getPath(), file);
 
-        Message message = new DefaultMessage();
-        endpoint.configureMessage(consumedFile, message);
-        assertEquals(EXPECT_FILE, message.getHeader(Exchange.FILE_NAME));
+            assertEquals(EXPECT_FILE, consumedFile.getRelativeFilePath());
+        }
     }
 }

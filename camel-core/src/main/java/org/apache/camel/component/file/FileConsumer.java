@@ -17,7 +17,6 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.Processor;
@@ -103,12 +102,13 @@ public class FileConsumer extends GenericFileConsumer<File> {
         answer.setBinding(new FileBinding());
         answer.setFile(file);
         answer.setFileLength(file.length());
-        answer.setFileName(file.getName());
+        answer.setFileNameOnly(file.getName());
         answer.setAbsolute(file.isAbsolute());
-        answer.setAbsoluteFileName(file.getAbsolutePath());
+        answer.setAbsoluteFilePath(file.getAbsolutePath());
         answer.setLastModified(file.lastModified());
         if (file.isAbsolute()) {
-            answer.setRelativeFileName(null);
+            // use absolute path as relative
+            answer.setRelativeFilePath(file.getAbsolutePath());
         } else {
             File path;
             if (file.getPath().startsWith(endpointPath)) {
@@ -119,11 +119,15 @@ public class FileConsumer extends GenericFileConsumer<File> {
             }
 
             if (path.getParent() != null) {
-                answer.setRelativeFileName(path.getParent() + File.separator + file.getName());
+                answer.setRelativeFilePath(path.getParent() + File.separator + file.getName());
             } else {
-                answer.setRelativeFileName(path.getName());
+                answer.setRelativeFilePath(path.getName());
             }
         }
+
+        // name is the relative path as we want to preserve leading paths relative to the endpoint path
+        answer.setFileName(answer.getRelativeFilePath());
+        
         // use file as body as we have converters if needed as stream
         answer.setBody(file);
         return answer;

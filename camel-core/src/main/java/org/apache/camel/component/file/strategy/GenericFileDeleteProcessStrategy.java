@@ -29,7 +29,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
         // must invoke super
         super.commit(operations, endpoint, exchange, file);
 
-        boolean deleted = operations.deleteFile(file.getAbsoluteFileName());
+        boolean deleted = operations.deleteFile(file.getAbsoluteFilePath());
         if (!deleted) {
             throw new GenericFileOperationFailedException("Cannot delete file: " + file);
         }

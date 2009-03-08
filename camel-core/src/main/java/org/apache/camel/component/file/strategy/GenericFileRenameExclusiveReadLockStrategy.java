@@ -60,13 +60,13 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
                 }
             }
             
-            exclusive = operations.renameFile(file.getAbsoluteFileName(), newFile.getAbsoluteFileName());
+            exclusive = operations.renameFile(file.getAbsoluteFilePath(), newFile.getAbsoluteFilePath());
             if (exclusive) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Acquired exclusive read lock to file: " + file);
                 }
                 // rename it back so we can read it
-                operations.renameFile(newFile.getAbsoluteFileName(), file.getAbsoluteFileName());
+                operations.renameFile(newFile.getAbsoluteFilePath(), file.getAbsoluteFilePath());
             } else {
                 boolean interrupted = sleep();
                 if (interrupted) {

@@ -104,6 +104,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileName(file.getFilename());
+        answer.setFileNameOnly(file.getFilename());
         answer.setFileLength(file.getAttrs().getSize());
         answer.setLastModified(file.getAttrs().getMTime() * 1000L);
         answer.setHostname(((RemoteFileConfiguration) endpoint.getConfiguration()).getHost());
@@ -113,7 +114,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         // create a pseudo absolute name
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getFilename();
-        answer.setAbsoluteFileName(absoluteFileName);
+        answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
         String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
@@ -121,7 +122,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             // skip trailing /
             relativePath = relativePath.substring(1);
         }
-        answer.setRelativeFileName(relativePath);
+        answer.setRelativeFilePath(relativePath);
 
         return answer;
     }

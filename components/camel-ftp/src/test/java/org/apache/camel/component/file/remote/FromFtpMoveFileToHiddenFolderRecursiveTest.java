@@ -27,7 +27,7 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "?password=admin&recursive=true&binary=false"
-                + "&move=.done/${file:name}&initialDelay=3000&delay=5000";
+                + "&move=${file:parent}/.done/${file:onlyname}&initialDelay=3000&delay=5000";
     }
 
     @Override
@@ -47,8 +47,8 @@ public class FromFtpMoveFileToHiddenFolderRecursiveTest extends FtpServerTestSup
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
         mock.expectedFileExists(FTP_ROOT_DIR + ".done/hello.txt");
-        mock.expectedFileExists(FTP_ROOT_DIR + ".done/bye/bye.txt");
-        mock.expectedFileExists(FTP_ROOT_DIR + ".done/goodday/goodday.txt");
+        mock.expectedFileExists(FTP_ROOT_DIR + "bye/.done/bye.txt");
+        mock.expectedFileExists(FTP_ROOT_DIR + "goodday/.done/goodday.txt");
 
         mock.assertIsSatisfied();
     }

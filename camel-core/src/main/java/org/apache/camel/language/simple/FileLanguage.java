@@ -25,21 +25,28 @@ import org.apache.camel.util.ObjectHelper;
  *
  * Examples of supported file expressions are:
  * <ul>
- * <li><tt>file:name</tt> to access the file name</li>
- * <li><tt>file:name.noext</tt> to access the file name with no extension</li>
- * <li><tt>file:name.ext</tt> to access the file name extension</li>
- * <li><tt>file:parent</tt> to access the parent file name</li>
- * <li><tt>file:path</tt> to access the file path name</li>
- * <li><tt>file:absolute</tt> is the file regarded as absolute or relative</li>
- * <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
- * <li><tt>file:length</tt> to access the file length as a Long type</li>
- * <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
- * <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
+ *   <li><tt>file:name</tt> to access the file name (is relative, see note below))</li>
+ *   <li><tt>file:name.noext</tt> to access the file name with no extension</li>
+ *   <li><tt>file:ext</tt> to access the file extension</li>
+ *   <li><tt>file:onlyname</tt> to access the file name (no paths)</li>
+ *   <li><tt>file:onlyname.noext</tt> to access the file name (no paths) with no extension </li>
+ *   <li><tt>file:parent</tt> to access the parent file name</li>
+ *   <li><tt>file:path</tt> to access the file path name</li>
+ *   <li><tt>file:absolute</tt> is the file regarded as absolute or relative</li>
+ *   <li><tt>file:absolute.path</tt> to access the absolute file path name</li>
+ *   <li><tt>file:length</tt> to access the file length as a Long type</li>
+ *   <li><tt>file:modified</tt> to access the file last modified as a Date type</li>
+ *   <li><tt>date:&lt;command&gt;:&lt;pattern&gt;</tt> for date formatting using the {@link java.text.SimpleDateFormat} patterns.
  *     Additional Supported commands are: <tt>file</tt> for the last modified timestamp of the file.
  *     All the commands from {@link SimpleLanguage} is also avaiable.
- * </li>
+ *   </li>
  * </ul>
- * All the simple expression is also available so you can eg use <tt>${in.header.foo}</tt> to access the foo header.
+ * The <b>relative</b> file is the filename with the starting directory clipped, as opposed to <b>path</b> that will
+ * return the full path including the starting directory.
+ * <br/>
+ * The <b>only</b> file is the filename only with all paths clipped.
+ * <br/>
+  * All the simple expression is also available so you can eg use <tt>${in.header.foo}</tt> to access the foo header.
  *
  * @see org.apache.camel.language.simple.SimpleLanguage
  * @see org.apache.camel.language.bean.BeanLanguage
@@ -58,10 +65,14 @@ public class FileLanguage extends SimpleLanguageSupport {
         if (remainder != null) {
             if (ObjectHelper.equal(remainder, "name")) {
                 return FileExpressionBuilder.fileNameExpression();
-            } else if (ObjectHelper.equal(remainder, "name.ext")) {
-                return FileExpressionBuilder.fileNameExtensionExpression();
             } else if (ObjectHelper.equal(remainder, "name.noext")) {
                 return FileExpressionBuilder.fileNameNoExtensionExpression();
+            } else if (ObjectHelper.equal(remainder, "onlyname")) {
+                return FileExpressionBuilder.fileOnlyNameExpression();
+            } else if (ObjectHelper.equal(remainder, "onlyname.noext")) {
+                return FileExpressionBuilder.fileOnlyNameNoExtensionExpression();
+            } else if (ObjectHelper.equal(remainder, "ext")) {
+                return FileExpressionBuilder.fileExtensionExpression();
             } else if (ObjectHelper.equal(remainder, "parent")) {
                 return FileExpressionBuilder.fileParentExpression();
             } else if (ObjectHelper.equal(remainder, "path")) {

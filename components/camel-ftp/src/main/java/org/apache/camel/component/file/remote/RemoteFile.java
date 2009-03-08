@@ -48,8 +48,8 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
     public RemoteFile<T> copyFrom(RemoteFile<T> source) {
         RemoteFile<T> result = (RemoteFile<T>) source.clone();
         result.setAbsolute(source.isAbsolute());
-        result.setAbsoluteFileName(source.getAbsoluteFileName());
-        result.setRelativeFileName(source.getRelativeFileName());
+        result.setAbsoluteFilePath(source.getAbsoluteFilePath());
+        result.setRelativeFilePath(source.getRelativeFilePath());
         result.setFileName(source.getFileName());
         result.setFileLength(source.getFileLength());
         result.setLastModified(source.getLastModified());

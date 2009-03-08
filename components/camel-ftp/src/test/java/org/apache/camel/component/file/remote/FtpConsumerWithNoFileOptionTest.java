@@ -50,8 +50,8 @@ public class FtpConsumerWithNoFileOptionTest extends FtpServerTestSupport {
 
         RemoteFileExchange exchange = (RemoteFileExchange) mock.getExchanges().get(0);
         RemoteFile file = (RemoteFile) exchange.getGenericFile();
-        assertEquals("hello.txt", file.getAbsoluteFileName());
-        assertEquals("hello.txt", file.getRelativeFileName());
+        assertEquals("hello.txt", file.getAbsoluteFilePath());
+        assertEquals("hello.txt", file.getRelativeFilePath());
         assertEquals("hello.txt", file.getFileName());
     }
 
