@@ -24,10 +24,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for consuming multiple directories.
  */
-public class FileConsumeMoveMultipleDirectoriesTest extends ContextTestSupport {
+public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
 
     private String fileUrl = "file://target/multidir/?recursive=true&initialDelay=2000&delay=5000"
-            + "&exclude=.*old&move=done/${file:name}.old";
+            + "&move=.done/${file:name}.old";
 
     @Override
     protected void setUp() throws Exception {
@@ -42,11 +42,12 @@ public class FileConsumeMoveMultipleDirectoriesTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Bye World", "Hello World", "Godday World");
 
-        mock.expectedFileExists("target/multidir/done/bye.txt.old");
-        mock.expectedFileExists("target/multidir/done/sub/hello.txt.old");
-        mock.expectedFileExists("target/multidir/done/sub/sub2/godday.txt.old");
+        mock.expectedFileExists("target/multidir/.done/bye.txt.old");
+        mock.expectedFileExists("target/multidir/.done/sub/hello.txt.old");
+        mock.expectedFileExists("target/multidir/.done/sub/sub2/godday.txt.old");
 
         assertMockEndpointsSatisfied();
+
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

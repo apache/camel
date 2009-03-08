@@ -48,14 +48,13 @@ public class FileConsumeFilesAndDelete extends ContextTestSupport {
 
         // file should not exists
         assertFalse("File should been deleted", new File("target/files/report.txt").getAbsoluteFile().exists());
-        assertFalse("File should been deleted", new File("target/files/.camel/report.txt").getAbsoluteFile().exists());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/files/?recursive=false&delete=true").to("mock:result");
+                from("file://target/files/?fileName=report.txt&delete=true").to("mock:result");
             }
         };
     }

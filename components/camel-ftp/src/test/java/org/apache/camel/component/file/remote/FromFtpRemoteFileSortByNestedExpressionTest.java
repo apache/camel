@@ -43,7 +43,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl() + "&sortBy=file:name.ext;file:name").to("mock:result");
+                from(getFtpUrl() + "&sortBy=file:ext;file:name").to("mock:result");
             }
         });
         context.start();
@@ -58,7 +58,7 @@ public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(getFtpUrl() + "&sortBy=file:name.ext;reverse:file:name").to("mock:reverse");
+                from(getFtpUrl() + "&sortBy=file:ext;reverse:file:name").to("mock:reverse");
             }
         });
         context.start();

@@ -26,8 +26,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FromFtpMoveFileRecursiveTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false&exclude=.*old"
-                + "&move=done/${file:name}.old&initialDelay=2500&delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&recursive=true&binary=false"
+                + "&move=.done/${file:name}.old&initialDelay=2500&delay=5000";
     }
 
     @Override
@@ -46,9 +46,9 @@ public class FromFtpMoveFileRecursiveTest extends FtpServerTestSupport {
     public void testPollFileAndShouldBeMoved() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceivedInAnyOrder("Hello", "Bye", "Goodday");
-        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/hello.txt.old");
-        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/bye/bye.txt.old");
-        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/done/goodday/goodday.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/.done/hello.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/.done/bye/bye.txt.old");
+        mock.expectedFileExists(FTP_ROOT_DIR + "movefile/.done/goodday/goodday.txt.old");
 
         mock.assertIsSatisfied();
     }

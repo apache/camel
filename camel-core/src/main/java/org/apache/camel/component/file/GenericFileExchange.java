@@ -61,14 +61,18 @@ public class GenericFileExchange<T> extends DefaultExchange {
 
     protected void populateHeaders(GenericFile<T> file) {
         if (file != null) {
-            getIn().setHeader("CamelFileName", file.getFileName());
+            getIn().setHeader(Exchange.FILE_NAME_ONLY, file.getFileNameOnly());
+            getIn().setHeader(Exchange.FILE_NAME, file.getFileName());
             getIn().setHeader("CamelFileAbsolute", file.isAbsolute());
-            getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFileName());
+            getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFilePath());
+
             if (file.isAbsolute()) {
-                getIn().setHeader("CamelFilePath", file.getAbsoluteFileName());
+                getIn().setHeader("CamelFilePath", file.getAbsoluteFilePath());
             } else {
-                getIn().setHeader("CamelFilePath", file.getEndpointPath() + File.separator + file.getRelativeFileName());
+                getIn().setHeader("CamelFilePath", file.getEndpointPath() + File.separator + file.getRelativeFilePath());
             }
+
+            getIn().setHeader("CamelFileRelativePath", file.getRelativeFilePath());
             getIn().setHeader("CamelFileParent", file.getParent());
 
             if (file.getFileLength() > 0) {
@@ -85,8 +89,8 @@ public class GenericFileExchange<T> extends DefaultExchange {
     }
 
     public void setGenericFile(GenericFile<T> file) {
-        setIn(new GenericFileMessage<T>(file));
         this.file = file;
+        setIn(new GenericFileMessage<T>(file));
         populateHeaders(file);
     }
 

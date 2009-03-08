@@ -62,7 +62,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
     private GenericFile<T> renameFile(GenericFileOperations<T> operations, GenericFile<T> from, GenericFile<T> to) throws IOException {
         // deleting any existing files before renaming
         try {
-            operations.deleteFile(to.getAbsoluteFileName());
+            operations.deleteFile(to.getAbsoluteFilePath());
         } catch (GenericFileOperationFailedException e) {
             // ignore the file does not exists
         }
@@ -77,7 +77,7 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
         if (log.isDebugEnabled()) {
             log.debug("Renaming file: " + from + " to: " + to);
         }
-        boolean renamed = operations.renameFile(from.getAbsoluteFileName(), to.getAbsoluteFileName());
+        boolean renamed = operations.renameFile(from.getAbsoluteFilePath(), to.getAbsoluteFilePath());
         if (!renamed) {
             throw new GenericFileOperationFailedException("Cannot rename file: " + from + " to: " + to);
         }

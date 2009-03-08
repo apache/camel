@@ -43,7 +43,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> fileGenericFileOperations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
 
-        String lockFileName = file.getAbsoluteFileName() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        String lockFileName = file.getAbsoluteFilePath() + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
         if (LOG.isTraceEnabled()) {
             LOG.trace("Locking the file: " + file + " using the lock file name: " + lockFileName);
         }

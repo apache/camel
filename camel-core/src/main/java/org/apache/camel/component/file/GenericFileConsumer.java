@@ -144,7 +144,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                 // preMoveNamePrefix/preMoveNamePostfix options
                 final GenericFile<T> target = exchange.getGenericFile();
                 // must use full name when downloading so we have the correct path
-                final String name = target.getAbsoluteFileName();
+                final String name = target.getAbsoluteFilePath();
 
                 // retrieve the file using the stream
                 if (log.isTraceEnabled()) {

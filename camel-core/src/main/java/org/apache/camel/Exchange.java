@@ -48,6 +48,7 @@ public interface Exchange {
     String FILE_BATCH_SIZE = "CamelFileBatchSize";
     String FILE_LOCAL_WORK_PATH = "CamelFileLocalWorkPath";
     String FILE_NAME = "CamelFileName";
+    String FILE_NAME_ONLY = "CamelFileNameOnly";
     String FILE_NAME_PRODUCED = "CamelFileNameProduced";
 
     String LOOP_INDEX = "CamelLoopIndex";

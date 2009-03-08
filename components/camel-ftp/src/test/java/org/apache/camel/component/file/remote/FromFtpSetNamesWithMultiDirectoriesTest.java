@@ -34,11 +34,13 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/incoming?password=admin&binary=true"
-                + "&consumer.delay=2000&recursive=true";
+                + "&initialDelay=2500&delay=5000&recursive=true";
     }
 
     @Override
     protected void setUp() throws Exception {
+        deleteDirectory(FTP_ROOT_DIR + "/incoming");
+        deleteDirectory("./target/ftpsetnamestest");
         super.setUp();
         prepareFtpServer();
     }
@@ -89,8 +91,7 @@ public class FromFtpSetNamesWithMultiDirectoriesTest extends FtpServerTestSuppor
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                String fileUrl = "file:target/ftpsetnamestest/?noop=true";
-                from(getFtpUrl()).to(fileUrl, "mock:result");
+                from(getFtpUrl()).to("file:target/ftpsetnamestest", "mock:result");
             }
         };
     }

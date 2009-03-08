@@ -29,12 +29,12 @@ public class FileBinding implements GenericFileBinding<File>, Serializable {
     public Object getBody(GenericFile<File> file) {
         // as we use java.io.File itself as the body (not loading its content into a OutputStream etc.)
         // we just store a java.io.File handle to the actual file denoted by the
-        // file.getAbsoluteFileName. We must do this as the original file consumed can be renamed before
+        // file.getAbsoluteFilePath. We must do this as the original file consumed can be renamed before
         // being processed (preMove) and thus it points to an invalid file location.
-        // GenericFile#getAbsoluteFileName() is always up-to-date and thus we use it to create a file
+        // GenericFile#getAbsoluteFilePath() is always up-to-date and thus we use it to create a file
         // handle that is correct
-        if (body == null || !file.getAbsoluteFileName().equals(body.getAbsolutePath())) {
-            body = new File(file.getAbsoluteFileName());
+        if (body == null || !file.getAbsoluteFilePath().equals(body.getAbsolutePath())) {
+            body = new File(file.getAbsoluteFilePath());
         }
         return body;
     }

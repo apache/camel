@@ -25,6 +25,7 @@ import java.util.GregorianCalendar;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
@@ -60,9 +61,11 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     public void testFile() throws Exception {
-        assertExpression("${file:name}", file.getName());
-        assertExpression("${file:name.ext}", "txt");
-        assertExpression("${file:name.noext}", "hello");
+        assertExpression("${file:ext}", "txt");
+        assertExpression("${file:name}", "test" + File.separator + file.getName());
+        assertExpression("${file:name.noext}", "test" + File.separator + "hello");
+        assertExpression("${file:onlyname}", file.getName());
+        assertExpression("${file:onlyname.noext}", "hello");
         assertExpression("${file:parent}", file.getParent());
         assertExpression("${file:path}", file.getPath());
         assertExpression("${file:absolute}", file.isAbsolute());
@@ -93,11 +96,13 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     public void testSimpleAndFile() throws Exception {
-        assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-hello.bak");
+        assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-test/hello.bak");
+        assertExpression("backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-hello.bak");
     }
 
     public void testSimpleAndFileAndBean() throws Exception {
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-hello.bak");
+        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-test/hello.bak");
+        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak", "backup-abc-generatorbybean-hello.bak");
     }
 
     public void testBean() throws Exception {
@@ -108,10 +113,10 @@ public class FileLanguageTest extends LanguageTestSupport {
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/filelanguage";
-        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader(uri, "Hello World", Exchange.FILE_NAME, "test/hello.txt");
 
         // get the file handle
-        file = new File("target/filelanguage/hello.txt");
+        file = new File("target/filelanguage/test/hello.txt");
         GenericFile<File> gf = FileConsumer.asGenericFile("target/filelanguage", file);
 
         FileEndpoint endpoint = getMandatoryEndpoint(uri, FileEndpoint.class);

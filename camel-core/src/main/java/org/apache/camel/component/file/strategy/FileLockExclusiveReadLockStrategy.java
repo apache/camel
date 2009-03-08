@@ -42,7 +42,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
     private long timeout;
 
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
-        File target = new File(file.getAbsoluteFileName());
+        File target = new File(file.getAbsoluteFilePath());
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for exclusive read lock to file: " + target);

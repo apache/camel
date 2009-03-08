@@ -26,6 +26,7 @@ import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.language.constant.ConstantLanguage;
+import org.apache.camel.util.FileUtil;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a> based
@@ -44,7 +45,7 @@ public final class FileExpressionBuilder {
     public static Expression fileNameExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return exchange.getIn().getHeader("CamelFileName", String.class);
+                return exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
             }
 
             @Override
@@ -54,10 +55,23 @@ public final class FileExpressionBuilder {
         };
     }
 
+    public static Expression fileOnlyNameExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname";
+            }
+        };
+    }
+
     public static Expression fileNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String name = exchange.getIn().getHeader("CamelFileName", String.class);
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 if (name != null) {
                     if (name.lastIndexOf(".") != -1) {
                         return name.substring(0, name.lastIndexOf('.'));
@@ -77,10 +91,33 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static Expression fileNameExtensionExpression() {
+    public static Expression fileOnlyNameNoExtensionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                String name = exchange.getIn().getHeader("CamelFileName", String.class);
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                if (name != null) {
+                    if (name.lastIndexOf(".") != -1) {
+                        return name.substring(0, name.lastIndexOf('.'));
+                    } else {
+                        // name does not have extension
+                        return name;
+                    }
+                } else {
+                    return null;
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "file:onlyname.noext";
+            }
+        };
+    }
+
+    public static Expression fileExtensionExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 if (name != null) {
                     return name.substring(name.lastIndexOf('.') + 1);
                 } else {
@@ -90,7 +127,7 @@ public final class FileExpressionBuilder {
 
             @Override
             public String toString() {
-                return "file:name.ext";
+                return "file:ext";
             }
         };
     }

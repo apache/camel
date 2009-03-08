@@ -309,8 +309,25 @@ public final class FileUtil {
     }
 
     public static String stripLeadingSeparator(String name) {
+        if (name == null) {
+            return null;
+        }
         if (name.startsWith("/") || name.startsWith(File.separator)) {
             return name.substring(1);
+        }
+        return name;
+    }
+
+    public static String stripPath(String name) {
+        if (name == null) {
+            return null;
+        }
+        int pos = name.lastIndexOf("/");
+        if (pos == -1) {
+            pos = name.lastIndexOf(File.separator);
+        }
+        if (pos != -1) {
+            return name.substring(pos + 1);
         }
         return name;
     }

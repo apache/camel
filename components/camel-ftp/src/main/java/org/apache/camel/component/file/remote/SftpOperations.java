@@ -145,9 +145,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        // for FTP we can not use leading / for refering to files
-        name = FileUtil.stripLeadingSeparator(name);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
@@ -160,10 +157,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
-        // for FTP we can not use leading / for refering to files
-        from = FileUtil.stripLeadingSeparator(from);
-        to = FileUtil.stripLeadingSeparator(to);
-
         if (LOG.isDebugEnabled()) {
             LOG.debug("Renaming file: " + from + " to: " + to);
         }
@@ -176,9 +169,6 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
-        // for FTP we can not use leading / for refering to files
-        directory = FileUtil.stripLeadingSeparator(directory);
-
         // ignore absolute as all dirs are relative with FTP
         boolean success = false;
 
@@ -312,7 +302,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
         OutputStream os;
         try {
             // use relative filename in local work directory
-            String relativeName = exchange.getGenericFile().getRelativeFileName();
+            String relativeName = exchange.getGenericFile().getRelativeFilePath();
 
             temp = new File(local, relativeName + ".inprogress");
             local = new File(local, relativeName);

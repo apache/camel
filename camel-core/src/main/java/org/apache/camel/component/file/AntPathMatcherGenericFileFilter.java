@@ -52,7 +52,7 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
             ObjectHelper.invokeMethod(excludesMethod, filter, collectionAsCommaDelimitedString(excludes));
 
             // invoke acceptPathName(String)
-            String path = file.getRelativeFileName();
+            String path = file.getRelativeFilePath();
             Boolean result = (Boolean) ObjectHelper.invokeMethod(acceptsMethod, filter, path);
             return result;
 

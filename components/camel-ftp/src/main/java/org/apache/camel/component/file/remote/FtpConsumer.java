@@ -100,6 +100,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         answer.setEndpointPath(endpointPath);
         answer.setFile(file);
         answer.setFileName(file.getName());
+        answer.setFileNameOnly(file.getName());
         answer.setFileLength(file.getSize());
         if (file.getTimestamp() != null) {
             answer.setLastModified(file.getTimestamp().getTimeInMillis());
@@ -111,7 +112,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         // create a pseudo absolute name
         String absoluteFileName = (ObjectHelper.isNotEmpty(directory) ? directory + "/" : "") + file.getName();
-        answer.setAbsoluteFileName(absoluteFileName);
+        answer.setAbsoluteFilePath(absoluteFileName);
 
         // the relative filename, skip the leading endpoint configured path
         String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
@@ -119,7 +120,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             // skip trailing /
             relativePath = relativePath.substring(1);
         }
-        answer.setRelativeFileName(relativePath);
+        answer.setRelativeFilePath(relativePath);
 
         return answer;
     }
