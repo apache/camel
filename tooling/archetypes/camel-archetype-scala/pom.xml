@@ -51,6 +51,7 @@
                   <replacefilter token="$CAMEL_VERSION_REPLACEME$" value="${project.version}" />
                   <replacefilter token="$SCALA_VERSION_REPLACEME$" value="${scala-version}" />
                   <replacefilter token="$SCALA_PLUGIN_VERSION_REPLACEME$" value="${scala-plugin-version}" />
+                  <replacefilter token="$LOG4J_VERSION_REPLACEME$" value="${log4j-version}" /> 
                 </replace>
               </tasks>
             </configuration>
