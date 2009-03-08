@@ -66,7 +66,7 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         FtpConfiguration ftpConfig = (FtpConfiguration) config;
 
         if (ftpConfig.getFtpClientConfig() != null) {
-            LOG.trace("Configuring FTPFile with config: " + ftpConfig.getFtpClientConfig());
+            LOG.trace("Configuring FTPClient with config: " + ftpConfig.getFtpClientConfig());
             client.configure(ftpConfig.getFtpClientConfig());
         }
 

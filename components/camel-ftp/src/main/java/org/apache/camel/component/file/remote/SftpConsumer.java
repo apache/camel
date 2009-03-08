@@ -21,6 +21,7 @@ import java.util.List;
 import com.jcraft.jsch.ChannelSftp;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,18 +41,16 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
             return;
         }
 
-        // fix filename
-        if (fileName.endsWith("/")) {
-            fileName = fileName.substring(0, fileName.length() - 1);
-        }
+        // remove trailing /
+        fileName = FileUtil.stripTrailingSeparator(fileName);
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + fileName);
         }
         List<ChannelSftp.LsEntry> files = operations.listFiles(fileName);
         for (ChannelSftp.LsEntry file : files) {
-            RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
             if (file.getAttrs().isDir()) {
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
                 if (endpoint.isRecursive() && isValidFile(remote, true)) {
                     // recursive scan and add the sub files and folders
                     String directory = fileName + "/" + file.getFilename();
@@ -60,6 +59,7 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
                 // we cannot use file.getAttrs().isLink on Windows, so we dont invoke the method
                 // just assuming its a file we should poll
             } else {
+                RemoteFile<ChannelSftp.LsEntry> remote = asRemoteFile(fileName, file);
                 if (isValidFile(remote, false)) {
                     // matched file so add
                     fileList.add(remote);
@@ -118,10 +118,8 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         // the relative filename, skip the leading endpoint configured path
         String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
-        if (relativePath.startsWith("/")) {
-            // skip trailing /
-            relativePath = relativePath.substring(1);
-        }
+        // skip trailing /
+        relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
 
         return answer;

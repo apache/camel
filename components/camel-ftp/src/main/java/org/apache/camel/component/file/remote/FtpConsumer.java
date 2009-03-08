@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.net.ftp.FTPFile;
 
@@ -40,10 +41,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
             return;
         }
 
-        // fix filename
-        if (fileName.endsWith("/")) {
-            fileName = fileName.substring(0, fileName.length() - 1);
-        }
+        // remove trailing /
+        fileName = FileUtil.stripTrailingSeparator(fileName);
 
         if (log.isTraceEnabled()) {
             log.trace("Polling directory: " + fileName);
@@ -116,10 +115,8 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
 
         // the relative filename, skip the leading endpoint configured path
         String relativePath = ObjectHelper.after(absoluteFileName, endpointPath);
-        if (relativePath.startsWith("/")) {
-            // skip trailing /
-            relativePath = relativePath.substring(1);
-        }
+        // skip trailing /
+        relativePath = FileUtil.stripLeadingSeparator(relativePath);
         answer.setRelativeFilePath(relativePath);
 
         return answer;

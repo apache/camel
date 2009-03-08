@@ -32,6 +32,7 @@ import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UserInfo;
+import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -39,7 +40,6 @@ import org.apache.camel.component.file.GenericFileExchange;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.FileUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -212,7 +212,7 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
     private boolean buildDirectoryChunks(String dirName) throws IOException, SftpException {
         final StringBuilder sb = new StringBuilder(dirName.length());
-        final String[] dirs = dirName.split("\\/|\\\\");
+        final String[] dirs = dirName.split("/|\\\\");
 
         boolean success = false;
         for (String dir : dirs) {
@@ -331,7 +331,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             os = new FileOutputStream(temp);
 
             // set header with the path to the local work file
-            exchange.getIn().setHeader("CamelFileLocalWorkPath", local.getPath());
+            exchange.getIn().setHeader(Exchange.FILE_LOCAL_WORK_PATH, local.getPath());
+
 
         } catch (Exception e) {
             throw new GenericFileOperationFailedException("Cannot create new local work file: " + local);
