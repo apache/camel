@@ -48,7 +48,7 @@ public final class FileUtil {
     public static String normalizePath(String path) {
         // special handling for Windows where we need to convert / to \\
         if (path != null && System.getProperty("os.name").startsWith("Windows") && path.indexOf("/") >= 0) {
-            return path.replaceAll("/", "\\\\");
+            return path.replace('/', '\\');
         }
         return path;
     }

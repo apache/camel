@@ -42,8 +42,8 @@ public class GenericFile<T> implements Serializable {
     private GenericFileBinding<T> binding;
     private boolean absolute;
 
-    public String getFileSeparator() {
-        return File.separator;
+    public char getFileSeparator() {
+        return File.separatorChar;
     }
 
     @Override
@@ -232,11 +232,14 @@ public class GenericFile<T> implements Serializable {
         if (ObjectHelper.isEmpty(path)) {
             return path;
         }
-        return path.replaceAll("/|\\\\", getFileSeparator());
+        path = path.replace('/', getFileSeparator());
+        path = path.replace('\\', getFileSeparator());
+        return path;
     }
 
     @Override
     public String toString() {
         return "GenericFile[" + (absolute ? absoluteFilePath : relativeFilePath) + "]";
     }
+
 }
