@@ -317,8 +317,8 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        if (name.startsWith("/") || name.startsWith(File.separator)) {
-            return name.substring(1);
+        while (name.startsWith("/") || name.startsWith(File.separator)) {
+            name = name.substring(1);
         }
         return name;
     }
@@ -330,8 +330,8 @@ public final class FileUtil {
         if (name == null) {
             return null;
         }
-        if (name.endsWith("/") || name.endsWith(File.separator)) {
-            return name.substring(0, name.length() - 1);
+        while (name.endsWith("/") || name.endsWith(File.separator)) {
+            name = name.substring(0, name.length() - 1);
         }
         return name;
     }
