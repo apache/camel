@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -44,6 +45,8 @@ public class PaddyRouteTest extends FtpServerTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                getContext().addInterceptStrategy(new Tracer());
+
                 from(getFtpUrl()).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertNotNull(exchange.getIn().getHeader(Exchange.FILE_NAME));
