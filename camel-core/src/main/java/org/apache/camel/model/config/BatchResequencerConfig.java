@@ -21,11 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.processor.Resequencer;
-
 /**
  * Defines the configuration parameters for the batch-processing
- * {@link Resequencer}. Usage example:
+ * {@link org.apache.camel.processor.Resequencer}. Usage example:
  * 
  * <pre>
  * from(&quot;direct:start&quot;).resequence(body()).batch(

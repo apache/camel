@@ -36,10 +36,9 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
-import org.apache.camel.spi.DataFormat;
 
 /**
- * An expression for constructing the different possible {@link DataFormat}
+ * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
  * options.
  *
  * @version $Revision$
@@ -49,7 +48,7 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     private final Operation operation;
 
     /**
-     * {@link DataFormat} operations.
+     * {@link org.apache.camel.spi.DataFormat} operations.
      */
     public enum Operation {
         Marshal, Unmarshal

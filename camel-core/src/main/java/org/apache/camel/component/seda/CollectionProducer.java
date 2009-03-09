@@ -22,11 +22,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
- * A simple {@link Producer} which just appends to a {@link Collection} the {@link Exchange} object.
+ * A simple {@link org.apache.camel.Producer} which just appends to a {@link Collection} the {@link Exchange} object.
  *
  * @version $Revision$
  */

@@ -26,11 +26,10 @@ import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.TraceableUnitOfWork;
-import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.UuidGenerator;
 
 /**
- * The default implementation of {@link UnitOfWork}
+ * The default implementation of {@link org.apache.camel.spi.UnitOfWork}
  *
  * @version $Revision$
  */

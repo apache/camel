@@ -22,12 +22,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.DefaultExchangeComparator;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 
 /**
- * Defines the configuration parameters for the {@link StreamResequencer}.
+ * Defines the configuration parameters for the {@link org.apache.camel.processor.StreamResequencer}.
  * Usage example:
  * 
  * <pre>
