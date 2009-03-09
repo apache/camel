@@ -36,7 +36,7 @@ public class MinaConfiguration implements Cloneable {
     private ProtocolCodecFactory codec;
     private String encoding;
     private long timeout = 30000;
-    private boolean lazySessionCreation;
+    private boolean lazySessionCreation = true;
     private boolean transferExchange;
     private boolean minaLogger;
     private List<IoFilter> filters;
