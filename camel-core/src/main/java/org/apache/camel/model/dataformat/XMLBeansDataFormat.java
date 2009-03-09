@@ -21,10 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.spi.DataFormat;
-
 /**
- * Represents the XMLBeans XML {@link DataFormat}
+ * Represents the XMLBeans XML {@link org.apache.camel.spi.DataFormat}
  *
  * @version $Revision$
  */

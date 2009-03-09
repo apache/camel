@@ -18,13 +18,12 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.ServiceHelper;
 
 /**
- * A simple implementation of {@link PollingConsumer} which just uses
+ * A simple implementation of {@link org.apache.camel.PollingConsumer} which just uses
  * a {@link Processor}. This implementation does not support timeout based
  * receive methods such as {@link #receive(long)}
  *

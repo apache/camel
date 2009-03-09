@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.bean;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
@@ -31,7 +30,7 @@ import org.apache.camel.util.ObjectHelper;
  * beanName to lookup in the <a href="http://camel.apache.org/registry.html>registry</a>
  * then the method is invoked to evaluate the expression using the
  * <a href="http://camel.apache.org/bean-integration.html">bean integration</a> to bind the
- * {@link Exchange} to the method arguments.
+ * {@link org.apache.camel.Exchange} to the method arguments.
  * <p/>
  * As of Camel 1.5 the bean language also supports invoking a provided bean by
  * its classname or the bean itself.

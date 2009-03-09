@@ -29,7 +29,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.DelegateProcessor;
@@ -152,7 +151,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds a route for an interceptor; use the {@link ProcessorDefinition#proceed()} method
+     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
      * to continue processing the underlying route being intercepted.
      * @return the builder
      */

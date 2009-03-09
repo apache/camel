@@ -33,7 +33,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
-import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.spi.Language;
@@ -233,7 +232,7 @@ public class ExpressionDefinition implements Expression, Predicate {
 
     /**
      * Allows derived classes to set a lazily created expressionType instance
-     * such as if using the {@link ExpressionClause}
+     * such as if using the {@link org.apache.camel.builder.ExpressionClause}
      */
     protected void setExpressionType(ExpressionDefinition expressionType) {
         this.expressionType = expressionType;
