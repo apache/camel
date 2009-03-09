@@ -87,54 +87,37 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        // TODO: Should be TRACE
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Changing name to: " + newName);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Changing name to: " + newName);
         }
 
         // use java.io.File to help us with computing name changes
         File file = new File(newName);
-        boolean nameChangeOnly = newName.indexOf(getFileSeparator()) == -1;
         boolean absolute = file.isAbsolute();
 
         // store the file name only
         setFileNameOnly(file.getName());
         setFileName(file.getName());
 
-        // relative name is a bit more complex
-        if (nameChangeOnly) {
-            setRelativeFilePath(changeNameOnly(getRelativeFilePath(), file.getName()));
-            setFileName(changeNameOnly(getFileName(), file.getName()));
+        // relative path
+        if (file.getParent() != null) {
+            setRelativeFilePath(file.getParent() + getFileSeparator() + file.getName());
         } else {
-            if (file.getParent() != null) {
-                setRelativeFilePath(file.getParent() + getFileSeparator() + file.getName());
-            } else {
-                setRelativeFilePath(file.getName());
-            }
+            setRelativeFilePath(file.getName());
         }
 
-        // absolute vs relative
+        // absolute path
         if (absolute) {
             setAbsolute(true);
             setAbsoluteFilePath(file.getAbsolutePath());
         } else {
             setAbsolute(false);
-            // construct a pseudo absolute filename that the file operations uses
+            // construct a pseudo absolute filename that the file operations uses even for relative only
             setAbsoluteFilePath(endpointPath + getFileSeparator() + getRelativeFilePath());
         }
 
-        // TODO: Should be TRACE
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Name changed: " + this);
-        }
-    }
-
-    private String changeNameOnly(String path, String name) {
-        int pos = path.lastIndexOf(getFileSeparator());
-        if (pos != -1) {
-            return path.substring(0, pos + 1) + name;
-        } else {
-            return name;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Name changed to: " + this);
         }
     }
 
