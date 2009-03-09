@@ -40,7 +40,7 @@
 
   <repositories>
     <repository>
-      <id>java.net.maven2</id>
+      <id>java.net.m2</id>
       <name>java.net Maven 2 Repo</name>
       <url>http://download.java.net/maven/2</url>
     </repository>
@@ -59,7 +59,7 @@
 
   <pluginRepositories>
     <pluginRepository>
-      <id>java.net.maven2</id>
+      <id>java.net.m2</id>
       <name>java.net Maven 2 Repo</name>
       <url>http://download.java.net/maven/2</url>
     </pluginRepository>
