@@ -1057,6 +1057,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends messages to all its child outputs; so that each processor and
+     * destination gets a copy of the original message to avoid the processors
+     * interfering with each other using {@link ExchangePattern#InOnly}.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
      *
      * @param ref  a reference in the registry to lookup the interceptor that must be of type {@link DelegateProcessor}

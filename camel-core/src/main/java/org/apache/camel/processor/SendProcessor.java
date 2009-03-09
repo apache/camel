@@ -35,11 +35,11 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Service {
-    private static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
-    private Endpoint destination;
-    private Producer producer;
-    private AsyncProcessor processor;
-    private ExchangePattern pattern;
+    protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
+    protected Endpoint destination;
+    protected Producer producer;
+    protected AsyncProcessor processor;
+    protected ExchangePattern pattern;
 
     public SendProcessor(Endpoint destination) {
         ObjectHelper.notNull(destination, "destination");
@@ -64,7 +64,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
                 throw new IllegalStateException("No producer, this processor has not been started!");
             }
         } else {
-            configureExchange(exchange);
+            exchange = configureExchange(exchange);
             producer.process(exchange);
         }
     }
@@ -79,7 +79,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
             callback.done(true);
             return true;
         } else {
-            configureExchange(exchange);
+            exchange = configureExchange(exchange);
             return processor.process(exchange, callback);
         }
     }
@@ -105,9 +105,11 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
         }
     }
 
-    protected void configureExchange(Exchange exchange) {
+    protected Exchange configureExchange(Exchange exchange) {
         if (pattern != null) {
             exchange.setPattern(pattern);
         }
+        return exchange;
     }
+
 }

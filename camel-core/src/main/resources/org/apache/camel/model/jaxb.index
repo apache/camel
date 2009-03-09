@@ -69,3 +69,4 @@ TransformDefinition
 TryDefinition
 UnmarshalDefinition
 WhenDefinition
+WireTapDefinition
