@@ -21,12 +21,16 @@ import java.io.Serializable;
 
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
 public class GenericFile<T> implements Serializable {
+
+    private static final Log LOG = LogFactory.getLog(GenericFile.class);
 
     private String endpointPath;
     private String fileName;
@@ -83,12 +87,15 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        newName = FileUtil.normalizePath(newName);
+        // TODO: Should be TRACE
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Changing name to: " + newName);
+        }
 
         // use java.io.File to help us with computing name changes
         File file = new File(newName);
-        boolean absolute = file.isAbsolute();
         boolean nameChangeOnly = newName.indexOf(getFileSeparator()) == -1;
+        boolean absolute = file.isAbsolute();
 
         // store the file name only
         setFileNameOnly(file.getName());
@@ -114,6 +121,11 @@ public class GenericFile<T> implements Serializable {
             setAbsolute(false);
             // construct a pseudo absolute filename that the file operations uses
             setAbsoluteFilePath(endpointPath + getFileSeparator() + getRelativeFilePath());
+        }
+
+        // TODO: Should be TRACE
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Name changed: " + this);
         }
     }
 
