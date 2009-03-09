@@ -22,39 +22,48 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.WireTapProcessor;
+import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;inOnly/&gt; element
+ * Represents an XML &lt;wireTap/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "inOnly")
+@XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InOnlyDefinition extends SendDefinition<InOnlyDefinition> {
+public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
 
-    public InOnlyDefinition() {
+    public WireTapDefinition() {
     }
 
-    public InOnlyDefinition(String uri) {
+    public WireTapDefinition(String uri) {
         setUri(uri);
     }
 
-    public InOnlyDefinition(Endpoint endpoint) {
+    public WireTapDefinition(Endpoint endpoint) {
         setEndpoint(endpoint);
     }
 
     @Override
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
+        Endpoint endpoint = resolveEndpoint(routeContext);
+        return new WireTapProcessor(endpoint, getPattern());
+    }
+
+    public ExchangePattern getPattern() {
+        return ExchangePattern.InOnly;
+    }
+
+    @Override
     public String toString() {
-        return "InOnly[" + getLabel() + "]";
+        return "WireTap[" + getLabel() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "inOnly";
+        return "wireTap";
     }
 
-    @Override
-    public ExchangePattern getPattern() {
-        return ExchangePattern.InOnly;
-    }
 }

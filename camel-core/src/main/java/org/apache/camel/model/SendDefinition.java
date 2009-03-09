@@ -40,11 +40,11 @@ import org.apache.camel.util.ObjectHelper;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class SendDefinition<Type extends ProcessorDefinition> extends ProcessorDefinition<Type> {
     @XmlAttribute(required = false)
-    private String uri;
+    protected String uri;
     @XmlAttribute(required = false)
-    private String ref;
+    protected String ref;
     @XmlTransient
-    private Endpoint endpoint;
+    protected Endpoint endpoint;
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

@@ -20,21 +20,19 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- * Wire tap unit test
- *
- * @version $Revision$
- */
-public class WireTapTest extends ContextTestSupport {
+import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
+
+public class WireTapUsingMulticastTest extends ContextTestSupport {
     protected MockEndpoint tap;
     protected MockEndpoint result;
 
     public void testSend() throws Exception {
-        // hello must come first, as we have delay on the tapped route
-        result.expectedBodiesReceived("Hello World", "Tapped");
-        tap.expectedBodiesReceived("Tapped");
+        String body = "<body/>";
+        tap.expectedBodiesReceived(body);
+        result.expectedBodiesReceived(body);
+        expectsMessageCount(1, tap, result);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBody("direct:start", body);
 
         assertMockEndpointsSatisfied();
     }
@@ -49,16 +47,7 @@ public class WireTapTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: e1
-                from("direct:start")
-                    .to("log:foo")
-                    .wireTap("direct:tap")
-                    .to("mock:result");
-                // END SNIPPET: e1
-
-                from("direct:tap")
-                    .delay(100).setBody().constant("Tapped")
-                    .to("mock:result", "mock:tap");
+                from("direct:start").multicast().to("mock:tap", "mock:result");
             }
         };
     }
