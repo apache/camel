@@ -48,6 +48,8 @@ public class Camel715ThreadProcessorTest extends TestCase {
     }
 
     public void testThreadProcessor() {
+        long start = System.currentTimeMillis();
+
         try {
             CamelContext context = new DefaultCamelContext();
 
@@ -81,6 +83,16 @@ public class Camel715ThreadProcessorTest extends TestCase {
             }
 
             latch.await();
+
+            long delta = System.currentTimeMillis() - start;
+
+            // should be able to run in approx 5 sec on my local laptop.
+            // we had once a performance degrade that caused this test to take 9x longer
+            // so this is a safe guard that this should not happen again.
+            // in case some slow AIX box can not run this in 10 sec or less, then we
+            // should disable this timing as we want it to trigger on local bulds in case
+            // it happens again
+            assertTrue("Should be faster than 10 sec, took: " + delta, delta < 10000);
 
             context.stop();
         } catch (Exception ex) {
