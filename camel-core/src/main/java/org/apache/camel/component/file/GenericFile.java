@@ -19,7 +19,6 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.Serializable;
 
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -230,6 +229,9 @@ public class GenericFile<T> implements Serializable {
      * Fixes the path separator to be according to the protocol
      */
     protected String normalizePathToProtocol(String path) {
+        if (ObjectHelper.isEmpty(path)) {
+            return path;
+        }
         return path.replaceAll("/|\\\\", getFileSeparator());
     }
 
