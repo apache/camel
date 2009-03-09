@@ -69,7 +69,7 @@ public class GenericFileExchange<T> extends DefaultExchange {
             if (file.isAbsolute()) {
                 getIn().setHeader("CamelFilePath", file.getAbsoluteFilePath());
             } else {
-                // we must normal path according to protocol if we build our own paths
+                // we must normalize path according to protocol if we build our own paths
                 String path = file.normalizePathToProtocol(file.getEndpointPath() + File.separator + file.getRelativeFilePath());
                 getIn().setHeader("CamelFilePath", path);
             }
