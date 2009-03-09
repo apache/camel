@@ -118,12 +118,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         }
     }
 
-    public boolean deleteFile(FTPClient client, String name) throws GenericFileOperationFailedException {
+    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Deleteing file: " + name);
         }
         try {
-            return client.deleteFile(name);
+            return this.client.deleteFile(name);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }
@@ -305,14 +305,6 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             FTPFile[] files = client.listFiles(path);
             list.addAll(Arrays.asList(files));
             return list;
-        } catch (IOException e) {
-            throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
-        }
-    }
-
-    public boolean deleteFile(String name) throws GenericFileOperationFailedException {
-        try {
-            return this.client.deleteFile(name);
         } catch (IOException e) {
             throw new GenericFileOperationFailedException(client.getReplyCode(), client.getReplyString(), e.getMessage(), e);
         }

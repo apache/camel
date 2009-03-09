@@ -39,6 +39,10 @@ public class GenericFile<T> implements Serializable {
     private GenericFileBinding<T> binding;
     private boolean absolute;
 
+    public String getFileSeparator() {
+        return File.separator;
+    }
+
     @Override
     public GenericFile<T> clone() {
         return copyFrom(this);
@@ -72,14 +76,6 @@ public class GenericFile<T> implements Serializable {
         return result;
     }
 
-    public boolean needToNormalize() {
-        return true;
-    }
-
-    public String getFileSeparator() {
-        return File.separator;
-    }
-
     /**
      * Changes the name of this remote file. This method alters the absolute and
      * relative names as well.
@@ -87,12 +83,12 @@ public class GenericFile<T> implements Serializable {
      * @param newName the new name
      */
     public void changeFileName(String newName) {
-        newName = needToNormalize() ? FileUtil.normalizePath(newName) : newName;
-        boolean absolute = isAbsolutePath(newName);
-        boolean nameChangeOnly = newName.indexOf(getFileSeparator()) == -1;
+        newName = FileUtil.normalizePath(newName);
 
         // use java.io.File to help us with computing name changes
         File file = new File(newName);
+        boolean absolute = file.isAbsolute();
+        boolean nameChangeOnly = newName.indexOf(getFileSeparator()) == -1;
 
         // store the file name only
         setFileNameOnly(file.getName());
@@ -130,16 +126,12 @@ public class GenericFile<T> implements Serializable {
         }
     }
 
-    private boolean isAbsolutePath(String path) {
-        return new File(path).isAbsolute();
-    }
-
     public String getRelativeFilePath() {
         return relativeFilePath;
     }
 
     public void setRelativeFilePath(String relativeFilePath) {
-        this.relativeFilePath = needToNormalize() ? FileUtil.normalizePath(relativeFilePath) : relativeFilePath;
+        this.relativeFilePath = normalizePathToProtocol(relativeFilePath);
     }
 
     public String getFileName() {
@@ -147,7 +139,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setFileName(String fileName) {
-        this.fileName = fileName;
+        this.fileName = normalizePathToProtocol(fileName);
     }
 
     public long getFileLength() {
@@ -183,15 +175,17 @@ public class GenericFile<T> implements Serializable {
     }
 
     public String getParent() {
+        String parent;
         if (isAbsolute()) {
             String name = getAbsoluteFilePath();
             File path = new File(name);
-            return path.getParent();
+            parent = path.getParent();
         } else {
             String name = getRelativeFilePath();
             File path = new File(endpointPath, name);
-            return path.getParent();
+            parent = path.getParent();
         }
+        return normalizePathToProtocol(parent);
     }
 
     public GenericFileBinding<T> getBinding() {
@@ -206,7 +200,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setAbsoluteFilePath(String absoluteFilePath) {
-        this.absoluteFilePath = needToNormalize() ? FileUtil.normalizePath(absoluteFilePath) : absoluteFilePath;
+        this.absoluteFilePath = normalizePathToProtocol(absoluteFilePath);
     }
 
     public String getAbsoluteFilePath() {
@@ -226,7 +220,7 @@ public class GenericFile<T> implements Serializable {
     }
 
     public void setEndpointPath(String endpointPath) {
-        this.endpointPath = needToNormalize() ? FileUtil.normalizePath(endpointPath) : endpointPath;
+        this.endpointPath = normalizePathToProtocol(endpointPath);
     }
 
     public String getFileNameOnly() {
@@ -235,6 +229,13 @@ public class GenericFile<T> implements Serializable {
 
     public void setFileNameOnly(String fileNameOnly) {
         this.fileNameOnly = fileNameOnly;
+    }
+
+    /**
+     * Fixes the path separator to be according to the protocol
+     */
+    protected String normalizePathToProtocol(String path) {
+        return path.replaceAll("/|\\\\", getFileSeparator());
     }
 
     @Override
