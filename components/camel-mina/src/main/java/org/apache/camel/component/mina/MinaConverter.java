@@ -32,18 +32,14 @@ import org.apache.mina.common.ByteBuffer;
  */
 @Converter
 public final class MinaConverter {
+
     private MinaConverter() {
         //Utility Class
     }
+
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
         byte[] answer = new byte[buffer.remaining()];
-        try {
-            // must acquire the Byte buffer to avoid release if more than twice
-            buffer.acquire();
-        } catch (IllegalStateException ex) {
-            // catch the exception if we acquire the buffer which is already released.
-        }
         buffer.get(answer);
         return answer;
     }

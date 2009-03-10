@@ -26,7 +26,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.mina.common.ByteBuffer;
 
 /**
  * To test InOut exchange for the UDP protocol.
@@ -49,14 +48,14 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends ContextTestSupport {
         byte[] data = input.getBytes();
 
         DatagramPacket packet = new DatagramPacket(data, data.length, address, PORT);
-        LOG.debug("Sending data");
+        LOG.debug("+++ Sending data +++");
         socket.send(packet);
 
         Thread.sleep(1000);
 
         byte[] buf = new byte[128];
         DatagramPacket receive = new DatagramPacket(buf, buf.length, address, PORT);
-        LOG.debug("Receving data");
+        LOG.debug("+++ Receving data +++");
         socket.receive(receive);
 
         socket.close();
@@ -69,8 +68,7 @@ public class MinaUdpWithInOutUsingPlainSocketTest extends ContextTestSupport {
             public void configure() {
                 from("mina:udp://127.0.0.1:" + PORT + "?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        ByteBuffer in = exchange.getIn().getBody(ByteBuffer.class);
-                        String s = MinaConverter.toString(in, exchange);
+                        String s = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Hello " + s);
                     }
                 });
