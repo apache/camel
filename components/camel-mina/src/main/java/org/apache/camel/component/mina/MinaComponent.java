@@ -19,34 +19,25 @@ package org.apache.camel.component.mina;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.net.URI;
-import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetEncoder;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.DefaultIoFilterChainBuilder;
 import org.apache.mina.common.IoAcceptor;
 import org.apache.mina.common.IoConnector;
 import org.apache.mina.common.IoFilter;
 import org.apache.mina.common.IoServiceConfig;
-import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.LoggingFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
-import org.apache.mina.filter.codec.ProtocolDecoder;
-import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.apache.mina.filter.codec.ProtocolEncoder;
-import org.apache.mina.filter.codec.ProtocolEncoderOutput;
 import org.apache.mina.filter.codec.serialization.ObjectSerializationCodecFactory;
 import org.apache.mina.filter.codec.textline.LineDelimiter;
 import org.apache.mina.transport.socket.nio.DatagramAcceptor;
@@ -294,48 +285,8 @@ public class MinaComponent extends DefaultComponent {
         ProtocolCodecFactory codecFactory = configuration.getCodec();
         if (codecFactory == null) {
             final Charset charset = getEncodingParameter(type, configuration);
-
-            // set the encoder used for this datagram codec factory
-            codecFactory = new ProtocolCodecFactory() {
-                public ProtocolEncoder getEncoder() throws Exception {
-                    return new ProtocolEncoder() {
-                        private CharsetEncoder encoder;
-
-                        public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
-                            if (encoder == null) {
-                                encoder = charset.newEncoder();
-                            }
-                            ByteBuffer buf = toByteBuffer(message, encoder);
-                            buf.flip();
-                            out.write(buf);
-                        }
-
-                        public void dispose(IoSession session) throws Exception {
-                            // do nothing
-                        }
-                    };
-                }
-
-                public ProtocolDecoder getDecoder() throws Exception {
-                    return new ProtocolDecoder() {
-                        public void decode(IoSession session, ByteBuffer in, ProtocolDecoderOutput out) throws Exception {
-                            // must acquire the bytebuffer since we just pass it below instead of creating a new one (CAMEL-257)
-                            in.acquire();
-
-                            // lets just pass the ByteBuffer in
-                            out.write(in);
-                        }
-
-                        public void finishDecode(IoSession session, ProtocolDecoderOutput out) throws Exception {
-                            // do nothing
-                        }
-
-                        public void dispose(IoSession session) throws Exception {
-                            // do nothing
-                        }
-                    };
-                }
-            };
+            
+            codecFactory = new MinaUdpProtocolCodecFactory(getCamelContext(), charset);
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug(type + ": Using CodecFactory: " + codecFactory + " using encoding: " + charset);
@@ -343,18 +294,6 @@ public class MinaComponent extends DefaultComponent {
         }
 
         addCodecFactory(config, codecFactory);
-    }
-
-    private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder) throws CharacterCodingException {
-        ByteBuffer answer;
-        try {
-            answer = convertTo(ByteBuffer.class, message);
-        } catch (NoTypeConversionAvailableException e) {
-            String value = convertTo(String.class, message);
-            answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
-            answer.putString(value, encoder);
-        }
-        return answer;
     }
 
     private void addCodecFactory(IoServiceConfig config, ProtocolCodecFactory codecFactory) {
