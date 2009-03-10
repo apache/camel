@@ -72,22 +72,6 @@ public class FileConsumer extends GenericFileConsumer<File> {
         }
     }
 
-    protected void pollFile(String fileName, List<GenericFile<File>> fileList) {
-        File file = new File(fileName);
-
-        if (!file.exists()) {
-            return;
-        }
-
-        // createa a generic file
-        GenericFile<File> gf = asGenericFile(endpointPath, file);
-
-        if (isValidFile(gf, false)) {
-            // matched file so add
-            fileList.add(gf);
-        }
-    }
-
     /**
      * Creates a new GenericFile<File> based on the given file.
      *

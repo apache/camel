@@ -118,14 +118,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
     protected abstract void pollDirectory(String fileName, List<GenericFile<T>> fileList);
 
     /**
-     * Polls the given file
-     *
-     * @param fileName the file name
-     * @param fileList current list of files gathered
-     */
-    protected abstract void pollFile(String fileName, List<GenericFile<T>> fileList);
-
-    /**
      * Processes the exchange
      *
      * @param exchange the exchange
