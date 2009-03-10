@@ -72,6 +72,10 @@ public class CamelMockBundle extends MockBundle {
             String[] entries = new String[] {"bean_test", "file_test"};
             result = getListEnumeration(Activator.META_INF_LANGUAGE, entries);
         }
+        if (Activator.META_INF_LANGUAGE_RESOLVER.equals(path)) {
+            String[] entries = new String[] {"default"};
+            result = getListEnumeration(Activator.META_INF_LANGUAGE_RESOLVER, entries);
+        }
 
         return result;
     }
