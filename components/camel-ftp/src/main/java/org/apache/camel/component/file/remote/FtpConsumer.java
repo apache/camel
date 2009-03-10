@@ -68,30 +68,6 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
     }
 
-    protected void pollFile(String fileName, List<GenericFile<FTPFile>> fileList) {
-        String directory = ".";
-        int index = fileName.lastIndexOf("/");
-        if (index > -1) {
-            directory = fileName.substring(0, index);
-        }
-        // list the files in the fold and poll the first file
-        List<FTPFile> list = operations.listFiles(fileName);
-        if (list.size() > 0) {
-            FTPFile file = list.get(0);
-            if (file != null) {
-                RemoteFile<FTPFile> remoteFile = asRemoteFile(directory, file);
-                if (isValidFile(remoteFile, false)) {
-                    // matched file so add
-                    fileList.add(remoteFile);
-                }
-            }
-        } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Polled [" + fileName + "]. No files found");
-            }
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private RemoteFile<FTPFile> asRemoteFile(String directory, FTPFile file) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();

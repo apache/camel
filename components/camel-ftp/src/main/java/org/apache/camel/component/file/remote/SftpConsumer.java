@@ -68,36 +68,6 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
         }
     }
 
-    /**
-     * Polls the given file
-     *
-     * @param fileName the file name
-     * @param fileList current list of files gathered
-     */
-    protected void pollFile(String fileName, List<GenericFile<ChannelSftp.LsEntry>> fileList) {
-        String directory = ".";
-        int index = fileName.lastIndexOf("/");
-        if (index > -1) {
-            directory = fileName.substring(0, index);
-        }
-        // list the files in the fold and poll the first file
-        List<ChannelSftp.LsEntry> list = operations.listFiles(fileName);
-        if (list.size() > 0) {
-            ChannelSftp.LsEntry file = list.get(0);
-            if (file != null) {
-                RemoteFile<ChannelSftp.LsEntry> remoteFile = asRemoteFile(directory, file);
-                if (isValidFile(remoteFile, false)) {
-                    // matched file so add
-                    fileList.add(remoteFile);
-                }
-            }
-        } else {
-            if (log.isTraceEnabled()) {
-                log.trace("Polled [" + fileName + "]. No files found");
-            }
-        }
-    }
-
     private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String directory, ChannelSftp.LsEntry file) {
         RemoteFile<ChannelSftp.LsEntry> answer = new RemoteFile<ChannelSftp.LsEntry>();
 
