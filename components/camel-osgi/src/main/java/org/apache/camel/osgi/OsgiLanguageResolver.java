@@ -18,6 +18,8 @@ package org.apache.camel.osgi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.commons.logging.Log;
@@ -49,19 +51,46 @@ public class OsgiLanguageResolver implements LanguageResolver {
         } catch (Throwable e) {
             throw new IllegalArgumentException("Invalid URI, no Language registered for scheme : " + name, e);
         }
-        if (type == null) {
-            return null;
-        }
-        if (Language.class.isAssignableFrom(type)) {
-            return (Language)context.getInjector().newInstance(type);
+        if (type != null) {
+            if (Language.class.isAssignableFrom(type)) {
+                return (Language)context.getInjector().newInstance(type);
+            } else {
+                throw new IllegalArgumentException("Type is not a Lanaguage implementation. Found: "
+                                                   + type.getName());
+            }
         } else {
-            throw new IllegalArgumentException("Type is not a Lanaguage implementation. Found: "
-                                               + type.getName());
+            return noSpecificLanguageFound(name, context);
         }
     }
+    
+    protected Language noSpecificLanguageFound(String name, CamelContext context) {
+        Class type = null;
+        try {
+            type = getLanaguageResolver("default");
+        } catch (NoFactoryAvailableException e) {
+            // ignore
+        } catch (Throwable e) {
+            throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
+        }
+        if (type != null) {
+            if (LanguageResolver.class.isAssignableFrom(type)) {
+                LanguageResolver resolver = (LanguageResolver)context.getInjector().newInstance(type);
+                return resolver.resolveLanguage(name, context);
+            } else {
+                throw new IllegalArgumentException("Type is not a LanguageResolver implementation. Found: " + type.getName());
+            }
+        }
+        throw new NoSuchLanguageException(name);
+    }
+
+    
 
     protected Class getLanaguage(String name) throws Exception {
         return Activator.getLanguage(name);
+    }
+    
+    protected Class getLanaguageResolver(String name) throws Exception {
+        return Activator.getLanguageResolver(name);
     }
 
 }
