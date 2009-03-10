@@ -43,10 +43,13 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_COMPONENT = "META-INF/services/org/apache/camel/component/";
     public static final String META_INF_LANGUAGE = "META-INF/services/org/apache/camel/language/";
+    public static final String META_INF_LANGUAGE_RESOLVER = "META-INF/services/org/apache/camel/language/resolver/";
+    
     private static final transient Log LOG = LogFactory.getLog(Activator.class);    
     private static final Map<String, ComponentEntry> COMPONENTS = new HashMap<String, ComponentEntry>();
     private static final Map<URL, TypeConverterEntry> TYPE_CONVERTERS = new HashMap<URL, TypeConverterEntry>();
     private static final Map<String, ComponentEntry> LANGUAGES = new HashMap<String, ComponentEntry>();
+    private static final Map<String, ComponentEntry> LANGUAGE_RESOLVERS = new HashMap<String, ComponentEntry>();
     private static Bundle bundle;
     
     private class ComponentEntry {
@@ -105,6 +108,7 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
     protected void mayBeAddComponentAndLanguageFor(Bundle bundle) {        
         addComponentEntry(META_INF_COMPONENT, bundle, COMPONENTS);
         addComponentEntry(META_INF_LANGUAGE, bundle, LANGUAGES);
+        addComponentEntry(META_INF_LANGUAGE_RESOLVER, bundle, LANGUAGE_RESOLVERS);
     }
     
     protected synchronized void mayBeAddTypeConverterFor(Bundle bundle) {
@@ -130,7 +134,8 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
 
     protected void mayBeRemoveComponentAndLanguageFor(Bundle bundle) {
         removeComponentEntry(bundle, COMPONENTS);
-        removeComponentEntry(bundle, LANGUAGES);        
+        removeComponentEntry(bundle, LANGUAGES);
+        removeComponentEntry(bundle, LANGUAGE_RESOLVERS);
     }
     
     protected void removeComponentEntry(Bundle bundle, Map<String, ComponentEntry> entries) {
@@ -252,13 +257,17 @@ public class Activator implements BundleActivator, SynchronousBundleListener {
         return getClassFromEntries(name, LANGUAGES);
     }
     
+    public static synchronized Class getLanguageResolver(String name) throws Exception {
+        return getClassFromEntries(name, LANGUAGE_RESOLVERS);
+    }
+    
     protected static synchronized Class getClassFromEntries(String name, Map<String, ComponentEntry> entries) throws Exception {
         ComponentEntry entry = entries.get(name);
         if (entry == null) {
             return null;
         }
         if (entry.type == null) {
-            URL url = entry.bundle.getEntry(entry.path);
+            URL url = entry.bundle.getEntry(entry.path);            
             if (LOG.isDebugEnabled()) {
                 LOG.debug("The entry " + name + "'s url is" + url);
             }

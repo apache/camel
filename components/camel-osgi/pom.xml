@@ -92,6 +92,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-script</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-mock</artifactId>
       <scope>test</scope>
