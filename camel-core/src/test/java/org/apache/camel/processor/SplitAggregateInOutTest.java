@@ -22,11 +22,15 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
 public class SplitAggregateInOutTest extends ContextTestSupport {
+
+    private static final Log LOG = LogFactory.getLog(SplitAggregateInOutTest.class);
 
     private String expectedBody = "Response[(id=1,item=A);(id=2,item=B);(id=3,item=C)]";
 
@@ -37,6 +41,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
         // use requestBody as its InOut
         Object out = template.requestBody("direct:start", "A@B@C");
         assertEquals(expectedBody, out);
+        LOG.debug("Response to caller: " + out);
 
         assertMockEndpointsSatisfied();
     }
@@ -85,6 +90,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
          * We just handle the order by returning a id line for the order
          */
         public String handleOrder(String line) {
+            LOG.debug("HandleOrder: " + line);
             return "(id=" + ++counter + ",item=" + line + ")";
         }
 
@@ -93,6 +99,7 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
          * back to the original caller
          */
         public String buildCombinedResponse(String line) {
+            LOG.debug("BuildCombinedResponse: " + line);
             return "Response[" + line + "]";
         }
     }
@@ -113,6 +120,9 @@ public class SplitAggregateInOutTest extends ContextTestSupport {
             // copy from OUT as we use InOut pattern
             String orders = oldExchange.getOut().getBody(String.class);
             String newLine = newExchange.getOut().getBody(String.class);
+
+            LOG.debug("Aggregate old orders: " + orders);
+            LOG.debug("Aggregate new order: " + newLine);
 
             // put orders together separating by semi colon
             orders = orders + ";" + newLine;
