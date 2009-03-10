@@ -86,10 +86,16 @@ public class MinaProducer extends DefaultProducer {
             handler.reset();
         }
 
-        // write the body
+        // log what we are writing
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Writing body: " + body);
+            Object out = body;
+            if (body instanceof byte[]) {
+                // byte arrays is not readable so convert to string
+                out = exchange.getContext().getTypeConverter().convertTo(String.class, body);
+            }
+            LOG.debug("Writing body : " + out);
         }
+        // write the body
         MinaHelper.writeBody(session, body, exchange);
 
         if (sync) {

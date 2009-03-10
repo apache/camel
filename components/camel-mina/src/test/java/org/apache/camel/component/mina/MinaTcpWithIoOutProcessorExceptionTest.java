@@ -22,7 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * To unit test CAMEL-364.
@@ -48,6 +47,9 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
             public void configure() {
                 from(uri).process(new Processor() {
                     public void process(Exchange e) {
+                        // use no delay for fast unit testing
+                        errorHandler(deadLetterChannel().maximumRedeliveries(2).delay(0));
+
                         assertEquals("Hello World", e.getIn().getBody(String.class));
                         // simulate a problem processing the input to see if we can handle it properly
                         throw new IllegalArgumentException("Forced exception");

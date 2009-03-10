@@ -92,8 +92,14 @@ public class MinaConsumer extends DefaultConsumer {
 
         @Override
         public void messageReceived(IoSession session, Object object) throws Exception {
+            // log what we received
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Received body: " + object);
+                Object in = object;
+                if (in instanceof byte[]) {
+                    // byte arrays is not readable so convert to string
+                    in = endpoint.getCamelContext().getTypeConverter().convertTo(String.class, in);
+                }
+                LOG.debug("Received body: " + in);
             }
 
             Exchange exchange = endpoint.createExchange(session, object);
