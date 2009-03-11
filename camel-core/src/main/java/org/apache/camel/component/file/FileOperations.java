@@ -68,6 +68,9 @@ public class FileOperations implements GenericFileOperations<File> {
 
         // always create endpoint defined directory
         if (endpoint.isAutoCreate() && !endpoint.getFile().exists()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Building starting directory: " + endpoint.getFile());
+            }
             endpoint.getFile().mkdirs();
         }
 
@@ -76,16 +79,19 @@ public class FileOperations implements GenericFileOperations<File> {
             return true;
         }
 
-        // TODO: Check bug for double starting directory
-        
+        File endpointPath = endpoint.getFile();
+        File target = new File(directory);
+
         File path;
         if (absolute) {
-            path = new File(directory);
-        } else if (endpoint.getFile().equals(new File(directory))) {
-            // its just the root path
-            path = endpoint.getFile();
+            // absolute path
+            path = target;
+        } else if (endpointPath.equals(target)) {
+            // its just the root of the endpoint path
+            path = endpointPath;
         } else {
-            String afterRoot = ObjectHelper.after(directory, endpoint.getFile().getPath());
+            // relative after the endpoint path
+            String afterRoot = ObjectHelper.after(directory, endpointPath.getPath() + File.separator);
             if (ObjectHelper.isNotEmpty(afterRoot)) {
                 // dir is under the root path
                 path = new File(endpoint.getFile(), afterRoot);
@@ -99,6 +105,9 @@ public class FileOperations implements GenericFileOperations<File> {
             // the directory already exists
             return true;
         } else {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Building directory: " + path);
+            }
             return path.mkdirs();
         }
     }

@@ -75,8 +75,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private OnExceptionDefinition findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices, Exchange exchange,
                                                Throwable exception) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
         }
 
         // the goal is to find the exception with the same/closet inheritance level as the target exception being thrown
@@ -96,8 +96,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
                 // must match
                 if (!matchesWhen(type, exchange)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("The type did not match when: " + type);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("The type did not match when: " + type);
                     }
                     continue;
                 }
@@ -120,11 +120,11 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             }
         }
 
-        if (LOG.isDebugEnabled()) {
+        if (LOG.isTraceEnabled()) {
             if (candidate != null) {
-                LOG.debug("Using " + candidate + " as the exception policy");
+                LOG.trace("Using " + candidate + " as the exception policy");
             } else {
-                LOG.debug("No candidate found to be used as exception policy");
+                LOG.trace("No candidate found to be used as exception policy");
             }
         }
 
