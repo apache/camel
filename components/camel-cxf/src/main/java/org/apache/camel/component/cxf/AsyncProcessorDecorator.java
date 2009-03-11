@@ -47,8 +47,8 @@ public class AsyncProcessorDecorator implements AsyncProcessor {
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         try {
             before.process(exchange);
-        } catch (Throwable t) {
-            exchange.setException(t);
+        } catch (Exception e) {
+            exchange.setException(e);
             callback.done(true);
             return true;
         }
@@ -57,8 +57,8 @@ public class AsyncProcessorDecorator implements AsyncProcessor {
                 try {
                     after.process(exchange);
                     callback.done(doneSynchronously);
-                } catch (Throwable t) {
-                    exchange.setException(t);
+                } catch (Exception e) {
+                    exchange.setException(e);
                 }
             }
         });
