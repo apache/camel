@@ -50,7 +50,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Throwable e;
+        Exception e;
 
         // try processor first
         try {
@@ -110,7 +110,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
 
     protected void processFinally(Exchange exchange) throws Exception {
         if (finallyProcessor != null) {
-            Throwable lastException = exchange.getException();
+            Exception lastException = exchange.getException();
             exchange.setException(null);
 
             // do not catch any exception here, let it propagate up

@@ -32,7 +32,7 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
         return newExchange;
     }
     
-    protected Throwable checkException(Exchange oldExchange, Exchange newExchange) {
+    protected Exception checkException(Exchange oldExchange, Exchange newExchange) {
         return newExchange.getException() != null
                 ? newExchange.getException()
                 : oldExchange.getException();

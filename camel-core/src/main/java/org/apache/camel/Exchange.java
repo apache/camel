@@ -192,14 +192,14 @@ public interface Exchange {
      *
      * @return the exception (or null if no faults)
      */
-    Throwable getException();
+    Exception getException();
 
     /**
      * Sets the exception associated with this exchange
      *
      * @param e  the caused exception
      */
-    void setException(Throwable e);
+    void setException(Exception e);
 
     /**
      * Returns true if this exchange failed due to either an exception or fault

@@ -44,7 +44,7 @@ public class DefaultExchange implements Exchange {
     private Message in;
     private Message out;
     private Message fault;
-    private Throwable exception;
+    private Exception exception;
     private String exchangeId;
     private UnitOfWork unitOfWork;
     private ExchangePattern pattern;
@@ -224,11 +224,11 @@ public class DefaultExchange implements Exchange {
         configureMessage(out);
     }
 
-    public Throwable getException() {
+    public Exception getException() {
         return exception;
     }
 
-    public void setException(Throwable exception) {
+    public void setException(Exception exception) {
         this.exception = exception;
     }
 

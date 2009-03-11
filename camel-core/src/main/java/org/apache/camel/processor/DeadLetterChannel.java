@@ -411,7 +411,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
-            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class));
+            exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
         } else {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
