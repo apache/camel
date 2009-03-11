@@ -35,7 +35,7 @@
 
         <route>
             <from uri="direct:tap"/>
-            <delay><constant>500</constant></delay>
+            <delay delayTime="1000"><constant/></delay>
             <setBody><constant>Tapped</constant></setBody>
             <to uri="mock:result"/>
             <to uri="mock:tap"/>
