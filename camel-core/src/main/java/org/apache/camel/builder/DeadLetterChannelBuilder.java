@@ -124,6 +124,11 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DeadLetterChannelBuilder logStackTrace(boolean logStackTrace) {
+        getRedeliveryPolicy().setLogStackTrace(logStackTrace);
+        return this;
+    }
+
     /**
      * Sets the logger used for caught exceptions
      */

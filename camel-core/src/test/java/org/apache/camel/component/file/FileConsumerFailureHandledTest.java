@@ -33,22 +33,22 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class FileConsumerFailureHandledTest extends ContextTestSupport {
 
     @Override
-    protected void tearDown() throws Exception {
+    protected void setUp() throws Exception {
         deleteDirectory("target/messages");
-        super.tearDown();
+        super.setUp();
     }
 
     public void testParis() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:valid");
         mock.expectedBodiesReceived("Hello Paris");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Paris", Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Paris", Exchange.FILE_NAME, "paris.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
-        asserFiles("paris.txt");
+        asserFiles("paris.txt", true);
     }
 
     public void testLondon() throws Exception {
@@ -56,47 +56,70 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("London");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "London", Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "London", Exchange.FILE_NAME, "london.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
-        asserFiles("london.txt");
+        // london should be delated as we have failure handled it
+        asserFiles("london.txt", true);
     }
     
+    public void testDublin() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:beer");
+        // we get the original input so its not Hello London but only London
+        mock.expectedBodiesReceived("Dublin");
+
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Dublin", Exchange.FILE_NAME, "dublin.txt");
+        mock.assertIsSatisfied();
+
+        // sleep otherwise the file assertions below could fail
+        Thread.sleep(200);
+
+        // dublin should NOT be deleted, but should be retired on next consumer
+        asserFiles("dublin.txt", false);
+    }
+
     public void testMadrid() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         // we get the original input so its not Hello London but only London
         mock.expectedBodiesReceived("Madrid");
 
-        template.sendBodyAndHeader("file:target/messages/input/?delete=true", "Madrid", Exchange.FILE_NAME, "madrid.txt");
+        template.sendBodyAndHeader("file:target/messages/input/?delete=true&delay=5000", "Madrid", Exchange.FILE_NAME, "madrid.txt");
         mock.assertIsSatisfied();
 
         // sleep otherwise the file assertions below could fail
         Thread.sleep(200);
 
-        asserFiles("madrid.txt");
+        // madrid should NOT be deleted, but should be retired on next consumer
+        asserFiles("madrid.txt", false);
     }
 
-    private static void asserFiles(String filename) {
+    private static void asserFiles(String filename, boolean deleted) throws InterruptedException {
         // file should be deleted as deleted=true in parameter in the route below
         File file = new File("target/messages/input/" + filename);
-        assertEquals("File " + filename + " should be deleted", false, file.exists());
+        assertEquals("File " + filename + " should be deleted: " + deleted, deleted, !file.exists());
 
         // and no lock files
-        file = new File("target/messages/input/" + filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX);
-        assertEquals("File " + filename + " lock should be deleted", false, file.exists());
+        String lock = filename + FileComponent.DEFAULT_LOCK_FILE_POSTFIX;
+        file = new File("target/messages/input/" + lock);
+        assertFalse("File " + lock + " should be deleted", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // make sure mock:error is the dead letter channel
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2));
+                // use no delay for fast unit testing
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+
+                // special for not handled when we got beer
+                onException(ValidationException.class).onWhen(exceptionMessage().contains("beer"))
+                    .handled(false).to("mock:beer");
 
                 // special failure handler for ValidationException
-                onException(ValidationException.class).to("mock:invalid");
+                onException(ValidationException.class).handled(true).to("mock:invalid");
 
                 // our route logic to process files from the input folder
                 from("file:target/messages/input/?delete=true").
@@ -113,6 +136,8 @@ public class FileConsumerFailureHandledTest extends ContextTestSupport {
                 throw new ValidationException(exchange, "Forced exception by unit test");
             } else if ("Madrid".equals(body)) {
                 throw new RuntimeCamelException("Madrid is not a supported city");
+            } else if ("Dublin".equals(body)) {
+                throw new ValidationException(exchange, "Dublin have good beer");
             }
             exchange.getOut().setBody("Hello " + body);
         }

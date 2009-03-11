@@ -422,4 +422,16 @@ public final class ExchangeHelper {
         }
         return null;
     }
+
+    public static boolean isFailureHandled(Exchange exchange) {
+        Boolean handled = exchange.getProperty(Exchange.FAILURE_HANDLED, Boolean.class);
+        return handled != null && handled;
+    }
+
+    public static void setFailureHandled(Exchange exchange) {
+        exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
+        // clear exception since its failure handled
+        exchange.setException(null);
+    }
+
 }

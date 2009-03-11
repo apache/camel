@@ -58,7 +58,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
             e = exchange.getException();
 
             // Ignore it if it was handled by the dead letter channel.
-            if (e != null && DeadLetterChannel.isFailureHandled(exchange)) {
+            if (e != null && ExchangeHelper.isFailureHandled(exchange)) {
                 e = null;
             }
         } catch (Exception ex) {
