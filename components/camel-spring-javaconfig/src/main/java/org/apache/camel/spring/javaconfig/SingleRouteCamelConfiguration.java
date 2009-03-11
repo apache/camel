@@ -30,6 +30,7 @@ import org.springframework.config.java.annotation.Bean;
  * @version $Revision$
  */
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
+
     @Bean
     public List<RouteBuilder> routes() {
         return Collections.singletonList(route());
@@ -37,7 +38,6 @@ public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
 
     /**
      * Creates the single {@link RouteBuilder} to use in this confguration
-     * @return
      */
     public abstract RouteBuilder route();
 }

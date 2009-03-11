@@ -285,7 +285,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * @return <tt>true</tt> if the remote file is matched, <tt>false</tt> if not
      */
     protected boolean isMatched(GenericFile<T> file, boolean isDirectory) {
-        String name = file.getFileName();
+        String name = file.getFileNameOnly();
 
         // folders/names starting with dot is always skipped (eg. ".", ".camel", ".camelLock")
         if (name.startsWith(".")) {
@@ -337,7 +337,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         if (fileExpressionResult == null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = new DefaultExchange(endpoint.getCamelContext());
-            fileExpressionResult = (String) endpoint.getFileName().evaluate(dummy);
+            fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
         }
     }
 

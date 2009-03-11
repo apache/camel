@@ -32,6 +32,7 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
 import org.apache.commons.logging.Log;
@@ -198,7 +199,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
     public void setMove(String fileLanguageExpression) {
-        this.move = FileLanguage.file(fileLanguageExpression);
+        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
+        this.move = FileLanguage.file(expression);
     }
 
     public Expression getPreMove() {
@@ -214,7 +216,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
     public void setPreMove(String fileLanguageExpression) {
-        this.preMove = FileLanguage.file(fileLanguageExpression);
+        String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
+        this.preMove = FileLanguage.file(expression);
     }
 
     public Expression getFileName() {
@@ -387,12 +390,47 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         String name = file.isAbsolute() ? file.getAbsoluteFilePath() : file.getRelativeFilePath();
 
         // skip leading endpoint configured directory
-        if (name.startsWith(getConfiguration().getDirectory())) {
+        String endpointPath = getConfiguration().getDirectory();
+        if (ObjectHelper.isNotEmpty(endpointPath) && name.startsWith(endpointPath)) {
             name = ObjectHelper.after(name, getConfiguration().getDirectory() + File.separator);
         }
 
         // adjust filename
         message.setHeader(Exchange.FILE_NAME, name);
+    }
+
+    /**
+     * Strategy to configure the move or premove option based on a String input.
+     * <p/>
+     * @param expression the original string input
+     * @return configured string or the original if no modifications is needed
+     */
+    protected String configureMoveOrPreMoveExpression(String expression) {
+        // if the expression already have ${ } placeholders then pass it unmodified
+        if (expression.indexOf("${") != -1) {
+            return expression;
+        }
+
+        // remove trailing slash
+        expression = FileUtil.stripTrailingSeparator(expression);
+
+        StringBuilder sb = new StringBuilder();
+
+        // relative or absolute path?
+        File file = new File(expression);
+
+        // if relative then insert start with the parent folder
+        if (!file.isAbsolute()) {
+            sb.append("${file:parent}");
+            sb.append(File.separator);
+        }
+        // insert the directory the end user provided
+        sb.append(expression);
+        // append only the filename (file:name can contain a relative path, so we must use onlyname)
+        sb.append(File.separator);
+        sb.append("${file:onlyname}");
+
+        return sb.toString();
     }
 
     protected Map<String, Object> getParamsAsMap() {
