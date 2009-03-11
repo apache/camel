@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.camel.Processor;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -97,9 +98,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
             answer.setRelativeFilePath(file.getAbsolutePath());
         } else {
             File path;
-            if (file.getPath().startsWith(endpointPath)) {
+            if (file.getPath().startsWith(FileUtil.normalizePath(endpointPath))) {
                 // skip duplicate endpoint path
-                path = new File(ObjectHelper.after(file.getPath(), endpointPath + File.separator));
+                path = new File(ObjectHelper.after(file.getPath(), FileUtil.normalizePath(endpointPath) + File.separator));
             } else {
                 path = new File(file.getPath());
             }
