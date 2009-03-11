@@ -70,6 +70,9 @@ public class FromFtpMoveFileTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
 
+        // give time to move file
+        Thread.sleep(200);
+
         // assert the file is deleted
         File file = new File("./res/home/movefile/done/sub2/hello.txt.old");
         file = file.getAbsoluteFile();

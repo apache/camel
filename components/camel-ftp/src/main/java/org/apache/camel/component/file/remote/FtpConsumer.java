@@ -206,47 +206,56 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
 
-            if (deleteFile) {
-                // delete file after consuming
-                if (log.isDebugEnabled()) {
-                    log.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
-                }
-                boolean deleted = client.deleteFile(ftpFile.getName());
-                if (!deleted) {
-                    String message = "Can not delete file: " + ftpFile.getName() + " from: " + remoteServer();
-                    throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
-                }
-            } else if (isMoveFile()) {
-                String fromName = ftpFile.getName();
-                String toName = getMoveFileName(fromName, exchange);
-                if (log.isDebugEnabled()) {
-                    log.debug("Moving file: " + fromName + " to: " + toName);
-                }
-
-                // delete any existing file
-                boolean deleted = client.deleteFile(toName);
-                if (!deleted) {
-                    // if we could not delete any existing file then maybe the folder is missing
-                    // build folder if needed
-                    int lastPathIndex = toName.lastIndexOf('/');
-                    if (lastPathIndex != -1) {
-                        String directory = toName.substring(0, lastPathIndex);
-                        if (!FtpUtils.buildDirectory(client, directory)) {
-                            log.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
-                        }
-                    }
-                }
-
-                // try to rename
-                boolean success = client.rename(fromName, toName);
-                if (!success) {
-                    String message = "Can not move file: " + fromName + " to: " + toName;
-                    throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
-                }
-            }
 
             // all success so lets process it
             getProcessor().process(exchange);
+
+            if (exchange.isFailed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing of exchange failed, so cannot do FTP post command such as move or delete: " + exchange);
+                }
+            } else {
+                // after processing then do post command such as delete or move
+                if (deleteFile) {
+                    // delete file after consuming
+                    if (log.isDebugEnabled()) {
+                        log.debug("Deleteing file: " + ftpFile.getName() + " from: " + remoteServer());
+                    }
+                    boolean deleted = client.deleteFile(ftpFile.getName());
+                    if (!deleted) {
+                        String message = "Can not delete file: " + ftpFile.getName() + " from: " + remoteServer();
+                        throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
+                    }
+                } else if (isMoveFile()) {
+                    String fromName = ftpFile.getName();
+                    String toName = getMoveFileName(fromName, exchange);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Moving file: " + fromName + " to: " + toName);
+                    }
+
+                    // delete any existing file
+                    boolean deleted = client.deleteFile(toName);
+                    if (!deleted) {
+                        // if we could not delete any existing file then maybe the folder is missing
+                        // build folder if needed
+                        int lastPathIndex = toName.lastIndexOf('/');
+                        if (lastPathIndex != -1) {
+                            String directory = toName.substring(0, lastPathIndex);
+                            if (!FtpUtils.buildDirectory(client, directory)) {
+                                log.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
+                            }
+                        }
+                    }
+
+                    // try to rename
+                    boolean success = client.rename(fromName, toName);
+                    if (!success) {
+                        String message = "Can not move file: " + fromName + " to: " + toName;
+                        throw new FtpOperationFailedException(client.getReplyCode(), client.getReplyString(), message);
+                    }
+                }
+            }
+
         }
     }
 

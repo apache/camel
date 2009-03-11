@@ -17,11 +17,10 @@
 package org.apache.camel.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
+import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -82,8 +81,6 @@ public class OsgiLanguageResolver implements LanguageResolver {
         }
         throw new NoSuchLanguageException(name);
     }
-
-    
 
     protected Class getLanaguage(String name) throws Exception {
         return Activator.getLanguage(name);

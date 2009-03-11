@@ -202,43 +202,51 @@ public class SftpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, relativePath);
             }
 
-            if (deleteFile) {
-                // delete file after consuming
-                if (log.isDebugEnabled()) {
-                    log.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer());
-                }
-                deleteFile(sftpFile.getFilename());
-            } else if (isMoveFile()) {
-                String fromName = sftpFile.getFilename();
-                String toName = getMoveFileName(fromName, exchange);
-                if (log.isDebugEnabled()) {
-                    log.debug("Moving file: " + fromName + " to: " + toName);
-                }
+            // all success so lets process it
+            getProcessor().process(exchange);
 
-                // delete any existing file
-                boolean deleted = deleteFile(toName);
-                if (!deleted) {
-                    // if we could not delete any existing file then maybe the folder is missing
-                    // build folder if needed
-                    int lastPathIndex = toName.lastIndexOf('/');
-                    if (lastPathIndex != -1) {
-                        String directory = toName.substring(0, lastPathIndex);
-                        if (!SftpUtils.buildDirectory(channel, directory)) {
-                            log.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
+            if (exchange.isFailed()) {
+                if (log.isDebugEnabled()) {
+                    log.debug("Processing of exchange failed, so cannot do FTP post command such as move or delete: " + exchange);
+                }
+            } else {
+                // after processing then do post command such as delete or move
+                if (deleteFile) {
+                    // delete file after consuming
+                    if (log.isDebugEnabled()) {
+                        log.debug("Deleteing file: " + sftpFile.getFilename() + " from: " + remoteServer());
+                    }
+                    deleteFile(sftpFile.getFilename());
+                } else if (isMoveFile()) {
+                    String fromName = sftpFile.getFilename();
+                    String toName = getMoveFileName(fromName, exchange);
+                    if (log.isDebugEnabled()) {
+                        log.debug("Moving file: " + fromName + " to: " + toName);
+                    }
+
+                    // delete any existing file
+                    boolean deleted = deleteFile(toName);
+                    if (!deleted) {
+                        // if we could not delete any existing file then maybe the folder is missing
+                        // build folder if needed
+                        int lastPathIndex = toName.lastIndexOf('/');
+                        if (lastPathIndex != -1) {
+                            String directory = toName.substring(0, lastPathIndex);
+                            if (!SftpUtils.buildDirectory(channel, directory)) {
+                                log.warn("Can not build directory: " + directory + " (maybe because of denied permissions)");
+                            }
                         }
                     }
-                }
 
-                // try to rename
-                try {
-                    channel.rename(fromName, toName);
-                } catch (SftpException e) {
-                    // ignore just log a warning
-                    log.warn("Can not move file: " + fromName + " to: " + toName);
+                    // try to rename
+                    try {
+                        channel.rename(fromName, toName);
+                    } catch (SftpException e) {
+                        // ignore just log a warning
+                        log.warn("Can not move file: " + fromName + " to: " + toName);
+                    }
                 }
             }
-
-            getProcessor().process(exchange);
         }
     }
 

@@ -68,6 +68,9 @@ public class FromFtpDeleteFileTest extends FtpServerTestSupport {
 
         mock.assertIsSatisfied();
 
+        // give time to delete file
+        Thread.sleep(200);
+
         // assert the file is deleted
         File file = new File("./res/home/deletefile/hello.txt");
         file = file.getAbsoluteFile();

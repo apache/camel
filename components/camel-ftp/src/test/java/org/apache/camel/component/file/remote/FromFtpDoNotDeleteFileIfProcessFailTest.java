@@ -20,19 +20,19 @@ import java.io.File;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to test consumer.moveNamePrefix option.
+ * Unit test to test consumer.deleteFile option.
  */
-public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
+public class FromFtpDoNotDeleteFileIfProcessFailTest extends FtpServerTestSupport {
 
-    private int port = 20030;
-    private String ftpUrl = "ftp://admin@localhost:" + port + "/movefile?password=admin&binary=false"
-        + "&consumer.moveNamePrefix=done/";
+    private int port = 20055;
+    private String ftpUrl = "ftp://admin@localhost:" + port + "/deletefile?password=admin&binary=false&consumer.deleteFile=true";
 
     public int getPort() {
         return port;
@@ -41,7 +41,6 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        deleteDirectory("./res/home/movefile");
         prepareFtpServer();
     }
 
@@ -50,7 +49,7 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
         // test that we can pool and store as a local file
         Endpoint endpoint = context.getEndpoint(ftpUrl);
         Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody("Hello World this file will be moved");
+        exchange.getIn().setBody("Hello World this file will NOT be deleted");
         exchange.getIn().setHeader(FileComponent.HEADER_FILE_NAME, "hello.txt");
         Producer producer = endpoint.createProducer();
         producer.start();
@@ -58,31 +57,37 @@ public class FromFtpMoveFilePrefixTest extends FtpServerTestSupport {
         producer.stop();
 
         // assert file is created
-        File file = new File("./res/home/movefile/hello.txt");
+        File file = new File("./res/home/deletefile/hello.txt");
         file = file.getAbsoluteFile();
         assertTrue("The file should exists", file.exists());
     }
 
-    public void testPollFileAndShouldBeMoved() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
+    public void testPollFileAndShouldBeDeleted() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Hello World this file will be moved");
+        mock.expectedBodiesReceived("Hello World this file will NOT be deleted");
 
         mock.assertIsSatisfied();
 
-        // give time to delete file
+        // give time to NOT delete file
         Thread.sleep(200);
 
         // assert the file is deleted
-        File file = new File("./res/home/movefile/done/hello.txt");
+        File file = new File("./res/home/deletefile/hello.txt");
         file = file.getAbsoluteFile();
-        assertTrue("The file should have been moved", file.exists());
+        assertTrue("The file should NOT have been deleted", file.exists());
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(ftpUrl).to("mock:result");
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).initialRedeliveryDelay(100));
+
+                from(ftpUrl).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced by unittest");
+                    }
+                });
             }
         };
     }
