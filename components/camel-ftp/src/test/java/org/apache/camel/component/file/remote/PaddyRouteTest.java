@@ -18,9 +18,9 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.Tracer;
 
 /**
  * An unit test based on Paddy having trouble with SFTP.
