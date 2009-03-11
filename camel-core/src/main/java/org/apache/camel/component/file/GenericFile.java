@@ -99,9 +99,7 @@ public class GenericFile<T> implements Serializable {
         String newFileName = FileUtil.normalizePath(newName);
         File file = new File(newFileName);            
         if (!absolute) {
-            // for relative then we should avoid having the endpoint path duplicated so clip it
-            System.out.println("endpointPath " + endpointPath);
-            System.out.println("newName " + newFileName);
+            // for relative then we should avoid having the endpoint path duplicated so clip it            
             if (ObjectHelper.isNotEmpty(endpointPath) && newFileName.startsWith(endpointPath)) {
                 // clip starting endpoint in case it was added
                 newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
