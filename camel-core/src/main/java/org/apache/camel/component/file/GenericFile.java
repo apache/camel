@@ -94,6 +94,17 @@ public class GenericFile<T> implements Serializable {
         File file = new File(newName);
         boolean absolute = file.isAbsolute();
 
+        if (!absolute) {
+            // for relative then we should avoid having the endpoint path duplicated so clip it
+            if (ObjectHelper.isNotEmpty(endpointPath) && newName.startsWith(endpointPath)) {
+                // clip starting endpoint in case it was added
+                newName = ObjectHelper.after(newName, endpointPath + getFileSeparator());
+
+                // reconstruct file with clipped name
+                file = new File(newName);
+            }
+        }
+
         // store the file name only
         setFileNameOnly(file.getName());
         setFileName(file.getName());
@@ -112,7 +123,8 @@ public class GenericFile<T> implements Serializable {
         } else {
             setAbsolute(false);
             // construct a pseudo absolute filename that the file operations uses even for relative only
-            setAbsoluteFilePath(endpointPath + getFileSeparator() + getRelativeFilePath());
+            String path = ObjectHelper.isEmpty(endpointPath) ? "" : endpointPath + getFileSeparator();
+            setAbsoluteFilePath(path + getRelativeFilePath());
         }
 
         if (LOG.isTraceEnabled()) {

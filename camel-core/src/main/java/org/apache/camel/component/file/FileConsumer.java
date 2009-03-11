@@ -98,9 +98,10 @@ public class FileConsumer extends GenericFileConsumer<File> {
             answer.setRelativeFilePath(file.getAbsolutePath());
         } else {
             File path;
-            if (file.getPath().startsWith(FileUtil.normalizePath(endpointPath))) {
+            String endpointNormalized = FileUtil.normalizePath(endpointPath);
+            if (file.getPath().startsWith(endpointNormalized)) {
                 // skip duplicate endpoint path
-                path = new File(ObjectHelper.after(file.getPath(), FileUtil.normalizePath(endpointPath) + File.separator));
+                path = new File(ObjectHelper.after(file.getPath(), endpointNormalized + File.separator));
             } else {
                 path = new File(file.getPath());
             }
