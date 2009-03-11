@@ -94,12 +94,12 @@ public class FileLanguageTest extends LanguageTestSupport {
     }
 
     public void testSimpleAndFile() throws Exception {
-        assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-test/hello.bak");
+        assertExpression("backup-${in.header.foo}-${file:name.noext}.bak", "backup-abc-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${file:onlyname.noext}.bak", "backup-abc-hello.bak");
     }
 
     public void testSimpleAndFileAndBean() throws Exception {
-        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-test/hello.bak");
+        assertExpression("backup-${in.header.foo}-${bean:generator}-${file:name.noext}.bak", "backup-abc-generatorbybean-test" + File.separator + "hello.bak");
         assertExpression("backup-${in.header.foo}-${bean:generator}-${file:onlyname.noext}.bak", "backup-abc-generatorbybean-hello.bak");
     }
 
