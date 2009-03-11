@@ -95,11 +95,18 @@ public class GenericFile<T> implements Serializable {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Changing name to: " + newName);
         }
+
         // Make sure the newName is normalized.
         String newFileName = FileUtil.normalizePath(newName);
-        File file = new File(newFileName);            
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Normalized endpointPath: " + endpointPath);
+            LOG.trace("Normalized newFileName: " + newFileName);
+        }
+
+        File file = new File(newFileName);
         if (!absolute) {
-            // for relative then we should avoid having the endpoint path duplicated so clip it            
+            // for relative then we should avoid having the endpoint path duplicated so clip it
             if (ObjectHelper.isNotEmpty(endpointPath) && newFileName.startsWith(endpointPath)) {
                 // clip starting endpoint in case it was added
                 newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
@@ -132,6 +139,11 @@ public class GenericFile<T> implements Serializable {
         }
 
         if (LOG.isTraceEnabled()) {
+            LOG.trace("FileNameOnly: " + getFileNameOnly());
+            LOG.trace("FileName: " + getFileName());
+            LOG.trace("Absolute: " + isAbsolute());
+            LOG.trace("Relative path: " + getRelativeFilePath());
+            LOG.trace("Absolute path: " + getAbsoluteFilePath());
             LOG.trace("Name changed to: " + this);
         }
     }

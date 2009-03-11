@@ -76,6 +76,8 @@ public class FileOperations implements GenericFileOperations<File> {
             return true;
         }
 
+        // TODO: Check bug for double starting directory
+        
         File path;
         if (absolute) {
             path = new File(directory);

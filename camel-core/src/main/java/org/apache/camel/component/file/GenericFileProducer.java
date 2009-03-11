@@ -122,7 +122,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
                     // skip trailing /
                     directory = FileUtil.stripLeadingSeparator(directory);
                     if (!operations.buildDirectory(directory, false)) {
-                        log.debug("Can not build directory [" + directory + "] (could be because of denied permissions)");
+                        log.debug("Cannot build directory [" + directory + "] (could be because of denied permissions)");
                     }
                 }
             }
@@ -170,12 +170,25 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = expression.evaluate(exchange, String.class);
         }
 
-        String endpointFile = endpoint.getConfiguration().getDirectory();
+
+        // flattern name
+        if (endpoint.isFlattern()) {
+            int pos = name.lastIndexOf(File.separator);
+            if (pos == -1) {
+                pos = name.lastIndexOf('/');
+            }
+            if (pos != -1) {
+                name = name.substring(pos + 1);
+            }
+        }
+
+        // compute path by adding endpoint starting directory
+        String endpointPath = endpoint.getConfiguration().getDirectory();
         // Its a directory so we should use it as a base path for the filename
         // If the path isn't empty, we need to add a trailing / if it isn't already there
         String baseDir = "";
-        if (endpointFile.length() > 0) {
-            baseDir = endpointFile + (endpointFile.endsWith(File.separator) ? "" : File.separator);
+        if (endpointPath.length() > 0) {
+            baseDir = endpointPath + (endpointPath.endsWith(File.separator) ? "" : File.separator);
         }
         if (name != null) {
             answer = baseDir + name;

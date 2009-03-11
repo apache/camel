@@ -59,6 +59,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected boolean noop;
     protected boolean recursive;
     protected boolean delete;
+    protected boolean flattern;
     protected String tempPrefix;
     protected String include;
     protected String exclude;
@@ -184,6 +185,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public void setDelete(boolean delete) {
         this.delete = delete;
+    }
+
+    public boolean isFlattern() {
+        return flattern;
+    }
+
+    public void setFlattern(boolean flattern) {
+        this.flattern = flattern;
     }
 
     public Expression getMove() {
@@ -386,17 +395,22 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     public void configureMessage(GenericFile<T> file, Message message) {
         message.setBody(file);
 
-        // compute name to set on header that should be relative to starting directory
-        String name = file.isAbsolute() ? file.getAbsoluteFilePath() : file.getRelativeFilePath();
+        if (flattern) {
+            // when flattern the file name should not contain any paths
+            message.setHeader(Exchange.FILE_NAME, file.getFileNameOnly());
+        } else {
+            // compute name to set on header that should be relative to starting directory
+            String name = file.isAbsolute() ? file.getAbsoluteFilePath() : file.getRelativeFilePath();
 
-        // skip leading endpoint configured directory
-        String endpointPath = getConfiguration().getDirectory();
-        if (ObjectHelper.isNotEmpty(endpointPath) && name.startsWith(endpointPath)) {
-            name = ObjectHelper.after(name, getConfiguration().getDirectory() + File.separator);
+            // skip leading endpoint configured directory
+            String endpointPath = getConfiguration().getDirectory();
+            if (ObjectHelper.isNotEmpty(endpointPath) && name.startsWith(endpointPath)) {
+                name = ObjectHelper.after(name, getConfiguration().getDirectory() + File.separator);
+            }
+
+            // adjust filename
+            message.setHeader(Exchange.FILE_NAME, name);
         }
-
-        // adjust filename
-        message.setHeader(Exchange.FILE_NAME, name);
     }
 
     /**
