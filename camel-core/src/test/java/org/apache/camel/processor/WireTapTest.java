@@ -57,7 +57,7 @@ public class WireTapTest extends ContextTestSupport {
                 // END SNIPPET: e1
 
                 from("direct:tap")
-                    .delay(100).setBody().constant("Tapped")
+                    .delay(1000).setBody().constant("Tapped")
                     .to("mock:result", "mock:tap");
             }
         };
