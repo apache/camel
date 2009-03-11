@@ -78,7 +78,12 @@ public class GenericFile<T> implements Serializable {
         result.setBinding(source.getBinding());
         return result;
     }
-
+    
+    protected boolean isAbsolute(String name) {
+        File file = new File(name);
+        return file.isAbsolute();        
+    }
+   
     /**
      * Changes the name of this remote file. This method alters the absolute and
      * relative names as well.
@@ -88,12 +93,9 @@ public class GenericFile<T> implements Serializable {
     public void changeFileName(String newName) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Changing name to: " + newName);
-        }
-
-        // use java.io.File to help us with computing name changes
-        File file = new File(newName);
-        boolean absolute = file.isAbsolute();
-
+        }       
+        
+        File file = new File(newName);            
         if (!absolute) {
             // for relative then we should avoid having the endpoint path duplicated so clip it
             if (ObjectHelper.isNotEmpty(endpointPath) && newName.startsWith(endpointPath)) {
@@ -117,9 +119,9 @@ public class GenericFile<T> implements Serializable {
         }
 
         // absolute path
-        if (absolute) {
+        if (isAbsolute(newName)) {
             setAbsolute(true);
-            setAbsoluteFilePath(file.getAbsolutePath());
+            setAbsoluteFilePath(newName);
         } else {
             setAbsolute(false);
             // construct a pseudo absolute filename that the file operations uses even for relative only
