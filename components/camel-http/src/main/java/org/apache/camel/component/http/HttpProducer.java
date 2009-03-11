@@ -26,6 +26,7 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
@@ -79,7 +80,7 @@ public class HttpProducer extends DefaultProducer {
 
                 answer.setHeaders(in.getHeaders());
                 answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
-                answer.setBody(extractResponseBody(method));
+                answer.setBody(extractResponseBody(method, exchange));
 
                 // propagate HTTP response headers
                 Header[] headers = method.getResponseHeaders();
@@ -93,7 +94,7 @@ public class HttpProducer extends DefaultProducer {
             } else {
                 HttpOperationFailedException exception = null;
                 Header[] headers = method.getResponseHeaders();
-                InputStream is = extractResponseBody(method);
+                InputStream is = extractResponseBody(method, exchange);
                 if (responseCode >= 300 && responseCode < 400) {
                     String redirectLocation;
                     Header locationHeader = method.getResponseHeader("location");
@@ -137,22 +138,21 @@ public class HttpProducer extends DefaultProducer {
      * @return  the response as a stream
      * @throws IOException can be thrown
      */
-    protected static InputStream extractResponseBody(HttpMethod method) throws IOException {
-        LoadingByteArrayOutputStream bos = null;
+    protected static InputStream extractResponseBody(HttpMethod method, Exchange exchange) throws IOException {
+        CachedOutputStream cos = null;
         InputStream is = null;
         try {
-            bos = new LoadingByteArrayOutputStream();
+            cos = new CachedOutputStream(exchange.getContext().getProperties());
             is = GZIPHelper.getInputStream(method);            
             // in case of no response stream
             if (is == null) {
                 return null;
             }
-            IOUtils.copy(is, bos);
-            bos.flush();
-            return bos.createInputStream();
+            IOUtils.copy(is, cos);
+            cos.flush();
+            return cos.getInputStream();
         } finally {
-            ObjectHelper.close(is, "Extracting response body", LOG);
-            ObjectHelper.close(bos, "Extracting response body", LOG);
+            ObjectHelper.close(is, "Extracting response body", LOG);            
         }
     }
 
