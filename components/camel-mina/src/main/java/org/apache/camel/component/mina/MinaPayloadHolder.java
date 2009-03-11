@@ -55,7 +55,7 @@ public class MinaPayloadHolder implements Serializable {
     private Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
     private Map<String, Object> properties = new LinkedHashMap<String, Object>();
     private Map<String, Object> faultHeaders = new LinkedHashMap<String, Object>();
-    private Throwable exception;
+    private Exception exception;
 
     /**
      * Creates a payload object with the information from the given exchange.
