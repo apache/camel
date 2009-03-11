@@ -28,7 +28,7 @@ import org.apache.commons.logging.LogFactory;
  * Generic File. Specific implementations of a file based endpoint need to
  * provide a File for transfer.
  */
-public class GenericFile<T> implements Serializable {
+public class GenericFile<T> implements Cloneable, Serializable {
 
     private static final Log LOG = LogFactory.getLog(GenericFile.class);
 

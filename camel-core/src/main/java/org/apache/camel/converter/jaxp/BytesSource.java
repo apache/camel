@@ -32,7 +32,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class BytesSource extends StreamSource {
-    private byte[] data;
+    private final byte[] data;
 
     public BytesSource(byte[] data) {
         ObjectHelper.notNull(data, "data");

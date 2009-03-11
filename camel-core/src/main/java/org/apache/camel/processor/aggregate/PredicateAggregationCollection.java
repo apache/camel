@@ -43,7 +43,7 @@ public class PredicateAggregationCollection extends DefaultAggregationCollection
     public void onAggregation(Object correlationKey, Exchange newExchange) {
         if (aggregationCompletedPredicate.matches(newExchange)) {
             // this exchange has now aggregated so lets add it to the collection of things to send
-            super.getMap().remove(correlationKey);
+            super.getAggregated().remove(correlationKey);
             collection.add(newExchange);
         }
     }

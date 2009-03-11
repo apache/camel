@@ -78,7 +78,7 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
 
         try {
             processor.process(exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             exchange.setException(e);
         }
 

@@ -53,8 +53,7 @@ public class AntPathMatcherGenericFileFilter implements GenericFileFilter {
 
             // invoke acceptPathName(String)
             String path = file.getRelativeFilePath();
-            Boolean result = (Boolean) ObjectHelper.invokeMethod(acceptsMethod, filter, path);
-            return result;
+            return (Boolean) ObjectHelper.invokeMethod(acceptsMethod, filter, path);
 
         } catch (NoSuchMethodException e) {
             throw new TypeNotPresentException(ANTPATHMATCHER_CLASSNAME, e);

@@ -811,7 +811,7 @@ public final class ObjectHelper {
             Object value = actualType.newInstance();
             return cast(expectedType, value);
         } catch (InstantiationException e) {
-            throw new RuntimeCamelException();
+            throw new RuntimeCamelException(e);
         } catch (IllegalAccessException e) {
             throw new RuntimeCamelException(e);
         }

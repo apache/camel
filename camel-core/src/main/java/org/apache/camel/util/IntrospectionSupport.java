@@ -100,7 +100,7 @@ public final class IntrospectionSupport {
                     name = name.substring(3, 4).toLowerCase() + name.substring(4);
                     properties.put(optionPrefix + name, strValue);
                     rc = true;
-                } catch (Throwable ignore) {
+                } catch (Exception ignore) {
                     // ignore
                 }
             }
@@ -126,7 +126,7 @@ public final class IntrospectionSupport {
         }
     }
 
-    public static Object getProperty(Object target, String property) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
+    public static Object getProperty(Object target, String property) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(property, "property");
 
@@ -138,8 +138,7 @@ public final class IntrospectionSupport {
     }
 
     public static Method getPropertyGetter(Class type, String propertyName) throws NoSuchMethodException {
-        Method method = type.getMethod("get" + ObjectHelper.capitalize(propertyName));
-        return method;
+        return type.getMethod("get" + ObjectHelper.capitalize(propertyName));
     }
 
     public static boolean setProperties(Object target, Map properties, String optionPrefix) throws Exception {

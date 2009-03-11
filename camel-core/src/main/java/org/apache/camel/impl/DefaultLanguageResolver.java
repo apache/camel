@@ -40,7 +40,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
             type = LANGUAGE_FACTORY.findClass(name);
         } catch (NoFactoryAvailableException e) {
             // ignore
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
         }
         if (type != null) {
@@ -60,7 +60,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
             type = LANGUAGE_RESOLVER.findClass("default");
         } catch (NoFactoryAvailableException e) {
             // ignore
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
         }
         if (type != null) {

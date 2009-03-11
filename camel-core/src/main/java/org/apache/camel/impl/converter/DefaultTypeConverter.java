@@ -52,8 +52,8 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     private final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
     private Injector injector;
-    private List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
-    private List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
+    private final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
+    private final List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
     private boolean loaded;
 
     public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector) {

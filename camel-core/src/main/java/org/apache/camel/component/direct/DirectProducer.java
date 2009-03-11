@@ -63,8 +63,8 @@ public class DirectProducer extends DefaultProducer implements AsyncProcessor {
                 for (DefaultConsumer consumer : endpoint.getConsumers()) {
                     consumer.getProcessor().process(exchange);
                 }
-            } catch (Throwable error) {
-                exchange.setException(error);
+            } catch (Exception e) {
+                exchange.setException(e);
             }
         }
         callback.done(true);

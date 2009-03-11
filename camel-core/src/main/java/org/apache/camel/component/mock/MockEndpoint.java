@@ -72,7 +72,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private int expectedMinimumCount;
     private List expectedBodyValues;
     private List actualBodyValues;
-    private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
     private String headerName;
     private Object headerValue;
     private Object actualHeader;
@@ -708,7 +708,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             }
 
             performAssertions(exchange);
-        } catch (Throwable e) {
+        } catch (Exception e) {
             failures.add(e);
         }
         if (latch != null) {

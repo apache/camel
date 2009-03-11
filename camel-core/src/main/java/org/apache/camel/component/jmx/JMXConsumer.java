@@ -38,7 +38,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
     public void handleNotification(Notification notification, Object handback) {
         try {
             getProcessor().process(jmxEndpoint.createExchange(notification));
-        } catch (Throwable e) {
+        } catch (Exception e) {
             handleException(e);
         }
     }

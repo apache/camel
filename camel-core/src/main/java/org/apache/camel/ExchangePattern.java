@@ -110,7 +110,7 @@ public enum ExchangePattern {
         try {
             return valueOf(value);
         } catch (Exception e) {
-            throw new IllegalArgumentException("Unknown message exchange pattern: " + value);
+            throw new IllegalArgumentException("Unknown message exchange pattern: " + value, e);
         }
     }
 

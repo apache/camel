@@ -38,7 +38,7 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     private static final transient Log LOG = LogFactory.getLog(DefaultAggregationCollection.class);
     private Expression correlationExpression;
     private AggregationStrategy aggregationStrategy;
-    private Map<Object, Exchange> map = new LinkedHashMap<Object, Exchange>();
+    private final Map<Object, Exchange> aggregated = new LinkedHashMap<Object, Exchange>();
 
     public DefaultAggregationCollection() {
     }
@@ -48,17 +48,17 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
         this.aggregationStrategy = aggregationStrategy;
     }
 
-    protected Map<Object, Exchange> getMap() {
-        return map;
+    protected Map<Object, Exchange> getAggregated() {
+        return aggregated;
     }
 
     @Override
     public boolean add(Exchange exchange) {
         Object correlationKey = correlationExpression.evaluate(exchange);
         if (LOG.isDebugEnabled()) {
-            LOG.debug("evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
+            LOG.debug("Evaluated expression: " + correlationExpression + " as CorrelationKey: " + correlationKey);
         }
-        Exchange oldExchange = map.get(correlationKey);
+        Exchange oldExchange = aggregated.get(correlationKey);
         Exchange newExchange = exchange;
 
         if (oldExchange != null) {
@@ -72,14 +72,14 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
         }
 
         // the strategy may just update the old exchange and return it
-        if (newExchange != oldExchange) {
+        if (!newExchange.equals(oldExchange)) {
             if (LOG.isDebugEnabled()) {
-                LOG.debug("put exchange:" + newExchange + " for key:"  + correlationKey);
+                LOG.debug("Put exchange:" + newExchange + " with coorelation key:"  + correlationKey);
             }
             if (oldExchange == null) {
                 newExchange.setProperty(Exchange.AGGREGATED_SIZE, Integer.valueOf(1));
             }
-            map.put(correlationKey, newExchange);
+            aggregated.put(correlationKey, newExchange);
         }
 
         onAggregation(correlationKey, newExchange);
@@ -88,16 +88,16 @@ public class DefaultAggregationCollection extends AbstractCollection<Exchange> i
     }
 
     public Iterator<Exchange> iterator() {
-        return map.values().iterator();
+        return aggregated.values().iterator();
     }
 
     public int size() {
-        return map.size();
+        return aggregated.size();
     }
 
     @Override
     public void clear() {
-        map.clear();
+        aggregated.clear();
     }
 
     public void onAggregation(Object correlationKey, Exchange newExchange) {

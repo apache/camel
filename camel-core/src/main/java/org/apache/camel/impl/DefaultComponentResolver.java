@@ -59,7 +59,7 @@ public class DefaultComponentResolver implements ComponentResolver {
             type = COMPONENT_FACTORY.findClass(name);
         } catch (NoFactoryAvailableException e) {
             return null;
-        } catch (Throwable e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Component registered for scheme: " + name, e);
         }
         if (type == null) {
