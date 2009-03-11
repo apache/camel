@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 import java.io.Serializable;
 
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -93,17 +94,20 @@ public class GenericFile<T> implements Serializable {
     public void changeFileName(String newName) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Changing name to: " + newName);
-        }       
-        
-        File file = new File(newName);            
+        }
+        // Make sure the newName is normalized.
+        String newFileName = FileUtil.normalizePath(newName);
+        File file = new File(newFileName);            
         if (!absolute) {
             // for relative then we should avoid having the endpoint path duplicated so clip it
-            if (ObjectHelper.isNotEmpty(endpointPath) && newName.startsWith(endpointPath)) {
+            System.out.println("endpointPath " + endpointPath);
+            System.out.println("newName " + newFileName);
+            if (ObjectHelper.isNotEmpty(endpointPath) && newFileName.startsWith(endpointPath)) {
                 // clip starting endpoint in case it was added
-                newName = ObjectHelper.after(newName, endpointPath + getFileSeparator());
+                newFileName = ObjectHelper.after(newFileName, endpointPath + getFileSeparator());
 
                 // reconstruct file with clipped name
-                file = new File(newName);
+                file = new File(newFileName);
             }
         }
 
@@ -119,9 +123,9 @@ public class GenericFile<T> implements Serializable {
         }
 
         // absolute path
-        if (isAbsolute(newName)) {
+        if (isAbsolute(newFileName)) {
             setAbsolute(true);
-            setAbsoluteFilePath(newName);
+            setAbsoluteFilePath(newFileName);
         } else {
             setAbsolute(false);
             // construct a pseudo absolute filename that the file operations uses even for relative only

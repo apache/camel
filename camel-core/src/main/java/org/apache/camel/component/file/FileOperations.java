@@ -60,6 +60,7 @@ public class FileOperations implements GenericFileOperations<File> {
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         File file = new File(from);
         File target = new File(to);
+        //System.out.println("rename the file from " + from + " to " + to);
         return file.renameTo(target);
     }
 
