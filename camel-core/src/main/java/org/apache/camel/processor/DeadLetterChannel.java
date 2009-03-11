@@ -31,6 +31,7 @@ import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
@@ -91,7 +92,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     data.sync = false;
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
-                    if (exchange.getException() != null && !isFailureHandled(exchange)) {
+                    if (exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
                         // if we are redelivering then sleep before trying again
                         asyncProcess(exchange, callback, data);
                     } else {
@@ -200,7 +201,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     data.sync = false;
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
-                    if (exchange.getException() != null && !isFailureHandled(exchange)) {                        
+                    if (exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
                         //TODO Call the Timer for the asyncProcessor
                         asyncProcess(exchange, callback, data);
                     } else {
@@ -212,7 +213,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 // It is going to be processed async..
                 return false;
             }
-            if (exchange.getException() == null || isFailureHandled(exchange)) {
+            if (exchange.getException() == null || ExchangeHelper.isFailureHandled(exchange)) {
                 // If everything went well.. then we exit here..
                 callback.done(true);
                 return true;
@@ -328,7 +329,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private boolean deliverToFaultProcessor(final Exchange exchange, final AsyncCallback callback,
                                             final RedeliveryData data) {
         // we did not success with the redelivery so now we let the failure processor handle it
-        setFailureHandled(exchange);
+        ExchangeHelper.setFailureHandled(exchange);
         // must decrement the redelivery counter as we didn't process the redelivery but is
         // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
         decrementRedeliveryCounter(exchange);
@@ -351,17 +352,6 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     // Properties
     // -------------------------------------------------------------------------
-
-    public static boolean isFailureHandled(Exchange exchange) {
-        Boolean handled = exchange.getProperty(Exchange.FAILURE_HANDLED, Boolean.class);
-        return handled != null && handled;
-    }
-
-    public static void setFailureHandled(Exchange exchange) {
-        exchange.setProperty(Exchange.FAILURE_HANDLED, Boolean.TRUE);
-        // clear exception since its failure handled
-        exchange.setException(null);
-    }
 
     /**
      * Returns the output processor

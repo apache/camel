@@ -158,18 +158,16 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                     public void done(boolean sync) {
                         final GenericFile<T> file = exchange.getGenericFile();
                         boolean failed = exchange.isFailed();
-                        boolean handled = DeadLetterChannel.isFailureHandled(exchange);
 
                         if (log.isDebugEnabled()) {
-                            log.debug("Done processing file: " + file + ". Status is: "
-                                    + (failed ? "failed: " + failed + ", handled by failure processor: " + handled : "processed OK"));
+                            log.debug("Done processing file: " + file + " using exchange: " + exchange);
                         }
 
                         boolean committed = false;
                         try {
-                            if (!failed || handled) {
+                            if (!failed) {
                                 // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
-                                processStrategyCommit(processStrategy, exchange, file, handled);
+                                processStrategyCommit(processStrategy, exchange, file);
                                 committed = true;
                             } else {
                                 // there was an exception but it was not handled by the DeadLetterChannel
@@ -197,13 +195,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      * @param processStrategy the strategy to perform the commit
      * @param exchange        the exchange
      * @param file            the file processed
-     * @param failureHandled  is <tt>false</tt> if the exchange was processed succesfully,
-     *                        <tt>true</tt> if an exception occured during processing but it
-     *                        was handled by the failure processor (usually the DeadLetterChannel).
      */
     @SuppressWarnings("unchecked")
     protected void processStrategyCommit(GenericFileProcessStrategy<T> processStrategy,
-                                         GenericFileExchange<T> exchange, GenericFile<T> file, boolean failureHandled) {
+                                         GenericFileExchange<T> exchange, GenericFile<T> file) {
         if (endpoint.isIdempotent()) {
             // only add to idempotent repository if we could process the file
             // only use the filename as the key as the file could be moved into a done folder
@@ -211,9 +206,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         }
 
         try {
-            if (log.isDebugEnabled()) {
-                log.debug("Committing remote file strategy: " + processStrategy + " for file: " + file
-                        + (failureHandled ? " that was handled by the failure processor." : ""));
+            if (log.isTraceEnabled()) {
+                log.trace("Committing remote file strategy: " + processStrategy + " for file: " + file);
             }
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
@@ -232,8 +226,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
      */
     protected void processStrategyRollback(GenericFileProcessStrategy<T> processStrategy,
                                            GenericFileExchange<T> exchange, GenericFile<T> file) {
-        if (log.isDebugEnabled()) {
-            log.debug("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
+        if (log.isWarnEnabled()) {
+            log.warn("Rolling back remote file strategy: " + processStrategy + " for file: " + file);
         }
         try {
             processStrategy.rollback(operations, endpoint, exchange, file);

@@ -122,11 +122,11 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             // must close channel first
             ObjectHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
             // need to delete the lock file
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleting (releasing) exclusive lock file: " + lockFileName);
-            }            
             File lockfile = new File(lockFileName);
-            lockfile.delete();
+            boolean deleted = lockfile.delete();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exclusive lock file: " + lockFileName + " was deleted: " + deleted);
+            }
         }
     }
 
@@ -136,7 +136,7 @@ public class FileLockExclusiveReadLockStrategy implements GenericFileExclusiveRe
             Thread.sleep(1000);
             return true;
         } catch (InterruptedException e) {
-            LOG.debug("Sleep interrupted while waiting for exclusive read lock");
+            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return false;
         }
     }

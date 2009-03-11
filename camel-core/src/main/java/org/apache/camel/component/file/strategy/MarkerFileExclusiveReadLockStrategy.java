@@ -74,11 +74,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
             // must close channel
             ObjectHelper.close(channel, "Closing channel", LOG);
             
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Deleting lock file: " + lockFileName);
-            }
             File lockfile = new File(lockFileName);
-            lockfile.delete();            
+            boolean deleted = lockfile.delete();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Lock file: " + lockFileName + " was deleted: " + deleted);
+            }
         }
     }
 

@@ -90,7 +90,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             Thread.sleep(1000);
             return true;
         } catch (InterruptedException e) {
-            LOG.debug("Sleep interrupted while waiting for exclusive read lock");
+            LOG.debug("Sleep interrupted while waiting for exclusive read lock, so breaking out");
             return false;
         }
     }

@@ -39,7 +39,7 @@ public class FileConsumer extends GenericFileConsumer<File> {
         File directory = new File(fileName);
 
         if (!directory.exists() || !directory.isDirectory()) {
-            log.warn("Cannot poll directory as file does not exists or is not a directory: " + directory);
+            log.warn("Cannot poll as directory does not exists or its not a directory: " + directory);
             return;
         }
 
