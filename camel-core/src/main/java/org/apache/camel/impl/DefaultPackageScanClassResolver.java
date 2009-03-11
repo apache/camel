@@ -376,9 +376,9 @@ public class DefaultPackageScanClassResolver implements PackageScanClassResolver
             if (!found) {
                 LOG.warn("Could not find class '" + fqn + "' in any classloaders: " + set);
             }
-        } catch (Throwable t) {
-            LOG.warn("Could not examine class '" + fqn + "' due to a " + t.getClass().getName()
-                + " with message: " + t.getMessage(), t);
+        } catch (Exception e) {
+            LOG.warn("Could not examine class '" + fqn + "' due to a " + e.getClass().getName()
+                + " with message: " + e.getMessage(), e);
         }
     }
 

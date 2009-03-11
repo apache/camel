@@ -72,8 +72,9 @@ public final class FileExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
                 if (name != null) {
-                    if (name.lastIndexOf(".") != -1) {
-                        return name.substring(0, name.lastIndexOf('.'));
+                    int pos = name.lastIndexOf('.');
+                    if (pos != -1) {
+                        return name.substring(0, pos);
                     } else {
                         // name does not have extension
                         return name;
@@ -95,8 +96,9 @@ public final class FileExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
                 if (name != null) {
-                    if (name.lastIndexOf(".") != -1) {
-                        return name.substring(0, name.lastIndexOf('.'));
+                    int pos = name.lastIndexOf('.');
+                    if (pos != -1) {
+                        return name.substring(0, pos);
                     } else {
                         // name does not have extension
                         return name;

@@ -81,8 +81,8 @@ public class XmlConverter {
         Class cl = null;
         try {
             cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX");
-        } catch (Throwable t) {
-            // do nothing here
+        } catch (Exception e) {
+            // ignore
         }
         DOM_TO_SAX_CLASS = cl;
     }

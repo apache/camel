@@ -58,8 +58,8 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
         try {
             processor.process(exchange);
-        } catch (Throwable error) {
-            exchange.setException(error);
+        } catch (Exception e) {
+            exchange.setException(e);
         }
     }
 

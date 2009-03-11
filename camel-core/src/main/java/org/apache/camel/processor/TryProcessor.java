@@ -26,8 +26,6 @@ import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 /**
  * Implements try/catch/finally type processing
  *
@@ -52,7 +50,9 @@ public class TryProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Throwable e = null;
+        Throwable e;
+
+        // try processor first
         try {
             tryProcessor.process(exchange);
             e = exchange.getException();
@@ -61,38 +61,23 @@ public class TryProcessor extends ServiceSupport implements Processor {
             if (e != null && DeadLetterChannel.isFailureHandled(exchange)) {
                 e = null;
             }
-        } catch (Throwable ex) {
+        } catch (Exception ex) {
             e = ex;
             exchange.setException(e);
         }
 
-        Exception unexpected = null;
+        // handle any exception occured during the try processor
         try {
             if (e != null) {
-                LOG.info("Caught exception while processing exchange.", e);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Caught exception while processing exchange.", e);
+                }
                 handleException(exchange, e);
             }
-        } catch (Exception ex) {
-            unexpected = ex;
-        } catch (Throwable ex) {
-            unexpected = wrapRuntimeCamelException(ex);
         } finally {
-            try {
-                processFinally(exchange);
-            } catch (Exception ex) {
-                unexpected = ex;
-            } catch (Throwable ex) {
-                unexpected = wrapRuntimeCamelException(ex);
-            }
-            if (unexpected != null) {
-                LOG.warn("Caught exception inside processFinally clause.", unexpected);
-                throw unexpected;
-            }
-        }
-
-        if (unexpected != null) {
-            LOG.warn("Caught exception inside handle clause.", unexpected);
-            throw unexpected;
+            // and run finally
+            // notice its always executed since we always enter the try block
+            processFinally(exchange);
         }
     }
 
@@ -104,7 +89,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
         ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
     }
 
-    protected void handleException(Exchange exchange, Throwable e) throws Throwable {
+    protected void handleException(Exchange exchange, Throwable e) throws Exception {
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(e)) {
                 // lets attach the exception to the exchange
@@ -123,7 +108,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
         }
     }
 
-    protected void processFinally(Exchange exchange) throws Throwable {
+    protected void processFinally(Exchange exchange) throws Exception {
         if (finallyProcessor != null) {
             Throwable lastException = exchange.getException();
             exchange.setException(null);

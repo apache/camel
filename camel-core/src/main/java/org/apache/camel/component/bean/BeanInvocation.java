@@ -81,10 +81,8 @@ public class BeanInvocation implements Externalizable {
             exchange.getOut().setBody(response);
         } catch (InvocationTargetException e) {
             exchange.setException(e.getCause());
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

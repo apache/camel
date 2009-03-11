@@ -674,13 +674,13 @@ public final class ExpressionBuilder {
                 if ("now".equals(command)) {
                     date = new Date();
                 } else if (command.startsWith("header.") || command.startsWith("in.header.")) {
-                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getIn().getHeader(key, Date.class);
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);
                     }
                 } else if (command.startsWith("out.header.")) {
-                    String key = command.substring(command.lastIndexOf(".") + 1);
+                    String key = command.substring(command.lastIndexOf('.') + 1);
                     date = exchange.getOut().getHeader(key, Date.class);
                     if (date == null) {
                         throw new IllegalArgumentException("Cannot find java.util.Date object at " + command);

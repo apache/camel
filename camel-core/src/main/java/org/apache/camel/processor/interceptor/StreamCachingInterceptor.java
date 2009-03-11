@@ -89,7 +89,7 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
         } else {
             try {
                 getProcessor().process(exchange);
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 exchange.setException(e);
             }
             // false means processing of the exchange asynchronously,

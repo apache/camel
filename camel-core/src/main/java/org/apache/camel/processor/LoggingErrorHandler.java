@@ -57,7 +57,7 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
             if (exchange.getException() != null) {
                 error = exchange.getException();
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             error = e;
         }
 

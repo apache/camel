@@ -16,8 +16,6 @@
  */
 package org.apache.camel.management;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -58,11 +56,11 @@ public class ExceptionWithManagementTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                onException(AssertionFailedError.class).maximumRedeliveries(1).to("mock:error");
+                onException(IllegalArgumentException.class).maximumRedeliveries(1).to("mock:error");
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new AssertionFailedError("intentional error");
+                        throw new IllegalArgumentException("intentional error");
                     }
                 }).to("mock:out");
             }
