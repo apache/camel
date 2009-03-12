@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
+
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -114,6 +116,16 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
      */
     public String remoteServerInformation() {
         return ((RemoteFileConfiguration) configuration).remoteServerInformation();
+    }
+    
+    @Override
+    public char getFileSeparator() {       
+        return '/';
+    }
+    
+    @Override
+    public boolean isAbsolute(String name) {        
+        return name.startsWith("/");
     }
 
 }

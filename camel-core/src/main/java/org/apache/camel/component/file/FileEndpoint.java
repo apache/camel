@@ -116,4 +116,16 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         return "file://" + getFile().getAbsolutePath();
     }
 
+    @Override
+    public char getFileSeparator() {       
+        return File.separatorChar;
+    }
+
+    @Override
+    public boolean isAbsolute(String name) {
+        // relative or absolute path?
+        File file = new File(name);
+        return file.isAbsolute();
+    }
+
 }
