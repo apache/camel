@@ -122,12 +122,11 @@ public class CamelContextResource {
     public ConvertersResource getConvertersResource() {
         return new ConvertersResource(this);
     }
-/*
 
-    public List<EndpointLink> getEndpoints() {
-        return getEndpointsResource().getDTO().getEndpoints();
+    @Path("languages")
+    public LanguagesResource getLanguages() {
+        return new LanguagesResource(this);
     }
-*/
 
 
 }
