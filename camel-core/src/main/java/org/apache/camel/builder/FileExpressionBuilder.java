@@ -22,10 +22,9 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.ExpressionAdapter;
-import org.apache.camel.language.IllegalSyntaxException;
-import org.apache.camel.language.constant.ConstantLanguage;
-import org.apache.camel.language.simple.SimpleLanguage;
+import org.apache.camel.spi.Language;
 
 /**
  * A helper class for working with <a href="http://camel.apache.org/expression.html">expressions</a> based
@@ -236,22 +235,24 @@ public final class FileExpressionBuilder {
         };
     }
 
-    public static Expression simpleExpression(final String simple) {
+    public static Expression simpleExpression(final String expression) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
                 try {
-                    return SimpleLanguage.simple(simple).evaluate(exchange);
-                } catch (IllegalSyntaxException e) {
+                    Language simple = exchange.getContext().resolveLanguage("simple");
+                    return simple.createExpression(expression).evaluate(exchange);
+                } catch (ExpressionIllegalSyntaxException e) {
                     // fallback to constant so end users can enter a fixed filename
-                    return ConstantLanguage.constant(simple).evaluate(exchange);
+                    Language constant = exchange.getContext().resolveLanguage("constant");
+                    return constant.createExpression(expression).evaluate(exchange);
                 }
             }
 
             @Override
             public String toString() {
-                return "simple(" + simple + ")";
+                return "simple(" + expression + ")";
             }
         };
     }

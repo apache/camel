@@ -30,6 +30,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.Builder;
+import org.apache.camel.builder.PredicateSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -228,7 +229,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
-            predicate.assertMatches("Predicate should match", exchange);
+            PredicateSupport.assertMatches(predicate, "Predicate should match", exchange);
         } catch (AssertionError e) {
             log.debug("Caught expected assertion error: " + e);
         }
@@ -240,7 +241,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected boolean assertPredicate(Predicate predicate, Exchange exchange, boolean expected) {
         if (expected) {
-            predicate.assertMatches("Predicate failed", exchange);
+            PredicateSupport.assertMatches(predicate, "Predicate failed", exchange);
         }
         boolean value = predicate.matches(exchange);
 
@@ -370,4 +371,29 @@ public abstract class TestSupport extends TestCase {
         File dir = new File(file);
         dir.mkdirs();
     }
+
+    /**
+     * To be used for folder/directory comparison that works across different platforms such
+     * as Window, Mac and Linux.
+     */
+    public static void assertDirectoryEquals(String expected, String actual) {
+        assertDirectoryEquals(null, expected, actual);
+    }
+
+    /**
+     * To be used for folder/directory comparison that works across different platforms such
+     * as Window, Mac and Linux.
+     */
+    public static void assertDirectoryEquals(String message, String expected, String actual) {
+        // must use single / as path separators
+        String expectedPath = expected.replace('\\', '/');
+        String actualPath = actual.replace('\\', '/');
+
+        if (message != null) {
+            assertEquals(message, expectedPath, actualPath);
+        } else {
+            assertEquals(expectedPath, actualPath);
+        }
+    }
+
 }

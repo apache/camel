@@ -18,8 +18,8 @@ package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
 import org.apache.camel.impl.ExpressionSupport;
-import org.apache.camel.language.ExpressionEvaluationException;
 import org.apache.commons.jxpath.CompiledExpression;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.JXPathException;
@@ -79,5 +79,10 @@ public class JXPathExpression extends ExpressionSupport {
             compiledExpression = JXPathContext.compile(expression);
         }
         return compiledExpression;
+    }
+
+    @Override
+    public String toString() {
+        return "JXpath[" + expression + "]";
     }
 }

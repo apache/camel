@@ -24,8 +24,4 @@ class ScalaPredicate(function: Exchange => Boolean) extends Predicate[Exchange]{
     function(exchange)
   }
 
-  override def assertMatches(text: String, exchange: Exchange) = {
-    if (!matches(exchange)) throw new AssertionError(text + " : " + exchange + " doesn't match Scala function")
-  }
-
 }

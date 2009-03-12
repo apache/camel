@@ -14,27 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language;
-
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Language;
+package org.apache.camel;
 
 /**
- * An exception thrown if some illegal syntax is rejected by a specific language
+ * An exception thrown if the expression contains illegal syntax.
  *
  * @version $Revision$
  */
-public class IllegalSyntaxException extends RuntimeCamelException {
-    private final Language language;
+public class ExpressionIllegalSyntaxException extends RuntimeCamelException {
     private final String expression;
 
-    public IllegalSyntaxException(Language language, String expression) {
-        this(language, expression, null);
+    public ExpressionIllegalSyntaxException(String expression) {
+        this(expression, null);
     }
 
-    public IllegalSyntaxException(Language language, String expression, Throwable cause) {
-        super("Illegal syntax for language: " + language + ". Expression: " + expression, cause);
-        this.language = language;
+    public ExpressionIllegalSyntaxException(String expression, Throwable cause) {
+        super("Illegal syntax: " + expression, cause);
         this.expression = expression;
     }
 
@@ -42,7 +37,4 @@ public class IllegalSyntaxException extends RuntimeCamelException {
         return expression;
     }
 
-    public Language getLanguage() {
-        return language;
-    }
 }

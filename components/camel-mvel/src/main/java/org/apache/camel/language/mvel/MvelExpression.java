@@ -19,15 +19,15 @@ package org.apache.camel.language.mvel;
 import java.io.Serializable;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.ExpressionSupport;
-import org.apache.camel.language.ExpressionEvaluationException;
-import org.apache.camel.language.IllegalSyntaxException;
 
 public class MvelExpression extends ExpressionSupport {
 
     private final String expressionString;
     private final Class<?> type;
-    private Serializable compiled;
+    private final Serializable compiled;
 
     public MvelExpression(MvelLanguage language, String expressionString, Class<?> type) {
         this.expressionString = expressionString;
@@ -35,7 +35,7 @@ public class MvelExpression extends ExpressionSupport {
         try {
             this.compiled = org.mvel.MVEL.compileExpression(expressionString);
         } catch (Exception e) {
-            throw new IllegalSyntaxException(language, expressionString, e);
+            throw new ExpressionIllegalSyntaxException(expressionString, e);
         }
     }
 
@@ -53,5 +53,10 @@ public class MvelExpression extends ExpressionSupport {
 
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
+    }
+
+    @Override
+    public String toString() {
+        return "Mvel[" + expressionString + "]";
     }
 }
