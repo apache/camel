@@ -29,6 +29,7 @@ import org.apache.camel.Exchange;
  * @version $Revision$
  */
 public final class MinaPayloadHelper {
+
     private MinaPayloadHelper() {
         //Utility Class
     }

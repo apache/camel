@@ -18,6 +18,8 @@ package org.apache.camel.component.mina;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.common.WriteFuture;
 
@@ -26,6 +28,8 @@ import org.apache.mina.common.WriteFuture;
  */
 public final class MinaHelper {
 
+    private static final transient Log LOG = LogFactory.getLog(MinaHelper.class);
+
     private MinaHelper() {
         //Utility Class
     }
@@ -33,9 +37,9 @@ public final class MinaHelper {
     /**
      * Writes the given body to MINA session. Will wait until the body has been written.
      *
-     * @param session   the MINA session
-     * @param body      the body to write (send)
-     * @param exchange  the mina exchange used for error reporting
+     * @param session  the MINA session
+     * @param body     the body to write (send)
+     * @param exchange the mina exchange used for error reporting
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
@@ -44,7 +48,8 @@ public final class MinaHelper {
         WriteFuture future = session.write(body);
         future.join();
         if (!future.isWritten()) {
-            throw new CamelExchangeException("Could not write body", exchange);
+            LOG.warn("Cannot write body: " + body + " using session: " + session);
+            throw new CamelExchangeException("Cannot write body", exchange);
         }
     }
 
