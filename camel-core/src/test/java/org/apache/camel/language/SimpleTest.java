@@ -17,6 +17,7 @@
 package org.apache.camel.language;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 
 /**
  * @version $Revision$
@@ -27,7 +28,7 @@ public class SimpleTest extends LanguageTestSupport {
         try {
             assertExpression("Hello World", "Hello World");
             fail("Should have thrown an Exception");
-        } catch (IllegalSyntaxException e) {
+        } catch (ExpressionIllegalSyntaxException e) {
             // constants is not supported
         }
     }

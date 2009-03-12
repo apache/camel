@@ -26,13 +26,14 @@ import org.apache.camel.Predicate;
  */
 public abstract class PredicateSupport implements Predicate {
 
-    public void assertMatches(String text, Exchange exchange) {
-        if (!matches(exchange)) {
-            throw new AssertionError(assertionFailureMessage(exchange)  + " on " + exchange);
+    public static void assertMatches(Predicate predicate, String text, Exchange exchange) {
+        if (!predicate.matches(exchange)) {
+            if (text == null) {
+                throw new AssertionError(predicate + " on " + exchange);
+            } else {
+                throw new AssertionError(text + predicate + " on " + exchange);
+            }
         }
-    }
 
-    protected String assertionFailureMessage(Exchange exchange) {
-        return toString();
     }
 }

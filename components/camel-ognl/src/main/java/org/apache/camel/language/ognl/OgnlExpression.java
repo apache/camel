@@ -21,9 +21,9 @@ import ognl.OgnlContext;
 import ognl.OgnlException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.impl.ExpressionSupport;
-import org.apache.camel.language.ExpressionEvaluationException;
-import org.apache.camel.language.IllegalSyntaxException;
 
 /**
  * An <a href="http://www.ognl.org/">OGNL</a> {@link Expression}
@@ -42,7 +42,7 @@ public class OgnlExpression extends ExpressionSupport {
         try {
             this.expression = Ognl.parseExpression(expressionString);
         } catch (OgnlException e) {
-            throw new IllegalSyntaxException(language, expressionString, e);
+            throw new ExpressionIllegalSyntaxException(expressionString, e);
         }
     }
 
@@ -52,8 +52,7 @@ public class OgnlExpression extends ExpressionSupport {
 
     public Object evaluate(Exchange exchange) {
         // TODO we could use caching here but then we'd have possible
-        // concurrency issues
-        // so lets assume that the provider caches
+        // concurrency issues so lets assume that the provider caches
         OgnlContext oglContext = new OgnlContext();
         try {
             return Ognl.getValue(expression, oglContext, new RootObject(exchange));
@@ -64,5 +63,10 @@ public class OgnlExpression extends ExpressionSupport {
 
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
+    }
+
+    @Override
+    public String toString() {
+        return "OGNL[" + expressionString + "]";
     }
 }

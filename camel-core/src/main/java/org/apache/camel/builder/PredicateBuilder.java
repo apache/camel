@@ -247,12 +247,6 @@ public final class PredicateBuilder {
             public String toString() {
                 return expression + " instanceof " + type.getCanonicalName();
             }
-
-            @Override
-            protected String assertionFailureMessage(Exchange exchange) {
-                return super.assertionFailureMessage(exchange)
-                    + " for <" + expression.evaluate(exchange) + ">";
-            }
         };
     }
 
@@ -294,12 +288,6 @@ public final class PredicateBuilder {
             public String toString() {
                 return expression + ".matches('" + pattern + "')";
             }
-
-            @Override
-            protected String assertionFailureMessage(Exchange exchange) {
-                return super.assertionFailureMessage(exchange) + " for <" + expression.evaluate(exchange) + ">";
-            }
-
         };
     }
 }

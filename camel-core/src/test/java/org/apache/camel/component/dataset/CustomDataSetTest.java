@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
+import org.apache.camel.builder.PredicateSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,7 +41,7 @@ public class CustomDataSetTest extends ContextTestSupport {
             // lets compare the XPath result
             Predicate predicate = PredicateBuilder.isEqualTo(expression, ExpressionBuilder.constantExpression(index));
             log.debug("evaluating predicate: " + predicate);
-            predicate.assertMatches("Actual: " + actual, actual);
+            PredicateSupport.assertMatches(predicate, "Actual: " + actual, actual);
         }
 
         protected Object createMessageBody(long messageIndex) {

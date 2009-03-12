@@ -17,8 +17,8 @@
 package org.apache.camel.language.simple;
 
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.builder.FileExpressionBuilder;
-import org.apache.camel.language.IllegalSyntaxException;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -94,7 +94,7 @@ public class FileLanguage extends SimpleLanguageSupport {
         if (remainder != null) {
             String[] parts = remainder.split(":");
             if (parts.length != 2) {
-                throw new IllegalSyntaxException(this, expression + " ${date:command:pattern} is the correct syntax.");
+                throw new ExpressionIllegalSyntaxException("Valid syntax: ${date:command:pattern} was: " + expression);
             }
             String command = parts[0];
             String pattern = parts[1];

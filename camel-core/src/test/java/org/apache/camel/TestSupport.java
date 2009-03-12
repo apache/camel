@@ -22,6 +22,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;
+import org.apache.camel.builder.PredicateSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -227,7 +228,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
-            predicate.assertMatches("Predicate should match: ", exchange);
+            PredicateSupport.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
             log.debug("Caught expected assertion error: " + e);
         }
@@ -237,9 +238,9 @@ public abstract class TestSupport extends TestCase {
     /**
      * Asserts that the predicate returns the expected value on the exchange
      */
-    protected boolean assertPredicate(Predicate predicate, Exchange exchange, boolean expected) {
+    protected boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expected) {
         if (expected) {
-            predicate.assertMatches("Predicate failed: ", exchange);
+            PredicateSupport.assertMatches(predicate, "Predicate failed: ", exchange);
         }
         boolean value = predicate.matches(exchange);
 
@@ -407,20 +408,15 @@ public abstract class TestSupport extends TestCase {
      * as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String message, String expected, String actual) {
-        String expectedPath = expected;
-        String actualPath = actual;
         // must use single / as path separators
-        if (expected.indexOf("\\") >= 0) {
-            expectedPath = expected.replaceAll("\\\\", "/");
-        }
-        if (actual.indexOf("\\") >= 0) {
-            actualPath = actual.replaceAll("\\\\", "/");            
-        }
-        
+        String expectedPath = expected.replace('\\', '/');
+        String actualPath = actual.replace('\\', '/');
+
         if (message != null) {
             assertEquals(message, expectedPath, actualPath);
         } else {
             assertEquals(expectedPath, actualPath);
         }
     }
+
 }
