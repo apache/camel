@@ -28,13 +28,18 @@ import org.apache.commons.logging.LogFactory;
 
 public class OsgiLanguageResolver extends DefaultLanguageResolver {
     private static final transient Log LOG = LogFactory.getLog(OsgiLanguageResolver.class);
+    @Override
+    protected Log getLog() {
+        return LOG;
+    }
     
     @Override
     protected Class findLanguage(String name) throws Exception {
         return Activator.getLanguage(name);
     }
     
-    protected Class findLanaguageResolver(String name) throws Exception {
+    @Override
+    protected Class findLanguageResolver(String name) throws Exception {
         return Activator.getLanguageResolver(name);
     }
 
