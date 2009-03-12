@@ -50,7 +50,7 @@ public class StreamCacheConverterTest extends ContextTestSupport {
 
     public void testConvertToStreamCacheStreamSource() throws IOException, FileNotFoundException, TransformerException {
         StreamSource source = new StreamSource(getTestFileStream());
-        StreamCache cache = converter.convertToStreamCache(source);
+        StreamCache cache = converter.convertToStreamCache(source, exchange);
         //assert re-readability of the cached StreamSource
         XmlConverter converter = new XmlConverter();
         assertNotNull(converter.toString((Source)cache));
