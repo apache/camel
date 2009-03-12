@@ -27,6 +27,9 @@
 
 <ul>
   <li>
+    <a href="<c:url value='/languages'/>" title="View the available languages you can use with Camel">Languages</a>
+  </li>
+  <li>
     <a href="<c:url value='/converters'/>" title="View the available type converters currently registered with Camel">Type Converters</a>
   </li>
   <li>
