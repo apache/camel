@@ -38,16 +38,19 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected static final FactoryFinder LANGUAGE_RESOLVER = new FactoryFinder("META-INF/services/org/apache/camel/language/resolver/");
     private static final transient Log LOG = LogFactory.getLog(DefaultLanguageResolver.class);
     
+    protected Log getLog() {
+        return LOG;
+    }
     @SuppressWarnings("unchecked")
     public Language resolveLanguage(String name, CamelContext context) {
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
-            if (bean != null && LOG.isDebugEnabled()) {
-                LOG.debug("Found language: " + name + " in registry: " + bean);
+            if (bean != null && getLog().isDebugEnabled()) {
+                getLog().debug("Found language: " + name + " in registry: " + bean);
             }
         } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
+            getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
         }
         if (bean != null) {
             if (bean instanceof Language) {
