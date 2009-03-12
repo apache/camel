@@ -24,23 +24,26 @@ import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
-import junit.framework.TestCase;
-
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Test cases for {@link StreamCacheConverter}
  */
-public class StreamCacheConverterTest extends TestCase {
+public class StreamCacheConverterTest extends ContextTestSupport {
     
     private static final String TEST_FILE = "org/apache/camel/converter/stream/test.xml";
     private StreamCacheConverter converter;
+    private Exchange exchange;
     
     @Override
     protected void setUp() throws Exception {
         super.setUp();
         this.converter = new StreamCacheConverter();
+        this.exchange = new DefaultExchange(context);
     }
 
     public void testConvertToStreamCacheStreamSource() throws IOException, FileNotFoundException, TransformerException {
@@ -55,7 +58,7 @@ public class StreamCacheConverterTest extends TestCase {
 
     public void testConvertToStreamCacheInputStream() throws IOException {
         InputStream is = getTestFileStream();
-        InputStream cache = (InputStream)converter.convertToStreamCache(is);
+        InputStream cache = (InputStream)converter.convertToStreamCache(is, exchange);
         //assert re-readability of the cached InputStream
         assertNotNull(IOConverter.toString(cache));
         assertNotNull(IOConverter.toString(cache));

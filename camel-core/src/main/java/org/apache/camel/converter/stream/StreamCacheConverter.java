@@ -16,7 +16,6 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -27,10 +26,12 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.IOHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -67,8 +68,10 @@ public class StreamCacheConverter {
     }
 
     @Converter
-    public StreamCache convertToStreamCache(InputStream stream) throws IOException {
-        return new InputStreamCache(IOConverter.toBytes(stream));
+    public StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
+        CachedOutputStream cos = new CachedOutputStream();
+        IOHelper.copyAndCloseInput(stream, cos);       
+        return cos.getStreamCache();
     }
 
     @Converter
@@ -100,13 +103,15 @@ public class StreamCacheConverter {
      * {@link StreamCache} implementation for Cache the StreamSource {@link StreamSource}s
      */
     private class StreamSourceCache extends StreamSource implements StreamCache {
-        InputStreamCache inputStreamCache;
+        StreamCache streamCache;
         ReaderCache readCache;
         
         public StreamSourceCache(StreamSource source) throws IOException {
             if (source.getInputStream() != null) {
-                inputStreamCache = new InputStreamCache(IOConverter.toBytes(source.getInputStream()));
-                setInputStream(inputStreamCache);
+                CachedOutputStream cos = new CachedOutputStream();
+                IOHelper.copyAndCloseInput(source.getInputStream(), cos);
+                streamCache = cos.getStreamCache();
+                setInputStream((InputStream)streamCache);
                 setSystemId(source.getSystemId());
             }
             if (source.getReader() != null) {
@@ -115,8 +120,8 @@ public class StreamCacheConverter {
             }
         }
         public void reset() {
-            if (inputStreamCache != null) {
-                inputStreamCache.reset();
+            if (streamCache != null) {
+                streamCache.reset();
             }
             if (readCache != null) {
                 readCache.reset();
@@ -124,15 +129,7 @@ public class StreamCacheConverter {
         }
         
     }
-
-    private class InputStreamCache extends ByteArrayInputStream implements StreamCache {
-
-        public InputStreamCache(byte[] data) {
-            super(data);
-        }
-
-    }
-
+      
     private class ReaderCache extends StringReader implements StreamCache {
 
         public ReaderCache(String s) {
@@ -152,6 +149,8 @@ public class StreamCacheConverter {
         }
 
     }
+    
+    
 
 
 }
