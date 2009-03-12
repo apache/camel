@@ -16,23 +16,21 @@
  */
 package org.apache.camel.web.resources;
 
-import java.util.Map;
-import java.util.TreeMap;
+import com.sun.jersey.api.view.ImplicitProduces;
+import com.sun.jersey.spi.inject.Inject;
+import com.sun.jersey.spi.resource.Singleton;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.web.model.Camel;
 
 import javax.annotation.PreDestroy;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import com.sun.jersey.api.view.ImplicitProduces;
-import com.sun.jersey.spi.inject.Inject;
-import com.sun.jersey.spi.resource.Singleton;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
-import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.web.model.Camel;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * The root Camel resource from which all other resources can be navigated such as for <code>endpoints</code>
@@ -103,6 +101,22 @@ public class CamelContextResource {
     }
 
     /**
+     * Returns the active components
+     */
+    @Path("components")
+    public ComponentsResource getComponents() {
+        return new ComponentsResource(this);
+    }
+
+    /**
+     * Returns the active type converters
+     */
+    @Path("converters")
+    public ConvertersResource getConvertersResource() {
+        return new ConvertersResource(this);
+    }
+
+    /**
      * Returns the active endpoints
      */
     @Path("endpoints")
@@ -111,21 +125,19 @@ public class CamelContextResource {
     }
 
     /**
+     * Returns the active languages
+     */
+    @Path("languages")
+    public LanguagesResource getLanguages() {
+        return new LanguagesResource(this);
+    }
+
+    /**
      * Returns the active routes
      */
     @Path("routes")
     public RoutesResource getRoutesResource() {
         return new RoutesResource(this);
-    }
-
-    @Path("converters")
-    public ConvertersResource getConvertersResource() {
-        return new ConvertersResource(this);
-    }
-
-    @Path("languages")
-    public LanguagesResource getLanguages() {
-        return new LanguagesResource(this);
     }
 
 

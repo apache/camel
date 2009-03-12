@@ -16,11 +16,11 @@
  */
 package org.apache.camel.web.resources;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @version $Revision: 1.1 $

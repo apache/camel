@@ -19,20 +19,39 @@ package org.apache.camel.web.resources;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
+ * Represents the list of the currently active <a href="http://camel.apache.org/component.html">components</a>
+ * in the current camel context
+ *
  * @version $Revision: 1.1 $
  */
-public class LanguageResource extends CamelChildResourceSupport {
-    private static final transient Log LOG = LogFactory.getLog(LanguageResource.class);
-    private String id;
+public class ComponentsResource extends CamelChildResourceSupport {
+    private static final transient Log LOG = LogFactory.getLog(ComponentsResource.class);
 
-    public LanguageResource(CamelContextResource contextResource, String id) {
+    public ComponentsResource(CamelContextResource contextResource) {
         super(contextResource);
-        this.id = id;
     }
 
+    public List<String> getComponentIds() {
+        List<String> answer = new ArrayList<String>(getCamelContext().getComponentNames());
+        Collections.sort(answer);
+        return answer;
+    }
 
-    public String getId() {
-        return id;
+    /**
+     * Returns a specific component
+     */
+    @Path("{id}")
+    public ComponentResource getLanguage(@PathParam("id") String id) {
+        if (id == null) {
+            return null;
+        }
+        return new ComponentResource(getContextResource(), id);
     }
 }

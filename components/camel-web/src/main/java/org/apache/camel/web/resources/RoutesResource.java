@@ -16,18 +16,18 @@
  */
 package org.apache.camel.web.resources;
 
-import java.io.IOException;
-import java.util.List;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.view.RouteDotGenerator;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.view.RouteDotGenerator;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * The active routes in Camel which are used to implement one or more

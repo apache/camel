@@ -16,9 +16,12 @@
  */
 package org.apache.camel.web.resources;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+import org.apache.camel.Endpoint;
+import org.apache.camel.web.model.EndpointLink;
+import org.apache.camel.web.model.Endpoints;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -29,12 +32,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import org.apache.camel.Endpoint;
-import org.apache.camel.web.model.EndpointLink;
-import org.apache.camel.web.model.Endpoints;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 
 /**
  * The active endpoints in Camel

@@ -16,11 +16,15 @@
  */
 package org.apache.camel.web.resources;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import com.sun.jersey.api.representation.Form;
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.web.model.EndpointLink;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -30,15 +34,11 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
-
-import com.sun.jersey.api.representation.Form;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.spi.BrowsableEndpoint;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.web.model.EndpointLink;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A Camel <a href="http://camel.apache.org/endpoint.html">Endpoint</a>
