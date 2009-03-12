@@ -54,5 +54,4 @@ public class BindySimpleCsvUnmarshallTest extends AbstractJUnit4SpringContextTes
             };
         }
     }
-
 }

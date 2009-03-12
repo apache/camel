@@ -30,7 +30,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
-import org.apache.camel.dataformat.bindy.util.ConvertSeparator;
+import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.commons.logging.Log;
@@ -89,7 +89,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                 if (keyValuePairField != null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Key declared in the class : " + cl.getName() + ", key : "
-                                  + keyValuePairField.tag() + ", Field : " + keyValuePairField.toString());
+                            + keyValuePairField.tag() + ", Field : " + keyValuePairField.toString());
                     }
                     mapKeyValuePairField.put(keyValuePairField.tag(), keyValuePairField);
                     mapAnnotedField.put(keyValuePairField.tag(), field);
@@ -164,14 +164,13 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
         Iterator<Integer> it = keyValuePairFields.keySet().iterator();
 
         // Check if separator exists
-        ObjectHelper
-            .notNull(this.pairSeparator,
-                     "The pair separator has not been instantiated or property not defined in the @Message annotation");
+        ObjectHelper.notNull(this.pairSeparator,
+             "The pair separator has not been instantiated or property not defined in the @Message annotation");
 
-        char separator = ConvertSeparator.getCharDelimitor(this.getPairSeparator());
+        char separator = Converter.getCharDelimitor(this.getPairSeparator());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Separator converted : " + separator + ", from : " + this.getPairSeparator());
+            LOG.debug("Separator converted : '0x" + Integer.toHexString(separator) + "', from : " + this.getPairSeparator());
         }
 
         while (it.hasNext()) {
@@ -186,7 +185,7 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Tag : " + keyValuePairField.tag() + ", Field type : " + field.getType()
-                          + ", class : " + field.getDeclaringClass().getName());
+                    + ", class : " + field.getDeclaringClass().getName());
             }
 
             // Retrieve the format associated to the type
@@ -204,8 +203,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             // Convert the content to a String and append it to the builder
             // Add the tag followed by its key value pair separator
             // the data and finish by the pair separator
-            builder.append(keyValuePairField.tag() + this.getKeyValuePairSeparator()
-                           + format.format(field.get(obj)) + separator);
+            builder.append(keyValuePairField.tag() + this.getKeyValuePairSeparator() + 
+                format.format(field.get(obj)) + separator);
         }
 
         return builder.toString();
@@ -241,29 +240,28 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
                     
                     // Get Pair Separator parameter
                     ObjectHelper.notNull(message.pairSeparator(),
-                                         "No Pair Separator has been defined in the @Message annotation !");
+                        "No Pair Separator has been defined in the @Message annotation !");
                     pairSeparator = message.pairSeparator();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Pair Separator defined for the message : " + pairSeparator);
                     }
 
                     // Get KeyValuePair Separator parameter
-                    ObjectHelper
-                        .notNull(message.keyValuePairSeparator(),
-                                 "No Key Value Pair Separator has been defined in the @Message annotation !");
+                    ObjectHelper.notNull(message.keyValuePairSeparator(),
+                        "No Key Value Pair Separator has been defined in the @Message annotation !");
                     keyValuePairSeparator = message.keyValuePairSeparator();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Key Value Pair Separator defined for the message : "
-                                  + keyValuePairSeparator);
+                            + keyValuePairSeparator);
                     }
 
+                    // Get carriage return parameter
+                    crlf = message.crlf();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Carriage return defined for the message : " + crlf);
+                    }
                 }
-
             }
-
         }
-
     }
-    
-
 }

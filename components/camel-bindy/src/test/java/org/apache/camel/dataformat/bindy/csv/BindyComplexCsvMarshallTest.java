@@ -43,7 +43,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTests {
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
-    private String result = "10,A1,Julia,Roberts,BE123456789,Belgium Ventage 10/12,150,USD,14-01-2009";
+    private String result = "10,A1,Julia,Roberts,BE123456789,Belgium Ventage 10/12,150,USD,14-01-2009\r\n";
 
     @Produce(uri = "direct:start")
     private ProducerTemplate template;

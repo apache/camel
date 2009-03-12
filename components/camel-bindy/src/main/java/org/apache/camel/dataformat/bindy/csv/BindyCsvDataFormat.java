@@ -28,6 +28,7 @@ import java.util.Scanner;
 import org.apache.camel.Exchange;
 import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -40,7 +41,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public class BindyCsvDataFormat implements DataFormat {
     private static final transient Log LOG = LogFactory.getLog(BindyCsvDataFormat.class);
-
+    
     private String packageName;
     private BindyCsvFactory modelFactory;
 
@@ -53,13 +54,21 @@ public class BindyCsvDataFormat implements DataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
+    	
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
+        byte[] CRLF;
+     
+        // Get CRLF
+        CRLF = Converter.getByteReturn( factory.getCarriageReturn() );
 
         for (Map<String, Object> model : models) {
             String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
-            outputStream.write(bytes);
+            outputStream.write( bytes );
+            
+            // Add a carriage return
+            outputStream.write( CRLF );
         }
     }
 
@@ -69,8 +78,8 @@ public class BindyCsvDataFormat implements DataFormat {
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
-        // Create POJO where CSV data will be stored
-        Map<String, Object> model = factory.factory();
+        // Pojos of the model
+        Map<String, Object> model;
 
         InputStreamReader in = new InputStreamReader(inputStream);
 
@@ -102,6 +111,9 @@ public class BindyCsvDataFormat implements DataFormat {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Counter " + count++ + " : content : " + line);
                 }
+                
+                // Create POJO where CSV data will be stored
+                model = factory.factory();
 
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord

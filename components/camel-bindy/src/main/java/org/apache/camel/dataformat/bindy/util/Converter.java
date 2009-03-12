@@ -21,9 +21,9 @@ package org.apache.camel.dataformat.bindy.util;
  * The ConvertSeparator helps to return the char associated to the unicode string
  *
  */
-public final class ConvertSeparator {
+public final class Converter {
     
-    private ConvertSeparator() {
+    private Converter() {
         // helper class
     }
 
@@ -36,7 +36,18 @@ public final class ConvertSeparator {
         } else {
             return separator.charAt(0);
         }
-
     }
-
+    
+    public static byte[] getByteReturn(String returnCharacter) {
+    	
+        if (returnCharacter.equals("WINDOWS")) {
+            return new byte[] { 13, 10 };
+        } else if (returnCharacter.equals("UNIX")) {
+            return new byte[] { 10 };
+        } else if (returnCharacter.equals("MAC")) {
+            return new byte[] { 13 };
+        } else {
+            return returnCharacter.getBytes();
+        }
+    }
 }

@@ -54,5 +54,4 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
             };
         }
     }
-
 }

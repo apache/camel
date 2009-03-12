@@ -43,7 +43,7 @@ public class BindySimpleKeyValuePairTabMarshallTest extends AbstractJUnit4Spring
 
     private List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
     
-    private String result = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=0\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t";
+    private String result = "1=BE.CHM.001\t8=FIX 4.1\t9=20\t10=0\t11=CHM0001-01\t22=4\t34=1\t35=0\t48=BE0001245678\t49=INVMGR\t54=1\t56=BRKR\t58=this is a camel - bindy test\t\r\n";
     
     @Produce(uri = "direct:start")
     private ProducerTemplate template;

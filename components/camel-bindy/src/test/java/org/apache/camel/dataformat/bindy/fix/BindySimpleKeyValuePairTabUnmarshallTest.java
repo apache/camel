@@ -55,5 +55,4 @@ public class BindySimpleKeyValuePairTabUnmarshallTest extends AbstractJUnit4Spri
             };
         }
     }
-
 }

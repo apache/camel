@@ -30,6 +30,8 @@ import java.lang.annotation.RetentionPolicy;
  * The name is optional and could be used in the future to bind a property which a different name
  * The type (optional) allow to define the type of the message (e.g. FIX, EMX, ...)
  * The version (optional) defines the version of the message (e.g. 4.1, ...)
+ * The crlf (optional) is used to add a new line after a record. By default, the value is WINDOWS 
+ * (line feed and carriage return on windows 
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -66,5 +68,13 @@ public @interface Message {
      * version defines the version of the message (e.g. 4.1, ...) (optional)
      */
     String version() default "4.1";
+    
+    /**
+     * Character to be used to add a carriage return after each record (optional)
+     * Three values can be used : WINDOWS, UNIX or MAC
+     * 
+     * @return String
+     */
+    String crlf() default "WINDOWS";
 
 }

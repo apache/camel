@@ -37,7 +37,8 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     private static final transient Log LOG = LogFactory.getLog(BindyAbstractFactory.class);
     protected Set<Class> models;
     protected Map<String, Field> mapAnnotedLinkField = new LinkedHashMap<String, Field>();    
-
+    protected String crlf;
+    
     private AnnotationModelLoader modelsLoader;
     
     private String packageName;
@@ -120,5 +121,11 @@ public abstract class BindyAbstractFactory implements BindyFactory {
 
         return mapModel;
     }
-
+    
+    /**
+     * Find the carriage return set
+     */
+    public String getCarriageReturn() {
+        return crlf;
+    }
 }
