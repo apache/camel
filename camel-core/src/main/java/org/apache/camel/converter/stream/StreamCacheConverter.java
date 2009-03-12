@@ -46,8 +46,8 @@ public class StreamCacheConverter {
     private XmlConverter converter = new XmlConverter();
 
     @Converter
-    public StreamCache convertToStreamCache(StreamSource source) throws IOException {
-        return new StreamSourceCache(source);
+    public StreamCache convertToStreamCache(StreamSource source, Exchange exchange) throws IOException {
+        return new StreamSourceCache(source, exchange);
     }
     
     @Converter
@@ -107,7 +107,7 @@ public class StreamCacheConverter {
         StreamCache streamCache;
         ReaderCache readCache;
         
-        public StreamSourceCache(StreamSource source) throws IOException {
+        public StreamSourceCache(StreamSource source, Exchange exchange) throws IOException {
             if (source.getInputStream() != null) {
                 // set up CachedOutputStream with the properties
                 CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
