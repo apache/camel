@@ -18,75 +18,27 @@ package org.apache.camel.osgi;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.impl.DefaultLanguageResolver;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class OsgiLanguageResolver implements LanguageResolver {
+public class OsgiLanguageResolver extends DefaultLanguageResolver {
     private static final transient Log LOG = LogFactory.getLog(OsgiLanguageResolver.class);
+    @Override
+    protected Log getLog() {
+        return LOG;
+    }    
 
-    public Language resolveLanguage(String name, CamelContext context) {
-        Object bean = null;
-        try {
-            bean = context.getRegistry().lookup(name);
-            if (bean != null && LOG.isDebugEnabled()) {
-                LOG.debug("Found language: " + name + " in registry: " + bean);
-            }
-        } catch (Exception e) {
-            LOG.debug("Ignored error looking up bean: " + name + ". Error: " + e);
-        }
-        if (bean != null) {
-            if (bean instanceof Language) {
-                return (Language)bean;
-            }
-            // we do not throw the exception here and try to auto create a Language from OSGI bundle
-        }
-        // Check in OSGi bundles        
-        Class type = null;
-        try {
-            type = getLanaguage(name);
-        } catch (Throwable e) {
-            throw new IllegalArgumentException("Invalid URI, no Language registered for scheme : " + name, e);
-        }
-        if (type != null) {
-            if (Language.class.isAssignableFrom(type)) {
-                return (Language)context.getInjector().newInstance(type);
-            } else {
-                throw new IllegalArgumentException("Type is not a Lanaguage implementation. Found: "
-                                                   + type.getName());
-            }
-        } else {
-            return noSpecificLanguageFound(name, context);
-        }
-    }
-    
-    protected Language noSpecificLanguageFound(String name, CamelContext context) {
-        Class type = null;
-        try {
-            type = getLanaguageResolver("default");
-        } catch (NoFactoryAvailableException e) {
-            // ignore
-        } catch (Throwable e) {
-            throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
-        }
-        if (type != null) {
-            if (LanguageResolver.class.isAssignableFrom(type)) {
-                LanguageResolver resolver = (LanguageResolver)context.getInjector().newInstance(type);
-                return resolver.resolveLanguage(name, context);
-            } else {
-                throw new IllegalArgumentException("Type is not a LanguageResolver implementation. Found: " + type.getName());
-            }
-        }
-        throw new NoSuchLanguageException(name);
-    }
-
-    protected Class getLanaguage(String name) throws Exception {
+    @Override
+    protected Class findLanguage(String name) throws Exception {
         return Activator.getLanguage(name);
     }
     
-    protected Class getLanaguageResolver(String name) throws Exception {
+    @Override
+    protected Class findLanguageResolver(String name) throws Exception {
         return Activator.getLanguageResolver(name);
     }
 

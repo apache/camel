@@ -16,12 +16,17 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 
 /**
  * Default language resolver that looks for language factories in <b>META-INF/services/org/apache/camel/language/</b> and
@@ -29,14 +34,33 @@ import org.apache.camel.util.NoFactoryAvailableException;
  *
  * @version $Revision$
  */
-public class DefaultLanguageResolver implements LanguageResolver {
+public class DefaultLanguageResolver implements LanguageResolver {    
     protected static final FactoryFinder LANGUAGE_FACTORY = new FactoryFinder("META-INF/services/org/apache/camel/language/");
     protected static final FactoryFinder LANGUAGE_RESOLVER = new FactoryFinder("META-INF/services/org/apache/camel/language/resolver/");
-
+    private static final transient Log LOG = LogFactory.getLog(DefaultLanguageResolver.class);
+    
+    protected Log getLog() {
+        return LOG;
+    }
     public Language resolveLanguage(String name, CamelContext context) {
+        Object bean = null;
+        try {
+            bean = context.getRegistry().lookup(name);
+            if (bean != null && getLog().isDebugEnabled()) {
+                getLog().debug("Found language: " + name + " in registry: " + bean);
+            }
+        } catch (Exception e) {
+            getLog().debug("Ignored error looking up bean: " + name + ". Error: " + e);
+        }
+        if (bean != null) {
+            if (bean instanceof Language) {
+                return (Language)bean;
+            }
+            // we do not throw the exception here and try to auto create a Language from META-INF
+        }
         Class type = null;
         try {
-            type = LANGUAGE_FACTORY.findClass(name);
+            type = findLanguage(name);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Throwable e) {
@@ -55,7 +79,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class type = null;
         try {
-            type = LANGUAGE_RESOLVER.findClass("default");
+            type = findLanguageResolver("default");
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Throwable e) {
@@ -70,5 +94,13 @@ public class DefaultLanguageResolver implements LanguageResolver {
             }
         }
         throw new NoSuchLanguageException(name);
+    }
+    
+    protected Class findLanguage(String name) throws Exception {
+        return LANGUAGE_FACTORY.findClass(name);
+    }
+    
+    protected Class findLanguageResolver(String name) throws Exception {
+        return LANGUAGE_RESOLVER.findClass("default");
     }
 }
