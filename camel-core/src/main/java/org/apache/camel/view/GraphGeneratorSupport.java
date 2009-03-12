@@ -70,6 +70,14 @@ public abstract class GraphGeneratorSupport {
         this.dir = dir;
     }
 
+    public String getImagePrefix() {
+        return imagePrefix;
+    }
+
+    public void setImagePrefix(String imagePrefix) {
+        this.imagePrefix = imagePrefix;
+    }
+
     public String getRoutesText(CamelContext context) throws IOException {
         List<RouteDefinition> routes = context.getRouteDefinitions();
         routeGroupMap = createRouteGroupMap(routes);
