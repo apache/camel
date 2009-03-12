@@ -14,29 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.ognl;
-
-import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+package org.apache.camel;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
+ * Used for defining if a given class is singleton or not.
+ * If the class is a Singleton, then a single instance will be shared. Because the class is shared, it
+ * should be treated as an immutable and be thread safe.
  *
  * @version $Revision$
  */
-public class OgnlLanguage implements Language, IsSingleton {
+public interface IsSingleton {
 
-    public Predicate createPredicate(String expression) {
-        return new OgnlExpression(this, expression, Boolean.class);
-    }
+    /**
+     * Wheter this class supports being singleton or not.
+     *  
+     * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
+     */
+    boolean isSingleton();
 
-    public Expression createExpression(String expression) {
-        return new OgnlExpression(this, expression, Object.class);
-    }
-
-    public boolean isSingleton() {
-        return true;
-    }
 }

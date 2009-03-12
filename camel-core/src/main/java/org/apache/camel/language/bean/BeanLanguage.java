@@ -17,6 +17,7 @@
 package org.apache.camel.language.bean;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.spi.Language;
@@ -37,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class BeanLanguage implements Language {
+public class BeanLanguage implements Language, IsSingleton {
 
     /**
      * Creates the expression based on the string syntax.
@@ -104,4 +105,7 @@ public class BeanLanguage implements Language {
         return new BeanExpression(bean, method);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
 }

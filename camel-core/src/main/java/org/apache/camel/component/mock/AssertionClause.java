@@ -24,8 +24,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.PredicateSupport;
 import org.apache.camel.builder.ValueBuilder;
+import org.apache.camel.util.PredicateAssertHelper;
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 import static org.apache.camel.builder.ExpressionBuilder.propertyExpression;
@@ -112,7 +112,7 @@ public abstract class AssertionClause implements Runnable {
      */
     protected void applyAssertionOn(MockEndpoint endpoint, int index, Exchange exchange) {
         for (Predicate predicate : predicates) {
-            PredicateSupport.assertMatches(predicate, endpoint.getEndpointUri() + " ", exchange);
+            PredicateAssertHelper.assertMatches(predicate, endpoint.getEndpointUri() + " ", exchange);
         }
     }
 

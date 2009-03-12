@@ -14,29 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.ognl;
+package org.apache.camel.util;
 
-import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
+import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
+ * A helper for doing {@link Predicate} assertions.
  *
  * @version $Revision$
  */
-public class OgnlLanguage implements Language, IsSingleton {
+public final class PredicateAssertHelper {
 
-    public Predicate createPredicate(String expression) {
-        return new OgnlExpression(this, expression, Boolean.class);
+    private PredicateAssertHelper() {
+        // Utility class
     }
 
-    public Expression createExpression(String expression) {
-        return new OgnlExpression(this, expression, Object.class);
+    public static void assertMatches(Predicate predicate, String text, Exchange exchange) {
+        if (!predicate.matches(exchange)) {
+            if (text == null) {
+                throw new AssertionError(predicate + " on " + exchange);
+            } else {
+                throw new AssertionError(text + predicate + " on " + exchange);
+            }
+        }
+
     }
 
-    public boolean isSingleton() {
-        return true;
-    }
 }

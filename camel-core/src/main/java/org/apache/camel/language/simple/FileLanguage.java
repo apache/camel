@@ -105,4 +105,7 @@ public class FileLanguage extends SimpleLanguageSupport {
         return FileExpressionBuilder.simpleExpression(expression);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
 }

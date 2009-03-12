@@ -211,7 +211,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
             }
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
-            log.warn("Error committing remote file strategy: " + processStrategy, e);
             handleException(e);
         }
     }
@@ -232,7 +231,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         try {
             processStrategy.rollback(operations, endpoint, exchange, file);
         } catch (Exception e) {
-            log.warn("Error rolling back remote file strategy: " + processStrategy, e);
             handleException(e);
         }
     }

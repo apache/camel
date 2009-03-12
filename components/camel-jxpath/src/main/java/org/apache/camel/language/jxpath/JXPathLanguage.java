@@ -17,6 +17,7 @@
 package org.apache.camel.language.jxpath;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
@@ -24,7 +25,7 @@ import org.apache.camel.spi.Language;
  * <a href="http://commons.apache.org/jxpath/">JXPath</a> {@link Language}
  * provider
  */
-public class JXPathLanguage implements Language {
+public class JXPathLanguage implements Language, IsSingleton {
 
     public Expression createExpression(String expression) {
         return new JXPathExpression(expression, Object.class);
@@ -34,4 +35,7 @@ public class JXPathLanguage implements Language {
         return new JXPathExpression(predicate, Boolean.class);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
 }

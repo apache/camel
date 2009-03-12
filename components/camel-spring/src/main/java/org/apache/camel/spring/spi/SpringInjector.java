@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.spi;
 
+import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -38,6 +39,16 @@ public class SpringInjector implements Injector {
         // TODO support annotations for mandatory injection points?
         Object value = applicationContext.getBeanFactory().createBean(type, autowireMode, dependencyCheck);
         return type.cast(value);
+    }
+
+    public <T> T newInstance(Class<T> type, Object instance) {
+        if (instance instanceof IsSingleton) {
+            boolean singleton = ((IsSingleton) instance).isSingleton();
+            if (singleton) {
+                return type.cast(instance);
+            }
+        }
+        return newInstance(type);
     }
 
     public int getAutowireMode() {

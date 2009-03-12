@@ -16,6 +16,8 @@
  */
 package org.apache.camel.impl;
 
+import java.util.List;
+
 import junit.framework.TestCase;
 import org.apache.camel.Component;
 import org.apache.camel.component.bean.BeanComponent;
@@ -37,6 +39,16 @@ public class DefaultCamelContextTest extends TestCase {
         ctx.setAutoCreateComponents(false);
         Component component = ctx.getComponent("bean");
         assertNull(component);
+    }
+
+    public void testGetComponents() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        Component component = ctx.getComponent("bean");
+        assertNotNull(component);
+
+        List<String> list = ctx.getComponentNames();
+        assertEquals(1, list.size());
+        assertEquals("bean", list.get(0));
     }
 
 }

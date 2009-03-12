@@ -45,7 +45,7 @@ public final class PredicateBuilder {
      * Converts the given expression into an {@link Predicate}
      */
     public static Predicate toPredicate(final Expression expression) {
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 return ObjectHelper.evaluateValuePredicate(value);
@@ -63,7 +63,7 @@ public final class PredicateBuilder {
      */
     public static Predicate not(final Predicate predicate) {
         notNull(predicate, "predicate");
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 return !predicate.matches(exchange);
             }
@@ -81,7 +81,7 @@ public final class PredicateBuilder {
     public static Predicate and(final Predicate left, final Predicate right) {
         notNull(left, "left");
         notNull(right, "right");
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 return left.matches(exchange) && right.matches(exchange);
             }
@@ -99,7 +99,7 @@ public final class PredicateBuilder {
     public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
         notNull(right, "right");
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 return left.matches(exchange) || right.matches(exchange);
             }
@@ -117,7 +117,7 @@ public final class PredicateBuilder {
     public static Predicate in(final Predicate... predicates) {
         notNull(predicates, "predicates");
 
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 for (Predicate in : predicates) {
                     if (in.matches(exchange)) {
@@ -237,7 +237,7 @@ public final class PredicateBuilder {
         notNull(expression, "expression");
         notNull(type, "type");
 
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 return type.isInstance(value);
@@ -274,7 +274,7 @@ public final class PredicateBuilder {
         notNull(expression, "expression");
         notNull(pattern, "pattern");
 
-        return new PredicateSupport() {
+        return new Predicate() {
             public boolean matches(Exchange exchange) {
                 Object value = expression.evaluate(exchange);
                 if (value != null) {

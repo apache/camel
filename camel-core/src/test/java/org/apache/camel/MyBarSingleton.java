@@ -14,29 +14,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.ognl;
-
-import org.apache.camel.Expression;
-import org.apache.camel.IsSingleton;
-import org.apache.camel.Predicate;
-import org.apache.camel.spi.Language;
+package org.apache.camel;
 
 /**
- * An <a href="http://www.ognl.org/">OGNL</a> {@link Language} plugin
- *
  * @version $Revision$
  */
-public class OgnlLanguage implements Language, IsSingleton {
+public class MyBarSingleton implements IsSingleton {
 
-    public Predicate createPredicate(String expression) {
-        return new OgnlExpression(this, expression, Boolean.class);
+    private String name;
+
+    public MyBarSingleton() {
     }
 
-    public Expression createExpression(String expression) {
-        return new OgnlExpression(this, expression, Object.class);
+    public MyBarSingleton(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isSingleton() {
         return true;
     }
+
 }

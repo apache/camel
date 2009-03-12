@@ -17,6 +17,7 @@
 package org.apache.camel.language.constant;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.Language;
 /**
  * A language for constant expressions.
  */
-public class ConstantLanguage implements Language {
+public class ConstantLanguage implements Language, IsSingleton {
 
     public static Expression constant(Object value) {        
         return ExpressionBuilder.constantExpression(value);
@@ -37,5 +38,9 @@ public class ConstantLanguage implements Language {
 
     public Expression createExpression(String expression) {
         return ConstantLanguage.constant(expression);
+    }
+
+    public boolean isSingleton() {
+        return true;
     }
 }
