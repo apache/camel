@@ -41,6 +41,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     protected Log getLog() {
         return LOG;
     }
+
     @SuppressWarnings("unchecked")
     public Language resolveLanguage(String name, CamelContext context) {
         Object bean = null;

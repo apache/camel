@@ -16,8 +16,9 @@
  */
 package org.apache.camel.language;
 
-import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.language.simple.SimpleLanguage;
 
 /**
  * @version $Revision$
@@ -41,6 +42,14 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("header.foo", "abc");
     }
 
+    public void testLanguagesInContext() throws Exception {
+        // evaluate so we know there is 1 language in the context
+        assertExpression("id", exchange.getIn().getMessageId());
+
+        assertEquals(1, context.getLanguageNames().size());
+        assertEquals("simple", context.getLanguageNames().get(0));
+    }
+
     public void testComplexExpressions() throws Exception {
         assertExpression("hey ${in.header.foo}", "hey abc");
         assertExpression("hey ${in.header.foo}!", "hey abc!");
@@ -50,7 +59,6 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.header.foo}", "abc");
         assertExpression("${in.header.foo}!", "abc!");
     }
-
 
     public void testInvalidComplexExpression() throws Exception {
         try {

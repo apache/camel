@@ -16,6 +16,7 @@
  */
 package org.apache.camel.guice.impl;
 
+import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
 
 /**
@@ -34,6 +35,16 @@ public class GuiceInjector implements Injector {
         // TODO if not bound we could create an instance and inject it?
         //injector.injectMembers(instance);
         return injector.getInstance(type);
+    }
+
+    public <T> T newInstance(Class<T> type, Object instance) {
+        if (instance instanceof IsSingleton) {
+            boolean singleton = ((IsSingleton) instance).isSingleton();
+            if (singleton) {
+                return type.cast(instance);
+            }
+        }
+        return newInstance(type);
     }
 
 }

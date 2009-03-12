@@ -17,6 +17,7 @@
 package org.apache.camel.language.property;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.Language;
 /**
  * A language for property expressions.
  */
-public class PropertyLanguage implements Language {
+public class PropertyLanguage implements Language, IsSingleton {
 
     public static Expression property(String propertyName) {        
         return ExpressionBuilder.propertyExpression(propertyName);
@@ -37,5 +38,9 @@ public class PropertyLanguage implements Language {
 
     public Expression createExpression(String expression) {
         return PropertyLanguage.property(expression);
+    }
+
+    public boolean isSingleton() {
+        return true;
     }
 }

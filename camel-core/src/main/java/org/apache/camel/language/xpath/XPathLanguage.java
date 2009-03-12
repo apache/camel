@@ -19,6 +19,7 @@ package org.apache.camel.language.xpath;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.Language;
@@ -28,7 +29,7 @@ import org.apache.camel.spi.Language;
  *
  * @version $Revision$
  */
-public class XPathLanguage implements Language {
+public class XPathLanguage implements Language, IsSingleton {
     private QName resultType;
 
     public Predicate createPredicate(String expression) {
@@ -55,5 +56,9 @@ public class XPathLanguage implements Language {
         if (resultType != null) {
             builder.setResultQName(resultType);
         }
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 }

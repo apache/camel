@@ -79,6 +79,13 @@ public interface CamelContext extends Service {
     <T extends Component> T getComponent(String name, Class<T> componentType);
 
     /**
+     * Gets a readonly list of names of the components currently registered
+     *
+     * @return a readonly list with the names of the the componens.
+     */
+    List<String> getComponentNames();
+
+    /**
      * Removes a previously added component.
      *
      * @param componentName the component name to remove
@@ -278,6 +285,13 @@ public interface CamelContext extends Service {
      * @return the resolved language
      */
     Language resolveLanguage(String language);
+
+    /**
+     * Gets a readonly list with the names of the languages currently registered.
+     *
+     * @return a readonly list with the names of the the languages. 
+     */
+    List<String> getLanguageNames();
 
     /**
      * Creates a new ProducerTemplate.

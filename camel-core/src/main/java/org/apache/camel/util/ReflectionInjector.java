@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Injector;
 
 /**
@@ -29,5 +30,15 @@ public class ReflectionInjector implements Injector {
 
     public <T> T newInstance(Class<T> type) {
         return ObjectHelper.newInstance(type);
+    }
+
+    public <T> T newInstance(Class<T> type, Object instance) {
+        if (instance instanceof IsSingleton) {
+            boolean singleton = ((IsSingleton) instance).isSingleton();
+            if (singleton) {
+                return type.cast(instance);
+            }
+        }
+        return newInstance(type);
     }
 }

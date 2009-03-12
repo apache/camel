@@ -33,4 +33,14 @@ public interface Injector {
      * @return a newly created instance
      */
     <T> T newInstance(Class<T> type);
+
+    /**
+     * Instantiates a new instance of the given object type possibly injecting values
+     * into the object in the process
+     *
+     * @param instance an instance of the type to create
+     * @return a newly created instance
+     */
+    <T> T newInstance(Class<T> type, Object instance);
+
 }

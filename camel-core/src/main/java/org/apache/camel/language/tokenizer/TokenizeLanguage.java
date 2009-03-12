@@ -17,6 +17,7 @@
 package org.apache.camel.language.tokenizer;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
@@ -26,7 +27,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A language for tokenizer expressions.
  */
-public class TokenizeLanguage implements Language {
+public class TokenizeLanguage implements Language, IsSingleton {
 
     private String token;
     private String headerName;
@@ -101,5 +102,9 @@ public class TokenizeLanguage implements Language {
 
     public void setRegex(boolean regex) {
         this.regex = regex;
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 }

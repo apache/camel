@@ -16,23 +16,44 @@
  */
 package org.apache.camel;
 
-import junit.framework.TestCase;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ReflectionInjector;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision$
  */
-public class InjectorDefaultsToReflectionTest extends TestCase {
-    private static final transient Log LOG = LogFactory.getLog(InjectorDefaultsToReflectionTest.class);
-    
+public class InjectorDefaultsToReflectionTest extends ContextTestSupport {
+
     public void testInjectorIsReflectionByDefault() throws Exception {
-        Injector injector = new DefaultCamelContext().getInjector();
-        assertTrue("Injector should be reflection based but was: " + injector,
-                   injector instanceof ReflectionInjector);
-        LOG.debug("Found injector: " + injector);
+        Injector injector = context.getInjector();
+        assertIsInstanceOf(ReflectionInjector.class, injector);
     }
+
+    public void testNewInstance() throws Exception {
+        Injector injector = context.getInjector();
+
+        MyFoo foo = injector.newInstance(MyFoo.class);
+        foo.setName("Claus");
+
+        MyFoo foo2 = injector.newInstance(MyFoo.class);
+        assertNotSame(foo, foo2);
+
+        assertEquals("Claus", foo.getName());
+        assertNull(foo2.getName());
+    }
+
+    public void testSharedInstance() throws Exception {
+        Injector injector = context.getInjector();
+
+        MyBarSingleton bar = injector.newInstance(MyBarSingleton.class, new MyBarSingleton());
+        bar.setName("Claus");
+
+        MyBarSingleton bar2 = injector.newInstance(MyBarSingleton.class, bar);
+        assertSame(bar, bar2);
+
+        assertEquals("Claus", bar.getName());
+        assertEquals("Claus", bar2.getName());
+    }
+
+
 }

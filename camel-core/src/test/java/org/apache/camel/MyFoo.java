@@ -14,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Predicate;
+package org.apache.camel;
 
 /**
- * A useful base class for {@link Predicate} implementations
- *
  * @version $Revision$
  */
-public abstract class PredicateSupport implements Predicate {
+public class MyFoo {
 
-    public static void assertMatches(Predicate predicate, String text, Exchange exchange) {
-        if (!predicate.matches(exchange)) {
-            if (text == null) {
-                throw new AssertionError(predicate + " on " + exchange);
-            } else {
-                throw new AssertionError(text + predicate + " on " + exchange);
-            }
-        }
+    private String name;
 
+    public MyFoo() {
+    }
+
+    public MyFoo(String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
@@ -37,7 +38,7 @@ import static org.apache.camel.language.simple.SimpleLangaugeOperator.*;
 /**
  * Abstract base class for Simple languages.
  */
-public abstract class SimpleLanguageSupport implements Language {
+public abstract class SimpleLanguageSupport implements Language, IsSingleton {
 
     protected static final Pattern PATTERN = Pattern.compile(
             "^\\$\\{(.+)\\}\\s+(==|>|>=|<|<=|!=|contains|not contains|regex|not regex|in|not in)\\s+(.+)$");

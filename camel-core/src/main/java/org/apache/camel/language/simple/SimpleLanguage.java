@@ -120,4 +120,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         throw new ExpressionIllegalSyntaxException(expression);
     }
 
+    public boolean isSingleton() {
+        return true;
+    }
 }

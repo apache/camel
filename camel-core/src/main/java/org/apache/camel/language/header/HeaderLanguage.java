@@ -17,6 +17,7 @@
 package org.apache.camel.language.header;
 
 import org.apache.camel.Expression;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.PredicateBuilder;
@@ -25,7 +26,7 @@ import org.apache.camel.spi.Language;
 /**
  * A language for header expressions.
  */
-public class HeaderLanguage implements Language {
+public class HeaderLanguage implements Language, IsSingleton {
 
     public static Expression header(String headerName) {        
         return ExpressionBuilder.headerExpression(headerName);
@@ -37,5 +38,9 @@ public class HeaderLanguage implements Language {
 
     public Expression createExpression(String expression) {
         return HeaderLanguage.header(expression);
+    }
+
+    public boolean isSingleton() {
+        return true;
     }
 }

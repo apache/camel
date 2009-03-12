@@ -22,7 +22,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.camel.builder.Builder;
-import org.apache.camel.builder.PredicateSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -30,6 +29,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.PredicateAssertHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -228,7 +228,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected void assertPredicateDoesNotMatch(Predicate predicate, Exchange exchange) {
         try {
-            PredicateSupport.assertMatches(predicate, "Predicate should match: ", exchange);
+            PredicateAssertHelper.assertMatches(predicate, "Predicate should match: ", exchange);
         } catch (AssertionError e) {
             log.debug("Caught expected assertion error: " + e);
         }
@@ -240,7 +240,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected boolean assertPredicate(final Predicate predicate, Exchange exchange, boolean expected) {
         if (expected) {
-            PredicateSupport.assertMatches(predicate, "Predicate failed: ", exchange);
+            PredicateAssertHelper.assertMatches(predicate, "Predicate failed: ", exchange);
         }
         boolean value = predicate.matches(exchange);
 

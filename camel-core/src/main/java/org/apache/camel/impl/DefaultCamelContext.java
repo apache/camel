@@ -30,6 +30,7 @@ import javax.naming.Context;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -93,6 +94,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ComponentResolver componentResolver;
     private boolean autoCreateComponents = true;
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
+    private final Map<String, Language> languages = new HashMap<String, Language>();
     private Registry registry;
     private LifecycleStrategy lifecycleStrategy;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
@@ -514,7 +516,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     // -----------------------------------------------------------------------
 
     public Language resolveLanguage(String language) {
-        return getLanguageResolver().resolveLanguage(language, this);
+        Language answer;
+        synchronized (languages) {
+            answer = languages.get(language);
+
+            // check if the language is singleton, if so return the shared instance
+            if (answer != null && answer instanceof IsSingleton) {
+                boolean singleton = ((IsSingleton)answer).isSingleton();
+                if (singleton) {
+                    return answer;
+                }
+            }
+
+            // language not known or not singleton, then use resolver
+            answer = getLanguageResolver().resolveLanguage(language, this);
+            if (answer != null) {
+                languages.put(language, answer);
+            }
+        }
+
+        // no language resolved
+        return answer;
     }
 
     // Properties
@@ -953,6 +975,26 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.packageScanClassResolver = packageScanClassResolver;
     }
 
+    public List<String> getComponentNames() {
+        synchronized (components) {
+            List<String> answer = new ArrayList<String>();
+            for (String name : components.keySet()) {
+                answer.add(name);
+            }
+            return answer;
+        }
+    }
+
+    public List<String> getLanguageNames() {
+        synchronized (languages) {
+            List<String> answer = new ArrayList<String>();
+            for (String name : languages.keySet()) {
+                answer.add(name);
+            }
+            return answer;
+        }
+    }
+
     protected synchronized String getEndpointKey(String uri, Endpoint endpoint) {
         if (endpoint.isSingleton()) {
             return uri;
@@ -966,5 +1008,5 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
     }
-    
+
 }

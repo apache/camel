@@ -18,12 +18,13 @@ package org.apache.camel.builder.script;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
 
 /**
  * @version $Revision$
  */
-public class ScriptLanguage implements Language {
+public class ScriptLanguage implements Language, IsSingleton {
     private final String language;
 
     public ScriptLanguage(String language) {
@@ -36,5 +37,9 @@ public class ScriptLanguage implements Language {
 
     public Expression createExpression(String expression) {
         return new ScriptBuilder(language, expression);
+    }
+
+    public boolean isSingleton() {
+        return false;
     }
 }
