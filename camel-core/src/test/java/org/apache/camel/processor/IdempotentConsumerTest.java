@@ -23,7 +23,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
@@ -33,7 +32,22 @@ public class IdempotentConsumerTest extends ContextTestSupport {
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                ).to("mock:result");
+            }
+        });
+        context.start();
+
         resultEndpoint.expectedBodiesReceived("one", "two", "three");
 
         sendMessage("1", "one");
@@ -43,7 +57,41 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         sendMessage("1", "one");
         sendMessage("3", "three");
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testFailedExchangesNotAdded() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).delay(0).logStackTrace(false));
+
+                from("direct:start").idempotentConsumer(
+                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
+                ).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("messageId", String.class);
+                        if (id.equals("2")) {
+                            throw new IllegalArgumentException("Damm I cannot handle id 2");
+                        }
+                    }
+                }).to("mock:result");
+            }
+        });
+        context.start();
+
+        // we send in 2 messages with id 2 that fails
+        getMockEndpoint("mock:error").expectedMessageCount(2);
+        resultEndpoint.expectedBodiesReceived("one", "three");
+
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("2", "two");
+        sendMessage("1", "one");
+        sendMessage("3", "three");
+
+        assertMockEndpointsSatisfied();
     }
 
     protected void sendMessage(final Object messageId, final Object body) {
@@ -65,13 +113,4 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("direct:start").idempotentConsumer(
-                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).to("mock:result");
-            }
-        };
-    }
 }

@@ -34,12 +34,12 @@ import org.apache.commons.logging.LogFactory;
  */
 public class IdempotentConsumer extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
-    private Expression messageIdExpression;
-    private Processor nextProcessor;
-    private IdempotentRepository idempotentRepository;
+    private final Expression messageIdExpression;
+    private final Processor nextProcessor;
+    private final IdempotentRepository idempotentRepository;
 
-    public IdempotentConsumer(Expression messageIdExpression, 
-            IdempotentRepository idempotentRepository, Processor nextProcessor) {
+    public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
+                              Processor nextProcessor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
         this.nextProcessor = nextProcessor;
@@ -57,10 +57,19 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
         if (messageId == null) {
             throw new NoMessageIdException(exchange, messageIdExpression);
         }
-        if (idempotentRepository.add(messageId)) {
-            nextProcessor.process(exchange);
-        } else {
+
+        if (idempotentRepository.contains(messageId)) {
             onDuplicateMessage(exchange, messageId);
+        } else {
+            // process it first
+            nextProcessor.process(exchange);
+
+            // then test wheter it was failed or not
+            if (!exchange.isFailed()) {
+                onCompletedMessage(exchange, messageId);
+            } else {
+                onFailedMessage(exchange, messageId);
+            }
         }
     }
 
@@ -99,6 +108,34 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
     protected void onDuplicateMessage(Exchange exchange, String messageId) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Ignoring duplicate message with id: " + messageId + " for exchange: " + exchange);
+        }
+    }
+
+    /**
+     * A strategy method to allow derived classes to overload the behaviour of
+     * processing a completed message
+     *
+     * @param exchange the exchange
+     * @param messageId the message ID of this exchange
+     */
+    @SuppressWarnings("unchecked")
+    protected void onCompletedMessage(Exchange exchange, String messageId) {
+        idempotentRepository.add(messageId);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Added to repository with id: " + messageId + " for exchange: " + exchange);
+        }
+    }
+
+    /**
+     * A strategy method to allow derived classes to overload the behaviour of
+     * processing a failed message
+     *
+     * @param exchange the exchange
+     * @param messageId the message ID of this exchange
+     */
+    protected void onFailedMessage(Exchange exchange, String messageId) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Not added to repository as exchange failed: " + exchange + " with id: " + messageId);
         }
     }
 }
