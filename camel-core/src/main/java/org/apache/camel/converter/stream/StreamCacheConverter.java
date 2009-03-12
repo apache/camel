@@ -109,7 +109,8 @@ public class StreamCacheConverter {
         
         public StreamSourceCache(StreamSource source) throws IOException {
             if (source.getInputStream() != null) {
-                CachedOutputStream cos = new CachedOutputStream();
+                // set up CachedOutputStream with the properties
+                CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
                 IOHelper.copyAndCloseInput(source.getInputStream(), cos);
                 streamCache = cos.getStreamCache();
                 setInputStream((InputStream)streamCache);
