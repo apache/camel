@@ -34,6 +34,7 @@ import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.ExchangeImpl;
+import org.apache.cxf.message.Message;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
 /**
@@ -78,7 +79,7 @@ public class CxfProducer extends DefaultProducer {
         CxfBinding binding = endpoint.getCxfBinding();
         
         // create invocation context
-        Map<String, Object> requestContext = new WrappedMessageContext(
+        WrappedMessageContext requestContext = new WrappedMessageContext(
                 new HashMap<String, Object>(), null, Scope.APPLICATION);
         Map<String, Object> responseContext = new HashMap<String, Object>();
         
@@ -125,10 +126,14 @@ public class CxfProducer extends DefaultProducer {
             }
         }
         
+        // Remove protocol headers from scopes.  Otherwise, response headers can be
+        // overwritten by request headers when SOAPHandlerInterceptor tries to create
+        // a wrapped message context by the copyScoped() method.
+        requestContext.getScopes().remove(Message.PROTOCOL_HEADERS);
+        
         Map<String, Object> invocationContext = new HashMap<String, Object>();
         invocationContext.put(Client.RESPONSE_CONTEXT, responseContext);
-        invocationContext.put(Client.REQUEST_CONTEXT, 
-                ((WrappedMessageContext)requestContext).getWrappedMap());
+        invocationContext.put(Client.REQUEST_CONTEXT, requestContext.getWrappedMap());
 
         // send the CXF request
         client.invoke(boi, getParams(endpoint, camelExchange), 

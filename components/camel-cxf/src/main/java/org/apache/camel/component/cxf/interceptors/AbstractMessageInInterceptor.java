@@ -78,14 +78,18 @@ public abstract class AbstractMessageInInterceptor<T extends Message>
         Element payloadEl = (Element)document.getChildNodes().item(0);
 
         Exchange ex = message.getExchange();
+        
+        // make sure BindingInfo put in the exchange
+        BindingInfo bi = ex.get(BindingInfo.class);
+        if (bi == null) {
+            Endpoint ep = ex.get(Endpoint.class);
+            bi = ep.getEndpointInfo().getBinding();
+            ex.put(BindingInfo.class, bi);
+        }
+        
         BindingOperationInfo boi = ex.get(BindingOperationInfo.class);
         if (boi == null) {
-            BindingInfo bi = ex.get(BindingInfo.class);
-            if (bi == null) {
-                Endpoint ep = ex.get(Endpoint.class);
-                bi = ep.getEndpointInfo().getBinding();
-                ex.put(BindingInfo.class, bi);
-            }
+            
             // handling inbound message
             if (logger.isLoggable(Level.INFO)) {
                 logger.info("AbstractRoutingMessageInInterceptor Infer BindingOperationInfo.");
