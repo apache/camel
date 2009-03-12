@@ -36,11 +36,17 @@ import org.apache.cxf.phase.Phase;
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LogUtils.getL7dLogger(PayLoadDataFormatFeature.class);
     // filter the unused phase
-    private static final String[] REMOVING_IN_PHASES = {Phase.UNMARSHAL, Phase.PRE_LOGICAL, 
-        Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL, Phase.POST_LOGICAL_ENDING };
+    
+    // PRE_INVOKE needs to be removed.  Otherwise, HolderInInterceptor will interfere us
+    private static final String[] REMOVING_IN_PHASES = {
+        Phase.UNMARSHAL, Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL,
+        Phase.POST_LOGICAL_ENDING, Phase.PRE_INVOKE
+    };
 
-    private static final String[] REMOVING_OUT_PHASES = {Phase.MARSHAL, Phase.MARSHAL_ENDING, 
-        Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL, Phase.POST_LOGICAL_ENDING };
+    private static final String[] REMOVING_OUT_PHASES = {
+        Phase.MARSHAL, Phase.MARSHAL_ENDING, Phase.PRE_LOGICAL, Phase.PRE_LOGICAL_ENDING, Phase.POST_LOGICAL,
+        Phase.POST_LOGICAL_ENDING
+    };
 
     @Override
     public void initialize(Client client, Bus bus) {
