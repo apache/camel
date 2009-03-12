@@ -84,6 +84,10 @@ public class GenericFile<T> implements Cloneable, Serializable {
         File file = new File(name);
         return file.isAbsolute();        
     }
+    
+    protected String normalizePath(String name) {
+        return FileUtil.normalizePath(name);
+    }
    
     /**
      * Changes the name of this remote file. This method alters the absolute and
@@ -97,9 +101,9 @@ public class GenericFile<T> implements Cloneable, Serializable {
         }
 
         // Make sure the newName is normalized.
-        String newFileName = FileUtil.normalizePath(newName);
+        String newFileName = normalizePath(newName);
 
-        if (LOG.isTraceEnabled()) {
+        if (LOG.isTraceEnabled()) {            
             LOG.trace("Normalized endpointPath: " + endpointPath);
             LOG.trace("Normalized newFileName: " + newFileName);
         }

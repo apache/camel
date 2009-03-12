@@ -48,6 +48,11 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         return name.startsWith("" + getFileSeparator());
     }
     
+    @Override
+    protected String normalizePath(String name) {        
+        return name;
+    }
+    
     @SuppressWarnings("unchecked")
     public RemoteFile<T> copyFrom(RemoteFile<T> source) {
         RemoteFile<T> result;
@@ -74,8 +79,8 @@ public class RemoteFile<T> extends GenericFile<T> implements Cloneable {
         return result;
     }
 
-    protected String normalizePathToProtocol(String path) {
-        path = super.normalizePathToProtocol(path);
+    protected String normalizePathToProtocol(String path) {        
+        path = super.normalizePathToProtocol(path);        
         // strip leading / for FTP protocol to avoid files with absolute paths
         return FileUtil.stripLeadingSeparator(path);
     }

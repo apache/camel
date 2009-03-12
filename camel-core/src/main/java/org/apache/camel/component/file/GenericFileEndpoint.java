@@ -94,6 +94,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
 
     public abstract String getScheme();
     
+    public abstract char getFileSeparator();
+    
+    public abstract boolean isAbsolute(String name);
+    
     /**
      * Return the file name that will be auto-generated for the given message if
      * none is provided
@@ -426,24 +430,21 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
 
         // remove trailing slash
-        expression = FileUtil.stripTrailingSeparator(expression);
+        expression = FileUtil.stripTrailingSeparator(expression);        
 
         StringBuilder sb = new StringBuilder();
 
-        // relative or absolute path?
-        File file = new File(expression);
-
         // if relative then insert start with the parent folder
-        if (!file.isAbsolute()) {
+        if (!isAbsolute(expression)) {
             sb.append("${file:parent}");
-            sb.append(File.separator);
+            sb.append(getFileSeparator());
         }
         // insert the directory the end user provided
         sb.append(expression);
         // append only the filename (file:name can contain a relative path, so we must use onlyname)
-        sb.append(File.separator);
+        sb.append(getFileSeparator());
         sb.append("${file:onlyname}");
-
+        
         return sb.toString();
     }
 
