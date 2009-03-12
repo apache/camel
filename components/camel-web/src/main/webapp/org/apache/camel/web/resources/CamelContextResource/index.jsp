@@ -27,6 +27,9 @@
 
 <ul>
   <li>
+    <a href="<c:url value='/components'/>" title="View the available components you can use with Camel">Components</a>
+  </li>
+  <li>
     <a href="<c:url value='/languages'/>" title="View the available languages you can use with Camel">Languages</a>
   </li>
   <li>

@@ -16,20 +16,18 @@
  */
 package org.apache.camel.web.resources;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.List;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-
-import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
- * Represents the list of languages available in the current camel context
+ * Represents the list of the currently active <a href="http://camel.apache.org/languages.html">languages</a>
+ * in the current camel context
  *
  * @version $Revision: 1.1 $
  */
@@ -41,7 +39,9 @@ public class LanguagesResource extends CamelChildResourceSupport {
     }
 
     public List<String> getLanguageIds() {
-        return getCamelContext().getLanguageNames();
+        List<String> answer = new ArrayList<String>(getCamelContext().getLanguageNames());
+        Collections.sort(answer);
+        return answer;
     }
 
     /**

@@ -16,7 +16,10 @@
  */
 package org.apache.camel.web.resources;
 
-import java.net.URI;
+import com.sun.jersey.api.representation.Form;
+import org.apache.camel.CamelContext;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.model.RouteDefinition;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,12 +27,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import com.sun.jersey.api.representation.Form;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.ServiceStatus;
-import org.apache.camel.model.RouteDefinition;
+import java.net.URI;
 
 /**
  * Represents the status of a single single Camel Route which is used to implement one or more

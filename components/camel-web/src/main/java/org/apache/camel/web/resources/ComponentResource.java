@@ -22,11 +22,11 @@ import org.apache.commons.logging.LogFactory;
 /**
  * @version $Revision: 1.1 $
  */
-public class LanguageResource extends CamelChildResourceSupport {
-    private static final transient Log LOG = LogFactory.getLog(LanguageResource.class);
+public class ComponentResource extends CamelChildResourceSupport {
+    private static final transient Log LOG = LogFactory.getLog(ComponentResource.class);
     private String id;
 
-    public LanguageResource(CamelContextResource contextResource, String id) {
+    public ComponentResource(CamelContextResource contextResource, String id) {
         super(contextResource);
         this.id = id;
     }
