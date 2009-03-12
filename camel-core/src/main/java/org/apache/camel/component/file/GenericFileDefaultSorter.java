@@ -18,8 +18,9 @@ package org.apache.camel.component.file;
 
 import java.util.Comparator;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
-import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -90,31 +91,34 @@ public final class GenericFileDefaultSorter {
     /**
      * Returns a new sory by file language expression
      *
+     * @param context    the camel context
      * @param expression the file language expression
      * @param reverse    true to reverse order
      * @return the comparator
      */
     public static Comparator<GenericFileExchange> sortByFileLanguage(
-            final String expression, final boolean reverse) {
-        return sortByFileLanguage(expression, reverse, false, null);
+            CamelContext context, String expression, boolean reverse) {
+        return sortByFileLanguage(context, expression, reverse, false, null);
     }
 
     /**
      * Returns a new sory by file language expression
      *
+     * @param context    the camel context
      * @param expression the file language expression
      * @param reverse    true to reverse order
      * @param ignoreCase ignore case if comparing strings
      * @return the comparator
      */
     public static Comparator<GenericFileExchange> sortByFileLanguage(
-            final String expression, final boolean reverse, final boolean ignoreCase) {
-        return sortByFileLanguage(expression, reverse, ignoreCase, null);
+            CamelContext context, String expression, boolean reverse, boolean ignoreCase) {
+        return sortByFileLanguage(context, expression, reverse, ignoreCase, null);
     }
 
     /**
      * Returns a new sort by file language expression
      *
+     * @param context    the camel context
      * @param expression the file language expression
      * @param reverse    true to reverse order
      * @param ignoreCase ignore case if comparing strings
@@ -122,11 +126,12 @@ public final class GenericFileDefaultSorter {
      * @return the comparator
      */
     public static Comparator<GenericFileExchange> sortByFileLanguage(
-            final String expression, final boolean reverse,
+            final CamelContext context, final String expression, final boolean reverse,
             final boolean ignoreCase, final Comparator<GenericFileExchange> nested) {
         return new Comparator<GenericFileExchange>() {
             public int compare(GenericFileExchange o1, GenericFileExchange o2) {
-                final Expression exp = FileLanguage.file(expression);
+                Language language = context.resolveLanguage("file");
+                final Expression exp = language.createExpression(expression);
                 Object result1 = exp.evaluate(o1);
                 Object result2 = exp.evaluate(o2);
                 int answer = ObjectHelper.compare(result1, result2, ignoreCase);

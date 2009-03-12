@@ -35,8 +35,8 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.language.constant.ConstantLanguage;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
@@ -156,8 +156,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
      * @return the builder
      */
     public OnExceptionDefinition handled(boolean handled) {
-        ConstantLanguage constant = new ConstantLanguage();
-        return handled(constant.createPredicate(Boolean.toString(handled)));
+        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
+        return handled(expression);
     }
     
     /**

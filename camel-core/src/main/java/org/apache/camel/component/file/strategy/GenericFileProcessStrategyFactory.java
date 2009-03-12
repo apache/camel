@@ -18,6 +18,7 @@ package org.apache.camel.component.file.strategy;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
@@ -29,7 +30,7 @@ public final class GenericFileProcessStrategyFactory {
     }
 
     @SuppressWarnings("unchecked")
-    public static GenericFileProcessStrategy createGenericFileProcessStrategy(Map<String, Object> params) {
+    public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         boolean isNoop = params.get("noop") != null;
