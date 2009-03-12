@@ -28,6 +28,7 @@ import java.lang.annotation.RetentionPolicy;
  * The separator (mandatory)
  * The name is optional and could be used in the future to bind a property which a different name
  * The skipfirstline (optional) allows to skip the first line of the file/content received
+ * The crlf (optional) is used to add a new line after a record. By default, the value is WINDOWS 
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
@@ -54,5 +55,13 @@ public @interface CsvRecord {
      * @return boolean
      */
     boolean skipFirstLine() default false;
+    
+    /**
+     * Character to be used to add a carriage return after each record (optional)
+     * Three values can be used : WINDOWS, UNIX or MAC
+     * 
+     * @return String
+     */
+    String crlf() default "WINDOWS";
 
 }

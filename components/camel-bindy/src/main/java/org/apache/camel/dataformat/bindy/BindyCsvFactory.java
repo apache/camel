@@ -70,20 +70,16 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         // initialize Csv parameter(s)
         // separator and skip first line from @CSVrecord annotation
         initCsvRecordParameters();
-
     }
     
-    
     public void initAnnotedFields() {
-
         for (Class<?> cl : models) {
-
             for (Field field : cl.getDeclaredFields()) {
                 DataField dataField = field.getAnnotation(DataField.class);
                 if (dataField != null) {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Position defined in the class : " + cl.getName() + ", position : "
-                                  + dataField.pos() + ", Field : " + dataField.toString());
+                            + dataField.pos() + ", Field : " + dataField.toString());
                     }
                     mapDataField.put(dataField.pos(), dataField);
                     mapAnnotedField.put(dataField.pos(), field);
@@ -98,15 +94,12 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     mapAnnotedLinkField.put(cl.getName(), field);
                 }
             }
-
         }
     }
-    
 
     public void bind(List<String> data, Map<String, Object> model) throws Exception {
 
         int pos = 0;
-
         while (pos < data.size()) {
 
             // Set the field with the data received
@@ -130,12 +123,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                 format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
                 field.set(model.get(field.getDeclaringClass().getName()), format.parse(data.get(pos)));
-
             }
-
             pos++;
         }
-
     }
 
     public String unbind(Map<String, Object> model) throws Exception {
@@ -158,11 +148,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             field.setAccessible(true);
 
             // Retrieve the format associated to the type
-            Format format;
-
-            String pattern = dataField.pattern();
-            format = FormatFactory.getFormat(field.getType(), pattern, dataField.precision());
-
+            Format format = FormatFactory.getFormat(field.getType(), dataField.pattern(), dataField.precision());
             Object obj = model.get(field.getDeclaringClass().getName());
 
             // Convert the content to a String and append it to the builder
@@ -170,9 +156,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (it.hasNext()) {
                 builder.append(this.getSeparator());
             }
-
         }
-
         return builder.toString();
     }
 
@@ -194,11 +178,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      * Get paramaters defined in @Csvrecord annotation
      */
     private void initCsvRecordParameters() {
-
         if (separator == null) {
-
             for (Class<?> cl : models) {
-
                 // Get annotation @CsvRecord from the class
                 CsvRecord record = cl.getAnnotation(CsvRecord.class);
 
@@ -212,18 +193,19 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     // Get Separator parameter
                     ObjectHelper.notNull(record.separator(),
-                                         "No separator has been defined in the @Record annotation !");
+                        "No separator has been defined in the @Record annotation !");
                     separator = record.separator();
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Separator defined for the CSV : " + separator);
                     }
-
+                    
+                    // Get carriage return parameter
+                    crlf = record.crlf();
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Carriage return defined for the CSV : " + crlf);
+                    }
                 }
-
             }
-
         }
-
     }
-
 }

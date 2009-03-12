@@ -28,6 +28,7 @@ import java.util.Scanner;
 import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.util.ObjectHelper;
@@ -41,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 public class BindyKeyValuePairDataFormat implements DataFormat {
     
     private static final transient Log LOG = LogFactory.getLog(BindyKeyValuePairDataFormat.class);
-
+    
     private String packageName;
     private BindyKeyValuePairFactory modelFactory;
 
@@ -56,11 +57,18 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyKeyValuePairFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
+        byte[] crlf;
+        
+        // Get CRLF
+        crlf = Converter.getByteReturn(factory.getCarriageReturn());
         
         for (Map<String, Object> model : models) {
             String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
+            
+            // Add a carriage return
+            outputStream.write(crlf);
         }
     }
 
@@ -70,8 +78,8 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
-        // Create POJO where messages data will be saved
-        Map<String, Object> model = factory.factory();
+        // Pojos of the model
+        Map<String, Object> model;
 
         InputStreamReader in = new InputStreamReader(inputStream);
 
@@ -98,6 +106,9 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Counter " + count++ + " : content : " + line);
                 }
+                
+                // Create POJO where CSV data will be stored
+                model = factory.factory();
 
                 // Split the message according to the pair separator defined in
                 // annotated class @Message
@@ -124,7 +135,6 @@ public class BindyKeyValuePairDataFormat implements DataFormat {
             scanner.close();
             ObjectHelper.close(in, "in", LOG);
         }
-
     }
 
     /**
