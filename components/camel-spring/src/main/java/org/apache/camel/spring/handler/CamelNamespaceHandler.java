@@ -31,6 +31,7 @@ import org.w3c.dom.NodeList;
 
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.model.config.PropertiesType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -174,7 +175,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteType.class);
-        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
+        classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);     
         classes.add(org.apache.camel.model.dataformat.DataFormatType.class);
         classes.add(org.apache.camel.model.language.ExpressionType.class);
         classes.add(org.apache.camel.model.loadbalancer.LoadBalancerType.class);
@@ -208,6 +209,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
+                builder.addPropertyValue("properties", factoryBean.getProperties());
 
                 if (factoryBean.getPackages().length > 0) {
                     builder.addPropertyValue("packages", factoryBean.getPackages());

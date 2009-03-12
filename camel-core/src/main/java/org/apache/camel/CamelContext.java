@@ -335,6 +335,16 @@ public interface CamelContext extends Service {
     Map<String, DataFormatType> getDataFormats();
     
     /**
+     * Sets the properties that can be referenced in the camel context
+     */
+    void setProperties(Map<String, String> properties);
+    
+    /**
+     * Gets the properties that can be referenced in the camel context
+     */
+    Map<String, String> getProperties();
+    
+    /**
      * Create a FactoryFinder which will be used for the loading the factory class from META-INF
      * @return the factory finder
      */

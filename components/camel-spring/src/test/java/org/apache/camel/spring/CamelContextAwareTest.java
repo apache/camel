@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring;
 
+import java.util.Map;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,6 +29,10 @@ public class CamelContextAwareTest extends SpringTestSupport {
 
     public void testInjectionPoints() throws Exception {
         assertNotNull("No CamelContext injected!", bean.getCamelContext());
+        Map<String, String> properties  = bean.getCamelContext().getProperties();
+        assertNotNull("the properties should not been null", properties);
+        assertEquals("No properties injected", properties.size(), 1);
+        assertEquals("Should get the value of org.apache.camel.test", properties.get("org.apache.camel.test"), "this is a test");
     }
 
     @Override

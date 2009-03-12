@@ -97,6 +97,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatType> dataFormats = new HashMap<String, DataFormatType>();
+    private Map<String, String> properties = new HashMap<String, String>();
     private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
 
     public DefaultCamelContext() {
@@ -784,6 +785,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void setFactoryFinderClass(Class<? extends FactoryFinder> finderClass) {
         factoryFinderClass = finderClass;
     }
+    
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;        
+    }
 
     public FactoryFinder createFactoryFinder() {
         try {
@@ -818,6 +827,5 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
     }
-
-
+    
 }

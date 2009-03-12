@@ -28,40 +28,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 
 public class CachedOutputStream extends OutputStream {
-    private static final File DEFAULT_TEMP_DIR;
-    private static final int DEFAULT_THRESHOLD;
-    static {
-        String s = System.getProperty("org.apache.camel.util.CachedOutputStream.Threshold",
-                                      "-1");
-        int i = Integer.parseInt(s);
-        if (i <= 0) {
-            i = 64 * 1024;
-        }
-        DEFAULT_THRESHOLD = i;
-        
-        s = System.getProperty("org.apache.camel.util.CachedOutputStream.OutputDirectory");
-        if (s != null) {
-            File f = new File(s);
-            if (f.exists() && f.isDirectory()) {
-                DEFAULT_TEMP_DIR = f;
-            } else {
-                DEFAULT_TEMP_DIR = null;
-            }
-        } else {
-            DEFAULT_TEMP_DIR = null;
-        }
-    }
-
+    public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
+    public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
+   
     protected boolean outputLocked;
     protected OutputStream currentStream;
 
-    private long threshold = DEFAULT_THRESHOLD;
+    private long threshold = 64 * 1024;
 
     private int totalLength;
 
@@ -69,7 +49,7 @@ public class CachedOutputStream extends OutputStream {
 
     private File tempFile;
 
-    private File outputDir = DEFAULT_TEMP_DIR;   
+    private File outputDir;   
     
     private List<Object> streamList = new ArrayList<Object>();
 
@@ -80,9 +60,30 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public CachedOutputStream(long threshold) {
-        this.threshold = threshold; 
-        currentStream = new ByteArrayOutputStream(2048);
-        inmem = true;
+        this();
+        this.threshold = threshold;        
+    }
+    
+    public CachedOutputStream(Map<String, String> properties) {
+        this();
+        String value = properties.get(THRESHOLD);
+        if (value != null) {
+            int i = Integer.parseInt(value);
+            if (i > 0) {
+                threshold = i;
+            }
+        }
+        value = properties.get(TEMP_DIR);
+        if (value != null) {
+            File f = new File(value);
+            if (f.exists() && f.isDirectory()) {
+                outputDir = f;
+            } else {
+                outputDir = null;
+            }
+        } else {
+            outputDir = null;
+        }        
     }
 
     /**
