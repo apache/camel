@@ -19,10 +19,10 @@ package org.apache.camel.component.mina;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInput;
+import java.io.ObjectInputStream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.IOConverter;
 import org.apache.mina.common.ByteBuffer;
 
 /**
@@ -46,7 +46,9 @@ public final class MinaConverter {
 
     @Converter
     public static String toString(ByteBuffer buffer, Exchange exchange) {
-        return IOConverter.toString(toByteArray(buffer), exchange);
+        byte[] bytes = toByteArray(buffer);
+        // use type converter as it can handle encoding set on the Exchange
+        return exchange.getContext().getTypeConverter().convertTo(String.class, exchange, bytes);
     }
 
     @Converter
@@ -56,7 +58,8 @@ public final class MinaConverter {
 
     @Converter
     public static ObjectInput toObjectInput(ByteBuffer buffer) throws IOException {
-        return IOConverter.toObjectInput(toInputStream(buffer));
+        InputStream is = toInputStream(buffer);
+        return new ObjectInputStream(is);
     }
 
     @Converter
