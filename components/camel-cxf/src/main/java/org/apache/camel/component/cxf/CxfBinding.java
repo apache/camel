@@ -202,6 +202,11 @@ public final class CxfBinding {
                                                                   null,
                                                                   Scope.APPLICATION);
             ctx.putAll(requestContext);
+
+            // Remove protocol headers from scopes.  Otherwise, response headers can be
+            // overwritten by request headers when SOAPHandlerInterceptor tries to create
+            // a wrapped message context by the copyScoped() method.
+            ctx.getScopes().remove(Message.PROTOCOL_HEADERS);
             requestContext = realMap;
 
         }
