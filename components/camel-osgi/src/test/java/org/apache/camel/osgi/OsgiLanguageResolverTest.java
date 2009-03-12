@@ -28,7 +28,7 @@ public class OsgiLanguageResolverTest extends CamelOsgiTestSupport {
         BundleContext context = getActivator().getBundle().getBundleContext();        
         CamelContext camelContext = new DefaultCamelContext();
         OsgiLanguageResolver resolver = new OsgiLanguageResolver();
-        Language language = resolver.noSpecificLanguageFound("js", camelContext);
+        Language language = resolver.resolveLanguage("js", camelContext);
         assertNotNull("We should find js language", language);
     }
 }
