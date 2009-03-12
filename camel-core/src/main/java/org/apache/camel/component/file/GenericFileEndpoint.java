@@ -23,14 +23,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
-import org.apache.camel.language.simple.FileLanguage;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -140,10 +141,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
 
         try {
-            Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", Map.class);
-            return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getParamsAsMap());
+            Method factoryMethod = factory.getMethod("createGenericFileProcessStrategy", CamelContext.class, Map.class);
+            return (GenericFileProcessStrategy<T>) ObjectHelper.invokeMethod(factoryMethod, null, getCamelContext(), getParamsAsMap());
         } catch (NoSuchMethodException e) {
-            throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy(GenericFileEndpoint endpoint) method not found", e);
+            throw new TypeNotPresentException(factory.getSimpleName() + ".createGenericFileProcessStrategy method not found", e);
         }
     }
 
@@ -213,7 +214,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.move = FileLanguage.file(expression);
+        this.move = createFileLangugeExpression(expression);
     }
 
     public Expression getPreMove() {
@@ -230,7 +231,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      */
     public void setPreMove(String fileLanguageExpression) {
         String expression = configureMoveOrPreMoveExpression(fileLanguageExpression);
-        this.preMove = FileLanguage.file(expression);
+        this.preMove = createFileLangugeExpression(expression);
     }
 
     public Expression getFileName() {
@@ -246,7 +247,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
      * {@link org.apache.camel.language.simple.FileLanguage}
      */
     public void setFileName(String fileLanguageExpression) {
-        this.fileName = FileLanguage.file(fileLanguageExpression);
+        this.fileName = createFileLangugeExpression(fileLanguageExpression);
     }
 
     public boolean isIdempotent() {
@@ -294,7 +295,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     }
 
     public void setSortBy(String expression, boolean reverse) {
-        setSortBy(GenericFileDefaultSorter.sortByFileLanguage(expression, reverse));
+        setSortBy(GenericFileDefaultSorter.sortByFileLanguage(getCamelContext(), expression, reverse));
     }
 
     public String getTempPrefix() {
@@ -430,7 +431,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
 
         // remove trailing slash
-        expression = FileUtil.stripTrailingSeparator(expression);        
+        expression = FileUtil.stripTrailingSeparator(expression);
 
         StringBuilder sb = new StringBuilder();
 
@@ -444,7 +445,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         // append only the filename (file:name can contain a relative path, so we must use onlyname)
         sb.append(getFileSeparator());
         sb.append("${file:onlyname}");
-        
+
         return sb.toString();
     }
 
@@ -474,6 +475,11 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
         }
 
         return params;
+    }
+
+    private Expression createFileLangugeExpression(String expression) {
+        Language language = getCamelContext().resolveLanguage("file");
+        return language.createExpression(expression);
     }
 
 }

@@ -19,10 +19,11 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
 
 public final class FileProcessStrategyFactory {
@@ -30,7 +31,7 @@ public final class FileProcessStrategyFactory {
     private FileProcessStrategyFactory() {
     }
 
-    public static GenericFileProcessStrategy createGenericFileProcessStrategy(Map<String, Object> params) {
+    public static GenericFileProcessStrategy createGenericFileProcessStrategy(CamelContext context, Map<String, Object> params) {
 
         // We assume a value is present only if its value not null for String and 'true' for boolean
         boolean isNoop = params.get("noop") != null;
@@ -64,8 +65,10 @@ public final class FileProcessStrategyFactory {
             // default strategy will move files in a .camel/ subfolder where the file was consumed
             GenericFileRenameProcessStrategy<File> strategy = new GenericFileRenameProcessStrategy<File>();
             strategy.setExclusiveReadLockStrategy(getExclusiveReadLockStrategy(params));
-            Expression exp = FileLanguage.file("${file:parent}/.camel/${file:onlyname}");
-            strategy.setCommitRenamer(new GenericFileExpressionRenamer<File>(exp));
+            // use context to lookup language to let it be loose coupled
+            Language language = context.resolveLanguage("file");
+            Expression expression = language.createExpression("${file:parent}/.camel/${file:onlyname}");
+            strategy.setCommitRenamer(new GenericFileExpressionRenamer<File>(expression));
             return strategy;
         }
     }

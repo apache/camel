@@ -22,7 +22,7 @@ import java.io.InputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.language.simple.FileLanguage;
+import org.apache.camel.spi.Language;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -160,7 +160,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 if (log.isDebugEnabled()) {
                     log.debug(Exchange.FILE_NAME + " contains a FileLanguage expression: " + name);
                 }
-                expression = FileLanguage.file(name);
+                Language language = getEndpoint().getCamelContext().resolveLanguage("file");
+                expression = language.createExpression(name);
             }
         }
         if (expression != null) {
@@ -170,9 +171,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
             name = expression.evaluate(exchange, String.class);
         }
 
-
         // flattern name
-        if (endpoint.isFlattern()) {
+        if (name != null && endpoint.isFlattern()) {
             int pos = name.lastIndexOf(File.separator);
             if (pos == -1) {
                 pos = name.lastIndexOf('/');
