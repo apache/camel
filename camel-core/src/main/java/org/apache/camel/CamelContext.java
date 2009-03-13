@@ -81,7 +81,7 @@ public interface CamelContext extends Service {
     /**
      * Gets a readonly list of names of the components currently registered
      *
-     * @return a readonly list with the names of the the componens.
+     * @return a readonly list with the names of the the components
      */
     List<String> getComponentNames();
 
@@ -289,7 +289,7 @@ public interface CamelContext extends Service {
     /**
      * Gets a readonly list with the names of the languages currently registered.
      *
-     * @return a readonly list with the names of the the languages. 
+     * @return a readonly list with the names of the the languages
      */
     List<String> getLanguageNames();
 
