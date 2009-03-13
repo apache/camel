@@ -33,6 +33,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.data.ChallengeResponse;
 import org.restlet.data.ChallengeScheme;
+import org.restlet.data.CharacterSet;
 import org.restlet.data.Form;
 import org.restlet.data.MediaType;
 import org.restlet.data.Request;
@@ -181,7 +182,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else {
             out = exchange.getOut();
         }
-        
+             
         // get content type
         MediaType mediaType = out.getHeader(RestletConstants.RESTLET_MEDIA_TYPE, MediaType.class);
         if (mediaType == null) {
@@ -215,6 +216,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             LOG.debug("Populate Restlet response from exchange body: " + text);
         }
         response.setEntity(text, mediaType);
+        
+        if (exchange.getProperty(Exchange.CHARSET_NAME) != null) {
+            response.getEntity().setCharacterSet(CharacterSet.valueOf(exchange.getProperty(Exchange.CHARSET_NAME, 
+                                                                                           String.class)));
+        } 
     }
 
     /**
