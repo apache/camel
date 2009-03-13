@@ -56,6 +56,8 @@ public class RedeliveryPolicyDefinition {
     private LoggingLevel retryAttemptedLogLevel;
     @XmlAttribute
     private Boolean logStackTrace;
+    @XmlAttribute
+    private Boolean disableRedelivery;
 
     public RedeliveryPolicy createRedeliveryPolicy(CamelContext context, RedeliveryPolicy parentPolicy) {
         if (ref != null) {
@@ -96,6 +98,10 @@ public class RedeliveryPolicyDefinition {
         if (logStackTrace != null) {
             answer.setLogStackTrace(logStackTrace);
         }
+        if (disableRedelivery != null && disableRedelivery) {
+            answer.setMaximumRedeliveries(0);
+        }
+
         return answer;
     }
 
@@ -331,5 +337,13 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogStackTrace(Boolean logStackTrace) {
         this.logStackTrace = logStackTrace;
+    }
+
+    public Boolean getDisableRedelivery() {
+        return disableRedelivery;
+    }
+
+    public void setDisableRedelivery(Boolean disableRedelivery) {
+        this.disableRedelivery = disableRedelivery;
     }
 }

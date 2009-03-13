@@ -58,7 +58,8 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead"));
+                // no redelivery for faster unit test
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
 
                 from("direct:in")
                     .to("bean:myBean")

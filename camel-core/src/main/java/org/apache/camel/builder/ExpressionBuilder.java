@@ -148,9 +148,9 @@ public final class ExpressionBuilder {
     public static Expression exchangeExceptionExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Throwable exception = exchange.getException();
+                Exception exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                 }
                 return exception;
             }
@@ -163,6 +163,24 @@ public final class ExpressionBuilder {
     }   
     
     /**
+     * Returns an expression for the type converter
+     *
+     * @return an expression object which will return the type converter
+     */
+    public static Expression typeConverterExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return exchange.getContext().getTypeConverter();
+            }
+
+            @Override
+            public String toString() {
+                return "typeConverter";
+            }
+        };
+    }
+
+    /**
      * Returns an expression for an exception message set on the exchange
      *
      * @see <tt>Exchange.getException().getMessage()</tt>
@@ -171,9 +189,9 @@ public final class ExpressionBuilder {
     public static Expression exchangeExceptionMessageExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Throwable exception = exchange.getException();
+                Exception exception = exchange.getException();
                 if (exception == null) {
-                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Throwable.class);
+                    exception = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
                 }
                 return exception != null ? exception.getMessage() : null;
             }

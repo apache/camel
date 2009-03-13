@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.builder.ExpressionBuilder;
 
 /**
@@ -36,7 +37,7 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
         loadDefaultRegistry();
     }
 
-    public synchronized Expression getDefaultParameterTypeExpression(Class parameterType) {
+    public Expression getDefaultParameterTypeExpression(Class parameterType) {
         Expression expression = parameterTypeToExpressionMap.get(parameterType);
         return expression;
     }
@@ -44,24 +45,15 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
     /**
      * Adds a default parameter type mapping to an expression
      */
-    public synchronized void addParameterMapping(Class parameterType, Expression expression) {
+    public void addParameterMapping(Class parameterType, Expression expression) {
         parameterTypeToExpressionMap.put(parameterType, expression);
     }
 
-    /**
-     * Creates an invocation on the given POJO using annotations to decide which method to invoke
-     * and to figure out which parameters to use
-     */
-/*
-    public MethodInvocation createInvocation(Object pojo,
-                                             BeanInfo beanInfo,
-                                             Exchange messageExchange,
-                                             Endpoint pojoEndpoint) throws RuntimeCamelException {
-        return beanInfo.createInvocation(pojo, messageExchange);
-    }
-*/
     public void loadDefaultRegistry() {
         addParameterMapping(Exchange.class, ExpressionBuilder.exchangeExpression());
         addParameterMapping(Message.class, ExpressionBuilder.inMessageExpression());
+        addParameterMapping(Exception.class, ExpressionBuilder.exchangeExceptionExpression());
+        addParameterMapping(TypeConverter.class, ExpressionBuilder.typeConverterExpression());
     }
+
 }

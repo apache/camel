@@ -46,6 +46,9 @@ public class ChainedBeanInvocationTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                // for faster unit testing
+                errorHandler(noErrorHandler());
+
                 from("direct:start")
                     .to("bean:myBean?method=a")
                     .bean(beanMock, "b")

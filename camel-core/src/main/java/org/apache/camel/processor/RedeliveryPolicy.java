@@ -300,6 +300,14 @@ public class RedeliveryPolicy extends DelayPolicy {
         return this;
     }
 
+    /**
+     * Disables redelivery by setting maximum redeliveries to 0.
+     */
+    public RedeliveryPolicy disableRedelivery() {
+        setMaximumRedeliveries(0);
+        return this;
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public double getBackOffMultiplier() {

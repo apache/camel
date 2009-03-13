@@ -99,6 +99,11 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DeadLetterChannelBuilder disableRedelivery() {
+        getRedeliveryPolicy().maximumRedeliveries(0);
+        return this;
+    }
+
     public DeadLetterChannelBuilder maximumRedeliveryDelay(long maximumRedeliveryDelay) {
         getRedeliveryPolicy().maximumRedeliveryDelay(maximumRedeliveryDelay);
         return this;
