@@ -39,13 +39,12 @@ public final class Converter {
     }
     
     public static byte[] getByteReturn(String returnCharacter) {
-    	
         if (returnCharacter.equals("WINDOWS")) {
-            return new byte[] { 13, 10 };
+            return new byte[] {13, 10};
         } else if (returnCharacter.equals("UNIX")) {
-            return new byte[] { 10 };
+            return new byte[] {10};
         } else if (returnCharacter.equals("MAC")) {
-            return new byte[] { 13 };
+            return new byte[] {13};
         } else {
             return returnCharacter.getBytes();
         }

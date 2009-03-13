@@ -23,16 +23,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.swing.plaf.basic.BasicBorders.SplitPaneBorder;
-
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
-import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
 import org.apache.camel.dataformat.bindy.util.Converter;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -203,8 +199,8 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
             // Convert the content to a String and append it to the builder
             // Add the tag followed by its key value pair separator
             // the data and finish by the pair separator
-            builder.append(keyValuePairField.tag() + this.getKeyValuePairSeparator() + 
-                format.format(field.get(obj)) + separator);
+            builder.append(keyValuePairField.tag() + this.getKeyValuePairSeparator() 
+                           + format.format(field.get(obj)) + separator);
         }
 
         return builder.toString();

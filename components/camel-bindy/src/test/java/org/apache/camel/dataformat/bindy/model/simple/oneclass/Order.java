@@ -126,15 +126,15 @@ public class Order {
 
     @Override
     public String toString() {
-        return "Model : " + Order.class.getName() + " : " + 
-            String.valueOf(this.getOrderNr()) + ", " + 
-            String.valueOf(this.getAmount()) + ", " + 
-            String.valueOf(this.getIsinCode()) + ", " + 
-            String.valueOf(this.getInstrumentName()) + ", " + 
-            String.valueOf(this.getCurrency()) + ", " + 
-            String.valueOf(this.getClientNr()) + ", " + 
-            String.valueOf(this.getFirstName()) + ", " + 
-            String.valueOf(this.getLastName()) + ", " + 
-            String.valueOf(this.getOrderDate());
+        return "Model : " + Order.class.getName() + " : " 
+               + String.valueOf(this.getOrderNr()) + ", "
+               + String.valueOf(this.getAmount()) + ", "
+               + String.valueOf(this.getIsinCode()) + ", "
+               + String.valueOf(this.getInstrumentName()) + ", "
+               + String.valueOf(this.getCurrency()) + ", "
+               + String.valueOf(this.getClientNr()) + ", "
+               + String.valueOf(this.getFirstName()) + ", "
+               + String.valueOf(this.getLastName()) + ", "
+               + String.valueOf(this.getOrderDate());
     }
 }

@@ -57,10 +57,10 @@ public class Client {
 
     @Override
     public String toString() {
-        return "Model : " + Client.class.getName() + " : " + 
-            String.valueOf(this.getClientNr()) + ", " + 
-            String.valueOf(this.getFirstName()) + ", " + 
-            String.valueOf(this.getLastName());
+        return "Model : " + Client.class.getName() + " : "
+            + String.valueOf(this.getClientNr()) + ", "
+            + String.valueOf(this.getFirstName()) + ", "
+            + String.valueOf(this.getLastName());
     }
 
 }
