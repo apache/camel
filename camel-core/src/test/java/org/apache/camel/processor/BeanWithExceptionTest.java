@@ -19,8 +19,10 @@ package org.apache.camel.processor;
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 import org.apache.camel.Header;
 import org.apache.camel.Processor;
+import org.apache.camel.Property;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,7 +41,13 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
+        template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("<valid/>");
+                exchange.getIn().setHeader("foo", "bar");
+                exchange.setProperty("cheese", "old");
+            }
+        });
 
         assertMockEndpointsSatisfied();
     }
@@ -48,7 +56,13 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
 
         try {
-            template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
+            template.send("direct:start", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.getIn().setBody("<invalid/>");
+                    exchange.getIn().setHeader("foo", "notMatchedHeaderValue");
+                    exchange.setProperty("cheese", "old");
+                }
+            });
         } catch (Exception e) {
             // expected
         }
@@ -85,7 +99,9 @@ public class BeanWithExceptionTest extends ContextTestSupport {
         private static final transient Log LOG = LogFactory.getLog(ValidationBean.class);
 
         public void someMethod(String body, @Header("foo")
-                               String header) throws ValidationException {
+                               String header, @Property("cheese") String cheese) throws ValidationException {
+            assertEquals("old", cheese);
+
             if ("bar".equals(header)) {
                 LOG.info("someMethod() called with valid header and body: " + body);
             } else {
