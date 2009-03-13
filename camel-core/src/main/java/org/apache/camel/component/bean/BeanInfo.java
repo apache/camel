@@ -127,9 +127,15 @@ public class BeanInfo {
             methodInfo = defaultMethod;
         }
         if (methodInfo != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Choosed method to invoke: " + methodInfo + " on bean: " + pojo);
+            }
             return methodInfo.createMethodInvocation(pojo, exchange);
         }
 
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Cannot find suitable method to invoke on bean: " + pojo);
+        }
         return null;
     }
 
@@ -312,6 +318,9 @@ public class BeanInfo {
 
                 // try to match the arguments
                 if (methodInfo.bodyParameterMatches(bodyType)) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Found a possible method: " + methodInfo);
+                    }
                     if (methodInfo.hasExceptionParameter()) {
                         // methods with accepts exceptions
                         possiblesWithException.add(methodInfo);
@@ -322,51 +331,82 @@ public class BeanInfo {
                 }
             }
 
-            // TODO refactor below into a separate method
-
             // find best suited method to use
-            Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
-            if (exception != null && possiblesWithException.size() == 1) {
-                // prefer the method that accepts exception in case we have an exception also
-                return possiblesWithException.get(0);
-            } else if (possibles.size() == 1) {
-                return possibles.get(0);
-            } else if (possibles.isEmpty()) {
-                // TODO: Make sure this is properly unit tested
-                // lets try converting
-                Object newBody = null;
-                MethodInfo matched = null;
-                for (MethodInfo methodInfo : operationList) {
-                    Object value;
-                    try {
-                        value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
-                        if (value != null) {
-                            if (newBody != null) {
-                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
-                            } else {
-                                newBody = value;
-                                matched = methodInfo;
-                            }
-                        }
-                    } catch (NoTypeConversionAvailableException e) {
-                        // we can safely ignore this exception as we want a behaviour similar to
-                        // that if convertToType return null
-                    }
-                }
-                if (matched != null) {
-                    in.setBody(newBody);
-                    return matched;
-                }
-            } else {
-                // if we only have a single method with custom annotations, lets use that one
-                if (operationsWithCustomAnnotation.size() == 1) {
-                    return operationsWithCustomAnnotation.get(0);
-                }
-                return chooseMethodWithCustomAnnotations(exchange, possibles);
-            }
+            return chooseBestPossibleMethodInfo(exchange, operationList, body, possibles, possiblesWithException);
         }
 
         // no match so return null
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<MethodInfo> operationList, Object body,
+                                                    List<MethodInfo> possibles, List<MethodInfo> possiblesWithException)
+            throws AmbiguousMethodCallException {
+
+        Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
+        if (exception != null && possiblesWithException.size() == 1) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Exchange has exception set so we prefer method that also has exception as parameter");
+            }
+            // prefer the method that accepts exception in case we have an exception also
+            return possiblesWithException.get(0);
+        } else if (possibles.size() == 1) {
+            return possibles.get(0);
+        } else if (possibles.isEmpty()) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("No poosible methods trying to convert body to parameter types");
+            }
+
+            // TODO: Make sure this is properly unit tested
+            // lets try converting
+            Object newBody = null;
+            MethodInfo matched = null;
+            for (MethodInfo methodInfo : operationList) {
+                Object value;
+                try {
+                    value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
+                    if (value != null) {
+                        if (LOG.isTraceEnabled()) {
+                            LOG.trace("Converted body from: " + body.getClass().getCanonicalName()
+                                    + "to: " + methodInfo.getBodyParameterType().getCanonicalName());
+                        }
+                        if (newBody != null) {
+                            // we already have found one new body that could be converted so now we have 2 methods
+                            // and then its ambiguous
+                            throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
+                        } else {
+                            newBody = value;
+                            matched = methodInfo;
+                        }
+                    }
+                } catch (NoTypeConversionAvailableException e) {
+                    // we can safely ignore this exception as we want a behaviour similar to
+                    // that if convertToType return null
+                }
+            }
+            if (matched != null) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Setting converted body: " + body);
+                }
+                Message in = exchange.getIn();
+                in.setBody(newBody);
+                return matched;
+            }
+        } else {
+            // if we only have a single method with custom annotations, lets use that one
+            if (operationsWithCustomAnnotation.size() == 1) {
+                MethodInfo answer = operationsWithCustomAnnotation.get(0);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("There are only one method with annotations so we choose it: " + answer);
+                }
+                return answer;
+            }
+            // phew try to choose among multiple methods with annotations
+            return chooseMethodWithCustomAnnotations(exchange, possibles);
+        }
+
+        // cannot find a good method to use
         return null;
     }
 
