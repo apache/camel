@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.bean;
 
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,13 +58,13 @@ import static org.apache.camel.util.ExchangeHelper.convertToType;
 public class BeanInfo {
     private static final transient Log LOG = LogFactory.getLog(BeanInfo.class);
     private final CamelContext camelContext;
-    private Class type;
-    private ParameterMappingStrategy strategy;
-    private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
+    private final Class type;
+    private final ParameterMappingStrategy strategy;
+    private final Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
+    private final List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
+    private final List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
+    private final Map<Method, MethodInfo> methodMap = new ConcurrentHashMap<Method, MethodInfo>();
     private MethodInfo defaultMethod;
-    private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
-    private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
-    private Map<Method, MethodInfo> methodMap = new HashMap<Method, MethodInfo>();
     private BeanInfo superBeanInfo;
 
     public BeanInfo(CamelContext camelContext, Class type) {
@@ -94,8 +92,20 @@ public class BeanInfo {
         return camelContext;
     }
 
-    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange)
-        throws RuntimeCamelException {
+    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
+        // lookup in registry first if there is a strategy defined
+        Registry registry = camelContext.getRegistry();
+        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
+                                                          ParameterMappingStrategy.class);
+        if (answer == null) {
+            // no then use the default one
+            answer = new DefaultParameterMappingStrategy();
+        }
+
+        return answer;
+    }
+
+    public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {
             return methodInfo.createMethodInvocation(pojo, exchange);
@@ -103,11 +113,9 @@ public class BeanInfo {
         return null;
     }
 
-    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException,
-        AmbiguousMethodCallException {
+    public MethodInvocation createInvocation(Object pojo, Exchange exchange) throws RuntimeCamelException, AmbiguousMethodCallException {
         MethodInfo methodInfo = null;
 
-        // TODO use some other mechanism?
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (name != null) {
             methodInfo = operations.get(name);
@@ -121,9 +129,15 @@ public class BeanInfo {
         if (methodInfo != null) {
             return methodInfo.createMethodInvocation(pojo, exchange);
         }
+
         return null;
     }
 
+    /**
+     * Introspects the given class
+     *
+     * @param clazz the class
+     */
     protected void introspect(Class clazz) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz);
@@ -140,6 +154,12 @@ public class BeanInfo {
         }
     }
 
+    /**
+     * Introspects the given method
+     *
+     * @param clazz the class
+     * @param method the method
+     */
     protected MethodInfo introspect(Class clazz, Method method) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Introspecting class: " + clazz + ", method: " + method);
@@ -178,6 +198,199 @@ public class BeanInfo {
         return methodInfo;
     }
 
+
+    /**
+     * Returns the {@link MethodInfo} for the given method if it exists or null
+     * if there is no metadata available for the given method
+     */
+    public MethodInfo getMethodInfo(Method method) {
+        MethodInfo answer = methodMap.get(method);
+        if (answer == null) {
+            // maybe the method is defined on a base class?
+            if (superBeanInfo == null && type != Object.class) {
+                Class superclass = type.getSuperclass();
+                if (superclass != null && superclass != Object.class) {
+                    superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
+                    return superBeanInfo.getMethodInfo(method);
+                }
+            }
+        }
+        return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected MethodInfo createMethodInfo(Class clazz, Method method) {
+        Class[] parameterTypes = method.getParameterTypes();
+        Annotation[][] parametersAnnotations = method.getParameterAnnotations();
+
+        List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
+        List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
+
+        boolean hasCustomAnnotation = false;
+        for (int i = 0; i < parameterTypes.length; i++) {
+            Class parameterType = parameterTypes[i];
+            Annotation[] parameterAnnotations = parametersAnnotations[i];
+            Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType, parameterAnnotations);
+            hasCustomAnnotation |= expression != null;
+
+            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations, expression);
+            parameters.add(parameterInfo);
+
+            if (expression == null) {
+                hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
+                if (bodyParameters.isEmpty()) {
+                    if (Exchange.class.isAssignableFrom(parameterType)) {
+                        // use exchange
+                        expression = ExpressionBuilder.exchangeExpression();
+                    } else {
+                        // lets assume its the body
+                        expression = ExpressionBuilder.bodyExpression(parameterType);
+                    }
+                    parameterInfo.setExpression(expression);
+                    bodyParameters.add(parameterInfo);
+                } else {
+                    // will ignore the expression for parameter evaluation
+                }
+            }
+
+        }
+
+        // now lets add the method to the repository
+        MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
+        return methodInfo;
+    }
+
+    /**
+     * Lets try choose one of the available methods to invoke if we can match
+     * the message body to the body parameter
+     *
+     * @param pojo the bean to invoke a method on
+     * @param exchange the message exchange
+     * @return the method to invoke or null if no definitive method could be
+     *         matched
+     * @throws AmbiguousMethodCallException is thrown if cannot chose method due to ambiguous
+     */
+    protected MethodInfo chooseMethod(Object pojo, Exchange exchange) throws AmbiguousMethodCallException {
+        if (operationsWithBody.size() == 1) {
+            // only one body possible so we got a hit
+            return operationsWithBody.get(0);
+        } else if (!operationsWithBody.isEmpty()) {
+            // multiple operations so find the best suited if possible
+            return chooseMethodWithMatchingBody(exchange, operationsWithBody);
+        } else if (operationsWithCustomAnnotation.size() == 1) {
+            // if there is one method with an annotation then use that one
+            return operationsWithCustomAnnotation.get(0);
+        }
+        // no we could not find a method to invoke, so either there are none or there are ambigiuous methods.
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
+        // lets see if we can find a method who's body param type matches the message body
+        Message in = exchange.getIn();
+        Object body = in.getBody();
+        if (body != null) {
+            Class bodyType = body.getClass();
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Matching for method with a single parameter that matches type: " + bodyType.getCanonicalName());
+            }
+
+            List<MethodInfo> possibles = new ArrayList<MethodInfo>();
+            List<MethodInfo> possiblesWithException = new ArrayList<MethodInfo>();
+            for (MethodInfo methodInfo : operationList) {
+                // TODO: AOP proxies have additional methods - consider having a static
+                // method exclude list to skip all known AOP proxy methods
+                // TODO: This class could use some TRACE logging
+
+                // test for MEP pattern matching
+                boolean out = exchange.getPattern().isOutCapable();
+                if (out && methodInfo.isReturnTypeVoid()) {
+                    // skip this method as the MEP is Out so the method must return something
+                    continue;
+                }
+
+                // try to match the arguments
+                if (methodInfo.bodyParameterMatches(bodyType)) {
+                    if (methodInfo.hasExceptionParameter()) {
+                        // methods with accepts exceptions
+                        possiblesWithException.add(methodInfo);
+                    } else {
+                        // regular methods with no exceptions
+                        possibles.add(methodInfo);
+                    }
+                }
+            }
+
+            // TODO refactor below into a separate method
+
+            // find best suited method to use
+            Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
+            if (exception != null && possiblesWithException.size() == 1) {
+                // prefer the method that accepts exception in case we have an exception also
+                return possiblesWithException.get(0);
+            } else if (possibles.size() == 1) {
+                return possibles.get(0);
+            } else if (possibles.isEmpty()) {
+                // TODO: Make sure this is properly unit tested
+                // lets try converting
+                Object newBody = null;
+                MethodInfo matched = null;
+                for (MethodInfo methodInfo : operationList) {
+                    Object value;
+                    try {
+                        value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
+                        if (value != null) {
+                            if (newBody != null) {
+                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
+                            } else {
+                                newBody = value;
+                                matched = methodInfo;
+                            }
+                        }
+                    } catch (NoTypeConversionAvailableException e) {
+                        // we can safely ignore this exception as we want a behaviour similar to
+                        // that if convertToType return null
+                    }
+                }
+                if (matched != null) {
+                    in.setBody(newBody);
+                    return matched;
+                }
+            } else {
+                // if we only have a single method with custom annotations, lets use that one
+                if (operationsWithCustomAnnotation.size() == 1) {
+                    return operationsWithCustomAnnotation.get(0);
+                }
+                return chooseMethodWithCustomAnnotations(exchange, possibles);
+            }
+        }
+
+        // no match so return null
+        return null;
+    }
+
+    /**
+     * Validates wheter the given method is a valid candidate for Camel Bean Binding.
+     *
+     * @param clazz   the class
+     * @param method  the method
+     * @return true if valid, false to skip the method
+     */
+    protected boolean isValidMethod(Class clazz, Method method) {
+        // must be a public method
+        if (!Modifier.isPublic(method.getModifiers())) {
+            return false;
+        }
+
+        // return type must not be an Exchange
+        if (method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) {
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * Does the given method info override an existing method registered before (from a subclass)
      *
@@ -212,163 +425,7 @@ public class BeanInfo {
         return null;
     }
 
-    /**
-     * Returns the {@link MethodInfo} for the given method if it exists or null
-     * if there is no metadata available for the given method
-     */
-    public MethodInfo getMethodInfo(Method method) {
-        MethodInfo answer = methodMap.get(method);
-        if (answer == null) {
-            // maybe the method is defined on a base class?
-            if (superBeanInfo == null && type != Object.class) {
-                Class superclass = type.getSuperclass();
-                if (superclass != null && superclass != Object.class) {
-                    superBeanInfo = new BeanInfo(camelContext, superclass, strategy);
-                    return superBeanInfo.getMethodInfo(method);
-                }
-            }
-        }
-        return answer;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected MethodInfo createMethodInfo(Class clazz, Method method) {
-        Class[] parameterTypes = method.getParameterTypes();
-        Annotation[][] parametersAnnotations = method.getParameterAnnotations();
-
-        List<ParameterInfo> parameters = new ArrayList<ParameterInfo>();
-        List<ParameterInfo> bodyParameters = new ArrayList<ParameterInfo>();
-
-        boolean hasCustomAnnotation = false;
-        for (int i = 0; i < parameterTypes.length; i++) {
-            Class parameterType = parameterTypes[i];
-            Annotation[] parameterAnnotations = parametersAnnotations[i];
-            Expression expression = createParameterUnmarshalExpression(clazz, method, parameterType,
-                                                                       parameterAnnotations);
-            hasCustomAnnotation |= expression != null;
-
-            ParameterInfo parameterInfo = new ParameterInfo(i, parameterType, parameterAnnotations,
-                                                            expression);
-            parameters.add(parameterInfo);
-
-            if (expression == null) {
-                hasCustomAnnotation |= ObjectHelper.hasAnnotation(parameterAnnotations, Body.class);
-                if (bodyParameters.isEmpty()) {
-                    // lets assume its the body
-                    if (Exchange.class.isAssignableFrom(parameterType)) {
-                        expression = ExpressionBuilder.exchangeExpression();
-                    } else {
-                        expression = ExpressionBuilder.bodyExpression(parameterType);
-                    }
-                    parameterInfo.setExpression(expression);
-                    bodyParameters.add(parameterInfo);
-                } else {
-                    // will ignore the expression for parameter evaluation
-                }
-            }
-
-        }
-
-        // now lets add the method to the repository
-
-        // TODO allow an annotation to expose the operation name to use
-        /* if (method.getAnnotation(Operation.class) != null) { String name =
-         * method.getAnnotation(Operation.class).name(); if (name != null &&
-         * name.length() > 0) { opName = name; } }
-         */
-        MethodInfo methodInfo = new MethodInfo(clazz, method, parameters, bodyParameters, hasCustomAnnotation);
-        return methodInfo;
-    }
-
-    /**
-     * Lets try choose one of the available methods to invoke if we can match
-     * the message body to the body parameter
-     *
-     * @param pojo the bean to invoke a method on
-     * @param exchange the message exchange
-     * @return the method to invoke or null if no definitive method could be
-     *         matched
-     */
-    protected MethodInfo chooseMethod(Object pojo, Exchange exchange) throws AmbiguousMethodCallException {
-        if (operationsWithBody.size() == 1) {
-            return operationsWithBody.get(0);
-        } else if (!operationsWithBody.isEmpty()) {
-            return chooseMethodWithMatchingBody(exchange, operationsWithBody);
-        } else if (operationsWithCustomAnnotation.size() == 1) {
-            return operationsWithCustomAnnotation.get(0);
-        }
-        return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList) throws AmbiguousMethodCallException {
-        // lets see if we can find a method who's body param type matches the message body
-        Message in = exchange.getIn();
-        Object body = in.getBody();
-        if (body != null) {
-            Class bodyType = body.getClass();
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Matching for method with a single parameter that matches type: " + bodyType.getCanonicalName());
-            }
-
-            List<MethodInfo> possibles = new ArrayList<MethodInfo>();
-            for (MethodInfo methodInfo : operationList) {
-                // TODO: AOP proxies have additional methods - consider having a static
-                // method exclude list to skip all known AOP proxy methods
-                // TODO: This class could use some TRACE logging
-
-                // test for MEP pattern matching
-                boolean out = exchange.getPattern().isOutCapable();
-                if (out && methodInfo.isReturnTypeVoid()) {
-                    // skip this method as the MEP is Out so the method must return something
-                    continue;
-                }
-
-                // try to match the arguments
-                if (methodInfo.bodyParameterMatches(bodyType)) {
-                    possibles.add(methodInfo);
-                }
-            }
-            if (possibles.size() == 1) {
-                return possibles.get(0);
-            } else if (possibles.isEmpty()) {
-                // lets try converting
-                Object newBody = null;
-                MethodInfo matched = null;
-                for (MethodInfo methodInfo : operationList) {
-                    Object value = null;
-                    try {
-                        value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
-                        if (value != null) {
-                            if (newBody != null) {
-                                throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
-                            } else {
-                                newBody = value;
-                                matched = methodInfo;
-                            }
-                        }
-                    } catch (NoTypeConversionAvailableException e) {
-                        // we can safely ignore this exception as we want a behaviour similar to
-                        // that if convertToType return null
-                    }
-                }
-                if (matched != null) {
-                    in.setBody(newBody);
-                    return matched;
-                }
-            } else {
-                // if we only have a single method with custom annotations, lets use that one
-                if (operationsWithCustomAnnotation.size() == 1) {
-                    return operationsWithCustomAnnotation.get(0);
-                }
-                return chooseMethodWithCustomAnnotations(exchange, possibles);
-            }
-        }
-        // no match so return null
-        return null;
-    }
-
-    protected MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles) throws AmbiguousMethodCallException {
+    private MethodInfo chooseMethodWithCustomAnnotations(Exchange exchange, Collection<MethodInfo> possibles) throws AmbiguousMethodCallException {
         // if we have only one method with custom annotations lets choose that
         MethodInfo chosen = null;
         for (MethodInfo possible : possibles) {
@@ -393,41 +450,22 @@ public class BeanInfo {
      * insufficient annotations or not fitting with the default type
      * conventions.
      */
-    protected Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType,
-                                                            Annotation[] parameterAnnotation) {
+    private Expression createParameterUnmarshalExpression(Class clazz, Method method, Class parameterType,
+                                                          Annotation[] parameterAnnotation) {
 
-        // TODO look for a parameter annotation that converts into an expression
+        // look for a parameter annotation that converts into an expression
         for (Annotation annotation : parameterAnnotation) {
             Expression answer = createParameterUnmarshalExpressionForAnnotation(clazz, method, parameterType, annotation);
             if (answer != null) {
                 return answer;
             }
         }
+        // no annotations then try the default parameter mappings
         return strategy.getDefaultParameterTypeExpression(parameterType);
     }
 
-    protected boolean isPossibleBodyParameter(Annotation[] annotations) {
-        if (annotations != null) {
-            for (Annotation annotation : annotations) {
-                if ((annotation instanceof Property)
-                        || (annotation instanceof Header)
-                        || (annotation instanceof Headers)
-                        || (annotation instanceof OutHeaders)
-                        || (annotation instanceof Properties)) {
-                    return false;
-                }
-                LanguageAnnotation languageAnnotation = annotation.annotationType().getAnnotation(LanguageAnnotation.class);
-                if (languageAnnotation != null) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    protected Expression createParameterUnmarshalExpressionForAnnotation(Class clazz, Method method,
-                                                                         Class parameterType,
-                                                                         Annotation annotation) {
+    private Expression createParameterUnmarshalExpressionForAnnotation(Class clazz, Method method, Class parameterType,
+                                                                       Annotation annotation) {
         if (annotation instanceof Property) {
             Property propertyAnnotation = (Property)annotation;
             return ExpressionBuilder.propertyExpression(propertyAnnotation.value());
@@ -461,27 +499,4 @@ public class BeanInfo {
         return null;
     }
 
-    protected boolean isValidMethod(Class clazz, Method method) {
-        // must be a public method
-        if (!Modifier.isPublic(method.getModifiers())) {
-            return false;
-        }
-
-        // return type must not be an Exchange
-        if (method.getReturnType() != null && Exchange.class.isAssignableFrom(method.getReturnType())) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
-        Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
-                                                          ParameterMappingStrategy.class);
-        if (answer == null) {
-            answer = new DefaultParameterMappingStrategy();
-        }
-        return answer;
-    }
 }

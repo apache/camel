@@ -28,8 +28,8 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class FromFilePollThirdTimeOkTest extends ContextTestSupport {
 
-    private String body = "Hello World this file will be deleted";
     private static int counter;
+    private String body = "Hello World this file will be deleted";
 
     @Override
     protected void setUp() throws Exception {

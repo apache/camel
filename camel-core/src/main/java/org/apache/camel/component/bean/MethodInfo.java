@@ -314,5 +314,13 @@ public class MethodInfo {
         return null;
     }
 
+    protected boolean hasExceptionParameter() {
+        for (ParameterInfo parameter : parameters) {
+            if (Exception.class.isAssignableFrom(parameter.getType())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }
