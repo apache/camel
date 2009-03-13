@@ -16,21 +16,14 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.Expression;
-
 /**
- * A strategy for creating a default parameter expression for a given type
- *
  * @version $Revision$
  */
-public interface ParameterMappingStrategy {
+public final class BeanConstants {
 
-    /**
-     * Gets an expression used for evaluation with the current Exchange and its result
-     * is used as parameter value for the given type
-     *
-     * @param parameterType the parameter type
-     * @return the expression to evalute as value
-     */
-    Expression getDefaultParameterTypeExpression(Class parameterType);
+    public static final String BEAN_PARAMETER_MAPPING_STRATEGY = "CamelBeanParameterMappingStrategy";
+
+    private BeanConstants() {
+        // Utility class
+    }
 }

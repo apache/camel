@@ -93,10 +93,9 @@ public class BeanInfo {
     }
 
     public static ParameterMappingStrategy createParameterMappingStrategy(CamelContext camelContext) {
-        // lookup in registry first if there is a strategy defined
+        // lookup in registry first if there is a user define strategy
         Registry registry = camelContext.getRegistry();
-        ParameterMappingStrategy answer = registry.lookup(ParameterMappingStrategy.class.getName(),
-                                                          ParameterMappingStrategy.class);
+        ParameterMappingStrategy answer = registry.lookup(BeanConstants.BEAN_PARAMETER_MAPPING_STRATEGY, ParameterMappingStrategy.class);
         if (answer == null) {
             // no then use the default one
             answer = new DefaultParameterMappingStrategy();
@@ -105,6 +104,10 @@ public class BeanInfo {
         return answer;
     }
 
+    /**
+     * @deprecated not used
+     */
+    @Deprecated
     public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {
@@ -354,11 +357,11 @@ public class BeanInfo {
         } else if (possibles.size() == 1) {
             return possibles.get(0);
         } else if (possibles.isEmpty()) {
+            // TODO: This code is not covered by existing unit test in camel-core, need to be tested
             if (LOG.isTraceEnabled()) {
                 LOG.trace("No poosible methods trying to convert body to parameter types");
             }
 
-            // TODO: Make sure this is properly unit tested
             // lets try converting
             Object newBody = null;
             MethodInfo matched = null;
