@@ -23,39 +23,35 @@ import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.jvnet.mock_javamail.Mailbox;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 /**
- * Unit test for unseen option.
+ * Unit test for rollback option.
  */
-public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
+public class MailDoNotDeleteIfProcessFailsTest extends ContextTestSupport {
 
-    public void testProcessOnlyUnseenMessages() throws Exception {
+    private static int counter;
+
+    public void testRoolbackIfProcessFails() throws Exception {
         prepareMailbox();
 
-        sendBody("direct:a", "Message 3");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Message 1");
+        // the first 2 attempt should fail
+        getMockEndpoint("mock:error").expectedMessageCount(2);
 
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Message 3");
-        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
 
-        // reset mock so we can make new assertions
-        mock.reset();
-
-        // send a new message, now we should only receive this new massages as all the others has been SEEN
-        sendBody("direct:a", "Message 4");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("Message 4");
-        mock.assertIsSatisfied();
+        assertEquals(3, counter);
     }
 
     private void prepareMailbox() throws Exception {
         // connect to mailbox
         Mailbox.clearAll();
+
         JavaMailSenderImpl sender = new JavaMailSenderImpl();
         Store store = sender.getSession().getStore("imap");
         store.connect("localhost", 25, "claus", "secret");
@@ -63,11 +59,11 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
         folder.open(Folder.READ_WRITE);
         folder.expunge();
 
-        // inserts two messages with the SEEN flag
+        // inserts two new messages
         Message[] msg = new Message[2];
         msg[0] = new MimeMessage(sender.getSession());
         msg[0].setText("Message 1");
-        msg[0].setFlag(Flags.Flag.SEEN, true);
+        msg[0].setFlag(Flags.Flag.SEEN, false);
         msg[1] = new MimeMessage(sender.getSession());
         msg[1].setText("Message 2");
         msg[1].setFlag(Flags.Flag.SEEN, true);
@@ -78,9 +74,19 @@ public class MailProcessOnlyUnseenMessagesTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:a").to("smtp://claus@localhost");
+                // no redelivery for unit test as we want it to be polled next time
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0).logStackTrace(false));
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.delay=1000").to("mock:result");
+                from("imap://localhost?username=claus&password=secret&unseen=true&delay=250")
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {
+                                counter++;
+                                if (counter < 3) {
+                                    throw new IllegalArgumentException("Forced by unit test");
+                                }
+                            }
+                        })
+                        .to("mock:result");
             }
         };
     }
