@@ -26,8 +26,8 @@ import java.util.TreeMap;
 import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

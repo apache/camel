@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

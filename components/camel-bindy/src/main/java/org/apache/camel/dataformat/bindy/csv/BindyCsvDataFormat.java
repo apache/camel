@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.CamelContext;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
 import org.apache.camel.dataformat.bindy.util.Converter;
 import org.apache.camel.spi.DataFormat;
@@ -54,21 +53,21 @@ public class BindyCsvDataFormat implements DataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-    	
+    
         BindyCsvFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>) body;
-        byte[] CRLF;
+        byte[] bytesCRLF;
      
         // Get CRLF
-        CRLF = Converter.getByteReturn( factory.getCarriageReturn() );
+        bytesCRLF = Converter.getByteReturn(factory.getCarriageReturn());
 
         for (Map<String, Object> model : models) {
             String result = factory.unbind(model);
             byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
-            outputStream.write( bytes );
+            outputStream.write(bytes);
             
             // Add a carriage return
-            outputStream.write( CRLF );
+            outputStream.write(bytesCRLF);
         }
     }
 
