@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 
 /**
@@ -96,7 +95,7 @@ public final class Builder {
      * Returns a predicate and value builder for the inbound message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder bodyAs(Class<T> type) {
+    public static <T> ValueBuilder bodyAs(Class<T> type) {
         Expression expression = ExpressionBuilder.bodyExpression(type);
         return new ValueBuilder(expression);
     }
@@ -114,7 +113,7 @@ public final class Builder {
      * Returns a predicate and value builder for the outbound message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder outBodyAs(Class<T> type) {
+    public static <T> ValueBuilder outBodyAs(Class<T> type) {
         Expression expression = ExpressionBuilder.outBodyExpression(type);
         return new ValueBuilder(expression);
     }
@@ -132,7 +131,7 @@ public final class Builder {
      * Returns a predicate and value builder for the fault message body as a
      * specific type
      */
-    public static <E extends Exchange, T> ValueBuilder faultBodyAs(Class<T> type) {
+    public static <T> ValueBuilder faultBodyAs(Class<T> type) {
         Expression expression = ExpressionBuilder.faultBodyExpression(type);
         return new ValueBuilder(expression);
     }

@@ -126,6 +126,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return (Type) this;
     }   
     
+    /**
+     * Sends the exchange to the given endpoint
+     *
+     * @param uri  the String formatted endpoint uri to send to
+     * @param args arguments for the string formatting of the uri
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type toF(String uri, Object... args) {
+        addOutput(new ToDefinition(String.format(uri, args)));
+        return (Type) this;
+    }
+
 
     /**
      * Sends the exchange to the given endpoint
