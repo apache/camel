@@ -81,6 +81,19 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
+     * Creates a new route from the given URI input
+     *
+     * @param uri  the String formatted from uri
+     * @param args arguments for the string formatting of the uri
+     * @return the builder
+     */
+    public RouteDefinition fromF(String uri, Object... args) {
+        RouteDefinition answer = routeCollection.from(String.format(uri, args));
+        configureRoute(answer);
+        return answer;
+    }
+
+    /**
      * Creates a new route from the given endpoint
      *
      * @param endpoint  the from endpoint
