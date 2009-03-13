@@ -50,9 +50,9 @@ public class MailConfiguration implements Cloneable {
     private String defaultEncoding;
     private String from = DEFAULT_FROM;
     private String folderName = DEFAULT_FOLDER_NAME;
-    private boolean deleteProcessedMessages;
+    private boolean delete;
+    private boolean unseen = true;
     private boolean ignoreUriScheme;
-    private boolean processOnlyUnseenMessages = true;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private int fetchSize = -1;
     private boolean debugMode;
@@ -313,12 +313,12 @@ public class MailConfiguration implements Cloneable {
         this.from = from;
     }
 
-    public boolean isDeleteProcessedMessages() {
-        return deleteProcessedMessages;
+    public boolean isDelete() {
+        return delete;
     }
 
-    public void setDeleteProcessedMessages(boolean deleteProcessedMessages) {
-        this.deleteProcessedMessages = deleteProcessedMessages;
+    public void setDelete(boolean delete) {
+        this.delete = delete;
     }
 
     public String getFolderName() {
@@ -337,12 +337,12 @@ public class MailConfiguration implements Cloneable {
         this.ignoreUriScheme = ignoreUriScheme;
     }
 
-    public boolean isProcessOnlyUnseenMessages() {
-        return processOnlyUnseenMessages;
+    public boolean isUnseen() {
+        return unseen;
     }
 
-    public void setProcessOnlyUnseenMessages(boolean processOnlyUnseenMessages) {
-        this.processOnlyUnseenMessages = processOnlyUnseenMessages;
+    public void setUnseen(boolean unseen) {
+        this.unseen = unseen;
     }
 
     /**
