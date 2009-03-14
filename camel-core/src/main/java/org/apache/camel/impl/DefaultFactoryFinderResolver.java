@@ -14,30 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spi;
+package org.apache.camel.impl;
+
+import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 
 /**
- * Represents a resolver of FactoryFinder to
+ * Default factory finder.
  *
  * @version $Revision$
  */
-public interface FactoryFinderResolver {
+public class DefaultFactoryFinderResolver implements FactoryFinderResolver {
 
-    /**
-     * Creates a new defaut factory finder using a default resource path.
-     *
-     * @param classResolver the class resolcer to use
-     * @return a factory finder.
-     */
-    FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver);
+    public static final transient String DEFAULT_RESOURCE_PATH = "META-INF/services/org/apache/camel/";
 
-    /**
-     * Creates a new factory finder.
-     *
-     * @param classResolver the class resolcer to use
-     * @param resourcePath the resource path as base to lookup files within
-     * @return a factory finder.
-     */
-    FactoryFinder resolveFactoryFinder(ClassResolver classResolver, String resourcePath);
+    public FactoryFinder resolveDefaultFactoryFinder(ClassResolver classResolver) {
+        return new DefaultFactoryFinder(classResolver, DEFAULT_RESOURCE_PATH);
+    }
+
+    public FactoryFinder resolveFactoryFinder(ClassResolver classResolver, String resourcePath) {
+        return new DefaultFactoryFinder(classResolver, resourcePath);
+    }
 
 }

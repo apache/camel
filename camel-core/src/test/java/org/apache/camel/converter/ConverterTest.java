@@ -31,8 +31,9 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultFactoryFinder;
+import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.IntrospectionSupport;
@@ -47,7 +48,7 @@ public class ConverterTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinder());
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
     public static class IntegerPropertyEditor extends PropertyEditorSupport {
         public void setAsText(String text) throws IllegalArgumentException {

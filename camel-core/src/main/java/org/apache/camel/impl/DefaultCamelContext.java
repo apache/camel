@@ -102,8 +102,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private Map<String, String> properties = new HashMap<String, String>();
-    private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinder();
-    private FactoryFinder factoryFinder;
+    private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
+    private FactoryFinder defaultFactoryFinder;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
     private ClassResolver classResolver;
@@ -932,10 +932,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public FactoryFinder getDefaultFactoryFinder() {
-        if (factoryFinder == null) {
-            factoryFinder = factoryFinderResolver.resolveDefaultFactoryFinder();
+        if (defaultFactoryFinder == null) {
+            defaultFactoryFinder = factoryFinderResolver.resolveDefaultFactoryFinder(getClassResolver());
         }
-        return factoryFinder;
+        return defaultFactoryFinder;
     }
 
     public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
@@ -946,7 +946,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         synchronized (factories) {
             FactoryFinder answer = factories.get(path);
             if (answer == null) {
-                answer = new DefaultFactoryFinder(path);
+                answer = factoryFinderResolver.resolveFactoryFinder(getClassResolver(), path);
                 factories.put(path, answer);
             }
             return answer;
