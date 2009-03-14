@@ -29,15 +29,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.TypeConverterAware;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 
@@ -51,13 +50,15 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     private static final transient Log LOG = LogFactory.getLog(DefaultTypeConverter.class);
     private final Map<TypeMapping, TypeConverter> typeMappings = new ConcurrentHashMap<TypeMapping, TypeConverter>();
     private final Map<TypeMapping, TypeMapping> misses = new ConcurrentHashMap<TypeMapping, TypeMapping>();
-    private Injector injector;
     private final List<TypeConverterLoader> typeConverterLoaders = new ArrayList<TypeConverterLoader>();
     private final List<TypeConverter> fallbackConverters = new ArrayList<TypeConverter>();
+    private Injector injector;
+    private final FactoryFinder factoryFinder;
     private boolean loaded;
 
-    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector) {
+    public DefaultTypeConverter(PackageScanClassResolver resolver, Injector injector, FactoryFinder factoryFinder) {
         this.injector = injector;
+        this.factoryFinder = factoryFinder;
 
         typeConverterLoaders.add(new AnnotationTypeConverterLoader(resolver));
 
@@ -338,8 +339,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
     }
 
     protected void loadFallbackTypeConverters() throws IOException, ClassNotFoundException {
-        FactoryFinder finder = new FactoryFinder();
-        List<TypeConverter> converters = finder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
+        List<TypeConverter> converters = factoryFinder.newInstances("FallbackTypeConverter", getInjector(), TypeConverter.class);
         for (TypeConverter converter : converters) {
             addFallbackTypeConverter(converter);
         }

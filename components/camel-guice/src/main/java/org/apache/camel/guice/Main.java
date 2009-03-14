@@ -31,7 +31,7 @@ import com.google.inject.Key;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.util.MainSupport;
+import org.apache.camel.impl.MainSupport;
 import org.apache.camel.view.ModelFileGenerator;
 import org.guiceyfruit.Injectors;
 

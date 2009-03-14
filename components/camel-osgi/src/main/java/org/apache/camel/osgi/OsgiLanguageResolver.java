@@ -17,29 +17,25 @@
 package org.apache.camel.osgi;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
-import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.impl.DefaultLanguageResolver;
-import org.apache.camel.spi.Language;
-import org.apache.camel.spi.LanguageResolver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class OsgiLanguageResolver extends DefaultLanguageResolver {
     private static final transient Log LOG = LogFactory.getLog(OsgiLanguageResolver.class);
+
     @Override
     protected Log getLog() {
         return LOG;
     }
     
     @Override
-    protected Class findLanguage(String name) throws Exception {
+    protected Class findLanguage(String name, CamelContext context) throws Exception {
         return Activator.getLanguage(name);
     }
     
     @Override
-    protected Class findLanguageResolver(String name) throws Exception {
+    protected Class findLanguageResolver(String name, CamelContext context) throws Exception {
         return Activator.getLanguageResolver(name);
     }
 

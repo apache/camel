@@ -53,7 +53,7 @@ public class CamelContextFactory implements BundleContextAware {
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
             addOsgiAnnotationTypeConverterLoader(context, bundleContext);
-            context.setFactoryFinderClass(OsgiFactoryFinder.class);
+            context.setFactoryFinderResolver(new OsgiFactoryFinder());
         }
         
         return context;

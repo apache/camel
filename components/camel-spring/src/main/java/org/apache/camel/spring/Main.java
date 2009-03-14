@@ -24,8 +24,8 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.impl.MainSupport;
 import org.apache.camel.spring.handler.CamelNamespaceHandler;
-import org.apache.camel.util.MainSupport;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

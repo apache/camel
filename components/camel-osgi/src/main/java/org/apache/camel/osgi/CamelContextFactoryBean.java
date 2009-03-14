@@ -50,7 +50,7 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
             context.setPackageScanClassResolver(new OsgiPackageScanClassResolver(bundleContext));
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
-            context.setFactoryFinderClass(OsgiFactoryFinder.class);
+            context.setFactoryFinderResolver(new OsgiFactoryFinder());
             addOsgiAnnotationTypeConverterLoader(context);
         }
         

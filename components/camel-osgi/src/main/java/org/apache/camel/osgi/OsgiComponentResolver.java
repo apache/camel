@@ -38,10 +38,7 @@ public class OsgiComponentResolver implements ComponentResolver {
     
     private static final transient Log LOG = LogFactory.getLog(OsgiComponentResolver.class);
 
-    protected Class getComponent(String name) throws Exception {
-        return Activator.getComponent(name);       
-    }
-
+    @SuppressWarnings("unchecked")
     public Component resolveComponent(String name, CamelContext context) throws Exception {
         Object bean = null;
         try {
@@ -58,8 +55,9 @@ public class OsgiComponentResolver implements ComponentResolver {
             }
             // we do not throw the exception here and try to auto create a component
         }
-        // Check in OSGi bundles        
-        Class type = null;
+
+        // Check in OSGi bundles
+        Class type;
         try {
             type = getComponent(name);
         } catch (Throwable e) {
@@ -68,12 +66,16 @@ public class OsgiComponentResolver implements ComponentResolver {
         if (type == null) {
             return null;
         }
+
         if (Component.class.isAssignableFrom(type)) {
             return (Component)context.getInjector().newInstance(type);
         } else {
-            throw new IllegalArgumentException("Type is not a Component implementation. Found: "
-                                               + type.getName());
+            throw new IllegalArgumentException("Type is not a Component implementation. Found: " + type.getName());
         }
+    }
+
+    protected Class getComponent(String name) throws Exception {
+        return Activator.getComponent(name);
     }
 
 }
