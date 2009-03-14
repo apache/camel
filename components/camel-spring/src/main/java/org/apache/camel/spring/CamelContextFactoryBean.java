@@ -49,6 +49,7 @@ import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
@@ -165,6 +166,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         ClassResolver classResolver = getBeanForType(ClassResolver.class);
         if (classResolver != null) {
             getContext().setClassResolver(classResolver);
+        }
+        FactoryFinderResolver factoryFinderResolver = getBeanForType(FactoryFinderResolver.class);
+        if (factoryFinderResolver != null) {
+            getContext().setFactoryFinderResolver(factoryFinderResolver);
         }
 
         Debugger debugger = getBeanForType(Debugger.class);

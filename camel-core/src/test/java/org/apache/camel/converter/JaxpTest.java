@@ -18,7 +18,6 @@ package org.apache.camel.converter;
 
 import java.io.InputStream;
 import java.io.StringReader;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamSource;
@@ -28,7 +27,8 @@ import org.w3c.dom.Element;
 
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultFactoryFinder;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
@@ -42,7 +42,7 @@ import org.apache.commons.logging.LogFactory;
 public class JaxpTest extends TestCase {
     private static final transient Log LOG = LogFactory.getLog(JaxpTest.class);
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinder());
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
     public void testConvertToDocument() throws Exception {
         Document document = converter

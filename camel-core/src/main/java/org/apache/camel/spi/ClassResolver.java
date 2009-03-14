@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.io.InputStream;
+
 /**
  * A class resolver for loading classes in a loosly coupled manner to cater for different platforms such
  * as standalone, web container, j2ee container and OSGi platforms.
@@ -97,5 +99,12 @@ public interface ClassResolver {
      * @throws ClassNotFoundException is thrown if class not found
      */
     <T> Class<T> resolveMandatoryClass(String name, Class<T> type, ClassLoader loader) throws ClassNotFoundException;
+
+    /**
+     * Loads the given resource as a stream
+     * @param uri the uri of the resource
+     * @return as a stream
+     */
+    InputStream loadResourceAsStream(String uri);
 
 }

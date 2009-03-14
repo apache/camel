@@ -26,35 +26,23 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.FactoryFinder;
-import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Default factory finder.
  */
-public class DefaultFactoryFinder implements FactoryFinder, FactoryFinderResolver {
-
-    public static final transient String DEFAULT_RESOURCE_PATH = "META-INF/services/org/apache/camel/";
+public class DefaultFactoryFinder implements FactoryFinder {
 
     protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
+    private ClassResolver classResolver;
     private String path;
 
-    public DefaultFactoryFinder() {
-        this(DEFAULT_RESOURCE_PATH);
-    }
-
-    public DefaultFactoryFinder(String resourcePath) {
+    public DefaultFactoryFinder(ClassResolver classResolver, String resourcePath) {
+        this.classResolver = classResolver;
         this.path = resourcePath;
-    }
-
-    public FactoryFinder resolveDefaultFactoryFinder() {
-        return new DefaultFactoryFinder();
-    }
-
-    public FactoryFinder resolveFactoryFinder(String path) {
-        return new DefaultFactoryFinder(path);
     }
 
     public String getResourcePath() {
@@ -133,7 +121,7 @@ public class DefaultFactoryFinder implements FactoryFinder, FactoryFinderResolve
             throw new IOException("Expected property is missing: " + propertyPrefix + "class");
         }
 
-        Class clazz = ObjectHelper.loadClass(className);
+        Class clazz = classResolver.resolveClass(className);
         if (clazz == null) {
             throw new ClassNotFoundException(className);
         }
@@ -143,7 +131,7 @@ public class DefaultFactoryFinder implements FactoryFinder, FactoryFinderResolve
     private Properties doFindFactoryProperties(String key) throws IOException {
         String uri = path + key;
 
-        InputStream in = ObjectHelper.loadResourceAsStream(uri);
+        InputStream in = classResolver.loadResourceAsStream(uri);
         if (in == null) {
             throw new NoFactoryAvailableException(uri);
         }
