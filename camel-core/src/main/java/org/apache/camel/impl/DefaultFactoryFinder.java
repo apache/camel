@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -26,71 +26,50 @@ import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
+import org.apache.camel.util.ObjectHelper;
 
 /**
- * Finder to find factories from the resource classpath, usually <b>META-INF/services/org/apache/camel/</b>.
+ * Default factory finder.
  */
-public class FactoryFinder {
-    // TODO: Extract interface to SPI
+public class DefaultFactoryFinder implements FactoryFinder, FactoryFinderResolver {
+
+    public static final transient String DEFAULT_RESOURCE_PATH = "META-INF/services/org/apache/camel/";
 
     protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
-    private final String path;    
+    private String path;
 
-    public FactoryFinder() {
-        this("META-INF/services/org/apache/camel/");
+    public DefaultFactoryFinder() {
+        this(DEFAULT_RESOURCE_PATH);
     }
 
-    public FactoryFinder(String path) {
-        this.path = path;
+    public DefaultFactoryFinder(String resourcePath) {
+        this.path = resourcePath;
     }
 
-    /**
-     * Creates a new instance of the given key
-     *
-     * @param key is the key to add to the path to find a text file containing
-     *            the factory name
-     * @return a newly created instance
-     */
-    public Object newInstance(String key) throws IllegalAccessException, InstantiationException, IOException,
-        ClassNotFoundException {
-        return newInstance(key, (String)null);
+    public FactoryFinder resolveDefaultFactoryFinder() {
+        return new DefaultFactoryFinder();
     }
 
-    public Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
-        InstantiationException, IOException, ClassNotFoundException {
-        Class clazz = findClass(key, propertyPrefix);
-        return clazz.newInstance();
+    public FactoryFinder resolveFactoryFinder(String path) {
+        return new DefaultFactoryFinder(path);
     }
 
-    public Object newInstance(String key, Injector injector) throws IOException, ClassNotFoundException {
-        return newInstance(key, injector, (String)null);
+    public String getResourcePath() {
+        return path;
     }
 
-    public Object newInstance(String key, Injector injector, String propertyPrefix) throws IOException,
-        ClassNotFoundException {
-        Class<?> type = findClass(key, propertyPrefix);
-        return injector.newInstance(type);
-    }
-
-    public <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException,
-        ClassNotFoundException {
-        return newInstance(key, injector, null, expectedType);
-    }
-
-    public <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType)
-        throws IOException, ClassNotFoundException {
-        Class<?> type = findClass(key, propertyPrefix);
-        Object value = injector.newInstance(type);
-        if (expectedType.isInstance(value)) {
-            return expectedType.cast(value);
-        } else {
-            throw new ClassCastException("Not instanceof " + expectedType.getName() + " value: " + value);
+    public Object newInstance(String key) throws NoFactoryAvailableException {
+        try {
+            return newInstance(key, null);
+        } catch (Exception e) {
+            throw new NoFactoryAvailableException(key);
         }
     }
 
-    public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws IOException,
-        ClassNotFoundException {
+    public <T> List<T> newInstances(String key, Injector injector, Class<T> type) throws ClassNotFoundException, IOException {
         List<Class> list = findClasses(key);
         List<T> answer = new ArrayList<T>(list.size());
         answer.add(newInstance(key, injector, type));
@@ -116,18 +95,36 @@ public class FactoryFinder {
         return clazz;
     }
 
-    public List<Class> findClasses(String key) throws ClassNotFoundException, IOException {
+    private Object newInstance(String key, String propertyPrefix) throws IllegalAccessException,
+        InstantiationException, IOException, ClassNotFoundException {
+        Class clazz = findClass(key, propertyPrefix);
+        return clazz.newInstance();
+    }
+
+    private <T> T newInstance(String key, Injector injector, Class<T> expectedType) throws IOException,
+        ClassNotFoundException {
+        return newInstance(key, injector, null, expectedType);
+    }
+
+    private <T> T newInstance(String key, Injector injector, String propertyPrefix, Class<T> expectedType)
+        throws IOException, ClassNotFoundException {
+        Class<?> type = findClass(key, propertyPrefix);
+        Object value = injector.newInstance(type);
+        if (expectedType.isInstance(value)) {
+            return expectedType.cast(value);
+        } else {
+            throw new ClassCastException("Not instanceof " + expectedType.getName() + " value: " + value);
+        }
+    }
+
+    private List<Class> findClasses(String key) throws ClassNotFoundException, IOException {
         return findClasses(key, null);
     }
 
-    public List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
+    private List<Class> findClasses(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         // TODO change to support finding multiple classes on the classpath!
         Class type = findClass(key, propertyPrefix);
         return Collections.singletonList(type);
-    }
-
-    public String getPath() {
-        return path;
     }
 
     private Class newInstance(Properties properties, String propertyPrefix) throws ClassNotFoundException, IOException {
@@ -163,5 +160,6 @@ public class FactoryFinder {
             ObjectHelper.close(in, key, null);
         }
     }
-    
+
+
 }

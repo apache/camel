@@ -16,14 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchLanguageException;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
-import org.apache.camel.util.FactoryFinder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -33,17 +31,18 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class DefaultLanguageResolver implements LanguageResolver {    
-    protected static final FactoryFinder LANGUAGE_FACTORY = new FactoryFinder("META-INF/services/org/apache/camel/language/");
-    protected static final FactoryFinder LANGUAGE_RESOLVER = new FactoryFinder("META-INF/services/org/apache/camel/language/resolver/");
+public class DefaultLanguageResolver implements LanguageResolver {
+    public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
+    public static final String LANGUAGE_RESOLVER_RESOURCE_PATH = LANGUAGE_RESOURCE_PATH + "resolver/";
+
     private static final transient Log LOG = LogFactory.getLog(DefaultLanguageResolver.class);
-    
-    protected Log getLog() {
-        return LOG;
-    }
+
+    protected FactoryFinder languageFactory;
+    protected FactoryFinder languageResolver;
 
     @SuppressWarnings("unchecked")
     public Language resolveLanguage(String name, CamelContext context) {
+        // lookup in registry first
         Object bean = null;
         try {
             bean = context.getRegistry().lookup(name);
@@ -59,29 +58,33 @@ public class DefaultLanguageResolver implements LanguageResolver {
             }
             // we do not throw the exception here and try to auto create a Language from META-INF
         }
+
         Class type = null;
         try {
-            type = findLanguage(name);
+            type = findLanguage(name, context);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no Language registered for scheme: " + name, e);
         }
+
         if (type != null) {
             if (Language.class.isAssignableFrom(type)) {
                 return (Language)context.getInjector().newInstance(type);
             } else {
                 throw new IllegalArgumentException("Type is not a Language implementation. Found: " + type.getName());
             }
+        } else {
+            // no specific language found then try fallback
+            return noSpecificLanguageFound(name, context);
         }
-        return noSpecificLanguageFound(name, context);
     }
 
     @SuppressWarnings("unchecked")
     protected Language noSpecificLanguageFound(String name, CamelContext context) {
         Class type = null;
         try {
-            type = findLanguageResolver("default");
+            type = findLanguageResolver("default", context);
         } catch (NoFactoryAvailableException e) {
             // ignore
         } catch (Exception e) {
@@ -98,11 +101,21 @@ public class DefaultLanguageResolver implements LanguageResolver {
         throw new NoSuchLanguageException(name);
     }
     
-    protected Class findLanguage(String name) throws Exception {
-        return LANGUAGE_FACTORY.findClass(name);
+    protected Class findLanguage(String name, CamelContext context) throws Exception {
+        if (languageFactory == null) {
+            languageFactory = context.getFactoryFinder(LANGUAGE_RESOURCE_PATH);
+        }
+        return languageFactory.findClass(name);
     }
     
-    protected Class findLanguageResolver(String name) throws Exception {
-        return LANGUAGE_RESOLVER.findClass("default");
+    protected Class findLanguageResolver(String name, CamelContext context) throws Exception {
+        if (languageResolver == null) {
+            languageResolver = context.getFactoryFinder(LANGUAGE_RESOLVER_RESOURCE_PATH);
+        }
+        return languageResolver.findClass(name);
+    }
+
+    protected Log getLog() {
+        return LOG;
     }
 }

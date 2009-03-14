@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.util;
+package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -32,10 +32,9 @@ import javax.xml.bind.JAXBException;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.apache.camel.view.RouteDotGenerator;
 import org.apache.commons.logging.Log;
@@ -392,7 +391,7 @@ public abstract class MainSupport extends ServiceSupport {
         if (camelContexts.size() == 1) {
             return camelContexts.get(0);
         } else {
-            DefaultCamelContext answer = new DefaultCamelContext();
+            CamelContext answer = new DefaultCamelContext();
             for (CamelContext camelContext : camelContexts) {
                 answer.addRouteDefinitions(camelContext.getRouteDefinitions());
             }

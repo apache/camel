@@ -23,33 +23,44 @@ import java.net.URL;
 import java.util.Properties;
 
 import org.apache.camel.NoFactoryAvailableException;
-import org.apache.camel.util.FactoryFinder;
+import org.apache.camel.impl.DefaultFactoryFinder;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-public class OsgiFactoryFinder extends FactoryFinder {
+public class OsgiFactoryFinder extends DefaultFactoryFinder {
     
     private class BundleEntry {
         URL url;
         Bundle bundle;
     }
-    
+
     public OsgiFactoryFinder() {
         super();
     }
-    
+
     public OsgiFactoryFinder(String path) {
         super(path);
     }
-    
+
+    @Override
+    public FactoryFinder resolveDefaultFactoryFinder() {
+        return new OsgiFactoryFinder();
+    }
+
+    @Override
+    public FactoryFinder resolveFactoryFinder(String path) {
+        return new OsgiFactoryFinder(path);
+    }
+
+    @Override
     public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
         if (propertyPrefix == null) {
             propertyPrefix = "";
         }
 
-        Class clazz = (Class)classMap.get(propertyPrefix + key);
-        Properties properties = null;
+        Class clazz = classMap.get(propertyPrefix + key);
         if (clazz == null) {
             BundleEntry entry = getResource(key);
             if (entry != null) {
@@ -59,7 +70,7 @@ public class OsgiFactoryFinder extends FactoryFinder {
                 BufferedInputStream reader = null;
                 try {
                     reader = new BufferedInputStream(in);
-                    properties = new Properties();
+                    Properties properties = new Properties();
                     properties.load(reader);
                     String className = properties.getProperty(propertyPrefix + "class");
                     if (className == null) {
@@ -75,16 +86,18 @@ public class OsgiFactoryFinder extends FactoryFinder {
                 throw new NoFactoryAvailableException(propertyPrefix + key);
             }           
         }
+
         return clazz;
     }
     
        
     public BundleEntry getResource(String name) {
-        URL url = null;
         BundleEntry entry = null;
         BundleContext bundleContext =  Activator.getBundle().getBundleContext();
-        for (Bundle bundle : bundleContext.getBundles()) {            
-            url = bundle.getEntry(getPath() + name);
+
+        URL url;
+        for (Bundle bundle : bundleContext.getBundles()) {
+            url = bundle.getEntry(getResourcePath() + name);
             if (url != null) {
                 entry = new BundleEntry();
                 entry.url = url;
@@ -92,6 +105,7 @@ public class OsgiFactoryFinder extends FactoryFinder {
                 break;
             }
         }
+
         return entry;
     }
 

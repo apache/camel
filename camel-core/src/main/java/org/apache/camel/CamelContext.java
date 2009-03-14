@@ -26,6 +26,8 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -33,7 +35,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.FactoryFinder;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -355,17 +356,26 @@ public interface CamelContext extends Service {
     Map<String, String> getProperties();
     
     /**
-     * Create a FactoryFinder which will be used for the loading the factory class from META-INF
-     * @return the factory finder
+     * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
+     *
+     * @return the default factory finder
      */
-    FactoryFinder createFactoryFinder();
+    FactoryFinder getDefaultFactoryFinder();
+
+    /**
+     * Sets the factory finder resolver to use.
+     *
+     * @param resolver the factory finder resolver
+     */
+    void setFactoryFinderResolver(FactoryFinderResolver resolver);
     
     /**
-     * Create a FactoryFinder which will be used for the loading the factory class from META-INF
+     * Gets the FactoryFinder which will be used for the loading the factory class from META-INF in the given path
+     *
      * @param path the META-INF path
      * @return the factory finder
      */
-    FactoryFinder createFactoryFinder(String path);
+    FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException;
 
     /**
      * Returns the current status of the given route

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,6 +51,8 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.ExchangeConverter;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Language;
@@ -62,13 +62,11 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
 import org.apache.camel.util.SystemHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import static org.apache.camel.util.ServiceHelper.startServices;
 import static org.apache.camel.util.ServiceHelper.stopServices;
 
@@ -104,7 +102,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private Map<String, String> properties = new HashMap<String, String>();
-    private Class<? extends FactoryFinder> factoryFinderClass = FactoryFinder.class;
+    private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinder();
+    private FactoryFinder factoryFinder;
+    private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new HashMap<String, RouteService>();
     private ClassResolver classResolver;
     private PackageScanClassResolver packageScanClassResolver;
@@ -341,6 +341,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public Endpoint getEndpoint(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+
         Endpoint answer;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
@@ -841,7 +843,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected TypeConverter createTypeConverter() {
-        DefaultTypeConverter answer = new DefaultTypeConverter(packageScanClassResolver, getInjector());
+        DefaultTypeConverter answer = new DefaultTypeConverter(packageScanClassResolver, getInjector(), getDefaultFactoryFinder());
         typeConverterRegistry = answer;
         return answer;
     }
@@ -850,20 +852,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Lazily create a default implementation
      */
     protected Injector createInjector() {
-        FactoryFinder finder = createFactoryFinder();
+        FactoryFinder finder = getDefaultFactoryFinder();
         try {
             return (Injector) finder.newInstance("Injector");
         } catch (NoFactoryAvailableException e) {
             // lets use the default
             return new ReflectionInjector();
-        } catch (IllegalAccessException e) {
-            throw new RuntimeCamelException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeCamelException(e);
-        } catch (IOException e) {
-            throw new RuntimeCamelException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeCamelException(e);
         }
     }
 
@@ -929,10 +923,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         return dataFormats;
     }
 
-    public void setFactoryFinderClass(Class<? extends FactoryFinder> finderClass) {
-        factoryFinderClass = finderClass;
-    }
-    
     public Map<String, String> getProperties() {
         return properties;
     }
@@ -941,21 +931,25 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.properties = properties;        
     }
 
-    public FactoryFinder createFactoryFinder() {
-        try {
-            return factoryFinderClass.newInstance();
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+    public FactoryFinder getDefaultFactoryFinder() {
+        if (factoryFinder == null) {
+            factoryFinder = factoryFinderResolver.resolveDefaultFactoryFinder();
         }
+        return factoryFinder;
     }
 
-    public FactoryFinder createFactoryFinder(String path) {
-        try {
-            Constructor<? extends FactoryFinder> constructor;
-            constructor = factoryFinderClass.getConstructor(String.class);
-            return constructor.newInstance(path);
-        } catch (Exception e) {
-            throw new RuntimeCamelException(e);
+    public void setFactoryFinderResolver(FactoryFinderResolver resolver) {
+        this.factoryFinderResolver = resolver;
+    }
+
+    public FactoryFinder getFactoryFinder(String path) throws NoFactoryAvailableException {
+        synchronized (factories) {
+            FactoryFinder answer = factories.get(path);
+            if (answer == null) {
+                answer = new DefaultFactoryFinder(path);
+                factories.put(path, answer);
+            }
+            return answer;
         }
     }
 

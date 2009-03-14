@@ -30,9 +30,9 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
-import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
@@ -124,7 +124,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint {
     protected GenericFileProcessStrategy<T> createGenericFileStrategy() {
         Class<?> factory = null;
         try {
-            FactoryFinder finder = getCamelContext().createFactoryFinder("META-INF/services/org/apache/camel/component/");
+            FactoryFinder finder = getCamelContext().getFactoryFinder("META-INF/services/org/apache/camel/component/");
             factory = finder.findClass(getScheme(), "strategy.factory.");
         } catch (ClassNotFoundException e) {
             log.debug("'strategy.factory.class' not found", e);

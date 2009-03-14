@@ -345,7 +345,7 @@ public class BeanInfo {
     @SuppressWarnings("unchecked")
     private MethodInfo chooseBestPossibleMethodInfo(Exchange exchange, Collection<MethodInfo> operationList, Object body,
                                                     List<MethodInfo> possibles, List<MethodInfo> possiblesWithException)
-            throws AmbiguousMethodCallException {
+        throws AmbiguousMethodCallException {
 
         Exception exception = ExpressionBuilder.exchangeExceptionExpression().evaluate(exchange, Exception.class);
         if (exception != null && possiblesWithException.size() == 1) {
