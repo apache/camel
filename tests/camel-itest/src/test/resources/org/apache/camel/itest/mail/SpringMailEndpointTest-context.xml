@@ -38,7 +38,7 @@
         <property name="username" value="james2"/>
         <property name="password" value="james2"/>
         <property name="protocol" value="pop3"/>
-        <property name="processOnlyUnseenMessages" value="false"/>
+        <property name="unseen" value="false"/>
     </bean>
 
     <!-- START SNIPPET: example -->
