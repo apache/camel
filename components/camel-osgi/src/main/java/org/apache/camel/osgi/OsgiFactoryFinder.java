@@ -25,33 +25,20 @@ import java.util.Properties;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultFactoryFinder;
 import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class OsgiFactoryFinder extends DefaultFactoryFinder {
-    
+
+    public OsgiFactoryFinder(ClassResolver classResolver, String resourcePath) {
+        super(classResolver, resourcePath);
+    }
+
     private class BundleEntry {
         URL url;
         Bundle bundle;
-    }
-
-    public OsgiFactoryFinder() {
-        super();
-    }
-
-    public OsgiFactoryFinder(String path) {
-        super(path);
-    }
-
-    @Override
-    public FactoryFinder resolveDefaultFactoryFinder() {
-        return new OsgiFactoryFinder();
-    }
-
-    @Override
-    public FactoryFinder resolveFactoryFinder(String path) {
-        return new OsgiFactoryFinder(path);
     }
 
     @Override
