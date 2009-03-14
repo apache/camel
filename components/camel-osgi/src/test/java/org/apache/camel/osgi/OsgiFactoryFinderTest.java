@@ -19,10 +19,11 @@ package org.apache.camel.osgi;
 import java.io.IOException;
 
 import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.impl.DefaultClassResolver;
 
 public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {
     public void testFindClass() throws Exception {
-        OsgiFactoryFinder finder = new OsgiFactoryFinder("META-INF/services/org/apache/camel/component/");
+        OsgiFactoryFinder finder = new OsgiFactoryFinder(new DefaultClassResolver(), "META-INF/services/org/apache/camel/component/");
         Class clazz = finder.findClass("file_test", "strategy.factory.");
         assertNotNull("We should get the file strategy factory here", clazz);
         
