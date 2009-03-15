@@ -22,7 +22,8 @@ import javax.jcr.Value;
 
 import junit.framework.TestCase;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.DefaultFactoryFinder;
+import org.apache.camel.impl.DefaultClassResolver;
+import org.apache.camel.impl.DefaultFactoryFinderResolver;
 import org.apache.camel.impl.DefaultPackageScanClassResolver;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.ReflectionInjector;
@@ -37,7 +38,7 @@ import org.apache.jackrabbit.value.StringValue;
 public class JcrConverterTest extends TestCase {
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinder());
+            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 
     public void testBooleanValueConverter() throws Exception {
         assertJcrConverterAvailable(BooleanValue.class, Boolean.TRUE);
