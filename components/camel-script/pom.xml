@@ -40,7 +40,7 @@
     <repositories>
         <!-- SMX Repository is more up to date than LogicBlaze repo -->
         <repository>
-            <id>servicemix.apache.svn</id>
+            <id>servicemix</id>
             <name>ServiceMix Repository</name>
             <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
         </repository>
