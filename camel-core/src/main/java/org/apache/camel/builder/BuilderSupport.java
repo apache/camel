@@ -45,14 +45,6 @@ public abstract class BuilderSupport {
         this.context = context;
     }
 
-    protected BuilderSupport(BuilderSupport parent) {
-        this.context = parent.getContext();
-        this.inheritErrorHandler = parent.inheritErrorHandler;
-        if (inheritErrorHandler && parent.errorHandlerBuilder != null) {
-            this.errorHandlerBuilder = parent.errorHandlerBuilder.copy();
-        }
-    }
-
     // Builder methods
     // -------------------------------------------------------------------------
 
@@ -323,7 +315,7 @@ public abstract class BuilderSupport {
      * @return the builder
      */
     public DeadLetterChannelBuilder deadLetterChannel(Endpoint deadLetterEndpoint) {
-        return new DeadLetterChannelBuilder(new SendProcessor(deadLetterEndpoint));
+        return new DeadLetterChannelBuilder(deadLetterEndpoint);
     }
 
     // Properties

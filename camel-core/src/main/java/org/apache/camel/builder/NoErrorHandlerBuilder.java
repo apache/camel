@@ -30,10 +30,6 @@ import org.apache.camel.spi.RouteContext;
  */
 public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
-    public ErrorHandlerBuilder copy() {
-        return this;
-    }
-
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         return processor;
     }

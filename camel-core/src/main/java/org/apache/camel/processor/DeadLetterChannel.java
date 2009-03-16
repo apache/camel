@@ -49,12 +49,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
 
     private static Timer timer = new Timer();
-    private Processor output;
-    private Processor deadLetter;
-    private AsyncProcessor outputAsync;
+    private final Processor output;
+    private final Processor deadLetter;
+    private final String deadLetterUri;
+    private final AsyncProcessor outputAsync;
     private RedeliveryPolicy redeliveryPolicy;
     private Logger logger;
-    private Processor redeliveryProcessor;
+    private final Processor redeliveryProcessor;
 
     private class RedeliveryData {
         int redeliveryCounter;
@@ -103,9 +104,22 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         } 
     }
 
-    public DeadLetterChannel(Processor output, Processor deadLetter, Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
+    /**
+     * Creates the dead letter channel.
+     *
+     * @param output                    outer processor that should use this dead letter channel
+     * @param deadLetter                the failure processor to send failed exchanges to
+     * @param deadLetterUri             an optional uri for logging purpose
+     * @param redeliveryProcessor       an optional processor to run before redelivert attempt
+     * @param redeliveryPolicy          policy for redelivery
+     * @param logger                    logger to use for logging failures and redelivery attempts
+     * @param exceptionPolicyStrategy   strategy for onException handling
+     */
+    public DeadLetterChannel(Processor output, Processor deadLetter, String deadLetterUri, Processor redeliveryProcessor,
+                             RedeliveryPolicy redeliveryPolicy, Logger logger, ExceptionPolicyStrategy exceptionPolicyStrategy) {
         this.output = output;
         this.deadLetter = deadLetter;
+        this.deadLetterUri = deadLetterUri;
         this.redeliveryProcessor = redeliveryProcessor;
         this.outputAsync = AsyncProcessorTypeConverter.convert(output);
         this.redeliveryPolicy = redeliveryPolicy;
@@ -119,7 +133,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     @Override
     public String toString() {
-        return "DeadLetterChannel[" + output + ", " + deadLetter + "]";
+        return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -307,7 +321,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      * will be redelivered. This can be used to alter the Exchange.
      */
     private void deliverToRedeliveryProcessor(final Exchange exchange, final AsyncCallback callback,
-                                            final RedeliveryData data) {
+                                              final RedeliveryData data) {
         if (data.onRedeliveryProcessor == null) {
             return;
         }

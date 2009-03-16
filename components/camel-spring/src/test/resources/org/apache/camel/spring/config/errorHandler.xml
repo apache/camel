@@ -23,31 +23,27 @@
     ">
 
 
-  <camelContext id="camel" errorHandlerRef="deadLetterErrorHandler"
-   xmlns="http://camel.apache.org/schema/spring">
-    <jmxAgent id="agent" disabled="true"/>
-    <route>
-      <from uri="seda:a"/>
-      <to uri="seda:b"/>
-    </route>
-    <route>
-       <from uri="direct:c"/>
-       <to uri="direct:d"/>
-    </route>
-  </camelContext>
+    <camelContext id="camel" errorHandlerRef="deadLetterErrorHandler" xmlns="http://camel.apache.org/schema/spring">
+        <jmxAgent id="agent" disabled="true"/>
+        <route>
+            <from uri="seda:a"/>
+            <to uri="seda:b"/>
+        </route>
+        <route>
+            <from uri="direct:c"/>
+            <to uri="direct:d"/>
+        </route>
+    </camelContext>
 
-  <bean id="deadLetterErrorHandler"
-        class="org.apache.camel.builder.DeadLetterChannelBuilder">
-    <property name="defaultDeadLetterEndpointUri"
-value="bean:exceptionProcessor" />
-    <property name="redeliveryPolicy" ref="rsRedeliveryPolicyConfig" />
-  </bean>
+    <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="bean:exceptionProcessor"/>
+        <property name="redeliveryPolicy" ref="rsRedeliveryPolicyConfig"/>
+    </bean>
 
-  <bean id="rsRedeliveryPolicyConfig"
-        class="org.apache.camel.processor.RedeliveryPolicy">
-    <property name="maximumRedeliveries" value="1" />
-    <property name="delay" value="30000"/>
-    <property name="useExponentialBackOff" value="true"/>
-  </bean>
+    <bean id="rsRedeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="maximumRedeliveries" value="1"/>
+        <property name="delay" value="30000"/>
+        <property name="useExponentialBackOff" value="true"/>
+    </bean>
 
 </beans>

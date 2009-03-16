@@ -36,10 +36,6 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         this.ref = ref;
     }
 
-    public ErrorHandlerBuilder copy() {
-        return new ErrorHandlerBuilderRef(ref);
-    }
-
     @Override
     public void addErrorHandlers(OnExceptionDefinition exception) {
         if (handler != null) {

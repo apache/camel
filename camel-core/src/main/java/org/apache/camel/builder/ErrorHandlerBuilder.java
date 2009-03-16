@@ -30,23 +30,25 @@ import org.apache.camel.spi.RouteContext;
 public interface ErrorHandlerBuilder {
 
     /**
-     * Creates a copy of this builder
-     */
-    ErrorHandlerBuilder copy();
-
-    /**
      * Creates the error handler interceptor
+     *
+     * @param routeContext the route context
+     * @param processor the outer processor
+     * @return the error handler
+     * @throws Exception is thrown if the error handler could not be created
      */
     Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception;
 
     /**
      * Adds error handler for the given exception type
+     *
      * @param exception  the exception to handle
      */
     void addErrorHandlers(OnExceptionDefinition exception);
 
     /**
      * Adds the error handlers for the given list of exception types
+     *
      * @param exceptions  the list of exceptions to handle
      */
     void setErrorHandlers(List<OnExceptionDefinition> exceptions);

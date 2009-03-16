@@ -23,9 +23,14 @@
     ">
 
     <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="defaultDeadLetterEndpointUri" value="mock:error"/>
+        <property name="deadLetter" ref="dead"/>
         <property name="onRedelivery" ref="myRedeliveryProcessor"/>
         <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
+    </bean>
+    
+    <bean id="dead" class="org.apache.camel.component.mock.MockEndpoint">
+        <property name="endpointUriIfNotSpecified" value="mock:error"/>
+        <property name="camelContext" ref="camel"/>
     </bean>
 
     <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
@@ -49,7 +54,7 @@
           class="org.apache.camel.processor.DeadLetterChannelOnExceptionOnRedeliveryTest$ThrowIOExceptionProcessor"/>
 
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="deadLetterErrorHandler">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="deadLetterErrorHandler">
 
         <!-- START SNIPPET: e1 -->
         <onException onRedeliveryRef="myIORedeliverProcessor">

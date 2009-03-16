@@ -72,7 +72,7 @@
   
   <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
     <property name="redeliveryPolicy" ref="redeliveryPolicyConfig" />
-    <property name="defaultDeadLetterEndpointUri" value="mock:error"/>
+    <property name="deadLetterUri" value="mock:error"/>
   </bean>
 	
   <bean id="redeliveryPolicyConfig" class="org.apache.camel.processor.RedeliveryPolicy">
