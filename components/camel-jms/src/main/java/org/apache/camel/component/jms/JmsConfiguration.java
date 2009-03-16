@@ -131,6 +131,7 @@ public class JmsConfiguration implements Cloneable {
     private String replyToTempDestinationAffinity = REPLYTO_TEMP_DEST_AFFINITY_PER_ENDPOINT;
     private String replyToDestination;
     private String replyToDestinationSelectorName;
+    private JmsMessageType jmsMessageType;
 
     public JmsConfiguration() {
     }
@@ -1143,5 +1144,13 @@ public class JmsConfiguration implements Cloneable {
         if (replyToDestinationSelectorName != null) {
             setAlwaysCopyMessage(true);
         }
+    }
+
+    public JmsMessageType getJmsMessageType() {
+        return jmsMessageType;
+    }
+
+    public void setJmsMessageType(JmsMessageType jmsMessageType) {
+        this.jmsMessageType = jmsMessageType;
     }
 }
