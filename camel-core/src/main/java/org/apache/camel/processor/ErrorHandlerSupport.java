@@ -34,7 +34,7 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  * @version $Revision$
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
-    private Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
+    private final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
     private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
     public void addExceptionPolicy(OnExceptionDefinition exceptionType) {

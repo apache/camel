@@ -45,13 +45,6 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.level = level;
     }
 
-    public ErrorHandlerBuilder copy() {
-        LoggingErrorHandlerBuilder answer = new LoggingErrorHandlerBuilder();
-        answer.setLog(getLog());
-        answer.setLevel(getLevel());
-        return answer;
-    }
-
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
         LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
         configure(handler);

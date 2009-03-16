@@ -37,7 +37,7 @@
     <!-- here we configure our DeadLetterChannel -->
 	<bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
 	    <!-- exchanges is routed to mock:dead in cased redelivery failed -->
-        <property name="defaultDeadLetterEndpointUri" value="mock:dead"/>
+        <property name="deadLetterUri" value="mock:dead"/>
 		<!-- reference the redelivery policy to use -->
         <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
     </bean>

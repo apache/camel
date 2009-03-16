@@ -16,6 +16,8 @@
  */
 package org.apache.camel.builder;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
@@ -24,6 +26,7 @@ import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
+import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.spi.RouteContext;
@@ -38,35 +41,41 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
+    private Logger logger = DeadLetterChannel.createDefaultLogger();
+    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
     private Processor onRedelivery;
-    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
-    private ProcessorFactory deadLetterFactory;
-    private Processor defaultDeadLetterEndpoint;
-    private Expression defaultDeadLetterEndpointExpression;
-    private String defaultDeadLetterEndpointUri = "log:org.apache.camel.DeadLetterChannel?level=error";
-    private Logger logger = DeadLetterChannel.createDefaultLogger();
+    private Processor failureProcessor;
+    private Endpoint deadLetter;
+    private String deadLetterUri;
 
+    /**
+     * Creates a default DeadLetterChannel with a default endpoint
+     */
     public DeadLetterChannelBuilder() {
+        this("log:org.apache.camel.DeadLetterChannel?level=error");
     }
 
-    public DeadLetterChannelBuilder(Processor processor) {
-        this(new ConstantProcessorBuilder(processor));
+    /**
+     * Creates a DeadLetterChannel using the given endpoint
+     *
+     * @param deadLetter the dead letter queue
+     */
+    public DeadLetterChannelBuilder(Endpoint deadLetter) {
+        setDeadLetter(deadLetter);
     }
 
-    public DeadLetterChannelBuilder(ProcessorFactory deadLetterFactory) {
-        this.deadLetterFactory = deadLetterFactory;
-    }
-
-    public ErrorHandlerBuilder copy() {
-        DeadLetterChannelBuilder answer = new DeadLetterChannelBuilder(deadLetterFactory);
-        answer.setRedeliveryPolicy(getRedeliveryPolicy().copy());
-        return answer;
+    /**
+     * Creates a DeadLetterChannel using the given endpoint
+     *
+     * @param uri the dead letter queue
+     */
+    public DeadLetterChannelBuilder(String uri) {
+        setDeadLetterUri(uri);
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        Processor deadLetter = getDeadLetterFactory().createProcessor();
-        DeadLetterChannel answer = new DeadLetterChannel(processor, deadLetter, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
+        DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         StreamCaching.enable(routeContext);
         configure(answer);
         return answer;
@@ -192,6 +201,45 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     // Properties
     // -------------------------------------------------------------------------
+
+    public Processor getFailureProcessor() {
+        if (failureProcessor == null) {
+            if (deadLetter != null) {
+                failureProcessor = new SendProcessor(deadLetter);
+            } else {
+                // use a recipient list since we only have an uri for the endpoint
+                failureProcessor = new RecipientList(new Expression() {
+                    public Object evaluate(Exchange exchange) {
+                        return deadLetterUri;
+                    }
+
+                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                        return exchange.getContext().getTypeConverter().convertTo(type, deadLetterUri);
+                    }
+                });
+            }
+        }
+        return failureProcessor;
+    }
+
+    public String getDeadLetterUri() {
+        return deadLetterUri;
+    }
+
+    public void setDeadLetterUri(final String deadLetterUri) {
+        this.deadLetter = null;
+        this.deadLetterUri = deadLetterUri;
+    }
+
+    public Endpoint getDeadLetter() {
+        return deadLetter;
+    }
+
+    public void setDeadLetter(Endpoint deadLetter) {
+        this.deadLetter = deadLetter;
+        this.deadLetterUri = deadLetter.getEndpointUri();
+    }
+
     public RedeliveryPolicy getRedeliveryPolicy() {
         return redeliveryPolicy;
     }
@@ -201,71 +249,6 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
      */
     public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
         this.redeliveryPolicy = redeliveryPolicy;
-    }
-
-    public ProcessorFactory getDeadLetterFactory() {
-        if (deadLetterFactory == null) {
-            deadLetterFactory = new ProcessorFactory() {
-                public Processor createProcessor() {
-                    return getDefaultDeadLetterEndpoint();
-                }
-            };
-        }
-        return deadLetterFactory;
-    }
-
-    /**
-     * Sets the default dead letter queue factory
-     */
-    public void setDeadLetterFactory(ProcessorFactory deadLetterFactory) {
-        this.deadLetterFactory = deadLetterFactory;
-    }
-
-    public Processor getDefaultDeadLetterEndpoint() {
-        if (defaultDeadLetterEndpoint == null) {
-            defaultDeadLetterEndpoint = new RecipientList(getDefaultDeadLetterEndpointExpression());
-        }
-        return defaultDeadLetterEndpoint;
-    }
-
-    /**
-     * Sets the default dead letter endpoint used
-     */
-    public void setDefaultDeadLetterEndpoint(Processor defaultDeadLetterEndpoint) {
-        this.defaultDeadLetterEndpoint = defaultDeadLetterEndpoint;
-    }
-
-    public Expression getDefaultDeadLetterEndpointExpression() {
-        if (defaultDeadLetterEndpointExpression == null) {
-            defaultDeadLetterEndpointExpression = ExpressionBuilder
-                .constantExpression(getDefaultDeadLetterEndpointUri());
-        }
-        return defaultDeadLetterEndpointExpression;
-    }
-
-    /**
-     * Sets the expression used to decide the dead letter channel endpoint for
-     * an exchange if no factory is provided via
-     * {@link #setDeadLetterFactory(ProcessorFactory)}
-     */
-    public void setDefaultDeadLetterEndpointExpression(Expression defaultDeadLetterEndpointExpression) {
-        this.defaultDeadLetterEndpointExpression = defaultDeadLetterEndpointExpression;
-    }
-
-    public String getDefaultDeadLetterEndpointUri() {
-        return defaultDeadLetterEndpointUri;
-    }
-
-    /**
-     * Sets the default dead letter endpoint URI used if no factory is provided
-     * via {@link #setDeadLetterFactory(ProcessorFactory)} and no expression is
-     * provided via {@link #setDefaultDeadLetterEndpointExpression(Expression)}
-     *
-     * @param defaultDeadLetterEndpointUri the default URI if no deadletter
-     *                factory or expression is provided
-     */
-    public void setDefaultDeadLetterEndpointUri(String defaultDeadLetterEndpointUri) {
-        this.defaultDeadLetterEndpointUri = defaultDeadLetterEndpointUri;
     }
 
     public Logger getLogger() {
@@ -298,6 +281,6 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     @Override
     public String toString() {
-        return "DeadLetterChannelBuilder(" + (deadLetterFactory != null ? deadLetterFactory : defaultDeadLetterEndpoint) + ")";
+        return "DeadLetterChannelBuilder(" + deadLetterUri + ")";
     }
 }
