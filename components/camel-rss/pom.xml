@@ -14,7 +14,15 @@
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.rss.*;org.apache.camel.dataformat.rss.*</camel.osgi.export.pkg>
   </properties>
-  
+ 
+  <repositories>
+    <repository>
+      <id>java.net.m2</id>
+      <name>java.net Maven 2 Repo</name>
+      <url>http://download.java.net/maven/2</url>
+    </repository>
+  </repositories>
+ 
   <dependencies>
     <!-- runtime -->
     <dependency>
@@ -34,7 +42,7 @@
     <dependency>
       <groupId>rome</groupId>
       <artifactId>rome</artifactId>
-      <version>0.9</version>
+      <version>1.0</version>
     </dependency>
     
     <!-- testing -->
