@@ -24,12 +24,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.bam.model.ProcessInstance;
 import org.apache.camel.bam.rules.ActivityRules;
-import org.apache.camel.builder.ProcessorFactory;
 
 /**
  * @version $Revision$
  */
-public class ActivityBuilder implements ProcessorFactory {
+public class ActivityBuilder {
     private ProcessBuilder processBuilder;
     private Endpoint endpoint;
     private ActivityRules activityRules;
