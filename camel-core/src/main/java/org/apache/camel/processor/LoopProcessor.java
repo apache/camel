@@ -32,7 +32,7 @@ import org.apache.commons.logging.LogFactory;
 public class LoopProcessor extends DelegateProcessor {
     private static final Log LOG = LogFactory.getLog(LoopProcessor.class);
 
-    private Expression expression;
+    private final Expression expression;
 
     public LoopProcessor(Expression expression, Processor processor) {
         super(processor);

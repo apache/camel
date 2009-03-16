@@ -27,7 +27,7 @@ import org.apache.camel.Producer;
  * @version $Revision$
  */
 public abstract class DefaultProducer extends ServiceSupport implements Producer {
-    private Endpoint endpoint;
+    private final Endpoint endpoint;
 
     public DefaultProducer(Endpoint endpoint) {
         this.endpoint = endpoint;

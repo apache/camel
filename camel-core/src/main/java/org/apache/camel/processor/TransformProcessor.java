@@ -24,7 +24,7 @@ import org.apache.camel.Processor;
  * A processor which sets the body on the OUT message with an expression
  */
 public class TransformProcessor extends DelegateProcessor implements Processor {
-    private Expression expression;
+    private final Expression expression;
 
     public TransformProcessor(Expression expression) {
         this.expression = expression;

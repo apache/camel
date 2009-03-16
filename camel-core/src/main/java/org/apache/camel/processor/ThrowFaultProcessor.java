@@ -25,7 +25,7 @@ import org.apache.camel.Processor;
  * The processor which implements the ThrowFault DSL
  */
 public class ThrowFaultProcessor implements Processor {
-    private Throwable fault;
+    private final Throwable fault;
 
     public ThrowFaultProcessor(Throwable fault) {
         this.fault = fault;

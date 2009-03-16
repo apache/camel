@@ -38,7 +38,7 @@ public class RouteService extends ServiceSupport {
     private final RouteDefinition routeType;
     private final List<RouteContext> routeContexts;
     private final Collection<Route> routes;
-    private String id;
+    private final String id;
 
     public RouteService(DefaultCamelContext camelContext, RouteDefinition routeType, List<RouteContext> routeContexts, Collection<Route> routes) {
         this.camelContext = camelContext;

@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class CatchProcessor extends DelegateProcessor {
-    private List<Class> exceptions;
+    private final List<Class> exceptions;
 
     public CatchProcessor(List<Class> exceptions, Processor processor) {
         super(processor);

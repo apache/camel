@@ -41,8 +41,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version $Revision$
  */
 public class RecipientList extends ServiceSupport implements Processor {
+    private final ProducerCache producerCache = new ProducerCache();
     private Expression expression;
-    private ProducerCache producerCache = new ProducerCache();
 
     public RecipientList() {
     }
@@ -91,5 +91,6 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
+        producerCache.start();
     }
 }

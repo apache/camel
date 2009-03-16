@@ -22,7 +22,7 @@ import org.apache.camel.spi.PackageScanFilter;
  * Package scan filter for testing if a given class is assignable to another class.
  */
 public class AssignableToPackageScanFilter implements PackageScanFilter {
-    private Class parent;
+    private final Class parent;
 
     public AssignableToPackageScanFilter(Class parentType) {
         this.parent = parentType;

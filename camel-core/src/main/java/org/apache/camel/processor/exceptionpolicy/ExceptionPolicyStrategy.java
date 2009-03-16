@@ -37,7 +37,7 @@ public interface ExceptionPolicyStrategy {
      * @param exception          the exception that was thrown
      * @return the resolved exception type to handle this exception, <tt>null</tt> if none found.
      */
-    OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices, Exchange exchange,
-                                            Throwable exception);
+    OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
+                                             Exchange exchange, Throwable exception);
 
 }

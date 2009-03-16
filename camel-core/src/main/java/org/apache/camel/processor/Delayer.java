@@ -31,7 +31,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class Delayer extends DelayProcessorSupport {
-    private Expression timeExpression;
+    private final Expression timeExpression;
     private long delay;
 
     public Delayer(Processor processor, Expression timeExpression, long delay) {
