@@ -45,7 +45,7 @@
       <url>http://download.java.net/maven/2</url>
     </repository>
     <repository>
-      <id>openqa-releases</id>
+      <id>release.openqa.org</id>
       <name>OpenQA Releases</name>
       <url>http://archiva.openqa.org/repository/releases</url>
       <releases>
