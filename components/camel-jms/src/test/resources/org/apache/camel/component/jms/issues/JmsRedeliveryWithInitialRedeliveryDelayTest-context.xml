@@ -38,7 +38,7 @@
     </bean>
 
     <bean id="myDeadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="defaultDeadLetterEndpointUri" value="mock:dead"/>
+        <property name="deadLetterUri" value="mock:dead"/>
         <property name="redeliveryPolicy" ref="myRedeliveryPolicyConfig"/>
     </bean>
 
