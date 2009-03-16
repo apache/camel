@@ -84,6 +84,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
   def thread(count: Int) = stack.top.thread(count)
   def unmarshal(format: DataFormatDefinition) = stack.top.unmarshal(format)
+  def wiretap(uri: String) = stack.top.wiretap(uri)
   def aggregate(expression: Exchange => Any) = stack.top.aggregate(expression)
 
   // implementing the Routes interface to allow RouteBuilder to be discovered by Spring
