@@ -17,18 +17,12 @@
 package org.apache.camel.component.jms;
 
 /**
- * JMS constants
+ * Enum for different {@link javax.jms.Message} types.
+ *
+ * @version $Revision$
  */
-public final class JmsConstants {
+public enum JmsMessageType {
 
-    public static final String JMS_REPLY_DESTINATION = "JMSReplyTo";
-
-    public static final String JMS_DESTINATION = "JMSDestination";
-
-    public static final String JMS_MESSAGE_TYPE = "CamelJmsMessageType";
-
-    private JmsConstants() {
-        // utility class
-    }
+    Bytes, Map, Object, Strem, Text
 
 }

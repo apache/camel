@@ -36,7 +36,6 @@ import javax.jms.ObjectMessage;
 import javax.jms.Session;
 import javax.jms.StreamMessage;
 import javax.jms.TextMessage;
-import javax.xml.transform.TransformerException;
 
 import org.w3c.dom.Node;
 
@@ -44,13 +43,16 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import static org.apache.camel.component.jms.JmsMessageType.Bytes;
+import static org.apache.camel.component.jms.JmsMessageType.Map;
+import static org.apache.camel.component.jms.JmsMessageType.Object;
+import static org.apache.camel.component.jms.JmsMessageType.Text;
 
 /**
  * A Strategy used to convert between a Camel {@link JmsExchange} and {@link JmsMessage}
@@ -61,7 +63,6 @@ import org.apache.commons.logging.LogFactory;
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
     private JmsEndpoint endpoint;
-    private XmlConverter xmlConverter = new XmlConverter();
     private HeaderFilterStrategy headerFilterStrategy;
 
     public JmsBinding() {
@@ -137,8 +138,7 @@ public class JmsBinding {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    if (headerFilterStrategy != null
-                            && headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                    if (headerFilterStrategy != null && headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
                         continue;
                     }
 
@@ -186,7 +186,7 @@ public class JmsBinding {
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session)
         throws JMSException {
         Message answer = null;
-        boolean alwaysCopy = (endpoint != null) ? endpoint.getConfiguration().isAlwaysCopyMessage() : false;
+        boolean alwaysCopy = (endpoint != null) && endpoint.getConfiguration().isAlwaysCopyMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
             if (!jmsMessage.shouldCreateNewMessage()) {
@@ -194,7 +194,7 @@ public class JmsBinding {
             }
         }
         if (answer == null) {
-            answer = createJmsMessage(camelMessage.getBody(), session, exchange.getContext());
+            answer = createJmsMessage(camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
             appendJmsProperties(answer, exchange, camelMessage);
         }
         return answer;
@@ -291,46 +291,71 @@ public class JmsBinding {
         return null;
     }
 
-    protected Message createJmsMessage(Object body, Session session, CamelContext context)
-        throws JMSException {
-        if (body instanceof Node) {
-            // lets convert the document to a String format
-            try {
-                body = xmlConverter.toString((Node)body);
-            } catch (TransformerException e) {
-                JMSException jmsException = new JMSException(e.getMessage());
-                jmsException.setLinkedException(e);
-                throw jmsException;
+    protected Message createJmsMessage(Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
+        JmsMessageType type = null;
+
+        // check if header have a type set, if so we force to use it
+        if (headers.containsKey(JmsConstants.JMS_MESSAGE_TYPE)) {
+            type = context.getTypeConverter().convertTo(JmsMessageType.class, headers.get(JmsConstants.JMS_MESSAGE_TYPE));
+        } else if (endpoint != null && endpoint.getConfiguration().getJmsMessageType() != null) {
+            // force a specific type from the endpoint configuration
+            type = endpoint.getConfiguration().getJmsMessageType();
+        } else {
+            // let body deterime the type
+            if (body instanceof Node || body instanceof String) {
+                type = Text;
+            } else if (body instanceof byte[] || body instanceof GenericFile || body instanceof File || body instanceof Reader
+                    || body instanceof InputStream || body instanceof ByteBuffer) {
+                type = Bytes;
+            } else if (body instanceof Map) {
+                type = Map;
+            } else if (body instanceof Serializable) {
+                type = Object;
             }
         }
-        if (body instanceof byte[]) {
-            BytesMessage result = session.createBytesMessage();
-            result.writeBytes((byte[])body);
-            return result;
-        }
-        if (body instanceof Map) {
-            MapMessage result = session.createMapMessage();
-            Map<?, ?> map = (Map<?, ?>)body;
-            try {
-                populateMapMessage(result, map, context);
-                return result;
-            } catch (JMSException e) {
-                // if MapMessage creation failed then fall back to Object Message
-                LOG.warn("Cannot populate MapMessage will fall back to ObjectMessage, cause by: " + e.getMessage());
+
+        // create the JmsMessage based on the type
+        if (type != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using JmsMessageType: " + type);
+            }
+
+            switch (type) {
+            case Text: {
+                TextMessage message = session.createTextMessage();
+                String payload = context.getTypeConverter().convertTo(String.class, body);
+                message.setText(payload);
+                return message;
+            }
+            case Bytes: {
+                BytesMessage message = session.createBytesMessage();
+                byte[] payload = context.getTypeConverter().convertTo(byte[].class, body);
+                message.writeBytes(payload);
+                return message;
+            }
+            case Map: {
+                MapMessage message = session.createMapMessage();
+                Map payload = context.getTypeConverter().convertTo(Map.class, body);
+                populateMapMessage(message, payload, context);
+                return message;
+            }
+            case Object:
+                return session.createObjectMessage((Serializable)body);
+            case Strem:
+                // TODO: Stream is not supported
+                break;
+            default:
+                break;
             }
         }
-        if (body instanceof String) {
-            return session.createTextMessage((String)body);
+
+        // TODO: should we throw an exception instead?
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Could not determine specific JmsMessage type to use from body."
+                    + " Will use generic JmsMessage. Body class: " + body.getClass().getCanonicalName());
         }
-        if (body instanceof GenericFile || body instanceof File || body instanceof Reader || body instanceof InputStream || body instanceof ByteBuffer) {
-            BytesMessage result = session.createBytesMessage();
-            byte[] bytes = context.getTypeConverter().convertTo(byte[].class, body);
-            result.writeBytes(bytes);
-            return result;
-        }
-        if (body instanceof Serializable) {
-            return session.createObjectMessage((Serializable)body);
-        }
+
+        // return a default message
         return session.createMessage();
     }
 

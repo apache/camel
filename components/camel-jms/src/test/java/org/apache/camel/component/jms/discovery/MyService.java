@@ -33,7 +33,7 @@ public class MyService {
     public Map status() {
         Map answer = new HashMap();
         answer.put("name", name);
-        answer.put("time", new Date());
+        answer.put("time", new Date().getTime());
         return answer;
     }
 }

@@ -763,6 +763,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setUseVersion102(useVersion102);
     }
 
+    public JmsMessageType getJmsMessageType() {
+        return getConfiguration().getJmsMessageType();
+    }
+
+    public void setJmsMessageType(JmsMessageType jmsMessageType) {
+        getConfiguration().setJmsMessageType(jmsMessageType);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
