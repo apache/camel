@@ -115,6 +115,8 @@ abstract class SAbstractDefinition extends DSL {
     this
   }
   
+  def wiretap(uri: String) = new SProcessorDefinition(target.wireTap(uri).asInstanceOf[RawProcessorDefinition])
+  
   def aggregate(expression: Exchange => Any) = new SAggregateDefinition(target.aggregate(expression))
 
 }
