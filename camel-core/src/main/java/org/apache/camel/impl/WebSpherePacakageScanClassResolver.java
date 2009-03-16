@@ -25,7 +25,7 @@ import java.util.Enumeration;
  */
 public class WebSpherePacakageScanClassResolver extends DefaultPackageScanClassResolver {
 
-    private String resourcePath;
+    private final String resourcePath;
 
     /**
      * Constructor.

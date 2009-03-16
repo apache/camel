@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final transient Log LOG = LogFactory.getLog(DefaultComponent.class);
 
-    private int defaultThreadPoolSize = 5;
+    private final int defaultThreadPoolSize = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
     

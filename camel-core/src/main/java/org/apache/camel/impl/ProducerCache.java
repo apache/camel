@@ -42,7 +42,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class ProducerCache extends ServiceSupport {
     private static final transient Log LOG = LogFactory.getLog(ProducerCache.class);
 
-    private Map<String, Producer> producers = new HashMap<String, Producer>();
+    private final Map<String, Producer> producers = new HashMap<String, Producer>();
 
     public synchronized Producer getProducer(Endpoint endpoint) {
         String key = endpoint.getEndpointUri();

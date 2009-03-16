@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -33,8 +32,8 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class ChoiceProcessor extends ServiceSupport implements Processor {
-    private List<FilterProcessor> filters = new ArrayList<FilterProcessor>();
-    private Processor otherwise;
+    private final List<FilterProcessor> filters;
+    private final Processor otherwise;
 
     public ChoiceProcessor(List<FilterProcessor> filters, Processor otherwise) {
         this.filters = filters;

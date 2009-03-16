@@ -32,7 +32,7 @@ import org.apache.camel.util.ExchangeHelper;
  */
 public class StringDataFormat implements DataFormat {
 
-    private String charset;
+    private final String charset;
 
     public StringDataFormat(String charset) {
         this.charset = charset;

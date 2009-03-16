@@ -33,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class DelayProcessorSupport extends DelegateProcessor {
     protected final transient Log log = LogFactory.getLog(getClass());
-    private CountDownLatch stoppedLatch = new CountDownLatch(1);
+    private final CountDownLatch stoppedLatch = new CountDownLatch(1);
     private boolean fastStop = true;
 
     public DelayProcessorSupport(Processor processor) {

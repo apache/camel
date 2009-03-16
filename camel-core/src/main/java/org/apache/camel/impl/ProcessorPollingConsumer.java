@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class ProcessorPollingConsumer extends PollingConsumerSupport {
-    private Processor processor;
+    private final Processor processor;
 
     public ProcessorPollingConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint);

@@ -36,10 +36,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class RoutingSlip extends ServiceSupport implements Processor {
     private static final transient Log LOG = LogFactory.getLog(RoutingSlip.class);
+    private final ProducerCache producerCache = new ProducerCache();
     private final String header;
     private final String uriDelimiter;
-
-    private ProducerCache producerCache = new ProducerCache();
 
     public RoutingSlip(String header) {
         this(header, RoutingSlipDefinition.DEFAULT_DELIMITER);
@@ -87,6 +86,7 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     }
 
     protected void doStart() throws Exception {
+        producerCache.start();
     }
 
     private void updateRoutingSlip(Exchange current) {

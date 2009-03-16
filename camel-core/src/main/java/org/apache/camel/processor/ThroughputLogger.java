@@ -32,7 +32,7 @@ public class ThroughputLogger extends Logger {
     private int groupSize = 100;
     private long startTime;
     private long groupStartTime;
-    private AtomicInteger receivedCounter = new AtomicInteger();
+    private final AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private String action = "Received";
     private String logMessage;

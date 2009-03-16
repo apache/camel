@@ -45,11 +45,11 @@ public class BatchProcessor extends ServiceSupport implements Processor {
     private int outBatchSize;
     private boolean groupExchanges;
 
-    private Processor processor;
-    private Collection<Exchange> collection;
+    private final Processor processor;
+    private final Collection<Exchange> collection;
     private ExceptionHandler exceptionHandler;
 
-    private BatchSender sender;
+    private final BatchSender sender;
 
     public BatchProcessor(Processor processor, Collection<Exchange> collection) {
         ObjectHelper.notNull(processor, "processor");

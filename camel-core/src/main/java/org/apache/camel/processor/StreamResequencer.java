@@ -54,9 +54,9 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     
-    private ExceptionHandler exceptionHandler;
-    private ResequencerEngine<Exchange> engine;
-    private Processor processor;
+    private final ExceptionHandler exceptionHandler;
+    private final ResequencerEngine<Exchange> engine;
+    private final Processor processor;
     private Delivery delivery;
     private int capacity;
     

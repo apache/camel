@@ -27,7 +27,7 @@ import org.apache.camel.Processor;
  * @version $Revision$
  */
 public class FilterProcessor extends DelegateProcessor {
-    private Predicate predicate;
+    private final Predicate predicate;
 
     public FilterProcessor(Predicate predicate, Processor processor) {
         super(processor);
