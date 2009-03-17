@@ -53,7 +53,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ProcessorTypeHelper;
+import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -246,7 +246,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
                 // if there is a proceed in the interceptor proxy then we should add
                 // the current outputs to out route so we will proceed and continue to route to them
-                ProceedDefinition proceed = ProcessorTypeHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
+                ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
                 if (proceed != null) {
                     proceed.getOutputs().addAll(outputs);
                 }
