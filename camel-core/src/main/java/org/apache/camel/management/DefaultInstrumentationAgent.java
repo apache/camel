@@ -73,29 +73,23 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
 
     protected void finalizeSettings() {
         if (registryPort == null) {
-            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT,
-                    DEFAULT_REGISTRY_PORT);
+            registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, DEFAULT_REGISTRY_PORT);
         }
 
         if (connectorPort == null) {
-            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT,
-                    DEFAULT_CONNECTION_PORT);
+            connectorPort = Integer.getInteger(JmxSystemPropertyKeys.CONNECTOR_PORT, DEFAULT_CONNECTION_PORT);
         }
 
         if (mBeanServerDefaultDomain == null) {
-            mBeanServerDefaultDomain =
-                System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
+            mBeanServerDefaultDomain = System.getProperty(JmxSystemPropertyKeys.DOMAIN, DEFAULT_DOMAIN);
         }
 
         if (mBeanObjectDomainName == null) {
-            mBeanObjectDomainName =
-                System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
+            mBeanObjectDomainName = System.getProperty(JmxSystemPropertyKeys.MBEAN_DOMAIN, DEFAULT_DOMAIN);
         }
 
         if (serviceUrlPath == null) {
-            serviceUrlPath =
-                System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH,
-                        DEFAULT_SERVICE_URL_PATH);
+            serviceUrlPath = System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, DEFAULT_SERVICE_URL_PATH);
         }
 
         if (createConnector == null) {
@@ -149,12 +143,10 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         try {
             registerMBeanWithServer(obj, name, forceRegistration);
         } catch (NotCompliantMBeanException e) {
-            // If this is not a "normal" MBean, then try to deploy it using JMX
-            // annotations
-            ModelMBeanInfo mbi = null;
+            // If this is not a "normal" MBean, then try to deploy it using JMX annotations
+            ModelMBeanInfo mbi;
             mbi = assembler.getMBeanInfo(obj, name.toString());
-            RequiredModelMBean mbean = (RequiredModelMBean)server.instantiate(RequiredModelMBean.class
-                .getName());
+            RequiredModelMBean mbean = (RequiredModelMBean)server.instantiate(RequiredModelMBean.class.getName());
             mbean.setModelMBeanInfo(mbi);
             try {
                 mbean.setManagedResource(obj, "ObjectReference");
@@ -200,7 +192,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         Object[] mBeans = mbeans.toArray();
         int caught = 0;
         for (Object name : mBeans) {
-            mbeans.remove((ObjectName)name);
+            mbeans.remove(name);
             try {
                 unregister((ObjectName)name);
             } catch (JMException jmex) {
@@ -252,7 +244,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     }
 
     protected void createMBeanServer() {
-        String hostName = DEFAULT_HOST;
+        String hostName;
         boolean canAccessSystemProps = true;
         try {
             // we'll do it this way mostly to determine if we should lookup the
@@ -269,8 +261,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
             try {
                 hostName = InetAddress.getLocalHost().getHostName();
             } catch (UnknownHostException uhe) {
-                LOG.info("Cannot determine localhost name. Using default: "
-                         + DEFAULT_REGISTRY_PORT, uhe);
+                LOG.info("Cannot determine localhost name. Using default: " + DEFAULT_REGISTRY_PORT, uhe);
                 hostName = DEFAULT_HOST;
             }
         } else {
@@ -298,8 +289,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         }
 
         // look for the first mbean server that has match default domain name
-        List<MBeanServer> servers =
-            (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
+        List<MBeanServer> servers = (List<MBeanServer>)MBeanServerFactory.findMBeanServer(null);
 
         for (MBeanServer server : servers) {
             if (LOG.isDebugEnabled()) {

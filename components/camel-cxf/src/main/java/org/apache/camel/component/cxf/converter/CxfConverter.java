@@ -111,10 +111,8 @@ public final class CxfConverter {
         
         if (MessageContentsList.class.isAssignableFrom(value.getClass())) {
             MessageContentsList list = (MessageContentsList)value;
-            
-            for (int i = 0; i < list.size(); i++) {
-                Object embedded = list.get(i);
-                
+
+            for (Object embedded : list) {
                 if (embedded != null) {
                     if (type.isInstance(embedded)) {
                         return type.cast(embedded);

@@ -750,7 +750,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        lifecycleStrategy.onContextStart(this);
+        try {
+            lifecycleStrategy.onContextStart(this);
+        } catch (Exception e) {
+            // not all containers allow access to its MBeanServer (such as OC4j)
+            LOG.warn("Cannot start lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
+            if (lifecycleStrategy instanceof InstrumentationLifecycleStrategy) {
+                // fallback to non JMX lifecycle to allow Camel to startup
+                LOG.warn("Will fallback to use default (non JMX) lifecycle strategy");
+                lifecycleStrategy = new DefaultLifecycleStrategy();
+                lifecycleStrategy.onContextStart(this);
+            }
+        }
 
         forceLazyInitialization();
         if (components != null) {
@@ -768,7 +779,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 routeService.start();
             }
         }
-        //startRoutes(routes);
 
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
@@ -780,21 +790,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
     }
-
-    /*
-        protected void startRoutes(Collection<Route> routeList) throws Exception {
-            if (routeList != null) {
-                for (Route route : routeList) {
-                    List<Service> services = route.getServicesForRoute();
-                    for (Service service : services) {
-                        addService(service);
-                    }
-                }
-            }
-        }
-
-    */
-
 
     /**
      * Starts the given route service
