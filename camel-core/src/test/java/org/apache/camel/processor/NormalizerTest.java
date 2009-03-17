@@ -18,15 +18,10 @@ package org.apache.camel.processor;
 
 import javax.naming.Context;
 
-import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.language.XPath;
 import org.apache.camel.util.jndi.JndiContext;
-import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class NormalizerTest extends ContextTestSupport {
    
@@ -64,9 +59,12 @@ public class NormalizerTest extends ContextTestSupport {
             public void configure() {
                 // START SNIPPET: example                
                 // we need to normalize two types of incoming messages
-                from("direct:start").choice()
-                  .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson").to("mock:result")
-                  .when().xpath("/customer").to("bean:normalizer?method=customerToPerson").to("mock:result");               
+                from("direct:start")
+                  .choice()
+                    .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson")
+                    .when().xpath("/customer").to("bean:normalizer?method=customerToPerson")
+                  .end()
+                  .to("mock:result");               
                 // END SNIPPET: example
             }
         };

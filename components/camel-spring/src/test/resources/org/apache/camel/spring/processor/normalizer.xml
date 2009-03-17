@@ -30,14 +30,13 @@
         <when>
           <xpath>/employee</xpath>
           <to uri="bean:normalizer?method=employeeToPerson"/>
-          <to uri="mock:result"/>
         </when>
         <when>
           <xpath>/customer</xpath>
           <to uri="bean:normalizer?method=customerToPerson"/>
-          <to uri="mock:result"/>
         </when>
       </choice>
+      <to uri="mock:result"/>
     </route> 
   </camelContext>
 
