@@ -25,9 +25,9 @@ import org.apache.camel.model.WhenDefinition;
 /**
  * Helper class for ProcessorType and the other model classes.
  */
-public final class ProcessorTypeHelper {
+public final class ProcessorDefinitionHelper {
 
-    private ProcessorTypeHelper() {
+    private ProcessorDefinitionHelper() {
     }
 
     /**
@@ -60,10 +60,13 @@ public final class ProcessorTypeHelper {
                     }
                 }
 
-                List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
-                T child = findFirstTypeInOutputs(children, type);
-                if (child != null) {
-                    return child;
+                // otherwise is optional
+                if (choice.getOtherwise() != null) {
+                    List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
+                    T child = findFirstTypeInOutputs(children, type);
+                    if (child != null) {
+                        return child;
+                    }
                 }
             }
 

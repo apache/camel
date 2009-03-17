@@ -21,6 +21,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
@@ -110,6 +111,10 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
             exchange.setPattern(pattern);
         }
         return exchange;
+    }
+
+    public Processor getProcessor() {
+        return processor;
     }
 
 }
