@@ -261,16 +261,21 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // lets force any lazy creation
         getContext().addRouteDefinitions(routes);
 
+        // setup JMX agent
+        initJMXAgent();
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Found JAXB created routes: " + getRoutes());
+        }
+        findRouteBuilders();
+        installRoutes();
+    }
+
+    private void initJMXAgent() throws Exception {
         if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
             LOG.debug("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
-            LOG.debug("JMXAgent enabled");
-
-            if (lifecycleStrategy != null) {
-                LOG.warn("lifecycleStrategy will be overriden by InstrumentationLifecycleStrategy");
-            }
-
             DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
             agent.setConnectorPort(camelJMXAgent.getConnectorPort());
             agent.setCreateConnector(camelJMXAgent.isCreateConnector());
@@ -280,14 +285,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
             agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
 
+            LOG.info("JMXAgent enabled: " + camelJMXAgent);
             getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));
         }
-
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Found JAXB created routes: " + getRoutes());
-        }
-        findRouteBuilders();
-        installRoutes();
     }
 
     @SuppressWarnings("unchecked")

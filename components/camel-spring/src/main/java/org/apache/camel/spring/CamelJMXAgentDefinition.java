@@ -144,4 +144,32 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     public void setDisabled(Boolean value) {
         disabled = value != null ? value : Boolean.FALSE;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("CamelJMXAgent[");
+        sb.append("usePlatformMBeanServer=").append(usePlatformMBeanServer);
+        if (createConnector != null) {
+            sb.append(", createConnector=").append(createConnector);
+        }
+        if (connectorPort != null) {
+            sb.append(", connectorPort=").append(connectorPort);
+        }
+        if (registryPort != null) {
+            sb.append(", registryPort=").append(registryPort);
+        }
+        if (serviceUrlPath != null) {
+            sb.append(", serviceUrlPath=").append(serviceUrlPath);
+        }
+        if (mbeanServerDefaultDomain != null) {
+            sb.append(", mbeanServerDefaultDomain=").append(mbeanServerDefaultDomain);
+        }
+        if (mbeanObjectDomainName != null) {
+            sb.append(", mbeanObjectDomainName=").append(mbeanObjectDomainName);
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
 }
