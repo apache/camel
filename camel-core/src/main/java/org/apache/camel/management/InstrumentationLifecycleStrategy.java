@@ -40,6 +40,7 @@ import org.apache.camel.model.RouteType;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -89,7 +90,9 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 ManagedService ms = new ManagedService(dc);
                 agent.register(ms, getNamingStrategy().getObjectName(dc));
             } catch (Exception e) {
-                LOG.warn("Could not register CamelContext MBean", e);
+                // must rethrow to allow CamelContext fallback to non JMX agent to allow
+                // Camel to continue to run
+                throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
     }

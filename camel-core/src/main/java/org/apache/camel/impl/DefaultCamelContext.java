@@ -56,7 +56,6 @@ import org.apache.camel.spi.Language;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.NoFactoryAvailableException;
 import org.apache.camel.util.ObjectHelper;
@@ -630,7 +629,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        lifecycleStrategy.onContextStart(this);
+        try {
+            lifecycleStrategy.onContextStart(this);
+        } catch (Exception e) {
+            // not all containers allow access to its MBeanServer (such as OC4j)
+            LOG.warn("Cannot start lifecycleStrategy: " + lifecycleStrategy + ". Cause: " + e.getMessage());
+            if (lifecycleStrategy instanceof InstrumentationLifecycleStrategy) {
+                // fallback to non JMX lifecycle to allow Camel to startup
+                LOG.warn("Will fallback to use default (non JMX) lifecycle strategy");
+                lifecycleStrategy = new DefaultLifecycleStrategy();
+                lifecycleStrategy.onContextStart(this);
+            }
+        }
 
         forceLazyInitialization();
         if (components != null) {
