@@ -48,14 +48,15 @@ import org.apache.commons.logging.LogFactory;
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
 
-    private static Timer timer = new Timer();
-    private final Processor output;
+    // we can use a single shared static timer for async redeliveries
+    private static final Timer REDELIVER_TIMER = new Timer("Camel DeadLetterChannel Redeliver Timer", true);
     private final Processor deadLetter;
     private final String deadLetterUri;
+    private final Processor output;
     private final AsyncProcessor outputAsync;
+    private final Processor redeliveryProcessor;
     private RedeliveryPolicy redeliveryPolicy;
     private Logger logger;
-    private final Processor redeliveryProcessor;
 
     private class RedeliveryData {
         int redeliveryCounter;
@@ -94,7 +95,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                     // only process if the exchange hasn't failed
                     // and it has not been handled by the error processor
                     if (exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
-                        // if we are redelivering then sleep before trying again
+                        // deliver to async to process it
                         asyncProcess(exchange, callback, data);
                     } else {
                         callback.done(sync);
@@ -275,9 +276,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             if (exchange.getException() != null) {
                 exchange.setException(null);
             }
-            // wait until we should redeliver
+            // wait until we should redeliver using a timer to avoid thread blocking
             data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
-            timer.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
+            REDELIVER_TIMER.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
 
             // letting onRedeliver be executed
             deliverToRedeliveryProcessor(exchange, callback, data);
