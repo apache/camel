@@ -19,6 +19,9 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Proxy;
 import javax.xml.namespace.QName;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -60,8 +63,7 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     
 
     private void init(CxfEndpointBean bean) throws Exception {
-        this.bean = bean;
-        
+        this.bean = bean;        
         // create configurer
         configurer = new ConfigurerImpl(((SpringCamelContext)getCamelContext())
             .getApplicationContext());
@@ -178,6 +180,13 @@ public class CxfSpringEndpoint extends CxfEndpoint {
     }
 
     void configure(Object beanInstance) {
+        // check the ApplicationContext states first , and call the refresh if necessary
+        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof AbstractApplicationContext) {
+            AbstractApplicationContext context = (AbstractApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
+            if (!context.isActive()) {
+                context.refresh();
+            }
+        }
         configurer.configureBean(beanId, beanInstance);
     }
     
