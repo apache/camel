@@ -89,6 +89,12 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         return new XPathBuilder(text);
     }
 
+    public static XPathBuilder xpath(String text, Class resultType) {
+        XPathBuilder builder = new XPathBuilder(text);
+        builder.setResultType(resultType);
+        return builder;
+    }
+
     @Override
     public String toString() {
         return "XPath: " + text;

@@ -34,23 +34,22 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
-    private Map<ProcessorDefinition, PerformanceCounter> counterMap;
+    private final Map<ProcessorDefinition, PerformanceCounter> counterMap;
 
     public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> counterMap) {
         this.counterMap = counterMap;
     }
 
     public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
-        Processor retval = target;
         PerformanceCounter counter = counterMap.get(processorType);
 
         if (counter != null) {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);
-            retval = wrapper;
+            return wrapper;
         }
 
-        return retval;
+        return target;
     }
 
 }
