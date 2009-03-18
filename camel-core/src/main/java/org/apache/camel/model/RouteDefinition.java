@@ -75,6 +75,11 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return "Route[" + inputs + " -> " + outputs + "]";
     }
 
+    @Override
+    public String getShortName() {
+        return "route";
+
+    }
 
     /**
      * Returns the status of the route if it has been registered with a {@link CamelContext}
