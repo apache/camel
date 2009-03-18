@@ -69,6 +69,7 @@ public class ReportIncidentRoutes extends RouteBuilder {
             .setHeader("subject", constant("new incident reported"))
             // send the email
             .to("smtp://someone@localhost?password=secret&to=incident@mycompany.com");
+        
     }
     
     public static void main(String args[]) throws Exception {
