@@ -17,8 +17,8 @@
 package org.apache.camel.builder.script;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.Predicate;
 import org.apache.camel.spi.Language;
 
 /**

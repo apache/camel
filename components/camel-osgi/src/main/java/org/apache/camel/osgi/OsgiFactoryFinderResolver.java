@@ -16,9 +16,9 @@
  */
 package org.apache.camel.osgi;
 
-import org.apache.camel.spi.FactoryFinderResolver;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.FactoryFinder;
+import org.apache.camel.spi.FactoryFinderResolver;
 
 /**
  * @version $Revision$
