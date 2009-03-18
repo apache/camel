@@ -21,8 +21,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConverter;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;

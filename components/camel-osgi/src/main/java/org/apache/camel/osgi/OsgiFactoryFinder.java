@@ -24,7 +24,6 @@ import java.util.Properties;
 
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.DefaultFactoryFinder;
-import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
