@@ -33,20 +33,35 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ProcessorDefinitionHelper;
 
 /**
- * Unit test based on user forum problem.
+ * Unit test based on user forum problem - CAMEL-1463.
  *
  * @version $Revision$
  */
 public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 
+    private static boolean jmx = true;
+
     @Override
     protected void setUp() throws Exception {
-        // TODO: disable JMX and you get the bug
-        //disableJMX();
+        // we must enable/disable JMX in this setUp
+        if (jmx) {
+            enableJMX();
+            jmx = false;
+        } else {
+            disableJMX();
+        }
         super.setUp();
     }
 
-    public void testNoErrorHandler() throws Exception {
+    public void testChoiceNoErrorHandler() throws Exception {
+        doTest();
+    }
+
+    public void testChoiceNoErrorHandlerJMXDisabled() throws Exception {
+        doTest();
+    }
+
+    private void doTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
@@ -76,8 +91,6 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
         }
     }
 
-
-    // TODO: We need a better solution to traverse a route than using reflection
     private <T> T findProceesorInRoute(Processor route, Class<T> type) {
         if (route == null) {
             return null;
