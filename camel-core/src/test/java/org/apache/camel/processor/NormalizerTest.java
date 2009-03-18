@@ -60,11 +60,11 @@ public class NormalizerTest extends ContextTestSupport {
                 // START SNIPPET: example                
                 // we need to normalize two types of incoming messages
                 from("direct:start")
-                  .choice()
-                    .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson")
-                    .when().xpath("/customer").to("bean:normalizer?method=customerToPerson")
-                  .end()
-                  .to("mock:result");               
+                    .choice()
+                        .when().xpath("/employee").to("bean:normalizer?method=employeeToPerson")
+                        .when().xpath("/customer").to("bean:normalizer?method=customerToPerson")
+                    .end()
+                    .to("mock:result");
                 // END SNIPPET: example
             }
         };

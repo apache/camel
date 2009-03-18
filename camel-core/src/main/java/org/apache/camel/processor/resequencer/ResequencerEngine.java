@@ -99,7 +99,7 @@ public class ResequencerEngine<E> {
     }
 
     public void start() {
-        timer = new Timer("Stream Resequencer Timer");
+        timer = new Timer("Camel Stream Resequencer Timer", true);
     }
 
     /**
