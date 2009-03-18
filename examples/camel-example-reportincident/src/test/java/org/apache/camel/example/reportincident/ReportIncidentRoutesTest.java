@@ -30,7 +30,7 @@ public class ReportIncidentRoutesTest extends TestCase {
     // should be the same address as we have in our route
     private static final String URL = "http://localhost:9080/camel-example-reportincident/webservices/incident";
 
-    private CamelContext camel;
+    protected CamelContext camel;
 
     protected void startCamel() throws Exception {
         camel = new DefaultCamelContext();
@@ -38,6 +38,10 @@ public class ReportIncidentRoutesTest extends TestCase {
         routes.setUsingServletTransport(false);
         camel.addRoutes(routes);
         camel.start();
+    }
+    
+    protected void stopCamel() throws Exception {
+        camel.stop();
     }
 
     protected static ReportIncidentEndpoint createCXFClient() {
@@ -54,6 +58,7 @@ public class ReportIncidentRoutesTest extends TestCase {
 
         // assert mailbox is empty before starting
         Mailbox inbox = Mailbox.get("incident@mycompany.com");
+        inbox.clear();
         assertEquals("Should not have mails", 0, inbox.size());
 
         // create input parameter
@@ -79,8 +84,10 @@ public class ReportIncidentRoutesTest extends TestCase {
 
         // assert mail box
         assertEquals("Should have got 1 mail", 1, inbox.size());
+        assertTrue(" We should get the email address from the mail ",
+                   ((String)inbox.get(0).getContent()).indexOf("- email: davsclaus@apache.org") > 0);
 
         // stop camel
-        camel.stop();
+        stopCamel();
     }
 }
