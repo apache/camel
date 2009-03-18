@@ -61,6 +61,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         return "Routes: " + routes;
     }
 
+    @Override
+    public String getShortName() {
+        return "routes";
+    }
+
     // Properties
     //-----------------------------------------------------------------------
     public List<RouteDefinition> getRoutes() {
