@@ -187,7 +187,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 LOG.warn("Could not register PerformanceCounter MBean: " + name, e);
             }
         }
-        
+
+        // TODO: align this code with InstrumentationLifecycleStrategy
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
 
         routeContext.setErrorHandlerWrappingStrategy(
@@ -200,7 +201,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         RouteType routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             if (routeType.getInputs().size() > 1) {
-                LOG.warn("Add InstrumentationProcessor to first input only.");
+                LOG.warn("Addding InstrumentationProcessor to first input only.");
             }
 
             Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();

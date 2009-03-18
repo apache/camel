@@ -61,9 +61,11 @@ public final class ProcessorTypeHelper {
                 }
 
                 List<ProcessorType<?>> children = choice.getOtherwise().getOutputs();
-                T child = findFirstTypeInOutputs(children, type);
-                if (child != null) {
-                    return child;
+                if (children != null) {
+                    T child = findFirstTypeInOutputs(children, type);
+                    if (child != null) {
+                        return child;
+                    }
                 }
             }
 

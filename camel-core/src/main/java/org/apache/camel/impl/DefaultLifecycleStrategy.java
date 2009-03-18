@@ -53,6 +53,7 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
 
     public void onRouteContextCreate(RouteContext routeContext) {
         RouteType routeType = routeContext.getRoute();
+
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             // configure the outputs
             List<ProcessorType<?>> outputs = new ArrayList<ProcessorType<?>>(routeType.getOutputs());
@@ -60,10 +61,18 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
             // clearing the outputs
             routeType.clearOutput();
 
+            // a list of processors in the route
+            List<ProcessorType> counterList = new ArrayList<ProcessorType>();
+
             // add the output configure the outputs with the routeType
             for (ProcessorType<?> processorType : outputs) {
                 routeType.addOutput(processorType);
+                counterList.add(processorType);
             }
+
+            // set the error handler strategy containing the list of outputs added
+            // TODO: align this code with InstrumentationLifecycleStrategy
+            routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(counterList));
         }
     }
 

@@ -39,14 +39,11 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
     private int callCounter3;
     private int redelivery = 1;
 
-    protected void setUp() throws Exception {
-        disableJMX();
-        super.setUp();
-    }
-
     public void testThreadErrorHandlerLogging() throws Exception {
         MockEndpoint handled = getMockEndpoint("mock:handled");
-        handled.expectedBodiesReceived(msg3);
+        // in case of an exception we should receive the original input,
+        // so this is message 1
+        handled.expectedBodiesReceived(msg1);
 
         try {
             template.sendBody("direct:errorTest", msg1);
@@ -57,9 +54,9 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1, callCounter1);
-        assertEquals(1, callCounter2);
-        assertEquals(1 + redelivery, callCounter3);  // Only this should be more then 1
+        assertEquals(1 + redelivery, callCounter1);
+        assertEquals(1 + redelivery, callCounter2);
+        assertEquals(1 + redelivery, callCounter3);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

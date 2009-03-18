@@ -91,6 +91,12 @@ public class XPathBuilder<E extends Exchange> implements Expression<E>, Predicat
         return new XPathBuilder(text);
     }
 
+    public static XPathBuilder xpath(String text, Class resultType) {
+        XPathBuilder builder = new XPathBuilder(text);
+        builder.setResultType(resultType);
+        return builder;
+    }
+
     @Override
     public String toString() {
         return "XPath: " + text;
