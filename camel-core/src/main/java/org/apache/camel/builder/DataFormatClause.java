@@ -18,13 +18,12 @@ package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
 
-import org.w3c.dom.Node;
-
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.CsvDataFormat;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
+import org.apache.camel.model.dataformat.GzipDataFormat;
 import org.apache.camel.model.dataformat.HL7DataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.JsonDataFormat;
@@ -36,6 +35,7 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
+import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
@@ -241,6 +241,14 @@ public class DataFormatClause<T extends ProcessorDefinition> {
     public T zip(int compressionLevel) {
         ZipDataFormat zdf = new ZipDataFormat(compressionLevel);
         return dataFormat(zdf);
+    }
+    
+    /**
+     * Uses the GZIP deflater data format
+     */
+    public T gzip() {
+        GzipDataFormat gzdf = new GzipDataFormat();
+        return dataFormat(gzdf);
     }
 
     @SuppressWarnings("unchecked")
