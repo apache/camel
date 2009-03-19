@@ -1,0 +1,7 @@
+.dijitRtl .nihilo .dijitAccordionArrow {
+	background-position: 0px top;
+}
+.dijitRtl .nihilo .dijitAccordionTitle-selected .dijitAccordionArrow {
+	
+	background-position: -15px top;
+}

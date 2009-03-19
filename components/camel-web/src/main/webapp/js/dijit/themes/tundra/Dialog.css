@@ -1,0 +1,147 @@
+
+.tundra .dijitDialog {
+	background: #fff;
+	border: 1px solid #7eabcd;
+	
+	padding: 0px;
+	-webkit-box-shadow: 0px 5px 10px #adadad;
+}
+.tundra .dijitDialog .dijitDialogPaneContent {
+	background: #fff;
+	border:none;
+	border-top: 1px solid #d3d3d3; 
+	padding:10px;
+}
+.tundra .dijitDialogTitleBar {
+	
+	background: #fafafa url("images/titleBar.png") repeat-x top left;
+	padding: 5px 6px 3px 6px;
+	cursor: move;
+	outline:0; 
+}
+.tundra .dijitDialogTitle {
+	
+	font-weight: bold;
+	padding: 0px 4px;
+}
+.tundra .dijitDialogCloseIcon {
+	
+	
+	background: url("images/tabClose.png") no-repeat right top;
+	position: absolute;
+	vertical-align: middle;
+	right: 6px;
+	top: 4px;
+	height: 15px;
+	width: 15px;
+	cursor: pointer;
+}
+.dj_ie6 .tundra .dijitDialogCloseIcon {
+	background : url("images/tabClose.gif") no-repeat right top;
+}
+.tundra .dijitDialogCloseIcon-hover {
+	background: url("images/tabCloseHover.png") no-repeat right top;
+}
+.dj_ie6 .tundra .dijitDialogCloseIcon-hover {
+	background : url("images/tabCloseHover.gif") no-repeat right top;
+}
+.tundra .dijitDialogContent {
+	
+	padding: 8px;
+}
+.tundra .dijitTooltip,
+.tundra .dijitTooltipDialog {
+	
+	background: transparent;	
+}
+.dijitTooltipBelow {
+	
+	padding-top: 13px;
+}
+.dijitTooltipAbove {
+	
+	padding-bottom: 13px;
+}
+.tundra .dijitTooltipContainer {
+	
+	background: #ffffff url("images/popupMenuBg.gif") repeat-x bottom left;
+	border: 1px solid #7eabcd;
+	padding: 0.45em;	
+	-webkit-border-radius: 3px;
+}
+.dj_ff3 .tundra .dijitTooltipContainer {
+	
+	-moz-border-radius: 3px;
+}	
+.tundra .dijitTooltipConnector {
+	
+	border:0px;
+	z-index: 2;
+}
+.tundra .dijitTooltipABRight .dijitTooltipConnector {
+	
+	left: auto !important;
+	right: 3px;
+}
+.tundra .dijitTooltipBelow .dijitTooltipConnector {
+	
+	top: 0px;
+	left: 3px;
+	background:url("images/tooltipConnectorUp.png") no-repeat top left;
+	width:16px;
+	height:14px;
+}
+.dj_ie6 .tundra .dijitTooltipBelow .dijitTooltipConnector {
+	
+	background-image: url("images/tooltipConnectorUp.gif");
+}
+.tundra .dijitTooltipAbove .dijitTooltipConnector {
+	
+	bottom: 0px;
+	left: 3px;
+	background:url("images/tooltipConnectorDown.png") no-repeat top left;
+	width:16px;
+	height:14px;
+}
+.dj_ie6 .tundra .dijitTooltipAbove .dijitTooltipConnector {
+	background-image: url("images/tooltipConnectorDown.gif");
+}
+.dj_ie6 .tundra .dijitTooltipAbove .dijitTooltipConnector {
+	bottom: -3px;
+}
+.tundra .dijitTooltipLeft {
+	padding-right: 14px;
+}
+.dj_ie6 .tundra .dijitTooltipLeft {
+	padding-left: 15px;
+}
+.tundra .dijitTooltipLeft .dijitTooltipConnector {
+	
+	right: 0px;
+	bottom: 3px;
+	background:url("images/tooltipConnectorRight.png") no-repeat top left;
+	width:16px;
+	height:14px;
+}
+.dj_ie6 .tundra .dijitTooltipLeft .dijitTooltipConnector {
+	background-image: url("images/tooltipConnectorRight.gif");
+}
+.tundra .dijitTooltipRight {
+	padding-left: 14px;
+}
+.tundra .dijitTooltipRight .dijitTooltipConnector {
+	
+	left: 0px;
+	bottom: 3px;
+	background:url("images/tooltipConnectorLeft.png") no-repeat top left;
+	width:16px;
+	height:14px;
+}
+.dj_ie6 .tundra .dijitTooltipRight .dijitTooltipConnector {
+	background-image: url("images/tooltipConnectorLeft.gif");
+}
+.dj_webkit .tundra .dijitPopup .dijitTooltipContainer,
+.dj_webkit .tundra .dijitPopup .dijitMenu {
+	
+	-webkit-box-shadow: 0px 5px 10px #adadad;
+}

@@ -1,0 +1,10 @@
+
+.dijitRtl .tundra .dijitEditorIcon {
+	background-image: url('images/editor_rtl.gif'); 
+}
+.dijitRtl .tundra .dijitDisabled .dijitEditorIcon {
+	background-image: url('images/editorDisabled_rtl.gif'); 
+}
+.dijitRtl .tundra .dijitToolbar .dijitToolbarSeparator {
+	background-image: url('images/editor_rtl.gif');
+}

@@ -1,0 +1,88 @@
+
+.nihilo .dijitInputField INPUT,
+.nihilo .dijitTextBox,
+.nihilo .dijitComboBox,
+.nihilo .dijitSpinner {
+	margin: 0em 0.1em;
+}
+.nihilo .dijitTextBox,
+.nihilo .dijitComboBox,
+.nihilo .dijitSpinner,
+.nihilo .dijitInlineEditor input,
+.nihilo .dijitTextArea {
+	
+	background:#fff url("../images/validationInputBg.png") repeat-x top left;
+	border:1px solid #d3d3d3;
+	line-height: normal;
+}
+.dj_ie6 .nihilo .dijitTextBox,
+.dj_ie6 .nihilo .dijitComboBox,
+.dj_ie6 .nihilo .dijitSpinner,
+.dj_ie6 .nihilo .dijitInlineEditor input,
+.dj_ie6 .nihilo .dijitTextArea {
+	background:#fff url('../images/validationInputBg.gif') repeat-x top left;
+}
+.nihilo .dijitComboBox .dijitButtonNode {
+	padding: 0 0.2em;
+}
+.nihilo .dijitComboBox .dijitButtonNode,
+.nihilo .dijitSpinner .dijitButtonNode {
+	
+	border-color: #d3d3d3;
+	border-left: 1px solid #d3d3d3;
+}
+.nihilo .dijitTextBoxDisabled,
+.nihilo .dijitComboBoxDisabled,
+.nihilo .dijitSpinnerDisabled,
+.nihilo .dijitTextAreaDisabled {
+	color: gray;
+}
+.dj_webkit .nihilo .dijitTextBoxDisabled,
+.dj_webkit .nihilo .dijitComboBoxDisabled,
+.dj_webkit .nihilo .dijitSpinnerDisabled,
+.dj_webkit .nihilo .dijitTextareaDisabled {
+	color: #eee;
+}
+.nihilo .dijitTextBoxFocused,
+.nihilo .dijitComboBoxFocused,
+.nihilo .dijitSpinnerFocused, .nihilo .dijitSpinnerUpArrowActive, .nihilo .dijitSpinnerDownArrowActive,
+.nihilo .dijitTextAreaFocused {
+	
+	border-color:#b3b3b3;
+}
+.nihilo .dijitComboBoxFocused .dijitButtonNode,
+.nihilo .dijitSpinnerFocused .dijitButtonNode,
+.nihilo .dijitSpinnerUpArrowActive .dijitButtonNode,
+.nihilo .dijitSpinnerDownArrowActive .dijitButtonNode {
+	border-left-color:#d3d3d3;
+}
+.nihilo .dijitSpinnerFocused .dijitDownArrowButton,
+.nihilo .dijitSpinnerUpArrowActive .dijitDownArrowButton,
+.nihilo .dijitSpinnerDownArrowActive .dijitDownArrowButton {
+	border-top-color:#d3d3d3;
+}
+.nihilo .dijitError {
+	border-color:#b3b3b3;
+	background-color:#f9f7ba;
+	background-image:none;
+}
+.dj_ie6 .nihilo .dijitError INPUT {
+	
+	background-color:#f9f7ba !important;
+}
+.nihilo .dijitErrorFocused {
+	background-color:#ff6;
+	background-image:none;
+}
+.dj_ie6 .nihilo .dijitErrorFocused INPUT {
+	
+	background-color:#ff6 !important;
+}
+.nihilo .dijitValidationIcon {
+	
+	width: 16px;
+	background: transparent url('../images/warning.png') no-repeat center center;
+}
+.nihilo .dijitComboBoxHighlightMatch {
+	background-color:#d3d3d3;
+}

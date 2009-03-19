@@ -1,0 +1,276 @@
+ 
+ 
+.soria .dijitTabPaneWrapper {
+	background:#fff;
+	border:1px solid #B1BADF;
+	margin: 0;
+	padding-left: 0px;
+}
+.soria .dijitTabInnerDiv {
+	padding:0px 3px 0px 0px;
+	margin: 0 0 0 4px;
+	background: url("../images/tabContainerSprite.gif") no-repeat;
+	background-position: right -400px;
+}
+.soria .dijitTab {
+	line-height:normal;
+	margin:0 2px 0 0;	
+	padding:0px;
+	background: url("../images/tabContainerSprite.gif") no-repeat 0 -300px;
+	color: #243C5F;
+	border-bottom: 1px #B1BADF solid;
+}	
+.soria .dijitTabInnerDiv .dijitTabContent {
+	padding:5px 3px 4px 4px;
+	background: url("../images/tabContainerSprite.gif") repeat-x 0 -350px;
+	position: relative;
+}
+.dijitTabSpacer {
+	font-size: 1px;
+}
+.soria .dijitTabHover {
+	color: #243C5F;
+	background: url("../images/tabContainerSprite.gif") no-repeat 0px -150px;
+}
+.soria .dijitTabHover .dijitTabInnerDiv {
+	background: url("../images/tabContainerSprite.gif") no-repeat right -250px;
+}
+.soria .dijitTabHover .dijitTabInnerDiv .dijitTabContent {
+	background: url("../images/tabContainerSprite.gif") repeat-x 0 -200px;
+}
+.soria .dijitTabChecked,
+.soria .dijitTabCloseButtonChecked
+{
+	
+	background: url("../images/tabContainerSprite.gif") no-repeat 0px -0px;
+}
+.soria .dijitTabChecked .dijitTabInnerDiv {
+	background: url("../images/tabContainerSprite.gif") no-repeat right -100px;
+}
+.soria .dijitTabChecked .dijitTabInnerDiv .dijitTabContent {
+	background: url("../images/tabContainerSprite.gif") repeat-x 0 -50px;
+	color: #243C5F !important;
+}
+.soria .dijitTabContainerTabListNested {
+	background: #F0F4FC;
+	background: #D9E9F9;
+	border: none;
+}
+.soria .dijitTabContainerTabListNested .dijitTab {
+	background: none;
+	border: none;
+	top: 0px;	
+}
+.soria .dijitTabContainerTabListNested .dijitTab .dijitTabInnerDiv,
+.soria .dijitTabContainerTabListNested .dijitTab .dijitTabContent {
+	background: none;
+}
+.soria .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent .tabLabel {
+	text-decoration: underline;
+}
+.soria .dijitTabContainerTabListNested .dijitTabChecked .tabLabel {
+	text-decoration: underline;
+	font-weight: bold;
+}
+.soria .dijitTabContainerSpacerNested .dijitTabSpacer {
+	
+	height: 0px;
+}
+.soria .dijitTabPaneWrapperNested {
+	border: none;	
+}
+.soria .dijitTab .closeImage {
+	width: 15px;
+	height: 15px;
+	background: url("../images/spriteRoundedIconsSmall.png") no-repeat -60px top;
+}
+.dj_ie6 .dijitTab .dijitClosable .closeImage {
+	background: url("../images/spriteRoundedIconsSmall.gif") no-repeat -60px top;
+}
+.soria .dijitTab .closeButton-hover .closeImage {
+	background: url("../images/spriteRoundedIconsSmall.png") no-repeat -60px -15px;
+}
+.dj_ie6 .soria .dijitTab .closeButton-hover .closeImage {
+	background: url("../images/spriteRoundedIconsSmall.gif") no-repeat -60px -15px;
+}
+.soria .dijitTab .dijitTabButtonSpacer {
+	height: 15px;
+	width: 1px;
+}
+.soria .dijitTabContainerTop-tabs {
+	margin-bottom: -1px;
+	border-color: #ccc;
+	padding-left: 3px;
+}
+.soria .dijitTabContainerTop-container {
+	border-top: none;
+}
+.soria .dijitTabContainerTop-tabs .dijitTabChecked {
+	border-bottom-color: #94b4e6;
+}
+.soria .dijitTabContainerTopStrip {
+	border: 1px solid #B1BADF;
+	padding-top: 2px;
+	padding-left: 3px;
+}
+.soria .dijitTabContainerTopStrip {
+	background: #F0F4FC;
+}
+.soria .dijitTabContainerBottom-tabs {
+	margin-top: -1px;
+	border-color: #ccc;
+	padding-left: 3px;
+}
+.soria .dijitTabContainerBottom-container {
+	border-bottom: none;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTab {
+	border-bottom: none;
+	border-top: 1px solid #B1BADF;
+	background: url("../images/tabBottomEnabledSpriteLR.gif") no-repeat bottom left;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabChecked {
+	border-top-color:#94b4e6;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabInnerDiv .dijitTabContent {
+	padding-top: 4px;
+	padding-bottom: 5px;
+	background: url("../images/tabBottomEnabledC.gif") repeat-x bottom left;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabInnerDiv {
+	background: url("../images/tabBottomEnabledSpriteLR.gif") no-repeat bottom right;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabHover {
+	color: #243C5F;
+	background: url("../images/tabBottomHoverSpriteLR.gif") no-repeat bottom left;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabHover .dijitTabInnerDiv {
+	background: url("../images/tabBottomHoverSpriteLR.gif") no-repeat bottom right;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabHover .dijitTabInnerDiv .dijitTabContent {
+	background: url("../images/tabBottomHoverC.gif") repeat-x bottom left;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabChecked,
+.soria .dijitTabContainerBottom-tabs .dijitTabCloseButtonChecked
+{
+	
+	background: url("../images/tabBottomActiveSpriteLR.gif") no-repeat bottom left;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabInnerDiv {
+	background: url("../images/tabBottomActiveSpriteLR.gif") no-repeat bottom right;
+}
+.soria .dijitTabContainerBottom-tabs .dijitTabChecked .dijitTabInnerDiv .dijitTabContent {
+	background: url("../images/tabBottomActiveC.gif") repeat-x bottom left;
+}
+.soria .dijitTabContainerBottomStrip {
+	padding-bottom: 2px;
+	padding-left: 3px;	
+	border: 1px solid #B1BADF;
+}
+.soria .dijitTabContainerBottomStrip {
+	background: #F0F4FC;
+}
+.soria .dijitTabContainerBottom-spacer,
+.soria .dijitTabContainerTop-spacer {
+	height: 2px;
+	border: 1px solid #8ba0bd;
+	background: #94b4e6;
+}
+.soria .dijitTabContainerRight-tabs {
+	margin-left: -1px;
+	border-color: #ccc;
+	padding-top: 3px;
+}
+.soria .dijitTabContainerRight-container {
+	border-right: none;
+}
+.soria .dijitTabContainerRight-tabs .dijitTab {
+	border-bottom: none;
+	border-left: 1px solid #B1BADF;
+	border-bottom: 1px solid #B1BADF !important;
+}
+.dj_ie .soria .dijitTabContainerRight-tabs .dijitTabInnerDiv {
+	border-bottom: solid #fff 1px;
+}
+.soria .dijitTabContainerRight-tabs .dijitTabChecked {
+	border-left-color: #94b4e6;
+}
+.soria .dijitTabContainerRight-tabs .dijitTabChecked {
+	background: url("../images/tabRightChecked.gif") no-repeat left top !important;
+}
+.dj_ie .soria .dijitTabContainerRight-tabs .dijitTabChecked .dijitTabInnerDiv,
+.dj_ie .soria .dijitTabContainerRight-tabs .dijitTabCheckedHover .dijitTabInnerDiv {
+	border-bottom: solid #efefef 1px;
+}
+.soria .dijitTabContainerRight-tabs .dijitTab {
+	background: url("../images/tabContainerSprite.gif") no-repeat left -350px;
+}
+.soria .dijitTabContainerRight-tabs .dijitTabHover .dijitTab {
+	background: url("../images/tabContainerSprite.gif") no-repeat left -200px;
+}
+.soria .dijitTabContainerRightStrip {
+	padding-right: 2px;
+	padding-top: 3px;	
+	border: 1px solid #B1BADF;
+}
+.soria .dijitTabContainerRightStrip {
+	background: #F0F4FC;
+}
+.soria .dijitTabContainerLeft-tabs {
+	margin-right: -1px;
+	border-color: #ccc;
+	padding-top: 3px;
+}
+.soria .dijitTabContainerLeft-container {
+	border-left: none;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTab {
+	border-right: 1px solid #B1BADF;
+	border-bottom: 1px solid #B1BADF;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTabChecked {
+	border-right: 1px solid #94b4e6;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTabInnerDiv {
+	background: url("../images/tabContainerSprite.gif") no-repeat right -350px;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTabHover .dijitTabInnerDiv {
+	background: url("../images/tabContainerSprite.gif") no-repeat right -200px;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabInnerDiv,
+.soria .dijitTabContainerLeft-tabs .dijitTabCheckedHover .dijitTabInnerDiv {
+	background: url("../images/tabLeftChecked.gif") no-repeat right top;
+}
+.dj_ie .soria .dijitTabContainerLeft-tabs .dijitTabChecked .dijitTabInnerDiv,
+.dj_ie .soria .dijitTabContainerLeft-tabs .dijitTabCheckedHover .dijitTabInnerDiv {
+	border-bottom: solid #efefef 1px;
+}
+.dj_ie .soria .dijitTabContainerLeft-tabs .dijitTabInnerDiv {
+	border-bottom: solid #fff 1px;
+}
+.soria .dijitTabContainerLeftStrip {
+	padding-left: 2px;
+	padding-top: 3px;	
+	border: 1px solid #B1BADF;
+}
+.soria .dijitTabContainerLeftStrip {
+	background: #F0F4FC;
+}
+.soria .dijitTabContainerLeft-tabs .dijitTab,
+.soria .dijitTabContainerRight-tabs .dijitTab {
+	margin-right:auto;
+	margin-bottom:2px;	
+}
+.soria .dijitTabContainerLeft-spacer,
+.soria .dijitTabContainerRight-spacer {
+	width: 2px;
+	border: 1px solid #8ba0bd;
+	background: #94b4e6;
+}
+.soria .dijitTabContainerTop-dijitContentPane .dijitTabContainerTop-tabs {
+	border-left: 0px solid #ccc;
+	border-top: 0px solid #ccc;
+	border-right: 0px solid #ccc;
+	padding-top: 0px;
+	padding-left: 0px;	
+}
