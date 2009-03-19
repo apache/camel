@@ -1,0 +1,28 @@
+-------------------------------------------------------------------------------
+Dojo Offline
+-------------------------------------------------------------------------------
+Release date: May 2007 (Release date used as version)
+-------------------------------------------------------------------------------
+Project state:
+experimental
+-------------------------------------------------------------------------------
+Credits
+	Brad Neuberg
+	SitePen
+-------------------------------------------------------------------------------
+Project description
+Toolkit to help build offline web applications; uses Google Gears under the covers.
+-------------------------------------------------------------------------------
+Dependencies:
+Dojo Storage, Dojo Crypto, Dojo Core, Google Gears
+-------------------------------------------------------------------------------
+Documentation
+
+See http://docs.google.com/View?docid=dhkhksk4_8gdp9gr for documentation and a t
+utorial on using Dojo Offline.
+
+-------------------------------------------------------------------------------
+Installation instructions
+
+See full documentation at URL given right above.
+-------------------------------------------------------------------------------
