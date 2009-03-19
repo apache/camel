@@ -1,0 +1,44 @@
+-------------------------------------------------------------------------------
+dojox.editor
+-------------------------------------------------------------------------------
+Version 0.5
+Release date: 7/10/2008
+-------------------------------------------------------------------------------
+Project state:
+experimental
+-------------------------------------------------------------------------------
+Credits
+	Mike Wilcox 	- Author
+    Dustin Machi 	- Technical Assistance
+-------------------------------------------------------------------------------
+Project description
+
+Space for extensions and additional plugins for dijit.Editor 
+-------------------------------------------------------------------------------
+Dependencies:
+
+dijit
+dojox.form
+
+-------------------------------------------------------------------------------
+Documentation
+
+The plugins directory contains extensions which work with dijit.Editor.
+
+-------------------------------------------------------------------------------
+Plugin Installation instructions
+
+Get dojo and dijit from svn. Include the Editor and plugins in your page:
+
+dojo.require("dijit.Editor");
+dojo.require("dojox.editor.plugins.TablePlugins");
+dojo.require("dojox.editor.plugins.UploadImage");
+
+And the style sheet:
+
+<link href="[path]dojox/editor/plugins/resources/editorPlugins.css" type="text/css" rel="stylesheet" />
+<link href="[path]dojox/form/resources/FileInput.css" type="text/css" rel="stylesheet" />
+
+See tests for examples:
+dojox/editor/plugins/tests/editorTablePlugs.html
+dojox/editor/plugins/tests/editorUploadPlug.html

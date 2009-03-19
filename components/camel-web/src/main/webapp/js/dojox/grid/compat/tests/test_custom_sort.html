@@ -1,0 +1,86 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>Custom Sort Test - dojox.Grid</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<style type="text/css">
+		@import "../../_grid/Grid.css";
+		body {
+			font-size: 0.9em;
+			font-family: Geneva, Arial, Helvetica, sans-serif;
+		}
+		.heading {
+			font-weight: bold;
+			padding-bottom: 0.25em;
+		}
+				
+		#grid {
+			border: 1px solid #333;
+			width: 35em;
+			height: 30em;
+		}
+	</style>
+	<script type="text/javascript" src="../../../../dojo/dojo.js" djConfig="isDebug:false, parseOnLoad: true"></script>
+	<!--<script type="text/javascript">
+		dojo.require("dojox.grid.Grid");
+		dojo.require("dojo.parser");
+	</script>-->
+	<!-- Debugging -->
+	<script type="text/javascript" src="../_grid/lib.js"></script>
+	<script type="text/javascript" src="../_grid/drag.js"></script>
+	<script type="text/javascript" src="../_grid/scroller.js"></script>
+	<script type="text/javascript" src="../_grid/builder.js"></script>
+	<script type="text/javascript" src="../_grid/cell.js"></script>
+	<script type="text/javascript" src="../_grid/layout.js"></script>
+	<script type="text/javascript" src="../_grid/rows.js"></script>
+	<script type="text/javascript" src="../_grid/focus.js"></script>
+	<script type="text/javascript" src="../_grid/selection.js"></script>
+	<script type="text/javascript" src="../_grid/edit.js"></script>
+	<script type="text/javascript" src="../_grid/view.js"></script>
+	<script type="text/javascript" src="../_grid/views.js"></script>
+	<script type="text/javascript" src="../_grid/rowbar.js"></script>
+	<script type="text/javascript" src="../_grid/publicEvents.js"></script>
+	<script type="text/javascript" src="../VirtualGrid.js"></script>
+	<script type="text/javascript" src="../_data/fields.js"></script>
+	<script type="text/javascript" src="../_data/model.js"></script>
+	<script type="text/javascript" src="../_data/editors.js"></script>
+	<script type="text/javascript" src="../Grid.js"></script>
+	<script type="text/javascript" src="support/test_data.js"></script>
+	<script type="text/javascript">
+		// here is a custom compare function that can drive the sorting engine
+		// of course, this is only valid for client-side data sets
+		compare2ndLetter = function(inA, inB) {
+			// sort on the second letter
+			// return <0, 0, >0
+			return inA.charCodeAt(1) - inB.charCodeAt(1);
+		}
+		
+		// custom compare functions for sorting belong to the data model
+		// data model keeps this kind of metadata in a object called 'fields'
+		
+		// you can install the custom compare function directly into fields
+		// model.fields.get(3).compare = compare2ndLetter;
+		
+		// or you could setup fields when instantiating the model
+		model = new dojox.grid.data.Table([{}, {}, {}, {compare: compare2ndLetter}], data);
+		
+		// a grid view is a group of columns
+		var view1 = {
+			cells: [[
+				{name: 'Column 0'}, {name: 'Column 1'}, {name: 'Column 2'}, {name: 'Column 3', width: "auto"}, {name: 'Column 4'}
+			],[
+				{name: 'Column 5'}, {name: 'Column 6'}, {name: 'Column 7'}, {name: 'Column 8', field: 3, colSpan: 2}
+			]]
+		};
+		// a grid layout is an array of views.
+		var layout = [ view1 ];
+</script>
+</head>
+<body>
+<div class="heading">dojox.Grid Custom Sort Test</div>
+<br />
+<b>Column 3</b>'s data field has a custom sorter that sorts by the 2nd letter in the string.
+<br /><br />
+<div id="grid" dojoType="dojox.Grid" model="model" structure="layout"></div>
+</body>
+</html>

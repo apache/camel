@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html debug="true">
+<head>
+	<title>dojox.Grid Test: Mysql Table Editing</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<style>
+		@import "../../_grid/tundraGrid.css";
+		@import "../../../../dojo/resources/dojo.css";
+		@import "../../../../dijit/themes/tundra/tundra.css";
+		@import "../../../../dijit/tests/css/dijitTests.css";
+
+		.grid {
+			height: 30em;
+		}
+	</style>
+
+	<script type="text/javascript" src="../../../../dojo/dojo.js" djConfig="isDebug:true, parseOnLoad: true"></script>
+	<script type="text/javascript" src="../../../../dijit/tests/_testCommon.js"></script>
+	<!--<script type="text/javascript">
+		dojo.require("dojox.grid.Grid");
+		dojo.require("dojox.grid.tests.databaseModel");
+		dojo.require("dojo.parser");
+	</script>-->
+	<!-- Debugging -->
+	<script type="text/javascript" src="../_grid/lib.js"></script>
+	<script type="text/javascript" src="../_grid/drag.js"></script>
+	<script type="text/javascript" src="../_grid/scroller.js"></script>
+	<script type="text/javascript" src="../_grid/builder.js"></script>
+	<script type="text/javascript" src="../_grid/cell.js"></script>
+	<script type="text/javascript" src="../_grid/layout.js"></script>
+	<script type="text/javascript" src="../_grid/rows.js"></script>
+	<script type="text/javascript" src="../_grid/focus.js"></script>
+	<script type="text/javascript" src="../_grid/selection.js"></script>
+	<script type="text/javascript" src="../_grid/edit.js"></script>
+	<script type="text/javascript" src="../_grid/view.js"></script>
+	<script type="text/javascript" src="../_grid/views.js"></script>
+	<script type="text/javascript" src="../_grid/rowbar.js"></script>
+	<script type="text/javascript" src="../_grid/publicEvents.js"></script>
+	<script type="text/javascript" src="../VirtualGrid.js"></script>
+	<script type="text/javascript" src="../_data/fields.js"></script>
+	<script type="text/javascript" src="../_data/model.js"></script>
+	<script type="text/javascript" src="../_data/editors.js"></script>
+	<script type="text/javascript" src="../_data/dijitEditors.js"></script>
+	<script type="text/javascript" src="../Grid.js"></script>
+	<script type="text/javascript" src="databaseModel.js"></script>
+	<script type="text/javascript">
+		var model = new dojox.grid.data.DbTable(null, null, 'support/data.php', "test", "testtbl");
+		// simple display of row info; based on model observing.
+		modelChange = function() {
+			dojo.byId('rowCount').innerHTML = model.count + ' row(s)';
+		}
+		model.observer(this);
+		
+		// yay, let's deal with MySql date types, at least a little bit...
+		// NOTE: supports only default date formatting YYYY-MM-DD HH:MM:SS or YY-MM-DD HH:MM:SS
+		mysqlDateToJsDate = function(inMysqlDateTime, inDateDelim, inTimeDelim) {
+			var dt = inMysqlDateTime.split(' '), d = dt[0], t = dt[1], r;
+			d = d&&d.split(inDateDelim||'-');
+			t = t&&t.split(inTimeDelim||':');
+			if (d && d.length == 3) {
+				r = new Date();
+				r.setYear(d[0]);
+				r.setMonth(parseInt(d[1])-1);
+				r.setDate(d[2]);
+			}
+			if (t && t.length == 3) {
+				r = r || new Date();
+				r.setHours(t[0]);
+				r.setMinutes(t[1]);
+				r.setSeconds(t[2]);
+			}
+			return r || new Date(inMysqlDateTime);
+		}
+		
+		jsDateToMySqlDate = function(inDate) {
+			var
+				d = new Date(inDate),
+				y = d.getFullYear(),
+				m = dojo.string.pad(d.getMonth() + 1),
+				dd = dojo.string.pad(d.getDate())
+			return dojo.string.substitute("${0}-${1}-${2}",[y, m, dd]);
+		};
+		
+		// custom simple MySql date formatter
+		formatMySqlDate = function(inDatum) {
+			return inDatum != dojox.grid.na ? dojo.date.locale.format(mysqlDateToJsDate(inDatum), this.constraint) : dojox.grid.na;
+		}
+		
+		// custom simple MySql date editor
+		dojo.declare("mySqlDateEditor", dojox.grid.editors.DateTextBox, {
+			format: function(inDatum, inRowIndex){
+				inDatum = mysqlDateToJsDate(inDatum);
+				return this.inherited(arguments, [inDatum, inRowIndex]);
+			},
+			getValue: function(inRowIndex){
+				var v = this.editor.getValue(), fv = jsDateToMySqlDate(v);
+				return fv;
+			}
+		});
+		
+		var gridLayout = [ 
+			{ type: "dojox.GridRowView", width: "20px" },
+			{
+			defaultCell: { width: 6, editor: dojox.grid.editors.Dijit }, 
+			cells: [[
+				{ name: 'Id', styles: 'text-align: right;', editorClass: "dijit.form.NumberTextBox" }, 
+				{ name: 'Name', width: 20},
+				{ name: 'Message', styles: 'text-align: right;'},
+				{ name: 'Date', 
+					editor: mySqlDateEditor, 
+					formatter: formatMySqlDate, 
+					constraint: {selector: "date"}, 
+					width: 10, 
+					styles: 'text-align:right;'}
+			]]}
+		];
+
+		function waitMessage() {
+			alert('Edit in progress, please wait.');
+		}
+		
+		function getDefaultRow() {
+			return ['', '', '', jsDateToMySqlDate(new Date())];
+		}
+		function addRow() {
+			if(model.canModify()){
+				grid.addRow(getDefaultRow());
+			}else{
+				waitMessage();
+			}
+		}
+		
+		function removeSelected(){
+			if(model.canModify()){
+				grid.removeSelectedRows();
+			}else{
+				waitMessage();
+			}
+		}
+	</script>
+</head>
+<body class="tundra">
+	<h1>dojox.Grid Test: Mysql Table Editing</h1>
+	<br>
+	<button onclick="addRow()">Add Row</button>&nbsp;&nbsp;
+	<button onclick="removeSelected()">Remove Selected</button>&nbsp;&nbsp;
+	<button onclick="grid.edit.apply()">Apply Edit</button>&nbsp;&nbsp;
+	<button onclick="grid.edit.cancel()">Cancel Edit</button>&nbsp;&nbsp;
+	<button onclick="grid.refresh()">Refresh</button>
+	<br><br>
+	<div jsId="grid" class="grid" structure="gridLayout" dojoType="dojox.Grid" model="model" singleClickEdit="true" autoWidth="true"></div>
+	<div id="rowCount"></div>
+	<p>Note: This test requires MySql and PHP and works with the database table available in support/testtbl.sql.</p>
+</body>
+</html>
