@@ -1,0 +1,68 @@
+ 
+ 
+.soria .dijitTitlePaneTitle {
+	background: #cccccc;
+	background:#fff url("images/titleBar.png") repeat-x top left;
+	border:1px solid #bfbfbf;
+	padding:3px 4px;
+	cursor: pointer;
+	font-size: 0.9em;
+	font-weight: bold;
+	color: #6d6d6d;
+}
+.soria .dijitTitlePaneTitle-hover {
+	background: #f9f9f9 url("images/accordionItemActive.png") top repeat-x;
+}
+.soria .dijitTitlePaneTitle * {
+	vertical-align: middle;
+}
+.soria .dijitTitlePane .dijitArrowNode {
+	width:15px;
+	height:15px;
+}
+.soria .dijitTitlePaneFocused .dijitTitlePaneTextNode {
+	color: #243C5F;
+}
+.soria .dijitOpen .dijitTitlePaneTextNode {
+	color: #243C5F;
+}
+.soria .dijitTitlePane .dijitClosed .dijitArrowNode {
+	background: url('images/spriteRoundedIconsSmall.png') no-repeat -30px top;
+}
+.dj_ie6 .soria .dijitTitlePane .dijitClosed .dijitArrowNode {
+	background:url('images/spriteRoundedIconsSmall.gif') no-repeat -30px top;
+}
+.soria .dijitTitlePane .dijitOpen .dijitArrowNode {
+	background:url('images/spriteRoundedIconsSmall.png') no-repeat -15px top;
+}
+.dj_ie6 .soria .dijitTitlePane .dijitOpen .dijitArrowNode {
+	background:url('images/spriteRoundedIconsSmall.gif') no-repeat -15px top;
+}
+.soria .dijitTitlePane .dijitArrowNodeInner {
+	display:none;
+}
+.dijit_a11y .dijitTitlePane .dijitArrowNodeInner {
+	display:inline !important;
+	font-family:monospace;
+	cursor: pointer;
+	padding-bottom:.2em;
+}
+.dijit_a11y .dijitTitlePane .dijitArrowNode {
+	display:none;
+}
+.soria .dijitTitlePaneContentOuter {
+	background: #ffffff;
+	border:1px solid #bfbfbf;
+	border-top: 0px solid #3d3d3d;	
+}
+.soria .dijitTitlePaneContentInner {
+	padding:10px;
+}
+.dj_ie6 .soria .dijitTitlePaneContentOuter,
+.dj_ie6 .soria .dijitTitlePane .dijitTitlePaneTitle {
+	zoom: 1;
+}
+.soria .dijitTitlePaneTextNode {
+	margin-left: 4px;
+	margin-right: 4px;
+}

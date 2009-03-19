@@ -1,0 +1,6 @@
+.dijitRtl .tundra .dijitComboBox .dijitButtonNode,
+.dijitRtl  .dijitSpinner .dijitButtonNode {
+	
+	border-color: #9b9b9b;
+	border-width: 0px 1px 0px 0px;
+}

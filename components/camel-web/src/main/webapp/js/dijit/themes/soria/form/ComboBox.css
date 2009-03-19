@@ -1,0 +1,10 @@
+.soria .dijitComboBox .dijitArrowButton .dijitArrowButtonInner {
+	background:url("../images/spriteArrows.png") no-repeat left center;
+	width: 11px;
+}
+.dj_ie6 .soria .dijitComboBox .dijitArrowButton .dijitArrowButtonInner {
+	background:url("../images/spriteArrows.gif") no-repeat left center;
+}
+.soria .dijitComboBoxHover .dijitArrowButtonInner {
+	
+}

@@ -1,0 +1,119 @@
+
+.tundra .dijitInputField INPUT,
+.tundra .dijitTextBox,
+.tundra .dijitComboBox,
+.tundra .dijitSpinner {
+	margin: 0em 0.1em;
+}
+.tundra .dijitTextBox,
+.tundra .dijitComboBox,
+.tundra .dijitSpinner,
+.tundra .dijitTextArea {
+	font-family: sans-serif;
+	font-size: 100%;
+}
+.tundra .dijitTextArea {
+	padding: 3px;
+}
+.tundra .dijitTextBox,
+.tundra .dijitComboBox,
+.tundra .dijitSpinner,
+.tundra .dijitTextArea,
+.tundra .dijitInlineEditor input {
+	
+	background:#fff url("../images/validationInputBg.png") repeat-x top left;
+	#background:#fff url('../images/validationInputBg.gif') repeat-x top left;
+	border:1px solid #b3b3b3;
+	line-height: normal;
+}
+.tundra .dijitTextBoxDisabled,
+.tundra .dijitComboBoxDisabled,
+.tundra .dijitSpinnerDisabled,
+.tundra .dijitTextAreaDisabled {
+	color: gray;
+}
+.dj_webkit .tundra .dijitTextBoxDisabled,
+.dj_webkit .tundra .dijitComboBoxDisabled,
+.dj_webkit .tundra .dijitSpinnerDisabled,
+.dj_webkit .tundra .dijitTextAreaDisabled {
+	color: #eee;
+}
+.tundra .dijitComboBox .dijitInputField {
+	padding: 1px 0;
+}
+.tundra .dijitComboBox .dijitButtonNode {
+	padding: 1px 0.2em;
+}
+.tundra .dijitComboBox .dijitButtonNode,
+.tundra .dijitSpinner .dijitButtonNode {
+	
+	border-color: #9b9b9b;
+	border-width: 0px 0px 0px 1px;
+	border-style: solid;
+}
+.tundra .dijitTextBoxFocused,
+.tundra .dijitComboBoxFocused,
+.tundra .dijitSpinnerFocused, .tundra .dijitSpinnerUpArrowActive, .tundra .dijitSpinnerDownArrowActive,
+.tundra .dijitTextAreaFocused {
+	
+	border-color:#406b9b;
+}
+.tundra .dijitComboBoxFocused .dijitButtonNode,
+.tundra .dijitSpinnerFocused .dijitButtonNode,
+.tundra .dijitSpinnerUpArrowActive .dijitButtonNode,
+.tundra .dijitSpinnerDownArrowActive .dijitButtonNode {
+	border-left-color:#366dba;
+}
+.tundra .dijitSpinnerFocused .dijitDownArrowButton,
+.tundra .dijitSpinnerUpArrowActive .dijitDownArrowButton,
+.tundra .dijitSpinnerDownArrowActive .dijitDownArrowButton {
+	border-top-color:#366dba;
+}
+.tundra .dijitError {
+	background-color:#f9f7ba;
+	background-image:none;
+}
+.dj_ie6 .tundra .dijitError INPUT {
+	
+	background-color:#f9f7ba !important;
+}
+.tundra .dijitErrorFocused {
+	background-color:#f9f999;
+	background-image:none;
+}
+.dj_ie6 .tundra .dijitErrorFocused INPUT {
+	
+	background-color:#f9f999 !important;
+}
+.tundra .dijitValidationIcon {
+	
+	width: 16px;
+	background: transparent url('../images/warning.png') no-repeat center center;
+}
+.tundra .dijitInlineValue {
+	
+	padding:3px;
+	margin:4px;
+}
+.tundra .dijitInlineEditor {
+	
+	display: inline-block;
+	display: -moz-inline-stack;
+	#display:inline;
+	
+}
+.dijitInlineEditor .saveButton,
+.dijitInlineEditor .cancelButton {
+	margin:3px 3px 3px 0px;
+}
+.RichTextEditable {
+	border:1px solid #bfbfbf;
+	border-top:0;
+}
+.tundra .dijitComboBoxHighlightMatch {
+	background-color:#a5beda;
+}
+.tundra .dijitFocusedLabel {
+	
+	outline: 1px dotted #666666;
+}

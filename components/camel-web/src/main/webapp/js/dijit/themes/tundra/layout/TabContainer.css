@@ -1,0 +1,174 @@
+
+.tundra .dijitTabPaneWrapper {
+	background:#fff;
+	border:1px solid #ccc;
+	margin: 0;
+	padding: 0;
+}
+.tundra .dijitTab {
+	line-height:normal;
+	margin-right:4px;	
+	padding:0px;
+	border:1px solid #ccc;
+	background:#e2e2e2 url("../images/tabEnabled.png") repeat-x;
+}
+.tundra .dijitTabInnerDiv {
+	padding:6px 8px 5px 9px;
+}
+.dijitTabSpacer {
+	font-size: 1px;
+}
+.tundra .dijitTabChecked {
+	
+	background-color:#fff;
+	border-color: #ccc;
+	background-image:none;
+}
+.tundra .dijitTabHover {
+	color: #243C5F;
+	border-top-color:#92a0b3;
+	border-left-color:#92a0b3;
+	border-right-color:#92a0b3;
+	background:#e2e2e2 url("../images/tabHover.gif") repeat-x;
+}
+.tundra .dijitTabCheckedHover {
+	color: inherit;
+	border:1px solid #ccc;
+	background:#fff;
+}
+.tundra .dijitTab .dijitClosable .closeImage {
+	background: url("../images/tabClose.png") no-repeat right top;
+	width: 12px;
+	height: 12px;
+}
+.tundra .dijitTab .dijitTabButtonSpacer {
+	
+	height: 12px;
+	width: 1px;
+}
+.tundra .dijitTabContainerTabListNested .dijitTab {
+	background: none;
+	border: none;
+	top: 0px;		 
+}
+.tundra .dijitTabContainerTabListNested .dijitTab .dijitTabContent {
+}
+.tundra .dijitTabContainerTabListNested .dijitTabHover .dijitTabContent .tabLabel {
+	text-decoration: underline;
+}
+.tundra .dijitTabContainerTabListNested .dijitTabChecked .dijitTabContent .tabLabel {
+	text-decoration: underline;
+	font-weight: bold;
+	
+}
+.tundra .dijitTabContainer .dijitTabPaneWrapperNested {
+	border: none;	
+}
+.tundra .dijitTab .closeImage {
+	background-image : url("../images/tabClose.png");
+}
+.dj_ie6 .tundra .dijitTab .closeImage {
+	background-image : url("../images/tabClose.gif");
+}
+.tundra .dijitTab .closeButton-hover .closeImage {
+	background-image : url("../images/tabCloseHover.png");
+}
+.dj_ie6 .tundra .dijitTab .closeButton-hover .closeImage {
+	background-image : url("../images/tabCloseHover.gif");
+}
+.tundra .dijitTabContainerTop-tabs {
+	margin-bottom: -1px;
+	border-color: #ccc;
+}
+.tundra .dijitTabContainerTop-container {
+	border-top: none;
+}
+.tundra .dijitTabContainerTop-tabs .dijitTabChecked {
+	border-bottom-color:white;
+}
+.tundra .dijitTabContainerTopStrip {
+	border: 1px solid #ccc;
+	padding-top: 2px;
+	padding-left: 3px;
+}
+.tundra .dijitTabContainerTopStrip {
+	background: #f2f2f2;
+}
+.tundra .dijitTabContainerBottom-tabs {
+	margin-top: -1px;
+	border-color: #ccc;
+}
+.tundra .dijitTabContainerBottom-container {
+	border-bottom: none;
+}
+.tundra .dijitTabContainerBottom-tabs .dijitTabChecked {
+	border-top-color:white;
+}
+.tundra .dijitTabContainerBottomStrip {
+	padding-bottom: 2px;
+	padding-left: 3px;	
+	border: 1px solid #ccc;
+}
+.tundra .dijitTabContainerBottomStrip {
+	background: #f2f2f2;
+}
+.tundra .dijitTabContainerBottom-spacer,
+.tundra .dijitTabContainerTop-spacer {
+	height: 0px;
+	border-top: 1px solid #ccc;
+	background: #fff;
+}
+.tundra .dijitTabContainerRight-tabs {
+	margin-left: -1px;
+	border-color: #ccc;
+}
+.tundra .dijitTabContainerRight-container {
+	border-right: none;
+}
+.tundra .dijitTabContainerRight-tabs .dijitTabChecked {
+	border-left-color:white;
+}
+.tundra .dijitTabContainerRightStrip {
+	padding-right: 2px;
+	padding-top: 3px;	
+	border: 1px solid #ccc;
+}
+.tundra .dijitTabContainerRightStrip {
+	background: #f2f2f2;
+}
+.tundra .dijitTabContainerLeft-tabs {
+	margin-right: -1px;
+	border-color: #ccc;
+}
+.tundra .dijitTabContainerLeft-container {
+	border-left: none;
+}
+.tundra .dijitTabContainerLeft-tabs .dijitTabChecked {
+	border-right-color:white;
+}
+.tundra .dijitTabContainerLeftStrip {
+	padding-left: 2px;
+	padding-top: 3px;	
+	border: 1px solid #ccc;
+}
+.tundra .dijitTabContainerLeftStrip {
+	background: #f2f2f2;
+}
+.tundra .dijitTabContainerLeft-tabs .dijitTab,
+.tundra .dijitTabContainerRight-tabs .dijitTab {
+	margin-right:0px;
+	margin-bottom:4px;	
+}
+.tundra .dijitTabContainerLeft-spacer,
+.tundra .dijitTabContainerRight-spacer {
+	width: 0px;
+	border-left: 1px solid #ccc;
+	background: #fff;
+}
+.tundra .dijitTabContainerTop-dijitContentPane .dijitTabContainerTop-tabs {
+	border-left: 0px solid #ccc;
+	border-top: 0px solid #ccc;
+	border-right: 0px solid #ccc;
+	padding-top: 0px;
+	padding-left: 0px;	
+}

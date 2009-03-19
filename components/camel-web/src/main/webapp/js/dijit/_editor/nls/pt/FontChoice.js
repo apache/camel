@@ -1,0 +1,1 @@
+({"1":"xx-small","2":"x-small","formatBlock":"Formato","3":"small","4":"medium","5":"large","6":"x-large","7":"xx-large ","fantasy":"fantasy","serif":"serif","p":"Parágrafo","pre":"Pré-formatado","sans-serif":"sans-serif","fontName":"Fonte","h1":"Título","h2":"Subcabeçalho","h3":"Sub-subcabeçalho","monospace":"monoespaçado","fontSize":"Tamanho","cursive":"cursive"})

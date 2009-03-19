@@ -1,0 +1,13 @@
+
+.dijitRtl .tundra .dijitTreeContainer .dijitTreeNode {
+    background-image : none;
+}
+.dijitRtl .tundra .dijitTreeContainer .dijitTreeExpandoOpened {
+	background-image: url('images/treeExpand_minus_rtl.gif');
+}
+.dijitRtl .tundra .dijitTreeContainer .dijitTreeExpandoClosed {
+	background-image: url('images/treeExpand_plus_rtl.gif');
+}
+.dijitRtl .tundra .dijitTreeContainer .dijitTreeExpandoLeaf {
+	background-image: none;
+}
