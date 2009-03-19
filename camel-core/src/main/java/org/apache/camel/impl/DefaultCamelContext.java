@@ -16,15 +16,6 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import javax.naming.Context;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
@@ -64,11 +55,21 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionInjector;
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
 import org.apache.camel.util.SystemHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
+
+import javax.naming.Context;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.Callable;
 
 /**
  * Represents the context used to configure routes and the policies to use.
@@ -400,7 +401,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (routes == null) {
             routes = new ArrayList<Route>();
         }
-        
+
         // lets return a copy of the collection as objects are removed later
         // when services are stopped
         return new ArrayList<Route>(routes);
@@ -448,6 +449,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         for (RouteDefinition routeDefinition : routeDefinitions) {
             routeDefinition.setCamelContext(this);
+            removeRouteDefinition(routeDefinition);
         }
         this.routeDefinitions.addAll(routeDefinitions);
         if (shouldStartRoutes()) {
@@ -455,12 +457,35 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
+    /**
+     * Removes the route definition with the given key.
+     *
+     * @return true if one or more routes was removed
+     */
+    public boolean removeRouteDefinition(String key) {
+        boolean answer = false;
+        Iterator<RouteDefinition> iter = routeDefinitions.iterator();
+        while (iter.hasNext()) {
+            RouteDefinition route = iter.next();
+            if (route.idOrCreate().equals(key)) {
+                iter.remove();
+                answer = true;
+            }
+        }
+        return answer;
+    }
+
     public void removeRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
         this.routeDefinitions.removeAll(routeDefinitions);
         for (RouteDefinition routeDefinition : routeDefinitions) {
-            stopRoute(routeDefinition);
+            removeRouteDefinition(routeDefinition);
         }
+    }
 
+    public void removeRouteDefinition(RouteDefinition routeDefinition) throws Exception {
+        String key = routeDefinition.idOrCreate();
+        stopRoute(key);
+        removeRouteDefinition(key);
     }
 
     public ServiceStatus getRouteStatus(RouteDefinition route) {
@@ -501,7 +526,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
 
-
     /**
      * Adds a service, starting it so that it will be stopped with this context
      */
@@ -524,7 +548,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
             // check if the language is singleton, if so return the shared instance
             if (answer != null && answer instanceof IsSingleton) {
-                boolean singleton = ((IsSingleton)answer).isSingleton();
+                boolean singleton = ((IsSingleton) answer).isSingleton();
                 if (singleton) {
                     return answer;
                 }
@@ -923,7 +947,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     public void setProperties(Map<String, String> properties) {
-        this.properties = properties;        
+        this.properties = properties;
     }
 
     public FactoryFinder getDefaultFactoryFinder() {
