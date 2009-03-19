@@ -1,0 +1,82 @@
+.dojoxRotatorContainer .dijitStackController,
+.dojoxRotatorPager {
+	position:absolute;
+	z-index:3;
+}
+.dojoxRotatorContent {
+	position:absolute;
+	z-index:1;
+}
+.dojoxRotatorContainer {
+	border:1px solid #9b9b9b;
+}
+.dojoxRotatorContainer .dijitStackController {
+	right:5px;
+	top:5px;
+}
+.dojoxRotatorContainer .dijitStackController .dijitToggleButtonChecked .dijitButtonNode {
+	background-color:#000;
+	background-image:none;
+	color:#fff;
+}
+.dojoxRotatorContainer .dojoxRotatorPager {
+	bottom:5px;
+	right:5px;
+}
+.tundra .rotatorIcons .dijitButtonText {
+	display:none;
+}
+.tundra .rotatorIcons button,
+.tundra .rotatorIcons .dijitButtonHover button,
+.tundra .rotatorIcons .dijitButtonActive button,
+.tundra .rotatorIcons .dijitToggleButtonHover button,
+.tundra .rotatorIcons .dijitToggleButtonActive button {
+	background:none;
+	border:0;
+}
+.tundra .rotatorIcons .previous,
+.tundra .rotatorIcons .next,
+.tundra .rotatorIcons .playPause,
+.tundra .rotatorIcons .dijitToggleButtonChecked .playPause {
+	background-image:url("icons/rotator.png");
+	background-repeat:no-repeat;
+	display:block;
+	height:16px;
+	width:16px;
+}
+.tundra .rotatorIcons .previous {
+	background-position:0 0;
+}
+.tundra .rotatorIcons .dijitButtonHover .previous { 
+	background-position:0 -16px;
+}
+.tundra .rotatorIcons .dijitButtonActive .previous { 
+	background-position:0 -32px;
+}
+.tundra .rotatorIcons .next{
+	background-position:-16px 0;
+}
+.tundra .rotatorIcons .dijitButtonHover .next{ 
+	background-position:-16px -16px;
+}
+.tundra .rotatorIcons .dijitButtonActive .next{ 
+	background-position:-16px -32px;
+}
+.tundra .rotatorIcons .playPause{
+	background-position:-32px 0;
+}
+.tundra .rotatorIcons .dijitToggleButtonHover .playPause{ 
+	background-position:-32px -16px;
+}
+.tundra .rotatorIcons .dijitToggleButtonActive .playPause {
+	background-position:-32px -32px;
+}
+.tundra .rotatorIcons .dijitToggleButtonChecked .playPause {
+	background-position:-48px 0;
+}
+.tundra .rotatorIcons .dijitToggleButtonCheckedHover .playPause {
+	background-position:-48px -16px;
+}
+.tundra .rotatorIcons .dijitToggleButtonCheckedActive .playPause { 
+	background-position:-48px -32px;
+}
