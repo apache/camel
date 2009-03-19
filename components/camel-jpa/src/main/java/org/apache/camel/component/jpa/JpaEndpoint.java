@@ -27,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.impl.ScheduledPollEndpoint;
@@ -225,7 +226,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
                     if (answer == null) {
                         Object defaultValue = exchange.getIn().getBody();
                         if (defaultValue != null) {
-                            throw new NoTypeConversionAvailableException(defaultValue, type);
+                            throw new RuntimeCamelException(new NoTypeConversionAvailableException(defaultValue, type));
                         }
 
                         // if we don't have a body then lets instantiate and inject a new instance

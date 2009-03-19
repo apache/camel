@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -80,7 +81,8 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
         };
     }
 
-    private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder) throws CharacterCodingException {
+    private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder)
+        throws CharacterCodingException, NoTypeConversionAvailableException {
         String value = context.getTypeConverter().convertTo(String.class, message);
         if (value != null) {
             ByteBuffer answer = ByteBuffer.allocate(value.length()).setAutoExpand(false);

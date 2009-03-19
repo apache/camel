@@ -57,7 +57,7 @@ public interface TypeConverter {
      * @return the converted value, is never <tt>null</tt>
      * @throws NoTypeConversionAvailableException if conversion not possible
      */
-    <T> T mandatoryConvertTo(Class<T> type, Object value);
+    <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException;
 
     /**
      * Converts the value to the specified type in the context of an exchange
@@ -71,6 +71,6 @@ public interface TypeConverter {
      * @return the converted value, is never <tt>null</tt>
      * @throws NoTypeConversionAvailableException} if conversion not possible
      */
-    <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value);
+    <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException;
 
 }
