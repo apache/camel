@@ -86,7 +86,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return convertTo(type, value);
     }
 
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         T answer = convertTo(type, value);
         if (answer == null) {
             throw new NoTypeConversionAvailableException(value, type);
@@ -94,7 +94,7 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return answer;
     }
 
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         return mandatoryConvertTo(type, value);
     }
 

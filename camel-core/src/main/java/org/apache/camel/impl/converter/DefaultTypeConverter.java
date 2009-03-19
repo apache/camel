@@ -99,11 +99,11 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         }
     }
 
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
         return mandatoryConvertTo(type, null, value);
     }
 
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value);

@@ -260,7 +260,8 @@ public final class IntrospectionSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
+    private static Object convert(TypeConverter typeConverter, Class type, Object value)
+        throws URISyntaxException, NoTypeConversionAvailableException {
         if (typeConverter != null) {
             return typeConverter.mandatoryConvertTo(type, value);
         }

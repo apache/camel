@@ -21,7 +21,7 @@ package org.apache.camel;
  *
  * @version $Revision$
  */
-public class NoTypeConversionAvailableException extends RuntimeCamelException {
+public class NoTypeConversionAvailableException extends CamelException {
     private final Object value;
     private final Class type;
 
