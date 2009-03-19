@@ -81,6 +81,14 @@ public class TypeConverterRegistryTest extends TestCase {
             // such as an encoding parameter or the likes
             return convertTo(type, value);
         }
+
+        public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+            return convertTo(type, value);
+        }
+
+        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+            return convertTo(type, value);
+        }
     }
     // END SNIPPET: e2
 

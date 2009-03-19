@@ -18,18 +18,16 @@ package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A processor which converts the payload of the input message to be of the given type
+ * <p/>
+ * If the convertions fails an {@link org.apache.camel.InvalidPayloadException} is thrown.
  *
  * @version $Revision$
  */
 public class ConvertBodyProcessor implements Processor {
-    private static final transient Log LOG = LogFactory.getLog(ConvertBodyProcessor.class);
     private final Class type;
 
     public ConvertBodyProcessor(Class type) {
@@ -39,12 +37,8 @@ public class ConvertBodyProcessor implements Processor {
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();        
-        Object value = null;
-        try {
-            value = in.getBody(type);
-        } catch (NoTypeConversionAvailableException e) {
-            LOG.warn("Could not convert body of IN message: " + in + " to type: " + type.getName());
-        }
+        Object value = in.getMandatoryBody(type);
+
         if (exchange.getPattern().isOutCapable()) {
             Message out = exchange.getOut();
             out.copyFrom(in);

@@ -87,7 +87,7 @@ public class JAXBConvertTest extends TestCase {
     public void testNoConversionForStreamCache() throws Exception {
         PurchaseOrder order = new PurchaseOrder();
         try {
-            converter.convertTo(StreamCache.class, order);
+            converter.mandatoryConvertTo(StreamCache.class, order);
             fail("We should not use the JAXB FallbackTypeConverter for stream caching");
         } catch (NoTypeConversionAvailableException e) {
             //this is OK

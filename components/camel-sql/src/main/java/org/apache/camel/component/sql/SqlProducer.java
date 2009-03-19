@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
@@ -42,16 +41,14 @@ public class SqlProducer extends DefaultProducer {
 
     public void process(final Exchange exchange) throws Exception {
         jdbcTemplate.execute(query, new PreparedStatementCallback() {
-            public Object doInPreparedStatement(PreparedStatement ps) throws SQLException,
-                DataAccessException {
+            public Object doInPreparedStatement(PreparedStatement ps) throws SQLException, DataAccessException {
                 int argNumber = 1;
-                try {
+
+                if (exchange.getIn().getBody() != null) {
                     Iterator<?> iterator = exchange.getIn().getBody(Iterator.class);
                     while (iterator != null && iterator.hasNext()) {
                         ps.setObject(argNumber++, iterator.next());
                     }
-                } catch (NoTypeConversionAvailableException e) {
-                    // ignored - assumed no parameters have to be used
                 }
 
                 // number of parameters must match

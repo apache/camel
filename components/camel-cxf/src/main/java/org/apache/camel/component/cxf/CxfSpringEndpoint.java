@@ -19,9 +19,6 @@ package org.apache.camel.component.cxf;
 import java.lang.reflect.Proxy;
 import javax.xml.namespace.QName;
 
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
@@ -35,6 +32,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+import org.springframework.context.support.AbstractApplicationContext;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Endpoint</a>

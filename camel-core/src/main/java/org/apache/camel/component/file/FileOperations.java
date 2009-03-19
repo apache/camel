@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
@@ -149,12 +148,8 @@ public class FileOperations implements GenericFileOperations<File> {
 
             // is the body file based
             File source = null;
-            try {
-                if (exchange.getIn().getBody() instanceof File || exchange.getIn().getBody() instanceof GenericFile) {
-                    source = exchange.getIn().getBody(File.class);
-                }
-            } catch (NoTypeConversionAvailableException e) {
-                // ignore
+            if (exchange.getIn().getBody() instanceof File || exchange.getIn().getBody() instanceof GenericFile) {
+                source = exchange.getIn().getBody(File.class);
             }
 
             if (source != null) {

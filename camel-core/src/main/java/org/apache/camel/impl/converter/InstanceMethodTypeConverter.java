@@ -59,4 +59,12 @@ public class InstanceMethodTypeConverter implements TypeConverter {
             ? (T)ObjectHelper.invokeMethod(method, instance, value, exchange) : (T)ObjectHelper
                 .invokeMethod(method, instance, value);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, null, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, null, value);
+    }
 }

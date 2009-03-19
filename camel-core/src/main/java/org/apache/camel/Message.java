@@ -98,16 +98,37 @@ public interface Message {
 
     /**
      * Returns the body of the message as a POJO
+     * <p/>
+     * The body can be <tt>null</tt> if no body is set
+     *
+     * @return the body, can be <tt>null</tt>
      */
     Object getBody();
+
+    /**
+     * Returns the body of the message as a POJO
+     *
+     * @return the body, is never <tt>null</tt>
+     * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
+     */
+    Object getMandatoryBody() throws InvalidPayloadException;
 
     /**
      * Returns the body as the specified type
      *
      * @param type the type that the body
-     * @return the body of the message as the specified type
+     * @return the body of the message as the specified type, or <tt>null</tt> if not possible to convert
      */
     <T> T getBody(Class<T> type);
+
+    /**
+     * Returns the mandatory body as the specified type
+     *
+     * @param type the type that the body
+     * @return the body of the message as the specified type, is never <tt>null</tt>.
+     * @throws InvalidPayloadException Is thrown if the body being <tt>null</tt> or wrong class type
+     */
+    <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException;
 
     /**
      * Sets the body of the message

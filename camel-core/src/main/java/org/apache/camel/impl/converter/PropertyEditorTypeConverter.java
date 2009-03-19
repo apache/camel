@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class PropertyEditorTypeConverter implements TypeConverter {
 
-    public <T> T convertTo(Class<T> toType, Object value) {
+    public <T> T convertTo(Class<T> type, Object value) {
         // We can't convert null values since we can't figure out a property
         // editor for it.
         if (value == null) {
@@ -40,20 +40,20 @@ public class PropertyEditorTypeConverter implements TypeConverter {
 
         if (value.getClass() == String.class) {
             // No conversion needed.
-            if (toType == String.class) {
-                return ObjectHelper.cast(toType, value);
+            if (type == String.class) {
+                return ObjectHelper.cast(type, value);
             }
 
-            PropertyEditor editor = PropertyEditorManager.findEditor(toType);
+            PropertyEditor editor = PropertyEditorManager.findEditor(type);
             if (editor != null) {
                 editor.setAsText(value.toString());
-                return ObjectHelper.cast(toType, editor.getValue());
+                return ObjectHelper.cast(type, editor.getValue());
             }
-        } else if (toType == String.class) {
+        } else if (type == String.class) {
             PropertyEditor editor = PropertyEditorManager.findEditor(value.getClass());
             if (editor != null) {
                 editor.setValue(value);
-                return ObjectHelper.cast(toType, editor.getAsText());
+                return ObjectHelper.cast(type, editor.getAsText());
             }
         }
 
@@ -63,4 +63,13 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, value);
+    }
+
 }

@@ -262,7 +262,7 @@ public final class IntrospectionSupport {
     @SuppressWarnings("unchecked")
     private static Object convert(TypeConverter typeConverter, Class type, Object value) throws URISyntaxException {
         if (typeConverter != null) {
-            return typeConverter.convertTo(type, value);
+            return typeConverter.mandatoryConvertTo(type, value);
         }
         PropertyEditor editor = PropertyEditorManager.findEditor(type);
         if (editor != null) {

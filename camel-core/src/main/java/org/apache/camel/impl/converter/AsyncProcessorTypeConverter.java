@@ -50,23 +50,31 @@ public class AsyncProcessorTypeConverter implements TypeConverter {
         }
     }
 
-    public <T> T convertTo(Class<T> toType, Object value) {
+    public <T> T convertTo(Class<T> type, Object value) {
         if (value != null) {
-            if (toType.equals(AsyncProcessor.class)) {
+            if (type.equals(AsyncProcessor.class)) {
                 if (value instanceof AsyncProcessor) {
-                    return toType.cast(value);
+                    return type.cast(value);
                 } else if (value instanceof Processor) {
                     // Provide an async bridge to the regular processor.
                     final Processor processor = (Processor)value;
-                    return toType.cast(new ProcessorToAsyncProcessorBridge(processor));
+                    return type.cast(new ProcessorToAsyncProcessorBridge(processor));
                 }
             }
         }
         return null;
     }
 
-    public <T> T convertTo(Class<T> toType, Exchange exchange, Object value) {
-        return convertTo(toType, value);
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, value);
     }
 
     public static AsyncProcessor convert(Processor value) {

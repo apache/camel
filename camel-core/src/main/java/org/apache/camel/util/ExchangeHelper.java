@@ -30,10 +30,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -41,7 +38,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class ExchangeHelper {
-    private static final transient Log LOG = LogFactory.getLog(ExchangeHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -80,7 +76,6 @@ public final class ExchangeHelper {
      * @return the endpoint
      * @throws NoSuchEndpointException if the endpoint cannot be resolved
      */
-    @SuppressWarnings({"unchecked" })
     public static Endpoint resolveEndpoint(Exchange exchange, Object value)
         throws NoSuchEndpointException {
         Endpoint endpoint;
@@ -95,13 +90,9 @@ public final class ExchangeHelper {
 
     public static <T> T getMandatoryProperty(Exchange exchange, String propertyName, Class<T> type)
         throws NoSuchPropertyException {
-        try {
-            T result = exchange.getProperty(propertyName, type);
-            if (result != null) {
-                return result;
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            // will throw NoSuchPropertyException below
+        T result = exchange.getProperty(propertyName, type);
+        if (result != null) {
+            return result;
         }
         throw new NoSuchPropertyException(exchange, propertyName, type);
     }
@@ -183,16 +174,9 @@ public final class ExchangeHelper {
      */
     public static <T> T convertToType(Exchange exchange, Class<T> type, Object value) {
         CamelContext camelContext = exchange.getContext();
-        if (camelContext != null) {
-            TypeConverter converter = camelContext.getTypeConverter();
-            if (converter != null) {
-                return converter.convertTo(type, exchange, value);
-            }
-        }
-        LOG.warn("No CamelContext and type converter available to convert types for exchange " + exchange);
-
-        if (type.isInstance(value)) {
-            return type.cast(value);
+        TypeConverter converter = camelContext.getTypeConverter();
+        if (converter != null) {
+            return converter.convertTo(type, exchange, value);
         }
         return null;
     }

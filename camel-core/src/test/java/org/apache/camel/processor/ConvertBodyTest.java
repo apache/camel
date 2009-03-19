@@ -14,29 +14,50 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.processor;
 
+import java.util.Date;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 public class ConvertBodyTest extends ContextTestSupport {
-    public void testConvertToInteger() throws Exception {
 
-        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result",
-                MockEndpoint.class);
-        resultEndpoint.expectedBodiesReceived(11);
+    public void testConvertToInteger() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(11);
 
         template.sendBody("direct:start", "11");
 
-        resultEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testConvertFailed() throws Exception {
+        MockEndpoint dead = getMockEndpoint("mock:dead");
+        dead.expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+
+        try {
+            template.sendBody("direct:invalid", "11");
+            fail("Should have thrown an exception");
+        } catch (RuntimeCamelException e) {
+            assertTrue(e.getCause() instanceof InvalidPayloadException);
+        }
+
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
+
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
+
+                from("direct:invalid").convertBodyTo(Date.class).to("mock:result");
             }
         };
     }

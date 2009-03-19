@@ -16,12 +16,10 @@
  */
 package org.apache.camel.impl;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.util.UuidGenerator;
 
 /**
@@ -47,46 +45,53 @@ public abstract class MessageSupport implements Message {
         return body;
     }
 
-    @SuppressWarnings("unchecked")
     public <T> T getBody(Class<T> type) {
         return getBody(type, getBody());
     }
 
-    @SuppressWarnings("unchecked")
+    public Object getMandatoryBody() throws InvalidPayloadException {
+        Object answer = getBody();
+        if (answer == null) {
+            throw new InvalidPayloadException(getExchange(), Object.class, this);
+        }
+        return answer;
+    }
+
     protected <T> T getBody(Class<T> type, Object body) {
         Exchange e = getExchange();
         if (e != null) {
-            CamelContext camelContext = e.getContext();
-            if (camelContext != null) {
-                boolean tryConvert = true;
-                TypeConverter converter = camelContext.getTypeConverter();
-                // if its the default type converter then use a performance shortcut to check if it can convert it
-                // this is faster than getting throwing and catching NoTypeConversionAvailableException
-                // the StreamCachingInterceptor will attempt to convert the payload to a StremCache for caching purpose
-                // so we get invoked on each node the exchange passes. So this is a little performance optimization
-                // to avoid the excessive exception handling
-                if (body != null && converter instanceof DefaultTypeConverter) {
-                    DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) converter;
-                    // we can only check if there is no converter meaning we have tried to convert it beforehand
-                    // and then knows for sure there is no converter possible
-                    tryConvert = !defaultTypeConverter.hasNoConverterFor(type, body.getClass());
-                }
-                if (tryConvert) {
-                    try {
-                        // lets first try converting the body itself first
-                        // as for some types like InputStream v Reader its more efficient to do the transformation
-                        // from the body itself as its got efficient implementations of them, before trying the
-                        // message
-                        return converter.convertTo(type, e, body);
-                    } catch (NoTypeConversionAvailableException ex) {
-                        // ignore
-                    }
-                }
-                // fallback to the message itself
-                return converter.convertTo(type, this);
+            TypeConverter converter = e.getContext().getTypeConverter();
+
+            // lets first try converting the body itself first
+            // as for some types like InputStream v Reader its more efficient to do the transformation
+            // from the body itself as its got efficient implementations of them, before trying the
+            // message
+            T answer = converter.convertTo(type, getExchange(), body);
+            if (answer != null) {
+                return answer;
+            }
+            // fallback to the message itself
+            answer = converter.convertTo(type, getExchange(), this);
+            if (answer != null) {
+                return answer;
             }
         }
-        return (T)getBody();
+
+        // not possible to convert
+        return null;
+    }
+
+    public <T> T getMandatoryBody(Class<T> type) throws InvalidPayloadException {
+        Exchange e = getExchange();
+        if (e != null) {
+            TypeConverter converter = e.getContext().getTypeConverter();
+            try {
+                return converter.mandatoryConvertTo(type, e, getBody());
+            } catch (Exception cause) {
+                throw new InvalidPayloadException(e, type, this, cause);
+            }
+        }
+        throw new InvalidPayloadException(e, type, this);
     }
 
     public void setBody(Object body) {

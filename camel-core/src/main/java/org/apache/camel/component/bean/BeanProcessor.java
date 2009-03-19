@@ -22,7 +22,6 @@ import java.lang.reflect.Method;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -84,14 +83,10 @@ public class BeanProcessor extends ServiceSupport implements Processor {
             in.setHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, isMultiParameterArray());
         }
 
-        try {
-            BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
-            if (beanInvoke != null) {
-                beanInvoke.invoke(bean, exchange);
-                return;
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            // ignore, body is not a BeanInvocation
+        BeanInvocation beanInvoke = in.getBody(BeanInvocation.class);
+        if (beanInvoke != null) {
+            beanInvoke.invoke(bean, exchange);
+            return;
         }
 
         boolean isExplicitMethod = false;

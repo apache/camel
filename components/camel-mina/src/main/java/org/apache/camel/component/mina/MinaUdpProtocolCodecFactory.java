@@ -21,8 +21,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoTypeConversionAvailableException;
-import org.apache.camel.TypeConverter;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -83,36 +81,15 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
     }
 
     private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder) throws CharacterCodingException {
-        // for fast convertions try this first instead of type converter registry
-        String value = null;
-        if (message instanceof String) {
-            value = (String) message;
-        } else {
-            // try to lookup if there is a string converter
-            TypeConverter tc = context.getTypeConverterRegistry().lookup(String.class, message.getClass());
-            if (tc != null) {
-                value = tc.convertTo(String.class, message);
-            }
-        }
-
-        TypeConverter tc = context.getTypeConverterRegistry().lookup(ByteBuffer.class, message.getClass());
-        if (tc == null && value == null) {
-            // use the slower converter that throws exception
-            try {
-                value = context.getTypeConverter().convertTo(String.class, message);
-            } catch (NoTypeConversionAvailableException e) {
-                // ignore
-            }
-        }
-
+        String value = context.getTypeConverter().convertTo(String.class, message);
         if (value != null) {
             ByteBuffer answer = ByteBuffer.allocate(value.length()).setAutoExpand(false);
             answer.putString(value, encoder);
             return answer;
         }
 
-        // failback if ther is a byte buffer type converter, in case there is a fallback converter as well
-        return context.getTypeConverter().convertTo(ByteBuffer.class, message);
+        // failback to use a byte buffer converter
+        return context.getTypeConverter().mandatoryConvertTo(ByteBuffer.class, message);
     }
 
 }

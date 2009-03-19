@@ -93,7 +93,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     @Override
     protected String createEndpointUri() {
-        return "jpa" + entityType != null ? "://" + entityType.getName() : "";
+        return "jpa" + (entityType != null ? "://" + entityType.getName() : "");
     }
 
 
@@ -221,20 +221,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         } else {
             return new ExpressionAdapter() {
                 public Object evaluate(Exchange exchange) {
-                    Object answer = null;
-                    try {
-                        answer = exchange.getIn().getBody(type);
-                    } catch (NoTypeConversionAvailableException e) {
-                        // ignore
-                    }
+                    Object answer = exchange.getIn().getBody(type);
                     if (answer == null) {
                         Object defaultValue = exchange.getIn().getBody();
                         if (defaultValue != null) {
                             throw new NoTypeConversionAvailableException(defaultValue, type);
                         }
 
-                        // if we don't have a body then
-                        // lets instantiate and inject a new instance
+                        // if we don't have a body then lets instantiate and inject a new instance
                         answer = exchange.getContext().getInjector().newInstance(type);
                     }
                     return answer;

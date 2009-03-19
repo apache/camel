@@ -18,7 +18,6 @@ package org.apache.camel.component.log;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.ObjectHelper;
@@ -175,19 +174,13 @@ public class LogFormatter implements ExchangeFormatter {
     // Implementation methods
     //-------------------------------------------------------------------------
     protected Object getBodyAsString(Message message) {
-        StreamCache newBody = null;
-        try {
-            newBody = message.getBody(StreamCache.class);
-            if (newBody != null) {
-                message.setBody(newBody);
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            // ignore
+        StreamCache newBody = message.getBody(StreamCache.class);
+        if (newBody != null) {
+            message.setBody(newBody);
         }
-        Object answer = null;
-        try {
-            answer = message.getBody(String.class);
-        } catch (NoTypeConversionAvailableException ex) {
+
+        Object answer = message.getBody(String.class);
+        if (answer == null) {
             answer = message.getBody();
         }
 

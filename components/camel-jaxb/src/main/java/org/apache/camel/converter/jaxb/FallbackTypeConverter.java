@@ -86,6 +86,18 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
         return convertTo(type, value);
     }
 
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        T answer = convertTo(type, value);
+        if (answer == null) {
+            throw new NoTypeConversionAvailableException(value, type);
+        }
+        return answer;
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return mandatoryConvertTo(type, value);
+    }
+
     protected <T> boolean isJaxbType(Class<T> type) {
         XmlRootElement element = type.getAnnotation(XmlRootElement.class);
         return element != null;
@@ -133,26 +145,26 @@ public class FallbackTypeConverter implements TypeConverter, TypeConverterAware 
     }
 
     protected <T> T marshall(Class<T> type, Object value) throws JAXBException {
+        T answer = null;
         if (parentTypeConverter != null) {
             // lets convert the object to a JAXB source and try convert that to
             // the required source
             JAXBContext context = createContext(value.getClass());
             JAXBSource source = new JAXBSource(context, value);
-            try {
-                return parentTypeConverter.convertTo(type, source);
-            } catch (NoTypeConversionAvailableException e) {
+
+            answer = parentTypeConverter.convertTo(type, source);
+            if (answer == null) {
                 // lets try a stream
                 StringWriter buffer = new StringWriter();
                 // must create a new instance of marshaller as its not thred safe
                 Marshaller marshaller = context.createMarshaller();
                 marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isPrettyPrint() ? Boolean.TRUE : Boolean.FALSE);
                 marshaller.marshal(value, buffer);
-                return parentTypeConverter.convertTo(type, buffer.toString());
+                answer = parentTypeConverter.convertTo(type, buffer.toString());
             }
         }
 
-        // lets try convert to the type from JAXB
-        return null;
+        return answer;
     }
 
     /**

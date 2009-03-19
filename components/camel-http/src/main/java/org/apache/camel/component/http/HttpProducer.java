@@ -22,10 +22,8 @@ import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.helper.GZIPHelper;
-import org.apache.camel.component.http.helper.LoadingByteArrayOutputStream;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -212,23 +210,22 @@ public class HttpProducer extends DefaultProducer {
         if (in.getBody() == null) {
             return null;
         }
-        try {
-            return in.getBody(RequestEntity.class);
-        } catch (NoTypeConversionAvailableException ex) {
+
+        RequestEntity answer = in.getBody(RequestEntity.class);
+        if (answer == null) {
             try {
                 String data = in.getBody(String.class);
                 if (data != null) {
                     String contentType = in.getHeader("Content-Type", String.class);
                     String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
-                    return new StringRequestEntity(data, contentType, charset);
-                } else {
-                    // no data
-                    return null;
+                    answer = new StringRequestEntity(data, contentType, charset);
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new RuntimeCamelException(e);
             }
         }
+
+        return answer;
     }
 
     public HttpClient getHttpClient() {

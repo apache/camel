@@ -77,4 +77,12 @@ public class ArrayTypeConverter implements TypeConverter {
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return convertTo(type, value);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, value);
+    }
 }

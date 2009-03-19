@@ -17,22 +17,18 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
-
 import javax.xml.transform.Source;
 
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.MessageImpl;
 
 public final class CxfSoapBinding {
-    private static final Log LOG = LogFactory.getLog(CxfSoapBinding.class);
 
     private CxfSoapBinding() {
-
     }
     
     public static org.apache.cxf.message.Message getCxfInMessage(HeaderFilterStrategy headerFilterStrategy,
@@ -54,12 +50,13 @@ public final class CxfSoapBinding {
 
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer);
 
+        InputStream body = null;
         try {
-            InputStream body = message.getBody(InputStream.class);
-            answer.setContent(InputStream.class, body);
-        } catch (NoTypeConversionAvailableException ex) {
-            LOG.warn("Can't get right InputStream object here, the message body is " + message.getBody());
+            body = message.getMandatoryBody(InputStream.class);
+        } catch (InvalidPayloadException e) {
+            throw new RuntimeCamelException(e);
         }
+        answer.setContent(InputStream.class, body);
 
         answer.putAll(message.getHeaders());
         answer.setExchange(cxfExchange);
@@ -85,12 +82,13 @@ public final class CxfSoapBinding {
         CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage);
 
         // send the body back
+        Source body = null;
         try {
-            Source body = message.getBody(Source.class);
-            outMessage.setContent(Source.class, body);
-        } catch (NoTypeConversionAvailableException ex) {
-            LOG.warn("Can't get right Source object here, the message body is " + message.getBody());
+            body = message.getMandatoryBody(Source.class);
+        } catch (InvalidPayloadException e) {
+            throw new RuntimeCamelException(e);
         }
+        outMessage.setContent(Source.class, body);
         outMessage.putAll(message.getHeaders());
         return outMessage;
     }
