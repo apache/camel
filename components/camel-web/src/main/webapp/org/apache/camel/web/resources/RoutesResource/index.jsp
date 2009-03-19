@@ -16,7 +16,7 @@
   <c:forEach var="i" items="${it.routes}">
   <tr>
     <td>
-      <a href='<c:url value="/routes/${i.id}"/>'>${i.shortName}</a> ${i.description.text}
+      <a href='<c:url value="/routes/${i.id}/edit"/>'>${i.shortName}</a> ${i.description.text}
     </td>
     <td class="${i.status}">
       ${i.status}

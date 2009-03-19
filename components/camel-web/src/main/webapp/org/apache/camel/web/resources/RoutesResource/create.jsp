@@ -4,15 +4,15 @@
   <script type='text/javascript' src="<c:url value='/js/bespin/editor/embed.js'/>"></script>
   <script type='text/javascript' src="<c:url value='/js/route.js'/>"></script>
 
-  <title>Edit ${it.route.id}</title>
+  <title>Create New Route</title>
 </head>
 <body>
 
-<form id="routeForm" action="<c:url value="/routes/${it.route.id}"/>" method="post">
+<form id="routeForm" action="<c:url value="/routes"/>" method="post">
 <table>
   <tr>
     <td>
-      <h2>Edit ${it.route.id}</h2>
+      <h2>Create New Route</h2>
     </td>
     <td>
       <input type="button" value="Save" onclick="submitRoute()">
@@ -26,7 +26,11 @@
 <div class="error">${it.error}</div>
 
 <div id="editor"
-     style="height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">${it.routeXml}
+     style="height: 300px; border: 10px solid #ddd; -moz-border-radius: 10px; -webkit-border-radius: 10px;">
+<route xmlns="http://camel.apache.org/schema/spring">
+  <from uri="seda:Some.Endpoint"/>
+  <to uri="seda:Some.Other.Endpoint"/>
+</route>
 </div>
 
 </form>

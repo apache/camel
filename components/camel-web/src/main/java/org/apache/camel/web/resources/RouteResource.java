@@ -16,18 +16,33 @@
  */
 package org.apache.camel.web.resources;
 
-import java.io.IOException;
-import java.io.StringWriter;
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.view.RouteDotGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.view.RouteDotGenerator;
+import javax.xml.bind.Unmarshaller;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 
 /**
  * A single Camel Route which is used to implement one or more
@@ -36,12 +51,17 @@ import org.apache.camel.view.RouteDotGenerator;
  * @version $Revision: 1.1 $
  */
 public class RouteResource extends CamelChildResourceSupport {
+    private static final transient Log LOG = LogFactory.getLog(RouteResource.class);
+
     private RouteDefinition route;
+    private String error = "";
+    private String id;
 
 
     public RouteResource(RoutesResource routesResource, RouteDefinition route) {
         super(routesResource.getContextResource());
         this.route = route;
+        this.id = route.idOrCreate();
     }
 
     /**
@@ -80,6 +100,59 @@ public class RouteResource extends CamelChildResourceSupport {
 
 
     /**
+     * Allows a route definition to be updated
+     */
+    @POST
+    @Consumes()
+    @Produces({MediaType.TEXT_XML, MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+    public void postRoute(RouteDefinition routeDefinition) throws Exception {
+        // lets preserve the ID
+        routeDefinition.setId(id);
+
+        // lets install the updated route
+        getCamelContext().addRouteDefinitions(Collections.singletonList(routeDefinition));
+    }
+
+
+    /**
+     * Updates a route definition using form encoded data from a web form
+     *
+     * @param formData is the form data POSTed typically from a HTML form with the <code>route</code> field used to encode
+     *                 the XML text of the new route definition
+     */
+    @POST
+    @Consumes("application/x-www-form-urlencoded")
+    public Response postRouteForm(@Context UriInfo uriInfo, Form formData) throws URISyntaxException {
+        // TODO replace the Form class with an injected bean?
+        String xml = formData.getFirst("route", String.class);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("new XML is: " + xml);
+        }
+        if (xml == null) {
+            error = "No XML submitted!";
+        } else {
+            try {
+                JAXBContext context = JAXBContext.newInstance(Constants.JAXB_PACKAGES);
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+                Object value = unmarshaller.unmarshal(new StringReader(xml));
+                if (value instanceof RouteDefinition) {
+                    RouteDefinition routeDefinition = (RouteDefinition) value;
+                    postRoute(routeDefinition);
+                    return Response.seeOther(new URI("/routes")).build();
+                } else {
+                    error = "Posted XML is not a route but is of type " + ObjectHelper.className(value);
+                }
+            } catch (JAXBException e) {
+                error = "Failed to parse XML: " + e.getMessage();
+            } catch (Exception e) {
+                error = "Failed to install route: " + e.getMessage();
+            }
+        }
+        // lets re-render the form
+        return Response.ok(new Viewable("edit", this)).build();
+    }
+
+    /**
      * Looks up an individual route
      */
     @Path("status")
@@ -87,5 +160,8 @@ public class RouteResource extends CamelChildResourceSupport {
         return new RouteStatusResource(this);
     }
 
+    public String getError() {
+        return error;
+    }
 
 }

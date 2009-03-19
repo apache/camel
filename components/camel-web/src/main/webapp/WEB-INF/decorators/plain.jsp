@@ -15,17 +15,13 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 --%>
-
 <html>
-    <head>
-        <title><decorator:title default="Apache Camel" /></title>
-        <decorator:head />
-    </head>
+<head>
+  <title><decorator:title default="Apache Camel"/></title>
+  <decorator:head/>
+</head>
 
-    <body onload="window.print();">
-        Printed on <%=new java.util.Date()%>.<br/>
-        <hr noshade="noshade" size="1"/>
-        <br/>
-        <decorator:body />
-    </body>
+<body>
+<decorator:body/>
+</body>
 </html>
