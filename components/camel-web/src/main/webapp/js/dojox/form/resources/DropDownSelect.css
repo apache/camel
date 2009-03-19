@@ -1,0 +1,202 @@
+
+.dojoxDropDownSelect {
+	margin: 0.2em;
+}
+.dojoxDropDownSelect .dijitButtonNode {
+	text-align: left;
+}
+.dijitRtl .dojoxDropDownSelect .dijitButtonNode {
+	text-align: right;
+}
+.dijitToolbar .dojoxDropDownSelect {
+	margin: 0;
+}
+.dj_webkit .dijitToolbar .dojoxDropDownSelect {
+	padding-left: 0.3em;
+}
+.dijit_a11y .dojoxDropDownSelectDisabled .dijitButtonNode {
+	border-style: outset!important;
+	border-width: medium!important;
+	border-color: #999 !important;
+	color:#999 !important;
+}
+.dojoxDropDownSelect .dijitButtonContents {
+	padding: 0px;
+	border-right: none;
+	background: transparent none;
+}
+.dojoxDropDownSelectFixedWidth .dijitButtonContents {
+	width: 100%;
+}
+.dojoxDropDownSelect .dijitArrowButton {
+	width: 16px;
+}
+.dojoxDropDownSelectLabel *
+{
+	vertical-align: baseline;
+}
+.dojoxDropDownSelectSelectedOption * {
+	font-weight: bold;
+}
+.dojoxDropDownSelectMenu {
+	border-width: 1px;
+}
+.dojoxDropDownSelect .dijitButtonContents {
+	white-space: nowrap;
+}
+.tundra .dojoxDropDownSelectDisabled * {
+    cursor: not-allowed !important;
+}
+.tundra .dojoxDropDownSelectReadOnly * {
+    cursor: default !important;
+}
+.tundra .dojoxDropDownSelect .dijitButtonNode {
+	padding: 0px;
+}
+.tundra .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 1px;
+    background:#fff url("../../../dijit/themes/tundra/images/validationInputBg.png") repeat-x top left;
+    #background:#fff url('../../../dijit/themes/tundra/images/validationInputBg.gif') repeat-x top left;
+}
+.tundra .dojoxDropDownSelectHover .dijitButtonContents,
+.tundra .dojoxDropDownSelectActive .dijitButtonContents,
+.tundra .dojoxDropDownSelectOpened .dijitButtonContents,
+.tundra .dojoxDropDownSelectDisabled .dijitButtonContents,
+.tundra .dojoxDropDownSelectReadOnly .dijitButtonContents{
+	background: transparent none;
+}
+.dj_ie .tundra .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 0px;
+}
+.tundra .dojoxDropDownSelectDisabled .dijitButtonNode {
+    border-color: #d5d5d5 #bdbdbd #bdbdbd #d5d5d5;
+    background:#e4e4e4 url("../../../dijit/themes/tundra/images/buttonDisabled.png") top repeat-x;
+}
+.dj_ie .tundra .dojoxDropDownSelectDisabled  .dijitButtonNode * {
+	filter: gray() alpha(opacity=50); 
+}
+.tundra .dojoxDropDownSelectHover .dijitButtonNode {
+    border-color:#a5beda;
+    border-bottom-color:#5c7590;
+    border-right-color:#5c7590;
+    color:#243C5F;
+    background:#fcfdff url("../../../dijit/themes/tundra/images/buttonHover.png") repeat-x bottom;
+}
+.tundra .dojoxDropDownSelectActive .dijitButtonNode,
+.tundra .dojoxDropDownSelectOpened .dijitButtonNode {
+    border-color:#366dba;
+    background: #ededed url("../../../dijit/themes/tundra/images/buttonActive.png") bottom repeat-x;
+}
+.tundra .dojoxDropDownSelectMenu td {
+	padding: 0em;
+}
+.tundra .dojoxDropDownSelectMenu .dijitMenuItemIcon {
+	margin: 0.1em 0.2em;
+	display: none;
+}
+.tundra .dojoxDropDownSelectMenu .dijitMenuItemLabel,
+.tundra .dojoxDropDownSelectMenu .dijitMenuArrowCell {
+	padding: 0.1em 0.2em;
+}
+.soria .dojoxDropDownSelectDisabled * {
+    cursor: not-allowed !important;
+}
+.soria .dojoxDropDownSelectReadOnly * {
+    cursor: default !important;
+}
+.soria .dojoxDropDownSelect .dijitButtonNode {
+	padding: 0px;
+}
+.soria .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 1px;
+    background:#fff url("../../../dijit/themes/soria/images/validationInputBg.png") repeat-x top left;
+    #background:#fff url('../../../dijit/themes/soria/images/validationInputBg.gif') repeat-x top left;
+}
+.soria .dojoxDropDownSelectHover .dijitButtonContents,
+.soria .dojoxDropDownSelectActive .dijitButtonContents,
+.soria .dojoxDropDownSelectOpened .dijitButtonContents,
+.soria .dojoxDropDownSelectDisabled .dijitButtonContents,
+.soria .dojoxDropDownSelectReadOnly .dijitButtonContents{
+	background: transparent none;
+}
+.dj_ie .soria .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 0px;
+}
+.soria .dojoxDropDownSelectDisabled .dijitButtonNode {
+    border-color: #b9bbdd #b9bbdd #b9bbdd #b9bbdd;
+    background:#c3d3e5 url("../../../dijit/themes/soria/images/buttonDisabled.png") top repeat-x;
+}
+.dj_ie .soria .dojoxDropDownSelectDisabled  .dijitButtonNode * {
+	filter: gray() alpha(opacity=50); 
+}
+.soria .dojoxDropDownSelectHover .dijitButtonNode {
+    color:#000;
+    background:#acc5e2 url("../../../dijit/themes/soria/images/buttonHover.png") repeat-x top left;
+}
+.soria .dojoxDropDownSelectActive .dijitButtonNode,
+.soria .dojoxDropDownSelectOpened .dijitButtonNode {
+    border-color:#657c9c;
+    background: #91b4e5 url("../../../dijit/themes/soria/images/buttonActive.png") top left repeat-x;
+}
+.soria .dojoxDropDownSelectMenu td {
+	padding: 0em;
+}
+.soria .dojoxDropDownSelectMenu .dijitMenuItemIcon {
+	margin: 0.1em 0.2em;
+	display: none;
+}
+.soria .dojoxDropDownSelectMenu .dijitMenuItemLabel,
+.soria .dojoxDropDownSelectMenu .dijitMenuArrowCell {
+	padding: 0.1em 0.2em;
+}
+.nihilo .dojoxDropDownSelectDisabled * {
+    cursor: not-allowed !important;
+}
+.nihilo .dojoxDropDownSelectReadOnly * {
+    cursor: default !important;
+}
+.nihilo .dojoxDropDownSelect .dijitButtonNode {
+	padding: 0px;
+}
+.nihilo .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 1px;
+    background:#fff url("../../../dijit/themes/nihilo/images/validationInputBg.png") repeat-x top left;
+    #background:#fff url('../../../dijit/themes/nihilo/images/validationInputBg.gif') repeat-x top left;
+}
+.nihilo .dojoxDropDownSelectHover .dijitButtonContents,
+.nihilo .dojoxDropDownSelectActive .dijitButtonContents,
+.nihilo .dojoxDropDownSelectOpened .dijitButtonContents,
+.nihilo .dojoxDropDownSelectDisabled .dijitButtonContents,
+.nihilo .dojoxDropDownSelectReadOnly .dijitButtonContents{
+	background: transparent none;
+}
+.dj_ie .nihilo .dojoxDropDownSelect .dijitButtonContents {
+	padding-top: 0px;
+}
+.nihilo .dojoxDropDownSelectDisabled .dijitButtonNode {
+    border-color: #dedede;
+    background:#fafafa url("../../../dijit/themes/nihilo/images/buttonDisabled.png") top repeat-x;
+}
+.dj_ie .nihilo .dojoxDropDownSelectDisabled  .dijitButtonNode * {
+	filter: gray() alpha(opacity=50); 
+}
+.nihilo .dojoxDropDownSelectHover .dijitButtonNode {
+    color:#000;
+    background:#fcfcfc url("../../../dijit/themes/nihilo/images/buttonHover.png") repeat-x top left;
+}
+.nihilo .dojoxDropDownSelectActive .dijitButtonNode,
+.nihilo .dojoxDropDownSelectOpened .dijitButtonNode {
+    border-color:#dedede;
+    background: #f5f5f5 url("../../../dijit/themes/nihilo/images/buttonActive.png") top left repeat-x;
+}
+.nihilo .dojoxDropDownSelectMenu td {
+	padding: 0em;
+}
+.nihilo .dojoxDropDownSelectMenu .dijitMenuItemIcon {
+	margin: 0.1em 0.2em;
+	display: none;
+}
+.nihilo .dojoxDropDownSelectMenu .dijitMenuItemLabel,
+.nihilo .dojoxDropDownSelectMenu .dijitMenuArrowCell {
+	padding: 0.1em 0.2em;
+}

@@ -1,0 +1,84 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+	<title>dojox.Grid with Dojo.Data via binding</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"></meta>
+	<style type="text/css">
+		@import "../../../../dojo/resources/dojo.css";
+		@import "../../_grid/tundraGrid.css";
+		
+		#grid, #grid2 {
+			width: 65em;
+			height: 25em;
+			padding: 1px;
+		}
+	</style>
+	<script type="text/javascript" src="../../../../dojo/dojo.js" 
+		djConfig="isDebug: true, debugAtAllCosts: false, parseOnLoad: true"></script>
+	<script type="text/javascript">
+		dojo.require("dojox.grid.Grid");
+		dojo.require("dojo.data.ItemFileReadStore");
+		dojo.require("dojox.data.CsvStore");
+		dojo.require("dojo.parser");
+	</script>
+	<script type="text/javascript">
+		function getRow(inRowIndex){
+			return ' ' + inRowIndex;
+		}
+		
+		var layoutMovies = [
+			// view 0
+			{ type: 'dojox.GridRowView', width: '20px' },
+			// view 1
+			{ cells: [[{ name: "Row", get: getRow, width: 5}]], noscroll: true},
+			// view 2
+			{ cells: [[
+				{ field: "Title", width: 'auto' },
+				{ field: "Year", width: 5 },
+				{ field: "Producer", width: 20 }
+			]]}
+		];
+		
+		var layoutCountries = [
+			// view 0
+			{ type: 'dojox.GridRowView', width: '20px' },
+			// view 1
+			{ cells: [[{ name: "Row", get: getRow, width: 5}]], noscroll: true},
+			// view 2
+			{ cells: [[
+				{ field: 0, width: 'auto' },
+				{ width: 8 }
+			]]}
+		];
+	</script>
+</head>
+<body class="tundra">
+	<h5>dojox.Grid using Dojo.Data stores via simple binding</h5>
+	<span dojoType="dojox.data.CsvStore" 
+		jsId="csvStore" url="support/movies.csv">
+	</span>
+	<span dojoType="dojox.grid.data.DojoData" 
+		jsId="dataModel"
+		store="csvStore"
+		rowsPerPage="5"
+		query="{ Title: '*' }"
+		clientSort="true">
+	</span>
+	<div id="grid" dojoType="dojox.Grid" elasticView="2" 
+		model="dataModel" structure="layoutMovies">
+	</div>
+
+	<span dojoType="dojo.data.ItemFileReadStore" 
+		jsId="jsonStore" url="../../../../dijit/tests/_data/countries.json">
+	</span>
+	<span dojoType="dojox.grid.data.DojoData" 
+		jsId="dataModel2" 
+		rowsPerPage="20"
+		store="jsonStore" 
+		query="{ name : '*' }">
+	</span>
+	<div id="grid2" dojoType="dojox.Grid" elasticView="2" 
+		model="dataModel2" structure="layoutCountries">
+	</div>
+</body>
+</html>
