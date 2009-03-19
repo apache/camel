@@ -62,4 +62,13 @@ public class InstanceMethodFallbackTypeConverter implements TypeConverter {
             ? (T)ObjectHelper.invokeMethod(method, instance, type, value, exchange, registry) : (T)ObjectHelper
                 .invokeMethod(method, instance, type, value, registry);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, null, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, null, value);
+    }
+
 }

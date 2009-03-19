@@ -72,7 +72,6 @@ public class CamelDestinationTest extends CamelTestSupport {
         assertNotNull("The camel context which get from camel destination is not null", context);
         assertEquals("Get the wrong camel context", context.getName(), "dest_context");
         assertEquals("The camel context should has two routers", context.getRoutes().size(), 2);
-        assertEquals("The router 0 start endpoint is wrong", context.getRoutes().get(0).getEndpoint().getEndpointUri(), "direct:EndpointA");
         bus.shutdown(false);
     }
 
@@ -126,15 +125,10 @@ public class CamelDestinationTest extends CamelTestSupport {
 
 
 
-    private void verifyReceivedMessage(Message inMessage, String content) {
+    private void verifyReceivedMessage(Message inMessage, String content) throws IOException {
         ByteArrayInputStream bis = (ByteArrayInputStream)inMessage.getContent(InputStream.class);
         byte bytes[] = new byte[bis.available()];
-        try {
-            bis.read(bytes);
-        } catch (IOException ex) {
-            assertFalse("Read the Destination recieved Message error ", false);
-            ex.printStackTrace();
-        }
+        bis.read(bytes);
         String reponse = new String(bytes);
         assertEquals("The reponse date should be equals", content, reponse);
     }
@@ -154,21 +148,20 @@ public class CamelDestinationTest extends CamelTestSupport {
         // set up MessageObserver for handlering the conduit message
         MessageObserver observer = new MessageObserver() {
             public void onMessage(Message m) {
-                Exchange exchange = new ExchangeImpl();
-                exchange.setInMessage(m);
-                m.setExchange(exchange);
-                verifyReceivedMessage(m, "HelloWorld");
-                //verifyHeaders(m, outMessage);
-                // setup the message for
-                Conduit backConduit;
                 try {
+                    Exchange exchange = new ExchangeImpl();
+                    exchange.setInMessage(m);
+                    m.setExchange(exchange);
+                    verifyReceivedMessage(m, "HelloWorld");
+                    //verifyHeaders(m, outMessage);
+                    // setup the message for
+                    Conduit backConduit;
                     backConduit = destination.getBackChannel(m, null, null);
                     // wait for the message to be got from the conduit
                     Message replyMessage = new MessageImpl();
                     sendoutMessage(backConduit, replyMessage, true, "HelloWorld Response");
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    throw new RuntimeException(e);
                 }
             }
         };

@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.bean.BeanProcessor;
 import org.apache.camel.component.event.EventComponent;
 import org.apache.camel.component.event.EventEndpoint;
@@ -112,8 +111,6 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             // dependencies are initialized
             try {
                 maybeStart();
-            } catch (RuntimeException e) {
-                throw e;
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
@@ -187,14 +184,10 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
 
     protected Endpoint convertBeanToEndpoint(String uri, Object bean) {
         // We will use the type convert to build the endpoint first
-        try {
-            Endpoint endpoint = getTypeConverter().convertTo(Endpoint.class, bean);
-            if (endpoint != null) {
-                endpoint.setCamelContext(this);
-                return endpoint;
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            // ignore, handled below
+        Endpoint endpoint = getTypeConverter().convertTo(Endpoint.class, bean);
+        if (endpoint != null) {
+            endpoint.setCamelContext(this);
+            return endpoint;
         }
 
         return new ProcessorEndpoint(uri, this, new BeanProcessor(bean, this));

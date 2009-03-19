@@ -26,10 +26,14 @@ public class NoTypeConversionAvailableException extends RuntimeCamelException {
     private final Class type;
 
     public NoTypeConversionAvailableException(Object value, Class type) {
-        super("No type converter available to convert from type: " + (value != null ? value.getClass().getCanonicalName() : null)
-              + " to the required type: " + type.getCanonicalName() + " with value " + value);
+        super(createMessage(value, type));
         this.value = value;
         this.type = type;
+    }
+
+    public NoTypeConversionAvailableException(Object value, Class type, Throwable cause) {
+        this(value, type);
+        initCause(cause);
     }
 
     /**
@@ -42,7 +46,7 @@ public class NoTypeConversionAvailableException extends RuntimeCamelException {
     /**
      * Returns the required <tt>to</tt> type
      */
-    public Class getType() {
+    public Class getToType() {
         return type;
     }
 
@@ -56,6 +60,14 @@ public class NoTypeConversionAvailableException extends RuntimeCamelException {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Returns an error message for no type converter available.
+     */
+    public static String createMessage(Object value, Class type) {
+        return ("No type converter available to convert from type: " + (value != null ? value.getClass().getCanonicalName() : null)
+              + " to the required type: " + type.getCanonicalName() + " with value " + value);
     }
 
 }

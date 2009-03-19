@@ -54,4 +54,13 @@ public class StaticMethodFallbackTypeConverter implements TypeConverter {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)
             : (T)ObjectHelper.invokeMethod(method, null, type, value, registry);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, null, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, null, value);
+    }
+
 }

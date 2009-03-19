@@ -226,7 +226,7 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         return deadLetterUri;
     }
 
-    public void setDeadLetterUri(final String deadLetterUri) {
+    public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetter = null;
         this.deadLetterUri = deadLetterUri;
     }

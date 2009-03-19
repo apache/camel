@@ -21,7 +21,6 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.model.AbstractInterceptorDefinition;
@@ -70,15 +69,11 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        try {
-            StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
-            if (newBody != null) {
-                exchange.getIn().setBody(newBody);
-            }
-            MessageHelper.resetStreamCache(exchange.getIn());
-        } catch (NoTypeConversionAvailableException ex) {
-            // ignore if in is not of StreamCache type
+        StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
+        if (newBody != null) {
+            exchange.getIn().setBody(newBody);
         }
+        MessageHelper.resetStreamCache(exchange.getIn());
 
         return proceed(exchange, callback);
     }

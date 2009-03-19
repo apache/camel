@@ -34,7 +34,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Header;
 import org.apache.camel.Headers;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.OutHeaders;
 import org.apache.camel.Properties;
 import org.apache.camel.Property;
@@ -366,26 +365,20 @@ public class BeanInfo {
             Object newBody = null;
             MethodInfo matched = null;
             for (MethodInfo methodInfo : operationList) {
-                Object value;
-                try {
-                    value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
-                    if (value != null) {
-                        if (LOG.isTraceEnabled()) {
-                            LOG.trace("Converted body from: " + body.getClass().getCanonicalName()
-                                    + "to: " + methodInfo.getBodyParameterType().getCanonicalName());
-                        }
-                        if (newBody != null) {
-                            // we already have found one new body that could be converted so now we have 2 methods
-                            // and then its ambiguous
-                            throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
-                        } else {
-                            newBody = value;
-                            matched = methodInfo;
-                        }
+                Object value = convertToType(exchange, methodInfo.getBodyParameterType(), body);
+                if (value != null) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Converted body from: " + body.getClass().getCanonicalName()
+                                + "to: " + methodInfo.getBodyParameterType().getCanonicalName());
                     }
-                } catch (NoTypeConversionAvailableException e) {
-                    // we can safely ignore this exception as we want a behaviour similar to
-                    // that if convertToType return null
+                    if (newBody != null) {
+                        // we already have found one new body that could be converted so now we have 2 methods
+                        // and then its ambiguous
+                        throw new AmbiguousMethodCallException(exchange, Arrays.asList(matched, methodInfo));
+                    } else {
+                        newBody = value;
+                        matched = methodInfo;
+                    }
                 }
             }
             if (matched != null) {

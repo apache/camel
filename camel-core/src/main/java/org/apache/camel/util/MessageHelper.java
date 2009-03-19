@@ -17,7 +17,6 @@
 package org.apache.camel.util;
 
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.StreamCache;
 
 /**
@@ -47,20 +46,13 @@ public final class MessageHelper {
             return null;
         }
 
-        StreamCache newBody = null;
-        try {
-            newBody = message.getBody(StreamCache.class);
-            if (newBody != null) {
-                message.setBody(newBody);
-            }
-        } catch (NoTypeConversionAvailableException ex) {
-            // ignore, in not of StreamCache type
+        StreamCache newBody = message.getBody(StreamCache.class);
+        if (newBody != null) {
+            message.setBody(newBody);
         }
 
-        Object answer;
-        try {
-            answer = message.getBody(String.class);
-        } catch (NoTypeConversionAvailableException ex) {
+        Object answer = message.getBody(String.class);
+        if (answer == null) {
             answer = message.getBody();
         }
 

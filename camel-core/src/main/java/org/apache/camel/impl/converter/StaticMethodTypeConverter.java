@@ -50,4 +50,13 @@ public class StaticMethodTypeConverter implements TypeConverter {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, value, exchange)
             : (T)ObjectHelper.invokeMethod(method, null, value);
     }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return convertTo(type, null, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        return convertTo(type, null, value);
+    }
+
 }

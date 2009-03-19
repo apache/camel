@@ -51,7 +51,6 @@ import net.sf.saxon.trans.XPathException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeExpressionException;
@@ -412,17 +411,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         DynamicQueryContext dynamicQueryContext = new DynamicQueryContext(config);
 
         Message in = exchange.getIn();
-        Source source = null;
-        try {
-            Item item = in.getBody(Item.class);
+
+        Item item = in.getBody(Item.class);
+        if (item != null) {
             dynamicQueryContext.setContextItem(item);
-        } catch (NoTypeConversionAvailableException e) {
-            try {
-                source = in.getBody(Source.class);
-            } catch (NoTypeConversionAvailableException e2) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("No body available on exchange so using an empty document: " + exchange);
-                }
+        } else {
+            Source source = in.getBody(Source.class);
+            if (source == null) {
                 source = converter.toSource(converter.createDocument());
             }
             DocumentInfo doc = getStaticQueryContext().buildDocument(source);

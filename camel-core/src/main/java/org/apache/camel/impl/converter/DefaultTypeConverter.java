@@ -75,32 +75,51 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         return typeConverterLoaders;
     }
 
-    /**
-     * Is there <b>NOT</b> a type converter registered being able to converter the
-     * given value to the type
-     * @param toType  the type to convert to
-     * @param fromType  the type to convert from
-     * @return <tt>true</tt> if there is <b>NOT</b> a converter, <tt>false</tt> if there is
-     */
-    @SuppressWarnings("unchecked")
-    public boolean hasNoConverterFor(Class toType, Class fromType) {
-        TypeMapping key = new TypeMapping(toType, fromType);
-        // we must only look in misses and not do the acutal convertions
-        // as for stream it can be impossible to re-read them and this
-        // method should not cause any overhead
-        return misses.containsKey(key);
-    }
-
     public <T> T convertTo(Class<T> type, Object value) {
         return convertTo(type, null, value);
     }
 
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return doConvertTo(type, exchange, value);
+        Object answer;
+        try {
+            answer = doConvertTo(type, exchange, value);
+        } catch (Exception e) {
+            // we cannot convert so return null
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(NoTypeConversionAvailableException.createMessage(value, type)
+                        + " Caused by: " + e.getMessage() + ". Will ignore this and continue.");
+            }
+            return null;
+        }
+        if (answer == Void.TYPE) {
+            // Could not find suitable conversion
+            return null;
+        } else {
+            return (T) answer;
+        }
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Object value) {
+        return mandatoryConvertTo(type, null, value);
+    }
+
+    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
+        Object answer;
+        try {
+            answer = doConvertTo(type, exchange, value);
+        } catch (Exception e) {
+            throw new NoTypeConversionAvailableException(value, type, e);
+        }
+        if (answer == Void.TYPE) {
+            // Could not find suitable conversion
+            throw new NoTypeConversionAvailableException(value, type);
+        } else {
+            return (T) answer;
+        }
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T doConvertTo(Class<T> type, Exchange exchange, Object value) {
+    public Object doConvertTo(final Class type, final Exchange exchange, final Object value) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Converting " + (value == null ? "null" : value.getClass().getCanonicalName())
                 + " -> " + type.getCanonicalName() + " with value: " + value);
@@ -109,7 +128,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (value == null) {
             // lets avoid NullPointerException when converting to boolean for null values
             if (boolean.class.isAssignableFrom(type)) {
-                return (T) Boolean.FALSE;
+                return Boolean.FALSE;
             }
             return null;
         }
@@ -119,13 +138,20 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             return type.cast(value);
         }
 
+        // check if we have tried it before and if its a miss
+        TypeMapping key = new TypeMapping(type, value.getClass());
+        if (misses.containsKey(key)) {
+            // we have tried before but we cannot convert this one
+            return Void.TYPE;
+        }
+
         // make sure we have loaded the converters
         checkLoaded();
 
         // try to find a suitable type converter
         TypeConverter converter = getOrFindTypeConverter(type, value);
         if (converter != null) {
-            T rc = converter.convertTo(type, exchange, value);
+            Object rc = converter.convertTo(type, exchange, value);
             if (rc != null) {
                 return rc;
             }
@@ -133,7 +159,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
 
         // fallback converters
         for (TypeConverter fallback : fallbackConverters) {
-            T rc = fallback.convertTo(type, exchange, value);
+            Object rc = fallback.convertTo(type, exchange, value);
             if (rc != null) {
                 return rc;
             }
@@ -143,17 +169,17 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         if (type.isPrimitive()) {
             Class primitiveType = ObjectHelper.convertPrimitiveTypeToWrapperType(type);
             if (primitiveType != type) {
-                return (T) convertTo(primitiveType, exchange, value);
+                return convertTo(primitiveType, exchange, value);
             }
         }
 
+        // Could not find suitable conversion, so remember it
         synchronized (misses) {
-            TypeMapping key = new TypeMapping(type, value.getClass());
             misses.put(key, key);
         }
 
-        // Could not find suitable conversion
-        throw new NoTypeConversionAvailableException(value, type);
+        // Could not find suitable conversion, so return Void to indicate not found
+        return Void.TYPE;
     }
 
     public void addTypeConverter(Class toType, Class fromType, TypeConverter typeConverter) {
