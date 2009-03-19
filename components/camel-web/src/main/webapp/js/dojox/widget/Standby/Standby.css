@@ -1,0 +1,16 @@
+.standbyUnderlayNode {
+	display: none;
+	opacity: 0;
+	z-index: 9999;
+	position: absolute;
+	cursor:wait;
+}
+.standbyImageNode {
+	opacity: 0;
+        display: none;
+	z-index: -10000;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	cursor:wait;
+}
