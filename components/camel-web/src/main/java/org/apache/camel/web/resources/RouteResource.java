@@ -16,9 +16,8 @@
  */
 package org.apache.camel.web.resources;
 
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.view.RouteDotGenerator;
-
+import java.io.IOException;
+import java.io.StringWriter;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -26,8 +25,9 @@ import javax.ws.rs.core.MediaType;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import java.io.IOException;
-import java.io.StringWriter;
+
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.view.RouteDotGenerator;
 
 /**
  * A single Camel Route which is used to implement one or more

@@ -16,14 +16,14 @@
  */
 package org.apache.camel.web.resources;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents the list of the currently active <a href="http://camel.apache.org/component.html">components</a>
