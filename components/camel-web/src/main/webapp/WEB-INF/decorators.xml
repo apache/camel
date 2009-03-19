@@ -30,4 +30,9 @@
 
   <decorator name="panel" page="panel.jsp" />
   <decorator name="printable" page="printable.jsp" />
+
+  <decorator name="plain" page="plain.jsp">
+    <pattern>/routes/*/edit</pattern>
+  </decorator>
+
 </decorators>

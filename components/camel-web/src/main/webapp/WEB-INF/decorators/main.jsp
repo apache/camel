@@ -23,16 +23,23 @@
     @import url(<c:url value="/css/type-settings.css"/>);
     @import url(<c:url value="/css/site.css"/>);
   </style>
-  <c:if test="${!disableJavaScript}">
+  <%
+      if (request.getAttribute("noJavaScript") == null) {
+  %>
     <script type='text/javascript' src='<c:url value="/js/common.js"/>'></script>
     <script type='text/javascript' src='<c:url value="/js/css.js"/>'></script>
     <script type='text/javascript' src='<c:url value="/js/standardista-table-sorting.js"/>'></script>
-  </c:if>
+  <%
+    }
+  %>
 
   <decorator:head/>
 </head>
 
+<%--
 <body onload='<decorator:getProperty property="body.onload"/>'>
+--%>
+<body>
 
 
 <div class="white_box">
