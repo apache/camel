@@ -16,15 +16,15 @@
  */
 package org.apache.camel.web.resources;
 
-import org.apache.camel.impl.converter.DefaultTypeConverter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+
+import org.apache.camel.impl.converter.DefaultTypeConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $Revision: 1.1 $
@@ -60,7 +60,7 @@ public class ConvertersResource extends CamelChildResourceSupport {
     public ConvertersFromResource getConvertersFrom(@PathParam("type") Class type) {
 */
 
-public ConvertersFromResource getConvertersFrom(@PathParam("type") String typeName) {
+    public ConvertersFromResource getConvertersFrom(@PathParam("type") String typeName) {
         Class type = getCamelContext().getClassResolver().resolveClass(typeName, getClass().getClassLoader());
         if (type == null) {
             return null;

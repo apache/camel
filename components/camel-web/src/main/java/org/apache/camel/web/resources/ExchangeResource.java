@@ -16,6 +16,9 @@
  */
 package org.apache.camel.web.resources;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import com.sun.jersey.api.view.ImplicitProduces;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -23,9 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.spi.UnitOfWork;
-
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * A Camel <a href="http://camel.apache.org/exchange.html">message exchange</a>
