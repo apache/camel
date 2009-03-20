@@ -26,8 +26,10 @@ import java.util.logging.Logger;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.cxf.common.logging.LogUtils;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.MethodDispatcher;
+import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
@@ -174,6 +176,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         CxfHeaderHelper.propagateCxfToCamel(endpoint.getHeaderFilterStrategy(), exchange.getInMessage(),
                 cxfExchange.getIn().getHeaders());
         cxfExchange.getIn().setBody(params);
+        
         try {
             cxfConsumer.getProcessor().process(cxfExchange);
         } catch (Exception ex) {
@@ -193,6 +196,24 @@ public class CamelInvoker implements Invoker, MessageInvoker {
                 throw new Fault(ex);
             }
         } else {
+            Message cxfMessage = exchange.getOutMessage();
+            if (cxfMessage == null && !exchange.isOneWay()) {
+                Endpoint ep = exchange.get(Endpoint.class);
+                cxfMessage = ep.getBinding().createMessage();
+                exchange.setOutMessage(cxfMessage);
+            }
+
+            Message message = cxfExchange.getOutMessage();
+            if (message != null) {
+                Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)message.get(Client.RESPONSE_CONTEXT));
+                if (responseContext != null) {
+                    List<Header> headers = CastUtils.cast((List<?>)responseContext.get(Header.HEADER_LIST));
+                    if (headers != null) {
+                        cxfMessage.put(Header.HEADER_LIST, headers);
+                    }
+                }
+            }
+
             result = cxfExchange.getOut().getBody();
             if (result != null) {
                 if (result instanceof MessageContentsList || result instanceof List || result.getClass().isArray()) {

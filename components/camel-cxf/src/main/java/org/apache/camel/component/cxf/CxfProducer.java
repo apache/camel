@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.xml.namespace.QName;
 
@@ -33,16 +34,13 @@ import org.apache.camel.component.cxf.invoker.CxfClient;
 import org.apache.camel.component.cxf.invoker.CxfClientFactoryBean;
 import org.apache.camel.component.cxf.invoker.InvokingContext;
 import org.apache.camel.component.cxf.invoker.InvokingContextFactory;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.common.classloader.ClassLoaderUtils;
-import org.apache.cxf.configuration.Configurer;
-import org.apache.cxf.configuration.spring.ConfigurerImpl;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.frontend.ClientProxy;
@@ -60,6 +58,9 @@ import org.apache.cxf.service.model.BindingOperationInfo;
  * @version $Revision$
  */
 public class CxfProducer extends DefaultProducer<CxfExchange> {
+    
+    private static final Logger LOG = LogUtils.getL7dLogger(CxfProducer.class);
+    
     private CxfEndpoint endpoint;
     private Client client;
     private DataFormat dataFormat;
@@ -173,7 +174,10 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                                                                    String.class);
             // Get context from message
             Map<String, Object> context = new HashMap<String, Object>();
-            Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
+            Map<String, Object> responseContext = CxfBinding.propogateContext(exchange, context);
+            
+            CxfBinding.relayRequestHeaders(endpoint, exchange, context);
+            
             Message response = new MessageImpl();
             if (operationName != null) {
                 // we need to check out the operation Namespace
@@ -188,6 +192,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
                 // copy the response context to the response
                 CxfBinding.storeCXfResponseContext(response, responseContext);
                 CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
+                CxfBinding.relayResponseHeaders(endpoint, exchange, context);
 
             } else {
                 throw new RuntimeCamelException("Can't find the operation name in the message!");
@@ -226,7 +231,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             response.setExchange(ex);
             // invoke the message prepare the context
             Map<String, Object> context = new HashMap<String, Object>();
-            Map<String, Object> responseContext = CxfBinding.propogateContext(inMessage, context);
+            Map<String, Object> responseContext = CxfBinding.propogateContext(exchange, context);
 
             Object result = cxfClient.dispatch(params, context, ex);
             ex.setOutMessage(response);
@@ -234,8 +239,6 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
             // copy the response context to the response
             CxfBinding.storeCXfResponseContext(response, responseContext);
             CxfBinding.storeCxfResponse(endpoint.getHeaderFilterStrategy(), exchange, response);
-
-
         }
 
     }

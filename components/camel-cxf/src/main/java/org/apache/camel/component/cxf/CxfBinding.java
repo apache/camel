@@ -17,22 +17,38 @@
 package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.xml.ws.Holder;
 import javax.xml.ws.handler.MessageContext;
 import javax.xml.ws.handler.MessageContext.Scope;
 
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.component.cxf.headers.DefaultMessageHeadersRelay;
+import org.apache.camel.component.cxf.headers.Direction;
+import org.apache.camel.component.cxf.headers.MessageHeadersRelay;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.cxf.binding.Binding;
+import org.apache.cxf.binding.soap.model.SoapHeaderInfo;
+import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Endpoint;
+import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.jaxws.handler.HandlerChainInvoker;
+import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.service.model.BindingMessageInfo;
+import org.apache.cxf.service.model.BindingOperationInfo;
 
 /**
  * The binding/mapping of Camel messages to Apache CXF and back again
@@ -40,6 +56,8 @@ import org.apache.cxf.message.Message;
  * @version $Revision$
  */
 public final class CxfBinding {
+    private static final Logger LOG = LogUtils.getL7dLogger(CxfBinding.class);
+    
     private CxfBinding() {
         // Helper class
     }
@@ -111,7 +129,7 @@ public final class CxfBinding {
         requestContext.remove(HandlerChainInvoker.class.getName());
         
         answer.put(Client.REQUEST_CONTEXT, requestContext);
-
+        
         return answer;
     }
 
@@ -192,35 +210,185 @@ public final class CxfBinding {
     }
 
 
-    public static Map<String, Object> propogateContext(Message message, Map<String, Object> context) {
-        Map<String, Object> requestContext = CastUtils.cast((Map)message.get(Client.REQUEST_CONTEXT));
-        Map<String, Object> responseContext = CastUtils.cast((Map)message.get(Client.RESPONSE_CONTEXT));
-        // TODO map the JAXWS properties to cxf
+    public static Map<String, Object> propogateContext(CxfExchange exchange, Map<String, Object> context) {
+        Message message = exchange.getInMessage();
+        Map<String, Object> requestContext = CastUtils.cast((Map<?, ?>)message.get(Client.REQUEST_CONTEXT));
+        Map<String, Object> responseContext = CastUtils.cast((Map<?, ?>)message.get(Client.RESPONSE_CONTEXT));
+        Map<String, Object> camelRequestContext = 
+            CastUtils.cast((Map<?, ?>)exchange.getIn().getHeader(Client.REQUEST_CONTEXT));
+        
+        Map<String, Object> mergedRequestContext = new HashMap<String, Object>();
+        WrappedMessageContext ctx = new WrappedMessageContext(mergedRequestContext,
+                                                              null,
+                                                              Scope.APPLICATION);
         if (requestContext != null) {
-            Map<String, Object> realMap = new HashMap<String, Object>();
-            WrappedMessageContext ctx = new WrappedMessageContext(realMap,
-                                                                  null,
-                                                                  Scope.APPLICATION);
             ctx.putAll(requestContext);
-
-            // Remove protocol headers from scopes.  Otherwise, response headers can be
-            // overwritten by request headers when SOAPHandlerInterceptor tries to create
-            // a wrapped message context by the copyScoped() method.
-            ctx.getScopes().remove(Message.PROTOCOL_HEADERS);
-            requestContext = realMap;
-
         }
-
+        
+        if (camelRequestContext != null) {
+            ctx.putAll(camelRequestContext);
+        }
+        
+        // Remove protocol headers from scopes.  Otherwise, response headers can be
+        // overwritten by request headers when SOAPHandlerInterceptor tries to create
+        // a wrapped message context by the copyScoped() method.
+        if (ctx.size() > 0) {
+            ctx.getScopes().remove(Message.PROTOCOL_HEADERS);
+        }
+            
         if (responseContext == null) {
             responseContext = new HashMap<String, Object>();
         } else {
             // clear the response context
             responseContext.clear();
         }
-        context.put(Client.REQUEST_CONTEXT, requestContext);
+        context.put(Client.REQUEST_CONTEXT, mergedRequestContext);
         context.put(Client.RESPONSE_CONTEXT, responseContext);
         return responseContext;
-
     }
 
+    protected static void relayRequestHeaders(CxfEndpoint endpoint, 
+                                              CxfExchange exchange, 
+                                              Map<String, Object> context) {
+        
+        Message message = exchange.getInMessage();
+        if (message == null) {
+            return;
+        }
+        Map<String, Object> requestContext = CastUtils.cast((Map<?, ?>)context.get(Client.REQUEST_CONTEXT));
+        if (!endpoint.isRelayHeaders()) {
+            message.remove(Header.HEADER_LIST);
+            if (exchange.getExchange() == null) {
+                return;
+            }
+            BindingOperationInfo bop = exchange.getExchange().get(BindingOperationInfo.class);
+            if (null == bop) {
+                return;
+            }
+            BindingMessageInfo bmi = bop.getInput();
+            List<SoapHeaderInfo> headersInfo = bmi.getExtensors(SoapHeaderInfo.class);
+            if (headersInfo == null || headersInfo.size() == 0) {
+                return;
+            }
+            MessageContentsList parameters = MessageContentsList.getContentsList(message);
+            for (SoapHeaderInfo headerInfo : headersInfo) {
+                Object o = parameters.get(headerInfo.getPart());
+                if (o instanceof Holder) {
+                    Holder holder = (Holder)o;
+                    holder.value = null;
+                } else {
+                    parameters.remove(headerInfo.getPart());
+                }
+            }
+            return;
+        }
+        if (!message.containsKey(Header.HEADER_LIST)) {
+            return;
+        }
+        MessageHeadersRelay relay = getRelay(endpoint, exchange);
+        relayHeaders(Direction.OUT, 
+                     (List<Header>)message.get(Header.HEADER_LIST),
+                     requestContext, 
+                     relay);
+    }
+
+    protected static void relayResponseHeaders(CxfEndpoint endpoint, 
+                                               CxfExchange exchange, 
+                                               Map<String, Object> context) {
+        Message message = exchange.getOutMessage();
+        if (message == null) {
+            return;
+        }
+        Map<String, Object> responseContext = (Map<String, Object>)context.get(Client.RESPONSE_CONTEXT);
+        List<Header> headers = (List<Header>)responseContext.get(Header.HEADER_LIST);
+        responseContext.remove(Header.HEADER_LIST);
+        if (!endpoint.isRelayHeaders()) {
+            Exchange e = exchange.getExchange();
+            if (e == null) {
+                return;
+            }
+            BindingOperationInfo bop = e.get(BindingOperationInfo.class);
+            if (null == bop) {
+                return;
+            }
+            BindingMessageInfo bmi = bop.getOutput();
+            List<SoapHeaderInfo> headersInfo = bmi.getExtensors(SoapHeaderInfo.class);
+            if (headersInfo == null || headersInfo.size() == 0) {
+                return;
+            }
+            MessageContentsList parameters = MessageContentsList.getContentsList(message);
+            for (SoapHeaderInfo headerInfo : headersInfo) {
+                Object o = parameters.get(headerInfo.getPart());
+                if (o instanceof Holder) {
+                    Holder holder = (Holder)o;
+                    holder.value = null;
+                } else {
+                    parameters.remove(headerInfo.getPart());
+                }
+            }
+            return;
+        }
+        if (headers == null || headers.size() == 0) {
+            return;
+        }
+        MessageHeadersRelay relay = getRelay(endpoint, exchange);
+        relayHeaders(Direction.IN, 
+                     headers,
+                     responseContext,
+                     relay);
+    }
+
+    protected static MessageHeadersRelay getRelay(CxfEndpoint endpoint, CxfExchange exchange) {
+        MessageHeadersRelay relay = null;
+        String ns = null;
+        Endpoint e = null;
+        Exchange cxfExchange = exchange.getExchange();
+        if (cxfExchange != null) {
+            e = cxfExchange.get(Endpoint.class);
+        }
+        if (e != null && e.getBinding() != null) {
+            Binding b = e.getBinding();
+            if (b != null && b.getBindingInfo() != null) {
+                ns = b.getBindingInfo().getBindingId();
+            }
+        }
+        if (ns == null) {
+            LOG.log(Level.WARNING,
+                    "No CXF Binding namespace can be resolved for relaying message headers, " 
+                     + " using " + DefaultMessageHeadersRelay.ACTIVATION_NAMESPACE + " namespace");
+        }
+        if (ns != null) {
+            relay = endpoint.getMessageHeadersRelay(ns);
+        }
+        if (relay == null) {
+            LOG.log(Level.WARNING,
+                    "No MessageHeadersRelay instance is bound to '" 
+                     + ns + "' namespace; using " 
+                     + DefaultMessageHeadersRelay.ACTIVATION_NAMESPACE + " namespace");
+            relay = 
+                endpoint.getMessageHeadersRelay(DefaultMessageHeadersRelay.ACTIVATION_NAMESPACE);
+        }
+        return relay;
+    }
+    
+    protected static void relayHeaders(Direction direction, 
+                                       List<Header> from,
+                                       Map<String, Object> context,
+                                       MessageHeadersRelay relay) {
+        
+        List<Header> to = (List<Header>)context.get(Header.HEADER_LIST);
+        boolean hasHeaders = true;
+        if (to == null) {
+            to = new ArrayList<Header>();
+            hasHeaders = false;
+        }
+        relay.relay(direction, from, to);
+        for (Header header : to) {
+            header.setDirection(Header.Direction.DIRECTION_OUT);
+        }
+        if (!hasHeaders && to.size() > 0) {
+            context.put(Header.HEADER_LIST, to);
+        }
+    }
 }
+

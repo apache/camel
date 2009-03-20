@@ -41,6 +41,7 @@ public interface CxfConstants {
     String CAMEL_TRANSPORT_PREFIX = "camel:";
     String CXF_EXCHANGE = "org.apache.cxf.message.exchange";
     String CAMEL_EXCHANGE = "org.apache.camel.exchange";
+    String CAMEL_CXF_MESSAGE_HEADER_RELAYS = "org.apache.camel.cxf.message.headers.relays";
 }
 
 

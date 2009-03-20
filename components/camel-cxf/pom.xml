@@ -269,6 +269,12 @@
       						</extraargs>
       					</wsdlOption>
       					<wsdlOption>
+      						<wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
+      						<extraargs>
+      							<extraarg>-verbose</extraarg>
+      						</extraargs>
+      					</wsdlOption>
+      					<wsdlOption>
       						<wsdl>${basedir}/src/test/resources/person-non-wrapper.wsdl</wsdl>
       						<extraargs>
       							<extraarg>-b</extraarg>
