@@ -32,15 +32,8 @@ public class Jsr223Test extends TestCase {
     private String [] scriptNames = {"beanshell", "groovy", "js", "python", "ruby", "javascript"};
 
     public void testLanguageNames() throws Exception {
-        // ruby scripting does not work on IBM's JDK
-        // see http://jira.codehaus.org/browse/JRUBY-3073
-        ArrayList<String> scriptNamesAsList = new ArrayList<String>(Arrays.asList(scriptNames));       
-        if ("IBM Corporation".equals(System.getProperty("java.vendor"))) {
-            scriptNamesAsList.remove("ruby");
-        }
-        
         ScriptEngineManager manager = new ScriptEngineManager();
-        for (String scriptName : scriptNamesAsList) {
+        for (String scriptName : scriptNames) {
             ScriptEngine engine = manager.getEngineByName(scriptName);
             assertNotNull("We should get the script engine for " + scriptName , engine);
         }

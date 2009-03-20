@@ -183,7 +183,7 @@
                     <childDelegation>false</childDelegation>
                     <useFile>true</useFile>
                     <includes>
-                        <include>**/*XXXX.*</include>
+                        <include>**/*Test.*</include>
                     </includes>
                     <!-- TODO: beanshell doesnt work on java 5 yet with the bsh-engine we got in pom right now -->
                     <excludes>
@@ -195,38 +195,4 @@
         </plugins>
     </build>
     
-    <profiles>
-      <profile>
-        <id>on-ibmjdk</id>
-        <activation>
-          <property>
-            <name>java.vendor</name>
-            <value>IBM Corporation</value>
-          </property>
-        </activation>
-        <build>
-            <plugins>
-                <plugin>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <forkMode>pertest</forkMode>
-                        <childDelegation>false</childDelegation>
-                        <useFile>true</useFile>
-                        <includes>
-                            <include>**/*Test.*</include>
-                        </includes>
-                        <!-- TODO: beanshell doesnt work on java 5 yet with the bsh-engine we got in pom right now -->
-                        <!-- TODO: Ruby scripting doesn't work on IBM's JDK 
-                                   See http://jira.codehaus.org/browse/JRUBY-3073 -->
-                        <excludes>
-                            <exclude>**/BeanShellScriptRouteTest.*</exclude>
-                            <exclude>**/BeanShellFilterTest.*</exclude>
-                            <exclude>**/Ruby*Test.*</exclude>
-                        </excludes>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-      </profile>
-    </profiles>    
 </project>
