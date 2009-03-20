@@ -132,6 +132,7 @@ public class JmsConfiguration implements Cloneable {
     private String replyToDestination;
     private String replyToDestinationSelectorName;
     private JmsMessageType jmsMessageType;
+    private JmsKeyFormatStrategy jmsKeyFormatStrategy;
 
     public JmsConfiguration() {
     }
@@ -1152,5 +1153,16 @@ public class JmsConfiguration implements Cloneable {
 
     public void setJmsMessageType(JmsMessageType jmsMessageType) {
         this.jmsMessageType = jmsMessageType;
+    }
+
+    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+        if (jmsKeyFormatStrategy == null) {
+            jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
+        }
+        return jmsKeyFormatStrategy;
+    }
+
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
+        this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
     }
 }

@@ -16,29 +16,25 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.util.ObjectHelper;
-
 /**
+ * Default strategy that handles dots and hyphens.
+ * <p/>
+ * This can be used for sending keys containg package names that is common by Java frameworks.
+ *
  * @version $Revision$
  */
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class DefaultJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
-    public JmsHeaderFilterStrategy() {
-        initialize();
+    public String encodeKey(String key) {
+        String answer = key.replace(".", "_");
+        answer = answer.replaceAll("-", "_HYPHEN_");
+        return answer;
     }
 
-    protected void initialize() {
-        // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
-        // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
-        getOutFilter().add("JMSXUserID");
-        getOutFilter().add("JMSXAppID");
-        getOutFilter().add("JMSXDeliveryCount");
-        getOutFilter().add("JMSXProducerTXID");
-        getOutFilter().add("JMSXConsumerTXID");
-        getOutFilter().add("JMSXRcvTimestamp");
-        getOutFilter().add("JMSXRecvTimestamp");
-        getOutFilter().add("JMSXState");
+    public String decodeKey(String key) {
+        String answer = key.replaceAll("_HYPHEN_", "-");
+        answer = answer.replace("_", ".");
+        return answer;
     }
 
 }

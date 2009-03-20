@@ -144,7 +144,7 @@ public class JmsBinding {
 
                     // must decode back from safe JMS header name to original header name
                     // when storing on this Camel JmsMessage object.
-                    String key = JmsBinding.decodeFromSafeJmsHeaderName(name);
+                    String key = endpoint.getJmsKeyFormatStrategy().decodeKey(name);
                     map.put(key, value);
                 } catch (JMSException e) {
                     throw new RuntimeCamelException(name, e);
@@ -224,28 +224,25 @@ public class JmsBinding {
                                   String headerName, Object headerValue) throws JMSException {
         if (headerName.startsWith("JMS") && !headerName.startsWith("JMSX")) {
             if (headerName.equals("JMSCorrelationID")) {
-                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class,
-                    headerValue));
+                jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
-                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class,
-                    headerValue));
+                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
-                // The following properties are set by the MessageProducer
-                // JMSDeliveryMode, JMSDestination, JMSExpiration,
-                // JMSPriority,
-                // The following are set on the underlying JMS provider
+                // The following properties are set by the MessageProducer:
+                // JMSDeliveryMode, JMSDestination, JMSExpiration, JMSPriorit
+                // The following are set on the underlying JMS provider:
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
                 LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
             }
         } else if (shouldOutputHeader(in, headerName, headerValue)) {
-            // must encode to safe JMS header name before setting property on jmsMessage
-            String key = encodeToSafeJmsHeaderName(headerName);
             // only primitive headers and strings is allowed as properties
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             if (value != null) {
+                // must encode to safe JMS header name before setting property on jmsMessage
+                String key = endpoint.getJmsKeyFormatStrategy().encodeKey(headerName);
                 jmsMessage.setObjectProperty(key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
@@ -396,31 +393,6 @@ public class JmsBinding {
 
         return headerFilterStrategy == null
             || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
-    }
-
-    /**
-     * Encoder to encode JMS header keys that is that can be sent over the JMS transport.
-     * <p/>
-     * For example: Sending dots is the key is not allowed. Especially the Bean component has
-     * this problem if you want to provide the method name to invoke on the bean.
-     * <p/>
-     * <b>Note</b>: Currently this encoder is simple as it only supports encoding dots to underscores.
-     *
-     * @param headerName the header name
-     * @return the key to use instead for storing properties and to be for lookup of the same property
-     */
-    public static String encodeToSafeJmsHeaderName(String headerName) {
-        return headerName.replace(".", "_");
-    }
-
-    /**
-     * Decode operation for the {@link #encodeToSafeJmsHeaderName(String)}.
-     *
-     * @param headerName the header name
-     * @return the original key
-     */
-    public static String decodeFromSafeJmsHeaderName(String headerName) {
-        return headerName.replace("_", ".");
     }
 
 }

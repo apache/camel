@@ -423,8 +423,26 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
                 throw new IllegalArgumentException("The JmsComponent's username or password is null");
             }
         }
-        setProperties(endpoint.getConfiguration(), parameters);
 
+        // jms header strategy
+        String strategy = getAndRemoveParameter(parameters, "jmsKeyFormatStrategy", String.class);
+        if (strategy != null) {
+            if (isReferenceParameter(strategy)) {
+                String key = strategy.substring(1);
+                endpoint.setJmsKeyFormatStrategy(lookup(key, JmsKeyFormatStrategy.class));
+            } else {
+                // should be on of the default ones we support
+                if ("default".equalsIgnoreCase(strategy)) {
+                    endpoint.setJmsKeyFormatStrategy(new DefaultJmsKeyFormatStrategy());
+                } else if ("passthrough".equalsIgnoreCase(strategy)) {
+                    endpoint.setJmsKeyFormatStrategy(new PassThroughJmsKeyFormatStrategy());
+                } else {
+                    throw new IllegalArgumentException("Unknown jmsKeyFormatStrategy option: " + strategy);
+                }
+            }
+        }
+
+        setProperties(endpoint.getConfiguration(), parameters);
         endpoint.setHeaderFilterStrategy(getHeaderFilterStrategy());
 
         return endpoint;

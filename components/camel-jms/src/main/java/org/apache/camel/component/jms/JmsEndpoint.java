@@ -771,6 +771,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setJmsMessageType(jmsMessageType);
     }
 
+    public JmsKeyFormatStrategy getJmsKeyFormatStrategy() {
+        return getConfiguration().getJmsKeyFormatStrategy();
+    }
+
+    public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsHeaderStrategy) {
+        getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
