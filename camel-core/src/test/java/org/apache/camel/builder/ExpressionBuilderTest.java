@@ -18,7 +18,9 @@ package org.apache.camel.builder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
@@ -28,6 +30,8 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 
 import static org.apache.camel.builder.ExpressionBuilder.bodyExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertiesExpression;
+import static org.apache.camel.builder.ExpressionBuilder.camelContextPropertyExpression;
 import static org.apache.camel.builder.ExpressionBuilder.constantExpression;
 import static org.apache.camel.builder.ExpressionBuilder.headerExpression;
 import static org.apache.camel.builder.ExpressionBuilder.regexReplaceAll;
@@ -39,8 +43,9 @@ import static org.apache.camel.builder.PredicateBuilder.contains;
  * @version $Revision$
  */
 public class ExpressionBuilderTest extends TestSupport {
-    protected Exchange exchange = new DefaultExchange(new DefaultCamelContext());
-
+    protected CamelContext camelContext = new DefaultCamelContext();
+    protected Exchange exchange = new DefaultExchange(camelContext);
+    
     public void testRegexTokenize() throws Exception {
         Expression<Exchange> expression = regexTokenize(headerExpression("location"), ",");
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Islington", "London", "UK"}));
@@ -85,6 +90,16 @@ public class ExpressionBuilderTest extends TestSupport {
 
         ArrayList expected = new ArrayList(Arrays.asList(new String[] {"Hello World", "Bye World", "See you again"}));
         assertExpression(expression, exchange, expected);
+    }
+
+    
+    public void testCamelContextPropertiesExpression() throws Exception {
+        camelContext.getProperties().put("CamelTestKey", "CamelTestValue");        
+        Expression<Exchange> expression = camelContextPropertyExpression("CamelTestKey");
+        assertExpression(expression, exchange, "CamelTestValue");        
+        expression = camelContextPropertiesExpression();
+        Map<String, String> properties = (Map<String, String>)expression.evaluate(exchange);
+        assertEquals("Get a wrong properties size", properties.size(), 1);
     }
 
     @Override

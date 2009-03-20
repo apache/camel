@@ -137,7 +137,7 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression for the property value with the given name
+     * Returns an expression for the property value of exchange with the given name
      *
      * @see Exchange#getProperty(String)
      * @param propertyName the name of the property the expression will return
@@ -156,9 +156,8 @@ public final class ExpressionBuilder {
         };
     }
 
-
     /**
-     * Returns an expression for the property value with the given name
+     * Returns an expression for the properties of exchange with the given name
      *
      * @see Exchange#getProperties()
      * @return an expression object which will return the properties
@@ -172,6 +171,45 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "properties";
+            }
+        };
+    }
+    
+    /**
+     * Returns an expression for the properties of exchange with the given name
+     *
+     * @see Exchange#getProperties()
+     * @return an expression object which will return the properties
+     */
+    public static <E extends Exchange> Expression<E> camelContextPropertiesExpression() {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getContext().getProperties();
+            }
+
+            @Override
+            public String toString() {
+                return "camelContextProperties";
+            }
+        };
+    }
+    
+    /**
+     * Returns an expression for the property value of the camel context with the given name
+     *
+     * @see Exchange#getProperty(String)
+     * @param propertyName the name of the property the expression will return
+     * @return an expression object which will return the property value
+     */
+    public static <E extends Exchange> Expression<E> camelContextPropertyExpression(final String propertyName) {
+        return new Expression<E>() {
+            public Object evaluate(E exchange) {
+                return exchange.getContext().getProperties().get(propertyName);
+            }
+
+            @Override
+            public String toString() {
+                return "camelContextProperty(" + propertyName + ")";
             }
         };
     }
