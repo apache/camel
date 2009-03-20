@@ -30,7 +30,7 @@ class WiretapTest extends ScalaTestSupport {
   
   def doTestWiretap(from: String, to: String) = {
     to expect { _.received("Calling Elvis", "Calling Paul")}
-    "mock:tap" expect { _.received("Elvis is alive!", "Stop singing, you're not Elvis")}
+    mock("mock:tap").expectedBodiesReceivedInAnyOrder("Elvis is alive!", "Stop singing, you're not Elvis")
     test {
       from ! (Adult("Elvis"), Adult("Paul"))
     }
