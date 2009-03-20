@@ -16,29 +16,26 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.util.ObjectHelper;
-
 /**
+ * Strategy for applying encoding and decoding of JMS headers so they apply to the JMS spec.
+ *
  * @version $Revision$
  */
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public interface JmsKeyFormatStrategy {
 
-    public JmsHeaderFilterStrategy() {
-        initialize();
-    }
+    /**
+     * Encodes the key before its sent as a {@link javax.jms.Message} message.
+     *
+     * @param key  the original key
+     * @return the encoded key
+     */
+    String encodeKey(String key);
 
-    protected void initialize() {
-        // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
-        // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
-        getOutFilter().add("JMSXUserID");
-        getOutFilter().add("JMSXAppID");
-        getOutFilter().add("JMSXDeliveryCount");
-        getOutFilter().add("JMSXProducerTXID");
-        getOutFilter().add("JMSXConsumerTXID");
-        getOutFilter().add("JMSXRcvTimestamp");
-        getOutFilter().add("JMSXRecvTimestamp");
-        getOutFilter().add("JMSXState");
-    }
-
+    /**
+     * Decodes the key after its received from a {@link javax.jms.Message} message.
+     *
+     * @param key the encoded key
+     * @return the decoded key as the original key
+     */
+    String decodeKey(String key);
 }

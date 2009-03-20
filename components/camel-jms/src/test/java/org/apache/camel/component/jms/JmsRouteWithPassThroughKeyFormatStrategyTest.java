@@ -16,29 +16,15 @@
  */
 package org.apache.camel.component.jms;
 
-import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.apache.camel.util.ObjectHelper;
-
 /**
+ * With the passthrough option
+ *
  * @version $Revision$
  */
-public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
+public class JmsRouteWithPassThroughKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
-    public JmsHeaderFilterStrategy() {
-        initialize();
+    @Override
+    protected String getUri() {
+        return "activemq:queue:foo?jmsKeyFormatStrategy=passthrough";
     }
-
-    protected void initialize() {
-        // ignore provider specified JMS extension headers see page 39 of JMS 1.1 specification
-        // added "JMSXRecvTimestamp" as a workaround for an Oracle bug/typo in AqjmsMessage
-        getOutFilter().add("JMSXUserID");
-        getOutFilter().add("JMSXAppID");
-        getOutFilter().add("JMSXDeliveryCount");
-        getOutFilter().add("JMSXProducerTXID");
-        getOutFilter().add("JMSXConsumerTXID");
-        getOutFilter().add("JMSXRcvTimestamp");
-        getOutFilter().add("JMSXRecvTimestamp");
-        getOutFilter().add("JMSXState");
-    }
-
 }
