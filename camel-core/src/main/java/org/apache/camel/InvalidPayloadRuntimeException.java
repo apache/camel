@@ -17,7 +17,7 @@
 package org.apache.camel;
 
 /**
- * Runtime version of the {@link org.apache.camel.InvalidTypeException}.
+ * Runtime version of the {@link InvalidPayloadException}.
  *
  * @version $Revision$
  */
@@ -25,8 +25,19 @@ public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
     private final Class<?> type;
 
     public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type) {
-        super("No in body available of type: " + type.getName()
-              + NoSuchPropertyException.valueDescription(exchange.getIn().getBody()), exchange);
+        this(exchange, type, exchange.getIn());
+    }
+
+    public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message) {
+        super("No body available of type: " + type.getName()
+              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message, exchange);
+        this.type = type;
+    }
+
+    public InvalidPayloadRuntimeException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
+        super("No body available of type: " + type.getName()
+              + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message
+              + ". Caused by: " + cause.getMessage(), exchange, cause);
         this.type = type;
     }
 

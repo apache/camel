@@ -26,12 +26,12 @@ public class RuntimeExchangeException extends RuntimeCamelException {
     private final Exchange exchange;
 
     public RuntimeExchangeException(String message, Exchange exchange) {
-        super(message + " on the exchange: " +  exchange);
+        super(createMessage(message, exchange));
         this.exchange = exchange;
     }
 
-    public RuntimeExchangeException(Exception e, Exchange exchange) {
-        super(e.getMessage(), e);
+    public RuntimeExchangeException(String message, Exchange exchange, Throwable cause) {
+        super(createMessage(message, exchange), cause);
         this.exchange = exchange;
     }
 
@@ -40,6 +40,10 @@ public class RuntimeExchangeException extends RuntimeCamelException {
      */
     public Exchange getExchange() {
         return exchange;
+    }
+
+    protected static String createMessage(String message, Exchange exchange) {
+        return message + " on the exchange: " + exchange;
     }
 
 }
