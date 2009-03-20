@@ -103,10 +103,6 @@ public class BeanInfo {
         return answer;
     }
 
-    /**
-     * @deprecated not used
-     */
-    @Deprecated
     public MethodInvocation createInvocation(Method method, Object pojo, Exchange exchange) throws RuntimeCamelException {
         MethodInfo methodInfo = introspect(type, method);
         if (methodInfo != null) {

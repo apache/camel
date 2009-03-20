@@ -540,6 +540,9 @@ public final class ObjectHelper {
             return null;
         }
         try {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading class: " + name + " using classloader: " + loader);
+            }
             return loader.loadClass(name);
         } catch (ClassNotFoundException e) {
             if (LOG.isTraceEnabled()) {
