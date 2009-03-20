@@ -779,6 +779,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setJmsKeyFormatStrategy(jmsHeaderStrategy);
     }
 
+    public boolean isTransferExchange() {
+        return getConfiguration().isTransferExchange();
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        getConfiguration().setTransferExchange(transferExchange);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 

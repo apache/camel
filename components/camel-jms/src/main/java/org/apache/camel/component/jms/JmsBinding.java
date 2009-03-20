@@ -43,6 +43,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.file.GenericFile;
+import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
@@ -88,7 +89,14 @@ public class JmsBinding {
         try {
             if (message instanceof ObjectMessage) {
                 ObjectMessage objectMessage = (ObjectMessage)message;
-                return objectMessage.getObject();
+                Object payload = objectMessage.getObject();
+                if (payload instanceof DefaultExchangeHolder) {
+                    DefaultExchangeHolder holder = (DefaultExchangeHolder) payload;
+                    DefaultExchangeHolder.unmarshal(exchange, holder);
+                    return exchange.getIn().getBody();
+                } else {
+                    return objectMessage.getObject();
+                }
             } else if (message instanceof TextMessage) {
                 TextMessage textMessage = (TextMessage)message;
                 return textMessage.getText();
@@ -194,7 +202,7 @@ public class JmsBinding {
             }
         }
         if (answer == null) {
-            answer = createJmsMessage(camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
+            answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
             appendJmsProperties(answer, exchange, camelMessage);
         }
         return answer;
@@ -288,8 +296,17 @@ public class JmsBinding {
         return null;
     }
 
-    protected Message createJmsMessage(Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
+    protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
         JmsMessageType type = null;
+
+        // special for transferExchange
+        if (endpoint != null && endpoint.isTransferExchange()) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Option transferExchange=true so we use JmsMessageType: Object");
+            }
+            Serializable holder = DefaultExchangeHolder.marshal(exchange);
+            return session.createObjectMessage(holder);
+        }
 
         // check if header have a type set, if so we force to use it
         if (headers.containsKey(JmsConstants.JMS_MESSAGE_TYPE)) {

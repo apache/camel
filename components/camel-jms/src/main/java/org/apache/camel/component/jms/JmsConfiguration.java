@@ -133,6 +133,7 @@ public class JmsConfiguration implements Cloneable {
     private String replyToDestinationSelectorName;
     private JmsMessageType jmsMessageType;
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
+    private boolean transferExchange;
 
     public JmsConfiguration() {
     }
@@ -1164,5 +1165,13 @@ public class JmsConfiguration implements Cloneable {
 
     public void setJmsKeyFormatStrategy(JmsKeyFormatStrategy jmsKeyFormatStrategy) {
         this.jmsKeyFormatStrategy = jmsKeyFormatStrategy;
+    }
+
+    public boolean isTransferExchange() {
+        return transferExchange;
+    }
+
+    public void setTransferExchange(boolean transferExchange) {
+        this.transferExchange = transferExchange;
     }
 }
