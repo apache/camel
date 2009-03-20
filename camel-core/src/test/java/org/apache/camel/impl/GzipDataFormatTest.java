@@ -28,12 +28,12 @@ import org.apache.camel.converter.IOConverter;
  * Unit test of the gzip data format.
  */
 public class GzipDataFormatTest extends ContextTestSupport {
-    private static final String TEXT = "Hamlet by William Shakespeare\n" +
-                "To be, or not to be: that is the question:\n" + 
-        		"Whether 'tis nobler in the mind to suffer\n" + 
-        		"The slings and arrows of outrageous fortune,\n" + 
-        		"Or to take arms against a sea of troubles,\n" + 
-        		"And by opposing end them? To die: to sleep;";;
+    private static final String TEXT = "Hamlet by William Shakespeare\n"
+            + "To be, or not to be: that is the question:\n"
+            + "Whether 'tis nobler in the mind to suffer\n"
+            + "The slings and arrows of outrageous fortune,\n"
+            + "Or to take arms against a sea of troubles,\n"
+            + "And by opposing end them? To die: to sleep;";
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -53,7 +53,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
         context.start();
 
         byte[] output = sendText();
-        
+
         GZIPInputStream stream = new GZIPInputStream(new ByteArrayInputStream(output));
         String result = IOConverter.toString(stream);
         assertEquals("Uncompressed something different than compressed", TEXT, result);
@@ -67,9 +67,9 @@ public class GzipDataFormatTest extends ContextTestSupport {
         });
         context.start();
 
-        MockEndpoint result = (MockEndpoint)context.getEndpoint("mock:result");
+        MockEndpoint result = (MockEndpoint) context.getEndpoint("mock:result");
         result.expectedBodiesReceived(TEXT.getBytes("UTF-8"));
         sendText();
         result.assertIsSatisfied();
-    }    
+    }
 }

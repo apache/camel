@@ -18,6 +18,8 @@ package org.apache.camel.builder;
 
 import java.util.zip.Deflater;
 
+import org.w3c.dom.Node;
+
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.dataformat.ArtixDSContentType;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
@@ -35,7 +37,6 @@ import org.apache.camel.model.dataformat.XMLBeansDataFormat;
 import org.apache.camel.model.dataformat.XMLSecurityDataFormat;
 import org.apache.camel.model.dataformat.XStreamDataFormat;
 import org.apache.camel.model.dataformat.ZipDataFormat;
-import org.w3c.dom.Node;
 
 /**
  * An expression for constructing the different possible {@link org.apache.camel.spi.DataFormat}
