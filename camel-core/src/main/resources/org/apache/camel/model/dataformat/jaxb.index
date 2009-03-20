@@ -17,11 +17,11 @@
 ArtixDSContentType
 ArtixDSDataFormat
 CsvDataFormat
+DataFormatDefinition
+DataFormatsDefinition
 FlatpackDataFormat
 GzipDataFormat
 HL7DataFormat
-DataFormatDefinition
-DataFormatsDefinition
 JaxbDataFormat
 JsonDataFormat
 RssDataFormat
