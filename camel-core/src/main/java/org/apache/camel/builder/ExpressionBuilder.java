@@ -76,7 +76,6 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for the inbound message headers
      *
-     * @see Message#getHeaders()
      * @return an expression object which will return the inbound headers
      */
     public static Expression headersExpression() {
@@ -123,7 +122,6 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for the outbound message headers
      *
-     * @see Message#getHeaders()
      * @return an expression object which will return the headers
      */
     public static Expression outHeadersExpression() {
@@ -206,7 +204,6 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for the property value of exchange with the given name
      *
-     * @see Exchange#getProperty(String)
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
      */
@@ -224,9 +221,8 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns an expression for the properties of exchange with the given name
+     * Returns an expression for the properties of exchange
      *
-     * @see Exchange#getProperties()
      * @return an expression object which will return the properties
      */
     public static Expression propertiesExpression() {
@@ -243,9 +239,8 @@ public final class ExpressionBuilder {
     }
     
     /**
-     * Returns an expression for the properties of exchange with the given name
+     * Returns an expression for the properties of the camel context
      *
-     * @see Exchange#getProperties()
      * @return an expression object which will return the properties
      */
     public static Expression camelContextPropertiesExpression() {
@@ -264,7 +259,6 @@ public final class ExpressionBuilder {
     /**
      * Returns an expression for the property value of the camel context with the given name
      *
-     * @see Exchange#getProperty(String)
      * @param propertyName the name of the property the expression will return
      * @return an expression object which will return the property value
      */

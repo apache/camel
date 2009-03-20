@@ -24,12 +24,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.InvalidTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
 
 /**
@@ -111,11 +111,7 @@ public final class ExchangeHelper {
      * an exception if it is not present
      */
     public static Object getMandatoryInBody(Exchange exchange) throws InvalidPayloadException {
-        Object answer = exchange.getIn().getBody();
-        if (answer == null) {
-            throw new InvalidPayloadException(exchange, Object.class);
-        }
-        return answer;
+        return exchange.getIn().getMandatoryBody();
     }
 
     /**
@@ -123,11 +119,7 @@ public final class ExchangeHelper {
      * an exception if it is not present
      */
     public static <T> T getMandatoryInBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
-        T answer = exchange.getIn().getBody(type);
-        if (answer == null) {
-            throw new InvalidPayloadException(exchange, type);
-        }
-        return answer;
+        return exchange.getIn().getMandatoryBody(type);
     }
 
     /**
@@ -135,12 +127,7 @@ public final class ExchangeHelper {
      * an exception if it is not present
      */
     public static Object getMandatoryOutBody(Exchange exchange) throws InvalidPayloadException {
-        Message out = exchange.getOut();
-        Object answer = out.getBody();
-        if (answer == null) {
-            throw new InvalidPayloadException(exchange, Object.class, out);
-        }
-        return answer;
+        return exchange.getOut().getMandatoryBody();
     }
 
     /**
@@ -148,24 +135,19 @@ public final class ExchangeHelper {
      * an exception if it is not present
      */
     public static <T> T getMandatoryOutBody(Exchange exchange, Class<T> type) throws InvalidPayloadException {
-        Message out = exchange.getOut();
-        T answer = out.getBody(type);
-        if (answer == null) {
-            throw new InvalidPayloadException(exchange, type, out);
-        }
-        return answer;
+        return exchange.getOut().getMandatoryBody(type);
     }
 
     /**
      * Converts the value to the given expected type or throws an exception
      */
-    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value)
-        throws InvalidTypeException {
-        T answer = convertToType(exchange, type, value);
-        if (answer == null) {
-            throw new InvalidTypeException(exchange, value, type);
+    public static <T> T convertToMandatoryType(Exchange exchange, Class<T> type, Object value) throws NoTypeConversionAvailableException {
+        CamelContext camelContext = exchange.getContext();
+        TypeConverter converter = camelContext.getTypeConverter();
+        if (converter != null) {
+            return converter.mandatoryConvertTo(type, exchange, value);
         }
-        return answer;
+        throw new NoTypeConversionAvailableException(value, type);
     }
 
     /**

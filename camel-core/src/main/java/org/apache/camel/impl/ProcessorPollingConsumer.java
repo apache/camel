@@ -50,7 +50,7 @@ public class ProcessorPollingConsumer extends PollingConsumerSupport {
         try {
             processor.process(exchange);
         } catch (Exception e) {
-            throw new RuntimeExchangeException(e, exchange);
+            throw new RuntimeExchangeException("Error while processing exchange", exchange, e);
         }
         return exchange;
     }
