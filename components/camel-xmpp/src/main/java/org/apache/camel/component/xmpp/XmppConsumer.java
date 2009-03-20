@@ -24,6 +24,7 @@ import org.jivesoftware.smack.Chat;
 import org.jivesoftware.smack.MessageListener;
 import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackConfiguration;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -37,8 +38,8 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener {
     private static final transient Log LOG = LogFactory.getLog(XmppConsumer.class);
     private final XmppEndpoint endpoint;
-    private Chat privateChat;
     private MultiUserChat muc;
+    private XMPPConnection connection;
 
     public XmppConsumer(XmppEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -47,17 +48,25 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
     @Override
     protected void doStart() throws Exception {
+        connection = endpoint.createConnection();
+
         if (endpoint.getRoom() == null) {
-            privateChat = endpoint.getConnection().getChatManager().createChat(endpoint.getParticipant(), this);
-            LOG.info("Open chat to " + privateChat.getParticipant());
+            Chat privateChat = connection.getChatManager().createChat(endpoint.getParticipant(), this);
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Open private chat to: " + privateChat.getParticipant());
+            }
         } else {
-            muc = new MultiUserChat(endpoint.getConnection(), endpoint.resolveRoom());
+            muc = new MultiUserChat(connection, endpoint.resolveRoom(connection));
             muc.addMessageListener(this);
             DiscussionHistory history = new DiscussionHistory();
             history.setMaxChars(0); // we do not want any historical messages
+
             muc.join(endpoint.getNickname(), null, history, SmackConfiguration.getPacketReplyTimeout());
-            LOG.info("Joined room: " + muc.getRoom());
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Joined room: " + muc.getRoom() + " as: " + endpoint.getNickname());
+            }
         }
+
         super.doStart();
     }
 
@@ -65,8 +74,19 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
     protected void doStop() throws Exception {
         super.doStop();
         if (muc != null) {
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Leaving room: " + muc.getRoom());
+            }
+            muc.removeMessageListener(this);
             muc.leave();
             muc = null;
+        }
+        if (connection != null) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Disconnecting from: " + XmppEndpoint.getConnectionMessage(connection));
+            }
+            connection.disconnect();
+            connection = null;
         }
     }
 
@@ -81,7 +101,7 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
-            LOG.error("Error while processing message", e);
+            LOG.error("Error while processing XMPP message", e);
         }
     }
 

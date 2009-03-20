@@ -27,6 +27,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jivesoftware.smack.AccountManager;
@@ -45,7 +46,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private static final transient Log LOG = LogFactory.getLog(XmppEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private XmppBinding binding;
-    private XMPPConnection connection;
     private String host;
     private int port;
     private String user;
@@ -110,6 +110,80 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return true;
     }
     
+    public XMPPConnection createConnection() throws XMPPException {
+        XMPPConnection connection;
+
+        if (port > 0) {
+            if (getServiceName() == null) {
+                connection = new XMPPConnection(new ConnectionConfiguration(host, port));
+            } else {
+                connection = new XMPPConnection(new ConnectionConfiguration(host, port, getServiceName()));
+            }
+        } else {
+            connection = new XMPPConnection(host);
+        }
+
+        connection.connect();
+
+        if (login && !connection.isAuthenticated()) {
+            if (user != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Logging in to XMPP as user: " + user + " on connection: " + getConnectionMessage(connection));
+                }
+                if (password == null) {
+                    LOG.warn("No password configured for user: " + user + " on connection: " + getConnectionMessage(connection));
+                }
+
+                if (createAccount) {
+                    AccountManager accountManager = new AccountManager(connection);
+                    accountManager.createAccount(user, password);
+                }
+                if (resource != null) {
+                    connection.login(user, password, resource);
+                } else {
+                    connection.login(user, password);
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Logging in anonymously to XMPP on connection: "  + getConnectionMessage(connection));
+                }
+                connection.loginAnonymously();
+            }
+
+            // presence is not needed to be sent after login
+        }
+
+        return connection;
+    }
+
+    /*
+     * If there is no "@" symbol in the room, find the chat service JID and
+     * return fully qualified JID for the room as room@conference.server.domain
+     */
+    public String resolveRoom(XMPPConnection connection) throws XMPPException {
+        ObjectHelper.notEmpty(room, "room");
+
+        if (room.indexOf('@', 0) != -1) {
+            return room;
+        }
+
+        Iterator<String> iterator = MultiUserChat.getServiceNames(connection).iterator();
+        if (!iterator.hasNext()) {
+            throw new XMPPException("Cannot find Multi User Chat service on connection: " + getConnectionMessage(connection));
+        }
+
+        String chatServer = iterator.next();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Detected chat server: " + chatServer);
+        }
+
+        return room + "@" + chatServer;
+    }
+
+    public static String getConnectionMessage(XMPPConnection connetion) {
+        return connetion.getHost() + ":" + connetion.getPort() + "/" + connetion.getServiceName();
+    }
+
     // Properties
     // -------------------------------------------------------------------------
     public XmppBinding getBinding() {
@@ -215,17 +289,6 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return serviceName;
     }    
     
-    public XMPPConnection getConnection() throws XMPPException {
-        if (connection == null) {
-            connection = createConnection();
-        }
-        return connection;
-    }
-
-    public void setConnection(XMPPConnection connection) {
-        this.connection = connection;
-    }
-
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -236,69 +299,5 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected XMPPConnection createConnection() throws XMPPException {
-        XMPPConnection connection;
-        if (port > 0) {            
-            if (getServiceName() == null) {
-                connection = new XMPPConnection(new ConnectionConfiguration(host, port));
-            } else {
-                connection = new XMPPConnection(new ConnectionConfiguration(host, port, getServiceName()));
-            }
-        } else {
-            connection = new XMPPConnection(host);
-        }
-
-        connection.connect();
-
-        if (login && !connection.isAuthenticated()) {
-            if (user != null) {
-                LOG.info("Logging in to XMPP as user: " + user + " on connection: " + connection);
-                if (password == null) {
-                    LOG.warn("No password configured for user: " + user);
-                }
-
-                if (createAccount) {
-                    AccountManager accountManager = new AccountManager(connection);
-                    accountManager.createAccount(user, password);
-                }
-                if (resource != null) {
-                    connection.login(user, password, resource);
-                } else {
-                    connection.login(user, password);
-                }
-            } else {
-                LOG.info("Logging in anonymously to XMPP on connection: " + connection);
-                connection.loginAnonymously();
-            }
-
-            // presence is not needed to be sent after login
-        }
-
-        return connection;
-    }
-
-    /*
-     * If there is no "@" symbol in the room, find the chat service JID and
-     * return fully qualified JID for the room as room@conference.server.domain
-     */
-    public String resolveRoom() throws XMPPException {
-        if (room == null) {
-            throw new IllegalArgumentException("room is not specified");
-        }
-
-        if (room.indexOf('@', 0) != -1) {
-            return room;
-        }
-
-        XMPPConnection conn = getConnection();
-        Iterator<String> iterator = MultiUserChat.getServiceNames(conn).iterator();
-        if (!iterator.hasNext()) {
-            throw new XMPPException("Cannot find Multi User Chat service");
-        }
-        String chatServer = iterator.next();
-        LOG.info("Detected chat server: " + chatServer);
-
-        return room + "@" + chatServer;
-    }
 
 }
