@@ -17,15 +17,15 @@
 package org.apache.camel.component.mina;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
 
 /**
  * Helper to get and set the correct payload when transfering data using camel-mina.
  * Always use this helper instead of direct access on the exchange object.
  * <p/>
  * This helper ensures that we can also transfer exchange objects over the wire using the
- * <tt>exchangePayload=true</tt> option.
+ * <tt>transferExchange=true</tt> option.
  *
- * @see org.apache.camel.component.mina.MinaPayloadHolder
  * @version $Revision$
  */
 public final class MinaPayloadHelper {
@@ -37,7 +37,7 @@ public final class MinaPayloadHelper {
     public static Object getIn(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return MinaPayloadHolder.marshal(exchange);
+            return DefaultExchangeHolder.marshal(exchange);
         } else {
             // normal transfer using the body only
             return exchange.getIn().getBody();
@@ -47,7 +47,7 @@ public final class MinaPayloadHelper {
     public static Object getOut(MinaEndpoint endpoint, Exchange exchange) {
         if (endpoint.getConfiguration().isTransferExchange()) {
             // we should transfer the entire exchange over the wire (includes in/out)
-            return MinaPayloadHolder.marshal(exchange);
+            return DefaultExchangeHolder.marshal(exchange);
         } else {
             // normal transfer using the body only
             return exchange.getOut().getBody();
@@ -55,8 +55,8 @@ public final class MinaPayloadHelper {
     }
 
     public static void setIn(Exchange exchange, Object payload) {
-        if (payload instanceof MinaPayloadHolder) {
-            MinaPayloadHolder.unmarshal(exchange, (MinaPayloadHolder) payload);
+        if (payload instanceof DefaultExchangeHolder) {
+            DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else {
             // normal transfer using the body only
             exchange.getIn().setBody(payload);
@@ -64,8 +64,8 @@ public final class MinaPayloadHelper {
     }
 
     public static void setOut(Exchange exchange, Object payload) {
-        if (payload instanceof MinaPayloadHolder) {
-            MinaPayloadHolder.unmarshal(exchange, (MinaPayloadHolder) payload);
+        if (payload instanceof DefaultExchangeHolder) {
+            DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else {
             // normal transfer using the body only and preserve the headers
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());

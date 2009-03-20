@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mina;
+package org.apache.camel.impl;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -25,28 +25,29 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * Holder object for sending an exchange over the wire using the MINA ObjectSerializationCodecFactory codec.
- * This is configured using the <tt>transferExchange=true</tt> option for the TCP protocol.
+ * Holder object for sending an exchange over a remote wire as a serialized object.
+ * This is usually configured using the <tt>transferExchange=true</tt> option on the endpoint.
  * <p/>
- * As opposed to normal usage of camel-mina where only the body part of the exchange is transfered, this holder
- * object serializes the following fields over the wire:
+ * As opposed to normal usage where only the body part of the exchange is transfered over the wire,
+ * this holder object serializes the following fields over the wire:
  * <ul>
- *     <li>in body</li>
- *     <li>out body</li>
- *     <li>in headers</li>
- *     <li>out headers</li>
- *     <li>fault body </li>
- *     <li>fault headers</li>
- *     <li>exchange properties</li>
- *     <li>exception</li>
+ * <li>in body</li>
+ * <li>out body</li>
+ * <li>in headers</li>
+ * <li>out headers</li>
+ * <li>fault body </li>
+ * <li>fault headers</li>
+ * <li>exchange properties</li>
+ * <li>exception</li>
  * </ul>
  * Any object that is not serializable will be skipped and Camel will log this at WARN level.
  *
  * @version $Revision$
  */
-public class MinaPayloadHolder implements Serializable {
+public class DefaultExchangeHolder implements Serializable {
+
     private static final long serialVersionUID = 1L;
-    private static final transient Log LOG = LogFactory.getLog(MinaPayloadHolder.class);
+    private static final transient Log LOG = LogFactory.getLog(DefaultExchangeHolder.class);
 
     private Object inBody;
     private Object outBody;
@@ -61,11 +62,11 @@ public class MinaPayloadHolder implements Serializable {
      * Creates a payload object with the information from the given exchange.
      * Only marshal the Serializable object
      *
-     * @param exchange     the exchange
+     * @param exchange the exchange
      * @return the holder object with information copied form the exchange
      */
-    public static MinaPayloadHolder marshal(Exchange exchange) {
-        MinaPayloadHolder payload = new MinaPayloadHolder();
+    public static DefaultExchangeHolder marshal(Exchange exchange) {
+        DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
         payload.inBody = checkSerializableObject("in body", exchange.getIn().getBody());
         payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange.getIn().getHeaders()));
@@ -86,10 +87,10 @@ public class MinaPayloadHolder implements Serializable {
     /**
      * Transfers the information from the payload to the exchange.
      *
-     * @param exchange   the exchange to set values from the payload
-     * @param payload    the payload with the values
+     * @param exchange the exchange to set values from the payload
+     * @param payload  the payload with the values
      */
-    public static void unmarshal(Exchange exchange, MinaPayloadHolder payload) {
+    public static void unmarshal(Exchange exchange, DefaultExchangeHolder payload) {
         exchange.getIn().setBody(payload.inBody);
         exchange.getIn().setHeaders(payload.inHeaders);
         if (payload.outBody != null) {
@@ -107,16 +108,19 @@ public class MinaPayloadHolder implements Serializable {
     }
 
     public String toString() {
-        return "MinaPayloadHolder{" + "inBody=" + inBody + ", outBody=" + outBody + ", inHeaders="
-               + inHeaders + ", outHeaders=" + outHeaders + ", faultBody=" + faultBody + ", faultHeaders="
-               + faultHeaders + ", properties=" + properties + ", exception=" + exception + '}';
+        StringBuilder sb = new StringBuilder("DefaultExchangeHolder[");
+        sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);
+        sb.append(", inHeaders=").append(inHeaders).append(", outHeaders=").append(outHeaders);
+        sb.append(", faultBody=").append(faultBody).append(", faultHeaders=").append(faultHeaders);
+        sb.append(", properties=").append(properties).append(", exception=").append(exception);
+        return sb.append(']').toString();
     }
 
     private static Object checkSerializableObject(String type, Object object) {
         if (object instanceof Serializable) {
             return object;
         } else {
-            LOG.warn(type + " containig object " + object + " cannot be serialized, it will be excluded by the MinaPayloadHolder");
+            LOG.warn(type + " containig object " + object + " cannot be serialized, it will be excluded by the holder");
             return null;
         }
     }
@@ -132,7 +136,7 @@ public class MinaPayloadHolder implements Serializable {
                 result.put(entry.getKey(), entry.getValue());
             } else {
                 LOG.warn(type + " containing object " + entry.getValue() + " of key " + entry.getKey()
-                         + " cannot be serialized, it will be excluded by the MinaPayloadHolder");
+                        + " cannot be serialized, it will be excluded by the holder");
             }
         }
 

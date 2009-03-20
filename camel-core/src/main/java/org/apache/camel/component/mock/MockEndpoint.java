@@ -76,6 +76,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private String headerName;
     private Object headerValue;
     private Object actualHeader;
+    private String propertyName;
+    private Object propertyValue;
+    private Object actualProperty;
     private Processor reporter;
 
     public MockEndpoint(String endpointUri, Component component) {
@@ -318,6 +321,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
                 Object actualValue = getCamelContext().getTypeConverter().convertTo(actualHeader.getClass(), headerValue);
                 assertEquals("Header of message", actualValue, actualHeader);
+            }
+        });
+    }
+
+    /**
+     * Adds an expectation that the given property name & value are received by this
+     * endpoint
+     */
+    public void expectedPropertyReceived(final String name, final Object value) {
+        this.propertyName = name;
+        this.propertyValue = value;
+
+        expects(new Runnable() {
+            public void run() {
+                assertTrue("No property with name " + propertyName + " found.", actualProperty != null);
+
+                Object actualValue = getCamelContext().getTypeConverter().convertTo(actualProperty.getClass(), propertyValue);
+                assertEquals("Property of message", actualValue, actualProperty);
             }
         });
     }
@@ -723,6 +744,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
         if (headerName != null) {
             actualHeader = in.getHeader(headerName);
+        }
+
+        if (propertyName != null) {
+            actualProperty = exchange.getProperty(propertyName);
         }
 
         if (expectedBodyValues != null) {
