@@ -28,6 +28,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.message.Message;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.AbstractApplicationContext;
 
 
 /**
@@ -65,7 +66,7 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
             if (beanId.startsWith("//")) {
                 beanId = beanId.substring(2);
             }
-            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();
+            SpringCamelContext context = (SpringCamelContext) this.getCamelContext();            
             configurer = new ConfigurerImpl(context.getApplicationContext());
             cxfEndpointBean = (CxfEndpointBean) context.getApplicationContext().getBean(beanId);
             ObjectHelper.notNull(cxfEndpointBean, "cxfEndpointBean");
@@ -190,6 +191,13 @@ public class CxfEndpoint extends DefaultEndpoint<CxfExchange> {
     }
 
     public void configure(Object beanInstance) {
+        // check the ApplicationContext states first , and call the refresh if necessary
+        if (((SpringCamelContext)getCamelContext()).getApplicationContext() instanceof AbstractApplicationContext) {
+            AbstractApplicationContext context = (AbstractApplicationContext)((SpringCamelContext)getCamelContext()).getApplicationContext();
+            if (!context.isActive()) {
+                context.refresh();
+            }
+        }
         configurer.configureBean(beanId, beanInstance);
     }
 
