@@ -35,6 +35,11 @@ public class RuntimeExchangeException extends RuntimeCamelException {
         this.exchange = exchange;
     }
 
+    public RuntimeExchangeException(String message, Exchange exchange, Throwable cause) {
+        super(message + " on the exchange: " +  exchange, cause);
+        this.exchange = exchange;
+    }
+
     /**
      * Returns the exchange which caused the exception
      */
