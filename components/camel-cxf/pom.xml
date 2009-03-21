@@ -262,11 +262,11 @@
       			<configuration>
       				<sourceRoot>${basedir}/target/generated</sourceRoot>
       				<wsdlOptions>
+      				    <wsdlOption>
+      						<wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>      						
+      					</wsdlOption>
       					<wsdlOption>
-      						<wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>
-      						<extraargs>
-      							<extraarg>-verbose</extraarg>
-      						</extraargs>
+      						<wsdl>${basedir}/src/test/resources/person.wsdl</wsdl>      						
       					</wsdlOption>
       					<wsdlOption>
       						<wsdl>${basedir}/src/test/resources/soap_header.wsdl</wsdl>
