@@ -256,13 +256,6 @@ public interface CamelContext extends Service {
      * @return the type converter registry
      */
     TypeConverterRegistry getTypeConverterRegistry();
-
-    /**
-     * Returns the converter of message from one type to another
-     * 
-     * @return
-     */
-    MessageConverter getMessageConverter();
     
     /**
      * Returns the registry used to lookup components by name and type such as the Spring ApplicationContext,

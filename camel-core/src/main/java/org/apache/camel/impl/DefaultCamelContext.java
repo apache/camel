@@ -31,7 +31,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.IsSingleton;
-import org.apache.camel.MessageConverter;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -610,10 +609,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.typeConverterRegistry = typeConverterRegistry;
     }
     
-    public MessageConverter getMessageConverter() {
-        return null;
-    }
-
     public Injector getInjector() {
         if (injector == null) {
             injector = createInjector();
