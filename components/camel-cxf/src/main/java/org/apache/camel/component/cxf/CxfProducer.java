@@ -160,7 +160,7 @@ public class CxfProducer extends DefaultProducer<CxfExchange> {
 
     public void process(CxfExchange exchange) throws Exception {
         Message inMessage = CxfBinding.createCxfMessage(endpoint.getHeaderFilterStrategy(), exchange);
-        exchange.setProperty(CxfExchange.DATA_FORMAT, dataFormat);
+        exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);
 
         if (dataFormat.equals(DataFormat.POJO)) {
             // InputStream is = m.getContent(InputStream.class);

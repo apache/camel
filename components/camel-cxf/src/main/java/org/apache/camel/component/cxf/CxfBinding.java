@@ -146,7 +146,7 @@ public final class CxfBinding {
         if (response != null) {
             CxfHeaderHelper.propagateCxfToCamel(strategy, response, out.getHeaders());
             out.setMessage(response);
-            DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfExchange.DATA_FORMAT);
+            DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY);
             if (dataFormat.equals(DataFormat.MESSAGE)) {
                 out.setBody(response.getContent(InputStream.class));
             }

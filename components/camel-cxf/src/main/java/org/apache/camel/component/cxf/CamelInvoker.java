@@ -23,7 +23,9 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.CxfHeaderHelper;
 import org.apache.cxf.common.logging.LogUtils;
 import org.apache.cxf.endpoint.Client;
@@ -59,6 +61,18 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         //TODO set the request context here
         CxfEndpoint endpoint = cxfConsumer.getEndpoint();
         CxfExchange cxfExchange = endpoint.createExchange(inMessage);
+
+        // set data format mode in Camel exchange
+        DataFormat dataFormat = DataFormat.POJO;
+        try {
+            dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
+        } catch (CamelException e) {
+            if (LOG.isLoggable(Level.FINE)) {
+                LOG.log(Level.FINE, "Unable to determine dataFormat due to " + e.toString());
+            }
+        }
+
+        cxfExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
 
         BindingOperationInfo bop = exchange.get(BindingOperationInfo.class);
         cxfExchange.setProperty(BindingOperationInfo.class.toString(), bop);
