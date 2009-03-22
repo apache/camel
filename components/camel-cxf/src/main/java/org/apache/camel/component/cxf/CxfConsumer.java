@@ -62,7 +62,7 @@ public class CxfConsumer extends DefaultConsumer {
                 
                 // set data format mode in Camel exchange
                 DataFormat dataFormat = endpoint.getDataFormat();
-                camelExchange.setProperty(DataFormat.class.getName(), dataFormat);   
+                camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Set Exchange property: " + DataFormat.class.getName() 
                             + "=" + dataFormat);

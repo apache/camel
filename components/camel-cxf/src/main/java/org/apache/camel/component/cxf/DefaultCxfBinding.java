@@ -101,7 +101,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         
         // propagate body
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage, 
-                camelExchange.getProperty(DataFormat.class.getName(), DataFormat.class)));
+                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class)));
         
         // propagate response context
         if (responseContext != null && responseContext.size() > 0) {
@@ -198,7 +198,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
            
         // set body
         Object body = DefaultCxfBinding.getContentFromCxf(cxfMessage, 
-                camelExchange.getProperty(DataFormat.class.getName(), DataFormat.class));
+                camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
         if (body != null) {
             camelExchange.getIn().setBody(body);
         }  
@@ -226,7 +226,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Message outMessage = ep.getBinding().createMessage();
         cxfExchange.setOutMessage(outMessage);       
 
-        DataFormat dataFormat = camelExchange.getProperty(DataFormat.class.getName(), 
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
                 DataFormat.class);
         
         // propagate contexts

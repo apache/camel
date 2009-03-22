@@ -86,7 +86,7 @@ public class CxfProducer extends DefaultProducer {
         
         // set data format mode in exchange
         DataFormat dataFormat = endpoint.getDataFormat();
-        camelExchange.setProperty(DataFormat.class.getName(), dataFormat);   
+        camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
         if (LOG.isTraceEnabled()) {
             LOG.trace("Set Camel Exchange property: " + DataFormat.class.getName() 
                     + "=" + dataFormat);
