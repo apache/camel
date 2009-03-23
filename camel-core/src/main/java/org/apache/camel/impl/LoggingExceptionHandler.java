@@ -40,11 +40,23 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     }
 
     public void handleException(Throwable exception) {
-        if (exception instanceof RollbackExchangeException) {
+        if (isCausedByRollbackExchangeException(exception)) {
             // do not log stacktrace for intended rollbacks
             logger.log(exception.getMessage());
         } else {
             logger.log(exception.getMessage(), exception);
         }
     }
+
+    protected boolean isCausedByRollbackExchangeException(Throwable exception) {
+        if (exception instanceof RollbackExchangeException) {
+            return true;
+        } else if (exception.getCause() != null) {
+            // recursive children
+            return isCausedByRollbackExchangeException(exception.getCause());
+        }
+
+        return false;
+    }
+
 }

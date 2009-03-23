@@ -25,6 +25,8 @@ import javax.jms.Session;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.LoggingExceptionHandler;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jms.core.JmsOperations;
@@ -42,6 +44,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class EndpointMessageListener implements MessageListener {
     private static final transient Log LOG = LogFactory.getLog(EndpointMessageListener.class);
+    private ExceptionHandler exceptionHandler;
     private JmsEndpoint endpoint;
     private Processor processor;
     private JmsBinding binding;
@@ -96,7 +99,7 @@ public class EndpointMessageListener implements MessageListener {
             rce = wrapRuntimeCamelException(e);
         }
         if (rce != null) {
-            LOG.warn(endpoint + " consumer caught an exception while processing JMS message: " + message, rce);
+            getExceptionHandler().handleException(rce);
             throw rce;
         }
     }
@@ -131,6 +134,17 @@ public class EndpointMessageListener implements MessageListener {
      */
     public void setBinding(JmsBinding binding) {
         this.binding = binding;
+    }
+
+    public ExceptionHandler getExceptionHandler() {
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(getClass());
+        }
+        return exceptionHandler;
+    }
+
+    public void setExceptionHandler(ExceptionHandler exceptionHandler) {
+        this.exceptionHandler = exceptionHandler;
     }
 
     public boolean isEagerLoadingOfProperties() {
@@ -217,4 +231,14 @@ public class EndpointMessageListener implements MessageListener {
         }
         return destination;
     }
+
+    /**
+     * Handles the given exception using the {@link #getExceptionHandler()}
+     *
+     * @param t the exception to handle
+     */
+    protected void handleException(Throwable t) {
+        getExceptionHandler().handleException(t);
+    }
+
 }

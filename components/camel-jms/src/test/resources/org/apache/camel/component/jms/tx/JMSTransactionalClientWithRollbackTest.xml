@@ -24,22 +24,29 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- here we define our camel context -->
-    <camel:camelContext id="myroutes">
+    <camelContext id="myroutes" xmlns="http://camel.apache.org/schema/spring">
         <!-- and now our route using the XML syntax -->
-        <camel:route errorHandlerRef="errorHandler">
+        <route errorHandlerRef="errorHandler">
             <!-- 1: from the jms queue -->
-            <camel:from uri="activemq:queue:okay"/>
+            <from uri="activemq:queue:okay"/>
             <!-- 2: setup the transactional boundaries to require a transaction -->
-            <camel:policy ref="PROPAGATION_REQUIRED"/>
+            <policy ref="PROPAGATION_REQUIRED"/>
             <!-- 3: call our business logic that is myProcessor -->
-            <camel:process ref="myProcessor"/>
-            <!-- 4: if success then send it to the mock -->
-            <camel:to uri="mock:result"/>
-        </camel:route>
-    </camel:camelContext>
+            <process ref="myProcessor"/>
+            <!-- 4: choice -->
+            <choice>
+                <when>
+                    <simple>${in.header.count} &lt; 3</simple>
+                    <rollback message="Please rollback"/>
+                </when>
+            </choice>
+            <!-- 5: if success then send it to the mock -->
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
 
     <!-- this bean is our business logic -->
-    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
+    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientWithRollbackTest$MyProcessor"/>
     <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->
@@ -48,14 +55,17 @@
         <property name="springTransactionPolicy" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
+    <!-- jms connection factory -->
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
     </bean>
 
+    <!-- jms transaction manager -->
     <bean id="jmsTransactionManager" class="org.springframework.jms.connection.JmsTransactionManager">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
     </bean>
 
+    <!-- jms component configuration -->
     <bean id="jmsConfig" class="org.apache.camel.component.jms.JmsConfiguration">
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
@@ -63,10 +73,12 @@
         <property name="concurrentConsumers" value="1"/>
     </bean>
 
+    <!-- activemq component -->
     <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
+    <!-- spring required policy -->
     <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
         <constructor-arg>
             <bean class="org.springframework.transaction.support.TransactionTemplate">

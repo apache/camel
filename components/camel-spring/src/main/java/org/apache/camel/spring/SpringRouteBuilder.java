@@ -17,7 +17,6 @@
 package org.apache.camel.spring;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
@@ -111,7 +110,7 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      */
     public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
         TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
-        answer.setTransactionTemplate(policy.getTemplate());
+        answer.setTransactionTemplate(policy.getTransactionTemplate());
         return answer;
     }
 

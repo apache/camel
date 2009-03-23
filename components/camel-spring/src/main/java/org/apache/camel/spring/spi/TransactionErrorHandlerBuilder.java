@@ -17,10 +17,8 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
-import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.processor.DelayPolicy;
-import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.InitializingBean;
@@ -34,7 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version $Revision$
  */
-public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements Cloneable, InitializingBean {
+public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements InitializingBean {
 
     private TransactionTemplate transactionTemplate;
     private DelayPolicy delayPolicy;
@@ -50,20 +48,16 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
         this.transactionTemplate = transactionTemplate;
     }
 
+    public void setSpringTransactionPolicy(SpringTransactionPolicy policy) {
+        this.transactionTemplate = policy.getTransactionTemplate();
+    }
+
     public DelayPolicy getDelayPolicy() {
         return delayPolicy;
     }
 
     public void setDelayPolicy(DelayPolicy delayPolicy) {
         this.delayPolicy = delayPolicy;
-    }
-
-    public ErrorHandlerBuilder copy() {
-        try {
-            return (ErrorHandlerBuilder) clone();
-        } catch (CloneNotSupportedException e) {
-            throw new Error("Clone should be supported: " + e, e);
-        }
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {

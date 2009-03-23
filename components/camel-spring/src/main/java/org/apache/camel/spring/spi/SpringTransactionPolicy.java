@@ -45,7 +45,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     }
 
     public Processor wrap(Processor processor) {
-        final TransactionTemplate transactionTemplate = getTemplate();
+        final TransactionTemplate transactionTemplate = getTransactionTemplate();
         if (transactionTemplate == null) {
             LOG.warn("No TransactionTemplate available so transactions will not be enabled!");
             return processor;
@@ -56,7 +56,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
         return answer;
     }
 
-    public TransactionTemplate getTemplate() {
+    public TransactionTemplate getTransactionTemplate() {
         if (template == null) {
             template = new TransactionTemplate(transactionManager);
             if (propagationBehaviorName != null) {
@@ -66,7 +66,7 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
         return template;
     }
 
-    public void setTemplate(TransactionTemplate template) {
+    public void setTransactionTemplate(TransactionTemplate template) {
         this.template = template;
     }
 

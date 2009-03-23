@@ -18,15 +18,15 @@ package org.apache.camel.spring.interceptor;
 
 import javax.sql.DataSource;
 
-import org.apache.camel.spring.SpringTestSupport;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RollbackExchangeException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
  * Transactional client test with rollback in the DSL.
@@ -53,7 +53,7 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
         jdbc = new JdbcTemplate(ds);
         jdbc.execute("create table books (title varchar(50))");
-        jdbc.update("insert into books (title) values (?)", new Object[] {"Camel in Action"});
+        jdbc.update("insert into books (title) values (?)", new Object[]{"Camel in Action"});
     }
 
     @Override
@@ -82,31 +82,31 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-         // Notice that we use the SpringRouteBuilder that has a few more features than
-         // the standard RouteBuilder
-         return new SpringRouteBuilder() {
-             public void configure() throws Exception {
-                 // setup the transaction policy
-                 SpringTransactionPolicy required = context.getRegistry()
-                     .lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+        // Notice that we use the SpringRouteBuilder that has a few more features than
+        // the standard RouteBuilder
+        return new SpringRouteBuilder() {
+            public void configure() throws Exception {
+                // setup the transaction policy
+                SpringTransactionPolicy required = context.getRegistry()
+                        .lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
 
-                 // use transaction error handler
-                 errorHandler(transactionErrorHandler(required));
+                // use transaction error handler
+                errorHandler(transactionErrorHandler(required));
 
-                 // must setup policy for each route
-                 // TODO: CAMEL-1475 should fix this
-                 from("direct:okay").policy(required)
-                     .setBody(constant("Tiger in Action")).beanRef("bookService")
-                     .setBody(constant("Elephant in Action")).beanRef("bookService");
+                // must setup policy for each route
+                // TODO: CAMEL-1475 should fix this
+                from("direct:okay").policy(required)
+                        .setBody(constant("Tiger in Action")).beanRef("bookService")
+                        .setBody(constant("Elephant in Action")).beanRef("bookService");
 
-                 // must setup policy for each route
-                 // TODO: CAMEL-1475 should fix this
-                 from("direct:fail").policy(required)
-                     .setBody(constant("Tiger in Action")).beanRef("bookService")
-                     // force a rollback
-                     .rollback();
-             }
-         };
-     }
+                // must setup policy for each route
+                // TODO: CAMEL-1475 should fix this
+                from("direct:fail").policy(required)
+                        .setBody(constant("Tiger in Action")).beanRef("bookService")
+                        // force a rollback
+                        .rollback();
+            }
+        };
+    }
 
 }
