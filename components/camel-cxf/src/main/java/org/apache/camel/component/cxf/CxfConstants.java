@@ -26,8 +26,8 @@ public interface CxfConstants {
     String SERVICE_CLASS = "serviceClass";
     // dataFormat is used in endpoint uri
     String DATA_FORMAT = "dataFormat";
-    // org.apache.camel.cxf.dataFormat is used as exchange property key
-    String DATA_FORMAT_PROPERTY = "org.apache.camel.cxf.dataFormat";
+    // CamelCXFDataFormat is used as exchange property key
+    String DATA_FORMAT_PROPERTY = "CamelCXFDataFormat";
     String SET_DEFAULT_BUS = "setDefaultBus";
     String WSDL_URL = "wsdlURL";
     String ADDRESS = "address";
