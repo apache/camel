@@ -1079,7 +1079,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type rollback() {
-        RollbackDefinition answer = new RollbackDefinition();
+        return rollback(null);
+    }
+
+    /**
+     * Marks the exchange for rollback only.
+     * <p/>
+     * This is done by setting a {@link org.apache.camel.RollbackExchangeException} on the Exchange
+     * and mark it for rollback.
+     *
+     * @param message an optional message used for logging purpose why the rollback was triggered
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type rollback(String message) {
+        RollbackDefinition answer = new RollbackDefinition(message);
         addOutput(answer);
         return (Type) this;
     }

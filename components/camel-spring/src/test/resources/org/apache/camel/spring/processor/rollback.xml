@@ -33,14 +33,14 @@
     </bean>
 
     <!-- START SNIPPET: e1 -->
-    <camelContext trace="true" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route errorHandlerRef="errorHandler">
             <from uri="direct:start"/>
             <choice>
                 <when>
                     <simple>${body} != 'ok'</simple>
                     <to uri="mock:rollback"/>
-                    <rollback/>
+                    <rollback message="This is an optional message"/>
                 </when>
                 <otherwise>
                     <to uri="mock:result"/>

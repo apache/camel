@@ -24,11 +24,19 @@ package org.apache.camel;
 public class RollbackExchangeException extends Exception {
 
     public RollbackExchangeException(Exchange exchange) {
-        super("Intended rollback on exchange: " + exchange);
+        this("Intended rollback on exchange", exchange);
     }
 
     public RollbackExchangeException(Exchange exchange, Throwable cause) {
-        super("Intended rollback on exchange: " + exchange, cause);
+        this("Intended rollback on exchange", exchange, cause);
+    }
+
+    public RollbackExchangeException(String message, Exchange exchange) {
+        super(message + ": " + exchange);
+    }
+
+    public RollbackExchangeException(String message, Exchange exchange, Throwable cause) {
+        super(message + ": " + exchange, cause);
     }
 
 }

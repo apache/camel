@@ -441,7 +441,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         }
         if (exchange.isRollbackOnly()) {
             // log intented rollback on WARN level
-            logger.log("Intended rollback on exchange: " + exchange, LoggingLevel.WARN);
+            String msg = "Rollback exchange";
+            if (exchange.getException() != null) {
+                msg = msg + " due: " + exchange.getException().getMessage();
+            }
+            logger.log(msg, LoggingLevel.WARN);
         } else if (data.currentRedeliveryPolicy.isLogStackTrace() && e != null) {
             logger.log(message, e, newLogLevel);
         } else {
