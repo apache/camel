@@ -53,12 +53,4 @@ public class OutputDefinition<Type extends ProcessorDefinition> extends Processo
         }
     }
 
-    @Override
-    protected void configureChild(ProcessorDefinition output) {
-        super.configureChild(output);
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
-        // don't inherit interceptors by default
-    }
 }

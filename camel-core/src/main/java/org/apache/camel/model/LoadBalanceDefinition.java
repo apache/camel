@@ -88,15 +88,6 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         }
     }
 
-
-    @Override
-    protected void configureChild(ProcessorDefinition output) {
-        super.configureChild(output);
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
-    }
-
     public String getRef() {
         return ref;
     }

@@ -75,7 +75,6 @@ import static org.apache.camel.builder.Builder.body;
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition> extends OptionalIdentifiedType<Type> implements Block {
     private static final transient Log LOG = LogFactory.getLog(ProcessorDefinition.class);
     private ErrorHandlerBuilder errorHandlerBuilder;
-    private Boolean inheritErrorHandlerFlag;
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition parent;
@@ -1353,19 +1352,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return (Type) this;
     }
 
-    /**
-     * Configures whether or not the <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * is inherited by every processing node (or just the top most one)
-     *
-     * @param condition the flag as to whether error handlers should be inherited or not
-     * @return the current builder
-     */
-    @SuppressWarnings("unchecked")
-    public Type inheritErrorHandler(boolean condition) {
-        setInheritErrorHandlerFlag(condition);
-        return (Type) this;
-    }
-
     // Transformers
     // -------------------------------------------------------------------------
 
@@ -1931,27 +1917,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     @XmlTransient
-    public boolean isInheritErrorHandler() {
-        return isInheritErrorHandler(getInheritErrorHandlerFlag());
-    }
-
-    /**
-     * Lets default the inherit value to be true if there is none specified
-     */
-    public static boolean isInheritErrorHandler(Boolean value) {
-        return value == null || value;
-    }
-
-    @XmlAttribute(name = "inheritErrorHandler", required = false)
-    public Boolean getInheritErrorHandlerFlag() {
-        return inheritErrorHandlerFlag;
-    }
-
-    public void setInheritErrorHandlerFlag(Boolean inheritErrorHandlerFlag) {
-        this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
-    }
-
-    @XmlTransient
     public NodeFactory getNodeFactory() {
         if (nodeFactory == null) {
             nodeFactory = new NodeFactory();
@@ -2047,15 +2012,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
-        if (isInheritErrorHandler()) {
-            return new DeadLetterChannelBuilder();
-        } else {
-            return new NoErrorHandlerBuilder();
-        }
+        // return a new default one
+        return new DeadLetterChannelBuilder();
     }
 
     protected void configureChild(ProcessorDefinition output) {
         output.setNodeFactory(getNodeFactory());
+        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
     }
 
     @SuppressWarnings("unchecked")

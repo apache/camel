@@ -421,11 +421,4 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.outputs = outputs;
     }
     
-    @Override
-    protected void configureChild(ProcessorDefinition output) {
-        super.configureChild(output);
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
-    }
 }

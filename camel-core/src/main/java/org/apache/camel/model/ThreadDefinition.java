@@ -126,9 +126,7 @@ public class ThreadDefinition extends ProcessorDefinition<ProcessorDefinition> {
     @Override
     protected void configureChild(ProcessorDefinition output) {
         super.configureChild(output);
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
+        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
     }
 
     // Fluent methods

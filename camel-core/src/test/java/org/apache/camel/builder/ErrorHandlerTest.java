@@ -184,8 +184,7 @@ public class ErrorHandlerTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-
-                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).inheritErrorHandler(false).to("seda:b");
+                from("seda:a").errorHandler(loggingErrorHandler("FOO.BAR")).filter(body().isInstanceOf(String.class)).to("seda:b");
             }
         };
         // END SNIPPET: e5

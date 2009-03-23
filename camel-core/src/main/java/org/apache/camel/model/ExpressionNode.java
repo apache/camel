@@ -95,11 +95,4 @@ public class ExpressionNode extends ProcessorDefinition<ProcessorDefinition> {
         return new FilterProcessor(getExpression().createPredicate(routeContext), childProcessor);
     }
 
-    @Override
-    protected void configureChild(ProcessorDefinition output) {
-        super.configureChild(output);
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
-    }
 }
