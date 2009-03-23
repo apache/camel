@@ -22,20 +22,15 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
 public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
     
     public void configure() throws Exception {
-        
+        // get the required policy
         SpringTransactionPolicy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED");
 
-        
-        // useTransactionErrorHandler is only used for unit testing to reuse code
-        // for doing a 2nd test without this transaction error handler, so ignore
-        // this. For spring based transaction, end users are encouraged to use the
+        // For spring based transaction, end users are encouraged to use the
         // transaction error handler instead of the default DeadLetterChannel.
         errorHandler(transactionErrorHandler(required).
             // notice that the builder has builder methods for chained configuration
-            delay(5 * 1000L));
-        
+            delay(1 * 1000L));
 
-       
         // set the required policy for this route
         from("direct:okay").policy(required).
             setBody(constant("Tiger in Action")).beanRef("bookService").
@@ -45,8 +40,8 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
         from("direct:fail").policy(required).
             setBody(constant("Tiger in Action")).beanRef("bookService").
             setBody(constant("Donkey in Action")).beanRef("bookService");
-        
     }
+
 }
 
 

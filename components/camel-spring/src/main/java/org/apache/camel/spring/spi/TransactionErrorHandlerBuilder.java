@@ -37,7 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements Cloneable, InitializingBean {
 
     private TransactionTemplate transactionTemplate;
-    private DelayPolicy delayPolicy = new DelayPolicy();
+    private DelayPolicy delayPolicy;
 
     public TransactionErrorHandlerBuilder() {
     }
@@ -78,6 +78,9 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     // -------------------------------------------------------------------------
 
     public TransactionErrorHandlerBuilder delay(long delay) {
+        if (getDelayPolicy() == null) {
+            delayPolicy = new DelayPolicy();
+        }
         getDelayPolicy().delay(delay);
         return this;
     }
