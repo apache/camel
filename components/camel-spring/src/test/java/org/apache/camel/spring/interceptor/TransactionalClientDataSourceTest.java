@@ -109,7 +109,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
                     // transaction error handler instead of the default DeadLetterChannel.
                     errorHandler(transactionErrorHandler(required).
                         // notice that the builder has builder methods for chained configuration
-                        delay(5 * 1000L));
+                        delay(1 * 1000L));
                 }
                 // END SNIPPET: e1
 
