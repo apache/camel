@@ -134,6 +134,7 @@ public class JmsConfiguration implements Cloneable {
     private JmsMessageType jmsMessageType;
     private JmsKeyFormatStrategy jmsKeyFormatStrategy;
     private boolean transferExchange;
+    private boolean transferException;
 
     public JmsConfiguration() {
     }
@@ -1173,5 +1174,13 @@ public class JmsConfiguration implements Cloneable {
 
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
     }
 }

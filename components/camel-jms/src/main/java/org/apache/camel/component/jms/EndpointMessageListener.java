@@ -60,11 +60,12 @@ public class EndpointMessageListener implements MessageListener {
     }
 
     public void onMessage(final Message message) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug(endpoint + " consumer receiving JMS message: " + message);
+        }
+
         RuntimeCamelException rce = null;
         try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug(endpoint + " consumer receiving JMS message: " + message);
-            }
             Destination replyDestination = getReplyToDestination(message);
             final JmsExchange exchange = createExchange(message, replyDestination);
             if (eagerLoadingOfProperties) {
@@ -76,28 +77,41 @@ public class EndpointMessageListener implements MessageListener {
 
             // get the correct jms message to send as reply
             JmsMessage body = null;
+            Exception cause = null;
+            boolean sendReply = false;
             if (exchange.isFailed()) {
                 if (exchange.getException() != null) {
                     // an exception occurred while processing
-                    // TODO: Camel-585 somekind of flag to determine if we should send the exchange back to the client
-                    // or do as now where we wrap as runtime exception to be thrown back to spring so it can do rollback
-                    rce = wrapRuntimeCamelException(exchange.getException());
+                    if (endpoint.isTransferException()) {
+                        // send the exception as reply
+                        body = null;
+                        cause = exchange.getException();
+                        sendReply = true;
+                    } else {
+                        // only throw exception if endpoint is not configured to transfer exceptions
+                        // back to caller
+                        rce = wrapRuntimeCamelException(exchange.getException());
+                    }
                 } else if (exchange.getFault().getBody() != null) {
                     // a fault occurred while processing
                     body = exchange.getFault();
+                    sendReply = true;
                 }
             } else {
                 // process OK so get the reply
                 body = exchange.getOut(false);
+                sendReply = true;
             }
 
             // send the reply if we got a response and the exchange is out capable
-            if (rce == null && body != null && !disableReplyTo && exchange.getPattern().isOutCapable()) {
-                sendReply(replyDestination, message, exchange, body);
+            if (sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
+                sendReply(replyDestination, message, exchange, body, cause);
             }
+
         } catch (Exception e) {
             rce = wrapRuntimeCamelException(e);
         }
+
         if (rce != null) {
             getExceptionHandler().handleException(rce);
             throw rce;
@@ -194,7 +208,8 @@ public class EndpointMessageListener implements MessageListener {
     // Implementation methods
     //-------------------------------------------------------------------------
 
-    protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange, final JmsMessage out) {
+    protected void sendReply(Destination replyDestination, final Message message, final JmsExchange exchange,
+                             final JmsMessage out, final Exception cause) {
         if (replyDestination == null) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Cannot send reply message as there is no replyDestination for: " + out);
@@ -203,7 +218,7 @@ public class EndpointMessageListener implements MessageListener {
         }
         getTemplate().send(replyDestination, new MessageCreator() {
             public Message createMessage(Session session) throws JMSException {
-                Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session);
+                Message reply = endpoint.getBinding().makeJmsMessage(exchange, out, session, cause);
 
                 if (endpoint.getConfiguration().isUseMessageIDAsCorrelationID()) {
                     String messageID = exchange.getIn().getHeader("JMSMessageID", String.class);
