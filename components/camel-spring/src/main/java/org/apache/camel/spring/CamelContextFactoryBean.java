@@ -532,6 +532,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
             if (builders != null) {
                 for (Object builder : builders.values()) {
+                    if (beanPostProcessor != null) {
+                        // Inject the annotated resource
+                        beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+                    }
                     getContext().addRoutes((RouteBuilder) builder);
                 }
             }
@@ -540,6 +544,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addRoutes(routeBuilder);
         }
         if (routeBuilder != null) {
+            if (beanPostProcessor != null) {
+                // Inject the annotated resource
+                beanPostProcessor.postProcessBeforeInitialization(routeBuilder, routeBuilder.toString());
+            }
             getContext().addRoutes(routeBuilder);
         }
 
@@ -547,6 +555,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (builderRefs != null) {
             for (RouteBuilderRef builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
+                if (beanPostProcessor != null) {
+                    // Inject the annotated resource
+                    beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+                }
                 getContext().addRoutes(builder);
             }
         }
