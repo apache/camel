@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.processor.Logger;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.commons.logging.LogFactory;
@@ -39,6 +40,11 @@ public class LoggingExceptionHandler implements ExceptionHandler {
     }
 
     public void handleException(Throwable exception) {
-        logger.log(exception.getMessage(), exception);
+        if (exception instanceof RollbackExchangeException) {
+            // do not log stacktrace for intended rollbacks
+            logger.log(exception.getMessage());
+        } else {
+            logger.log(exception.getMessage(), exception);
+        }
     }
 }

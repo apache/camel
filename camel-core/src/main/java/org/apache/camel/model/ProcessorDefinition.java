@@ -1070,6 +1070,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Marks the exchange for rollback only.
+     * <p/>
+     * This is done by setting a {@link org.apache.camel.RollbackExchangeException} on the Exchange
+     * and mark it for rollback.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type rollback() {
+        RollbackDefinition answer = new RollbackDefinition();
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
      * Sends messages to all its child outputs; so that each processor and
      * destination gets a copy of the original message to avoid the processors

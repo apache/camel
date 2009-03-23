@@ -14,6 +14,7 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
+AbstractInterceptorDefinition
 AggregateDefinition
 BeanDefinition
 CatchDefinition
@@ -22,7 +23,6 @@ ConvertBodyDefinition
 DelayDefinition
 DescriptionDefinition
 EnrichDefinition
-OnExceptionDefinition
 ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
@@ -31,13 +31,13 @@ HandleFaultDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
-AbstractInterceptorDefinition
 InterceptorDefinition
 InterceptDefinition
 LoadBalanceDefinition
 LoopDefinition
 MarshalDefinition
 MulticastDefinition
+OnExceptionDefinition
 OptionalIdentifiedType
 OtherwiseDefinition
 PipelineDefinition
@@ -49,6 +49,7 @@ RedeliveryPolicyDefinition
 RemoveHeaderDefinition
 RemovePropertyDefinition
 ResequenceDefinition
+RollbackDefinition
 RouteBuilderDefinition
 RouteDefinition
 RoutesDefinition

@@ -29,7 +29,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.UuidGenerator;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * A default implementation of {@link Exchange}
@@ -248,19 +247,6 @@ public class DefaultExchange implements Exchange {
         this.fromEndpoint = fromEndpoint;
     }
 
-    public void throwException() throws Exception {
-        if (exception == null) {
-            return;
-        }
-        if (exception instanceof RuntimeException) {
-            throw (RuntimeException)exception;
-        }
-        if (exception instanceof Exception) {
-            throw (Exception)exception;
-        }
-        throw wrapRuntimeCamelException(exception);
-    }
-
     public Message getFault() {
         return getFault(true);
     }
@@ -303,6 +289,11 @@ public class DefaultExchange implements Exchange {
     public boolean isTransacted() {
         Boolean transacted = getProperty(TRANSACTED, Boolean.class);
         return transacted != null && transacted;
+    }
+
+    public boolean isRollbackOnly() {
+        Boolean rollback = getProperty(ROLLBACK_ONLY, Boolean.class);
+        return rollback != null && rollback;
     }
 
     public UnitOfWork getUnitOfWork() {

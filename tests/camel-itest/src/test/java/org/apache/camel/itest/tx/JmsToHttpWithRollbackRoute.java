@@ -16,14 +16,8 @@
  */
 package org.apache.camel.itest.tx;
 
-import javax.annotation.Resource;
-
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
 /**
  * Route that listen on a JMS queue and send a request/reply over http
@@ -34,18 +28,7 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
  *
  * @version $Revision$
  */
-public class JmsToHttpRoute extends SpringRouteBuilder {
-
-    @Resource(name = "PROPAGATION_REQUIRED")
-    protected SpringTransactionPolicy required;
-
-    @EndpointInject(name = "data")
-    protected Endpoint data;
-
-    protected static int counter;
-
-    protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
-    protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";
+public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
 
     public void configure() throws Exception {
         // configure a global transacted error handler
@@ -65,12 +48,8 @@ public class JmsToHttpRoute extends SpringRouteBuilder {
                 .when().xpath("/reply/status != 'ok'")
                     // as this is based on an unit test we use mocks to verify how many times we did rollback
                     .to("mock:rollback")
-                    // response is not okay so force a rollback by throwing an exception
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Rollback please");
-                        }
-                    })
+                    // response is not okay so force a rollback
+                    .rollback()
                 .otherwise()
                 // otherwise since its okay, the route ends and the response is sent back
                 // to the original caller

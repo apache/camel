@@ -68,6 +68,7 @@ public interface Exchange {
     String TIMER_TIME = "CamelTimerTime";
 
     String TRANSACTED = "CamelTransacted";
+    String ROLLBACK_ONLY = "CamelRollbackOnly";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
@@ -214,6 +215,11 @@ public interface Exchange {
      * Returns true if this exchange is transacted
      */
     boolean isTransacted();
+
+    /**
+     * Returns true if this exchange is marked for rollback
+     */
+    boolean isRollbackOnly();
 
     /**
      * Returns the container so that a processor can resolve endpoints from URIs

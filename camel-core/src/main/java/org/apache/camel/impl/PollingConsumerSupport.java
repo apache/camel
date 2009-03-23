@@ -35,7 +35,7 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
 
     @Override
     public String toString() {
-        return "PullConsumer on " + endpoint;
+        return "PollingConsumer on " + endpoint;
     }
 
     public Endpoint getEndpoint() {
