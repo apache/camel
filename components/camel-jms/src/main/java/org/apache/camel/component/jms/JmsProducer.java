@@ -99,13 +99,11 @@ public class JmsProducer extends DefaultProducer {
                 try {
                     JmsConfiguration c = endpoint.getConfiguration();
                     if (c.getReplyTo() != null) {
-                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint
-                            .getExecutorService());
+                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getExecutorService());
                         requestor.start();
                     } else {
                         if (affinity == RequestorAffinity.PER_PRODUCER) {
-                            requestor = new Requestor(endpoint.getConfiguration(), endpoint
-                                .getExecutorService());
+                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getExecutorService());
                             requestor.start();
                         } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
                             requestor = endpoint.getRequestor();
@@ -175,11 +173,11 @@ public class JmsProducer extends DefaultProducer {
             final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
             MessageCreator messageCreator = new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
-                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
+                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
                     message.setJMSReplyTo(replyTo);
                     requestor.setReplyToSelectorHeader(in, message);
 
-                    FutureTask future = null;
+                    FutureTask future;
                     future = (!msgIdAsCorrId)
                             ? requestor.getReceiveFuture(message.getJMSCorrelationID(), endpoint.getConfiguration().getRequestTimeout())
                             : requestor.getReceiveFuture(callback);
@@ -223,13 +221,32 @@ public class JmsProducer extends DefaultProducer {
                     }
                 }
                 if (message != null) {
-                    exchange.setOut(new JmsMessage(message, endpoint.getBinding()));
+                    // the response can be an exception
+                    JmsMessage response = new JmsMessage(message, endpoint.getBinding());
+                    Object body = response.getBody();
+
+                    if (endpoint.isTransferException() && body instanceof Exception) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Reply recieved. Setting reply as Exception: " + body);
+                        }
+                        // we got an exception back and endpoint was configued to transfer exception
+                        // therefore set response as exception
+                        exchange.setException((Exception) body);
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Reply recieved. Setting reply as OUT message: " + body);
+                        }
+                        // regular response
+                        exchange.setOut(response);
+                    }
+
+                    // correlation
                     if (correlationId != null) {
                         message.setJMSCorrelationID(correlationId);
                         exchange.getOut(false).setHeader("JMSCorrelationID", correlationId);
                     }
                 } else {
-                    // lets set a timed out exception
+                    // no response, so lets set a timed out exception
                     exchange.setException(new ExchangeTimedOutException(exchange, requestTimeout));
                 }
             } catch (Exception e) {
@@ -238,7 +255,7 @@ public class JmsProducer extends DefaultProducer {
         } else {
             MessageCreator messageCreator = new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
-                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session);
+                    Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
                     if (LOG.isDebugEnabled()) {
                         LOG.debug(endpoint + " sending JMS message: " + message);
                     }

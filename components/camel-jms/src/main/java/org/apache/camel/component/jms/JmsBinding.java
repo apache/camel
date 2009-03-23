@@ -176,24 +176,28 @@ public class JmsBinding {
     /**
      * Creates a JMS message from the Camel exchange and message
      *
+     * @param exchange the current exchange
      * @param session the JMS session used to create the message
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
     public Message makeJmsMessage(Exchange exchange, Session session) throws JMSException {
-        return makeJmsMessage(exchange, exchange.getIn(), session);
+        return makeJmsMessage(exchange, exchange.getIn(), session, null);
     }
 
     /**
      * Creates a JMS message from the Camel exchange and message
      *
+     * @param exchange the current exchange
+     * @param camelMessage the body to make a javax.jms.Message as
      * @param session the JMS session used to create the message
+     * @param cause optional exception occured that should be sent as reply instead of a regular body
      * @return a newly created JMS Message instance containing the
      * @throws JMSException if the message could not be created
      */
-    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session)
-        throws JMSException {
+    public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause) throws JMSException {
         Message answer = null;
+
         boolean alwaysCopy = (endpoint != null) && endpoint.getConfiguration().isAlwaysCopyMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
@@ -201,10 +205,22 @@ public class JmsBinding {
                 answer = jmsMessage.getJmsMessage();
             }
         }
+
         if (answer == null) {
-            answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
-            appendJmsProperties(answer, exchange, camelMessage);
+            if (cause != null) {
+                // an exception occured so send it as response
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Will create JmsMessage with caused exception: " + cause);
+                }
+                // create jms message containg the caused exception
+                answer = createJmsMessage(cause, session);
+            } else {
+                // create regular jms message using the camel message body
+                answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
+                appendJmsProperties(answer, exchange, camelMessage);
+            }
         }
+
         return answer;
     }
 
@@ -218,8 +234,7 @@ public class JmsBinding {
     /**
      * Appends the JMS headers from the Camel {@link JmsMessage}
      */
-    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in)
-        throws JMSException {
+    public void appendJmsProperties(Message jmsMessage, Exchange exchange, org.apache.camel.Message in) throws JMSException {
         Set<Map.Entry<String, Object>> entries = in.getHeaders().entrySet();
         for (Map.Entry<String, Object> entry : entries) {
             String headerName = entry.getKey();
@@ -294,6 +309,13 @@ public class JmsBinding {
             return headerValue.toString();
         }
         return null;
+    }
+
+    protected Message createJmsMessage(Exception cause, Session session) throws JMSException {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Using JmsMessageType: " + Object);
+        }
+        return session.createObjectMessage(cause);
     }
 
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {

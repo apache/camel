@@ -787,6 +787,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         getConfiguration().setTransferExchange(transferExchange);
     }
 
+    public boolean isTransferException() {
+        return getConfiguration().isTransferException();
+    }
+
+    public void setTransferException(boolean transferException) {
+        getConfiguration().setTransferException(transferException);
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
