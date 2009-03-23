@@ -27,10 +27,19 @@ import org.apache.camel.RollbackExchangeException;
  */
 public class RollbackProcessor implements Processor {
 
+    private String message;
+
+    public RollbackProcessor() {
+    }
+
+    public RollbackProcessor(String message) {
+        this.message = message;
+    }
+
     public void process(Exchange exchange) throws Exception {
         // mark the exchange for rollback
         exchange.setProperty(Exchange.ROLLBACK_ONLY, Boolean.TRUE);
-        exchange.setException(new RollbackExchangeException(exchange));
+        exchange.setException(new RollbackExchangeException(message, exchange));
     }
 
 }

@@ -38,7 +38,14 @@ import org.apache.camel.spi.RouteContext;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> {
 
+    @XmlAttribute(required = false)
+    private String message;
+
     public RollbackDefinition() {
+    }
+
+    public RollbackDefinition(String message) {
+        this.message = message;
     }
 
     @Override
@@ -48,12 +55,16 @@ public class RollbackDefinition extends ProcessorDefinition<RollbackDefinition> 
 
     @Override
     public String toString() {
-        return "Rollback";
+        if (message != null) {
+            return "Rollback[" + message + "]";
+        } else {
+            return "Rollback";
+        }
     }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) {
-        return new RollbackProcessor();
+        return new RollbackProcessor(message);
     }
 
     @Override

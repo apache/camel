@@ -88,7 +88,7 @@ public class RollbackTest extends ContextTestSupport {
                             }
                         })
                         .to("mock:rollback")
-                        .rollback()
+                        .rollback("That do not work")
                     .otherwise()
                         .to("mock:result")
                     .end();
