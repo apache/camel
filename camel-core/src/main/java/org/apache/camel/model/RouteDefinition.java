@@ -39,8 +39,6 @@ import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Represents an XML &lt;route/&gt; element
@@ -51,7 +49,6 @@ import org.apache.commons.logging.LogFactory;
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
-    private static final transient Log LOG = LogFactory.getLog(RouteDefinition.class);
     private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
@@ -78,7 +75,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     @Override
     public String getShortName() {
         return "route";
-
     }
 
     /**
@@ -321,10 +317,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     @Override
     protected void configureChild(ProcessorDefinition output) {
         super.configureChild(output);
-
-        if (isInheritErrorHandler()) {
-            output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-        }
 
         List<AbstractInterceptorDefinition> interceptors = getInterceptors();
         for (AbstractInterceptorDefinition interceptor : interceptors) {

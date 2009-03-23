@@ -21,7 +21,6 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -40,9 +39,6 @@ import org.apache.camel.processor.DelegateProcessor;
 @XmlRootElement(name = "routes")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> implements RouteContainer {
-    // TODO: not sure how else to use an optional attribute in JAXB2
-    @XmlAttribute
-    private Boolean inheritErrorHandlerFlag;
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
@@ -106,18 +102,6 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public boolean isInheritErrorHandler() {
-        return ProcessorDefinition.isInheritErrorHandler(getInheritErrorHandlerFlag());
-    }
-
-    public Boolean getInheritErrorHandlerFlag() {
-        return inheritErrorHandlerFlag;
-    }
-
-    public void setInheritErrorHandlerFlag(Boolean inheritErrorHandlerFlag) {
-        this.inheritErrorHandlerFlag = inheritErrorHandlerFlag;
     }
 
     public ErrorHandlerBuilder getErrorHandlerBuilder() {
@@ -198,7 +182,6 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     public RouteDefinition route(RouteDefinition route) {
         // lets configure the route
         route.setCamelContext(getCamelContext());
-        route.setInheritErrorHandlerFlag(getInheritErrorHandlerFlag());
         List<AbstractInterceptorDefinition> list = getInterceptors();
         for (AbstractInterceptorDefinition interceptorType : list) {
             route.addInterceptor(interceptorType);
@@ -267,7 +250,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     protected RouteDefinition createRoute() {
         RouteDefinition route = new RouteDefinition();
         ErrorHandlerBuilder handler = getErrorHandlerBuilder();
-        if (isInheritErrorHandler() && handler != null) {
+        if (handler != null) {
             route.setErrorHandlerBuilderIfNull(handler);
         }
         return route;

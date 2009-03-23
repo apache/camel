@@ -61,9 +61,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         return new SpringRouteBuilder() {
             public void configure() {
 
-                Policy requried = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRED"));
-                Policy notsupported = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_NOT_SUPPORTED"));
-                Policy requirenew = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW"));
+                SpringTransactionPolicy requried = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRED"));
+                SpringTransactionPolicy notsupported = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_NOT_SUPPORTED"));
+                SpringTransactionPolicy requirenew = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW"));
 
                 Policy rollback = new Policy() {
                     public Processor wrap(Processor processor) {
@@ -101,9 +101,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
                     }
                 };
 
-                // NOTE: ErrorHandler has to be disabled since it operates
-                // within the failed transaction.
-                inheritErrorHandler(false);
+                // setup transacted error handler
+                errorHandler(transactionErrorHandler(requried));
+
                 // Used to validate messages are sent to the target.
                 from("activemq:queue:mock.a").to("mock:a");
                 from("activemq:queue:mock.b").to("mock:b");
@@ -240,8 +240,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA);
     }
 
-    //TODO should fix this test
-    public void xtestSenarioB() throws Exception {
+    public void testSenarioB() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         // May be more since spring seems to go into tight loop re-delivering.

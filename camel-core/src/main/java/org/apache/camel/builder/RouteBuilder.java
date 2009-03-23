@@ -141,18 +141,6 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Configures whether or not the <a href="http://camel.apache.org/error-handler.html">error handler</a>
-     * is inherited by every processing node (or just the top most one)
-     *
-     * @param inherit  whether error handlers should be inherited or not
-     * @return the current builder
-     */
-    public RouteBuilder inheritErrorHandler(boolean inherit) {
-        routeCollection.setInheritErrorHandlerFlag(inherit);
-        return this;
-    }
-
-    /**
      * Adds the given interceptor to this route
      *
      * @param interceptor  the interceptor
@@ -226,13 +214,6 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     public List<Route> getRouteList() throws Exception {
         checkInitialized();
         return routes;
-    }
-
-    @Override
-    public void setInheritErrorHandler(boolean inheritErrorHandler) {
-        super.setInheritErrorHandler(inheritErrorHandler);
-        routeCollection.setInheritErrorHandlerFlag(inheritErrorHandler);
-
     }
 
     @Override
