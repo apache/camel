@@ -82,8 +82,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private static final Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
 
     @XmlAttribute(required = false)
-    private Boolean autowireRouteBuilders = Boolean.TRUE;
-    @XmlAttribute(required = false)
     private Boolean trace;
     @XmlAttribute(required = false)
     private Long delay;
@@ -457,14 +455,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.builderRefs = builderRefs;
     }
 
-    /**
-     * If enabled this will force all {@link RouteBuilder} classes configured in the Spring
-     * {@link ApplicationContext} to be registered automatically with this CamelContext.
-     */
-    public void setAutowireRouteBuilders(Boolean autowireRouteBuilders) {
-        this.autowireRouteBuilders = autowireRouteBuilders;
-    }
-
     public String getErrorHandlerRef() {
         return errorHandlerRef;
     }
@@ -519,28 +509,34 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     /**
      * Strategy to install all available routes into the context
      */
+    @SuppressWarnings("unchecked")
     protected void installRoutes() throws Exception {
-        if (autowireRouteBuilders != null && autowireRouteBuilders) {
-            Map builders = getApplicationContext().getBeansOfType(RouteBuilder.class, true, true);
-            if (builders != null) {
-                for (Object builder : builders.values()) {
-                    getContext().addRoutes((RouteBuilder) builder);
-                }
-            }
-        }
-        for (Routes routeBuilder : additionalBuilders) {
-            getContext().addRoutes(routeBuilder);
-        }
+        List<RouteBuilder> builders = new ArrayList<RouteBuilder>();
+
         if (routeBuilder != null) {
-            getContext().addRoutes(routeBuilder);
+            builders.add(routeBuilder);
         }
 
         // lets add route builders added from references
         if (builderRefs != null) {
             for (RouteBuilderDefinition builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
-                getContext().addRoutes(builder);
+                builders.add(builder);
             }
+        }
+
+        // install already configured routes
+        for (Routes routeBuilder : additionalBuilders) {
+            getContext().addRoutes(routeBuilder);
+        }
+
+        // install builders
+        for (RouteBuilder builder : builders) {
+            if (beanPostProcessor != null) {
+                // Inject the annotated resource
+                beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+            }
+            getContext().addRoutes(builder);
         }
     }
 
@@ -548,7 +544,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
      * Strategy method to try find {@link RouteBuilder} instances on the
      * classpath
      */
-    protected void findRouteBuilders() throws Exception, InstantiationException {
+    protected void findRouteBuilders() throws Exception {
         if (getPackages() != null && getPackages().length > 0) {
             RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), getPackages(), getContextClassLoaderOnStart(),
                     getBeanPostProcessor(), getContext().getPackageScanClassResolver());

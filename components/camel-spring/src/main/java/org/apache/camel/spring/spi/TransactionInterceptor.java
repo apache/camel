@@ -108,15 +108,23 @@ public class TransactionInterceptor extends DelegateProcessor {
                     rce = wrapRuntimeCamelException(e);
                 }
 
-                // rethrow exception if the exchange failed
-                if (rce != null) {
-                    // an exception occured so please sleep before we rethrow the exception
+                // rollback if exception occured or marked as rollback
+                if (rce != null || exchange.isRollbackOnly()) {
                     delayBeforeRedelivery();
                     if (activeTx) {
                         status.setRollbackOnly();
-                        LOG.debug("Setting transaction to rollbackOnly due to exception being thrown: " + rce.getMessage());
+                        if (LOG.isDebugEnabled()) {
+                            if (rce != null) {
+                                LOG.debug("Setting transaction to rollbackOnly due to exception being thrown: " + rce.getMessage());
+                            } else {
+                                LOG.debug("Setting transaction to rollbackOnly as Exchange was marked as rollback only");
+                            }
+                        }
                     }
-                    throw rce;
+                    // rethrow if an exception occured
+                    if (rce != null) {
+                        throw rce;
+                    }
                 }
             }
         });
@@ -141,6 +149,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
+                // TODO: As DLC we need a timer task, eg something in Util to help us
                 Thread.currentThread().interrupt();
             }
         }

@@ -14,22 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.config;
+package org.apache.camel.spring.processor;
 
 import org.apache.camel.CamelContext;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.apache.camel.processor.RollbackTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-/**
- * @version $Revision$
- */
-public class AutoRegisteredRouteBuilderTest extends XmlConfigTestSupport {
+public class SpringRollbackTest extends RollbackTest {
 
-    public void testUsingAutoRegisteredRouteBuilderUsingXml() throws Exception {
-        ApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/autoRegisteredRouteBuilder.xml");
-
-        CamelContext context = (CamelContext) applicationContext.getBean("camel4");
-        assertValidContext(context);
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/rollback.xml");
     }
 
 }

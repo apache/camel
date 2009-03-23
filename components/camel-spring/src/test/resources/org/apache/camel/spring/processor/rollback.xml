@@ -22,14 +22,32 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example4 -->
-  <camelContext id="camel4" xmlns="http://camel.apache.org/schema/spring" autowireRouteBuilders="true">
-  </camelContext>
-  <!-- END SNIPPET: example4 -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:dead"/>
+        <property name="redeliveryPolicy" ref="policy"/>
+    </bean>
 
+    <bean id="policy" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="delay" value="0"/>
+        <property name="maximumRedeliveries" value="1"/>
+    </bean>
 
-  <bean id="configuredRouteBuilder" class="org.apache.camel.spring.xml.ConfiguredRouteBuilder">
-    <property name="fromUri" value="seda:test.a"/>
-    <property name="toUri" value="seda:test.b"/>
-  </bean>
+    <!-- START SNIPPET: e1 -->
+    <camelContext trace="true" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route errorHandlerRef="errorHandler">
+            <from uri="direct:start"/>
+            <choice>
+                <when>
+                    <simple>${body} != 'ok'</simple>
+                    <to uri="mock:rollback"/>
+                    <rollback/>
+                </when>
+                <otherwise>
+                    <to uri="mock:result"/>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: e1 -->
+
 </beans>

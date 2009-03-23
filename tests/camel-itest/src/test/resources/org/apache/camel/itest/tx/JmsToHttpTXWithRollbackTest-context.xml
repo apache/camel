@@ -59,12 +59,12 @@
         <property name="configuration" ref="jmsConfig"/>
     </bean>
 
-    <bean id="route" class="org.apache.camel.itest.tx.JmsToHttpRoute"/>
+    <bean id="route" class="org.apache.camel.itest.tx.JmsToHttpWithRollbackRoute"/>
 
     <!-- Camel context -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <!--use our route -->
-       <routeBuilder ref="route"/>
+         <!--use our route -->
+        <routeBuilder ref="route"/>
 
         <!-- define our data endpoint as the activemq queue we send a message to -->
         <endpoint id="data" uri="activemq:queue:data"/>

@@ -185,13 +185,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             // if we are redelivering then sleep before trying again
             if (data.redeliveryCounter > 0) {
-                // okay we will give it another go so clear the exception so we can try again
-                if (exchange.getException() != null) {
-                    exchange.setException(null);
-                }
-
-                // reset cached streams so they can be read again
-                MessageHelper.resetStreamCache(exchange.getIn());
+                prepareExchangeForRedelivery(exchange);
 
                 // wait until we should redeliver
                 try {
@@ -272,10 +266,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         // process the next try
         // if we are redelivering then sleep before trying again
         if (data.redeliveryCounter > 0) {
-            // okay we will give it another go so clear the exception so we can try again
-            if (exchange.getException() != null) {
-                exchange.setException(null);
-            }
+            prepareExchangeForRedelivery(exchange);
+
             // wait until we should redeliver using a timer to avoid thread blocking
             data.redeliveryDelay = data.currentRedeliveryPolicy.calculateRedeliveryDelay(data.redeliveryDelay, data.redeliveryCounter);
             REDELIVER_TIMER.schedule(new RedeliverTimerTask(exchange, callback, data), data.redeliveryDelay);
@@ -284,7 +276,64 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             deliverToRedeliveryProcessor(exchange, callback, data);
         }
     }
-    
+
+    // Properties
+    // -------------------------------------------------------------------------
+
+    /**
+     * Returns the output processor
+     */
+    public Processor getOutput() {
+        return output;
+    }
+
+    /**
+     * Returns the dead letter that message exchanges will be sent to if the
+     * redelivery attempts fail
+     */
+    public Processor getDeadLetter() {
+        return deadLetter;
+    }
+
+    public RedeliveryPolicy getRedeliveryPolicy() {
+        return redeliveryPolicy;
+    }
+
+    /**
+     * Sets the redelivery policy
+     */
+    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
+        this.redeliveryPolicy = redeliveryPolicy;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    /**
+     * Sets the logger strategy; which {@link Log} to use and which
+     * {@link LoggingLevel} to use
+     */
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    // Implementation methods
+    // -------------------------------------------------------------------------
+
+    private void prepareExchangeForRedelivery(Exchange exchange) {
+        // okay we will give it another go so clear the exception so we can try again
+        if (exchange.getException() != null) {
+            exchange.setException(null);
+        }
+
+        // clear rollback flags
+        exchange.setProperty(Exchange.ROLLBACK_ONLY, null);
+
+        // reset cached streams so they can be read again
+        MessageHelper.resetStreamCache(exchange.getIn());
+    }
+
     private void handleException(Exchange exchange, RedeliveryData data) {
         Throwable e = exchange.getException();
 
@@ -340,7 +389,10 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             }
         });
     }
-    
+
+    /**
+     * All redelivery attempts failed so move the exchange to the fault processor (eg the dead letter queue)
+     */
     private boolean deliverToFaultProcessor(final Exchange exchange, final AsyncCallback callback,
                                             final RedeliveryData data) {
         // we did not success with the redelivery so now we let the failure processor handle it
@@ -353,7 +405,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         boolean sync = afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
                 LOG.trace("Fault processor done");
-                restoreExceptionOnExchange(exchange, data.handledPredicate);
+                prepareExchangeForFailure(exchange, data.handledPredicate);
                 callback.done(data.sync);
             }
         });
@@ -365,52 +417,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         return sync;
     }
 
-    // Properties
-    // -------------------------------------------------------------------------
-
-    /**
-     * Returns the output processor
-     */
-    public Processor getOutput() {
-        return output;
-    }
-
-    /**
-     * Returns the dead letter that message exchanges will be sent to if the
-     * redelivery attempts fail
-     */
-    public Processor getDeadLetter() {
-        return deadLetter;
-    }
-
-    public RedeliveryPolicy getRedeliveryPolicy() {
-        return redeliveryPolicy;
-    }
-
-    /**
-     * Sets the redelivery policy
-     */
-    public void setRedeliveryPolicy(RedeliveryPolicy redeliveryPolicy) {
-        this.redeliveryPolicy = redeliveryPolicy;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
-    /**
-     * Sets the logger strategy; which {@link Log} to use and which
-     * {@link LoggingLevel} to use
-     */
-    public void setLogger(Logger logger) {
-        this.logger = logger;
-    }
-
-    // Implementation methods
-
-    // -------------------------------------------------------------------------
-
-    protected static void restoreExceptionOnExchange(Exchange exchange, Predicate handledPredicate) {
+    private void prepareExchangeForFailure(Exchange exchange, Predicate handledPredicate) {
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
@@ -432,7 +439,10 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         } else {
             newLogLevel = data.currentRedeliveryPolicy.getRetriesExhaustedLogLevel();
         }
-        if (data.currentRedeliveryPolicy.isLogStackTrace() && e != null) {
+        if (exchange.isRollbackOnly()) {
+            // log intented rollback on WARN level
+            logger.log("Intended rollback on exchange: " + exchange, LoggingLevel.WARN);
+        } else if (data.currentRedeliveryPolicy.isLogStackTrace() && e != null) {
             logger.log(message, e, newLogLevel);
         } else {
             logger.log(message, newLogLevel);
@@ -447,7 +457,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
      * Increments the redelivery counter and adds the redelivered flag if the
      * message has been redelivered
      */
-    protected int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
+    private int incrementRedeliveryCounter(Exchange exchange, Throwable e) {
         Message in = exchange.getIn();
         Integer counter = in.getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
         int next = 1;

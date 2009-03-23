@@ -22,17 +22,16 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-
-
   <!-- START SNIPPET: example5 -->
-  <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring" autowireRouteBuilders="false">
-    <routeBuilder ref="configuredRouteBuilder"/>
+  <camelContext id="camel5" xmlns="http://camel.apache.org/schema/spring">
+      <routeBuilder ref="configuredRouteBuilder"/>
   </camelContext>
   <!-- END SNIPPET: example5 -->
 
 
   <bean id="configuredRouteBuilder" class="org.apache.camel.spring.xml.ConfiguredRouteBuilder">
-    <property name="fromUri" value="seda:test.a"/>
-    <property name="toUri" value="seda:test.b"/>
+      <property name="fromUri" value="seda:test.a"/>
+      <property name="toUri" value="seda:test.b"/>
   </bean>
+
 </beans>
