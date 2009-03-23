@@ -42,7 +42,7 @@
     </bean>
 
     <bean id="required" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
-        <property name="template" ref="PROPAGATION_REQUIRED"/>
+        <property name="transactionTemplate" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
     <bean id="PROPAGATION_REQUIRED" class="org.springframework.transaction.support.TransactionTemplate">
@@ -61,7 +61,6 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
-        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 

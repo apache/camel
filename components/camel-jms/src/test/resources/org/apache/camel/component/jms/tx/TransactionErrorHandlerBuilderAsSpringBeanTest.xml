@@ -55,7 +55,7 @@
     <!-- START SNIPPET: e2 -->
     <!-- camel policy we refer to in our route -->
     <bean id="required" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
-        <property name="template" ref="PROPAGATION_REQUIRED"/>
+        <property name="transactionTemplate" ref="PROPAGATION_REQUIRED"/>
     </bean>
 
     <!-- the standard spring transaction template for required -->
@@ -92,7 +92,6 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <property name="transactionManager" ref="jmsTransactionManager"/>
         <property name="transacted" value="true"/>
-        <property name="transactedInOut" value="true"/>
         <property name="concurrentConsumers" value="1"/>
     </bean>
 

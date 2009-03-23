@@ -18,16 +18,12 @@ package org.apache.camel.model;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Processor;
-import org.apache.camel.processor.ThrowFaultProcessor;
 import org.apache.camel.processor.RollbackProcessor;
 import org.apache.camel.spi.RouteContext;
 

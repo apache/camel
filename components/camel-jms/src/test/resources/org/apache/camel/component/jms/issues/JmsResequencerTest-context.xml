@@ -23,6 +23,7 @@ http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/came
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <jmxAgent id="agent" disabled="true" />
+        <routeBuilder ref="routeBuilder"/>
     </camelContext>
 
     <bean id="routeBuilder"
