@@ -20,12 +20,12 @@ import org.apache.camel.osgi.test.MockTypeConverterRegistry;
 
 public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
     
-    public void testLoad() throws Exception {
+    public void testLoad() throws Exception {               
         OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getResolver());
         MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
         loader.load(registry);
-        assertEquals("There should have a fallback converter", registry.getFallbackTypeConverters().size(), 1);
-        assertEquals("There should have a coverter", registry.getTypeConverters().size(), 1);
+        assertTrue("There should have at lest one fallback converter", registry.getFallbackTypeConverters().size() >= 1);        
+        assertTrue("There should have at lest one coverter", registry.getTypeConverters().size() >= 1);
     }
 
 }

@@ -47,14 +47,14 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         packageName = packageName.replace('.', '/');
         Set<ClassLoader> set = getClassLoaders();
         ClassLoader osgiClassLoader = getOsgiClassLoader(set);
-
+        int classesSize = classes.size(); 
         if (osgiClassLoader != null) {
             // if we have an osgi bundle loader use this one first
             LOG.debug("Using only osgi bundle classloader");
             findInOsgiClassLoader(test, packageName, osgiClassLoader, classes);
         }
         
-        if (classes.size() == 0) {
+        if (classes.size() == classesSize) {
             // Using the regular classloaders as a fallback
             LOG.debug("Using only regular classloaders");
             for (ClassLoader classLoader : set.toArray(new ClassLoader[set.size()])) {
