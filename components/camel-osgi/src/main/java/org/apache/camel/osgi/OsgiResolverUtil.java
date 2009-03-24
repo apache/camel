@@ -24,11 +24,14 @@ import java.util.Set;
 
 import org.apache.camel.util.ResolverUtil;
 import org.apache.camel.util.ResolverUtil.Test;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.util.BundleDelegatingClassLoader;
 
 public class OsgiResolverUtil extends ResolverUtil {
+    protected static final transient Log LOG = LogFactory.getLog(OsgiResolverUtil.class);
     private Bundle bundle;
     
     public OsgiResolverUtil(BundleContext context) {
@@ -64,19 +67,22 @@ public class OsgiResolverUtil extends ResolverUtil {
         packageName = packageName.replace('.', '/');
 
         Set<ClassLoader> set = getClassLoaders();
+        int classSize = getClasses().size();
 
         ClassLoader osgiClassLoader = getOsgiClassLoader(set);
-
+        LOG.debug("The osgi bundle classloader is " + osgiClassLoader);
         if (osgiClassLoader != null) {
-            // if we have an osgi bundle loader use this one only
+            // if we have an osgi bundle loader use this one first
             LOG.debug("Using only osgi bundle classloader");
             findInOsgiClassLoader(test, packageName, osgiClassLoader);
-        } else {
+        }
+        // try to use other classloader if we don't find any class from Osgi
+        if (classSize == getClasses().size()) {            
             LOG.debug("Using only regular classloaders");
-            for (ClassLoader classLoader : set) {
+            for (ClassLoader classLoader : set.toArray(new ClassLoader[set.size()])) {
                 if (!isOsgiClassloader(classLoader)) {
                     find(test, packageName, classLoader);
-                }
+                }        
             }
         }
     }

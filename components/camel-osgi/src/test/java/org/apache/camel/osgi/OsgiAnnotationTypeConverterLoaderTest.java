@@ -16,7 +16,9 @@
  */
 package org.apache.camel.osgi;
 
+import org.apache.camel.TypeConverter;
 import org.apache.camel.osgi.test.MockTypeConverterRegistry;
+import org.apache.camel.osgi.test.MyTypeConverter;
 
 public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport {
     
@@ -24,7 +26,7 @@ public class OsgiAnnotationTypeConverterLoaderTest extends CamelOsgiTestSupport 
         OsgiAnnotationTypeConverterLoader loader = new OsgiAnnotationTypeConverterLoader(getBundleContext());
         MockTypeConverterRegistry registry = new MockTypeConverterRegistry();
         loader.load(registry);        
-        assertEquals("There should have a coverter", registry.getTypeConverters().size(), 1);
+        assertTrue("There should have at lest one coverter", registry.getTypeConverters().size() >= 1);       
     }
 
 }
