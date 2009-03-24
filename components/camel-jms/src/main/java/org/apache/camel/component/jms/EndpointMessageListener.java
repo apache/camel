@@ -88,8 +88,8 @@ public class EndpointMessageListener implements MessageListener {
                         cause = exchange.getException();
                         sendReply = true;
                     } else {
-                        // only throw exception if endpoint is not configured to transfer exceptions
-                        // back to caller
+                        // only throw exception if endpoint is not configured to transfer exceptions back to caller
+                        // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
                 } else if (exchange.getFault().getBody() != null) {
@@ -97,14 +97,14 @@ public class EndpointMessageListener implements MessageListener {
                     body = exchange.getFault();
                     sendReply = true;
                 }
-            } else {
+            } else if (exchange.getOut(false) != null) {
                 // process OK so get the reply
                 body = exchange.getOut(false);
                 sendReply = true;
             }
 
             // send the reply if we got a response and the exchange is out capable
-            if (sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
+            if (rce == null && sendReply && !disableReplyTo && exchange.getPattern().isOutCapable()) {
                 sendReply(replyDestination, message, exchange, body, cause);
             }
 

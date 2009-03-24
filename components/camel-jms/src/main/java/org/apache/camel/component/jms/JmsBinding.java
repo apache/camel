@@ -47,6 +47,7 @@ import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -215,6 +216,7 @@ public class JmsBinding {
                 // create jms message containg the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
+                ObjectHelper.notNull(camelMessage, "message body");
                 // create regular jms message using the camel message body
                 answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
@@ -249,7 +251,14 @@ public class JmsBinding {
             if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
-                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
+                if (exchange.getPattern().isOutCapable()) {
+                    // only set the JMSReply if the Exchange supports Out
+                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
+                } else {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Exchange is not out capable, Ignoring JMSReplyTo: " + headerValue);
+                    }
+                }
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
