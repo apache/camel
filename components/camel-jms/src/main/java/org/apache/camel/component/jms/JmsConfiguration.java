@@ -253,31 +253,46 @@ public class JmsConfiguration implements Cloneable {
             execute(new SessionCallback() {
                 public Object doInJms(Session session) throws JMSException {
                     Destination destination = resolveDestinationName(session, destinationName);
-                    Assert.notNull(messageCreator, "MessageCreator must not be null");
-                    MessageProducer producer = createProducer(session, destination);
-                    Message message = null;
-                    try {
-                        message = messageCreator.createMessage(session);
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Sending created message: " + message);
-                        }
-                        doSend(producer, message);
-                        // Check commit - avoid commit call within a JTA
-                        // transaction.
-                        if (session.getTransacted() && isSessionLocallyTransacted(session)) {
-                            // Transacted session created by this template ->
-                            // commit.
-                            JmsUtils.commitIfNecessary(session);
-                        }
-                    } finally {
-                        JmsUtils.closeMessageProducer(producer);
-                    }
-                    if (message != null && callback != null) {
-                        callback.sent(message);
-                    }
-                    return null;
+                    return doSendToDestination(destination, messageCreator, callback, session);
                 }
             }, false);
+        }
+
+        public void send(final Destination destination,
+                         final MessageCreator messageCreator,
+                         final MessageSentCallback callback) throws JmsException {
+            execute(new SessionCallback() {
+                public Object doInJms(Session session) throws JMSException {
+                    return doSendToDestination(destination, messageCreator, callback, session);
+                }
+            }, false);
+        }
+
+        private Object doSendToDestination(final Destination destination,
+                                           final MessageCreator messageCreator,
+                                           final MessageSentCallback callback,
+                                           final Session session) throws JMSException {
+            Assert.notNull(messageCreator, "MessageCreator must not be null");
+            MessageProducer producer = createProducer(session, destination);
+            Message message = null;
+            try {
+                message = messageCreator.createMessage(session);
+                if (logger.isDebugEnabled()) {
+                    logger.debug("Sending created message: " + message);
+                }
+                doSend(producer, message);
+                // Check commit - avoid commit call within a JTA transaction.
+                if (session.getTransacted() && isSessionLocallyTransacted(session)) {
+                    // Transacted session created by this template -> commit.
+                    JmsUtils.commitIfNecessary(session);
+                }
+            } finally {
+                JmsUtils.closeMessageProducer(producer);
+            }
+            if (message != null && callback != null) {
+                callback.sent(message);
+            }
+            return null;
         }
 
         /**
