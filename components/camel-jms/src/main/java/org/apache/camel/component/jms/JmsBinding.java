@@ -255,9 +255,8 @@ public class JmsBinding {
                     // only set the JMSReply if the Exchange supports Out
                     jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
                 } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Exchange is not out capable, Ignoring JMSReplyTo: " + headerValue);
-                    }
+                    // warn we got a JMSReplyTo but the Exchange is not out capable
+                    LOG.warn("Exchange is not out capable, Ignoring JMSReplyTo: " + headerValue);
                 }
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
