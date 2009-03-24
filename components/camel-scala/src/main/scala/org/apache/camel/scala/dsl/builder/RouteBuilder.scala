@@ -80,6 +80,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
+  def rollback = stack.top.rollback
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)
   def setheader(name: String, expression: Exchange => Any) = stack.top.setheader(name, expression)
   def thread(count: Int) = stack.top.thread(count)
