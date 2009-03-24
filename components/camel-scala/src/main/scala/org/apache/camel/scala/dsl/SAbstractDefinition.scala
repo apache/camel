@@ -104,6 +104,8 @@ abstract class SAbstractDefinition extends DSL {
   
   def resequence(expression: Exchange => Any) = new SResequenceDefinition(target.resequence(expression))
   
+  def rollback = new SProcessorDefinition(target.rollback.asInstanceOf[RawProcessorDefinition])
+  
   def setbody(expression: Exchange => Any) = new SProcessorDefinition(target.setBody(expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])
   
   def setheader(name: String, expression: Exchange => Any) = new SProcessorDefinition(target.setHeader(name, expression).asInstanceOf[ProcessorDefinition[P] forSome {type P}])

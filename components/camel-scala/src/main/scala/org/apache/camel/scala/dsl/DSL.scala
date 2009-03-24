@@ -40,6 +40,7 @@ trait DSL {
   def process(function: Exchange => Unit) : DSL
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
+  def rollback : DSL
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
