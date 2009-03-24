@@ -31,6 +31,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTeemplate102;
 import org.apache.camel.component.jms.JmsConfiguration.CamelJmsTemplate;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap;
 import org.apache.camel.component.jms.requestor.DeferredRequestReplyMap.DeferredMessageSentCallback;
@@ -170,7 +171,6 @@ public class JmsProducer extends DefaultProducer {
             final ValueHolder<FutureTask> futureHolder = new ValueHolder<FutureTask>();
             final DeferredMessageSentCallback callback = msgIdAsCorrId ? deferredRequestReplyMap.createDeferredMessageSentCallback() : null;
 
-            final CamelJmsTemplate template = (CamelJmsTemplate)getInOutTemplate();
             MessageCreator messageCreator = new MessageCreator() {
                 public Message createMessage(Session session) throws JMSException {
                     Message message = endpoint.getBinding().makeJmsMessage(exchange, in, session, null);
@@ -191,10 +191,29 @@ public class JmsProducer extends DefaultProducer {
                 }
             };
 
+            CamelJmsTemplate template = null;
+            CamelJmsTeemplate102 template102 = null;
+            if (endpoint.isUseVersion102()) {
+                template102 = (CamelJmsTeemplate102)getInOutTemplate();
+            } else {
+                template = (CamelJmsTemplate)getInOutTemplate();
+            }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using JMS API " + (endpoint.isUseVersion102() ? "v1.0.2" : "v1.1"));
+            }
+
             if (destinationName != null) {
-                template.send(destinationName, messageCreator, callback);
+                if (template != null) {
+                    template.send(destinationName, messageCreator, callback);
+                } else {
+                    template102.send(destinationName, messageCreator, callback);
+                }
             } else if (destination != null) {
-                template.send(destination, messageCreator, callback);
+                if (template != null) {
+                    template.send(destination, messageCreator, callback);
+                } else {
+                    template102.send(destination, messageCreator, callback);
+                }
             } else {
                 throw new IllegalArgumentException("Neither destination nor destinationName is specified on this endpoint: " + endpoint);
             }

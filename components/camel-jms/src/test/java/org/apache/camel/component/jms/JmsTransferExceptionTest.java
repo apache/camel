@@ -25,8 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAcknowledge;
 
 /**
  * @version $Revision$
