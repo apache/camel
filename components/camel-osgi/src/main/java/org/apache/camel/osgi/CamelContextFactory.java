@@ -28,6 +28,8 @@ import org.apache.camel.impl.converter.AnnotationTypeConverterLoader;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.TypeConverterLoader;
 import org.apache.camel.util.ResolverUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
@@ -36,7 +38,7 @@ import org.springframework.osgi.context.BundleContextAware;
  * any spring application context involved.
  */
 public class CamelContextFactory implements BundleContextAware {
-    
+    protected static final transient Log LOG = LogFactory.getLog(CamelContextFactory.class);
     private BundleContext bundleContext;
 
     public BundleContext getBundleContext() {
@@ -49,7 +51,8 @@ public class CamelContextFactory implements BundleContextAware {
     
     public DefaultCamelContext createContext() {
         DefaultCamelContext context = new DefaultCamelContext();
-        if (bundleContext != null) {            
+        if (bundleContext != null) {
+            LOG.debug("The bundle context is not be null, let's setup the Osgi resolvers");
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
             addOsgiAnnotationTypeConverterLoader(context, bundleContext);
@@ -86,5 +89,6 @@ public class CamelContextFactory implements BundleContextAware {
             typeConverterLoaders.remove(atLoader);
         }
         typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
+        LOG.debug("added the OsgiAnnotationTypeConverterLoader");
     }    
 }

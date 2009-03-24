@@ -30,13 +30,16 @@ import org.apache.camel.spring.RouteBuilderFinder;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.util.FactoryFinder;
 import org.apache.camel.util.ResolverUtil;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.osgi.framework.BundleContext;
 import org.springframework.osgi.context.BundleContextAware;
 
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContextFactoryBean implements BundleContextAware {
-
+    protected static final transient Log LOG = LogFactory.getLog(CamelContextFactoryBean.class);
+    
     @XmlTransient
     private BundleContext bundleContext;
 
@@ -50,6 +53,7 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
     
     protected SpringCamelContext createContext() {
         SpringCamelContext context = super.createContext();
+        LOG.debug("The bundle context is " + bundleContext);
         if (bundleContext != null) {
             context.setComponentResolver(new OsgiComponentResolver());
             context.setLanguageResolver(new OsgiLanguageResolver());
@@ -85,8 +89,9 @@ public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContex
         }
         if (atLoader != null) {
             typeConverterLoaders.remove(atLoader);
-        }
+        }        
         typeConverterLoaders.add(new OsgiAnnotationTypeConverterLoader(bundleContext));
+        LOG.debug("added the OsgiAnnotationTypeConverterLoader");
     }    
     
 }
