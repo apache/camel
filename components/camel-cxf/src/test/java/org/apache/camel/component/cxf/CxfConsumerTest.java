@@ -45,6 +45,7 @@ public class CxfConsumerTest extends ContextTestSupport {
             public void configure() {
                 from(SIMPLE_ENDPOINT_URI).choice().when(header(CxfConstants.OPERATION_NAME).isEqualTo(ECHO_OPERATION)).process(new Processor() {
                     public void process(final Exchange exchange) {
+                        assertEquals(DataFormat.POJO, exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class));
                         Message in = exchange.getIn();
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);

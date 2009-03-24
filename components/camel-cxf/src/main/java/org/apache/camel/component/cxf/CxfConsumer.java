@@ -21,15 +21,11 @@ import javax.xml.ws.WebServiceProvider;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.feature.MessageDataFormatFeature;
 import org.apache.camel.component.cxf.feature.PayLoadDataFormatFeature;
-import org.apache.camel.component.cxf.spring.CxfEndpointBean;
 import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
-import org.apache.cxf.common.classloader.ClassLoaderUtils;
-import org.apache.cxf.configuration.Configurer;
-import org.apache.cxf.configuration.spring.ConfigurerImpl;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
 
@@ -88,7 +84,7 @@ public class CxfConsumer extends DefaultConsumer<CxfExchange> {
         
         DataFormat dataFormat = CxfEndpointUtils.getDataFormat(endpoint);
 
-        svrBean.setInvoker(new CamelInvoker(this));
+        svrBean.setInvoker(new CamelInvoker(this, dataFormat));
 
         // apply feature here
         if (!dataFormat.equals(DataFormat.POJO) && !isWebServiceProvider) {
