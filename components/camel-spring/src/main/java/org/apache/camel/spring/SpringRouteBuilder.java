@@ -109,8 +109,18 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * @return the created error handler
      */
     public TransactionErrorHandlerBuilder transactionErrorHandler(SpringTransactionPolicy policy) {
+        return transactionErrorHandler(policy.getTransactionTemplate());
+    }
+
+    /**
+     * Creates a transaction error handler.
+     *
+     * @param template the spring transaction template
+     * @return the created error handler
+     */
+    public TransactionErrorHandlerBuilder transactionErrorHandler(TransactionTemplate template) {
         TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
-        answer.setTransactionTemplate(policy.getTransactionTemplate());
+        answer.setTransactionTemplate(template);
         return answer;
     }
 

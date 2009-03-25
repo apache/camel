@@ -45,7 +45,6 @@ import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
-import org.apache.camel.builder.NoErrorHandlerBuilder;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.model.language.ConstantExpression;
@@ -1109,6 +1108,42 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     public Type wireTap(String uri) {
         WireTapDefinition answer = new WireTapDefinition();
         answer.setUri(uri);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends a new {@link org.apache.camel.Exchange} to the destination
+     * using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param body expression that creates the body to send
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, Expression body) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setNewExchangeExpression(body);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/wiretap.html">WireTap EIP:</a>
+     * Sends a new {@link org.apache.camel.Exchange} to the destination
+     * using {@link ExchangePattern#InOnly}.
+     *
+     * @param uri  the destination
+     * @param processor  processor preparing the new exchange to send
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type wireTap(String uri, Processor processor) {
+        WireTapDefinition answer = new WireTapDefinition();
+        answer.setUri(uri);
+        answer.setNewExchangeProcessor(processor);
         addOutput(answer);
         return (Type) this;
     }
