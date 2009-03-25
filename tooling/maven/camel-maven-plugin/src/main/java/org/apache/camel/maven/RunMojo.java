@@ -178,6 +178,20 @@ public class RunMojo extends AbstractExecMojo {
     private String mainClass;
 
     /**
+     * The basedPackages that spring java config want to gets.
+     *
+     * @parameter expression="${camel.basedPackages}"
+     */
+    private String basedPackages;
+
+    /**
+     * The configClasses that spring java config want to gets.
+     *
+     * @parameter expression="${camel.configClasses}"
+     */
+    private String configClasses;
+    
+    /**
      * The classpath based application context uri that spring want to gets.
      *
      * @parameter expression="${camel.applicationContextUri}"
@@ -330,6 +344,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoFailureException something bad happened...
      */
     public void execute() throws MojoExecutionException, MojoFailureException {
+        boolean usingSpringJavaConfigureMain = false;
         if (killAfter != -1) {
             getLog().warn("Warning: killAfter is now deprecated. Do you need it ? Please comment on MEXEC-6.");
         }
@@ -359,7 +374,18 @@ public class RunMojo extends AbstractExecMojo {
             args.add("-fa");
             args.add(fileApplicationContextUri);
         }
-
+        
+        if (configClasses != null) {
+            args.add("-cc");
+            args.add(configClasses);
+            usingSpringJavaConfigureMain = true;
+        }        
+        if (basedPackages != null) {
+            args.add("-bp");
+            args.add(basedPackages);
+            usingSpringJavaConfigureMain = true;
+        }
+ 
         args.add("-d");
         args.add(duration);
         if (arguments != null) {
@@ -367,6 +393,11 @@ public class RunMojo extends AbstractExecMojo {
         }
         arguments = new String[args.size()];
         args.toArray(arguments);
+        
+        if (usingSpringJavaConfigureMain) {
+            mainClass = "org.apache.camel.spring.javaconfig.Main";
+            getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initate a camel context");
+        }
 
         if (getLog().isDebugEnabled()) {
             StringBuffer msg = new StringBuffer("Invoking : ");
