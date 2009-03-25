@@ -25,6 +25,10 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
@@ -35,6 +39,11 @@ public class WireTapProcessor extends SendProcessor {
 
     private int defaultThreadPoolSize = 5;
     private ExecutorService executorService;
+
+    // expression or processor used for populating a new exchange to send
+    // as opposed to traditional wiretap that sends a copy of the original exchange
+    private Expression newExchangeExpression;
+    private Processor newExchangeProcessor;
 
     public WireTapProcessor(Endpoint destination) {
         super(destination);
@@ -122,11 +131,43 @@ public class WireTapProcessor extends SendProcessor {
 
     @Override
     protected Exchange configureExchange(Exchange exchange) {
+        if (newExchangeProcessor == null && newExchangeExpression == null) {
+            // use a copy of the original exchange
+            return configureCopyExchange(exchange);
+        } else {
+            // use a new exchange
+            return configureNewExchange(exchange);
+        }
+    }
+
+    private Exchange configureCopyExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
         Exchange copy = exchange.copy();
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         return copy;
+    }
+
+    private Exchange configureNewExchange(Exchange exchange) {
+        Exchange answer = new DefaultExchange(exchange.getContext(), ExchangePattern.InOnly);
+        // use destination os origin of this new exchange
+        answer.setFromEndpoint(getDestination());
+
+        // prepare the exchange
+        if (newExchangeProcessor != null) {
+            try {
+                newExchangeProcessor.process(answer);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        } else {
+            Object body = newExchangeExpression.evaluate(answer);
+            if (body != null) {
+                answer.getIn().setBody(body);
+            }
+        }
+
+        return answer;
     }
 
     public ExecutorService getExecutorService() {
@@ -151,5 +192,20 @@ public class WireTapProcessor extends SendProcessor {
     public void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
-    
+
+    public Processor getNewExchangeProcessor() {
+        return newExchangeProcessor;
+    }
+
+    public void setNewExchangeProcessor(Processor newExchangeProcessor) {
+        this.newExchangeProcessor = newExchangeProcessor;
+    }
+
+    public Expression getNewExchangeExpression() {
+        return newExchangeExpression;
+    }
+
+    public void setNewExchangeExpression(Expression newExchangeExpression) {
+        this.newExchangeExpression = newExchangeExpression;
+    }
 }

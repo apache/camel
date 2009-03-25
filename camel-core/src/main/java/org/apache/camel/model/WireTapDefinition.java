@@ -18,10 +18,14 @@ package org.apache.camel.model;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.WireTapProcessor;
 import org.apache.camel.spi.RouteContext;
@@ -34,6 +38,15 @@ import org.apache.camel.spi.RouteContext;
 @XmlRootElement(name = "wireTap")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
+
+    @XmlTransient
+    private Processor newExchangeProcessor;
+
+    @XmlAttribute(name = "processorRef", required = false)
+    private String newExchangeProcessorRef;
+
+    @XmlElement(name = "body", required = false)
+    private ExpressionSubElementDefinition newExchangeExpression;
 
     public WireTapDefinition() {
     }
@@ -49,7 +62,17 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Endpoint endpoint = resolveEndpoint(routeContext);
-        return new WireTapProcessor(endpoint, getPattern());
+        WireTapProcessor answer = new WireTapProcessor(endpoint, getPattern());
+
+        if (newExchangeProcessorRef != null) {
+            newExchangeProcessor = routeContext.lookup(newExchangeProcessorRef, Processor.class);
+        }
+        answer.setNewExchangeProcessor(newExchangeProcessor);
+        if (newExchangeExpression != null) {
+            answer.setNewExchangeExpression(newExchangeExpression.createExpression(routeContext));
+        }
+
+        return answer;
     }
 
     public ExchangePattern getPattern() {
@@ -64,6 +87,34 @@ public class WireTapDefinition extends SendDefinition<WireTapDefinition> {
     @Override
     public String getShortName() {
         return "wireTap";
+    }
+
+    public Processor getNewExchangeProcessor() {
+        return newExchangeProcessor;
+    }
+
+    public void setNewExchangeProcessor(Processor processor) {
+        this.newExchangeProcessor = processor;
+    }
+
+    public String getNewExchangeProcessorRef() {
+        return newExchangeProcessorRef;
+    }
+
+    public void setNewExchangeProcessorRef(String ref) {
+        this.newExchangeProcessorRef = ref;
+    }
+
+    public ExpressionSubElementDefinition getNewExchangeExpression() {
+        return newExchangeExpression;
+    }
+
+    public void setNewExchangeExpression(ExpressionSubElementDefinition expression) {
+        this.newExchangeExpression = expression;
+    }
+
+    public void setNewExchangeExpression(Expression expression) {
+        this.newExchangeExpression = new ExpressionSubElementDefinition(expression);
     }
 
 }

@@ -42,7 +42,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class TransactionInterceptor extends DelegateProcessor {
     private static final transient Log LOG = LogFactory.getLog(TransactionInterceptor.class);
     private final TransactionTemplate transactionTemplate;
-    private RedeliveryPolicy redeliveryPolicy;
     private DelayPolicy delayPolicy;
 
     public TransactionInterceptor(TransactionTemplate transactionTemplate) {
@@ -136,9 +135,7 @@ public class TransactionInterceptor extends DelegateProcessor {
      */
     protected void delayBeforeRedelivery() {
         long delay = 0;
-        if (redeliveryPolicy != null) {
-            delay = redeliveryPolicy.getDelay();
-        } else if (delayPolicy != null) {
+        if (delayPolicy != null) {
             delay = delayPolicy.getDelay();
         }
 
@@ -149,7 +146,7 @@ public class TransactionInterceptor extends DelegateProcessor {
                 }
                 Thread.sleep(delay);
             } catch (InterruptedException e) {
-                // TODO: As DLC we need a timer task, eg something in Util to help us
+                LOG.debug("Sleep interrupted");
                 Thread.currentThread().interrupt();
             }
         }
