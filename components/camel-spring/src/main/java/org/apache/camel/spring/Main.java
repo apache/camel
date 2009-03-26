@@ -41,7 +41,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
  * @version $Revision$
  */
 public class Main extends MainSupport {
-    private static Main instance;
+    protected static Main instance;
 
     private String applicationContextUri = "META-INF/spring/*.xml";
     private String fileApplicationContextUri;
@@ -89,8 +89,7 @@ public class Main extends MainSupport {
             }
         }
     }
-
-
+    
     public static void main(String... args) {
         Main main = new Main();
         instance = main;
