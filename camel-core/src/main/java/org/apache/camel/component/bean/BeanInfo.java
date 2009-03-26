@@ -59,7 +59,6 @@ public class BeanInfo {
     private final CamelContext camelContext;
     private final Class type;
     private final ParameterMappingStrategy strategy;
-    // TODO: A new key
     private final Map<String, List<MethodInfo>> operations = new ConcurrentHashMap<String, List<MethodInfo>>();
     private final List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private final List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
