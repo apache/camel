@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import org.apache.camel.Exchange;
+
  /**
   * Interface to allow plug-able implementation to filter header
   * to and from Camel message.
@@ -25,6 +27,8 @@ package org.apache.camel.spi;
   */
 public interface HeaderFilterStrategy {
 
+    public enum Direction { IN, OUT }
+
     /**
      * Applies filtering logic to Camel Message header that is
      * going to be copied to target message such as CXF and JMS message.
@@ -33,9 +37,10 @@ public interface HeaderFilterStrategy {
      * 
      * @param headerName  the header name
      * @param headerValue the header value
+     * @param exchange the context to perform filtering
      * @return <tt>true</tt> if this header should be filtered out.
      */
-    boolean applyFilterToCamelHeaders(String headerName, Object headerValue);
+    boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange);
 
     
     /**
@@ -47,8 +52,9 @@ public interface HeaderFilterStrategy {
      *  
      * @param headerName  the header name
      * @param headerValue the header value
+     * @param exchange the context to perform filtering
      * @return <tt>true</tt> if this header should be filtered out.
      */
-    boolean applyFilterToExternalHeaders(String headerName, Object headerValue);
+    boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange);
     
 }

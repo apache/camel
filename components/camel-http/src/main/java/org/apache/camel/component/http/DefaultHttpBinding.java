@@ -25,6 +25,7 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.helper.GZIPHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -56,7 +57,7 @@ public class DefaultHttpBinding implements HttpBinding {
         if (exchange.isFailed()) {
             Message fault = exchange.getFault(false);
             if (fault != null) {
-                doWriteFaultResponse(fault, response);
+                doWriteFaultResponse(fault, response, exchange);
             } else {
                 doWriteExceptionResponse(exchange.getException(), response);
             }
@@ -65,7 +66,7 @@ public class DefaultHttpBinding implements HttpBinding {
             copyProtocolHeaders(exchange.getIn(), exchange.getOut());
             Message out = exchange.getOut();            
             if (out != null) {
-                doWriteResponse(out, response);
+                doWriteResponse(out, response, exchange);
             }
         }
     }
@@ -88,11 +89,11 @@ public class DefaultHttpBinding implements HttpBinding {
         pw.flush();
     }
 
-    public void doWriteFaultResponse(Message message, HttpServletResponse response) throws IOException {
-        doWriteResponse(message, response);
+    public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
+        doWriteResponse(message, response, exchange);
     }
 
-    public void doWriteResponse(Message message, HttpServletResponse response) throws IOException {
+    public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // set the status code in the response. Default is 200.
         if (message.getHeader(HttpConstants.HTTP_RESPONSE_CODE) != null) {
             int code = message.getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
@@ -108,7 +109,7 @@ public class DefaultHttpBinding implements HttpBinding {
         for (String key : message.getHeaders().keySet()) {
             String value = message.getHeader(key, String.class);
             if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, value)) {
+                    && !headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
                 response.setHeader(key, value);
             }
         }
@@ -186,4 +187,5 @@ public class DefaultHttpBinding implements HttpBinding {
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
+
 }

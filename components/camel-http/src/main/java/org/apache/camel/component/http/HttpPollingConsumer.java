@@ -78,7 +78,7 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
             for (Header header : headers) {
                 String name = header.getName();
                 String value = header.getValue();
-                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                     message.setHeader(name, value);
                 }
             }

@@ -24,6 +24,10 @@ import org.apache.cxf.message.Exchange;
  * An strategy interface for implementing binding between CXF {@link Exchange} 
  * and Camel {@link org.apache.camel.Exchange}.  
  * 
+ * Assumptions: CxfProducer and CxfConsumer set {@link #DataFormat} and 
+ * {@link org.apache.cxf.service.model.BindingOperationInfo} 
+ * in Camel Exchange property before calling into these methods.  
+ * 
  * @version $Revision$
  * @since 2.0
  */

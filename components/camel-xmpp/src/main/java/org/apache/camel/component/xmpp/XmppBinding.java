@@ -55,7 +55,7 @@ public class XmppBinding {
         for (Map.Entry<String, Object> entry : entries) {
             String name = entry.getKey();
             Object value = entry.getValue();
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value)) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(name, value, exchange)) {
                 message.setProperty(name, value);
             }
         }
@@ -73,13 +73,13 @@ public class XmppBinding {
         return message.getBody();
     }
 
-    public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage) {
+    public Map<String, Object> extractHeadersFromXmpp(Message xmppMessage, Exchange exchange) {
         Map<String, Object> answer = new HashMap<String, Object>();
 
         for (String name : xmppMessage.getPropertyNames()) {
             Object value = xmppMessage.getProperty(name);
 
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                 answer.put(name, value);
             }
         }

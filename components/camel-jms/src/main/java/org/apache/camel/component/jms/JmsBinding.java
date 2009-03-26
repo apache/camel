@@ -115,7 +115,7 @@ public class JmsBinding {
         }
     }
 
-    public Map<String, Object> extractHeadersFromJms(Message jmsMessage) {
+    public Map<String, Object> extractHeadersFromJms(Message jmsMessage, Exchange exchange) {
         Map<String, Object> map = new HashMap<String, Object>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
@@ -147,7 +147,8 @@ public class JmsBinding {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    if (headerFilterStrategy != null && headerFilterStrategy.applyFilterToExternalHeaders(name, value)) {
+                    if (headerFilterStrategy != null && 
+                        headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         continue;
                     }
 
@@ -267,7 +268,7 @@ public class JmsBinding {
                 // JMSMessageID, JMSTimestamp, JMSRedelivered
                 LOG.debug("Ignoring JMS header: " + headerName + " with value: " + headerValue);
             }
-        } else if (shouldOutputHeader(in, headerName, headerValue)) {
+        } else if (shouldOutputHeader(in, headerName, headerValue, exchange)) {
             // only primitive headers and strings is allowed as properties
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
@@ -436,10 +437,10 @@ public class JmsBinding {
      * <b>Note</b>: Currently only supports sending java identifiers as keys
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
-                                         Object headerValue) {
+                                         Object headerValue, Exchange exchange) {
 
         return headerFilterStrategy == null
-            || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue);
+            || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }
 
 }

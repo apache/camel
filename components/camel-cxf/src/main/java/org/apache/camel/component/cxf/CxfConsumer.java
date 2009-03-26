@@ -26,6 +26,7 @@ import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.service.invoker.Invoker;
+import org.apache.cxf.service.model.BindingOperationInfo;
 
 /**
  * A Consumer of exchanges for a service in CXF.  CxfConsumer acts a CXF
@@ -59,6 +60,14 @@ public class CxfConsumer extends DefaultConsumer {
 
                 // create a Camel exchange
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
+                
+                BindingOperationInfo boi = cxfExchange.get(BindingOperationInfo.class);
+                if (boi != null) {
+                    camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Set exchange property: BindingOperationInfo: " + boi);
+                    }
+                }
                 
                 // set data format mode in Camel exchange
                 DataFormat dataFormat = endpoint.getDataFormat();
@@ -117,4 +126,5 @@ public class CxfConsumer extends DefaultConsumer {
     public Server getServer() {
         return server;
     }
+    
 }

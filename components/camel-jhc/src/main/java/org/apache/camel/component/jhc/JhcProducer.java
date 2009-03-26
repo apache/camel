@@ -157,7 +157,7 @@ public class JhcProducer extends DefaultProducer implements AsyncProcessor {
         HeaderFilterStrategy strategy = ((JhcEndpoint)getEndpoint()).getHeaderFilterStrategy();
         for (String headerName : exchange.getIn().getHeaders().keySet()) {
             String headerValue = exchange.getIn().getHeader(headerName, String.class);
-            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue)) {
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                 req.addHeader(headerName, headerValue);
             }
         }
@@ -251,7 +251,7 @@ public class JhcProducer extends DefaultProducer implements AsyncProcessor {
             HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
             for (Iterator it = httpResponse.headerIterator(); it.hasNext();) {
                 Header h = (Header) it.next();
-                if (strategy != null && !strategy.applyFilterToExternalHeaders(h.getName(), h.getValue())) {
+                if (strategy != null && !strategy.applyFilterToExternalHeaders(h.getName(), h.getValue(), e)) {
                     e.getOut().setHeader(h.getName(), h.getValue());
                 }
             }

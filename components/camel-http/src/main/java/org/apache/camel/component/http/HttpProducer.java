@@ -58,7 +58,7 @@ public class HttpProducer extends DefaultProducer {
         // propagate headers as HTTP headers
         for (String headerName : in.getHeaders().keySet()) {
             String headerValue = in.getHeader(headerName, String.class);
-            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue)) {
+            if (strategy != null && !strategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
                 method.addRequestHeader(headerName, headerValue);
             }
         }
@@ -85,7 +85,7 @@ public class HttpProducer extends DefaultProducer {
                 for (Header header : headers) {
                     String name = header.getName();
                     String value = header.getValue();
-                    if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value)) {
+                    if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         answer.setHeader(name, value);
                     }
                 }

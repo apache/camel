@@ -62,7 +62,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         // extract headers from restlet 
         for (Map.Entry<String, Object> entry : request.getAttributes().entrySet()) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
-                    entry.getValue())) {
+                    entry.getValue(), exchange)) {
                 
                 inMessage.setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
@@ -95,7 +95,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     }
                 } else {
                     if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(),
-                            entry.getValue())) {
+                            entry.getValue(), exchange)) {
 
                         inMessage.setHeader(entry.getKey(), entry.getValue());
                         if (LOG.isDebugEnabled()) {
@@ -138,7 +138,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
         
         for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue())) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 if (entry.getKey().startsWith("org.restlet.")) {
                     // put the org.restlet headers in attributes
                     request.getAttributes().put(entry.getKey(), entry.getValue());
@@ -202,7 +202,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
 
         for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue())) {
+            if (!headerFilterStrategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 response.getAttributes().put(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Populate Restlet response from exchange header: " 
@@ -233,7 +233,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
     public void populateExchangeFromRestletResponse(Exchange exchange, Response response) throws IOException {
         
         for (Map.Entry<String, Object> entry : response.getAttributes().entrySet()) {
-            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue())) {
+            if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
                 exchange.getOut().setHeader(entry.getKey(), entry.getValue());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Populate exchange from Restlet response header: " 
