@@ -79,11 +79,17 @@
                    xmlns:tns="http://apache.org/camel/component/cxf/soap/headers">
   </cxf:cxfEndpoint>
   
+  
+  <!-- START SNIPPET: dropAllMessageHeadersStrategy -->
   <bean id="dropAllMessageHeadersStrategy" class="org.apache.camel.component.cxf.CxfHeaderFilterStrategy">
+  
       <!--  Set relayHeaders to false to drop all SOAP headers -->
       <property name="relayHeaders" value="false"/>
+      
   </bean>
+  <!-- END SNIPPET: dropAllMessageHeadersStrategy -->
   
+  <!-- START SNIPPET: customMessageFilterStrategy -->
   <bean id="customMessageFilterStrategy" class="org.apache.camel.component.cxf.CxfHeaderFilterStrategy">
       <property name="messageHeaderFilters">
           <list>
@@ -95,6 +101,7 @@
           </list>
       </property>
   </bean>
+  <!-- END SNIPPET: customMessageFilterStrategy -->
   
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
       <route>
@@ -109,10 +116,14 @@
          <from uri="direct:relayProducer" />
          <to uri="cxf:bean:routerRelayEndpoint" />
       </route>
+      
+      <!-- START SNIPPET: noRelayRoute -->
       <route>
           <from uri="cxf:bean:routerNoRelayEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy"/>          
           <to uri="cxf:bean:serviceNoRelayEndpoint?headerFilterStrategy=#dropAllMessageHeadersStrategy"/>
       </route>
+      <!-- END SNIPPET: noRelayRoute -->
+      
       <route>
           <from uri="cxf:bean:serviceExtraRelays?headerFilterStrategy=#customMessageFilterStrategy"/>
           <to uri="mock:result"/>
