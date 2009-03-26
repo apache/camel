@@ -400,8 +400,6 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initate a camel context");
         }
         
-        System.out.println("The mainClass is " + mainClass);
-
         if (getLog().isDebugEnabled()) {
             StringBuffer msg = new StringBuffer("Invoking : ");
             msg.append(mainClass);
