@@ -196,16 +196,20 @@ public class BeanInfo {
                 continue;
             }
 
+            boolean found = false;
             for (int i = 0; i < info.getMethod().getParameterTypes().length; i++) {
                 Class type1 = info.getMethod().getParameterTypes()[i];
                 Class type2 = methodInfo.getMethod().getParameterTypes()[i];
-                if (!type1.equals(type2)) {
-                    continue;
+                if (type1.equals(type2)) {
+                    found = true;
+                    break;
                 }
             }
 
-            // sanme name, same parameters, then its overrides an existing class
-            return info;
+            if (found) {
+                // same name, same parameters, then its overrides an existing class
+                return info;
+            }
         }
 
         return null;
