@@ -103,7 +103,7 @@ public class MailMessage extends DefaultMessage {
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (mailMessage != null) {
             try {
-                map.putAll(getExchange().getBinding().extractHeadersFromMail(mailMessage));
+                map.putAll(getExchange().getBinding().extractHeadersFromMail(mailMessage, getExchange()));
             } catch (MessagingException e) {
                 throw new RuntimeCamelException("Error accessing headers due to: " + e.getMessage(), e);
             }

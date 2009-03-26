@@ -104,10 +104,6 @@ public class CxfProducer extends DefaultProducer {
             }
         }
         
-        // bind the request CXF exchange
-        binding.populateCxfRequestFromExchange(cxfExchange, camelExchange, 
-                requestContext);
- 
         // get binding operation info
         BindingOperationInfo boi = getBindingOperationInfo(camelExchange);
         if (LOG.isTraceEnabled()) {
@@ -125,6 +121,15 @@ public class CxfProducer extends DefaultProducer {
                 }
             }
         }
+        
+        camelExchange.setProperty(BindingOperationInfo.class.getName(), boi);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Set exchange property: BindingOperationInfo: " + boi);
+        }
+        
+        // bind the request CXF exchange
+        binding.populateCxfRequestFromExchange(cxfExchange, camelExchange, 
+                requestContext);
         
         // Remove protocol headers from scopes.  Otherwise, response headers can be
         // overwritten by request headers when SOAPHandlerInterceptor tries to create

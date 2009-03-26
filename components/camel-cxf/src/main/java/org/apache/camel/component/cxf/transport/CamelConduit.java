@@ -171,7 +171,7 @@ public class CamelConduit extends AbstractConduit implements Configurable {
                 public void process(org.apache.camel.Exchange ex) throws IOException {
                     CachedOutputStream outputStream = (CachedOutputStream)outMessage.getContent(OutputStream.class);
                     // Send out the request message here, copy the protocolHeader back
-                    CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, ex.getIn().getHeaders());
+                    CxfHeaderHelper.propagateCxfToCamel(headerFilterStrategy, outMessage, ex.getIn().getHeaders(), ex);
  
                     // TODO support different encoding
                     ex.getIn().setBody(outputStream.getBytes());

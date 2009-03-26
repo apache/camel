@@ -20,13 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
  * The default header filtering strategy.  Users can configure filter by 
  * setting filter set and/or setting a regular expression.  Subclass can 
  * add extended filter logic in 
- * {@link #extendedFilter(org.apache.camel.impl.DefaultHeaderFilterStrategy.Direction, String, Object)}
+ * {@link #extendedFilter(Direction, String, Object, Exchange)}
  * 
  * Filters are associated with directions (in or out).  "In" direction is 
  * referred to propagating headers "to" Camel message.  The "out" direction
@@ -38,8 +39,6 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  * @version $Revision$
  */
 public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
-
-    protected enum Direction { IN, OUT }
     
     private Set<String> inFilter;
     private Pattern inFilterPattern;
@@ -50,12 +49,12 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     private boolean lowerCase;
     private boolean allowNullValues;
     
-    public boolean applyFilterToCamelHeaders(String headerName, Object headerValue) {
-        return doFiltering(Direction.OUT, headerName, headerValue);
+    public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
+        return doFiltering(Direction.OUT, headerName, headerValue, exchange);
     }
 
-    public boolean applyFilterToExternalHeaders(String headerName, Object headerValue) {
-        return doFiltering(Direction.IN, headerName, headerValue);
+    public boolean applyFilterToExternalHeaders(String headerName, Object headerValue, Exchange exchange) {
+        return doFiltering(Direction.IN, headerName, headerValue, exchange);
     }
 
     /**
@@ -190,11 +189,11 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         allowNullValues = value;
     }   
 
-    protected boolean extendedFilter(Direction direction, String key, Object value) {
+    protected boolean extendedFilter(Direction direction, String key, Object value, Exchange exchange) {
         return false;
     }
 
-    private boolean doFiltering(Direction direction, String headerName, Object headerValue) {
+    private boolean doFiltering(Direction direction, String headerName, Object headerValue, Exchange exchange) {
         if (headerName == null) {
             return true;
         }
@@ -230,7 +229,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             }
         }
             
-        if (extendedFilter(direction, headerName, headerValue)) {
+        if (extendedFilter(direction, headerName, headerValue, exchange)) {
             return true;
         }
             

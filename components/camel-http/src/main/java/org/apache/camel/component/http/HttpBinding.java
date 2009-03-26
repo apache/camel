@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
@@ -79,19 +80,21 @@ public interface HttpBinding {
      * Strategy method that writes the response to the http response stream for a fault message
      *
      * @param message  the fault message
-     * @param response   the http response
+     * @param response the http response
+     * @param exchange the exchange to provide context for header filtering
      * @throws java.io.IOException can be thrown from http response
      */
-    void doWriteFaultResponse(Message message, HttpServletResponse response) throws IOException;
+    void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException;
 
     /**
      * Strategy method that writes the response to the http response stream for an OUT message
      *
      * @param message  the OUT message
-     * @param response   the http response
+     * @param response the http response
+     * @param exchange the exchange to provide context for header filtering
      * @throws java.io.IOException can be thrown from http response
      */
-    void doWriteResponse(Message message, HttpServletResponse response) throws IOException;
+    void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException;
 
     boolean isUseReaderForPayload();
 

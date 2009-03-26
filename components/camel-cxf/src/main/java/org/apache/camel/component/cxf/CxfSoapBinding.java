@@ -48,7 +48,7 @@ public final class CxfSoapBinding {
             exchange.setProperty(CxfConstants.CXF_EXCHANGE, cxfExchange);
         }
 
-        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer);
+        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), answer, exchange);
 
         InputStream body = null;
         try {
@@ -79,7 +79,7 @@ public final class CxfSoapBinding {
             message = exchange.getOut();
         }
 
-        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage);
+        CxfHeaderHelper.propagateCamelToCxf(headerFilterStrategy, message.getHeaders(), outMessage, exchange);
 
         // send the body back
         Source body = null;

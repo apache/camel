@@ -124,7 +124,7 @@ public class MailBinding {
             Object headerValue = entry.getValue();
             if (headerValue != null) {
                 if (headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue)) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange)) {
 
                     if (isRecipientHeader(headerName)) {
                         // skip any recipients as they are handled specially
@@ -232,7 +232,7 @@ public class MailBinding {
         return true;
     }
 
-    protected Map<String, Object> extractHeadersFromMail(Message mailMessage) throws MessagingException {
+    protected Map<String, Object> extractHeadersFromMail(Message mailMessage, Exchange exchange) throws MessagingException {
         Map<String, Object> answer = new HashMap<String, Object>();
         Enumeration names = mailMessage.getAllHeaders();
 
@@ -240,7 +240,7 @@ public class MailBinding {
             Header header = (Header)names.nextElement();
             String[] value = mailMessage.getHeader(header.getName());
             if (headerFilterStrategy != null
-                    && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value)) {
+                    && !headerFilterStrategy.applyFilterToExternalHeaders(header.getName(), value, exchange)) {
                 // toLowerCase() for doing case insensitive search
                 if (value.length == 1) {
                     CollectionHelper.appendValue(answer, header.getName().toLowerCase(), value[0]);

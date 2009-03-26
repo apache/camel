@@ -79,7 +79,7 @@ public class XmppMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (xmppMessage != null) {
-            map.putAll(getExchange().getBinding().extractHeadersFromXmpp(xmppMessage));
+            map.putAll(getExchange().getBinding().extractHeadersFromXmpp(xmppMessage, getExchange()));
         }
     }
 }

@@ -155,7 +155,7 @@ public class JmsMessage extends DefaultMessage {
     @Override
     protected void populateInitialHeaders(Map<String, Object> map) {
         if (jmsMessage != null && map != null) {
-            map.putAll(getBinding().extractHeadersFromJms(jmsMessage));
+            map.putAll(getBinding().extractHeadersFromJms(jmsMessage, getExchange()));
         }
     }
 
