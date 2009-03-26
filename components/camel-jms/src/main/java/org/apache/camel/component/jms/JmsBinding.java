@@ -252,13 +252,7 @@ public class JmsBinding {
             if (headerName.equals("JMSCorrelationID")) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
-                if (exchange.getPattern().isOutCapable()) {
-                    // only set the JMSReply if the Exchange supports Out
-                    jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
-                } else {
-                    // warn we got a JMSReplyTo but the Exchange is not out capable
-                    LOG.warn("Exchange is not out capable, Ignoring JMSReplyTo: " + headerValue);
-                }
+                jmsMessage.setJMSReplyTo(ExchangeHelper.convertToType(exchange, Destination.class, headerValue));
             } else if (headerName.equals("JMSType")) {
                 jmsMessage.setJMSType(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (LOG.isDebugEnabled()) {
