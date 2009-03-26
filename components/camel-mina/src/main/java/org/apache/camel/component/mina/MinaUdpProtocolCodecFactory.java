@@ -22,6 +22,8 @@ import java.nio.charset.CharsetEncoder;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.mina.common.ByteBuffer;
 import org.apache.mina.common.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
@@ -82,16 +84,25 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
     }
 
     private ByteBuffer toByteBuffer(Object message, CharsetEncoder encoder) throws CharacterCodingException {
-        ByteBuffer answer;
-        try {
-            answer = context.getTypeConverter().convertTo(ByteBuffer.class, message);
-        } catch (NoTypeConversionAvailableException e) {
-            String value = context.getTypeConverter().convertTo(String.class, message);
-            answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
-            answer.putString(value, encoder);
+        boolean tryConvert = true;
+        TypeConverter converter = context.getTypeConverter();
+        if (message != null && converter instanceof DefaultTypeConverter) {
+            DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) converter;
+            tryConvert = !defaultTypeConverter.hasNoConverterFor(ByteBuffer.class, message.getClass());
         }
+        if (tryConvert) {
+            try {
+                return converter.convertTo(ByteBuffer.class, message);
+            } catch (NoTypeConversionAvailableException ex) {
+                // ignore
+            }
+        }
+
+        ByteBuffer answer;
+        String value = context.getTypeConverter().convertTo(String.class, message);
+        answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
+        answer.putString(value, encoder);
         return answer;
     }
-
 
 }
