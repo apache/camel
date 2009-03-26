@@ -117,8 +117,11 @@ public class BeanInfo {
 
         String name = exchange.getIn().getHeader(Exchange.BEAN_METHOD_NAME, String.class);
         if (name != null) {
-            if (operations.get(name).size() == 1) {
-                methodInfo = operations.get(name).get(0);
+            if (operations.containsKey(name)) {
+                List<MethodInfo> methods = operations.get(name);
+                if (methods != null && methods.size() == 1) {
+                    methodInfo = methods.get(0);
+                }
             }
         }
         if (methodInfo == null) {
