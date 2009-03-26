@@ -61,7 +61,7 @@ public class BeanInfo {
     private final CamelContext camelContext;
     private Class type;
     private ParameterMappingStrategy strategy;
-    private Map<String, MethodInfo> operations = new ConcurrentHashMap<String, MethodInfo>();
+    private final Map<String, List<MethodInfo>> operations = new ConcurrentHashMap<String, List<MethodInfo>>();
     private MethodInfo defaultMethod;
     private List<MethodInfo> operationsWithBody = new ArrayList<MethodInfo>();
     private List<MethodInfo> operationsWithCustomAnnotation = new ArrayList<MethodInfo>();
@@ -77,10 +77,11 @@ public class BeanInfo {
         this.type = type;
         this.strategy = strategy;
         introspect(getType());
+        // if there are only 1 method with 1 operation then select it as a default/fallback method
         if (operations.size() == 1) {
-            Collection<MethodInfo> methodInfos = operations.values();
-            for (MethodInfo methodInfo : methodInfos) {
-                defaultMethod = methodInfo;
+            List<MethodInfo> methods = operations.values().iterator().next();
+            if (methods.size() == 1) {
+                defaultMethod = methods.get(0);
             }
         }
     }
@@ -106,10 +107,11 @@ public class BeanInfo {
         AmbiguousMethodCallException {
         MethodInfo methodInfo = null;
 
-        // TODO use some other mechanism?
         String name = exchange.getIn().getHeader(BeanProcessor.METHOD_NAME, String.class);
         if (name != null) {
-            methodInfo = operations.get(name);
+            if (operations.get(name).size() == 1) {
+                methodInfo = operations.get(name).get(0);
+            }
         }
         if (methodInfo == null) {
             methodInfo = chooseMethod(pojo, exchange);
@@ -162,7 +164,16 @@ public class BeanInfo {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Adding operation: " + opName + " for method: " + methodInfo);
         }
-        operations.put(opName, methodInfo);
+        if (operations.containsKey(opName)) {
+            // we have an overloaded method so add the method info to the same key
+            List<MethodInfo> existing = operations.get(opName);
+            existing.add(methodInfo);
+        } else {
+            // its a new method we have not seen before so wrap it in a list and add it
+            List<MethodInfo> methods = new ArrayList<MethodInfo>();
+            methods.add(methodInfo);
+            operations.put(opName, methods);
+        }
 
         if (methodInfo.hasBodyParameter()) {
             operationsWithBody.add(methodInfo);
