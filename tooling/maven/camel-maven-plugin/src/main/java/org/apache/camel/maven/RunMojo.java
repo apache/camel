@@ -84,7 +84,8 @@ public class RunMojo extends AbstractExecMojo {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter expression="-1"
+     * @parameter expression="${camel.duration}"
+     *            default-value="-1"
      *
      */
     protected String duration;
