@@ -84,7 +84,8 @@ public class RunMojo extends AbstractExecMojo {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter expression="-1"
+     * @parameter expression="${camel.duration}"
+     *            default-value="-1"
      *
      */
     protected String duration;
@@ -398,6 +399,8 @@ public class RunMojo extends AbstractExecMojo {
             mainClass = "org.apache.camel.spring.javaconfig.Main";
             getLog().info("Using the org.apache.camel.spring.javaconfig.Main to initate a camel context");
         }
+        
+        System.out.println("The mainClass is " + mainClass);
 
         if (getLog().isDebugEnabled()) {
             StringBuffer msg = new StringBuffer("Invoking : ");

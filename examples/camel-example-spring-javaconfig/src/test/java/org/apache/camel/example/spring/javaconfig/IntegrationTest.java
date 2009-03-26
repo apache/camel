@@ -14,30 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.javaconfig;
+package org.apache.camel.example.spring.javaconfig;
 
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.camel.builder.RouteBuilder;
-import org.springframework.config.java.annotation.Bean;
+import junit.framework.TestCase;
+import org.apache.camel.spring.javaconfig.Main;
 
 /**
- * A useful base class for writing
- * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
- * configurations to configure a CamelContext with a single {@link RouteBuilder} instance
-
  * @version $Revision$
  */
-public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
+public class IntegrationTest extends TestCase {
 
-    @Bean
-    public List<RouteBuilder> routes() {
-        return Collections.singletonList(route());
+    public void testCamelRulesDeployCorrectlyInSpring() throws Exception {
+        // let's boot up the Spring application context for 2 seconds to check that it works OK
+        Main.main("-duration", "2s", "-bp", "org.apache.camel.example.spring.javaconfig");
     }
-
-    /**
-     * Creates the single {@link RouteBuilder} to use in this configuration
-     */
-    public abstract RouteBuilder route();
 }

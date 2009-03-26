@@ -31,7 +31,7 @@ import org.springframework.context.support.AbstractApplicationContext;
  */
 public class Main extends org.apache.camel.spring.Main {
     
-    private String basedPackages = "org.apache.camel.spring.javaconfig";
+    private String basedPackages;
     
     private String configClassesString;
     
@@ -50,7 +50,13 @@ public class Main extends org.apache.camel.spring.Main {
                 setConfigClassesString(parameter);
             }
         });
-
+    }
+    
+    public static void main(String... args) {
+        Main main = new Main();
+        instance = main;
+        main.enableHangupSupport();
+        main.run(args);
     }
     
     public void setBasedPackages(String config) {
