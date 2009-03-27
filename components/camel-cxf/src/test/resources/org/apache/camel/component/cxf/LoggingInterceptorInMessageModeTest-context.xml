@@ -20,18 +20,20 @@
        http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    
-    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
-         <constructor-arg value="user-stream"/> 
-    </bean>
      
 	<cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:properties>
 			<entry key="dataFormat" value="MESSAGE"/>
-		</cxf:properties>
+		</cxf:properties>	
 	</cxf:cxfEndpoint>
 		
+    <!-- START SNIPPET: enableLoggingOutInterceptor -->
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
+         <!--  it really should have been user-prestream but CXF does have such phase! -->
+         <constructor-arg value="write"/> 
+    </bean>
+    		
 	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:outInterceptors>
@@ -41,6 +43,7 @@
 			<entry key="dataFormat" value="MESSAGE"/>
 		</cxf:properties>
 	</cxf:cxfEndpoint>
+	<!-- END SNIPPET: enableLoggingOutInterceptor -->
 	
 	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 		<route>
