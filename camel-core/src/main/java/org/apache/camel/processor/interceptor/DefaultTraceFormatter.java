@@ -42,6 +42,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
     private boolean showOutBody;
     private boolean showOutBodyType;
     private boolean showException = true;
+    private int maxChars;
 
     public Object format(final TraceInterceptor interceptor, final ProcessorDefinition node, final Exchange exchange) {
         Message in = exchange.getIn();
@@ -80,7 +81,15 @@ public class DefaultTraceFormatter implements TraceFormatter {
             sb.append(", Exception:").append(exchange.getException());
         }
 
-        return sb.toString();
+        if (maxChars > 0) {
+            String s = sb.toString();
+            if (s.length() > maxChars) {
+                s = s.substring(0, maxChars) + "...";
+            }
+            return s;
+        } else {
+            return sb.toString();
+        }
     }
 
     public boolean isShowBody() {
@@ -201,6 +210,14 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
     public void setNodeLength(int nodeLength) {
         this.nodeLength = nodeLength;
+    }
+
+    public int getMaxChars() {
+        return maxChars;
+    }
+
+    public void setMaxChars(int maxChars) {
+        this.maxChars = maxChars;
     }
 
     // Implementation methods
