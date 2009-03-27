@@ -16,7 +16,11 @@
  */
 package org.apache.camel.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -76,10 +80,38 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testRequestBody() throws Exception {
+        // with endpoint as string uri
+        Integer out = template.requestBody("direct:inout", "Hello", Integer.class);
+        assertEquals(new Integer(123), out);
+
+        out = template.requestBodyAndHeader("direct:inout", "Hello", "foo", "bar", Integer.class);
+        assertEquals(new Integer(123), out);
+
+        Map headers = new HashMap();
+        out = template.requestBodyAndHeaders("direct:inout", "Hello", headers, Integer.class);
+        assertEquals(new Integer(123), out);
+
+        // with endpoint object
+        Endpoint endpoint = context.getEndpoint("direct:inout");
+        out = template.requestBody(endpoint, "Hello", Integer.class);
+        assertEquals(new Integer(123), out);
+
+        out = template.requestBodyAndHeader(endpoint, "Hello", "foo", "bar", Integer.class);
+        assertEquals(new Integer(123), out);
+
+        headers = new HashMap();
+        out = template.requestBodyAndHeaders(endpoint, "Hello", headers, Integer.class);
+        assertEquals(new Integer(123), out);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // for faster unit test
+                errorHandler(noErrorHandler());
+
                 from("direct:in").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().setBody("Bye World");
@@ -103,6 +135,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                         throw new IllegalArgumentException("Forced exception by unit test");
                     }
                 }).to("mock:result");
+
+                from("direct:inout").transform(constant(123));
             }
         };
     }
