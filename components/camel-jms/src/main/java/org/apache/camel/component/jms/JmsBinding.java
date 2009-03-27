@@ -64,18 +64,27 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
  */
 public class JmsBinding {
     private static final transient Log LOG = LogFactory.getLog(JmsBinding.class);
-    private JmsEndpoint endpoint;
-    private HeaderFilterStrategy headerFilterStrategy;
+    private final JmsEndpoint endpoint;
+    private final HeaderFilterStrategy headerFilterStrategy;
+    private final JmsKeyFormatStrategy jmsKeyFormatStrategy;
 
     public JmsBinding() {
+        this.endpoint = null;
         headerFilterStrategy = new JmsHeaderFilterStrategy();
+        jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     }
 
     public JmsBinding(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
-        headerFilterStrategy = endpoint.getHeaderFilterStrategy();
-        if (headerFilterStrategy == null) {
+        if (endpoint.getHeaderFilterStrategy() != null) {
+            headerFilterStrategy = endpoint.getHeaderFilterStrategy();
+        } else {
             headerFilterStrategy = new JmsHeaderFilterStrategy();
+        }
+        if (endpoint.getJmsKeyFormatStrategy() != null) {
+            jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();
+        } else {
+            jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
         }
     }
 
@@ -154,7 +163,7 @@ public class JmsBinding {
 
                     // must decode back from safe JMS header name to original header name
                     // when storing on this Camel JmsMessage object.
-                    String key = endpoint.getJmsKeyFormatStrategy().decodeKey(name);
+                    String key = jmsKeyFormatStrategy.decodeKey(name);
                     map.put(key, value);
                 } catch (JMSException e) {
                     throw new RuntimeCamelException(name, e);
@@ -200,7 +209,7 @@ public class JmsBinding {
     public Message makeJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, Exception cause) throws JMSException {
         Message answer = null;
 
-        boolean alwaysCopy = (endpoint != null) && endpoint.getConfiguration().isAlwaysCopyMessage();
+        boolean alwaysCopy = endpoint != null && endpoint.getConfiguration().isAlwaysCopyMessage();
         if (!alwaysCopy && camelMessage instanceof JmsMessage) {
             JmsMessage jmsMessage = (JmsMessage)camelMessage;
             if (!jmsMessage.shouldCreateNewMessage()) {
@@ -432,7 +441,6 @@ public class JmsBinding {
      */
     protected boolean shouldOutputHeader(org.apache.camel.Message camelMessage, String headerName,
                                          Object headerValue, Exchange exchange) {
-
         return headerFilterStrategy == null
             || !headerFilterStrategy.applyFilterToCamelHeaders(headerName, headerValue, exchange);
     }
