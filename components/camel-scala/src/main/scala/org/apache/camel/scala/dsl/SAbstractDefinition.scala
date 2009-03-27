@@ -81,6 +81,12 @@ abstract class SAbstractDefinition extends DSL {
   
   def inOnly = new SProcessorDefinition(target.inOnly.asInstanceOf[RawProcessorDefinition])
   def inOut = new SProcessorDefinition(target.inOut.asInstanceOf[RawProcessorDefinition])
+  
+  def intercept(expression: Exchange => Boolean) = {
+      val intercept = target.intercept
+      intercept.when(new ScalaPredicate(expression))
+      new SInterceptDefinition(intercept)
+  }
  
   def loop(expression: Exchange => Any) = new SLoopDefinition(target.loop(expression))
   

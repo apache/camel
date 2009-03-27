@@ -70,6 +70,11 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def idempotentconsumer(expression: Exchange => Any) = stack.top.idempotentconsumer(expression)
   def inOnly = stack.top.inOnly
   def inOut = stack.top.inOut
+  def intercept(expression: Exchange => Boolean) = {
+  	val intercept = builder.intercept
+  	intercept.when(new ScalaPredicate(expression))
+  	new SInterceptDefinition(intercept)(this)
+  }
   def loop(expression: Exchange => Any) = stack.top.loop(expression)
   def split(expression: Exchange => Any) = stack.top.split(expression)
   def otherwise = stack.top.otherwise
