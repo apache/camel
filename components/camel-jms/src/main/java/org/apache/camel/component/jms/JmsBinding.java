@@ -277,7 +277,7 @@ public class JmsBinding {
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             if (value != null) {
                 // must encode to safe JMS header name before setting property on jmsMessage
-                String key = endpoint.getJmsKeyFormatStrategy().encodeKey(headerName);
+                String key = jmsKeyFormatStrategy.encodeKey(headerName);
                 jmsMessage.setObjectProperty(key, value);
             } else if (LOG.isDebugEnabled()) {
                 // okay the value is not a primitive or string so we cannot sent it over the wire
