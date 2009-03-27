@@ -417,6 +417,15 @@ public interface ProducerTemplate extends Service {
     Object requestBody(Object body);
 
     /**
+     * Sends the body to the default endpoint and returns the result content
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param body the payload to send
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBody(Object body, Class<T> type);
+
+    /**
      * Send the body to an endpoint returning any result output body.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
@@ -430,11 +439,33 @@ public interface ProducerTemplate extends Service {
      * Send the body to an endpoint returning any result output body.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
+     * @param endpoint the Endpoint to send to
+     * @param body     the payload
+     * @param type     the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBody(Endpoint endpoint, Object body, Class<T> type);
+
+    /**
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
      * @param endpointUri the endpoint URI to send to
      * @param body        the payload
      * @return the result (see class javadoc)
      */
     Object requestBody(String endpointUri, Object body);
+
+    /**
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload
+     * @param type        the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBody(String endpointUri, Object body, Class<T> type);
 
     /**
      * Send the body to an endpoint returning any result output body.
@@ -452,6 +483,19 @@ public interface ProducerTemplate extends Service {
      * Send the body to an endpoint returning any result output body.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
+     * @param endpoint    the Endpoint to send to
+     * @param body        the payload
+     * @param header      the header name
+     * @param headerValue the header value
+     * @param type        the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type);
+
+    /**
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
      * @param endpointUri the endpoint URI to send to
      * @param body        the payload
      * @param header      the header name
@@ -459,6 +503,19 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      */
     Object requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+
+    /**
+     * Send the body to an endpoint returning any result output body.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send to
+     * @param body        the payload
+     * @param header      the header name
+     * @param headerValue the header value
+     * @param type        the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type);
 
     /**
      * Sends the body to an endpoint with the specified headers and header
@@ -477,10 +534,36 @@ public interface ProducerTemplate extends Service {
      * values.
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
+     * @param endpointUri the endpoint URI to send to
+     * @param body the payload to send
+     * @param headers headers
+     * @param type the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
      * @param endpoint the endpoint URI to send to
      * @param body the payload to send
      * @param headers headers
      * @return the result (see class javadoc)
      */
     Object requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends the body to an endpoint with the specified headers and header
+     * values.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpoint the endpoint URI to send to
+     * @param body the payload to send
+     * @param headers headers
+     * @param type the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
 }

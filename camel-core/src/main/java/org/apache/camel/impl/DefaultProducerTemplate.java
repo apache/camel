@@ -238,6 +238,41 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return sendBodyAndHeaders(endpoint, ExchangePattern.InOut, body, headers);
     }
 
+    public <T> T requestBody(Object body, Class<T> type) {
+        Object answer = requestBody(body);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBody(Endpoint endpoint, Object body, Class<T> type) {
+        Object answer = requestBody(endpoint, body);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBody(String endpointUri, Object body, Class<T> type) {
+        Object answer = requestBody(endpointUri, body);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue, Class<T> type) {
+        Object answer = requestBodyAndHeader(endpoint, body, header, headerValue);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type) {
+        Object answer = requestBodyAndHeader(endpointUri, body, header, headerValue);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type) {
+        Object answer = requestBodyAndHeaders(endpointUri, body, headers);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
+    public <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type) {
+        Object answer = requestBodyAndHeaders(endpoint, body, headers);
+        return context.getTypeConverter().convertTo(type, answer);
+    }
+
     // Methods using the default endpoint
     // -----------------------------------------------------------------------
 
