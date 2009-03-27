@@ -35,6 +35,7 @@ public class LogFormatter implements ExchangeFormatter {
     private boolean showOut;
     private boolean showAll;
     private boolean multiline;
+    private int maxChars;
 
     public Object format(Exchange exchange) {
         Message in = exchange.getIn();
@@ -100,6 +101,26 @@ public class LogFormatter implements ExchangeFormatter {
             }
         }
 
+        if (maxChars > 0) {
+            StringBuilder answer = new StringBuilder();
+            for (String s : sb.toString().split("\n")) {
+                if (s != null) {
+                    if (s.length() > maxChars) {
+                        s = s.substring(0, maxChars);
+                        answer.append(s).append("...");
+                    } else {
+                        answer.append(s);
+                    }
+                    if (multiline) {
+                        answer.append("\n");
+                    }
+                }
+            }
+
+            // get rid of the leading space comma if needed
+            return "Exchange[" + (multiline ? answer.append(']').toString() : answer.toString().substring(2) + "]");
+        }
+
         // get rid of the leading space comma if needed
         return "Exchange[" + (multiline ? sb.append(']').toString() : sb.toString().substring(2) + "]");
     }
@@ -162,6 +183,14 @@ public class LogFormatter implements ExchangeFormatter {
 
     public boolean isMultiline() {
         return multiline;
+    }
+
+    public int getMaxChars() {
+        return maxChars;
+    }
+
+    public void setMaxChars(int maxChars) {
+        this.maxChars = maxChars;
     }
 
     /**

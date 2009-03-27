@@ -27,6 +27,7 @@
         <property name="showBody" value="true"/>
         <property name="showBodyType" value="false"/>
         <property name="showBreadCrumb" value="false"/>
+        <property name="maxChars" value="100"/>
     </bean>
 
     <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">

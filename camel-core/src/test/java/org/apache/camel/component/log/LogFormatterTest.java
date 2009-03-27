@@ -57,6 +57,17 @@ public class LogFormatterTest extends ContextTestSupport {
         template.sendBody("log:org.apache.camel.TEST", "Hello World".getBytes());
     }
 
+    public void testSendMessageToLogMaxChars() throws Exception {
+        template.sendBody("log:org.apache.camel.TEST",
+                "Hello World this is a very long string that is NOT going to be chopped by maxchars");
+
+        template.sendBody("log:org.apache.camel.TEST?maxChars=50",
+                "Hello World this is a very long string that is going to be chopped by maxchars");
+
+        template.sendBody("log:org.apache.camel.TEST?maxChars=50&showAll=true&multiline=true",
+                "Hello World this is a very long string that is going to be chopped by maxchars");
+    }
+
     public void testSendExchangeWithOut() throws Exception {
         Endpoint endpoint = resolveMandatoryEndpoint("log:org.apache.camel.TEST?showAll=true&multiline=true");
         Exchange exchange = endpoint.createExchange();
