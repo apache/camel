@@ -100,6 +100,9 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         XmppExchange exchange = endpoint.createExchange(message);
         try {
             getProcessor().process(exchange);
+            // must invoke nextMessage to consume the response from the server
+            // otherwise the client local queue will fill up (CAMEL-1467)
+            muc.nextMessage();
         } catch (Exception e) {
             LOG.error("Error while processing XMPP message", e);
         }
