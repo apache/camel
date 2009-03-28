@@ -21,21 +21,21 @@
        http://activemq.apache.org/camel/schema/cxfEndpoint http://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd
        http://activemq.apache.org/camel/schema/spring http://activemq.apache.org/camel/schema/spring/camel-spring.xsd
     ">
-    
-    <!--  
-    	TODO need to upgrade CXF to at least 2.1.5
-    	
-    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">
-         <constructor-arg value="user-stream"/> 
-    </bean>
-    --> 
+     
 	<cxf:cxfEndpoint id="routerEndpoint" address="http://localhost:9000/router"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 		<cxf:properties>
 			<entry key="dataFormat" value="MESSAGE"/>
-		</cxf:properties>
+		</cxf:properties>	
 	</cxf:cxfEndpoint>
 		
+    <!-- TODO need to upgrade CXF to at least 2.1.5
+         START SNIPPET: enableLoggingOutInterceptor 
+         it really should have been user-prestream but CXF does have such phase!
+    <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">         
+         <constructor-arg value="write"/> 
+    </bean>
+    --> 		
 	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
 	<!--  
@@ -48,6 +48,7 @@
 			<entry key="dataFormat" value="MESSAGE"/>
 		</cxf:properties>
 	</cxf:cxfEndpoint>
+	<!-- END SNIPPET: enableLoggingOutInterceptor -->
 	
 	<camelContext id="camel" xmlns="http://activemq.apache.org/camel/schema/spring">
 		<route>
