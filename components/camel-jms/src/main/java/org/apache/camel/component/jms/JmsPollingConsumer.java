@@ -41,11 +41,11 @@ public class JmsPollingConsumer extends PollingConsumerSupport<JmsExchange> {
     }
 
     public JmsExchange receiveNoWait() {
-        return receive(0);
+        return receive(JmsTemplate.RECEIVE_TIMEOUT_NO_WAIT);
     }
 
     public JmsExchange receive() {
-        return receive(-1);
+        return receive(JmsTemplate.RECEIVE_TIMEOUT_INDEFINITE_WAIT);
     }
 
     public JmsExchange receive(long timeout) {
