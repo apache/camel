@@ -44,8 +44,9 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
     private final CamelContext context;
     private final ProducerCache producerCache = new ProducerCache();
-    private boolean useEndpointCache = true;
+    // TODO: why do we have endpoint cache as camel context also have endpoint cache?
     private final Map<String, Endpoint> endpointCache = new HashMap<String, Endpoint>();
+    private boolean useEndpointCache = true;
     private Endpoint defaultEndpoint;
     
     public DefaultProducerTemplate(CamelContext context) {
@@ -104,72 +105,103 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return extractResultBody(result, pattern);
     }
 
-    public Object sendBody(Endpoint endpoint, Object body) {
+    public void sendBody(Endpoint endpoint, Object body) {
         Exchange result = send(endpoint, createSetBodyProcessor(body));
-        return extractResultBody(result);
+        // must invoke extract result body in case of exception to be rethrown
+        extractResultBody(result);
     }
 
-    public Object sendBody(String endpointUri, Object body) {
+    public void sendBody(String endpointUri, Object body) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return sendBody(endpoint, body);
+        sendBody(endpoint, body);
     }
 
     public Object sendBody(String endpointUri, ExchangePattern pattern, Object body) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return sendBody(endpoint, pattern, body);
+        Object result = sendBody(endpoint, pattern, body);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
     }
 
-    public Object sendBodyAndHeader(String endpointUri, final Object body, final String header,
-            final Object headerValue) {
-        return sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
+    public void sendBodyAndHeader(String endpointUri, final Object body, final String header, final Object headerValue) {
+        sendBodyAndHeader(resolveMandatoryEndpoint(endpointUri), body, header, headerValue);
     }
 
-    public Object sendBodyAndHeader(Endpoint endpoint, final Object body, final String header,
-            final Object headerValue) {
+    public void sendBodyAndHeader(Endpoint endpoint, final Object body, final String header, final Object headerValue) {
         Exchange result = send(endpoint, createBodyAndHeaderProcessor(body, header, headerValue));
-        return extractResultBody(result);
+        // must invoke extract result body in case of exception to be rethrown
+        extractResultBody(result);
     }
 
-    public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body, final String header,
-            final Object headerValue) {
-        Exchange result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
-        return extractResultBody(result, pattern);
+    public Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, final Object body,
+                                    final String header, final Object headerValue) {
+        Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
     }
 
-    public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body, final String header,
-            final Object headerValue) {
-        Exchange result = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
-        return extractResultBody(result, pattern);
+    public Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, final Object body,
+                                    final String header, final Object headerValue) {
+        Exchange exchange = send(endpoint, pattern, createBodyAndHeaderProcessor(body, header, headerValue));
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
     }
 
-    public Object sendBodyAndProperty(String endpointUri, final Object body, final String property,
-            final Object propertyValue) {
-        return sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
+    public void sendBodyAndProperty(String endpointUri, final Object body,
+                                      final String property, final Object propertyValue) {
+        sendBodyAndProperty(resolveMandatoryEndpoint(endpointUri), body, property, propertyValue);
     }    
     
-    public Object sendBodyAndProperty(Endpoint endpoint, final Object body, final String property,
-            final Object propertyValue) {
+    public void sendBodyAndProperty(Endpoint endpoint, final Object body,
+                                      final String property, final Object propertyValue) {
         Exchange result = send(endpoint, createBodyAndPropertyProcessor(body, property, propertyValue));
-        return extractResultBody(result);
-    }    
+        // must invoke extract result body in case of exception to be rethrown
+        extractResultBody(result);
+    }
     
-    public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body, final String property,
-            final Object propertyValue) {
-        Exchange result = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
-        return extractResultBody(result, pattern);
+    public Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, final Object body,
+                                      final String property, final Object propertyValue) {
+        Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
     }
 
-    public Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, final Object body, final String property,
-            final Object propertyValue) {
-        Exchange result = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
-        return extractResultBody(result, pattern);
-    }    
+    public Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, final Object body,
+                                      final String property, final Object propertyValue) {
+        Exchange exchange = send(endpoint, pattern, createBodyAndPropertyProcessor(body, property, propertyValue));
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
+    }
     
-    public Object sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
-        return sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
+    public void sendBodyAndHeaders(String endpointUri, final Object body, final Map<String, Object> headers) {
+        sendBodyAndHeaders(resolveMandatoryEndpoint(endpointUri), body, headers);
     }
 
-    public Object sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
+    public void sendBodyAndHeaders(Endpoint endpoint, final Object body, final Map<String, Object> headers) {
         Exchange result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -179,7 +211,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 in.setBody(body);
             }
         });
-        return extractResultBody(result);
+        // must invoke extract result body in case of exception to be rethrown
+        extractResultBody(result);
     }
 
     public Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body, Map<String, Object> headers) {
@@ -187,7 +220,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     public Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, final Object body, final Map<String, Object> headers) {
-        Exchange result = send(endpoint, pattern, new Processor() {
+        Exchange exchange = send(endpoint, pattern, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
                 for (Map.Entry<String, Object> header : headers.entrySet()) {
@@ -196,7 +229,13 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
                 in.setBody(body);
             }
         });
-        return extractResultBody(result);
+        Object result = extractResultBody(exchange, pattern);
+        if (pattern.isOutCapable()) {
+            return result;
+        } else {
+            // return null if not OUT capable
+            return null;
+        }
     }
 
     // Methods using an InOut ExchangePattern
@@ -276,8 +315,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     // Methods using the default endpoint
     // -----------------------------------------------------------------------
 
-    public Object sendBody(Object body) {
-        return sendBody(getMandatoryDefaultEndpoint(), body);
+    public void sendBody(Object body) {
+        sendBody(getMandatoryDefaultEndpoint(), body);
     }
 
     public Exchange send(Exchange exchange) {
@@ -288,16 +327,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return send(getMandatoryDefaultEndpoint(), processor);
     }
 
-    public Object sendBodyAndHeader(Object body, String header, Object headerValue) {
-        return sendBodyAndHeader(getMandatoryDefaultEndpoint(), body, header, headerValue);
+    public void sendBodyAndHeader(Object body, String header, Object headerValue) {
+        sendBodyAndHeader(getMandatoryDefaultEndpoint(), body, header, headerValue);
     }
 
-    public Object sendBodyAndProperty(Object body, String property, Object propertyValue) {
-        return sendBodyAndProperty(getMandatoryDefaultEndpoint(), body, property, propertyValue);
+    public void sendBodyAndProperty(Object body, String property, Object propertyValue) {
+        sendBodyAndProperty(getMandatoryDefaultEndpoint(), body, property, propertyValue);
     }    
     
-    public Object sendBodyAndHeaders(Object body, Map<String, Object> headers) {
-        return sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
+    public void sendBodyAndHeaders(Object body, Map<String, Object> headers) {
+        sendBodyAndHeaders(getMandatoryDefaultEndpoint(), body, headers);
     }
 
     // Properties

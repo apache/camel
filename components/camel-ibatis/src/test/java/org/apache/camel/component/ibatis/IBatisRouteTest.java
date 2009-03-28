@@ -44,8 +44,7 @@ public class IBatisRouteTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // now lets poll that the account has been inserted
-        Object answer = template.sendBody("ibatis:selectAllAccounts", null);
-        List body = assertIsInstanceOf(List.class, answer);
+        List body = template.requestBody("ibatis:selectAllAccounts", null, List.class);
 
         assertEquals("Wrong size: " + body, 1, body.size());
         Account actual = assertIsInstanceOf(Account.class, body.get(0));

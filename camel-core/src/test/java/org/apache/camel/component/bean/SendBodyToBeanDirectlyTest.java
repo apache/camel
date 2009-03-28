@@ -30,13 +30,13 @@ public class SendBodyToBeanDirectlyTest extends ContextTestSupport {
     public void testSendBodyToBeanDirectly() throws Exception {
         // note: the route chain is newever invoked as bean:one will only call this bean
         // and not do a route
-        Object response = template.sendBody("bean:one", "Start:");
+        Object response = template.requestBody("bean:one", "Start:");
         assertEquals("Start:one", response);
     }
 
     public void testSendBodyToBeanIndirectly() throws Exception {
         // note we must use pipeline in the route (check the builder)
-        Object response = template.sendBody("direct:start", "Start:");
+        Object response = template.requestBody("direct:start", "Start:");
         assertEquals("Start:onetwo", response);
     }
 

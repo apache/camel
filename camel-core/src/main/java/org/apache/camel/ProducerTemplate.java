@@ -62,12 +62,11 @@ public interface ProducerTemplate extends Service {
     Exchange send(Processor processor);
 
     /**
-     * Sends the body to the default endpoint and returns the result content
+     * Sends the body to the default endpoint
      *
      * @param body the payload to send
-     * @return the result (see class javadoc)
      */
-    Object sendBody(Object body);
+    void sendBody(Object body);
 
     /**
      * Sends the body to the default endpoint with a specified header and header
@@ -76,9 +75,8 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param header the header name
      * @param headerValue the header value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeader(Object body, String header, Object headerValue);
+    void sendBodyAndHeader(Object body, String header, Object headerValue);
 
     /**
      * Sends the body to the default endpoint with a specified property and property
@@ -87,9 +85,8 @@ public interface ProducerTemplate extends Service {
      * @param body          the payload to send
      * @param property      the property name
      * @param propertyValue the property value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndProperty(Object body, String property, Object propertyValue);    
+    void sendBodyAndProperty(Object body, String property, Object propertyValue);
     
     /**
      * Sends the body to the default endpoint with the specified headers and
@@ -97,9 +94,8 @@ public interface ProducerTemplate extends Service {
      *
      * @param body the payload to send
      * @param headers      the headers
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeaders(Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(Object body, Map<String, Object> headers);
 
     // Allow sending to arbitrary endpoints
     // -----------------------------------------------------------------------
@@ -189,22 +185,20 @@ public interface ProducerTemplate extends Service {
     Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint
      *
      * @param endpoint   the endpoint to send the exchange to
      * @param body       the payload
-     * @return the result (see class javadoc)
      */
-    Object sendBody(Endpoint endpoint, Object body);
+    void sendBody(Endpoint endpoint, Object body);
 
     /**
-     * Send the body to an endpoint returning any result output body
+     * Send the body to an endpoint
      *
      * @param endpointUri   the endpoint URI to send the exchange to
      * @param body          the payload
-     * @return the result (see class javadoc)
      */
-    Object sendBody(String endpointUri, Object body);
+    void sendBody(String endpointUri, Object body);
 
     /**
      * Send the body to an endpoint with the given {@link ExchangePattern}
@@ -214,7 +208,7 @@ public interface ProducerTemplate extends Service {
      * @param body          the payload
      * @param pattern       the message {@link ExchangePattern} such as
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
     Object sendBody(Endpoint endpoint, ExchangePattern pattern, Object body);
 
@@ -225,7 +219,7 @@ public interface ProducerTemplate extends Service {
      * @param pattern       the message {@link ExchangePattern} such as
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param body          the payload
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
     Object sendBody(String endpointUri, ExchangePattern pattern, Object body);
 
@@ -236,10 +230,8 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param header the header name
      * @param headerValue the header value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeader(String endpointUri, Object body, String header,
-                                    Object headerValue);
+    void sendBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -248,10 +240,8 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param header the header name
      * @param headerValue the header value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeader(Endpoint endpoint, Object body, String header,
-                                    Object headerValue);
+    void sendBodyAndHeader(Endpoint endpoint, Object body, String header, Object headerValue);
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -262,10 +252,10 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param header the header name
      * @param headerValue the header value
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
-    Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, Object body, String header,
-                                    Object headerValue);
+    Object sendBodyAndHeader(Endpoint endpoint, ExchangePattern pattern, Object body,
+                             String header, Object headerValue);
 
     /**
      * Sends the body to an endpoint with a specified header and header value
@@ -276,11 +266,11 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param header the header name
      * @param headerValue the header value
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
-    Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, Object body, String header,
-                                    Object headerValue);
-   
+    Object sendBodyAndHeader(String endpoint, ExchangePattern pattern, Object body,
+                             String header, Object headerValue);
+
     /**
      * Sends the body to an endpoint with a specified property and property value
      *
@@ -288,10 +278,8 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param property the property name
      * @param propertyValue the property value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndProperty(String endpointUri, Object body, String property,
-                                    Object propertyValue);
+    void sendBodyAndProperty(String endpointUri, Object body, String property, Object propertyValue);
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -300,10 +288,8 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param property the property name
      * @param propertyValue the property value
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndProperty(Endpoint endpoint, Object body, String property,
-                                    Object propertyValue);
+    void sendBodyAndProperty(Endpoint endpoint, Object body, String property, Object propertyValue);
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -314,10 +300,10 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param property the property name
      * @param propertyValue the property value
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
-    Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, Object body, String property,
-                                    Object propertyValue);
+    Object sendBodyAndProperty(Endpoint endpoint, ExchangePattern pattern, Object body,
+                               String property, Object propertyValue);
 
     /**
      * Sends the body to an endpoint with a specified property and property value
@@ -328,11 +314,11 @@ public interface ProducerTemplate extends Service {
      * @param body the payload to send
      * @param property the property name
      * @param propertyValue the property value
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
-    Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, Object body, String property,
-                                    Object propertyValue);       
-    
+    Object sendBodyAndProperty(String endpoint, ExchangePattern pattern, Object body,
+                               String property, Object propertyValue);
+
     /**
      * Sends the body to an endpoint with the specified headers and header
      * values
@@ -340,9 +326,8 @@ public interface ProducerTemplate extends Service {
      * @param endpointUri the endpoint URI to send to
      * @param body the payload to send
      * @param headers headers
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
 
     /**
      * Sends the body to an endpoint with the specified headers and header
@@ -351,9 +336,8 @@ public interface ProducerTemplate extends Service {
      * @param endpoint the endpoint URI to send to
      * @param body the payload to send
      * @param headers headers
-     * @return the result (see class javadoc)
      */
-    Object sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
+    void sendBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers);
 
     /**
      * Sends the body to an endpoint with the specified headers and header
@@ -364,7 +348,7 @@ public interface ProducerTemplate extends Service {
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param body the payload to send
      * @param headers headers
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
     Object sendBodyAndHeaders(String endpointUri, ExchangePattern pattern, Object body,
                               Map<String, Object> headers);
@@ -378,7 +362,7 @@ public interface ProducerTemplate extends Service {
      *   {@link ExchangePattern#InOnly} or {@link ExchangePattern#InOut}
      * @param body the payload to send
      * @param headers headers
-     * @return the result (see class javadoc)
+     * @return the result if {@link ExchangePattern} is OUT capable, otherwise <tt>null</tt>
      */
     Object sendBodyAndHeaders(Endpoint endpoint, ExchangePattern pattern, Object body,
                               Map<String, Object> headers);

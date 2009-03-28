@@ -42,13 +42,13 @@ public class BeanRouteUsingSpringEndpointTest extends AbstractJUnit38SpringConte
         assertNotNull(helloEndpoint);
         assertNotNull(goodbyeEndpoint);
 
-        Object value = template.sendBody(helloEndpoint, body);
+        Object value = template.requestBody(helloEndpoint, body);
 
         assertEquals("Returned value", "Hello James!", value);
     }
 
     public void testSayGoodbye() throws Exception {
-        Object value = template.sendBody(goodbyeEndpoint, body);
+        Object value = template.requestBody(goodbyeEndpoint, body);
 
         assertEquals("Returned value", "Bye James!", value);
     }

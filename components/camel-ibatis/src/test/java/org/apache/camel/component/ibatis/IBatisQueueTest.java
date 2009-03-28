@@ -50,8 +50,7 @@ public class IBatisQueueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         
         // now lets poll that the account has been inserted
-        Object answer = template.sendBody("ibatis:selectProcessedAccounts", null);
-        List body = assertIsInstanceOf(List.class, answer);
+        List body = template.requestBody("ibatis:selectProcessedAccounts", null, List.class);
 
         assertEquals("Wrong size: " + body, 2, body.size());
         Account actual = assertIsInstanceOf(Account.class, body.get(0));
@@ -59,9 +58,7 @@ public class IBatisQueueTest extends ContextTestSupport {
         assertEquals("Account.getFirstName()", "Bob", actual.getFirstName());
         assertEquals("Account.getLastName()", "Denver", actual.getLastName());
 
-        answer = template.sendBody("ibatis:selectUnprocessedAccounts", null);
-        
-        body = assertIsInstanceOf(List.class, answer);
+        body = template.requestBody("ibatis:selectUnprocessedAccounts", null, List.class);
         assertEquals("Wrong size: " + body, 0, body.size());
     }
     

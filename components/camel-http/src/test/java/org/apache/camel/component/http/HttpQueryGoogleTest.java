@@ -28,7 +28,7 @@ public class HttpQueryGoogleTest extends ContextTestSupport {
     }
 
     public void testQueryGoogle() throws Exception {
-        Object out = template.sendBody("http://www.google.com/search?q=Camel", "");
+        Object out = template.requestBody("http://www.google.com/search?q=Camel", "");
         assertNotNull(out);
         String data = context.getTypeConverter().convertTo(String.class, out);
         assertTrue("Camel should be in search result from Google", data.indexOf("Camel") > -1);

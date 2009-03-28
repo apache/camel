@@ -33,7 +33,7 @@ public class HttpToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        Object out = template.sendBody("http://localhost:9080/myworld", "Hello World");
+        Object out = template.requestBody("http://localhost:9080/myworld", "Hello World");
 
         String response = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("Response from Jetty", "We got the file", response);

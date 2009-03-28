@@ -37,7 +37,7 @@ public class StringDataFormatTest extends SpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:marshal");
         mock.expectedMessageCount(1);
 
-        byte[] out = (byte[]) template.sendBody("direct:marshal", body);
+        byte[] out = (byte[]) template.requestBody("direct:marshal", body);
         assertMockEndpointsSatisfied();
 
         String result = new String(out, "UTF-8");
@@ -51,7 +51,7 @@ public class StringDataFormatTest extends SpringTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
         mock.expectedMessageCount(1);
 
-        String out = (String) template.sendBody("direct:unmarshal", body);
+        String out = (String) template.requestBody("direct:unmarshal", body);
         assertMockEndpointsSatisfied();
 
         assertEquals(new String(body, "UTF-8"), out);

@@ -51,7 +51,7 @@ public class RouteMEPOptionalOutTest extends ContextTestSupport {
 
     public void testInOnly() {
         Object out = template.sendBody("direct:inonly", ExchangePattern.InOnly, "Hi");
-        assertEquals("Hello World", out);
+        assertEquals(null, out);
     }
 
     @Override

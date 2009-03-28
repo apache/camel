@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 public class MinaInOutCloseSessionWhenCompleteTest extends ContextTestSupport {
 
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.sendBody("mina:tcp://localhost:8080?sync=true&textline=true", "Claus");
+        Object out = template.requestBody("mina:tcp://localhost:8080?sync=true&textline=true", "Claus");
         assertEquals("Bye Claus", out);
     }
 

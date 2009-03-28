@@ -43,7 +43,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        InputStream answer = (InputStream) template.sendBody(uri, inputText);
+        InputStream answer = (InputStream) template.requestBody(uri, inputText);
 
         verifyMockGotExpectedText(mockEndpoint, expectedText);
 
@@ -63,7 +63,7 @@ public class HttpRoundtripHeaderTest extends ContextTestSupport {
         ((DefaultHeaderFilterStrategy)endpoint.getHeaderFilterStrategy()).setOutFilter(null);
 
         // read the response data
-        InputStream answer = (InputStream) template.sendBody(uri, inputText);
+        InputStream answer = (InputStream) template.requestBody(uri, inputText);
         verifyMockGotExpectedText(mockEndpoint, expectedText);
 
         String lastLine = readLastLine(answer);

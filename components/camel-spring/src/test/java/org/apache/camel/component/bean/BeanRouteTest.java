@@ -28,26 +28,26 @@ public class BeanRouteTest extends SpringTestSupport {
     protected Object body = "James";
 
     public void testSayHello() throws Exception {
-        Object value = template.sendBody("bean:myBean?method=sayHello", body);
+        Object value = template.requestBody("bean:myBean?method=sayHello", body);
 
         assertEquals("Returned value", "Hello James!", value);
     }
 
     public void testSayGoodbye() throws Exception {
-        Object value = template.sendBody("bean:myBean?method=sayGoodbye", body);
+        Object value = template.requestBody("bean:myBean?method=sayGoodbye", body);
 
         assertEquals("Returned value", "Bye James!", value);
     }
 
     public void testChooseMethodUsingBodyType() throws Exception {
-        Object value = template.sendBody("bean:myBean", 4);
+        Object value = template.requestBody("bean:myBean", 4);
 
         assertEquals("Returned value", 8L, value);
     }
 
     public void testAmbiguousMethodCallFails() throws Exception {
         try {
-            Object value = template.sendBody("bean:myBean", body);
+            Object value = template.requestBody("bean:myBean", body);
             fail("We should have failed to invoke an ambiguous method but instead got: " + value);
         } catch (Exception e) {
             log.info("Caught expected failure: " + e, e);

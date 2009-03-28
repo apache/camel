@@ -36,7 +36,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
 
-        Object result = template.sendBody("direct:in", "Hello World");
+        Object result = template.requestBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -58,7 +58,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(0);
 
-        Object result = template.sendBody("direct:fault", "Hello World");
+        Object result = template.requestBody("direct:fault", "Hello World");
 
         assertMockEndpointsSatisfied();
 

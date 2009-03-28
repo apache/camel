@@ -35,7 +35,7 @@ public class MinaTcpWithIoOutProcessorExceptionTest extends ContextTestSupport {
 
     public void testExceptionThrownInProcessor() {
         String body = "Hello World";
-        Object result = template.sendBody(uri, body);
+        Object result = template.requestBody(uri, body);
         // The exception should be passed to the client
         assertNotNull("the result should not be null", result);
         assertEquals("result is IllegalArgumentException", result, "java.lang.IllegalArgumentException: Forced exception");

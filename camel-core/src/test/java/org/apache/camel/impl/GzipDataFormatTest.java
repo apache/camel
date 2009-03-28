@@ -41,7 +41,7 @@ public class GzipDataFormatTest extends ContextTestSupport {
     }
 
     private byte[] sendText() throws Exception {
-        return (byte[]) template.sendBody("direct:start", TEXT.getBytes("UTF-8"));
+        return (byte[]) template.requestBody("direct:start", TEXT.getBytes("UTF-8"));
     }
 
     public void testMarshalTextToGZip() throws Exception {

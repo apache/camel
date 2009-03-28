@@ -48,7 +48,7 @@ public class IBatisProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         SqlMapClient client = endpoint.getSqlMapClient();
         Object body = exchange.getIn().getBody();
-        if (body == null) {
+        if (ObjectHelper.isEmpty(body)) {
             // must be a poll so lets do a query
             Message msg = exchange.getOut(true);
             if (LOG.isTraceEnabled()) {
