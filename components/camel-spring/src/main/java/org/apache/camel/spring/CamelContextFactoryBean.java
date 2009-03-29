@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -97,18 +96,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private CamelJMXAgentDefinition camelJMXAgent;    
     @XmlElements({
         @XmlElement(name = "beanPostProcessor", type = CamelBeanPostProcessor.class, required = false),
-        @XmlElement(name = "template", type = CamelTemplateFactoryBean.class, required = false),
+        @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
+        @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "proxy", type = CamelProxyFactoryDefinition.class, required = false),
         @XmlElement(name = "export", type = CamelServiceExporterDefinition.class, required = false)})
     private List beans;    
     @XmlElement(name = "routeBuilder", required = false)
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "endpoint", required = false)
-    private List<EndpointFactoryBean> endpoints;
+    private List<CamelEndpointFactoryBean> endpoints;
     @XmlElement(name = "dataFormats", required = false)
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
-    private List<OnExceptionDefinition> exceptionClauses = new ArrayList<OnExceptionDefinition>();
+    private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlElement(name = "intercept", required = false)
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlElement(name = "route", required = false)
@@ -215,8 +215,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // setup the intercepts
         for (RouteDefinition route : routes) {
 
-            if (exceptionClauses != null) {
-                route.getOutputs().addAll(exceptionClauses);
+            if (onExceptions != null) {
+                route.getOutputs().addAll(onExceptions);
             }    
             
             for (InterceptDefinition intercept : intercepts) {
@@ -560,11 +560,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         return dataFormats;
     }
 
-    public void setExceptionClauses(List<OnExceptionDefinition> exceptionClauses) {
-        this.exceptionClauses = exceptionClauses;
+    public void setOnExceptions(List<OnExceptionDefinition> onExceptions) {
+        this.onExceptions = onExceptions;
     }
 
-    public List<OnExceptionDefinition> getExceptionClauses() {
-        return exceptionClauses;
+    public List<OnExceptionDefinition> getOnExceptions() {
+        return onExceptions;
     }
 }

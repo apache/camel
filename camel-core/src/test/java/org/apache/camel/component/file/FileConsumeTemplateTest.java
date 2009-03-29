@@ -14,33 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
+package org.apache.camel.component.file;
+
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Exchange;
 
 /**
- * A runtime exception thrown if an {@link Endpoint} cannot be resolved via URI
- * 
- * @version $Revision$
+ * Using ConsumerTemplate to consume a file
  */
-public class ResolveEndpointFailedException extends RuntimeCamelException {
-    private final String uri;
+public class FileConsumeTemplateTest extends ContextTestSupport {
 
-    public ResolveEndpointFailedException(String uri, Throwable cause) {
-        super("Failed to resolve endpoint: " + uri + " due to: " + cause.getMessage(), cause);
-        this.uri = uri;
+    @Override
+    protected void setUp() throws Exception {
+        deleteDirectory("target/template");
+        super.setUp();
+        template.sendBodyAndHeader("file://target/template/", "Hello World", Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file://target/template/", "Bye World", Exchange.FILE_NAME, "bye.txt");
     }
 
-    public ResolveEndpointFailedException(String uri, String message) {
-        super("Failed to resolve endpoint: " + uri + " due to: " + message);
-        this.uri = uri;
+    public void testConsumeFileWithTemplate() throws Exception {
+        Exchange out = consumer.receive("file://target/template?fileName=hello.txt");
+        assertNotNull(out);
+        assertEquals("Hello World", out.getIn().getBody(String.class));
     }
 
-    public ResolveEndpointFailedException(String uri) {
-        super("Failed to resolve endpoint: " + uri);
-        this.uri = uri;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-    
 }

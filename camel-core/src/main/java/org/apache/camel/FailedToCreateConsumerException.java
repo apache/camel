@@ -14,38 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.factory;
-
-import org.apache.camel.component.bean.BeanEndpoint;
-import org.springframework.beans.factory.FactoryBean;
+package org.apache.camel;
 
 /**
- * Spring {@link org.springframework.beans.factory.FactoryBean} for creating
- * Camel {@link BeanEndpoint} objects.
+ * Thrown if Camel failed to create a consumer for a given endpoint.
  *
  * @version $Revision$
  */
-public class BeanEndpointFactory implements FactoryBean {
-    private boolean singleton = true;
+public class FailedToCreateConsumerException extends RuntimeCamelException {
+    private final Endpoint endpoint;
 
-    public Object getObject() throws Exception {
-        return new BeanEndpoint();
+    public FailedToCreateConsumerException(Endpoint endpoint, Throwable cause) {
+        super("Failed to create Consumer for endpoint: " + endpoint + ". Reason: " + cause, cause);
+        this.endpoint = endpoint;
     }
 
-    public Class getObjectType() {
-        return BeanEndpoint.class;
+    public Endpoint getEndpoint() {
+        return endpoint;
     }
-
-    public boolean isSingleton() {
-        return singleton;
-    }
-
-    protected void setSingleton(boolean singleton) {
-        this.singleton = singleton;
-    }
-
-    // Properties
-    //-------------------------------------------------------------------------
-
-
 }

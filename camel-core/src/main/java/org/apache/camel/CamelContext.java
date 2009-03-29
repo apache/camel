@@ -305,6 +305,16 @@ public interface CamelContext extends Service {
     ProducerTemplate createProducerTemplate();
 
     /**
+     * Creates a new ConsumerTemplate.
+     * <p/>
+     * See this FAQ before use: <a href="http://camel.apache.org/why-does-camel-use-too-many-threads-with-producertemplate.html">
+     * Why does Camel use too many threads with ProducerTemplate?</a> as it also applies for ConsumerTemplate.
+     *
+     * @return the template
+     */
+    ConsumerTemplate createConsumerTemplate();
+
+    /**
      * Adds the given interceptor strategy
      *
      * @param interceptStrategy the strategy

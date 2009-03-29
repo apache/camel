@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 @XmlRootElement(name = "endpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware {
+public class CamelEndpointFactoryBean extends IdentifiedType implements FactoryBean, CamelContextAware {
     @XmlAttribute
     private String uri;
     @XmlTransient

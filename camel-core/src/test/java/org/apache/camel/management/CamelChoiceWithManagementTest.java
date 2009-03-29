@@ -34,27 +34,13 @@ public class CamelChoiceWithManagementTest extends ContextTestSupport {
     private MockEndpoint d;
     private MockEndpoint e;
 
-
     protected void setUp() throws Exception {
-        context = createCamelContext();
-        assertValidContext(context);
-
-        template = context.createProducerTemplate();
-        RouteBuilder[] builders = createRouteBuilders();
-        for (RouteBuilder builder : builders) {
-            context.addRoutes(builder);
-        }
-        startCamelContext();
-
+        super.setUp();
         a = getMockEndpoint("mock:a");
         b = getMockEndpoint("mock:b");
         c = getMockEndpoint("mock:c");
         d = getMockEndpoint("mock:d");
         e = getMockEndpoint("mock:e");
-    }
-
-    protected void tearDown() throws Exception {
-        super.tearDown();
     }
 
     public void testFirstChoiceRoute() throws Exception {

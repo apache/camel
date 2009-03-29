@@ -29,6 +29,7 @@ import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NoFactoryAvailableException;
@@ -347,15 +348,15 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         ObjectHelper.notEmpty(uri, "uri");
 
         Endpoint answer;
+        String scheme = null;
         synchronized (endpoints) {
             answer = endpoints.get(uri);
             if (answer == null) {
                 try {
-
                     // Use the URI prefix to find the component.
                     String splitURI[] = ObjectHelper.splitOnCharacter(uri, ":", 2);
                     if (splitURI[1] != null) {
-                        String scheme = splitURI[0];
+                        scheme = splitURI[0];
                         Component component = getComponent(scheme);
 
                         // Ask the component to resolve the endpoint.
@@ -368,7 +369,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                             }
                         }
                     }
+
                     if (answer == null) {
+                        // no component then try in registry and elsewhere
                         answer = createEndpoint(uri);
                     }
 
@@ -384,6 +387,12 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
         }
+
+        // unknown scheme
+        if (answer == null && scheme != null) {
+            throw new ResolveEndpointFailedException(uri, "No component found with scheme: " + scheme);
+        }
+
         return answer;
     }
 
@@ -737,6 +746,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public ProducerTemplate createProducerTemplate() {
         return new DefaultProducerTemplate(this);
+    }
+
+    public ConsumerTemplate createConsumerTemplate() {
+        return new DefaultConsumerTemplate(this);
     }
 
     public ErrorHandlerBuilder getErrorHandlerBuilder() {

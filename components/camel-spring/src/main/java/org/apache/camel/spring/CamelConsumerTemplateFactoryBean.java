@@ -18,29 +18,25 @@ package org.apache.camel.spring;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
-import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultProducerTemplate;
+import org.apache.camel.impl.DefaultConsumerTemplate;
 import org.apache.camel.model.IdentifiedType;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * A Spring {@link FactoryBean} for creating a new {@link org.apache.camel.ProducerTemplate}
+ * A Spring {@link org.springframework.beans.factory.FactoryBean} for creating a new {@link org.apache.camel.ConsumerTemplate}
  * instance with a minimum of XML
- * 
+ *
  * @version $Revision$
  */
-@XmlRootElement(name = "template")
+@XmlRootElement(name = "consumer")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
-    @XmlAttribute(required = false)
-    private String defaultEndpoint;
+public class CamelConsumerTemplateFactoryBean extends IdentifiedType implements FactoryBean, InitializingBean, CamelContextAware {
     @XmlTransient
     private CamelContext camelContext;
 
@@ -51,20 +47,11 @@ public class CamelTemplateFactoryBean extends IdentifiedType implements FactoryB
     }
 
     public Object getObject() throws Exception {
-        CamelContext context = getCamelContext();
-        if (defaultEndpoint != null) {
-            Endpoint endpoint = context.getEndpoint(defaultEndpoint);
-            if (endpoint == null) {
-                throw new IllegalArgumentException("No endpoint found for URI: " + defaultEndpoint);
-            } else {
-                return new DefaultProducerTemplate(context, endpoint);
-            }
-        }
-        return new DefaultProducerTemplate(context);
+        return new DefaultConsumerTemplate(getCamelContext());
     }
 
     public Class getObjectType() {
-        return DefaultProducerTemplate.class;
+        return DefaultConsumerTemplate.class;
     }
 
     public boolean isSingleton() {
@@ -81,15 +68,4 @@ public class CamelTemplateFactoryBean extends IdentifiedType implements FactoryB
         this.camelContext = camelContext;
     }
 
-    public String getDefaultEndpoint() {
-        return defaultEndpoint;
-    }
-
-    /**
-     * Sets the default endpoint URI used by default for sending message
-     * exchanges
-     */
-    public void setDefaultEndpoint(String defaultEndpoint) {
-        this.defaultEndpoint = defaultEndpoint;
-    }
 }

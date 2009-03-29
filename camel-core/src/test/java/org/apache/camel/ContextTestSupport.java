@@ -39,6 +39,7 @@ import org.apache.camel.util.jndi.JndiTest;
 public abstract class ContextTestSupport extends TestSupport {
     protected CamelContext context;
     protected ProducerTemplate template;
+    protected ConsumerTemplate consumer;
     private boolean useRouteBuilder = true;
     private Service camelContextService;
 
@@ -69,6 +70,7 @@ public abstract class ContextTestSupport extends TestSupport {
         assertValidContext(context);
 
         template = context.createProducerTemplate();
+        consumer = context.createConsumerTemplate();
 
         if (isUseRouteBuilder()) {
             RouteBuilder[] builders = createRouteBuilders();
@@ -86,7 +88,12 @@ public abstract class ContextTestSupport extends TestSupport {
     @Override
     protected void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
-        template.stop();
+        if (consumer != null) {
+            consumer.stop();
+        }
+        if (template != null) {
+            template.stop();
+        }
         stopCamelContext();
     }
 

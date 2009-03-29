@@ -17,7 +17,8 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.Endpoint;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
@@ -28,11 +29,10 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
 
     public void testNoSuchComponent() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        context.addRoutes(createRouteBuilder());
         try {
-            context.start();
-            fail("Should have thrown a NoSuchEndpointException");
-        } catch (NoSuchEndpointException e) {
+            context.addRoutes(createRouteBuilder());
+            fail("Should have thrown a ResolveEndpointFailedException");
+        } catch (ResolveEndpointFailedException e) {
             // expected
         }
     }
@@ -40,7 +40,10 @@ public class RouteWithMistypedComponentNameTest extends TestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mistyped://hello").to("mock:result");
+                from("direct:hello").to("mock:result");
+
+                // unknown component
+                Endpoint endpoint = endpoint("mistyped:hello");
             }
         };
     }

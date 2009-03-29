@@ -32,7 +32,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.xml.Namespaces;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.ArtixDSDataFormat;
 import org.apache.camel.model.dataformat.JaxbDataFormat;
 import org.apache.camel.model.dataformat.SerializationDataFormat;
@@ -41,12 +40,14 @@ import org.apache.camel.model.loadbalancer.RandomLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.RoundRobinLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.StickyLoadBalanceStrategy;
 import org.apache.camel.model.loadbalancer.TopicLoadBalanceStrategy;
+import org.apache.camel.processor.loadbalancer.FailOverLoadBalancer;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.spring.CamelBeanPostProcessor;
+import org.apache.camel.spring.CamelConsumerTemplateFactoryBean;
 import org.apache.camel.spring.CamelContextFactoryBean;
+import org.apache.camel.spring.CamelEndpointFactoryBean;
 import org.apache.camel.spring.CamelJMXAgentDefinition;
-import org.apache.camel.spring.CamelTemplateFactoryBean;
-import org.apache.camel.spring.EndpointFactoryBean;
+import org.apache.camel.spring.CamelProducerTemplateFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
@@ -64,7 +65,7 @@ import org.springframework.beans.factory.xml.ParserContext;
  */
 public class CamelNamespaceHandler extends NamespaceHandlerSupport {
 
-    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(EndpointFactoryBean.class);
+    protected BeanDefinitionParser endpointParser = new BeanDefinitionParser(CamelEndpointFactoryBean.class);
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class);
     protected Set<String> parserElementNames = new HashSet<String>();
     protected Binder<Node> binder;
@@ -78,10 +79,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         // remoting
         addBeanDefinitionParser("proxy", CamelProxyFactoryBean.class);
-        addBeanDefinitionParser("template", CamelTemplateFactoryBean.class);
+        addBeanDefinitionParser("template", CamelProducerTemplateFactoryBean.class);
+        addBeanDefinitionParser("consumerTemplate", CamelConsumerTemplateFactoryBean.class);
         addBeanDefinitionParser("export", CamelServiceExporter.class);
 
         // data types
+        // TODO: why do we have this for data types, and only these 4 out of the 10+ data types we have in total?
         addBeanDefinitionParser("artixDS", ArtixDSDataFormat.class);
         addBeanDefinitionParser("jaxb", JaxbDataFormat.class);
         addBeanDefinitionParser("serialization", SerializationDataFormat.class);
@@ -92,12 +95,13 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         addBeanDefinitionParser("random", RandomLoadBalanceStrategy.class);
         addBeanDefinitionParser("sticky", StickyLoadBalanceStrategy.class);
         addBeanDefinitionParser("topic", TopicLoadBalanceStrategy.class);
+        addBeanDefinitionParser("failover", FailOverLoadBalancer.class);
 
         // jmx agent
         addBeanDefinitionParser("jmxAgent", CamelJMXAgentDefinition.class);
 
         // endpoint
-        addBeanDefinitionParser("endpoint", EndpointFactoryBean.class);
+        addBeanDefinitionParser("endpoint", CamelEndpointFactoryBean.class);
 
         // camel context
         Class cl = CamelContextFactoryBean.class;
@@ -200,7 +204,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
                 builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
-                builder.addPropertyValue("exceptionClauses", factoryBean.getExceptionClauses());
+                builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());
                 builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
                 builder.addPropertyValue("properties", factoryBean.getProperties());
 
@@ -240,7 +244,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             }
 
             // register as endpoint defined indirectly in the routes by from/to types having id explict set
-            registerEndpointsWithIdsDefinedInFromToTypes(element, parserContext, contextId);
+            registerEndpointsWithIdsDefinedInFromOrToTypes(element, parserContext, contextId);
 
             // lets inject the namespaces into any namespace aware POJOs
             injectNamespaces(element);
@@ -274,7 +278,10 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
     }
 
-    protected void registerEndpointsWithIdsDefinedInFromToTypes(Element element, ParserContext parserContext, String contextId) {
+    /**
+     * Uses for auto registering endpoints from the <tt>from</tt> or <tt>to</tt> DSL if they have an id attribute set
+     */
+    protected void registerEndpointsWithIdsDefinedInFromOrToTypes(Element element, ParserContext parserContext, String contextId) {
         NodeList list = element.getChildNodes();
         int size = list.getLength();
         for (int i = 0; i < size; i++) {
@@ -287,7 +294,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                     registerEndpoint(childElement, parserContext, contextId);
                 }
                 // recursive
-                registerEndpointsWithIdsDefinedInFromToTypes(childElement, parserContext, contextId);
+                registerEndpointsWithIdsDefinedInFromOrToTypes(childElement, parserContext, contextId);
             }
         }
     }

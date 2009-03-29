@@ -15,9 +15,10 @@
 ## limitations under the License.
 ## ------------------------------------------------------------------------
 CamelBeanPostProcessor
+CamelConsumerTemplateFactoryBean
 CamelContextFactoryBean
+CamelEndpointFactoryBean
 CamelJMXAgentDefinition
+CamelProducerTemplateFactoryBean
 CamelProxyFactoryDefinition
 CamelServiceExporterDefinition
-CamelTemplateFactoryBean
-EndpointFactoryBean
