@@ -226,7 +226,7 @@ public class JmsBinding {
                 // create jms message containg the caused exception
                 answer = createJmsMessage(cause, session);
             } else {
-                ObjectHelper.notNull(camelMessage, "message body");
+                ObjectHelper.notNull(camelMessage, "message");
                 // create regular jms message using the camel message body
                 answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, exchange.getContext());
                 appendJmsProperties(answer, exchange, camelMessage);
@@ -400,7 +400,8 @@ public class JmsBinding {
         // TODO: should we throw an exception instead?
         if (LOG.isDebugEnabled()) {
             LOG.debug("Could not determine specific JmsMessage type to use from body."
-                    + " Will use generic JmsMessage. Body class: " + body.getClass().getCanonicalName());
+                    + " Will use generic JmsMessage."
+                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : "") );
         }
 
         // return a default message
