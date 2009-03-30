@@ -87,22 +87,26 @@ public class MinaUdpProtocolCodecFactory implements ProtocolCodecFactory {
         boolean tryConvert = true;
         TypeConverter converter = context.getTypeConverter();
         if (message != null && converter instanceof DefaultTypeConverter) {
+            // see if we have a String type converter
             DefaultTypeConverter defaultTypeConverter = (DefaultTypeConverter) converter;
-            tryConvert = !defaultTypeConverter.hasNoConverterFor(ByteBuffer.class, message.getClass());
+            tryConvert = !defaultTypeConverter.hasNoConverterFor(String.class, message.getClass());
         }
         if (tryConvert) {
             try {
-                return converter.convertTo(ByteBuffer.class, message);
+                // use the string converter
+                String value = converter.convertTo(String.class, message);
+                if (value != null) {
+                    ByteBuffer answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
+                    answer.putString(value, encoder);
+                    return answer;
+                }
             } catch (NoTypeConversionAvailableException ex) {
                 // ignore
             }
         }
 
-        ByteBuffer answer;
-        String value = context.getTypeConverter().convertTo(String.class, message);
-        answer = ByteBuffer.allocate(value.length()).setAutoExpand(true);
-        answer.putString(value, encoder);
-        return answer;
+        // failback to use a byte buffer converter
+        return context.getTypeConverter().convertTo(ByteBuffer.class, message);
     }
 
 }
