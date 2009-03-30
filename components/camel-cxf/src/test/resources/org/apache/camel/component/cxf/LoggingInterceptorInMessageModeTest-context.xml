@@ -29,21 +29,17 @@
 		</cxf:properties>	
 	</cxf:cxfEndpoint>
 		
-    <!-- TODO need to upgrade CXF to at least 2.1.5
-         START SNIPPET: enableLoggingOutInterceptor 
-         it really should have been user-prestream but CXF does have such phase!
+    <!-- START SNIPPET: enableLoggingOutInterceptor 
+         it really should have been user-prestream but CXF does have such phase! -->
     <bean id="loggingOutInterceptor" class="org.apache.cxf.interceptor.LoggingOutInterceptor">         
          <constructor-arg value="write"/> 
     </bean>
-    --> 		
+   		
 	<cxf:cxfEndpoint id="serviceEndpoint" address="http://localhost:9002/helloworld"
 		serviceClass="org.apache.camel.component.cxf.HelloService">
-	<!--  
-    	TODO need to upgrade CXF to at least 2.1.5
-		<cxf:outInterceptors>
+	    <cxf:outInterceptors>
 		    <ref bean="loggingOutInterceptor"/>
-		</cxf:outInterceptors>
-		-->
+		</cxf:outInterceptors>		
 		<cxf:properties>
 			<entry key="dataFormat" value="MESSAGE"/>
 		</cxf:properties>

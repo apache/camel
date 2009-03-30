@@ -74,10 +74,8 @@ public class LoggingInterceptorInMessageModeTest extends AbstractJUnit38SpringCo
         server = svrBean.create();
         server.start();
     }
-    
-    // TODO Need CXF 2.1.5 or later https://issues.apache.org/activemq/browse/CAMEL-1351
-    public void testDummy() { }
-    public void xxtestInvokingServiceFromCXFClient() throws Exception {
+   
+    public void testInvokingServiceFromCXFClient() throws Exception {
         
         LoggingOutInterceptor logInterceptor = null;
                   
