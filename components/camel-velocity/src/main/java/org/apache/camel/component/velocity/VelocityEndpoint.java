@@ -61,8 +61,8 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         if (velocityEngine == null) {
             velocityEngine = component.getVelocityEngine();
             velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? Boolean.TRUE : Boolean.FALSE);
-            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
-            velocityEngine.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
+            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
+            velocityEngine.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, VelocityEndpoint.class.getName());
             velocityEngine.init();
         }
         return velocityEngine;
