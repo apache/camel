@@ -46,9 +46,9 @@ import org.apache.commons.logging.LogFactory;
 public abstract class MainSupport extends ServiceSupport {
     protected static final Log LOG = LogFactory.getLog(MainSupport.class);
     protected String dotOutputDir;
-    private List<Option> options = new ArrayList<Option>();
-    private CountDownLatch latch = new CountDownLatch(1);
-    private AtomicBoolean completed = new AtomicBoolean(false);
+    private final List<Option> options = new ArrayList<Option>();
+    private final CountDownLatch latch = new CountDownLatch(1);
+    private final AtomicBoolean completed = new AtomicBoolean(false);
     private long duration = -1;
     private TimeUnit timeUnit = TimeUnit.MILLISECONDS;    
     private String routesOutputFile;
@@ -56,7 +56,7 @@ public abstract class MainSupport extends ServiceSupport {
     private boolean debug;
     private boolean trace;
     private List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>();
-    private List<CamelContext> camelContexts = new ArrayList<CamelContext>();
+    private final List<CamelContext> camelContexts = new ArrayList<CamelContext>();
     private ProducerTemplate camelTemplate;
 
     protected MainSupport() {

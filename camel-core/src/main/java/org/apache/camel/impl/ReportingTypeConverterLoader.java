@@ -45,7 +45,8 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
         }
 
     };
-    private List<TypeMapping> typeMappings = new ArrayList<TypeMapping>();
+
+    private final List<TypeMapping> typeMappings = new ArrayList<TypeMapping>();
 
     public ReportingTypeConverterLoader(PackageScanClassResolver resolver) {
         super(resolver);
@@ -74,11 +75,11 @@ public class ReportingTypeConverterLoader extends AnnotationTypeConverterLoader 
      */
     public static class TypeMapping {
         private static int counter;
-        private Class toType;
-        private Class fromType;
-        private Class converterType;
-        private Method method;
-        private int index;
+        private final Class toType;
+        private final Class fromType;
+        private final Class converterType;
+        private final Method method;
+        private final int index;
 
         public TypeMapping(Class toType, Class fromType, Class converterType, Method method) {
             this.toType = toType;

@@ -104,7 +104,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
     public synchronized ScheduledExecutorService getExecutorService() {
         if (executorService == null) {
             Component c = getComponent();
-            if (c != null && c instanceof DefaultComponent) {
+            if (c instanceof DefaultComponent) {
                 DefaultComponent dc = (DefaultComponent) c;
                 executorService = dc.getExecutorService();
             }

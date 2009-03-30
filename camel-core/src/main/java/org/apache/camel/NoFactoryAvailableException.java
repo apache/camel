@@ -31,6 +31,11 @@ public class NoFactoryAvailableException extends IOException {
         this.uri = uri;
     }
 
+    public NoFactoryAvailableException(String uri, Throwable cause) {
+        this(uri);
+        initCause(cause);
+    }
+
     public String getUri() {
         return uri;
     }

@@ -52,10 +52,10 @@ public class DefaultExchangeHolder implements Serializable {
     private Object inBody;
     private Object outBody;
     private Object faultBody;
-    private Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
-    private Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
-    private Map<String, Object> properties = new LinkedHashMap<String, Object>();
-    private Map<String, Object> faultHeaders = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> inHeaders = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> outHeaders = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> properties = new LinkedHashMap<String, Object>();
+    private final Map<String, Object> faultHeaders = new LinkedHashMap<String, Object>();
     private Exception exception;
 
     /**

@@ -37,8 +37,8 @@ import org.apache.camel.util.ObjectHelper;
 public class DefaultFactoryFinder implements FactoryFinder {
 
     protected final ConcurrentHashMap<String, Class> classMap = new ConcurrentHashMap<String, Class>();
-    private ClassResolver classResolver;
-    private String path;
+    private final ClassResolver classResolver;
+    private final String path;
 
     public DefaultFactoryFinder(ClassResolver classResolver, String resourcePath) {
         this.classResolver = classResolver;
@@ -53,7 +53,7 @@ public class DefaultFactoryFinder implements FactoryFinder {
         try {
             return newInstance(key, null);
         } catch (Exception e) {
-            throw new NoFactoryAvailableException(key);
+            throw new NoFactoryAvailableException(key, e);
         }
     }
 
@@ -69,15 +69,13 @@ public class DefaultFactoryFinder implements FactoryFinder {
     }
 
     public Class findClass(String key, String propertyPrefix) throws ClassNotFoundException, IOException {
-        if (propertyPrefix == null) {
-            propertyPrefix = "";
-        }
+        String prefix = propertyPrefix != null ? propertyPrefix : "";
 
-        Class clazz = classMap.get(propertyPrefix + key);
+        Class clazz = classMap.get(prefix + key);
         if (clazz == null) {
-            clazz = newInstance(doFindFactoryProperties(key), propertyPrefix);
+            clazz = newInstance(doFindFactoryProperties(key), prefix);
             if (clazz != null) {
-                classMap.put(propertyPrefix + key, clazz);
+                classMap.put(prefix + key, clazz);
             }
         }
         return clazz;

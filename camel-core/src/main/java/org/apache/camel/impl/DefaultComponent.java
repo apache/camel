@@ -44,10 +44,10 @@ import org.apache.commons.logging.LogFactory;
 public abstract class DefaultComponent extends ServiceSupport implements Component {
     private static final transient Log LOG = LogFactory.getLog(DefaultComponent.class);
 
-    private final int defaultThreadPoolSize = 5;
+    private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private CamelContext camelContext;
     private ScheduledExecutorService executorService;
-    
+
     public DefaultComponent() {
     }
 
@@ -127,7 +127,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * @param parameters the parameters, an empty map if no parameters given
      * @throws ResolveEndpointFailedException should be thrown if the URI validation failed
      */
-    protected void validateURI(String uri, String path, Map parameters) throws ResolveEndpointFailedException {
+    protected void validateURI(String uri, String path, Map parameters) {
         // check for uri containing & but no ? marker
         if (uri.contains("&") && !uri.contains("?")) {
             throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: no ? marker however the uri "
@@ -164,7 +164,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
      * A factory method to create a default thread pool and executor
      */
     protected ScheduledExecutorService createExecutorService() {
-        return new ScheduledThreadPoolExecutor(defaultThreadPoolSize, new ThreadFactory() {
+        return new ScheduledThreadPoolExecutor(DEFAULT_THREADPOOL_SIZE, new ThreadFactory() {
             int counter;
 
             public synchronized Thread newThread(Runnable runnable) {

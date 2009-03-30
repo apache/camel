@@ -90,7 +90,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
      * @param t the exception to handle
      */
     protected void handleException(Throwable t) {
-        Throwable newt = (t == null) ? new Throwable("Handling [null] exception") : t;
+        Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;
         getExceptionHandler().handleException(newt);
     }
 }

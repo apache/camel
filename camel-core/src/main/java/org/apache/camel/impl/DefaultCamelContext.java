@@ -558,7 +558,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             answer = languages.get(language);
 
             // check if the language is singleton, if so return the shared instance
-            if (answer != null && answer instanceof IsSingleton) {
+            if (answer instanceof IsSingleton) {
                 boolean singleton = ((IsSingleton) answer).isSingleton();
                 if (singleton) {
                     return answer;

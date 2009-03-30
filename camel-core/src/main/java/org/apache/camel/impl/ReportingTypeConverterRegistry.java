@@ -29,7 +29,7 @@ import org.apache.camel.spi.TypeConverterRegistry;
  * Used by the camel-maven-plugin.
  */
 public class ReportingTypeConverterRegistry implements TypeConverterRegistry {
-    private List<String> errors = new ArrayList<String>();
+    private final List<String> errors = new ArrayList<String>();
 
     public String[] getErrors() {
         return errors.toArray(new String[errors.size()]);

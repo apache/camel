@@ -92,14 +92,14 @@ public class DefaultExchange implements Exchange {
         setProperties(safeCopy(exchange.getProperties()));
 
         // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
-        safeCopy(getIn(), exchange, exchange.getIn());
+        safeCopy(getIn(), exchange.getIn());
         Message copyOut = exchange.getOut(false);
         if (copyOut != null) {
-            safeCopy(getOut(true), exchange, copyOut);
+            safeCopy(getOut(true), copyOut);
         }
         Message copyFault = exchange.getFault(false);
         if (copyFault != null) {
-            safeCopy(getFault(true), exchange, copyFault);
+            safeCopy(getFault(true), copyFault);
         }
         setException(exchange.getException());
 
@@ -108,7 +108,7 @@ public class DefaultExchange implements Exchange {
         setFromEndpoint(exchange.getFromEndpoint());
     }
 
-    private static void safeCopy(Message message, Exchange exchange, Message that) {
+    private static void safeCopy(Message message, Message that) {
         if (message != null) {
             message.copyFrom(that);
         }
