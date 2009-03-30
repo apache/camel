@@ -73,7 +73,7 @@ public class JettyHttpComponent extends HttpComponent {
     private static final transient Log LOG = LogFactory.getLog(JettyHttpComponent.class);
     
     protected Server server;
-    protected HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();    
+    protected final HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
     protected String sslKeyPassword;
     protected String sslPassword;
     protected String sslKeystore;
