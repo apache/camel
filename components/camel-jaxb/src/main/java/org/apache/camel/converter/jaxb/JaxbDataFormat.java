@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -38,6 +39,7 @@ public class JaxbDataFormat implements DataFormat {
     private String contextPath;
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
+    private String encoding;
 
     public JaxbDataFormat() {
     }
@@ -53,7 +55,19 @@ public class JaxbDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
             // must create a new instance of marshaller as its not thred safe
-            getContext().createMarshaller().marshal(graph, stream);
+            Marshaller marshaller = getContext().createMarshaller();
+
+            // exchange take precedense over encoding option
+            String charset = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charset == null) {
+                charset = encoding;
+            }
+            if (charset != null) {
+                marshaller.setProperty(Marshaller.JAXB_ENCODING, charset);
+            }
+
+            marshaller.marshal(graph, stream);
+
         } catch (JAXBException e) {
             throw IOHelper.createIOException(e);
         }
@@ -107,6 +121,14 @@ public class JaxbDataFormat implements DataFormat {
 
     public void setPrettyPrint(boolean prettyPrint) {
         this.prettyPrint = prettyPrint;
+    }
+
+    public String getEncoding() {
+        return encoding;
+    }
+
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
     }
 
     protected JAXBContext createContext() throws JAXBException {

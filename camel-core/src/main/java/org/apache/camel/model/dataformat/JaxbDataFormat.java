@@ -38,6 +38,8 @@ public class JaxbDataFormat extends DataFormatType {
     private Boolean prettyPrint;
     @XmlAttribute(required = false)
     private Boolean ignoreJAXBElement;
+    @XmlAttribute(required = false)
+    private String encoding;
 
     public JaxbDataFormat() {
         super("org.apache.camel.converter.jaxb.JaxbDataFormat");
@@ -85,7 +87,10 @@ public class JaxbDataFormat extends DataFormatType {
             setProperty(dataFormat, "ignoreJAXBElement", Boolean.FALSE);
         } else { // the default value is true
             setProperty(dataFormat, "ignoreJAXBElement", Boolean.TRUE);
-        } 
+        }
+        if (encoding != null) {
+            setProperty(dataFormat, "encoding", encoding);
+        }
         setProperty(dataFormat, "contextPath", contextPath);
     }
 }
