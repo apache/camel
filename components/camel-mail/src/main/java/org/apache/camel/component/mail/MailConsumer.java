@@ -125,11 +125,22 @@ public class MailConsumer extends ScheduledPollConsumer {
     protected void ensureIsConnected() throws MessagingException {
         MailConfiguration config = endpoint.getConfiguration();
 
-        if (store == null || !store.isConnected()) {
-            store = sender.getSession().getStore(config.getProtocol());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Connecting to MailStore " + endpoint.getConfiguration().getMailStoreLogInformation());
+        boolean connected = false;
+        try {
+            if (store != null && store.isConnected()) {
+                connected = true;
             }
+        } catch (Exception e) {
+            LOG.debug("Exception while testing for is connected to MailStore: "
+                    + endpoint.getConfiguration().getMailStoreLogInformation()
+                    + ". Caused by: " + e.getMessage(), e);
+        }
+
+        if (!connected) {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Connecting to MailStore: " + endpoint.getConfiguration().getMailStoreLogInformation());
+            }
+            store = sender.getSession().getStore(config.getProtocol());
             store.connect(config.getHost(), config.getPort(), config.getUsername(), config.getPassword());
         }
 
