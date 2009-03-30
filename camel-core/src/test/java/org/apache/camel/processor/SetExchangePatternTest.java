@@ -73,7 +73,9 @@ public class SetExchangePatternTest extends ContextTestSupport {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
         String expectedBody = "InOnlyMessage";
         resultEndpoint.expectedBodiesReceived(expectedBody);
-        template.sendBody(sendUri, sendPattern, expectedBody);
+        resultEndpoint.expectedHeaderReceived("foo", "bar");
+
+        template.sendBodyAndHeader(sendUri, sendPattern, expectedBody, "foo", "bar");
         resultEndpoint.assertIsSatisfied();
         ExchangePattern actualPattern = resultEndpoint.getExchanges().get(0).getPattern();
         assertEquals("received exchange pattern", actualPattern, expectedPattern);
