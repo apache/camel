@@ -33,12 +33,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
  *
  * @version $Revision$
  */
-public class MailConfiguration implements Cloneable {
-
-    public static final String DEFAULT_FOLDER_NAME = "INBOX";
-    public static final String DEFAULT_FROM = "camel@localhost";
-    public static final String DEFAULT_ALTERNATE_BODY_HEADER = "mail_alternateBody";
-    public static final long DEFAULT_CONNECTION_TIMEOUT = 30000L;
+public class MailConfiguration implements Cloneable {   
 
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
@@ -49,18 +44,18 @@ public class MailConfiguration implements Cloneable {
     private String password;
     private Session session;
     private String defaultEncoding;
-    private String from = DEFAULT_FROM;
-    private String folderName = DEFAULT_FOLDER_NAME;
+    private String from = MailConstants.DEFAULT_FROM;
+    private String folderName = MailConstants.DEFAULT_FOLDER_NAME;
     private boolean delete;
     private boolean unseen = true;
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private int fetchSize = -1;
     private boolean debugMode;
-    private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
+    private long connectionTimeout = MailConstants.DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
     private String contentType = "text/plain";
-    private String alternateBodyHeader = DEFAULT_ALTERNATE_BODY_HEADER;
+    private String alternateBodyHeader = MailConstants.DEFAULT_ALTERNATE_BODY_HEADER;
     private boolean useInlineAttachments;
 
     public MailConfiguration() {
