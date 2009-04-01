@@ -278,44 +278,55 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         // make sure we have loaded the converters
         checkLoaded();
 
-        // lets try the super classes of the from type
+        return doLookup(toType, fromType, false);
+    }
+
+    private TypeConverter doLookup(Class toType, Class fromType, boolean isSuper) {
+
         if (fromType != null) {
+            // lets try if there is a direct match
+            TypeConverter converter = getTypeConverter(toType, fromType);
+            if (converter != null) {
+                return converter;
+            }
+
+            // try the interfaces
+            for (Class type : fromType.getInterfaces()) {
+                converter = getTypeConverter(toType, type);
+                if (converter != null) {
+                    return converter;
+                }
+            }
+
+            // try super then
             Class fromSuperClass = fromType.getSuperclass();
             if (fromSuperClass != null && !fromSuperClass.equals(Object.class)) {
-
-                TypeConverter converter = getTypeConverter(toType, fromSuperClass);
-                if (converter == null) {
-                    converter = lookup(toType, fromSuperClass);
-                }
+                converter = doLookup(toType, fromSuperClass, true);
                 if (converter != null) {
                     return converter;
                 }
             }
-            for (Class type : fromType.getInterfaces()) {
-                TypeConverter converter = getTypeConverter(toType, type);
-                if (converter != null) {
-                    return converter;
-                }
-            }
+        }
 
-            // lets test for arrays
-            if (fromType.isArray() && !fromType.getComponentType().isPrimitive()) {
-                // TODO can we try walking the inheritance-tree for the element types?
-                if (!fromType.equals(Object[].class)) {
-                    fromSuperClass = Object[].class;
+        // only do these tests as fallback and only on the target type (eg not on its super)
+        if (!isSuper) {
+            if (fromType != null && !fromType.equals(Object.class)) {
 
-                    TypeConverter converter = getTypeConverter(toType, fromSuperClass);
-                    if (converter == null) {
-                        converter = lookup(toType, fromSuperClass);
-                    }
-                    if (converter != null) {
-                        return converter;
+                // lets try classes derived from this toType
+                Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
+                for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
+                    TypeMapping key = entry.getKey();
+                    Class aToType = key.getToType();
+                    if (toType.isAssignableFrom(aToType)) {
+                        Class aFromType = key.getFromType();
+                        // skip Object based we do them last
+                        if (!aFromType.equals(Object.class) && aFromType.isAssignableFrom(fromType)) {
+                            return entry.getValue();
+                        }
                     }
                 }
-            }
 
-            // lets test for Object based converters
-            if (!fromType.equals(Object.class)) {
+                // lets test for Object based converters as last resort
                 TypeConverter converter = getTypeConverter(toType, Object.class);
                 if (converter != null) {
                     return converter;
@@ -323,21 +334,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
             }
         }
 
-        // lets try classes derived from this toType
-        if (fromType != null) {
-            Set<Map.Entry<TypeMapping, TypeConverter>> entries = typeMappings.entrySet();
-            for (Map.Entry<TypeMapping, TypeConverter> entry : entries) {
-                TypeMapping key = entry.getKey();
-                Class aToType = key.getToType();
-                if (toType.isAssignableFrom(aToType)) {
-                    if (key.getFromType().isAssignableFrom(fromType)) {
-                        return entry.getValue();
-                    }
-                }
-            }
-        }
-
-        // TODO look at constructors of toType?
+        // none found
         return null;
     }
 
