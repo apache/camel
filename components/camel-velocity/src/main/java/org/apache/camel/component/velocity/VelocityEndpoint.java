@@ -31,7 +31,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
-import org.apache.velocity.runtime.log.Log4JLogChute;
+import org.apache.velocity.runtime.log.CommonsLogLogChute;
 import org.springframework.core.io.Resource;
 
 /**
@@ -68,8 +68,8 @@ public class VelocityEndpoint extends ResourceBasedEndpoint {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
             velocityEngine.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? Boolean.TRUE : Boolean.FALSE);
-            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            velocityEngine.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, VelocityEndpoint.class.getName());
+            velocityEngine.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
+            velocityEngine.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
             velocityEngine.init();
         }
         return velocityEngine;
