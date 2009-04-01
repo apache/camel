@@ -16,12 +16,12 @@
  */
 package org.apache.camel.management;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
@@ -36,6 +36,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.InstrumentationAgent;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -51,6 +52,7 @@ import org.apache.commons.logging.LogFactory;
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
 
+    private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private InstrumentationAgent agent;
     private CamelNamingStrategy namingStrategy;
     private boolean initialized;
@@ -96,17 +98,62 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
     }
 
+    /**
+     * If the endpoint is an instance of ManagedResource then register it with the
+     * mbean server, if it is not then wrap the endpoint in a {@link ManagedEndpoint} and
+     * register that with the mbean server.
+     * @param endpoint the Endpoint attempted to be added
+     */
+    @SuppressWarnings("unchecked")
     public void onEndpointAdd(Endpoint endpoint) {
         // the agent hasn't been started
         if (!initialized) {
             return;
         }
 
+        Class annotationClass = resolveManagedAnnotation(endpoint);
+        if (annotationClass == null) {
+            registerEndpointAsManagedEndpoint(endpoint);
+            return;
+        }
+
+        Object annotation = endpoint.getClass().getAnnotation(annotationClass);
+        if (annotation == null) {
+            registerEndpointAsManagedEndpoint(endpoint);
+            return;
+        }
+
+        attemptToRegisterManagedResource(endpoint, annotation);
+    }
+
+    private Class resolveManagedAnnotation(Endpoint endpoint) {
+
+        CamelContext context = endpoint.getCamelContext();
+
+        ClassResolver resolver = context.getClassResolver();
+        return resolver.resolveClass(MANAGED_RESOURCE_CLASSNAME);
+    }
+
+    private void attemptToRegisterManagedResource(Endpoint endpoint, Object annotation) {
+        try {
+            Method m = annotation.getClass().getMethod("objectName");
+
+            String objectNameStr = (String) m.invoke(annotation);
+
+            ObjectName objectName = new ObjectName(objectNameStr);
+            agent.register(endpoint, objectName);
+        } catch (Exception e) {
+            LOG.debug("objectName method not present, wrapping endpoint in ManagedEndpoint instead");
+            registerEndpointAsManagedEndpoint(endpoint);
+        }
+    }
+
+    private void registerEndpointAsManagedEndpoint(Endpoint endpoint) {
         try {
             ManagedEndpoint me = new ManagedEndpoint(endpoint);
             agent.register(me, getNamingStrategy().getObjectName(me));
         } catch (JMException e) {
-            LOG.warn("Could not register Endpoint MBean", e);
+            LOG.warn("Could not register Endpoint MBean for uri: " + endpoint.getEndpointUri(), e);
         }
     }
 

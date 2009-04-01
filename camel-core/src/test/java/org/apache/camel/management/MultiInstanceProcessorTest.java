@@ -51,38 +51,29 @@ public class MultiInstanceProcessorTest extends JmxInstrumentationUsingDefaultsT
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 2, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":name=context,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":name=context,*"), null);
         assertEquals("Could not find 1 context: " + s, 1, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processors,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 2 processor: " + s, 2, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=routes,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 1 route: " + s, 1, s.size());
 
     }
 
     @Override
     public void testCounters() throws Exception {
-
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
-        resultEndpoint.expectedBodiesReceived(
-                new Object[] {"<hello>world!</hello>", "<hello>world!</hello>"});
+        resultEndpoint.expectedBodiesReceived("<hello>world!</hello>", "<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");
 
         resultEndpoint.assertIsSatisfied();
 
         verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to3,*"));
-        verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,nodeid=to4,*"));
-
     }
 
 }
