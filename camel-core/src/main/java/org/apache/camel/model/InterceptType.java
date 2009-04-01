@@ -101,8 +101,8 @@ public class InterceptType extends OutputType<ProcessorType> {
      * with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {
-        List<ProcessorType<?>> list = new ArrayList<ProcessorType<?>>();
-        for (ProcessorType<?> out : outputs) {
+        List<ProcessorType> list = new ArrayList<ProcessorType>();
+        for (ProcessorType out : outputs) {
             if (out instanceof WhenType) {
                 // JAXB does not invoke the when() fluent builder so we need to wrap the when in
                 // a choice with the proceed as the when for the Java DSL does
