@@ -37,6 +37,7 @@ public class MailConfiguration implements Cloneable {
 
     public static final String DEFAULT_FOLDER_NAME = "INBOX";
     public static final String DEFAULT_FROM = "camel@localhost";
+    public static final String DEFAULT_ALTERNATE_BODY_HEADER = "mail_alternateBody";
     public static final long DEFAULT_CONNECTION_TIMEOUT = 30000L;
 
     private Properties javaMailProperties;
@@ -59,6 +60,8 @@ public class MailConfiguration implements Cloneable {
     private long connectionTimeout = DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
     private String contentType = "text/plain";
+    private String alternateBodyHeader = DEFAULT_ALTERNATE_BODY_HEADER;
+    private boolean useInlineAttachments;
 
     public MailConfiguration() {
     }
@@ -408,5 +411,21 @@ public class MailConfiguration implements Cloneable {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+
+    public String getAlternateBodyHeader() {
+        return alternateBodyHeader;
+    }
+
+    public void setAlternateBodyHeader(String alternateBodyHeader) {
+        this.alternateBodyHeader = alternateBodyHeader;
+    }
+
+    public boolean isUseInlineAttachments() {
+        return useInlineAttachments;
+    }
+
+    public void setUseInlineAttachments(boolean useInlineAttachments) {
+        this.useInlineAttachments = useInlineAttachments;
     }
 }

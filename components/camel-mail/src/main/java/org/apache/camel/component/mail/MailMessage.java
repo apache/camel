@@ -140,22 +140,31 @@ public class MailMessage extends DefaultMessage {
 
         Object content = message.getContent();
         if (content instanceof Multipart) {
-            // mail with attachment
-            Multipart mp = (Multipart)content;
-            for (int i = 0; i < mp.getCount(); i++) {
-                Part part = mp.getBodyPart(i);
+            extractFromMultipart((Multipart)content, map);
+        }
+    }
+    
+    protected static void extractFromMultipart(Multipart mp, Map<String, DataHandler> map) 
+        throws javax.mail.MessagingException, IOException {
+
+        for (int i = 0; i < mp.getCount(); i++) {
+            Part part = mp.getBodyPart(i);           
+            if (part.isMimeType("multipart/*")) {
+                extractFromMultipart((Multipart)part.getContent(), map);
+            } else {
                 String disposition = part.getDisposition();
                 if (disposition != null) {
                     if (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE)) {
                         // only add named attachments
                         if (part.getFileName() != null) {
-                            // Parts marked with a disposition of Part.ATTACHMENT are clearly attachments
+                            // Parts marked with a disposition of Part.ATTACHMENT
+                            // are clearly attachments
                             CollectionHelper.appendValue(map, part.getFileName(), part.getDataHandler());
                         }
                     }
                 }
             }
         }
-    }
+    }    
 
 }
