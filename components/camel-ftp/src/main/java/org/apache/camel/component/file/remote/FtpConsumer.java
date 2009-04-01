@@ -102,7 +102,7 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
             if (endpoint.getConfiguration().isDirectory()) {
                 pollDirectory(fileName);
             } else {
-                int index = fileName.lastIndexOf(File.separatorChar);
+                int index = fileName.lastIndexOf('/');
                 if (index > -1) {
                     // cd to the folder of the filename
                     client.changeWorkingDirectory(fileName.substring(0, index));
