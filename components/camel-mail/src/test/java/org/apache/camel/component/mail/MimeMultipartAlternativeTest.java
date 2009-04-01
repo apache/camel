@@ -35,12 +35,10 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
     private String alternativeBody = "hello world! (plain text)";
     private String htmlBody = "<html><body><h1>Hello</h1>World<img src=\"cid:0001\"></body></html>";
 
-    public void testMultipartEmailWithInlineAttachments() throws Exception {
-        // START SNIPPET: e1
-
-        // create an exchange with a normal body and attachment to be produced as email
+    private void sendMultipartEmail(boolean useInlineattachments) throws Exception {
+     // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
-        endpoint.getConfiguration().setUseInlineAttachments(true);
+        endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
         endpoint.getConfiguration().setAlternateBodyHeader(MailConfiguration.DEFAULT_ALTERNATE_BODY_HEADER);
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
@@ -55,10 +53,13 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
         // start the producer
         producer.start();
         // and let it go (processes the exchange by sending the email)
-        producer.process(exchange);
+        producer.process(exchange); 
+        
+        producer.stop();
 
-        // END SNIPPET: e1
-
+    }
+    
+    private void verifyTheRecivedEmail(String expectString) throws Exception {
         // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
         Thread.sleep(1000);
 
@@ -67,10 +68,11 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
         Exchange out = mock.assertExchangeReceived(0);
         mock.assertIsSatisfied();
 
+        ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
+        ((MailMessage)out.getIn()).getMessage().writeTo(baos);
+        String dumpedMessage = baos.toString();
+        assertTrue("There should have the " + expectString, dumpedMessage.indexOf(expectString) > 0);
         if (log.isTraceEnabled()) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
-            ((MailMessage)out.getIn()).getMessage().writeTo(baos);
-            String dumpedMessage = baos.toString();
             log.trace("multipart alternative: \n" + dumpedMessage);
         }
          
@@ -83,59 +85,16 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
         assertEquals(1, attachments.size());
         assertEquals("multipart body should have 2 parts", 2, out.getIn().getBody(MimeMultipart.class).getCount());
 
-        producer.stop();
+        
     }
-
+    public void testMultipartEmailWithInlineAttachments() throws Exception {
+        sendMultipartEmail(true);
+        verifyTheRecivedEmail("Content-Disposition: inline; filename=\"cid:0001\"");
+    }    
+        
     public void testMultipartEmailWithRegularAttachments() throws Exception {
-        // START SNIPPET: e1
-
-        // create an exchange with a normal body and attachment to be produced as email
-        MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
-        endpoint.getConfiguration().setUseInlineAttachments(false);
-        endpoint.getConfiguration().setAlternateBodyHeader(MailConfiguration.DEFAULT_ALTERNATE_BODY_HEADER);
-
-        // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
-        Exchange exchange = endpoint.createExchange();
-        Message in = exchange.getIn();
-        in.setBody(htmlBody);
-        in.setHeader("mail_alternateBody", alternativeBody);
-        in.setHeader("sendInlineAttachments", false);
-        in.addAttachment("cid:0001", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
-
-        // create a producer that can produce the exchange (= send the mail)
-        Producer producer = endpoint.createProducer();
-        // start the producer
-        producer.start();
-        // and let it go (processes the exchange by sending the email)
-        producer.process(exchange);
-
-        // END SNIPPET: e1
-
-        // need some time for the mail to arrive on the inbox (consumed and sent to the mock)
-        Thread.sleep(1000);
-
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-        Exchange out = mock.assertExchangeReceived(0);
-        mock.assertIsSatisfied();
-
-        if (log.isTraceEnabled()) {
-            ByteArrayOutputStream baos = new ByteArrayOutputStream(((MailMessage)out.getIn()).getMessage().getSize());
-            ((MailMessage)out.getIn()).getMessage().writeTo(baos);
-            String dumpedMessage = baos.toString();
-            log.trace("multipart alternative: \n" + dumpedMessage);
-        }
-
-        // plain text
-        assertEquals(alternativeBody, out.getIn().getBody(String.class));
-
-        // attachment
-        Map<String, DataHandler> attachments = out.getIn().getAttachments();
-        assertNotNull("Should not have null attachments", attachments);
-        assertEquals(1, attachments.size());
-        assertEquals("multipart body should have 2 parts", 2, out.getIn().getBody(MimeMultipart.class).getCount());
-
-        producer.stop();
+        sendMultipartEmail(false);
+        verifyTheRecivedEmail("Content-Disposition: attachment; filename=\"cid:0001\"");
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
