@@ -68,17 +68,17 @@ public class DefaultExchangeHolder implements Serializable {
     public static DefaultExchangeHolder marshal(Exchange exchange) {
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
-        payload.inBody = checkSerializableObject("in body", exchange.getIn().getBody());
-        payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange.getIn().getHeaders()));
+        payload.inBody = checkSerializableObject("in body", exchange, exchange.getIn().getBody());
+        payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange, exchange.getIn().getHeaders()));
         if (exchange.getOut(false) != null) {
-            payload.outBody = checkSerializableObject("out body", exchange.getOut().getBody());
-            payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange.getOut().getHeaders()));
+            payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
+            payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders()));
         }
         if (exchange.getFault(false) != null) {
-            payload.faultBody = checkSerializableObject("fault body", exchange.getFault().getBody());
-            payload.faultHeaders.putAll(checkMapSerializableObjects("fault headers", exchange.getFault().getHeaders()));
+            payload.faultBody = checkSerializableObject("fault body", exchange, exchange.getFault().getBody());
+            payload.faultHeaders.putAll(checkMapSerializableObjects("fault headers", exchange, exchange.getFault().getHeaders()));
         }
-        payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange.getProperties()));
+        payload.properties.putAll(checkMapSerializableObjects("exchange properties", exchange, exchange.getProperties()));
         payload.exception = exchange.getException();
 
         return payload;
@@ -116,26 +116,32 @@ public class DefaultExchangeHolder implements Serializable {
         return sb.append(']').toString();
     }
 
-    private static Object checkSerializableObject(String type, Object object) {
-        if (object instanceof Serializable) {
-            return object;
+    private static Object checkSerializableObject(String type, Exchange exchange, Object object) {
+        if (object == null) {
+            return null;
+        }
+
+        Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, object);
+        if (converted != null) {
+            return converted;
         } else {
-            LOG.warn(type + " containig object " + object + " cannot be serialized, it will be excluded by the holder");
+            LOG.warn(type + " containig object: " + object + " of type: " + object.getClass().getCanonicalName() + " cannot be serialized, it will be excluded by the holder");
             return null;
         }
     }
 
-    private static Map<String, Object> checkMapSerializableObjects(String type, Map<String, Object> map) {
+    private static Map<String, Object> checkMapSerializableObjects(String type, Exchange exchange, Map<String, Object> map) {
         if (map == null) {
             return null;
         }
 
         Map<String, Object> result = new LinkedHashMap<String, Object>();
         for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (entry.getValue() instanceof Serializable) {
-                result.put(entry.getKey(), entry.getValue());
+            Serializable converted = exchange.getContext().getTypeConverter().convertTo(Serializable.class, exchange, entry.getValue());
+            if (converted != null) {
+                result.put(entry.getKey(), converted);
             } else {
-                LOG.warn(type + " containing object " + entry.getValue() + " of key " + entry.getKey()
+                LOG.warn(type + " containing object: " + entry.getValue() + " with key: " + entry.getKey()
                         + " cannot be serialized, it will be excluded by the holder");
             }
         }

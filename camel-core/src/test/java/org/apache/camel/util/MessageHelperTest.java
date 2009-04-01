@@ -16,8 +16,10 @@
  */
 package org.apache.camel.util;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.io.OutputStream;
 
+import junit.framework.TestCase;
 import org.apache.camel.Message;
 import org.apache.camel.StreamCache;
 import org.apache.camel.impl.DefaultMessage;
@@ -39,7 +41,7 @@ public class MessageHelperTest extends TestCase {
      */
     public void testResetStreamCache() throws Exception {
         // should not throw exceptions when Message or message body is null
-        MessageHelper.resetStreamCache((Message) null);
+        MessageHelper.resetStreamCache(null);
         MessageHelper.resetStreamCache(message);
         
         // handle StreamCache
@@ -47,6 +49,10 @@ public class MessageHelperTest extends TestCase {
         message.setBody(new StreamCache() {
             public void reset() {
                 reset.set(Boolean.TRUE);
+            }
+
+            public void writeTo(OutputStream os) throws IOException {
+                // noop
             }
         });
         MessageHelper.resetStreamCache(message);

@@ -16,6 +16,9 @@
  */
 package org.apache.camel;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
 /**
  * Tagging interface to indicate that a type is capable of caching the underlying data stream.
  * <p/>
@@ -31,5 +34,12 @@ public interface StreamCache {
      * Resets the StreamCache for a new stream consumption.
      */
     void reset();
+
+    /**
+     * Writes the stream to the given output
+     *
+     * @param os the destination to write to
+     */
+    void writeTo(OutputStream os) throws IOException;
 
 }

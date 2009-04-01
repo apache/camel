@@ -41,7 +41,7 @@ public class JmsXMLRouteTest extends ContextTestSupport {
     private static final String TEST_LONDON = "src/test/data/message1.xml";
     private static final String TEST_TAMPA = "src/test/data/message2.xml";
 
-    public void testLondonWithFileStream() throws Exception {
+    public void testLondonWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).bodyAs(String.class).contains("James");
@@ -49,12 +49,38 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         Source source = new StreamSource(new FileInputStream(TEST_LONDON));
         assertNotNull(source);
 
-        template.sendBody("direct:start", source);
+        template.sendBody("direct:object", source);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testTampaWithFileStream() throws Exception {
+    public void testLondonWithFileStreamAsBytes() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:london");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("James");
+
+        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
+        assertNotNull(source);
+
+        template.sendBody("direct:bytes", source);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testLondonWithFileStreamAsDefault() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:london");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("James");
+
+        Source source = new StreamSource(new FileInputStream(TEST_LONDON));
+        assertNotNull(source);
+
+        template.sendBody("direct:default", source);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testTampaWithFileStreamAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:tampa");
         mock.expectedMessageCount(1);
         mock.message(0).bodyAs(String.class).contains("Hiram");
@@ -62,12 +88,38 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
         assertNotNull(source);
 
-        template.sendBody("direct:start", source);
+        template.sendBody("direct:object", source);
 
         assertMockEndpointsSatisfied();
     }
 
-    public void testLondonWithStringSource() throws Exception {
+    public void testTampaWithFileStreamAsBytes() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:tampa");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("Hiram");
+
+        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
+        assertNotNull(source);
+
+        template.sendBody("direct:bytes", source);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testTampaWithFileStreamAsDefault() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:tampa");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("Hiram");
+
+        Source source = new StreamSource(new FileInputStream(TEST_TAMPA));
+        assertNotNull(source);
+
+        template.sendBody("direct:default", source);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testLondonWithStringSourceAsObject() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
         mock.message(0).bodyAs(String.class).contains("James");
@@ -79,11 +131,44 @@ public class JmsXMLRouteTest extends ContextTestSupport {
                 + "</person>");
         assertNotNull(source);
 
-        template.sendBody("direct:start", source);
+        template.sendBody("direct:object", source);
 
         assertMockEndpointsSatisfied();
     }
 
+    public void testLondonWithStringSourceAsBytes() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:london");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("James");
+
+        Source source = new StringSource("<person user=\"james\">\n"
+                + "  <firstName>James</firstName>\n"
+                + "  <lastName>Strachan</lastName>\n"
+                + "  <city>London</city>\n"
+                + "</person>");
+        assertNotNull(source);
+
+        template.sendBody("direct:bytes", source);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testLondonWithStringSourceAsDefault() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:london");
+        mock.expectedMessageCount(1);
+        mock.message(0).bodyAs(String.class).contains("James");
+
+        Source source = new StringSource("<person user=\"james\">\n"
+                + "  <firstName>James</firstName>\n"
+                + "  <lastName>Strachan</lastName>\n"
+                + "  <city>London</city>\n"
+                + "</person>");
+        assertNotNull(source);
+
+        template.sendBody("direct:default", source);
+
+        assertMockEndpointsSatisfied();
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
@@ -99,16 +184,37 @@ public class JmsXMLRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("activemq:queue:foo");
+                // no need to convert to String as JMS producer can handle XML streams now
+                from("direct:object").to("activemq:queue:object?jmsMessageType=Object");
 
-                from("activemq:queue:foo")
+                // no need to convert to String as JMS producer can handle XML streams now
+                from("direct:bytes").to("activemq:queue:bytes?jmsMessageType=Bytes");
+
+                // no need to convert to String as JMS producer can handle XML streams now
+                from("direct:default").to("activemq:queue:default");
+
+                from("activemq:queue:object")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Object body = exchange.getIn().getBody();
                             // should preserve the object as Source
                             assertIsInstanceOf(Source.class, body);
                         }
-                    })
+                    }).to("seda:choice");
+
+                from("activemq:queue:bytes")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            Object body = exchange.getIn().getBody();
+                            // should be a byte array by default
+                            assertIsInstanceOf(byte[].class, body);
+                        }
+                    }).to("seda:choice");
+
+                from("activemq:queue:default")
+                    .to("seda:choice");
+
+                from("seda:choice")
                     .choice()
                         .when().xpath("/person/city = 'London'").to("mock:london")
                         .when().xpath("/person/city = 'Tampa'").to("mock:tampa")
@@ -117,6 +223,5 @@ public class JmsXMLRouteTest extends ContextTestSupport {
             }
         };
     }
-
 
 }

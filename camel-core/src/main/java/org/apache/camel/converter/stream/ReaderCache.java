@@ -17,6 +17,7 @@
 package org.apache.camel.converter.stream;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.StringReader;
 
 import org.apache.camel.StreamCache;
@@ -48,6 +49,10 @@ public class ReaderCache extends StringReader implements StreamCache {
         } catch (IOException e) {
             LOG.warn("Cannot reset cache", e);
         }
+    }
+
+    public void writeTo(OutputStream os) throws IOException {
+        os.write(data.getBytes());
     }
 
     String getData() {

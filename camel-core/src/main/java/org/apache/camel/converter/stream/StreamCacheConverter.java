@@ -16,21 +16,20 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Serializable;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.FallbackConverter;
 import org.apache.camel.StreamCache;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
-import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
 
 /**
@@ -75,6 +74,20 @@ public class StreamCacheConverter {
     public StreamCache convertToStreamCache(Reader reader, Exchange exchange) throws IOException {
         String data = exchange.getContext().getTypeConverter().convertTo(String.class, reader);
         return new ReaderCache(data);
+    }
+
+    @Converter
+    public Serializable convertToSerializable(StreamCache cache, Exchange exchange) throws IOException {
+        byte[] data = convertToByteArray(cache, exchange);
+        return new BytesSource(data);
+    }
+
+    @Converter
+    public byte[] convertToByteArray(StreamCache cache, Exchange exchange) throws IOException {
+        // lets serialize it as a byte array
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+        cache.writeTo(os);
+        return os.toByteArray();
     }
 
 }

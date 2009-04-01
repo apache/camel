@@ -19,8 +19,7 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Serializable;
-import java.nio.CharBuffer;
+import java.io.OutputStream;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.Exchange;
@@ -33,12 +32,9 @@ import org.apache.camel.util.IOHelper;
  */
 public class StreamSourceCache extends StreamSource implements StreamCache {
 
-    private transient InputStream stream;
-    private StreamCache streamCache;
-    private ReaderCache readCache;
-
-    public StreamSourceCache() {
-    }
+    private final InputStream stream;
+    private final StreamCache streamCache;
+    private final ReaderCache readCache;
 
     public StreamSourceCache(StreamSource source, Exchange exchange) throws IOException {
         if (source.getInputStream() != null) {
@@ -46,12 +42,19 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
             CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
             IOHelper.copyAndCloseInput(source.getInputStream(), cos);
             streamCache = cos.getStreamCache();
+            readCache = null;
             setSystemId(source.getSystemId());
-        }
-        if (source.getReader() != null) {
+            stream = (InputStream) streamCache;
+        } else if (source.getReader() != null) {
             String data = exchange.getContext().getTypeConverter().convertTo(String.class, source.getReader());
             readCache = new ReaderCache(data);
+            streamCache = null;
             setReader(readCache);
+            stream = new ByteArrayInputStream(data.getBytes());
+        } else {
+            streamCache = null;
+            readCache = null;
+            stream = null;
         }
     }
 
@@ -71,16 +74,16 @@ public class StreamSourceCache extends StreamSource implements StreamCache {
         }
     }
 
+    public void writeTo(OutputStream os) throws IOException {
+        if (streamCache != null) {
+            streamCache.writeTo(os);
+        } else if (readCache != null) {
+            readCache.writeTo(os);
+        }
+    }
+
     @Override
     public InputStream getInputStream() {
-        if (stream == null) {
-            if (streamCache instanceof InputStream) {
-                stream = (InputStream) streamCache;
-            } else if (readCache != null) {
-                String data = readCache.getData();
-                stream = new ByteArrayInputStream(data.getBytes());
-            }
-        }
         return stream;
     }
 

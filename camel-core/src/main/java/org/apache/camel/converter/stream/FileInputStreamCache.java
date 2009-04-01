@@ -21,9 +21,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
+import org.apache.camel.util.IOHelper;
 
 public class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
@@ -61,7 +63,11 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
             throw new RuntimeCamelException(e);
         }            
     }
-    
+
+    public void writeTo(OutputStream os) throws IOException {
+        IOHelper.copy(getInputStream(), os);
+    }
+
     @Override
     public int available() throws IOException {
         return getInputStream().available();

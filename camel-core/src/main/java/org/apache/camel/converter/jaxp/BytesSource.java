@@ -20,7 +20,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-
+import java.io.Serializable;
 import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.util.ObjectHelper;
@@ -31,8 +31,11 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-public class BytesSource extends StreamSource {
-    private final byte[] data;
+public class BytesSource extends StreamSource implements Serializable {
+    private byte[] data;
+
+    public BytesSource() {
+    }
 
     public BytesSource(byte[] data) {
         ObjectHelper.notNull(data, "data");

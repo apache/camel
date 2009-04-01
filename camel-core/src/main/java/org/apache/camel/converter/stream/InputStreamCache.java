@@ -14,18 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.converter.stream;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.apache.camel.StreamCache;
-
+import org.apache.camel.util.IOHelper;
 
 public class InputStreamCache extends ByteArrayInputStream implements StreamCache {
 
     public InputStreamCache(byte[] data) {
         super(data);
+    }
+
+    public void writeTo(OutputStream os) throws IOException {
+        IOHelper.copy(this, os);
     }
 
 }
