@@ -85,15 +85,20 @@ public class MailBinding {
             mimeMessage.setFrom(new InternetAddress(from));
         }
 
-        if (exchange.getIn().hasAttachments()) {
-            appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
+        // if there is an alternativebody provided, set up a mime multipart alternative message
+        if (hasAlternativeBody(endpoint.getConfiguration(), exchange.getIn())) {
+            createMultipartAlternativeMessage(mimeMessage, exchange.getIn(), endpoint.getConfiguration()); 
         } else {
-            if ("text/html".equals(endpoint.getConfiguration().getContentType())) {
-                DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), "text/html");
-                mimeMessage.setDataHandler(new DataHandler(ds));
+            if (exchange.getIn().hasAttachments()) {
+                appendAttachmentsFromCamel(mimeMessage, exchange.getIn(), endpoint.getConfiguration());
             } else {
-                // its just text/plain
-                mimeMessage.setText(exchange.getIn().getBody(String.class));
+                if ("text/html".equals(endpoint.getConfiguration().getContentType())) {                  
+                    DataSource ds = new ByteArrayDataSource(exchange.getIn().getBody(String.class), "text/html");
+                    mimeMessage.setDataHandler(new DataHandler(ds));
+                } else {
+                    // its just text/plain
+                    mimeMessage.setText(exchange.getIn().getBody(String.class));
+                }
             }
         }
     }
@@ -196,16 +201,22 @@ public class MailBinding {
     protected void appendAttachmentsFromCamel(MimeMessage mimeMessage, org.apache.camel.Message camelMessage,
                                               MailConfiguration configuration)
         throws MessagingException {
+        
+        // Put parts in message
+        mimeMessage.setContent(createMixedMultipartAttachments(camelMessage, configuration));
+    }
 
-        // Create a Multipart
-        MimeMultipart multipart = new MimeMultipart();
-
+    private MimeMultipart createMixedMultipartAttachments(org.apache.camel.Message camelMessage, MailConfiguration configuration) throws MessagingException {
         // fill the body with text
+        MimeMultipart multipart = new MimeMultipart();
         multipart.setSubType("mixed");
-        MimeBodyPart textBodyPart = new MimeBodyPart();
-        textBodyPart.setContent(camelMessage.getBody(String.class), configuration.getContentType());
-        multipart.addBodyPart(textBodyPart);
+        addBodyToMultipart(camelMessage, configuration, multipart);
+        String partDisposition = configuration.isUseInlineAttachments() ?  Part.INLINE : Part.ATTACHMENT;
+        addAttachmentsToMultipart(camelMessage, multipart, partDisposition);
+        return multipart;
+    }
 
+    protected void addAttachmentsToMultipart(org.apache.camel.Message camelMessage, MimeMultipart multipart, String partDisposition) throws MessagingException {
         for (Map.Entry<String, DataHandler> entry : camelMessage.getAttachments().entrySet()) {
             String attachmentFilename = entry.getKey();
             DataHandler handler = entry.getValue();
@@ -215,19 +226,65 @@ public class MailBinding {
                     BodyPart messageBodyPart = new MimeBodyPart();
                     // Set the data handler to the attachment
                     messageBodyPart.setDataHandler(handler);
+                    
+                    if (attachmentFilename.toLowerCase().startsWith("cid:")) {
+                    // add a Content-ID header to the attachment
+                        messageBodyPart.addHeader("Content-ID", attachmentFilename.substring(4));
+                    }
                     // Set the filename
                     messageBodyPart.setFileName(attachmentFilename);
                     // Set Disposition
-                    messageBodyPart.setDisposition(Part.ATTACHMENT);
+                    messageBodyPart.setDisposition(partDisposition);
                     // Add part to multipart
                     multipart.addBodyPart(messageBodyPart);
                 }
             }
         }
-
-        // Put parts in message
-        mimeMessage.setContent(multipart);
     }
+
+    protected void createMultipartAlternativeMessage(MimeMessage mimeMessage, org.apache.camel.Message camelMessage, MailConfiguration configuration)
+        throws MessagingException { 
+
+        MimeMultipart multipartAlternative = new MimeMultipart("alternative");
+        mimeMessage.setContent(multipartAlternative);
+
+        BodyPart plainText = new MimeBodyPart();
+        plainText.setText(getAlternativeBody(configuration, camelMessage));
+        multipartAlternative.addBodyPart(plainText);
+
+        // if there are no attachments, add the body to the same mulitpart message
+        if (!camelMessage.hasAttachments()) {
+            addBodyToMultipart(camelMessage, configuration, multipartAlternative);
+        } else {
+            // if there are attachments, but they aren't set to be inline, add them to
+            // treat them as normal. It will append a multipart-mixed with the attachments and the
+            // body text
+            if (!configuration.isUseInlineAttachments()) {
+                BodyPart mixedAttachments = new MimeBodyPart();
+                mixedAttachments.setContent(createMixedMultipartAttachments(camelMessage, configuration));
+                multipartAlternative.addBodyPart(mixedAttachments);
+                //appendAttachmentsFromCamel(mimeMessage, camelMessage, configuration);
+            } else { // if the attachments are set to be inline, attach them as inline attachments
+                MimeMultipart multipartRelated = new MimeMultipart("related");
+                BodyPart related = new MimeBodyPart();
+
+                related.setContent(multipartRelated);
+                multipartAlternative.addBodyPart(related);
+
+                addBodyToMultipart(camelMessage, configuration, multipartRelated);
+
+                addAttachmentsToMultipart(camelMessage, multipartRelated, Part.INLINE);
+            }
+        }
+
+    }
+
+    protected void addBodyToMultipart(org.apache.camel.Message camelMessage, MailConfiguration configuration, MimeMultipart activeMultipart) throws MessagingException {
+        BodyPart bodyMessage = new MimeBodyPart();
+        bodyMessage.setContent(camelMessage.getBody(String.class), configuration.getContentType());
+        activeMultipart.addBodyPart(bodyMessage);
+    }
+
 
     /**
      * Strategy to allow filtering of attachments which are put on the Mail message
@@ -278,6 +335,15 @@ public class MailBinding {
             }
         }
         return false;
+    }
+
+    protected static boolean hasAlternativeBody(MailConfiguration configuration, org.apache.camel.Message camelMessage) {
+        return getAlternativeBody(configuration, camelMessage) != null;
+    }
+
+    protected static String getAlternativeBody(MailConfiguration configuration, org.apache.camel.Message camelMessage) {
+        String alternativeBodyHeader = configuration.getAlternateBodyHeader();
+        return camelMessage.getHeader(alternativeBodyHeader, java.lang.String.class);
     }
 
     /**
