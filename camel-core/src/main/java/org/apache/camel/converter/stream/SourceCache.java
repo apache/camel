@@ -14,15 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.converter.stream;
+
+import org.apache.camel.StreamCache;
+import org.apache.camel.converter.jaxp.StringSource;
 
 /**
- * Enum for different {@link javax.jms.Message} types.
- *
- * @version $Revision$
+ * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.converter.jaxp.StringSource}s
  */
-public enum JmsMessageType {
+public class SourceCache extends StringSource implements StreamCache {
 
-    Bytes, Map, Object, Stream, Text
+    private static final long serialVersionUID = 1L;
+
+    public SourceCache() {
+    }
+
+    public SourceCache(String data) {
+        new StringSource(data);
+    }
+
+    public void reset() {
+        // do nothing here
+    }
 
 }

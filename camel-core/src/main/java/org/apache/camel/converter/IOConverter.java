@@ -42,6 +42,7 @@ import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
+import java.nio.CharBuffer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 

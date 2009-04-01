@@ -16,11 +16,15 @@
  */
 package org.apache.camel.converter;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.Iterator;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Some core java.lang based <a
@@ -30,6 +34,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 @Converter
 public final class ObjectConverter {
+
+    private static final transient Log LOG = LogFactory.getLog(ObjectConverter.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -102,8 +108,23 @@ public final class ObjectConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(String value) {
-        return value.getBytes();
+    public static byte[] toByteArray(String value, Exchange exchange) {
+        byte[] bytes = null;
+        if (exchange != null) {
+            String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName != null) {
+                try {
+                    bytes = value.getBytes(charsetName);
+                } catch (UnsupportedEncodingException e) {
+                    LOG.warn("Cannot convert the byte to String with the charset " + charsetName, e);
+                }
+            }
+        }
+        if (bytes == null) {
+            bytes = value.getBytes();
+        }
+
+        return bytes;
     }
 
     @Converter

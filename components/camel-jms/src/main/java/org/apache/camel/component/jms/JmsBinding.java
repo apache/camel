@@ -371,27 +371,25 @@ public class JmsBinding {
             switch (type) {
             case Text: {
                 TextMessage message = session.createTextMessage();
-                String payload = context.getTypeConverter().convertTo(String.class, body);
+                String payload = context.getTypeConverter().convertTo(String.class, exchange, body);
                 message.setText(payload);
                 return message;
             }
             case Bytes: {
                 BytesMessage message = session.createBytesMessage();
-                byte[] payload = context.getTypeConverter().convertTo(byte[].class, body);
+                byte[] payload = context.getTypeConverter().convertTo(byte[].class, exchange, body);
                 message.writeBytes(payload);
                 return message;
             }
             case Map: {
                 MapMessage message = session.createMapMessage();
-                Map payload = context.getTypeConverter().convertTo(Map.class, body);
+                Map payload = context.getTypeConverter().convertTo(Map.class, exchange, body);
                 populateMapMessage(message, payload, context);
                 return message;
             }
             case Object:
-                return session.createObjectMessage((Serializable)body);
-            case Strem:
-                // TODO: Stream is not supported
-                break;
+                Serializable payload = context.getTypeConverter().convertTo(Serializable.class, exchange, body);
+                return session.createObjectMessage(payload);
             default:
                 break;
             }

@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -50,22 +51,16 @@ public class CachedOutputStream extends OutputStream {
     protected boolean outputLocked;
     protected OutputStream currentStream;
 
+    private final List<Object> streamList = new ArrayList<Object>();
     private long threshold = 64 * 1024;
-
     private int totalLength;
-
-    private boolean inmem;
-
+    private boolean inMemory;
     private File tempFile;
+    private File outputDir;
 
-    private File outputDir;   
-    
-    private List<Object> streamList = new ArrayList<Object>();
-
-    
     public CachedOutputStream() {
         currentStream = new ByteArrayOutputStream(2048);
-        inmem = true;
+        inMemory = true;
     }
 
     public CachedOutputStream(long threshold) {
@@ -100,7 +95,6 @@ public class CachedOutputStream extends OutputStream {
      * output stream ... etc.)
      */
     protected void doFlush() throws IOException {
-        
     }
 
     public void flush() throws IOException {
@@ -112,14 +106,12 @@ public class CachedOutputStream extends OutputStream {
      * Perform any actions required on stream closure (handle response etc.)
      */
     protected void doClose() throws IOException {
-        
     }
     
     /**
      * Perform any actions required after stream closure (close the other related stream etc.)
      */
     protected void postClose() throws IOException {
-        
     }
 
     /**
@@ -166,14 +158,14 @@ public class CachedOutputStream extends OutputStream {
             InputStream in = ac.getInputStream();
             IOHelper.copyAndCloseInput(in, out);
         } else {
-            if (inmem) {
+            if (inMemory) {
                 if (currentStream instanceof ByteArrayOutputStream) {
                     ByteArrayOutputStream byteOut = (ByteArrayOutputStream) currentStream;
                     if (copyOldContent && byteOut.size() > 0) {
                         byteOut.writeTo(out);
                     }
                 } else {
-                    throw new IOException("Unknown format of currentStream");
+                    throw new IOException("Unknown format of currentStream: " + currentStream);
                 }
             } else {
                 // read the file
@@ -185,7 +177,7 @@ public class CachedOutputStream extends OutputStream {
                 streamList.remove(currentStream);
                 tempFile.delete();
                 tempFile = null;
-                inmem = true;
+                inMemory = true;
             }
         }
         currentStream = out;
@@ -202,7 +194,7 @@ public class CachedOutputStream extends OutputStream {
     
     public byte[] getBytes() throws IOException {
         flush();
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 return ((ByteArrayOutputStream)currentStream).toByteArray();
             } else {
@@ -217,7 +209,7 @@ public class CachedOutputStream extends OutputStream {
     
     public void writeCacheTo(OutputStream out) throws IOException {
         flush();
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 ((ByteArrayOutputStream)currentStream).writeTo(out);
             } else {
@@ -240,12 +232,12 @@ public class CachedOutputStream extends OutputStream {
         }
         
         int count = 0;
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 byte bytes[] = ((ByteArrayOutputStream)currentStream).toByteArray();
                 out.append(IOHelper.newStringFromBytes(bytes, 0, limit));
             } else {
-                throw new IOException("Unknown format of currentStream");
+                throw new IOException("Unknown format of currentStream: " + currentStream);
             }
         } else {
             // read the file
@@ -270,12 +262,12 @@ public class CachedOutputStream extends OutputStream {
     }
     public void writeCacheTo(StringBuilder out) throws IOException {
         flush();
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 byte[] bytes = ((ByteArrayOutputStream)currentStream).toByteArray();
                 out.append(IOHelper.newStringFromBytes(bytes));
             } else {
-                throw new IOException("Unknown format of currentStream");
+                throw new IOException("Unknown format of currentStream: " + currentStream);
             }
         } else {
             // read the file
@@ -315,14 +307,13 @@ public class CachedOutputStream extends OutputStream {
     }
 
     protected void onWrite() throws IOException {
-        
     }
 
     public void write(byte[] b, int off, int len) throws IOException {
         if (!outputLocked) {
             onWrite();
             this.totalLength += len;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b, off, len);
@@ -333,7 +324,7 @@ public class CachedOutputStream extends OutputStream {
         if (!outputLocked) {
             onWrite();
             this.totalLength += b.length;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b);
@@ -344,7 +335,7 @@ public class CachedOutputStream extends OutputStream {
         if (!outputLocked) {
             onWrite();
             this.totalLength++;
-            if (inmem && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+            if (inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
                 createFileOutputStream();
             }
             currentStream.write(b);
@@ -361,7 +352,7 @@ public class CachedOutputStream extends OutputStream {
         
         currentStream = new BufferedOutputStream(new FileOutputStream(tempFile));
         bout.writeTo(currentStream);
-        inmem = false;
+        inMemory = false;
         streamList.add(currentStream);
     }
 
@@ -371,7 +362,7 @@ public class CachedOutputStream extends OutputStream {
 
     public InputStream getInputStream() throws IOException {
         flush();
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 return new ByteArrayInputStream(((ByteArrayOutputStream) currentStream).toByteArray());
             } else {
@@ -388,14 +379,14 @@ public class CachedOutputStream extends OutputStream {
                 streamList.add(fileInputStream);
                 return fileInputStream;
             } catch (FileNotFoundException e) {
-                throw new IOException("Cached file was deleted, " + e.toString());
+                throw IOHelper.createIOException("Cached file was already deleted", e);
             }
         }
     }
     
     public StreamCache getStreamCache() throws IOException {
         flush();
-        if (inmem) {
+        if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
                 return new InputStreamCache(((ByteArrayOutputStream) currentStream).toByteArray());
             } else {
@@ -403,27 +394,27 @@ public class CachedOutputStream extends OutputStream {
             }
         } else {
             try {
-                FileInputStreamCache fileInputStream = new FileInputStreamCache(tempFile, this);
-                return fileInputStream;
+                return new FileInputStreamCache(tempFile, this);
             } catch (FileNotFoundException e) {
-                throw new IOException("Cached file was deleted, " + e.toString());
+                throw IOHelper.createIOException("Cached file was already deleted", e);
             }
         }
     }
     
     private void maybeDeleteTempFile(Object stream) {        
         streamList.remove(stream);        
-        if (!inmem && tempFile != null && streamList.isEmpty()) {            
+        if (!inMemory && tempFile != null && streamList.isEmpty()) {
             tempFile.delete();
             tempFile = null;
             currentStream = new ByteArrayOutputStream(1024);
-            inmem = true;
+            inMemory = true;
         }
     }
 
     public void setOutputDir(File outputDir) throws IOException {
         this.outputDir = outputDir;
     }
+
     public void setThreshold(long threshold) {
         this.threshold = threshold;
     }

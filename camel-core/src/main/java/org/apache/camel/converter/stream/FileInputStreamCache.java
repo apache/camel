@@ -26,41 +26,57 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 
 public class FileInputStreamCache extends InputStream implements StreamCache {
-    private FileInputStream inputStream;
+    private InputStream stream;
     private CachedOutputStream cachedOutputStream;
     private File file;
 
+    public FileInputStreamCache() {
+    }
+
     public FileInputStreamCache(File file, CachedOutputStream cos) throws FileNotFoundException {
         this.file = file;
-        cachedOutputStream = cos;
-        inputStream = new FileInputStream(file);       
+        this.cachedOutputStream = cos;
+        this.stream = new FileInputStream(file);
     }
     
+    @Override
     public void close() {
         try {
-            inputStream.close();
-            cachedOutputStream.close();
-        } catch (Exception exception) {
-            throw new RuntimeCamelException(exception);
+            getInputStream().close();
+            if (cachedOutputStream != null) {
+                cachedOutputStream.close();
+            }
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         } 
     }
 
-    public void reset() {            
+    @Override
+    public void reset() {
         try {
-            inputStream.close();            
-            inputStream = new FileInputStream(file);
-        } catch (Exception exception) {
-            throw new RuntimeCamelException(exception);
+            getInputStream().close();
+            // reset by creating a new stream based on the file
+            stream = new FileInputStream(file);
+        } catch (Exception e) {
+            throw new RuntimeCamelException(e);
         }            
     }
     
+    @Override
     public int available() throws IOException {
-        return inputStream.available();
+        return getInputStream().available();
     }
 
     @Override
     public int read() throws IOException {
-        return inputStream.read();
-    }   
-    
-}   
+        return getInputStream().read();
+    }
+
+    protected InputStream getInputStream() throws FileNotFoundException {
+        if (file != null && stream == null) {
+            stream = new FileInputStream(file);
+        }
+        return stream;
+    }
+
+}

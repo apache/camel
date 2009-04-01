@@ -63,7 +63,6 @@ public class CachedOutputStreamTest extends TestCase {
     }
        
     public void testCacheStreamToFileAndCloseStream() throws IOException {       
-        
         CachedOutputStream cos = new CachedOutputStream(16);
         cos.setOutputDir(file);
         cos.write(TEST_STRING.getBytes("UTF-8"));        
@@ -85,11 +84,9 @@ public class CachedOutputStreamTest extends TestCase {
         }
         files = file.list();
         assertEquals("we should have no temp file", files.length, 0);
-       
     }
     
     public void testCacheStreamToFileAndNotCloseStream() throws IOException {       
-        
         CachedOutputStream cos = new CachedOutputStream(16);
         cos.setOutputDir(file);
         cos.write(TEST_STRING.getBytes("UTF-8"));        

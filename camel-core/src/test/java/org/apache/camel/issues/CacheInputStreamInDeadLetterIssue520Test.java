@@ -19,7 +19,6 @@ package org.apache.camel.issues;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 
 import javax.xml.transform.stream.StreamSource;
@@ -69,7 +68,8 @@ public class CacheInputStreamInDeadLetterIssue520Test extends ContextTestSupport
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3));
+                // 0 delay for faster unit test
+                errorHandler(deadLetterChannel("direct:errorHandler").maximumRedeliveries(3).delay(0));
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         count++;

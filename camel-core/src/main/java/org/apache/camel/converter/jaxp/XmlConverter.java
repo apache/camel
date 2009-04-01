@@ -180,6 +180,19 @@ public class XmlConverter {
     }
 
     /**
+     * Converts the given input Source into bytes
+     */
+    @Converter
+    public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
+        String answer = toString(source);
+        if (exchange != null) {
+            return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, answer);
+        } else {
+            return answer.getBytes();
+        }
+    }
+
+    /**
      * Converts the given input Node into text
      */
     @Converter
