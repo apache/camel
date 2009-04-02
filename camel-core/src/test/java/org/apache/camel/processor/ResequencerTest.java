@@ -78,17 +78,14 @@ public class ResequencerTest extends ContextTestSupport {
         assertEquals("Number of routes created: " + list, 1, list.size());
 
         Route route = list.get(0);
-        EventDrivenConsumerRoute consumerRoute =
-            assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
         Processor processor = unwrap(consumerRoute.getProcessor());
 
-        DeadLetterChannel deadLetterChannel =
-            assertIsInstanceOf(DeadLetterChannel.class, processor);
+        DefaultErrorHandler defaultErrorHandler = assertIsInstanceOf(DefaultErrorHandler.class, processor);
 
-        Processor outputProcessor = deadLetterChannel.getOutput();
-        InstrumentationProcessor interceptor =
-                assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+        Processor outputProcessor = defaultErrorHandler.getOutput();
+        InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
 
         outputProcessor = interceptor.getProcessor();
 

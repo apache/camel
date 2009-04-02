@@ -26,6 +26,7 @@ import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
@@ -105,8 +106,8 @@ public class ErrorHandlerTest extends TestSupport {
                 }
             } else {
                 assertEquals("From endpoint", "seda:b", endpointUri);
-                DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
-                Processor outputProcessor = deadLetterChannel.getOutput();
+                DefaultErrorHandler defaultErrorHandler = assertIsInstanceOf(DefaultErrorHandler.class, processor);
+                Processor outputProcessor = defaultErrorHandler.getOutput();
                 if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
                     sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
                 } else {

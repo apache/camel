@@ -79,6 +79,8 @@ public class ValidatingProcessorTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").

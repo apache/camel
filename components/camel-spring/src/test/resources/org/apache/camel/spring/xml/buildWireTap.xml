@@ -22,16 +22,21 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <multicast>
-        <to uri="seda:tap"/>
-        <to uri="seda:b"/>
-      </multicast>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
+
+    <!-- START SNIPPET: example -->
+    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <multicast>
+                <to uri="seda:tap"/>
+                <to uri="seda:b"/>
+            </multicast>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>

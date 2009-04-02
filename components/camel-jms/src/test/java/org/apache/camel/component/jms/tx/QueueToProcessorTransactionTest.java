@@ -19,7 +19,6 @@ package org.apache.camel.component.jms.tx;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.apache.log4j.Logger;
 
 /**
  * Test case derived from:
@@ -33,8 +32,6 @@ import org.apache.log4j.Logger;
  *
  */
 public class QueueToProcessorTransactionTest extends AbstractTransactionTest {
-
-    private Logger log = Logger.getLogger(getClass());
 
     public void testRollbackUsingXmlQueueToProcessor() throws Exception {
 

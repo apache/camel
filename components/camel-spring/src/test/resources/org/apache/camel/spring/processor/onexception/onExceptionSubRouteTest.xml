@@ -23,34 +23,41 @@
     ">
 
     <!-- START SNIPPET: e1 -->
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
+
+    <!-- the default error handler used in the 2nd route -->
+    <bean id="defaultErrorHandler" class="org.apache.camel.builder.DefaultErrorHandlerBuilder"/>
 
     <!-- this is our POJO bean with our business logic defined as a plain spring bean -->
-    <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
+    <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
 
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-      <route>
-        <from uri="direct:start" />
-        <onException>
-          <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-          <redeliveryPolicy maximumRedeliveries="1" />
-          <handled>
-            <constant>true</constant>
-          </handled>
-          <bean ref="orderService" method="orderFailed" />
-          <to uri="mock:error" />
-        </onException>
-        <bean ref="orderService" method="handleOrder" />
-        <to uri="mock:result" />
-      </route>
+        <route errorHandlerRef="errorHandler">
+            <from uri="direct:start"/>
+            <onException>
+                <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
+                <redeliveryPolicy maximumRedeliveries="1"/>
+                <handled>
+                    <constant>true</constant>
+                </handled>
+                <bean ref="orderService" method="orderFailed"/>
+                <to uri="mock:error"/>
+            </onException>
+            <bean ref="orderService" method="handleOrder"/>
+            <to uri="mock:result"/>
+        </route>
 
-      <!-- The exception clause specified in the first route will not be used in this route -->
-      <route>
-        <from uri="direct:start_with_no_handler" />
-        <bean ref="orderService" method="handleOrder" />
-        <to uri="mock:result" />
-      </route>
+        <!-- The exception clause specified in the first route will not be used in this route -->
+        <route errorHandlerRef="defaultErrorHandler">
+            <from uri="direct:start_with_no_handler"/>
+            <bean ref="orderService" method="handleOrder"/>
+            <to uri="mock:result"/>
+        </route>
 
     </camelContext>
     <!-- END SNIPPET: e1 -->

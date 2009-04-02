@@ -100,6 +100,8 @@ public class ExceptionTest extends ContextTestSupport {
 
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
                     onException(IllegalArgumentException.class).setBody(constant("<handled/>")).

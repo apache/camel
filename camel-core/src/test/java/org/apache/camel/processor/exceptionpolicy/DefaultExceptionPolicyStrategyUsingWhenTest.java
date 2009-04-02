@@ -69,6 +69,8 @@ public class DefaultExceptionPolicyStrategyUsingWhenTest extends ContextTestSupp
         return new RouteBuilder() {
             // START SNIPPET e1
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 // here we define our onException to catch MyUserException when
                 // there is a header[user] on the exchange that is not null
                 onException(MyUserException.class).onWhen(header("user").isNotNull())

@@ -26,6 +26,8 @@ public class ValidationWithExceptionTest extends ValidationTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 onException(ValidationException.class).to("mock:invalid");
 
                 from("direct:start").

@@ -34,8 +34,6 @@ public class InterceptorBuilderWithEndTest extends TestSupport {
 
     /**
      * Validates that interceptors are executed in the right order.
-     *
-     * @throws Exception
      */
     public void testRouteWithInterceptor() throws Exception {
 
@@ -73,12 +71,7 @@ public class InterceptorBuilderWithEndTest extends TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                //from("direct:a").intercept(interceptor1).intercept(interceptor2).to("direct:d");
                 from("direct:a").intercept(interceptor1).process(orderProcessor).end().intercept(interceptor2).process(toProcessor);
-                /*
-                 * TODO keep old DSL? .intercept() .add(interceptor1)
-                 * .add(interceptor2) .target().to("direct:d");
-                 */
             }
         };
         container.addRoutes(builder);

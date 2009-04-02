@@ -23,12 +23,17 @@
     ">
 
     <!-- START SNIPPET: e1 -->
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
 
     <!-- this is our POJO bean with our business logic defined as a plain spring bean -->
     <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService" />
 
     <!-- this is the camel context where we define the routes -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- define our error handler as a global error handler -->
+    <camelContext errorHandlerRef="errorHandler" xmlns="http://camel.apache.org/schema/spring">
 
       <onException>
         <!-- the exception is full qualified names as plain strings -->

@@ -14,53 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.management;
+package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * A testcase for exception handler when management is enabled (by default).
- * 
+ * Default error handler test
+ *
  * @version $Revision$
  */
-public class ExceptionWithManagementTest extends ContextTestSupport {
-
-    public void testExceptionHandler() throws Exception {
-        MockEndpoint error = this.resolveMandatoryEndpoint("mock:error", MockEndpoint.class);
-        error.expectedMessageCount(1);
-        
-        MockEndpoint out = this.resolveMandatoryEndpoint("mock:out", MockEndpoint.class);
-        out.expectedMessageCount(0);
-        
-        Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {    
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("hello");
-            }
-
-        });
-        
-        error.assertIsSatisfied();
-        out.assertIsSatisfied();
-    }
+public class DefaultErrorHandlerExplicitConfiguredTest extends DefaultErrorHandlerTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
-
-                onException(IllegalArgumentException.class).maximumRedeliveries(1).to("mock:error");
+                // use default error handler
+                errorHandler(defaultErrorHandler());
 
                 from("direct:start").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        throw new IllegalArgumentException("intentional error");
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kabom".equals(body)) {
+                            throw new IllegalArgumentException("Boom");
+                        }
+                        exchange.getIn().setBody("Bye World");
                     }
-                }).to("mock:out");
+                }).to("mock:result");
             }
         };
     }

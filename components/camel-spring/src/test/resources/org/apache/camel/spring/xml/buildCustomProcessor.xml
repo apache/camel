@@ -22,19 +22,21 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-        from("seda:a").process(myProcessor);
-  -->
-  <!-- START SNIPPET: example -->
-  <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <process ref="myProcessor"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <bean id="myProcessor" class="org.apache.camel.builder.MyProcessor"/>
+
+    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <process ref="myProcessor"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 
 </beans>

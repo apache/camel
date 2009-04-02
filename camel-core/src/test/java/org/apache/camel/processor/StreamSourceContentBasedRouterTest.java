@@ -65,6 +65,10 @@ public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // TODO: should also work with default error handler when
+                // stream cache is enabled as well
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:start").choice()
                   .when().xpath("/message/text() = 'xx'").to("mock:x")
                   .when().xpath("/message/text() = 'yy'").to("mock:y");

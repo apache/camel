@@ -22,32 +22,31 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-        from("seda:a").choice()
-                .when(header("foo").isEqualTo("bar")).to("seda:b")
-                .when(header("foo").isEqualTo("cheese")).to("seda:c")
-                .otherwise().to("seda:d");
-  -->
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <choice>
-        <when>
-          <xpath>$foo = 'bar'</xpath>
-          <to uri="seda:b"/>
-        </when>
-        <when>
-          <xpath>$foo = 'cheese'</xpath>
-          <to uri="seda:c"/>
-        </when>
-        <otherwise>
-          <to uri="seda:d"/>
-        </otherwise>
-      </choice>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
+
+    <!-- START SNIPPET: example -->
+    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <choice>
+                <when>
+                    <xpath>$foo = 'bar'</xpath>
+                    <to uri="seda:b"/>
+                </when>
+                <when>
+                    <xpath>$foo = 'cheese'</xpath>
+                    <to uri="seda:c"/>
+                </when>
+                <otherwise>
+                    <to uri="seda:d"/>
+                </otherwise>
+            </choice>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 
 </beans>

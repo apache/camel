@@ -22,20 +22,21 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-        from("seda:a").filter(header("foo").isEqualTo("bar")).to("seda:b");
-  -->
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="seda:a"/>
-      <filter>
-        <xpath>$foo = 'bar'</xpath>
-        <to uri="seda:b"/>
-      </filter>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
 
+    <!-- START SNIPPET: example -->
+    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <filter>
+                <xpath>$foo = 'bar'</xpath>
+                <to uri="seda:b"/>
+            </filter>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>

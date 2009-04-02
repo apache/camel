@@ -25,10 +25,9 @@ import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.log4j.Logger;
+import org.apache.camel.processor.DefaultErrorHandler;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-
 
 /**
  * Test case derived from:
@@ -40,40 +39,23 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public abstract class AbstractTransactionTest extends ContextTestSupport {
 
-    // keep a ref to easily check the count at the end.
-    // private ConditionalExceptionProcessor conditionalExceptionProcessor;
-
-    // Policy required = new SpringTransactionPolicy( bean(
-    // TransactionTemplate.class, "PROPAGATION_REQUIRED" ) );
-    // Policy notSupported = new SpringTransactionPolicy( bean(
-    // TransactionTemplate.class, "PROPAGATION_NOT_SUPPORTED" ) );
-    // Policy requireNew = new SpringTransactionPolicy( bean(
-    // TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW" ) );
-
     @Override
     protected void setUp() throws Exception {
-
         super.setUp();
-        // setConditionalExceptionProcessor( new ConditionalExceptionProcessor()
-        // );
     }
 
     protected void tearDown() throws Exception {
-
         super.tearDown();
         setCamelContextService(null);
         context = null;
         template = null;
-        // setConditionalExceptionProcessor( null );
     }
 
     protected CamelContext createCamelContext() throws Exception {
-
         return createSpringCamelContext(this, "org/apache/camel/component/jms/tx/JavaDSLTransactionTest.xml");
     }
 
     protected void assertResult() throws InterruptedException {
-
         template.sendBody("activemq:queue:foo", "blah");
         Thread.sleep(3000L);        
         assertTrue("Expected only 2 calls to process() (1 failure, 1 success) but encountered "
@@ -106,48 +88,37 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
 
     /**
      * Find the first instance of a Processor of a given class.
-     *
-     * @param processor
-     * @param findClass
-     * @return
      */
     protected Processor findProcessorByClass(Processor processor, Class findClass) {
-
         while (true) {
-
             processor = unwrapDeadLetter(processor);
 
             if (processor instanceof DelegateAsyncProcessor) {
                 processor = ((DelegateAsyncProcessor)processor).getProcessor();
             } else if (processor instanceof DelegateProcessor) {
-
                 // TransactionInterceptor is a DelegateProcessor
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else if (processor instanceof Pipeline) {
-
                 for (Processor p : ((Pipeline)processor).getProcessors()) {
-
                     p = findProcessorByClass(p, findClass);
                     if (p != null && p.getClass().isAssignableFrom(findClass)) {
-
                         processor = p;
                         return processor;
                     }
                 }
             } else {
-
                 return processor;
             }
         }
     }
 
     private Processor unwrapDeadLetter(Processor processor) {
-
         if (processor instanceof DeadLetterChannel) {
-
             processor = ((DeadLetterChannel)processor).getOutput();
         }
-
+        if (processor instanceof DefaultErrorHandler) {
+            processor = ((DefaultErrorHandler)processor).getOutput();
+        }
         return processor;
     }
 }

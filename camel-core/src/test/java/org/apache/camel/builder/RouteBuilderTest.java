@@ -52,6 +52,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").to("seda:b");
             }
         };
@@ -72,8 +74,7 @@ public class RouteBuilderTest extends TestSupport {
             if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
                 sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
             } else {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
             }
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
@@ -84,6 +85,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e2
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").filter(header("foo").isEqualTo("bar")).to("seda:b");
             }
         };
@@ -103,15 +106,13 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-                    unwrapErrorHandler(filterProcessor
-                            .getProcessor()));
+                    unwrapErrorHandler(filterProcessor.getProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -120,6 +121,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e3
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").choice().when(header("foo").isEqualTo("bar")).to("seda:b")
                     .when(header("foo").isEqualTo("cheese")).to("seda:c").otherwise().to("seda:d");
             }
@@ -140,8 +143,7 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
 
@@ -169,6 +171,8 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").process(myProcessor);
             }
         };
@@ -185,8 +189,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
 
@@ -198,6 +201,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").filter(header("foo").isEqualTo("bar")).process(myProcessor);
             }
         };
@@ -216,8 +221,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
@@ -230,6 +234,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e6
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").multicast().to("seda:tap", "seda:b");
             }
         };
@@ -269,6 +275,8 @@ public class RouteBuilderTest extends TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").intercept(interceptor1).intercept(interceptor2).to("seda:d");
             }
         };
@@ -289,8 +297,7 @@ public class RouteBuilderTest extends TestSupport {
             Processor processor = getProcessorWithoutErrorHandler(route);
 
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
 
@@ -307,6 +314,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e7
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").filter(header("foo").isEqualTo(123)).to("seda:b");
                 from("seda:a").filter(header("bar").isGreaterThan(45)).to("seda:b");
             }
@@ -330,6 +339,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e8
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").multicast().to("seda:b", "seda:c", "seda:d");
             }
         };
@@ -341,6 +352,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: e9
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").recipientList(header("foo"));
             }
         };
@@ -360,8 +373,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
             RecipientList p1 = assertIsInstanceOf(RecipientList.class, processor);
@@ -372,6 +384,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: splitter
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").split(body(String.class).tokenize("\n")).to("seda:b");
             }
         };
@@ -391,8 +405,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
             Splitter p1 = assertIsInstanceOf(Splitter.class, processor);
@@ -403,6 +416,8 @@ public class RouteBuilderTest extends TestSupport {
         // START SNIPPET: idempotent
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("seda:a").idempotentConsumer(header("myMessageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200))
                     .to("seda:b");
             }
@@ -423,20 +438,16 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
             if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, processor);
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
                 processor = interceptor.getProcessor();
             }
-            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
 
-            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer
-                .getMessageIdExpression().toString());
+            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
+            assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-                                                             unwrapErrorHandler(idempotentConsumer
-                                                                 .getNextProcessor()));
+                                                             unwrapErrorHandler(idempotentConsumer.getNextProcessor()));
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -503,6 +514,8 @@ public class RouteBuilderTest extends TestSupport {
     public void testCorrectNumberOfRoutes() throws Exception {
         RouteBuilder builder = new RouteBuilder() {
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error"));
+
                 from("direct:start").to("seda:in");
 
                 from("seda:in").to("mock:result");

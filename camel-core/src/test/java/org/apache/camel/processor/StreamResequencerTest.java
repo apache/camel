@@ -96,7 +96,7 @@ public class StreamResequencerTest extends ContextTestSupport {
 
         Processor processor = unwrap(consumerRoute.getProcessor());
 
-        DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+        DefaultErrorHandler deadLetterChannel = assertIsInstanceOf(DefaultErrorHandler.class, processor);
         Processor outputProcessor = deadLetterChannel.getOutput();
         if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
             InstrumentationProcessor interceptor =

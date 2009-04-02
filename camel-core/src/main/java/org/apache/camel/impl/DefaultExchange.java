@@ -336,7 +336,10 @@ public class DefaultExchange implements Exchange {
     }
 
     protected String createExchangeId() {
-        String answer = in.createExchangeId();
+        String answer = null;
+        if (in != null) {
+            answer = in.createExchangeId();
+        }
         if (answer == null) {
             answer = DefaultExchange.DEFAULT_ID_GENERATOR.generateId();
         }

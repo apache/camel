@@ -49,6 +49,8 @@ public class TraceableUnitOfWorkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 // must enable tracer to trace the route path taken during runtime
                 context.addInterceptStrategy(new Tracer());
 

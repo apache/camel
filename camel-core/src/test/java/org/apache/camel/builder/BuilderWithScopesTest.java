@@ -113,6 +113,8 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor).end()
                     .process(toProcessor);
             }
@@ -124,6 +126,8 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").filter(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .process(toProcessor);
             }
@@ -133,6 +137,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createChoiceBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).end()
                     .process(toProcessor);
@@ -169,6 +175,8 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).process(toProcessor); // continuation of the second when clause
             }
@@ -178,6 +186,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createChoiceWithOtherwiseBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
                     .process(orderProcessor3).end().process(toProcessor);
@@ -214,6 +224,8 @@ public class BuilderWithScopesTest extends TestSupport {
 
         runTest(new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 from("direct:a").choice().when(header("foo").isEqualTo("bar")).process(orderProcessor)
                     .when(header("foo").isEqualTo("cheese")).process(orderProcessor2).otherwise()
                     .process(orderProcessor3).process(toProcessor); // continuation of the otherwise clause
@@ -224,6 +236,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchNoEnd() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0));
+                
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).process(orderProcessor3); // continuation of the handle clause
             }
@@ -257,6 +271,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchEnd() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0));
+
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
             }
@@ -291,7 +307,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyNoEnd() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel().maximumRedeliveries(1));
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(1));
+
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).finallyBlock()
                     .process(orderProcessor2).process(orderProcessor3); // continuation of the finallyBlock clause
@@ -335,7 +352,8 @@ public class BuilderWithScopesTest extends TestSupport {
     protected RouteBuilder createTryCatchFinallyEnd() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel().maximumRedeliveries(1));
+                errorHandler(deadLetterChannel().maximumRedeliveries(1).delay(0));
+                
                 from("direct:a").tryBlock().process(validator).process(toProcessor)
                     .handle(ValidationException.class).process(orderProcessor).finallyBlock()
                     .process(orderProcessor2).end().process(orderProcessor3);

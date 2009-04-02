@@ -53,7 +53,18 @@
       	<bean class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
       </cxf:outInterceptors>
 	</cxf:cxfEndpoint>
-	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+        <property name="redeliveryPolicy" ref="myRedeliveryPolicy"/>
+    </bean>
+
+    <bean id="myRedeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
+        <property name="delay" value="0"/>
+    </bean>
+
+	<camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
 		<route>
 			<from uri="cxf:bean:routerEndpoint?dataFormat=PAYLOAD" />
 			<to uri="cxf:bean:serviceEndpoint?dataFormat=PAYLOAD" />

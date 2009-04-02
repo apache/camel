@@ -41,7 +41,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.DataFormatClause;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
+import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
@@ -2048,7 +2048,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
         // return a new default one
-        return new DeadLetterChannelBuilder();
+        return new DefaultErrorHandlerBuilder();
     }
 
     protected void configureChild(ProcessorDefinition output) {

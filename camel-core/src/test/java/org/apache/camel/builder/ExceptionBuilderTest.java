@@ -159,6 +159,8 @@ public class ExceptionBuilderTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+
                 // START SNIPPET: exceptionBuilder1
                 onException(NullPointerException.class)
                     .maximumRedeliveries(0)

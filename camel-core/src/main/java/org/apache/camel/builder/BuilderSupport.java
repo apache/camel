@@ -25,7 +25,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -237,6 +236,15 @@ public abstract class BuilderSupport {
     }
 
     /**
+     * Creates a default <a href="http://camel.apache.org/error-handler.html">error handler</a>.
+     *
+     * @return the builder
+     */
+    public DefaultErrorHandlerBuilder defaultErrorHandler() {
+        return new DefaultErrorHandlerBuilder();
+    }
+
+    /**
      * Creates a disabled <a href="http://camel.apache.org/error-handler.html">error handler</a>
      * for removing the default error handler
      *
@@ -336,11 +344,7 @@ public abstract class BuilderSupport {
     }
 
     protected ErrorHandlerBuilder createErrorHandlerBuilder() {
-        if (isInheritErrorHandler()) {
-            return new DeadLetterChannelBuilder();
-        } else {
-            return new NoErrorHandlerBuilder();
-        }
+        return new DefaultErrorHandlerBuilder();
     }
 
     /**

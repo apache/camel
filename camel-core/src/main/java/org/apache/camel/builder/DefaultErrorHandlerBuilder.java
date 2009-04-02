@@ -14,29 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.builder;
 
-import org.apache.camel.ValidationException;
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.Processor;
+import org.apache.camel.processor.DefaultErrorHandler;
+import org.apache.camel.spi.RouteContext;
 
 /**
- * The handle catch clause has a pipeline processing the exception.
+ * The default error handler builder.
  *
- * @author <a href="mailto:nsandhu">nsandhu</a>
- *
+ * @version $Revision$
  */
-public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest {
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
+public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
-                onException(ValidationException.class).to("mock:invalid");
+    // TODO: in the future support onException
 
-                from("direct:start").tryBlock().process(validator).to("mock:valid").handle(
-                        ValidationException.class).process(validator);
-            }
-        };
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
+        return new DefaultErrorHandler(processor);
     }
 
 }

@@ -22,27 +22,23 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!--
-        from("seda:a")
-           .intercept()
-              .add(interceptor1)
-              .add(interceptor2)
-           .target().to("seda:d");
-  -->
-  <!-- START SNIPPET: example -->
-  <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
-  <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>
+    <!-- setup our error handler as the deal letter channel -->
+    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:error"/>
+    </bean>
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <interceptor ref="interceptor1"/>
-      <interceptor ref="interceptor2"/>
-      
-      <from uri="seda:a"/>
-      <to uri="seda:d"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
+    <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>
 
+    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="seda:a"/>
+            <interceptor ref="interceptor1"/>
+            <interceptor ref="interceptor2"/>
+            <to uri="seda:d"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>
