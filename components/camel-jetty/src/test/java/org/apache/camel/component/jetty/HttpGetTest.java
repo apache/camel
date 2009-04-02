@@ -35,7 +35,7 @@ public class HttpGetTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start", null);
+        template.requestBody("direct:start", null, Object.class);
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();

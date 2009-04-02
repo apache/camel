@@ -46,7 +46,7 @@ public class HttpClientRouteTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:a");
         mockEndpoint.expectedBodiesReceived("<b>Hello World</b>");
 
-        template.sendBodyAndHeader("direct:start", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
+        template.requestBodyAndHeader("direct:start", new ByteArrayInputStream("This is a test".getBytes()), "Content-Type", "application/xml");
         
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
@@ -68,11 +68,9 @@ public class HttpClientRouteTest extends ContextTestSupport {
             public void configure() {
                 errorHandler(noErrorHandler());
                 Processor clientProc = new Processor() {
-
-                    public void process(Exchange exchange) throws Exception {                        
+                    public void process(Exchange exchange) throws Exception {
                         InputStream is = (InputStream) exchange.getIn().getBody();                        
                     }
-                    
                 };
                 
                 from("direct:start").to("http://localhost:9080/hello").process(clientProc).intercept(new StreamCachingInterceptor()).convertBodyTo(String.class).to("mock:a");
@@ -80,7 +78,6 @@ public class HttpClientRouteTest extends ContextTestSupport {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
-                        
                         exchange.getOut(true).setBody(bis);
                     }
                 };

@@ -40,7 +40,7 @@ public class ConvertPayloadToInputStreamTest extends ContextTestSupport {
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
 
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();

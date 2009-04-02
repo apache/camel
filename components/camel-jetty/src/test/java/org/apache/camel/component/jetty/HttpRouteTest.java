@@ -75,7 +75,7 @@ public class HttpRouteTest extends ContextTestSupport {
     }
 
     protected void invokeHttpEndpoint() throws IOException {
-        template.sendBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
+        template.requestBodyAndHeader("http://localhost:9080/test", expectedBody, "Content-Type", "application/xml");
     }
 
     @Override

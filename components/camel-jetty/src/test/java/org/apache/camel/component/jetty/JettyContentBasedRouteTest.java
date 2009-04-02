@@ -32,7 +32,7 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
 
         mock.expectedHeaderReceived("one", "true");
 
-        template.sendBody(serverUri + "?one=true", null);
+        template.requestBody(serverUri + "?one=true", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -42,7 +42,7 @@ public class JettyContentBasedRouteTest extends ContextTestSupport {
 
         mock.expectedHeaderReceived("two", "true");
 
-        template.sendBody(serverUri + "?two=true", null);
+        template.requestBody(serverUri + "?two=true", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }

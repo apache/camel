@@ -62,6 +62,8 @@ public class JettyWithXPathChoiceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                errorHandler(deadLetterChannel("mock:error").delay(0));
+
                 // Need a convertBodyTo processor here or we may get an error
                 // that we are at the end of the stream
                 from("jetty:http://localhost:9080/myworld").choice()

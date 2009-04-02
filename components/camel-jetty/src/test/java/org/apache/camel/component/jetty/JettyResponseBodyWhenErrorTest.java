@@ -30,7 +30,7 @@ public class JettyResponseBodyWhenErrorTest extends ContextTestSupport {
 
     public void testResponseBodyWhenError() throws Exception {
         try {
-            template.sendBody("http://localhost:9080/myapp/myservice", "bookid=123");
+            template.requestBody("http://localhost:9080/myapp/myservice", "bookid=123");
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = (HttpOperationFailedException) e.getCause();

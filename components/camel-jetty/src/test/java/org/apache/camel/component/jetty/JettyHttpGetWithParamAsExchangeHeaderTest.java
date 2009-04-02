@@ -34,7 +34,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
         mock.expectedHeaderReceived("two", "twei");
         mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "GET");
 
-        template.sendBody(serverUri + "?one=einz&two=twei", null);
+        template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -45,7 +45,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
         mock.expectedHeaderReceived("two", "dos");
         mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "GET");
 
-        template.sendBodyAndHeader(serverUri, null, HttpConstants.HTTP_QUERY, "one=uno&two=dos");
+        template.requestBodyAndHeader(serverUri, null, HttpConstants.HTTP_QUERY, "one=uno&two=dos");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +55,7 @@ public class JettyHttpGetWithParamAsExchangeHeaderTest extends ContextTestSuppor
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived(HttpConstants.HTTP_METHOD, "POST");
 
-        template.sendBody(serverUri, "Hello World");
+        template.requestBody(serverUri, "Hello World");
 
         assertMockEndpointsSatisfied();
     }
