@@ -72,7 +72,7 @@ public abstract class ServiceSupport implements Service {
      * @return true if this service has been started
      */
     public boolean isStarted() {
-        return started.get();
+        return started.get() && !starting.get();
     }
 
     /**
