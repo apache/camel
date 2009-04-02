@@ -53,7 +53,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
     private static final String FAILURE_HANDLED_PROPERTY = DeadLetterChannel.class.getName() + ".FAILURE_HANDLED";
 
-    private static Timer timer = new Timer();
+    private static Timer timer = new Timer("Camel DeadLetterChannel Redeliver Timer", true);
     private Processor output;
     private Processor deadLetter;
     private AsyncProcessor outputAsync;
