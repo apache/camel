@@ -201,6 +201,19 @@ public class HttpProducer extends DefaultProducer {
             uri = ((HttpEndpoint)getEndpoint()).getHttpUri().toString();
         }
 
+        // append HTTP_PATH to HTTP_URI if it is provided in the header
+        String path = exchange.getIn().getHeader(HttpConstants.HTTP_PATH, String.class);
+        if (path != null) {
+            // make sure that there is exactly one "/" between HTTP_URI and HTTP_PATH
+            if (!uri.endsWith("/")) {
+                uri = uri + "/";
+            }
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            uri = uri.concat(path);
+        }
+
         HttpMethod method = methodToUse.createMethod(uri);
 
         if (queryString != null) {
