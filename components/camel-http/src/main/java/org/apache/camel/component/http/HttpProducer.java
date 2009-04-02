@@ -44,10 +44,12 @@ import org.apache.commons.logging.LogFactory;
 public class HttpProducer extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(HttpProducer.class);
     private HttpClient httpClient;
+    private boolean throwException;
 
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
-        httpClient = endpoint.createHttpClient();
+        this.httpClient = endpoint.createHttpClient();
+        this.throwException = endpoint.isThrowException();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -73,49 +75,61 @@ public class HttpProducer extends DefaultProducer {
                 LOG.debug("Http responseCode: " + responseCode);
             }
 
-            if (responseCode >= 100 && responseCode < 300) {
-                Message answer = exchange.getOut(true);
-
-                answer.setHeaders(in.getHeaders());
-                answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
-                answer.setBody(extractResponseBody(method, exchange));
-
-                // propagate HTTP response headers
-                Header[] headers = method.getResponseHeaders();
-                for (Header header : headers) {
-                    String name = header.getName();
-                    String value = header.getValue();
-                    if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
-                        answer.setHeader(name, value);
-                    }
-                }
+            if (!throwException) {
+                // if we do not use failed exception then populate response for all response codes
+                populateResponse(exchange, method, in, strategy, responseCode);
             } else {
-                HttpOperationFailedException exception = null;
-                Header[] headers = method.getResponseHeaders();
-                InputStream is = extractResponseBody(method, exchange);
-                if (responseCode >= 300 && responseCode < 400) {
-                    String redirectLocation;
-                    Header locationHeader = method.getResponseHeader("location");
-                    if (locationHeader != null) {
-                        redirectLocation = locationHeader.getValue();
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, is);
-                    } else {
-                        // no redirect location
-                        exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
-                    }
+                if (responseCode >= 100 && responseCode < 300) {
+                    // only populate reponse for OK response
+                    populateResponse(exchange, method, in, strategy, responseCode);
                 } else {
-                    // internal server error (error code 500)
-                    exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
-                }
-
-                if (exception != null) {                    
-                    throw exception;
+                    // operation failed so populate exception to throw
+                    throw populateHttpOperationFailedException(exchange, method, responseCode);
                 }
             }
 
         } finally {
             method.releaseConnection();
         }
+    }
+
+    protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
+        Message answer = exchange.getOut(true);
+
+        answer.setHeaders(in.getHeaders());
+        answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
+        answer.setBody(extractResponseBody(method, exchange));
+
+        // propagate HTTP response headers
+        Header[] headers = method.getResponseHeaders();
+        for (Header header : headers) {
+            String name = header.getName();
+            String value = header.getValue();
+            if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                answer.setHeader(name, value);
+            }
+        }
+    }
+
+    protected HttpOperationFailedException populateHttpOperationFailedException(Exchange exchange, HttpMethod method, int responseCode) throws IOException {
+        HttpOperationFailedException exception;
+        Header[] headers = method.getResponseHeaders();
+        InputStream is = extractResponseBody(method, exchange);
+        if (responseCode >= 300 && responseCode < 400) {
+            String redirectLocation;
+            Header locationHeader = method.getResponseHeader("location");
+            if (locationHeader != null) {
+                redirectLocation = locationHeader.getValue();
+                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), redirectLocation, headers, is);
+            } else {
+                // no redirect location
+                exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+            }
+        } else {
+            // internal server error (error code 500)
+            exception = new HttpOperationFailedException(responseCode, method.getStatusLine(), headers, is);
+        }
+        return exception;
     }
 
     /**

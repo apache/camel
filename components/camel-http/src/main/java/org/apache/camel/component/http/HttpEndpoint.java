@@ -49,6 +49,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpClientParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
     private HttpConnectionManager httpConnectionManager;
+    private boolean throwException = true;
 
     public HttpEndpoint() {
     }
@@ -204,4 +205,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    public boolean isThrowException() {
+        return throwException;
+    }
+
+    public void setThrowException(boolean throwException) {
+        this.throwException = throwException;
+    }
 }

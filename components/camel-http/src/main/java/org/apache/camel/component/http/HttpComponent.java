@@ -65,7 +65,6 @@ public class HttpComponent extends DefaultComponent {
      * and password option are not null.
      * 
      * @param parameters the map of parameters 
-     * 
      */
     protected void configureParameters(Map parameters) {
         // lookup http binding in registry if provided
@@ -86,7 +85,7 @@ public class HttpComponent extends DefaultComponent {
         if (ref != null) {
             httpClientConfigurer = CamelContextHelper.mandatoryLookup(getCamelContext(), ref, HttpClientConfigurer.class);
         }
-        
+
         matchOnUriPrefix = Boolean.parseBoolean(getAndRemoveParameter(parameters, "matchOnUriPrefix", String.class));
     }
     
@@ -101,6 +100,9 @@ public class HttpComponent extends DefaultComponent {
         validateParameters(uri, parameters, "httpClient.");
 
         configureParameters(parameters);
+
+        // should we use an exception for failed error codes?
+        Boolean throwException = getAndRemoveParameter(parameters, "throwException", Boolean.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
@@ -119,6 +121,9 @@ public class HttpComponent extends DefaultComponent {
         HttpEndpoint endpoint = new HttpEndpoint(uri, this, httpUri, clientParams, httpConnectionManager, httpClientConfigurer);
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
+        }
+        if (throwException != null) {
+            endpoint.setThrowException(throwException);
         }
         return endpoint;
     }
