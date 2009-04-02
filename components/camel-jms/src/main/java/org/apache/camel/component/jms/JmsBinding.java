@@ -157,8 +157,8 @@ public class JmsBinding {
                 String name = names.nextElement().toString();
                 try {
                     Object value = jmsMessage.getObjectProperty(name);
-                    if (headerFilterStrategy != null && 
-                        headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
+                    if (headerFilterStrategy != null
+                        && headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         continue;
                     }
 
@@ -400,7 +400,7 @@ public class JmsBinding {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Could not determine specific JmsMessage type to use from body."
                     + " Will use generic JmsMessage."
-                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : "") );
+                    + (body != null ? (" Body class: " + body.getClass().getCanonicalName()) : ""));
         }
 
         // return a default message

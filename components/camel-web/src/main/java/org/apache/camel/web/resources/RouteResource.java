@@ -16,13 +16,12 @@
  */
 package org.apache.camel.web.resources;
 
-import com.sun.jersey.api.representation.Form;
-import com.sun.jersey.api.view.Viewable;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.view.RouteDotGenerator;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collections;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -37,12 +36,15 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collections;
+
+import com.sun.jersey.api.representation.Form;
+import com.sun.jersey.api.view.Viewable;
+
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.view.RouteDotGenerator;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A single Camel Route which is used to implement one or more
