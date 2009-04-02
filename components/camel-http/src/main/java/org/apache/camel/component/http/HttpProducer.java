@@ -49,7 +49,7 @@ public class HttpProducer extends DefaultProducer {
     public HttpProducer(HttpEndpoint endpoint) {
         super(endpoint);
         this.httpClient = endpoint.createHttpClient();
-        this.throwException = endpoint.isThrowException();
+        this.throwException = endpoint.isThrowExceptionOnFailure();
     }
 
     public void process(Exchange exchange) throws Exception {

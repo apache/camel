@@ -102,7 +102,7 @@ public class HttpComponent extends DefaultComponent {
         configureParameters(parameters);
 
         // should we use an exception for failed error codes?
-        Boolean throwException = getAndRemoveParameter(parameters, "throwException", Boolean.class);
+        Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(new URI(uri), parameters);
@@ -122,8 +122,8 @@ public class HttpComponent extends DefaultComponent {
         if (httpBinding != null) {
             endpoint.setBinding(httpBinding);
         }
-        if (throwException != null) {
-            endpoint.setThrowException(throwException);
+        if (throwExceptionOnFailure != null) {
+            endpoint.setThrowExceptionOnFailure(throwExceptionOnFailure);
         }
         return endpoint;
     }

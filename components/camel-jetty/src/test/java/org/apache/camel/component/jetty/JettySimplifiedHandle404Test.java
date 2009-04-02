@@ -50,11 +50,11 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
                 errorHandler(noErrorHandler());
 
                 // START SNIPPET: e1
-                // We set throwException to false to let Camel return any response from the remove HTTP server without thrown
+                // We set throwExceptionOnFailure to false to let Camel return any response from the remove HTTP server without thrown
                 // HttpOperationFailedException in case of failures.
                 // This allows us to handle all responses in the aggregation strategy where we can check the HTTP response code
                 // and decide what to do. As this is based on an unit test we assert the code is 404
-                from("direct:start").enrich("http://localhost:8123/myserver?throwException=false&user=Camel", new AggregationStrategy() {
+                from("direct:start").enrich("http://localhost:8123/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
                         Integer code = resource.getOut().getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
