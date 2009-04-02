@@ -18,11 +18,12 @@
 package org.apache.camel.component.mail;
 
 public final class MailConstants {
-    public static final String DEFAULT_ALTERNATE_BODY_HEADER = "mailAlternateBody";
-    public static final String DEFAULT_FOLDER_NAME = "INBOX";
-    public static final String DEFAULT_FROM = "camel@localhost";    
-    public static final long DEFAULT_CONNECTION_TIMEOUT = 30000L;
-    
+
+    public static final String MAIL_ALTERNATIVE_BODY = "CamelMailAlternativeBody";
+    public static final String MAIL_DEFAULT_FOLDER = "INBOX";
+    public static final String MAIL_DEFAULT_FROM = "camel@localhost";
+    public static final long MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000L;
+
     private MailConstants() {
         // utility class
     }

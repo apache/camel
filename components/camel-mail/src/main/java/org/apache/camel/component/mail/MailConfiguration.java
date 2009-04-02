@@ -44,18 +44,18 @@ public class MailConfiguration implements Cloneable {
     private String password;
     private Session session;
     private String defaultEncoding;
-    private String from = MailConstants.DEFAULT_FROM;
-    private String folderName = MailConstants.DEFAULT_FOLDER_NAME;
+    private String from = MailConstants.MAIL_DEFAULT_FROM;
+    private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
     private boolean delete;
     private boolean unseen = true;
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
     private int fetchSize = -1;
     private boolean debugMode;
-    private long connectionTimeout = MailConstants.DEFAULT_CONNECTION_TIMEOUT;
+    private long connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
     private String contentType = "text/plain";
-    private String alternateBodyHeader = MailConstants.DEFAULT_ALTERNATE_BODY_HEADER;
+    private String alternateBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
     private boolean useInlineAttachments;
 
     public MailConfiguration() {

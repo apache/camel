@@ -29,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import static org.apache.camel.component.mail.MailConstants.MAIL_ALTERNATIVE_BODY;
 
 
 public class MimeMultipartAlternativeTest extends ContextTestSupport {
@@ -39,13 +40,13 @@ public class MimeMultipartAlternativeTest extends ContextTestSupport {
      // create an exchange with a normal body and attachment to be produced as email
         MailEndpoint endpoint = context.getEndpoint("smtp://ryan@mymailserver.com?password=secret", MailEndpoint.class);
         endpoint.getConfiguration().setUseInlineAttachments(useInlineattachments);
-        endpoint.getConfiguration().setAlternateBodyHeader(MailConstants.DEFAULT_ALTERNATE_BODY_HEADER);
+        endpoint.getConfiguration().setAlternateBodyHeader(MailConstants.MAIL_ALTERNATIVE_BODY);
 
         // create the exchange with the mail message that is multipart with a file and a Hello World text/plain message.
         Exchange exchange = endpoint.createExchange();
         Message in = exchange.getIn();
         in.setBody(htmlBody);
-        in.setHeader("mailAlternateBody", alternativeBody);
+        in.setHeader(MAIL_ALTERNATIVE_BODY, alternativeBody);
         in.addAttachment("cid:0001", new DataHandler(new FileDataSource("src/test/data/logo.jpeg")));
 
         // create a producer that can produce the exchange (= send the mail)
