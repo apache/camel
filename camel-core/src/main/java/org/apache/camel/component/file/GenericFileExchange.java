@@ -17,15 +17,18 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.PollingConsumerAware;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.impl.DefaultExchange;
 
-public class GenericFileExchange<T> extends DefaultExchange {
+public class GenericFileExchange<T> extends DefaultExchange implements PollingConsumerAware {
 
     private GenericFile<T> file;
 
@@ -100,4 +103,12 @@ public class GenericFileExchange<T> extends DefaultExchange {
         return new GenericFileExchange<T>(this, file);
     }
 
+    public void exchangePolled(Exchange exchange) {
+        try {
+            // load content into memory
+            file.getBinding().loadContent(exchange, file);
+        } catch (IOException e) {
+            throw new RuntimeExchangeException("Cannot load content of file: " + file.getAbsoluteFilePath(), exchange, e);
+        }
+    }
 }

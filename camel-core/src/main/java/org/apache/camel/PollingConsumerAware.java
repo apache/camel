@@ -14,29 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.file;
-
-import java.io.IOException;
-
-import org.apache.camel.Exchange;
+package org.apache.camel;
 
 /**
- * Default binding for generic file.
+ * A callback for {@link org.apache.camel.Exchange} when they are polled by a {@link org.apache.camel.PollingConsumer}.
+ * <p/>
+ * Is used if the {@link org.apache.camel.Exchange} needs to prepare, eg loading content that it otherwisw would have
+ * loaded lazy on demand.
+ *
+ * @version $Revision$
  */
-public class GenericFileDefaultBinding<T> implements GenericFileBinding<T> {
+public interface PollingConsumerAware {
 
-    private Object body;
-
-    public Object getBody(GenericFile<T> file) {
-        return body;
-    }
-
-    public void setBody(GenericFile<T> file, Object body) {
-        this.body = body;
-    }
-
-    public void loadContent(Exchange exchange, GenericFile<T> file) throws IOException {
-        // noop as the body is already loaded
-    }
-
+    /**
+     * Callback when an {@link org.apache.camel.Exchange} has been pooled.
+     *
+     * @param exchange  the exchange
+     */
+    void exchangePolled(Exchange exchange);
 }

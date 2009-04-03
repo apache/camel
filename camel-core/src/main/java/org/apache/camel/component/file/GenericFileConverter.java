@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.FileNotFoundException;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;
@@ -37,6 +39,7 @@ public final class GenericFileConverter {
     public static Object convertTo(Class<?> type, Exchange exchange, Object value, TypeConverterRegistry registry) {
         // use a fallback type converter so we can convert the embedded body if the value is GenericFile
         if (GenericFile.class.isAssignableFrom(value.getClass())) {
+
             GenericFile file = (GenericFile) value;
             Class from = file.getBody().getClass();
 
@@ -44,6 +47,7 @@ public final class GenericFileConverter {
             if (from.isAssignableFrom(type)) {
                 return file.getBody();
             }
+
             // no then try to lookup a type converter
             TypeConverter tc = registry.lookup(type, from);
             if (tc != null) {
@@ -53,6 +57,11 @@ public final class GenericFileConverter {
         }
         
         return null;
+    }
+
+    @Converter
+    public static String convertToString(GenericFile file, Exchange exchange) {
+        return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
     }
 
 }

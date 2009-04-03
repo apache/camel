@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.file;
 
+import java.io.IOException;
+
+import org.apache.camel.Exchange;
+
 /**
  * Binding between the generic file and the body content.
  */
@@ -36,4 +40,13 @@ public interface GenericFileBinding<T> {
      * @param body the body
      */
     void setBody(GenericFile<T> file, Object body);
+
+    /**
+     * Loads the content from the file into memory
+     *
+     * @param exchange the current exchange
+     * @param file the file
+     * @throws java.io.IOException is thrown if the content could not be loaded
+     */
+    void loadContent(Exchange exchange, GenericFile<T> file) throws IOException;
 }

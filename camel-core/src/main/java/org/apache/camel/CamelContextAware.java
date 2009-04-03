@@ -27,7 +27,7 @@ public interface CamelContextAware {
     /**
      * Injects the {@link CamelContext}
      *
-     * @param camelContext
+     * @param camelContext the Camel context
      */
     void setCamelContext(CamelContext camelContext);
 }

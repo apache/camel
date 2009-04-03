@@ -17,7 +17,12 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.Serializable;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.util.IOHelper;
 
 /**
  * File binding with the {@link java.io.File} type.
@@ -25,8 +30,14 @@ import java.io.Serializable;
 public class FileBinding implements GenericFileBinding<File>, Serializable {
 
     private File body;
+    private byte[] content;
 
     public Object getBody(GenericFile<File> file) {
+        // if file content has been loaded then return it
+        if (content != null) {
+            return content;
+        }
+        
         // as we use java.io.File itself as the body (not loading its content into a OutputStream etc.)
         // we just store a java.io.File handle to the actual file denoted by the
         // file.getAbsoluteFilePath. We must do this as the original file consumed can be renamed before
@@ -41,6 +52,14 @@ public class FileBinding implements GenericFileBinding<File>, Serializable {
 
     public void setBody(GenericFile<File> file, Object body) {
         // noop
+    }
+
+    public void loadContent(Exchange exchange, GenericFile<File> file) throws IOException {
+        try {
+            content = exchange.getContext().getTypeConverter().mandatoryConvertTo(byte[].class, file.getFile());
+        } catch (NoTypeConversionAvailableException e) {
+            throw IOHelper.createIOException("Cannot load file content: " + file.getAbsoluteFilePath(), e);
+        }
     }
 
 }
