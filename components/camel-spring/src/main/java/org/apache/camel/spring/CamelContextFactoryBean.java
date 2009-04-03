@@ -53,6 +53,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ProcessorDefinitionHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -541,12 +542,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     /**
-     * Strategy method to try find {@link RouteBuilder} instances on the
-     * classpath
+     * Strategy method to try find {@link RouteBuilder} instances on the classpath
      */
     protected void findRouteBuilders() throws Exception {
+        List<String> packages = new ArrayList<String>();
+
         if (getPackages() != null && getPackages().length > 0) {
-            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), getPackages(), getContextClassLoaderOnStart(),
+
+            // normalize packages as end user can have inserted spaces or \n or the likes
+            for (String name : getPackages()) {
+                name = ObjectHelper.normalizeClassName(name);
+                if (ObjectHelper.isNotEmpty(name)) {
+                    packages.add(name);
+                }
+            }
+            String[] normalized = packages.toArray(new String[packages.size()]);
+
+            RouteBuilderFinder finder = new RouteBuilderFinder(getContext(), normalized, getContextClassLoaderOnStart(),
                     getBeanPostProcessor(), getContext().getPackageScanClassResolver());
             finder.appendBuilders(getAdditionalBuilders());
         }
