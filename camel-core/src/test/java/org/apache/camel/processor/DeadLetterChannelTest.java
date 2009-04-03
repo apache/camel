@@ -94,7 +94,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                                                              Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
                 if (attempt > 1) {
-                    assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(), "Timer-0");
+                    assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(), "Camel DeadLetterChannel Redeliver Timer");
                 }
                 
                 if (attempt < failUntilAttempt) {
