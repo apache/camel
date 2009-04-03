@@ -16,37 +16,14 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
-public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSupport {
-    protected static final RuntimeException RUNTIME_EXCEPTION = new RuntimeException("Expected exception.");
-    protected String body = "<hello>world!</hello>";
-
-    public void testFirstFewAttemptsFail() throws Exception {
-        MockEndpoint failedEndpoint = getMockEndpoint("mock:failed");
-        MockEndpoint successEndpoint = getMockEndpoint("mock:success");
-
-        failedEndpoint.expectedBodiesReceived(body);
-        failedEndpoint.message(0).header(Exchange.EXCEPTION_CAUGHT).isEqualTo(RUNTIME_EXCEPTION);
-        failedEndpoint.expectedMessageCount(1);
-
-        successEndpoint.expectedMessageCount(0);
-
-        sendBody("direct:start", body);
-
-        assertMockEndpointsSatisfied();
-        assertNull(failedEndpoint.getExchanges().get(0).getException());
-    }
+public class DeadLetterChannelExceptionCausePropagatedWithDefaultErrorHandlerTest extends DeadLetterChannelExceptionCausePropagatedTest {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
-
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
                 from("direct:start")

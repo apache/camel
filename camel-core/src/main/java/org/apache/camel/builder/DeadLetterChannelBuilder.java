@@ -76,6 +76,8 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
+        // must enable stream cache as DeadLetterChannel can do redeliveries and
+        // thus it needs to be able to read the stream again
         StreamCaching.enable(routeContext);
         configure(answer);
         return answer;
