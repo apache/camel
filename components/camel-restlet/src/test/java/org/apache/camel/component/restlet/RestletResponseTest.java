@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -38,6 +41,9 @@ public class RestletResponseTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://localhost:9080/users/{username}?restletMethod=POST").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
+                        String userName = exchange.getIn().getHeader("username", String.class);                        
+                        assertNotNull("userName should not be null", userName);
+                        exchange.getOut().setBody("{" + userName + "}");
                         exchange.getOut().setHeader(RestletConstants.RESTLET_RESPONSE_CODE, "417");
                         exchange.getOut().setHeader(RestletConstants.RESTLET_MEDIA_TYPE, "application/JSON");
                     }        
@@ -56,6 +62,12 @@ public class RestletResponseTest extends ContextTestSupport {
         } finally {
             method.releaseConnection();
         }
-
+    }
+    
+    public void testRestletProducer() throws Exception {
+        Map<String, Object> headers = new HashMap<String, Object>();        
+        headers.put("username", "homer");
+        String response = (String)template.requestBodyAndHeaders("restlet:http://localhost:9080/users/{username}?restletMethod=POST", "<request>message</request>", headers);
+        assertEquals("The response is wrong ", response, "{homer}");
     }
 }
