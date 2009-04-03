@@ -73,6 +73,7 @@
   </dependencies>
 
   <build>
+    <!-- START SNIPPET: example -->
     <plugins>
       <!-- Allows the routes to be run via 'mvn camel:run' -->
       <plugin>
@@ -81,11 +82,14 @@
         <version>${pom.version}</version>
         <configuration>
             <duration>5s</duration>
-            <configClasses>org.apache.camel.example.spring.javaconfig.MyRouteConfig</configClasses>            
+            <configClasses>org.apache.camel.example.spring.javaconfig.MyRouteConfig</configClasses>
+            <!--You could set the base package directory and let spring to find the config classes for you 
+            <basedPackages>org.apache.camel.example.spring.javaconfig</basedPackages> 
+             -->            
         </configuration>
       </plugin>
     </plugins>
-
+    <!-- END SNIPPET: example -->
   </build>
 
   <reporting>

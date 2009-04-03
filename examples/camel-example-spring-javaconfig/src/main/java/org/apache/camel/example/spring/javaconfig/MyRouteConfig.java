@@ -25,6 +25,7 @@ import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.springframework.config.java.annotation.Bean;
 import org.springframework.config.java.annotation.Configuration;
 
+//START SNIPPET: RouteConfig
 /**
  * A simple example router from a file system to an ActiveMQ queue and then to a file system
  *
@@ -61,6 +62,7 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration {
 
     @Bean
     @Override
+    // you can confige the route rule with Java DSL here
     public RouteBuilder route() {
         return new RouteBuilder() {
             public void configure() {
@@ -78,3 +80,4 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration {
         };
     }
 }
+//END SNIPPET: RouteConfig
