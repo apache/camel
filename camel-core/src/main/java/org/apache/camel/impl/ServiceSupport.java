@@ -69,10 +69,18 @@ public abstract class ServiceSupport implements Service {
     }
 
     /**
+     * @return true if this service is finished starting process
+     */
+    public boolean isFinishedStarting() {
+        return started.get() && !starting.get();
+    }
+    
+    
+    /**
      * @return true if this service has been started
      */
     public boolean isStarted() {
-        return started.get() && !starting.get();
+        return started.get();
     }
 
     /**
