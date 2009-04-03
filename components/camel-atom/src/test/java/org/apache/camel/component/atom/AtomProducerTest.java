@@ -25,7 +25,7 @@ public class AtomProducerTest extends ContextTestSupport {
 
     public void testNotYetImplemented() throws Exception {
         try {
-            context.getEndpoint("atom:file:target/out.atom").createProducer();
+            context.getEndpoint("atom:file://target/out.atom").createProducer();
             fail("Should have thrown an UnsupportedOperationException");
         } catch (UnsupportedOperationException e) {
             // ok

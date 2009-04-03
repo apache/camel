@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.rss;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
+import org.apache.camel.util.URISupport;
 
 /**
  * An <a href="http://camel.apache.org/rss.html">RSS Component</a>.
@@ -29,6 +31,15 @@ import org.apache.camel.component.feed.FeedEndpoint;
 public class RssComponent extends FeedComponent {
 
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
-        return new RssEndpoint(uri, this, remaining);        
+
+        // Parameters should be kept in the remaining path, since they might be needed to get the actual RSS feed
+        URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+
+        if(remainingUri.getScheme().equals("http") || remainingUri.getScheme().equals("https")){
+            return new RssEndpoint(uri, this, remainingUri.toString());
+        }
+
+        return new RssEndpoint(uri, this, remaining);
     }
+    
 }

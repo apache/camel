@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.atom;
 
+import java.net.URI;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.component.feed.FeedComponent;
 import org.apache.camel.component.feed.FeedEndpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.URISupport;
 
 /**
  * An <a href="http://camel.apache.org/atom.html">Atom Component</a>.
  * <p/>
- * Camel uses Apache Abdera as the Atom implementation. 
+ * Camel uses Apache Abdera as the Atom implementation.
  *
  * @version $Revision$
  */
@@ -34,6 +34,17 @@ public class AtomComponent extends FeedComponent {
 
     @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
+
+        // Parameters should be kept in the remaining path, since they might be needed to get the actual ATOM feed
+        URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
+
+        // if http or https then the uri should include the parameters as we can have URI parameters
+        // that need to be sent to the remote server when retrieving feeds
+        String scheme = remainingUri.getScheme();
+        if (scheme != null && (scheme.equals("http") || scheme.equals("https"))) {
+            return new AtomEndpoint(uri, this, remainingUri.toString());
+        }
+
         return new AtomEndpoint(uri, this, remaining);
     }
 

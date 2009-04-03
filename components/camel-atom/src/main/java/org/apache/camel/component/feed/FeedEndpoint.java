@@ -180,7 +180,12 @@ public abstract class FeedEndpoint extends DefaultPollingEndpoint {
     public boolean isSortEntries() {
         return sortEntries;
     }      
-    
+
+    public boolean isLenientProperties() {
+        // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
+        return true;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
