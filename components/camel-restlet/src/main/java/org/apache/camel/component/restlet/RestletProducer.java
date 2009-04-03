@@ -21,6 +21,7 @@ import org.apache.camel.impl.DefaultProducer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.Client;
+import org.restlet.Context;
 import org.restlet.data.Request;
 import org.restlet.data.Response;
 
@@ -36,6 +37,7 @@ public class RestletProducer extends DefaultProducer {
     public RestletProducer(RestletEndpoint endpoint) throws Exception {
         super(endpoint);
         client = new Client(endpoint.getProtocol());
+        client.setContext(new Context());
     }
 
     @Override
