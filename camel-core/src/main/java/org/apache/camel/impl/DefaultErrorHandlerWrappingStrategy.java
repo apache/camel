@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -39,6 +40,10 @@ public class DefaultErrorHandlerWrappingStrategy implements ErrorHandlerWrapping
     }
 
     public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+        // dont double wrap error handlers
+        if (target instanceof ErrorHandler) {
+            return target;
+        }
 
         // don't wrap our instrumentation interceptors
         if (counterList.contains(processorDefinition)) {

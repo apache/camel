@@ -82,7 +82,7 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
         Policy policy = resolvePolicy(routeContext);
         ObjectHelper.notNull(policy, "policy", this);
-        return policy.wrap(childProcessor);
+        return policy.wrap(routeContext, childProcessor);
     }
 
     protected Policy resolvePolicy(RouteContext routeContext) {

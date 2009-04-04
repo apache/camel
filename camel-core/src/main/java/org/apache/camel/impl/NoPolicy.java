@@ -18,15 +18,16 @@ package org.apache.camel.impl;
 
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an {@link Policy} which adds no interceptors.
  *
  * @version $Revision$
  */
-public class NoPolicy<E> implements Policy<E> {
+public class NoPolicy implements Policy {
 
-    public Processor wrap(Processor processor) {
+    public Processor wrap(RouteContext routeContext, Processor processor) {
         return processor;
     }
 }

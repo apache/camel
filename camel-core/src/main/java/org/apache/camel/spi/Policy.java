@@ -23,13 +23,14 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public interface Policy<E> {
+public interface Policy {
 
     /**
      * Wraps any applicable interceptors around the given processor
      *
+     * @param routeContext the route context
      * @param processor the processor to be intercepted
      * @return either the original processor or a processor wrapped in one or more interceptors
      */
-    Processor wrap(Processor processor);
+    Processor wrap(RouteContext routeContext, Processor processor);
 }

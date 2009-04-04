@@ -31,10 +31,13 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
     private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
 
     public void addErrorHandlers(OnExceptionDefinition exception) {
-        exceptions.add(exception);
+        // only add if we not already have it
+        if (!exceptions.contains(exception)) {
+            exceptions.add(exception);
+        }
     }
 
-    protected void configure(ErrorHandlerSupport handler) {
+    public void configure(ErrorHandlerSupport handler) {
         for (OnExceptionDefinition exception : exceptions) {
             handler.addExceptionPolicy(exception);
         }

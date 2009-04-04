@@ -46,6 +46,13 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
         if (handler == null) {
+            handler = lookupErrorHandlerBuilder(routeContext);
+        }
+        return handler.createErrorHandler(routeContext, processor);
+    }
+
+    public ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext) {
+        if (handler == null) {
             handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
             List<OnExceptionDefinition> list = getExceptions();
@@ -53,6 +60,11 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                 handler.addErrorHandlers(exceptionType);
             }
         }
-        return handler.createErrorHandler(routeContext, processor);
+        return handler;
     }
+
+    public String getRef() {
+        return ref;
+    }
+
 }
