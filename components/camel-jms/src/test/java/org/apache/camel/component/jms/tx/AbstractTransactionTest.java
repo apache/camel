@@ -28,6 +28,7 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.DefaultErrorHandler;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+import org.apache.camel.spring.spi.TransactionErrorHandler;
 
 /**
  * Test case derived from:
@@ -118,6 +119,9 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
         }
         if (processor instanceof DefaultErrorHandler) {
             processor = ((DefaultErrorHandler)processor).getOutput();
+        }
+        if (processor instanceof TransactionErrorHandler) {
+            processor = ((TransactionErrorHandler)processor).getOutput();
         }
         return processor;
     }

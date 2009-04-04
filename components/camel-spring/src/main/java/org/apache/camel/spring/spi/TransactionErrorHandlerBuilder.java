@@ -19,6 +19,8 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
 import org.apache.camel.processor.DelayPolicy;
+import org.apache.camel.processor.ErrorHandlerSupport;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.beans.factory.InitializingBean;
@@ -35,6 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport implements InitializingBean {
 
     private TransactionTemplate transactionTemplate;
+    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private DelayPolicy delayPolicy;
 
     public TransactionErrorHandlerBuilder() {
@@ -42,6 +45,16 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     public TransactionTemplate getTransactionTemplate() {
         return transactionTemplate;
+    }
+
+    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
+        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate, processor, delayPolicy, exceptionPolicyStrategy);
+        configure(answer);
+        return answer;
+    }
+
+    public void afterPropertiesSet() throws Exception {
+        ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
     }
 
     public void setTransactionTemplate(TransactionTemplate transactionTemplate) {
@@ -60,12 +73,16 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
         this.delayPolicy = delayPolicy;
     }
 
-    public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        return new TransactionInterceptor(processor, transactionTemplate, delayPolicy);
+    /**
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
+     * to use for a given thrown exception
+     */
+    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
+        return exceptionPolicyStrategy;
     }
 
-    public void afterPropertiesSet() throws Exception {
-        ObjectHelper.notNull(transactionTemplate, "transactionTemplate");
+    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
     // Builder methods
@@ -76,6 +93,14 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
             delayPolicy = new DelayPolicy();
         }
         getDelayPolicy().delay(delay);
+        return this;
+    }
+
+    /**
+     * Sets the exception policy to use
+     */
+    public TransactionErrorHandlerBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        setExceptionPolicyStrategy(exceptionPolicyStrategy);
         return this;
     }
 

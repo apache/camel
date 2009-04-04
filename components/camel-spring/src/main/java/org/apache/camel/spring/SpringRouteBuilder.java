@@ -20,7 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
-import org.apache.camel.spring.spi.TransactionInterceptor;
+import org.apache.camel.spring.spi.TransactionErrorHandler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -34,8 +34,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 public abstract class SpringRouteBuilder extends RouteBuilder implements ApplicationContextAware {
     private ApplicationContext applicationContext;
 
-    public TransactionInterceptor transactionInterceptor() {
-        return new TransactionInterceptor(bean(TransactionTemplate.class));
+    public TransactionErrorHandler transactionInterceptor() {
+        return new TransactionErrorHandler(bean(TransactionTemplate.class));
     }
 
     /**

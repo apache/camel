@@ -17,7 +17,10 @@
 package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -28,7 +31,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version $Revision$
  */
-public class SpringTransactionPolicy<E> implements Policy<E> {
+public class SpringTransactionPolicy implements Policy {
     private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
     private TransactionTemplate template;
     private String propagationBehaviorName;
@@ -44,15 +47,38 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
         this.template = template;
     }
 
-    public Processor wrap(Processor processor) {
+    public Processor wrap(RouteContext routeContext, Processor processor) {
         final TransactionTemplate transactionTemplate = getTransactionTemplate();
+
+        // TODO: Maybe we can auto create a template if non configured
+
         if (transactionTemplate == null) {
             LOG.warn("No TransactionTemplate available so transactions will not be enabled!");
             return processor;
         }
 
-        TransactionInterceptor answer = new TransactionInterceptor(transactionTemplate);
-        answer.setProcessor(processor);
+        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate);
+        answer.setOutput(processor);
+
+        ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+        if (builder instanceof ErrorHandlerBuilderRef) {
+            // its a reference to a error handler so lookup the reference
+            ErrorHandlerBuilderRef ref = (ErrorHandlerBuilderRef) builder;
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Looking up errorHandlerRef: " + ref.getRef());
+            }
+            builder = ref.lookupErrorHandlerBuilder(routeContext);
+        }
+
+        if (builder instanceof TransactionErrorHandlerBuilder) {
+            TransactionErrorHandlerBuilder txBuilder = (TransactionErrorHandlerBuilder) builder;
+            answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
+            answer.setDelayPolicy(txBuilder.getDelayPolicy());
+            txBuilder.configure(answer);
+        } else {
+            LOG.warn("No TransactionErrorHandler defined so exception policies will not be enabled!");
+        }
+
         return answer;
     }
 
@@ -85,5 +111,4 @@ public class SpringTransactionPolicy<E> implements Policy<E> {
     public String getPropagationBehaviorName() {
         return propagationBehaviorName;
     }
-
 }
