@@ -61,7 +61,12 @@ public final class GenericFileConverter {
 
     @Converter
     public static String convertToString(GenericFile file, Exchange exchange) {
-        return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
+        if (exchange != null) {
+            return exchange.getContext().getTypeConverter().convertTo(String.class, file.getBody());
+        } else {
+            // should revert to fallback converter if we dont have an exchange 
+            return null;
+        }
     }
 
 }
