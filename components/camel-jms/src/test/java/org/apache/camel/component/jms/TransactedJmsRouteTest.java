@@ -30,6 +30,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.spi.Policy;
+import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
@@ -66,7 +67,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
                 SpringTransactionPolicy requirenew = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW"));
 
                 Policy rollback = new Policy() {
-                    public Processor wrap(Processor processor) {
+                    public Processor wrap(RouteContext routeContext, Processor processor) {
                         return new DelegateProcessor(processor) {
                             @Override
                             public void process(Exchange exchange) throws Exception {
@@ -83,7 +84,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
                 };
 
                 Policy catchRollback = new Policy() {
-                    public Processor wrap(Processor processor) {
+                    public Processor wrap(RouteContext routeContext, Processor processor) {
                         return new DelegateProcessor(processor) {
                             @Override
                             public void process(Exchange exchange) {
