@@ -282,7 +282,6 @@ public class JmsProducer extends DefaultProducer {
                 String to = destinationName != null ? destinationName : "" + destination;
                 LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable: " + exchange + " with destination: " + to);
                 exchange.getIn().setHeader("JMSReplyTo", null);
-                exchange.getIn().setHeader("JMSCorrelationID", null);
             }
 
             MessageCreator messageCreator = new MessageCreator() {
