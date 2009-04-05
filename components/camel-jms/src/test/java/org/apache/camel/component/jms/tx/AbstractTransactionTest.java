@@ -22,13 +22,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
+import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.DefaultErrorHandler;
+import org.apache.camel.spring.spi.TransactionErrorHandler;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
-import org.apache.camel.spring.spi.TransactionErrorHandler;
 
 /**
  * Test case derived from:

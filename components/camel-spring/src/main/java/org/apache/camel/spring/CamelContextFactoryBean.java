@@ -52,8 +52,8 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -67,6 +67,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a

@@ -43,7 +43,7 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration {
     }
     
     @Override
-    // setup the ActiveMQ component and regist it into the camel context
+    // setup the ActiveMQ component and register it into the camel context
     public void setupCamelContext(CamelContext camelContext) throws Exception {
         JmsComponent answer = new JmsComponent();
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();

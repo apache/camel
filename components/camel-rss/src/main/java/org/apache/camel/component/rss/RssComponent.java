@@ -35,7 +35,7 @@ public class RssComponent extends FeedComponent {
         // Parameters should be kept in the remaining path, since they might be needed to get the actual RSS feed
         URI remainingUri = URISupport.createRemainingURI(new URI(remaining), parameters);
 
-        if(remainingUri.getScheme().equals("http") || remainingUri.getScheme().equals("https")){
+        if (remainingUri.getScheme().equals("http") || remainingUri.getScheme().equals("https")) {
             return new RssEndpoint(uri, this, remainingUri.toString());
         }
 
