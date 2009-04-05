@@ -233,7 +233,6 @@ public class JmsProducer extends DefaultProducer {
                 String to = endpoint.getDestination();
                 LOG.warn("Disabling JMSReplyTo as this Exchange is not OUT capable: " + exchange + " with destination: " + to);
                 exchange.getIn().setHeader("JMSReplyTo", null);
-                exchange.getIn().setHeader("JMSCorrelationID", null);
             }
 
             getInOnlyTemplate().send(endpoint.getDestination(), new MessageCreator() {
