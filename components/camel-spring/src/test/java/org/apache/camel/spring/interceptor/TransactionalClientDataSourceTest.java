@@ -46,9 +46,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        this.disableJMX();
         super.setUp();
-
         // START SNIPPET: e5
         // create database and insert dummy data
         final DataSource ds = getMandatoryBean(DataSource.class, "dataSource");
@@ -62,7 +60,6 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
     protected void tearDown() throws Exception {
         super.tearDown();
         jdbc.execute("drop table books");
-        this.enableJMX();
     }
 
     // START SNIPPET: e3
