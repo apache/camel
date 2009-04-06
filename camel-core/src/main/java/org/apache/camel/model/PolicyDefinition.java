@@ -76,6 +76,17 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
         this.ref = ref;
     }
 
+    /**
+     * Sets a reference to use for lookup the policy in the registry.
+     *
+     * @param ref the reference
+     * @return the builder
+     */
+    public PolicyDefinition ref(String ref) {
+        setRef(ref);
+        return this;
+    }
+
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = createOutputsProcessor(routeContext);

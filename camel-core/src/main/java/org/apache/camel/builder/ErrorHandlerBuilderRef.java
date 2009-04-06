@@ -55,7 +55,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         if (handler == null) {
             handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
-            List<OnExceptionDefinition> list = getExceptions();
+            List<OnExceptionDefinition> list = getErrorHandlers();
             for (OnExceptionDefinition exceptionType : list) {
                 handler.addErrorHandlers(exceptionType);
             }

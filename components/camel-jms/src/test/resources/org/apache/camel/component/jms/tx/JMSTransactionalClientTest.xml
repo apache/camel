@@ -68,11 +68,7 @@
     </bean>
 
     <bean id="PROPAGATION_REQUIRED" class="org.apache.camel.spring.spi.SpringTransactionPolicy">
-        <constructor-arg>
-            <bean class="org.springframework.transaction.support.TransactionTemplate">
-                <property name="transactionManager" ref="jmsTransactionManager"/>
-            </bean>
-        </constructor-arg>
+        <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>
     <!-- END SNIPPET: e2 -->
 

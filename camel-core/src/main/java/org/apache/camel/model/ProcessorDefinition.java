@@ -1365,6 +1365,21 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Apply a {@link Policy}.
+     * <p/>
+     * Policy can be used for transactional policies.
+     *
+     * @param ref  reference to lookup a policy in the registry
+     * @return the policy builder to configure
+     */
+    public PolicyDefinition policy(String ref) {
+        PolicyDefinition answer = new PolicyDefinition();
+        answer.setRef(ref);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
      * Forces handling of faults as exceptions
      *
      * @return the current builder with the fault handler configured

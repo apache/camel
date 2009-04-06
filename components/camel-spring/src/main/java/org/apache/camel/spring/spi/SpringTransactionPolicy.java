@@ -21,6 +21,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -47,17 +48,12 @@ public class SpringTransactionPolicy implements Policy {
         this.template = template;
     }
 
+    public SpringTransactionPolicy(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public Processor wrap(RouteContext routeContext, Processor processor) {
-        final TransactionTemplate transactionTemplate = getTransactionTemplate();
-
-        // TODO: Maybe we can auto create a template if non configured
-
-        if (transactionTemplate == null) {
-            LOG.warn("No TransactionTemplate available so transactions will not be enabled!");
-            return processor;
-        }
-
-        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate);
+        TransactionErrorHandler answer = new TransactionErrorHandler(getTransactionTemplate());
         answer.setOutput(processor);
 
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
@@ -65,18 +61,36 @@ public class SpringTransactionPolicy implements Policy {
             // its a reference to a error handler so lookup the reference
             ErrorHandlerBuilderRef ref = (ErrorHandlerBuilderRef) builder;
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Looking up errorHandlerRef: " + ref.getRef());
+                LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref.getRef());
             }
             builder = ref.lookupErrorHandlerBuilder(routeContext);
         }
 
         if (builder instanceof TransactionErrorHandlerBuilder) {
+            // use existing transaction error handler builder
             TransactionErrorHandlerBuilder txBuilder = (TransactionErrorHandlerBuilder) builder;
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
             answer.setDelayPolicy(txBuilder.getDelayPolicy());
             txBuilder.configure(answer);
         } else {
-            LOG.warn("No TransactionErrorHandler defined so exception policies will not be enabled!");
+            // no transaction error handler builder configure so create a temporary one as we got all
+            // the needed information form the configured builder anyway this allow us to use transacted
+            // routes anway even though the error handler is not transactional, eg ease of configuration
+            if (builder != null && LOG.isDebugEnabled()) {
+                LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: " + builder);
+            } else {
+                LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
+            }
+            TransactionErrorHandlerBuilder txBuilder = new TransactionErrorHandlerBuilder();
+            txBuilder.setTransactionTemplate(getTransactionTemplate());
+            txBuilder.setSpringTransactionPolicy(this);
+            if (builder != null) {
+                // use error handlers from the configured builder
+                txBuilder.setErrorHandlers(builder.getErrorHandlers());
+            }
+            answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
+            answer.setDelayPolicy(txBuilder.getDelayPolicy());
+            txBuilder.configure(answer);
         }
 
         return answer;
@@ -84,6 +98,7 @@ public class SpringTransactionPolicy implements Policy {
 
     public TransactionTemplate getTransactionTemplate() {
         if (template == null) {
+            ObjectHelper.notNull(transactionManager, "transactionManager");
             template = new TransactionTemplate(transactionManager);
             if (propagationBehaviorName != null) {
                 template.setPropagationBehaviorName(propagationBehaviorName);

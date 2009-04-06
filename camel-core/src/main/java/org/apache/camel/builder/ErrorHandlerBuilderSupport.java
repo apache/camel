@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.ErrorHandlerSupport;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 
 /**
  * Base class for builders of error handling.
@@ -29,6 +30,7 @@ import org.apache.camel.processor.ErrorHandlerSupport;
  */
 public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder {
     private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
+    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
 
     public void addErrorHandlers(OnExceptionDefinition exception) {
         // only add if we not already have it
@@ -43,12 +45,28 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         }
     }
 
-    public List<OnExceptionDefinition> getExceptions() {
+    public List<OnExceptionDefinition> getErrorHandlers() {
         return exceptions;
     }
 
     public void setErrorHandlers(List<OnExceptionDefinition> exceptions) {
         this.exceptions.clear();
         this.exceptions.addAll(exceptions);
+    }
+
+    /**
+     * Sets the exception policy to use
+     */
+    public ErrorHandlerBuilderSupport exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        setExceptionPolicyStrategy(exceptionPolicyStrategy);
+        return this;
+    }
+
+    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
+        return exceptionPolicyStrategy;
+    }
+
+    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
+        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 }

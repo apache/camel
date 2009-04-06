@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -53,4 +54,21 @@ public interface ErrorHandlerBuilder {
      */
     void setErrorHandlers(List<OnExceptionDefinition> exceptions);
 
+    /**
+     * Gets the error handlers
+     */
+    List<OnExceptionDefinition> getErrorHandlers();
+
+    /**
+     * Gets the exception policy strategy
+     */
+    ExceptionPolicyStrategy getExceptionPolicyStrategy();
+
+    /**
+     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
+     * to use for a given thrown exception
+     *
+     * @param exceptionPolicyStrategy  the exception policy strategy
+     */
+    void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy);
 }

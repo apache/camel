@@ -29,32 +29,10 @@ import org.apache.camel.spi.RouteContext;
  */
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
-    private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
-
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
-        DefaultErrorHandler answer = new DefaultErrorHandler(processor, exceptionPolicyStrategy);
+        DefaultErrorHandler answer = new DefaultErrorHandler(processor, getExceptionPolicyStrategy());
         configure(answer);
         return answer;
-    }
-
-    /**
-     * Sets the exception policy to use
-     */
-    public DefaultErrorHandlerBuilder exceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        setExceptionPolicyStrategy(exceptionPolicyStrategy);
-        return this;
-    }
-
-    /**
-     * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
-     * to use for a given thrown exception
-     */
-    public ExceptionPolicyStrategy getExceptionPolicyStrategy() {
-        return exceptionPolicyStrategy;
-    }
-
-    public void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.exceptionPolicyStrategy = exceptionPolicyStrategy;
     }
 
 }
