@@ -901,4 +901,45 @@ public final class ObjectHelper {
         return sb.toString();
     }
 
+    /**
+     * Creates an iterator to walk the exception from the bottom up
+     * (the last caused by going upwards to the root exception).
+     *
+     * @param exception  the exception
+     * @return the iterator
+     */
+    public static Iterator<Throwable> createExceptionIterator(Throwable exception) {
+        return new ExceptionIterator(exception);
+    }
+
+    private static class ExceptionIterator implements Iterator<Throwable> {
+        private List<Throwable> tree = new ArrayList<Throwable>();
+        private Iterator<Throwable> it;
+
+        public ExceptionIterator(Throwable exception) {
+            Throwable current = exception;
+            // spool to the bottom of the caused by tree
+            while (current != null) {
+                tree.add(current);
+                current = current.getCause();
+            }
+
+            // reverse tree so we go from bottom to top
+            Collections.reverse(tree);
+            it = tree.iterator();
+        }
+
+        public boolean hasNext() {
+            return it.hasNext();
+        }
+
+        public Throwable next() {
+            return it.next();
+        }
+
+        public void remove() {
+            it.remove();
+        }
+    }
+
 }

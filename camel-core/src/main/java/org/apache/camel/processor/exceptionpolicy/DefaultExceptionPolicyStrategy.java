@@ -16,15 +16,13 @@
  */
 package org.apache.camel.processor.exceptionpolicy;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -60,7 +58,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
                                             Throwable exception) {
 
         // recursive up the tree using the iterator
-        Iterator<Throwable> it = createExceptionIterator(exception); 
+        Iterator<Throwable> it = createExceptionIterator(exception);
         while (it.hasNext()) {
             OnExceptionDefinition type = findMatchedExceptionPolicy(exceptionPolicices, exchange, it.next());
             if (type != null) {
@@ -176,7 +174,7 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * @return the iterator
      */
     protected Iterator<Throwable> createExceptionIterator(Throwable exception) {
-        return new ExceptionIterator(exception);
+        return ObjectHelper.createExceptionIterator(exception);
     }
 
     private static int getInheritanceLevel(Class clazz) {
@@ -184,36 +182,6 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
             return 0;
         }
         return 1 + getInheritanceLevel(clazz.getSuperclass());
-    }
-
-    private class ExceptionIterator implements Iterator<Throwable> {
-        private List<Throwable> tree = new ArrayList<Throwable>();
-        private Iterator<Throwable> it;
-
-        public ExceptionIterator(Throwable exception) {
-            Throwable current = exception;
-            // spool to the bottom of the caused by tree
-            while (current != null) {
-                tree.add(current);
-                current = current.getCause();
-            }
-
-            // reverse tree so we go from bottom to top
-            Collections.reverse(tree);
-            it = tree.iterator();
-        }
-
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-
-        public Throwable next() {
-            return it.next();
-        }
-
-        public void remove() {
-            it.remove();
-        }
     }
 
 }

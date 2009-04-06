@@ -42,12 +42,8 @@ public class JmsToHttpWithOnExceptionRoute extends JmsToHttpRoute {
         // if its a 404 then regard it as handled
         onException(HttpOperationFailedException.class).onWhen(new Predicate() {
             public boolean matches(Exchange exchange) {
-                if (exchange.getException() instanceof HttpOperationFailedException) {
-                    HttpOperationFailedException e = (HttpOperationFailedException) exchange.getException();
-                    return e.getStatusCode() == 404;
-                } else {
-                    return false;
-                }
+                HttpOperationFailedException e = exchange.getException(HttpOperationFailedException.class);
+                return e != null && e.getStatusCode() == 404;
             }
         }).handled(true).to("mock:404").transform(constant(noAccess));
 

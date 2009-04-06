@@ -16,9 +16,13 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
+import java.net.ConnectException;
+
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.InvalidPayloadException;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * @version $Revision$
@@ -48,6 +52,27 @@ public class DefaultExchangeTest extends ExchangeTestSupport {
         } catch (InvalidPayloadException e) {
             // expected
         }
+    }
+
+    public void testExceptionAsType() throws Exception {
+        exchange.setException(ObjectHelper.wrapRuntimeCamelException(new ConnectException("Cannot connect to remote server")));
+
+        ConnectException ce = exchange.getException(ConnectException.class);
+        assertNotNull(ce);
+        assertEquals("Cannot connect to remote server", ce.getMessage());
+
+        IOException ie = exchange.getException(IOException.class);
+        assertNotNull(ie);
+        assertEquals("Cannot connect to remote server", ie.getMessage());
+
+        Exception e = exchange.getException(Exception.class);
+        assertNotNull(e);
+        assertEquals("Cannot connect to remote server", e.getMessage());
+
+        RuntimeCamelException rce = exchange.getException(RuntimeCamelException.class);
+        assertNotNull(rce);
+        assertNotSame("Cannot connect to remote server", rce.getMessage());
+        assertEquals("Cannot connect to remote server", rce.getCause().getMessage());
     }
 
     public void testHeader() throws Exception {

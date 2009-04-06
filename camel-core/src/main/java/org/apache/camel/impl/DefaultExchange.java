@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,6 +29,7 @@ import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UuidGenerator;
 
 /**
@@ -225,6 +227,22 @@ public class DefaultExchange implements Exchange {
 
     public Exception getException() {
         return exception;
+    }
+
+    public <T> T getException(Class<T> type) {
+        if (exception == null) {
+            return null;
+        }
+
+        Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
+        while (it.hasNext()) {
+            Throwable e = it.next();
+            if (type.isInstance(e)) {
+                return type.cast(e);
+            }
+        }
+        // not found
+        return null;
     }
 
     public void setException(Exception exception) {
