@@ -70,8 +70,7 @@ public class SpringTransactionalClientDataSourceTest extends SpringTestSupport {
         }
 
         int count = jdbc.queryForInt("select count(*) from books");
-        // TODO: Fix this bug with Spring DSL not working with TX policies
-        // assertEquals("Number of books", 1, count);
+        assertEquals("Number of books", 1, count);
     }
 
 }
