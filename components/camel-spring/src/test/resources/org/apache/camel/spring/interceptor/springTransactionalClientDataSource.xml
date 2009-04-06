@@ -48,6 +48,14 @@
         <route>
             <from uri="direct:fail"/>
             <policy ref="PROPAGATION_REQUIRED"/>
+            <setBody>
+                <constant>Tiger in Action</constant>
+            </setBody>
+            <bean ref="bookService"/>
+            <setBody>
+                <constant>Donkey in Action</constant>
+            </setBody>
+            <bean ref="bookService"/>
         </route>
     </camelContext>
 
