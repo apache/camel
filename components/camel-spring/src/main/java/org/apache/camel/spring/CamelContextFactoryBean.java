@@ -41,6 +41,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -214,44 +215,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
         }
 
-        // setup the intercepts
+        // do special preparation for some concepts such as interceptors and policies
         for (RouteDefinition route : routes) {
-
             if (onExceptions != null) {
                 route.getOutputs().addAll(onExceptions);
-            }    
-            
-            for (InterceptDefinition intercept : intercepts) {
-                List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-                List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
-                for (ProcessorDefinition output : route.getOutputs()) {
-                    if (output instanceof OnExceptionDefinition) {
-                        exceptionHandlers.add(output);
-                    } else {
-                        outputs.add(output);
-                    }
-                }
-
-                // clearing the outputs
-                route.clearOutput();
-
-                // add exception handlers as top children
-                route.getOutputs().addAll(exceptionHandlers);
-                
-                // add the interceptor but we must do some pre configuration beforehand
-                intercept.afterPropertiesSet();
-                InterceptDefinition proxy = intercept.createProxy();
-                route.addOutput(proxy);
-                route.pushBlock(proxy.getProceed());
-
-                // if there is a proceed in the interceptor proxy then we should add
-                // the current outputs to out route so we will proceed and continue to route to them
-                ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
-                if (proceed != null) {
-                    proceed.getOutputs().addAll(outputs);
-                }
             }
 
+            initInterceptors(route);
+            initPolicies(route);
         }
 
         if (dataFormats != null) {
@@ -269,6 +240,58 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    private void initInterceptors(RouteDefinition route) {
+        for (InterceptDefinition intercept : intercepts) {
+            List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+            List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
+            for (ProcessorDefinition output : route.getOutputs()) {
+                if (output instanceof OnExceptionDefinition) {
+                    exceptionHandlers.add(output);
+                } else {
+                    outputs.add(output);
+                }
+            }
+
+            // clearing the outputs
+            route.clearOutput();
+
+            // add exception handlers as top children
+            route.getOutputs().addAll(exceptionHandlers);
+
+            // add the interceptor but we must do some pre configuration beforehand
+            intercept.afterPropertiesSet();
+            InterceptDefinition proxy = intercept.createProxy();
+            route.addOutput(proxy);
+            route.pushBlock(proxy.getProceed());
+
+            // if there is a proceed in the interceptor proxy then we should add
+            // the current outputs to out route so we will proceed and continue to route to them
+            ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
+            if (proceed != null) {
+                proceed.getOutputs().addAll(outputs);
+            }
+        }
+    }
+
+    private void initPolicies(RouteDefinition route) {
+        // setup the policies as JAXB yet again have not created a correct model for us
+        List<ProcessorDefinition> types = route.getOutputs();
+        PolicyDefinition policy = null;
+        for (ProcessorDefinition type : types) {
+            if (type instanceof PolicyDefinition) {
+                policy = (PolicyDefinition) type;
+            } else if (policy != null) {
+                // the outputs should be moved to the policy
+                policy.addOutput(type);
+            }
+        }
+        // did we find a policy if so replace it as the only output on the route
+        if (policy != null) {
+            route.clearOutput();
+            route.addOutput(policy);
+        }
     }
 
     private void initJMXAgent() throws Exception {
