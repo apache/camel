@@ -25,10 +25,10 @@ public enum ServiceStatus {
     Created, Starting, Started, Stopping, Stopped;
 
     public boolean isStartable() {
-        return this != Starting && this != Started;
+        return this == Created || this == Stopped;
     }
 
     public boolean isStoppable() {
-        return this != Stopping && this != Stopped;
+        return this == Starting || this == Started;
     }
 }

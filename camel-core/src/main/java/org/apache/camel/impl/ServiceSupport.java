@@ -16,10 +16,11 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.util.ObjectHelper;
@@ -41,31 +42,55 @@ public abstract class ServiceSupport implements Service {
     private String version;
 
     public void start() throws Exception {
-        if (started.compareAndSet(false, true)) {
-            starting.set(true);
-            try {
-                if (childServices != null) {
-                    ServiceHelper.startServices(childServices);
+        if (!started.get()) {
+            if (starting.compareAndSet(false, true)) {
+                boolean childrenStarted = false;
+                Exception ex = null;
+                try {
+                    if (childServices != null) {
+                        ServiceHelper.startServices(childServices);
+                    }
+                    childrenStarted = true;
+                    doStart();
+                } catch (Exception e) {
+                    ex = e;
+                } finally {
+                    if (ex != null) {
+                        stop(childrenStarted);
+                        throw ex;
+                    } else {
+                        started.set(true);
+                        starting.set(false);
+                    }
                 }
-                doStart();
+            }
+        }
+    }
+    
+    private void stop(boolean childrenStarted) throws Exception {
+        if (stopping.compareAndSet(false, true)) {
+            try {
+                try {
+                    starting.set(false);
+                    if (childrenStarted) {
+                        doStop();
+                    }
+                } finally {
+                    started.set(false);
+                    if (childServices != null) {
+                        ServiceHelper.stopServices(childServices);
+                    }
+                }
             } finally {
-                notStarting();
+                stopped.set(true);
+                stopping.set(false);
             }
         }
     }
 
     public void stop() throws Exception {
-        if (started.get() && stopping.compareAndSet(false, true)) {
-            try {
-                doStop();
-            } finally {
-                if (childServices != null) {
-                    ServiceHelper.stopServices(childServices);
-                }
-                stopped.set(true);
-                started.set(false);
-                stopping.set(false);
-            }
+        if (started.get()) {
+            stop(true);
         }
     }
 
@@ -90,14 +115,6 @@ public abstract class ServiceSupport implements Service {
     }
     
     /**
-     * @return true if this service is finished starting process
-     */
-    public boolean isFinishedStarting() {
-        return started.get() && !starting.get();
-    }
-    
-    
-    /**
      * @return true if this service has been started
      */
     public boolean isStarted() {
@@ -119,6 +136,13 @@ public abstract class ServiceSupport implements Service {
     }
 
     /**
+     * @return true if this service is closed
+     */
+    public boolean isStopped() {
+        return stopped.get();
+    }
+
+    /**
      * Helper methods so the service knows if it should keep running.
      * Returns false if the service is being stopped or is stopped.
      *
@@ -128,21 +152,9 @@ public abstract class ServiceSupport implements Service {
         return !(stopping.get() || stopped.get());
     }
 
-    /**
-     * @return true if this service is closed
-     */
-    public boolean isStopped() {
-        return stopped.get();
-    }
-
     protected abstract void doStart() throws Exception;
 
     protected abstract void doStop() throws Exception;
-
-
-    protected void notStarting() {
-        starting.set(false);
-    }
 
     /**
      * Creates a new thread name with the given prefix
@@ -156,18 +168,16 @@ public abstract class ServiceSupport implements Service {
     }
 
     protected void addChildService(Object childService) {
-        if (childServices == null) {
-            childServices = new ArrayList();
+        synchronized (this) {
+            if (childServices == null) {
+                childServices = new CopyOnWriteArrayList();
+            }
         }
         childServices.add(childService);
     }
 
     protected boolean removeChildService(Object childService) {
-        if (childServices != null) {
-            return childServices.remove(childService);
-        } else {
-            return false;
-        }
+        return childServices != null ? childServices.remove(childService) : false;
     }
 
     /**
@@ -183,13 +193,8 @@ public abstract class ServiceSupport implements Service {
             version = aPackage.getImplementationVersion();
             if (version == null) {
                 version = aPackage.getSpecificationVersion();
-                if (version == null) {
-                    version = "";
-                }
             }
-        } else {
-            version = "";
         }
-        return version;
+        return version != null ? version : "";
     }
 }
