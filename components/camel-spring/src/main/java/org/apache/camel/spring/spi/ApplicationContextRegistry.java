@@ -16,8 +16,9 @@
  */
 package org.apache.camel.spring.spi;
 
-import org.apache.camel.spi.Registry;
+import java.util.Map;
 
+import org.apache.camel.spi.Registry;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
@@ -49,5 +50,10 @@ public class ApplicationContextRegistry implements Registry {
         } catch (NoSuchBeanDefinitionException e) {
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return applicationContext.getBeansOfType(type);
     }
 }

@@ -60,6 +60,7 @@ import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -1374,6 +1375,32 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     public PolicyDefinition policy(String ref) {
         PolicyDefinition answer = new PolicyDefinition();
+        answer.setRef(ref);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Marks this route as transacted and uses the default transacted policy found in the registry.
+     *
+     * @return the policy builder to configure
+     */
+    public PolicyDefinition transacted() {
+        PolicyDefinition answer = new PolicyDefinition();
+        answer.setType(TransactedPolicy.class);
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Marks this route as transacted.
+     *
+     * @param ref  reference to lookup a transacted policy in the registry
+     * @return the policy builder to configure
+     */
+    public PolicyDefinition transacted(String ref) {
+        PolicyDefinition answer = new PolicyDefinition();
+        answer.setType(TransactedPolicy.class);
         answer.setRef(ref);
         addOutput(answer);
         return answer;

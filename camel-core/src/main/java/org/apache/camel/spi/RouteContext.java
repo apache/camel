@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
@@ -96,6 +97,14 @@ public interface RouteContext {
      * @return the found object
      */
     <T> T lookup(String name, Class<T> type);
+
+    /**
+     * lookup objects by type
+     *
+     * @param type the expected type
+     * @return the found objects with the name as the key in the map. Returns an empty map if none found.
+     */
+    <T> Map<String, T> lookupByType(Class<T> type);
 
     /**
      * Lets complete the route creation, creating a single event driven route

@@ -19,8 +19,8 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -32,7 +32,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version $Revision$
  */
-public class SpringTransactionPolicy implements Policy {
+public class SpringTransactionPolicy implements TransactedPolicy {
     private static final transient Log LOG = LogFactory.getLog(SpringTransactionPolicy.class);
     private TransactionTemplate template;
     private String propagationBehaviorName;
@@ -76,10 +76,12 @@ public class SpringTransactionPolicy implements Policy {
             // no transaction error handler builder configure so create a temporary one as we got all
             // the needed information form the configured builder anyway this allow us to use transacted
             // routes anway even though the error handler is not transactional, eg ease of configuration
-            if (builder != null && LOG.isDebugEnabled()) {
-                LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: " + builder);
-            } else {
-                LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
+            if (LOG.isDebugEnabled()) {
+                if (builder != null) {
+                    LOG.debug("The ErrorHandlerBuilder configured is not a TransactionErrorHandlerBuilder: " + builder);
+                } else {
+                    LOG.debug("No ErrorHandlerBuilder configured, will use default TransactionErrorHandlerBuilder settings");
+                }
             }
             TransactionErrorHandlerBuilder txBuilder = new TransactionErrorHandlerBuilder();
             txBuilder.setTransactionTemplate(getTransactionTemplate());

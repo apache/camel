@@ -66,6 +66,7 @@ ThreadDefinition
 ThrottleDefinition
 ThrowFaultDefinition
 ToDefinition
+TransactedDefinition
 TransformDefinition
 TryDefinition
 UnmarshalDefinition

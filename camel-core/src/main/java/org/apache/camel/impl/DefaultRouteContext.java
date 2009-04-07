@@ -128,6 +128,10 @@ public class DefaultRouteContext implements RouteContext {
         return getCamelContext().getRegistry().lookup(name, type);
     }
 
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        return getCamelContext().getRegistry().lookupByType(type);
+    }
+
     @SuppressWarnings("unchecked")
     public void commit() {
         // now lets turn all of the event driven consumer processors into a

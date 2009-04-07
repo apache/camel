@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
 /**
  * Represents a service registry which may be implemented via a Spring ApplicationContext,
  * via JNDI, a simple Map or the OSGI Service Registry
@@ -41,4 +43,16 @@ public interface Registry {
      * @return the service from the registry or null if it could not be found
      */
     Object lookup(String name);
+
+    /**
+     * Looks up services in the registry by their type.
+     * <p/>
+     * <b>Note:</b> Not all registry implementations support this feature,
+     * such as the {@link org.apache.camel.impl.JndiRegistry}.
+     *
+     * @param type  the type of the registered services
+     * @return the types found, with their id as the key. Returns an empty Map if none found.
+     */
+    <T> Map<String, T> lookupByType(Class<T> type);
+
 }

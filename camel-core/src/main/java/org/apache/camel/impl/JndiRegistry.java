@@ -16,8 +16,9 @@
  */
 package org.apache.camel.impl;
 
+import java.util.Collections;
 import java.util.Hashtable;
-
+import java.util.Map;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameNotFoundException;
@@ -54,6 +55,12 @@ public class JndiRegistry implements Registry {
         } catch (NamingException e) {
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Map<String, T> lookupByType(Class<T> type) {
+        // not implemented so we return an empty map
+        return Collections.EMPTY_MAP;
     }
 
     public void bind(String s, Object o) {

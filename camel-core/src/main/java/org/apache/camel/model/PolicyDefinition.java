@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -25,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,10 +37,14 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
+    @XmlTransient
+    public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     @XmlAttribute(required = true)
     private String ref;
     @XmlTransient
     private Policy policy;
+    @XmlTransient
+    protected Class<? extends Policy> type;
 
     public PolicyDefinition() {
     }
@@ -77,6 +83,22 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
     }
 
     /**
+     * Sets a policy type that this defition should scope within.
+     * <p/>
+     * Is used for convention over configuration situations where the policy
+     * should be automatic looked up in the registry and it should be based
+     * on this type. For instance a {@link org.apache.camel.spi.TransactedPolicy}
+     * can be set as type for easy transaction configuration.
+     * <p/>
+     * Will by default scope to the wide {@link Policy}
+     *
+     * @param type the policy type
+     */
+    public void setType(Class<? extends Policy> type) {
+        this.type = type;
+    }
+
+    /**
      * Sets a reference to use for lookup the policy in the registry.
      *
      * @param ref the reference
@@ -98,7 +120,30 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     protected Policy resolvePolicy(RouteContext routeContext) {
         if (policy == null) {
-            policy = routeContext.lookup(getRef(), Policy.class);
+            // try ref first
+            String ref = getRef();
+            if (ObjectHelper.isNotEmpty(ref)) {
+                policy = routeContext.lookup(ref, Policy.class);
+            }
+
+            // try to lookup by scoped type
+            if (policy == null && type != null) {
+                // try find by type, note that this method is not supported by all registry
+                Map types = routeContext.lookupByType(type);
+                if (types.size() == 1) {
+                    // only one policy defined so use it
+                    Object found = types.values().iterator().next();
+                    if (type.isInstance(found)) {
+                        return type.cast(found);
+                    }
+                }
+            }
+
+            // for transacted routing try the default REQUIRED name
+            if (policy == null && type == TransactedPolicy.class) {
+                // still not found try with the default name PROPAGATION_REQUIRED
+                policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
+            }
         }
         return policy;
     }
