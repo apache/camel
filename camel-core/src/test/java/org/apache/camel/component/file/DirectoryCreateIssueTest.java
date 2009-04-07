@@ -61,16 +61,16 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
     }
 
     public void testFileCreatedAsDir() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(numFiles);
-
+        MockEndpoint mock = getMockEndpoint("mock:result");        
+        mock.expectedMessageCount(numFiles);         
         template.send("seda:testFileCreatedAsDir", new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
                 in.setBody("Contents of test file");
             }
         });
-
+        // wait a while for the file creation
+        Thread.sleep(1000);
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < numFiles; i++) {

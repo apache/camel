@@ -42,12 +42,12 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
+    @XmlTransient
+    protected Class<? extends Policy> type;
     @XmlAttribute(required = true)
     protected String ref;
     @XmlTransient
     private Policy policy;
-    @XmlTransient
-    protected Class<? extends Policy> type;
 
     public PolicyDefinition() {
     }
