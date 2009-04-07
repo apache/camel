@@ -37,10 +37,13 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "policy")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
+
+    // TODO: Align this code with TransactedDefinition
+
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     @XmlAttribute(required = true)
-    private String ref;
+    protected String ref;
     @XmlTransient
     private Policy policy;
     @XmlTransient

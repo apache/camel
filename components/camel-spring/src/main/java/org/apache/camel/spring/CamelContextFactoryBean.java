@@ -42,6 +42,7 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.PolicyDefinition;
+import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -278,19 +279,29 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private void initPolicies(RouteDefinition route) {
         // setup the policies as JAXB yet again have not created a correct model for us
         List<ProcessorDefinition> types = route.getOutputs();
+        // we need to types as transacted cannot extend policy due JAXB limitations
         PolicyDefinition policy = null;
+        TransactedDefinition transacted = null;
         for (ProcessorDefinition type : types) {
             if (type instanceof PolicyDefinition) {
                 policy = (PolicyDefinition) type;
+            } else if (type instanceof TransactedDefinition) {
+                transacted = (TransactedDefinition) type;
             } else if (policy != null) {
                 // the outputs should be moved to the policy
                 policy.addOutput(type);
+            } else if (transacted != null) {
+                // the outputs should be moved to the transacted policy
+                transacted.addOutput(type);
             }
         }
         // did we find a policy if so replace it as the only output on the route
         if (policy != null) {
             route.clearOutput();
             route.addOutput(policy);
+        } else if (transacted != null) {
+            route.clearOutput();
+            route.addOutput(transacted);
         }
     }
 
