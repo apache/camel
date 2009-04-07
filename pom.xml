@@ -85,9 +85,7 @@
 
     <!-- Repositories -->
     <m1-repo-url>scpexe://minotaur.apache.org/www/people.apache.org/repo/m1-snapshot-repository</m1-repo-url>
-    <release-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</release-repo-url>
     <site-repo-url>scpexe://people.apache.org/www/activemq.apache.org/camel/maven/</site-repo-url>
-    <snapshot-repo-url>scpexe://people.apache.org/www/people.apache.org/repo/m2-snapshot-repository</snapshot-repo-url>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.pkg>!javax.xml.bind.annotation.adapters,*</camel.osgi.import.pkg>
@@ -143,16 +141,6 @@
   </issueManagement>
 
   <distributionManagement>
-    <repository>
-      <id>apache.releases</id>
-      <name>Apache Release Distribution Repository</name>
-      <url>${release-repo-url}</url>
-    </repository>
-    <snapshotRepository>
-      <id>apache.snapshots</id>
-      <name>Apache Development Snapshot Repository</name>
-      <url>${snapshot-repo-url}</url>
-    </snapshotRepository>
     <site>
       <id>apache.website</id>
       <url>${site-repo-url}</url>
