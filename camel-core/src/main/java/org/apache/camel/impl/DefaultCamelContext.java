@@ -205,7 +205,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
                         addComponent(name, component);
-                        if (isStarted()) {
+                        if (isStarted() || isStarting()) {
                             // If the component is looked up after the context is started,
                             // lets start it up.
                             startServices(component);
