@@ -178,7 +178,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
                         addComponent(name, component);
-                        if (isStarted()) {
+                        if (isStarted() || isStarting()) {
                             // If the component is looked up after the context
                             // is started,
                             // lets start it up.
@@ -603,6 +603,18 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
+    public void start() throws Exception {
+        super.start();
+        
+        // the context is now considered started (i.e. isStarted() == true))
+        // starting routes is done after, not during context startup
+        synchronized (this) {
+            startRoutes(routes);
+        }
+
+        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
+    }
+
     // Implementation methods
     // -----------------------------------------------------------------------
 
@@ -649,9 +661,6 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
         startRouteDefinitions(routeDefinitions);
-        startRoutes(routes);
-        
-        LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") started");
     }
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
