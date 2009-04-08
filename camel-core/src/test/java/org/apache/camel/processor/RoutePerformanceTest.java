@@ -46,8 +46,8 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         long delta = System.nanoTime() - start;
 
-        LOG.debug("Took: " + delta + " ns");
-        LOG.debug("Took: " + delta / 1000000 + " millis");
+        LOG.info("Took: " + delta + " ns");
+        LOG.info("Took: " + delta / 1000000 + " millis");
     }
 
     @Override
