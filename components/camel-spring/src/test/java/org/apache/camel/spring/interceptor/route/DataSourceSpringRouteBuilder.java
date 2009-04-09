@@ -27,9 +27,7 @@ public class DataSourceSpringRouteBuilder extends SpringRouteBuilder {
 
         // For spring based transaction, end users are encouraged to use the
         // transaction error handler instead of the default DeadLetterChannel.
-        errorHandler(transactionErrorHandler(required).
-            // notice that the builder has builder methods for chained configuration
-            delay(1 * 1000L));
+        errorHandler(transactionErrorHandler(required));
 
         // set the required policy for this route
         from("direct:okay").policy(required).

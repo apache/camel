@@ -47,7 +47,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
 
     private static final transient Log LOG = LogFactory.getLog(TransactionErrorHandler.class);
     private final TransactionTemplate transactionTemplate;
-    private DelayPolicy delayPolicy;
     private Processor output;
 
     public TransactionErrorHandler(TransactionTemplate transactionTemplate) {
@@ -55,9 +54,8 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
     }
 
     public TransactionErrorHandler(TransactionTemplate transactionTemplate, Processor output,
-                                   DelayPolicy delayPolicy, ExceptionPolicyStrategy exceptionPolicy) {
+                                   ExceptionPolicyStrategy exceptionPolicy) {
         this.transactionTemplate = transactionTemplate;
-        this.delayPolicy = delayPolicy;
         setOutput(output);
         setExceptionPolicy(exceptionPolicy);
     }
@@ -135,8 +133,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
                         }
                     }
 
-                    delayBeforeRedelivery();
-
                     // rethrow if an exception occured
                     if (rce != null) {
                         throw rce;
@@ -144,28 +140,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
                 }
             }
         });
-    }
-
-    /**
-     * Sleeps before the transaction is set as rollback and the caused exception is rethrown to let the
-     * Spring TransactionManager handle the rollback.
-     */
-    protected void delayBeforeRedelivery() {
-        long delay = 0;
-        if (delayPolicy != null) {
-            delay = delayPolicy.getDelay();
-        }
-
-        if (delay > 0) {
-            try {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Sleeping for: " + delay + " millis until attempting redelivery");
-                }
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
     }
 
     /**
@@ -279,14 +253,6 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
 
     public void setOutput(Processor output) {
         this.output = output;
-    }
-
-    public DelayPolicy getDelayPolicy() {
-        return delayPolicy;
-    }
-
-    public void setDelayPolicy(DelayPolicy delayPolicy) {
-        this.delayPolicy = delayPolicy;
     }
 
 }

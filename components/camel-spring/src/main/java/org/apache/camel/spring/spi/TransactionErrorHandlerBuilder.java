@@ -38,7 +38,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     private TransactionTemplate transactionTemplate;
     private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
-    private DelayPolicy delayPolicy;
 
     public TransactionErrorHandlerBuilder() {
     }
@@ -48,7 +47,7 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
-        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate, processor, delayPolicy, exceptionPolicyStrategy);
+        TransactionErrorHandler answer = new TransactionErrorHandler(transactionTemplate, processor, exceptionPolicyStrategy);
         configure(answer);
         return answer;
     }
@@ -65,14 +64,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
         this.transactionTemplate = policy.getTransactionTemplate();
     }
 
-    public DelayPolicy getDelayPolicy() {
-        return delayPolicy;
-    }
-
-    public void setDelayPolicy(DelayPolicy delayPolicy) {
-        this.delayPolicy = delayPolicy;
-    }
-
     /**
      * Sets the exception policy strategy to use for resolving the {@link org.apache.camel.model.OnExceptionDefinition}
      * to use for a given thrown exception
@@ -87,14 +78,6 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     // Builder methods
     // -------------------------------------------------------------------------
-
-    public TransactionErrorHandlerBuilder delay(long delay) {
-        if (getDelayPolicy() == null) {
-            delayPolicy = new DelayPolicy();
-        }
-        getDelayPolicy().delay(delay);
-        return this;
-    }
 
     /**
      * Sets the exception policy to use

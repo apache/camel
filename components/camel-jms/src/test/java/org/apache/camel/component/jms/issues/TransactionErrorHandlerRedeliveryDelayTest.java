@@ -43,12 +43,9 @@ public class TransactionErrorHandlerRedeliveryDelayTest extends AbstractJUnit38S
         result.expectedMessageCount(1);
         result.expectedBodiesReceived("Bye World");
 
-        long start = System.currentTimeMillis();
         context.createProducerTemplate().sendBody("activemq:queue:in", "Hello World");
 
         result.assertIsSatisfied();
-        long delta = System.currentTimeMillis() - start;
-        assertTrue("There should have been redelivery delay: delta=" + delta, delta > 6000L);
     }
 
     public static class MyFailureProcessor implements Processor {

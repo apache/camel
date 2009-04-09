@@ -107,9 +107,7 @@ public class TransactionalClientDataSourceTest extends SpringTestSupport {
                     // for doing a 2nd test without this transaction error handler, so ignore
                     // this. For spring based transaction, end users are encouraged to use the
                     // transaction error handler instead of the default DeadLetterChannel.
-                    errorHandler(transactionErrorHandler(required).
-                        // notice that the builder has builder methods for chained configuration
-                        delay(1 * 1000L));
+                    errorHandler(transactionErrorHandler(required));
                 }
                 // END SNIPPET: e1
 

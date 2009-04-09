@@ -34,11 +34,6 @@
 
     <bean id="myTransactionErrorHandler" class="org.apache.camel.spring.spi.TransactionErrorHandlerBuilder">
         <property name="transactionTemplate" ref="PROPAGATION_REQUIRED"/>
-        <property name="delayPolicy" ref="myRedeliveryPolicyConfig"/>
-    </bean>
-
-    <bean id="myRedeliveryPolicyConfig" class="org.apache.camel.processor.DelayPolicy">
-        <property name="delay" value="2000"/>
     </bean>
 
     <bean id="required" class="org.apache.camel.spring.spi.SpringTransactionPolicy">

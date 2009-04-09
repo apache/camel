@@ -70,7 +70,6 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             // use existing transaction error handler builder
             TransactionErrorHandlerBuilder txBuilder = (TransactionErrorHandlerBuilder) builder;
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
-            answer.setDelayPolicy(txBuilder.getDelayPolicy());
             txBuilder.configure(answer);
         } else {
             // no transaction error handler builder configure so create a temporary one as we got all
@@ -91,7 +90,6 @@ public class SpringTransactionPolicy implements TransactedPolicy {
                 txBuilder.setErrorHandlers(builder.getErrorHandlers());
             }
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
-            answer.setDelayPolicy(txBuilder.getDelayPolicy());
             txBuilder.configure(answer);
         }
 
