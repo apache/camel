@@ -18,6 +18,7 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.spi.Registry;
 
+import org.springframework.beans.factory.BeanNotOfRequiredTypeException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.context.ApplicationContext;
 
@@ -39,6 +40,8 @@ public class ApplicationContextRegistry implements Registry {
             Object value = applicationContext.getBean(name, type);
             return type.cast(value);
         } catch (NoSuchBeanDefinitionException e) {
+            return null;
+        } catch (BeanNotOfRequiredTypeException e) {
             return null;
         }
     }

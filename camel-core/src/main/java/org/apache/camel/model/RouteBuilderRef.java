@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Routes;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -59,8 +60,13 @@ public class RouteBuilderRef extends IdentifiedType {
 
     public RouteBuilder createRouteBuilder(CamelContext camelContext) {
         ObjectHelper.notNull(camelContext, "camelContext");
-        ObjectHelper.notNull(ref, "ref");
-        RouteBuilder builder = CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);
-        return builder != null ? builder : CamelContextHelper.newInstance(camelContext, RouteBuilder.class);
+        ObjectHelper.notNull(ref, "ref");        
+        return CamelContextHelper.lookup(camelContext, ref, RouteBuilder.class);        
+    }
+
+    public Routes createRoutes(CamelContext camelContext) {
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+        ObjectHelper.notNull(ref, "ref", this);
+        return CamelContextHelper.lookup(camelContext, ref, Routes.class);
     }
 }

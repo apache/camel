@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Routes;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,6 +67,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -579,11 +581,22 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (builderRefs != null) {
             for (RouteBuilderRef builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
-                if (beanPostProcessor != null) {
-                    // Inject the annotated resource
-                    beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+                if (builder != null) {
+                    if (beanPostProcessor != null) {
+                        // Inject the annotated resource
+                        beanPostProcessor.postProcessBeforeInitialization(builder, builder.toString());
+                    }
+                    getContext().addRoutes(builder);
+                } else {
+                    // support to get the route here
+                    Routes routes = builderRef.createRoutes(getContext());
+                    if (routes != null) {
+                        getContext().addRoutes(routes);
+                    } else {
+                        // Throw the exception that we can't find any build here
+                        throw new CamelException("Can't find any routes info with this RouteBuilderDefinition " + builderRef);
+                    }
                 }
-                getContext().addRoutes(builder);
             }
         }
     }
