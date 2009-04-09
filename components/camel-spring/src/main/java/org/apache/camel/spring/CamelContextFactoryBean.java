@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Routes;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,12 +37,12 @@ import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.ProceedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.PolicyDefinition;
 import org.apache.camel.model.TransactedDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
@@ -69,8 +70,6 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
-
 /**
  * A Spring {@link FactoryBean} to create and initialize a
  * {@link SpringCamelContext} and install routes either explicitly configured in
@@ -557,7 +556,19 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         if (builderRefs != null) {
             for (RouteBuilderDefinition builderRef : builderRefs) {
                 RouteBuilder builder = builderRef.createRouteBuilder(getContext());
-                builders.add(builder);
+                if (builder != null) {
+                    builders.add(builder);
+                } else {
+                    // support to get the route here
+                    Routes routes = builderRef.createRoutes(getContext());
+                    if (routes != null) {
+                        additionalBuilders.add(routes);
+                    } else {
+                        // Throw the exception that we can't find any build here
+                        throw new CamelException("Can't find any routes info with this RouteBuilderDefinition " + builderRef);
+                    }
+                }
+                
             }
         }
 
