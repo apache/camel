@@ -36,11 +36,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import java.util.regex.Pattern;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.commons.csv.writer.CSVConfig;
+import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -77,6 +80,80 @@ public class CsvRouteTest extends ContextTestSupport {
         }
     }
 
+    public void testMultipleMessages() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMulti",
+                                                               MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(2);
+        Map body1 = new HashMap();
+        body1.put("foo", "abc");
+        body1.put("bar", 123);
+
+        Map body2 = new HashMap();
+        body2.put("foo", "def");
+        body2.put("bar", 456);
+        body2.put("baz", 789);
+
+        template.sendBody("direct:startMulti", body1);
+        template.sendBody("direct:startMulti", body2);
+
+        resultEndpoint.assertIsSatisfied();
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        Message in1 = list.get(0).getIn();
+        String text1 = in1.getBody(String.class);
+
+        log.debug("Received " + text1);
+        assertTrue("First CSV body has wrong value",
+                   Pattern.matches("(abc,123)|(123,abc)", text1.trim()));
+
+        Message in2 = list.get(1).getIn();
+        String text2 = in2.getBody(String.class);
+
+        log.debug("Received " + text2);
+
+        // fields should keep the same order from one call to the other
+        if (text1.trim().equals("abc,123")) {
+            assertEquals("Second CSV body has wrong value",
+                         "def,456,789", text2.trim());
+        } else {
+            assertEquals("Second CSV body has wrong value",
+                         "456,def,789", text2.trim());
+        }
+    }
+
+    public void testPresetConfig() throws Exception {
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:resultMultiCustom",
+                                                               MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(2);
+        Map body1 = new HashMap();
+        body1.put("foo", "abc");
+        body1.put("bar", 123);
+
+        Map body2 = new HashMap();
+        body2.put("foo", "def");
+        body2.put("bar", 456);
+        body2.put("baz", 789);
+        body2.put("buz", "000");
+
+        template.sendBody("direct:startMultiCustom", body1);
+        template.sendBody("direct:startMultiCustom", body2);
+
+        List<Exchange> list = resultEndpoint.getReceivedExchanges();
+        Message in1 = list.get(0).getIn();
+        String text1 = in1.getBody(String.class);
+
+        log.debug("Received " + text1);
+        assertEquals("First CSV body has wrong value",
+                     "abc;;123", text1.trim());
+
+        Message in2 = list.get(1).getIn();
+        String text2 = in2.getBody(String.class);
+
+        log.debug("Received " + text2);
+        assertEquals("Second CSV body has wrong value",
+                     "def;789;456", text2.trim());
+
+    }
+
     public void testUnMarshal() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:daltons");
         endpoint.expectedMessageCount(1);
@@ -99,6 +176,23 @@ public class CsvRouteTest extends ContextTestSupport {
                     marshal().csv().
                     to("mock:result");
                 // END SNIPPET: marshalRoute
+
+                from("direct:startMulti").
+                    marshal().csv().
+                    to("mock:resultMulti");
+
+                CsvDataFormat customCsv = new CsvDataFormat();
+                CSVConfig custom = new CSVConfig();
+                custom.setDelimiter(';');
+                custom.addField(new CSVField("foo"));
+                custom.addField(new CSVField("baz"));
+                custom.addField(new CSVField("bar"));
+                customCsv.setConfig(custom);
+                customCsv.setAutogenColumns(false);
+
+                from("direct:startMultiCustom").
+                    marshal(customCsv).
+                    to("mock:resultMultiCustom");
 
                 // START SNIPPET: unmarshalRoute
                 from("file:src/test/resources/?fileName=daltons.csv&noop=true").
