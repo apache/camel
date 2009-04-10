@@ -189,8 +189,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
                 updateNewExchange(subExchange, i, pairs);
                 try {
                     producer.process(subExchange);
-                } catch (Exception exception) {
-                    subExchange.setException(exception);
+                } catch (Exception e) {
+                    subExchange.setException(e);
                 }
                 doAggregate(result, subExchange);
                 i++;
@@ -223,9 +223,10 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
         List<ProcessorExchangePair> result = new ArrayList<ProcessorExchangePair>(processors.size());
-        Processor[] processorsArray = processors.toArray(new Processor[processors.size()]);
-        for (int i = 0; i < processorsArray.length; i++) {
-            result.add(new ProcessorExchangePair(processorsArray[i], exchange.copy()));
+
+        for (Processor processor : processors) {
+            Exchange copy = exchange.copy();
+            result.add(new ProcessorExchangePair(processor, copy));
         }
         return result;
     }

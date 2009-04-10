@@ -254,12 +254,19 @@ public interface Exchange {
     Exchange copy();
 
     /**
+     * Creates a new instance and copies from the current message exchange so that it can be
+     * forwarded to another destination as a new instance. Unlike regular copy this operation
+     * will not share the same {@link org.apache.camel.spi.UnitOfWork} so its should be used
+     * for async messaging, where the original and copied exchange are independent.
+     */
+    Exchange newCopy();
+
+    /**
      * Copies the data into this exchange from the given exchange
      *
      * @param source is the source from which headers and messages will be copied
      */
     void copyFrom(Exchange source);
-
 
     /**
      * Returns the endpoint which originated this message exchange if a consumer on an endpoint created the message exchange

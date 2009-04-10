@@ -87,6 +87,13 @@ public class DefaultExchange implements Exchange {
         return exchange;
     }
 
+    public Exchange newCopy() {
+        Exchange exchange = copy();
+        // do not share the unit of work
+        exchange.setUnitOfWork(null);
+        return exchange;
+    }
+
     public void copyFrom(Exchange exchange) {
         if (exchange == this) {
             return;

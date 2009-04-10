@@ -44,12 +44,12 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
     // if we extend PolicyDefinition so we must make a copy of the class
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
+    @XmlTransient
+    protected Class<? extends Policy> type = TransactedPolicy.class;
     @XmlAttribute
     protected String ref;
     @XmlTransient
     private Policy policy;
-    @XmlTransient
-    protected Class<? extends Policy> type = TransactedPolicy.class;
 
     public TransactedDefinition() {
     }

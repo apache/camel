@@ -224,7 +224,11 @@ public class DefaultTraceFormatter implements TraceFormatter {
     //-------------------------------------------------------------------------
     protected Object getBreadCrumbID(Exchange exchange) {
         UnitOfWork unitOfWork = exchange.getUnitOfWork();
-        return unitOfWork.getId();
+        if (unitOfWork != null) {
+            return unitOfWork.getId();
+        } else {
+            return exchange.getExchangeId();
+        }
     }
 
     protected String getNodeMessage(ProcessorDefinition node) {

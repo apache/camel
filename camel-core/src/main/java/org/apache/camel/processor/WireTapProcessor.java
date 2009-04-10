@@ -142,7 +142,7 @@ public class WireTapProcessor extends SendProcessor {
 
     private Exchange configureCopyExchange(Exchange exchange) {
         // must use a copy as we dont want it to cause side effects of the original exchange
-        Exchange copy = exchange.copy();
+        Exchange copy = exchange.newCopy();
         // set MEP to InOnly as this wire tap is a fire and forget
         copy.setPattern(ExchangePattern.InOnly);
         return copy;
