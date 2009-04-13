@@ -52,6 +52,16 @@
     </dependency>
     <dependency>
       <groupId>org.apache.abdera</groupId>
+      <artifactId>abdera-core</artifactId>
+      <version>0.4.0-incubating</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.abdera</groupId>
+      <artifactId>abdera-parser</artifactId>
+      <version>0.4.0-incubating</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.abdera</groupId>
       <artifactId>abdera-extensions-main</artifactId>
       <version>0.4.0-incubating</version>
     </dependency>
