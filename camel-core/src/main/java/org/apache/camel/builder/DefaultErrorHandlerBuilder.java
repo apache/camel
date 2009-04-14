@@ -18,8 +18,6 @@ package org.apache.camel.builder;
 
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DefaultErrorHandler;
-import org.apache.camel.processor.ErrorHandlerSupport;
-import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 
 /**

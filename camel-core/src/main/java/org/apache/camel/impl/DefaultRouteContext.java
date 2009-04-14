@@ -141,6 +141,8 @@ public class DefaultRouteContext implements RouteContext {
 
             // lets create the async processor
             final AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
+            // and wrap it in a unit of work so the UoW is on the top, so the entire route
+            // will be in the same UoW
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(asyncProcessor);
 
             // TODO: hz: move all this into the lifecycle strategy! (used by jmx naming strategy)

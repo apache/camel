@@ -27,7 +27,7 @@ public class HandleFaultProcessor extends DelegateProcessor implements AsyncProc
     
     @Override
     public String toString() {
-        return "HandleFaultProcessor(" + processor + ")";
+        return "HandleFault[" + processor + "]";
     }
 
     @Override

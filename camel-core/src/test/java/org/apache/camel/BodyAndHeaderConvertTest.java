@@ -47,15 +47,11 @@ public class BodyAndHeaderConvertTest extends TestCase {
     public void testConversionOfExchangeProperties() throws Exception {
         String text = exchange.getProperty("foo", String.class);
         assertEquals("foo property", "1234", text);
-
-        // TODO better conversion example when the property editor support is added
     }
 
     public void testConversionOfMessageHeaders() throws Exception {
         String text = exchange.getIn().getHeader("bar", String.class);
         assertEquals("bar header", "567", text);
-
-        // TODO better conversion example when the property editor support is added
     }
 
     public void testConversionOfMessageAttachments() throws Exception {

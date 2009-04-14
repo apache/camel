@@ -52,7 +52,7 @@ public class DelegateProcessor extends ServiceSupport implements Processor {
 
     @Override
     public String toString() {
-        return "Delegate(" + processor + ")";
+        return "Delegate[" + processor + "]";
     }
 
     public Processor getProcessor() {

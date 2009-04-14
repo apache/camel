@@ -50,6 +50,11 @@ public class Interceptor extends DelegateProcessor implements Intercept {
     }
 
     @Override
+    public String toString() {
+        return "Interceptor[" + interceptorLogic + "]";
+    }
+
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(interceptorLogic);
         super.doStart();

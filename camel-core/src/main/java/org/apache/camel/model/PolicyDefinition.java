@@ -16,7 +16,6 @@
  */
 package org.apache.camel.model;
 
-import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,7 +25,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.TransactedPolicy;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -40,8 +38,6 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Align this code with TransactedDefinition
 
-    @XmlTransient
-    public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     @XmlTransient
     protected Class<? extends Policy> type;
     @XmlAttribute(required = true)
@@ -121,36 +117,6 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
         return policy.wrap(routeContext, childProcessor);
     }
 
-    protected Policy resolvePolicy(RouteContext routeContext) {
-        if (policy == null) {
-            // try ref first
-            String ref = getRef();
-            if (ObjectHelper.isNotEmpty(ref)) {
-                policy = routeContext.lookup(ref, Policy.class);
-            }
-
-            // try to lookup by scoped type
-            if (policy == null && type != null) {
-                // try find by type, note that this method is not supported by all registry
-                Map types = routeContext.lookupByType(type);
-                if (types.size() == 1) {
-                    // only one policy defined so use it
-                    Object found = types.values().iterator().next();
-                    if (type.isInstance(found)) {
-                        return type.cast(found);
-                    }
-                }
-            }
-
-            // for transacted routing try the default REQUIRED name
-            if (policy == null && type == TransactedPolicy.class) {
-                // still not found try with the default name PROPAGATION_REQUIRED
-                policy = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
-            }
-        }
-        return policy;
-    }
-
     protected String description() {
         if (policy != null) {
             return policy.toString();
@@ -158,4 +124,13 @@ public class PolicyDefinition extends OutputDefinition<ProcessorDefinition> {
             return "ref: " + ref;
         }
     }
+
+    protected Policy resolvePolicy(RouteContext routeContext) {
+        if (policy != null) {
+            return policy;
+        }
+        // reuse code on transacted definition to do the resolution
+        return TransactedDefinition.doResolvePolicy(routeContext, getRef(), type);
+    }
+
 }

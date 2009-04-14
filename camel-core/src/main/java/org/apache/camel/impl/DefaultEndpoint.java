@@ -127,7 +127,6 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
      * Converts the given exchange to the specified exchange type
      */
     public Exchange convertTo(Class<Exchange> type, Exchange exchange) {
-        // TODO we could infer type parameter
         if (type.isInstance(exchange)) {
             return type.cast(exchange);
         }

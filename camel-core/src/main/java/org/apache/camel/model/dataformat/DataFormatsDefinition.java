@@ -33,8 +33,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DataFormatsDefinition {
 
-    // TODO cannot use @XmlElementRef as it doesn't allow optional properties
-    // @XmlElementRef
+    // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
         @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
         @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),   

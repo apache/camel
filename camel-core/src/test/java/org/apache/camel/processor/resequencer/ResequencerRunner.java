@@ -44,7 +44,6 @@ public class ResequencerRunner<E> extends Thread {
                 e.printStackTrace();
             }
         }
-        // TODO Auto-generated method stub
         super.run();
     }
 

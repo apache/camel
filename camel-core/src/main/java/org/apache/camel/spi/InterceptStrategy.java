@@ -40,5 +40,5 @@ public interface InterceptStrategy {
      * @throws Exception can be thrown
      */
     Processor wrapProcessorInInterceptors(ProcessorDefinition processorType,
-            Processor target) throws Exception;
+                                          Processor target) throws Exception;
 }

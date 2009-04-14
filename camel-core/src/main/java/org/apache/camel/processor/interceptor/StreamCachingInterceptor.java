@@ -45,7 +45,7 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
 
     @Override
     public String toString() {
-        return "StreamCachingInterceptor(" + processor + ")";
+        return "StreamCachingInterceptor[" + processor + "]";
     }
 
     /**

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.spring.spi;
 
+import java.util.Map;
+
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;

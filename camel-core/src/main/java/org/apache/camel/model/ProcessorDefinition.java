@@ -2040,6 +2040,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         CamelContext camelContext = routeContext.getCamelContext();
         strategies.addAll(camelContext.getInterceptStrategies());
         strategies.addAll(routeContext.getInterceptStrategies());
+        // TODO: Order the strategies, eg using Comparable so we can have Tracer near the real processor
         for (InterceptStrategy strategy : strategies) {
             if (strategy != null) {
                 target = strategy.wrapProcessorInInterceptors(this, target);

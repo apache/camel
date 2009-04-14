@@ -23,6 +23,7 @@ import org.apache.camel.spring.spi.TransactionErrorHandler;
 import org.apache.camel.spring.spi.TransactionErrorHandlerBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -122,6 +123,17 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
         TransactionErrorHandlerBuilder answer = new TransactionErrorHandlerBuilder();
         answer.setTransactionTemplate(template);
         return answer;
+    }
+
+    /**
+     * Creates a transaction error handler.
+     *
+     * @param transactionManager the spring transaction manager
+     * @return the created error handler
+     */
+    public TransactionErrorHandlerBuilder transactionErrorHandler(PlatformTransactionManager transactionManager) {
+        TransactionTemplate template = new TransactionTemplate(transactionManager);
+        return transactionErrorHandler(template);
     }
 
 }

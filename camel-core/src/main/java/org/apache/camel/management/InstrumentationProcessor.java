@@ -44,7 +44,7 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     
     @Override
     public String toString() {
-        return "Instrumentation(" + processor + ")";
+        return "Instrumentation[" + processor + "]";
     }
 
     public void setCounter(PerformanceCounter counter) {

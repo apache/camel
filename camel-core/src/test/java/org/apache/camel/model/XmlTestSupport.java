@@ -55,7 +55,6 @@ public abstract class XmlTestSupport extends TestSupport {
     }
 
     public static JAXBContext createJaxbContext() throws JAXBException {
-        return JAXBContext
-            .newInstance(Constants.JAXB_CONTEXT_PACKAGES);
+        return JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES);
     }
 }

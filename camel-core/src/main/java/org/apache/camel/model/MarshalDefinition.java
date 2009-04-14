@@ -51,8 +51,7 @@ import org.apache.camel.spi.RouteContext;
 public class MarshalDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private String ref;
-    // TODO cannot use @XmlElementRef as it doesn't allow optional properties
-    // @XmlElementRef
+    // cannot use @XmlElementRef as it doesn't allow optional properties
     @XmlElements({
     @XmlElement(required = false, name = "artixDS", type = ArtixDSDataFormat.class),
     @XmlElement(required = false, name = "csv", type = CsvDataFormat.class),

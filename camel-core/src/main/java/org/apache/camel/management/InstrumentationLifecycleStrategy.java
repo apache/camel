@@ -268,7 +268,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             // add exception handlers as top children
             routeType.getOutputs().addAll(exceptionHandlers);
 
-            // add an interceptor
+            // add an interceptor to instrument the route
             InstrumentationProcessor processor = new InstrumentationProcessor();
             routeType.intercept(processor);
 

@@ -42,7 +42,7 @@ public class Delayer extends DelayProcessorSupport {
 
     @Override
     public String toString() {
-        return "Delayer[on: " + timeExpression + " delay: " + delay + " to: " + getProcessor() + "]";
+        return "Delayer[" + (timeExpression != null ? "on: " + timeExpression : "") + " delay: " + delay + " to: " + getProcessor() + "]";
     }
 
     // Properties
