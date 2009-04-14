@@ -14,67 +14,53 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package org.apache.camel.guice.impl;
 
-import java.lang.reflect.AnnotatedElement;
+import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-
-import com.google.common.base.Objects;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-import com.google.inject.spi.AnnotationProviderFactory;
-import com.google.inject.spi.InjectionAnnotation;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.guiceyfruit.support.AnnotationMemberProvider;
 
 /**
  * Injects values into the {@link Produce} injection point
  *
  * @version $Revision$
  */
-@InjectionAnnotation(Produce.class)
-public class ProduceInjector extends CamelPostProcessorHelper implements AnnotationProviderFactory {
+public class ProduceInjector extends CamelPostProcessorHelper
+    implements AnnotationMemberProvider<Produce> {
 
-    @Inject
-    public ProduceInjector(CamelContext camelContext) {
-        super(camelContext);
-    }
+  @Inject
+  public ProduceInjector(CamelContext camelContext) {
+    super(camelContext);
+  }
 
-    public Provider createProvider(final AnnotatedElement member) {
-        final Produce inject = member.getAnnotation(Produce.class);
-        Objects.nonNull(inject, "@Produce is not present!");
+  public boolean isNullParameterAllowed(Produce produce, Method method, Class<?> aClass, int i) {
+    return false;
+  }
 
+  public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Field field) {
+    Class<?> type = field.getType();
+    String injectionPointName = field.getName();
+    String endpointRef = inject.ref();
+    String uri = inject.uri();
 
-        final Class<?> type;
-        final String injectionPointName;
-        final String endpointRef = inject.ref();
-        final String uri = inject.uri();
+    return getInjectionValue(type, uri, endpointRef, injectionPointName);
+  }
 
-        if (member instanceof Field) {
-            Field field = (Field) member;
-            type = field.getType();
-            injectionPointName = field.getName();
-        } else if (member instanceof Method) {
-            Method method = (Method) member;
-            Class<?>[] parameterTypes = method.getParameterTypes();
-            if (parameterTypes.length == 1) {
-                type = parameterTypes[0];
-                injectionPointName = ObjectHelper.getPropertyName(method);
-            } else {
-                throw new UnsupportedOperationException("Only a single method parameter value supported for @Produce on " + method);
-            }
-        } else {
-            throw new UnsupportedOperationException("Annotated element " + member + " not supported");
-        }
+  public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
+      int index) {
 
-        return new Provider() {
-            public Object get() {
-                return getInjectionValue(type, uri, endpointRef, injectionPointName);
-            }
-        };
-    }
+    Class<?>[] parameterTypes = method.getParameterTypes();
+    Class<?> type = parameterTypes[index];
+    String injectionPointName = ObjectHelper.getPropertyName(method);
+    String endpointRef = inject.ref();
+    String uri = inject.uri();
+    return getInjectionValue(type, uri, endpointRef, injectionPointName);
+  }
 }

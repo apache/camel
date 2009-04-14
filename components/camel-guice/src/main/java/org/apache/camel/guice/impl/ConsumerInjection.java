@@ -16,37 +16,28 @@
  */
 package org.apache.camel.guice.impl;
 
-import java.lang.reflect.Method;
-
-import com.google.common.base.Objects;
 import com.google.inject.Inject;
-
-import org.aopalliance.intercept.ConstructorInterceptor;
-import org.aopalliance.intercept.ConstructorInvocation;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consume;
 import org.apache.camel.impl.CamelPostProcessorHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.guiceyfruit.support.MethodHandler;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * @version $Revision$
  */
-public class ConsumerInjection extends CamelPostProcessorHelper implements ConstructorInterceptor {
-    public Object construct(ConstructorInvocation invocation) throws Throwable {
-        Object object = invocation.proceed();
-        if (object != null) {
-            Class<?> type = object.getClass();
-            Method[] methods = type.getMethods();
-            for (Method method : methods) {
-                consumerInjection(method, object);
-            }
-        }
-        return object;
-
+public class ConsumerInjection<I> extends CamelPostProcessorHelper implements MethodHandler<I,Consume> {
+    public void afterInjection(I injectee, Consume consume, Method method) throws InvocationTargetException, IllegalAccessException {
+        consumerInjection(method, injectee);
     }
 
     @Override
     public CamelContext getCamelContext() {
         CamelContext context = super.getCamelContext();
-        Objects.nonNull(context, "CamelContext not injected!");
+        ObjectHelper.notNull(context, "CamelContext not injected");
         return context;
     }
 

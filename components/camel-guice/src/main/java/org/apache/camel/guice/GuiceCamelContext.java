@@ -16,15 +16,8 @@
  */
 package org.apache.camel.guice;
 
-import java.util.List;
-import java.util.Set;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.naming.Context;
-
+import com.google.inject.Binding;
 import com.google.inject.Inject;
-
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
@@ -40,13 +33,21 @@ import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
+import org.guiceyfruit.Injectors;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The default CamelContext implementation for working with Guice.
- *
+ * <p/>
  * It is recommended you use this implementation with the
  * <a href="http://code.google.com/p/guiceyfruit/wiki/GuiceyJndi">Guicey JNDI Provider</a>
- * 
+ *
  * @version $Revision$
  */
 public class GuiceCamelContext extends DefaultCamelContext {
@@ -160,8 +161,13 @@ public class GuiceCamelContext extends DefaultCamelContext {
     }
 
     protected Context createContext() {
+        Set<Binding<?>> bindings = Injectors.getBindingsOf(injector, Context.class);
         try {
-            return (Context) injector.getInstance(Context.class);
+            if (bindings.isEmpty()) {
+                return new InitialContext();
+            } else {
+                return injector.getInstance(Context.class);
+            }
         } catch (Exception e) {
             throw new RuntimeCamelException(e);
         }

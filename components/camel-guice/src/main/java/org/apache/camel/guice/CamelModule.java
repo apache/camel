@@ -16,14 +16,16 @@
  */
 package org.apache.camel.guice;
 
-import com.google.inject.jsr250.Jsr250Module;
 import com.google.inject.matcher.Matchers;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.Routes;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
 import org.apache.camel.guice.impl.ConsumerInjection;
 import org.apache.camel.guice.impl.EndpointInjector;
 import org.apache.camel.guice.impl.ProduceInjector;
+import org.guiceyfruit.jsr250.Jsr250Module;
 
 /**
  * A base Guice module for creating a {@link CamelContext} leaving it up to the users module
@@ -51,13 +53,10 @@ public class CamelModule extends Jsr250Module {
         
         bind(CamelContext.class).to(GuiceCamelContext.class).asEagerSingleton();
 
-        bind(EndpointInjector.class);
-        bind(ProduceInjector.class);
+        bindAnnotationInjector(EndpointInject.class, EndpointInjector.class);
+        bindAnnotationInjector(Produce.class, ProduceInjector.class);
 
-        ConsumerInjection consumerInjection = new ConsumerInjection();
-        requestInjection(consumerInjection);
-
-        bindConstructorInterceptor(Matchers.methodAnnotatedWith(Consume.class), consumerInjection);
+        bindMethodHandler(Consume.class, ConsumerInjection.class);
     }
 
 }

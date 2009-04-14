@@ -23,11 +23,11 @@ import javax.naming.InitialContext;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+import com.google.inject.internal.Iterables;
+import com.google.inject.internal.Maps;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -95,8 +95,9 @@ public class Main extends MainSupport {
     protected void doStop() throws Exception {
         LOG.info("Apache Camel terminating");
 
+
         if (injector != null) {
-            injector.close();
+            Injectors.close(injector);
         }
     }
 
@@ -104,7 +105,8 @@ public class Main extends MainSupport {
         if (injector != null) {
             Set<ProducerTemplate> set = Injectors.getInstancesOf(injector, ProducerTemplate.class);
             if (!set.isEmpty()) {
-                return Iterables.get(set, 0);
+                // TODO shouldbe Iterables.get(set, 0);
+                return Iterables.getOnlyElement(set);
             }
         }
         for (CamelContext camelContext : getCamelContexts()) {

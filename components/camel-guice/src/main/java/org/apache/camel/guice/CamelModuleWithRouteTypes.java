@@ -17,12 +17,13 @@
 package org.apache.camel.guice;
 
 import java.util.Set;
+import java.util.HashSet;
 
-import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
+import com.google.inject.internal.Sets;
 import org.apache.camel.Routes;
-
+import org.apache.camel.Route;
 
 
 /**
@@ -46,8 +47,11 @@ import org.apache.camel.Routes;
 public class CamelModuleWithRouteTypes extends CamelModule {
     private Set<Class<? extends Routes>> routes;
 
-    public CamelModuleWithRouteTypes(Class<? extends Routes>... routes) {
-        this(Sets.newHashSet(routes));
+    public CamelModuleWithRouteTypes(Class<? extends Routes>... routeTypes) {
+        this.routes = new HashSet<Class<? extends Routes>>();
+        for (Class<? extends Routes> route : routeTypes) {
+            routes.add(route);
+        }
     }
 
     public CamelModuleWithRouteTypes(Set<Class<? extends Routes>> routes) {
