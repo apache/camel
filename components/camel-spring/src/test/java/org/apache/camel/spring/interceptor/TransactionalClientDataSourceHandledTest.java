@@ -16,61 +16,50 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.spring.spi.SpringTransactionPolicy;
 
 /**
  * Unit test to demonstrate the transactional client pattern.
  */
-public class TransactionalClientDataSourceWithOnExceptionTest extends TransactionalClientDataSourceTest {
-
-    protected int getExpectedRouteCount() {
-        return 0;
-    }
+public class TransactionalClientDataSourceHandledTest extends TransactionalClientDataSourceWithOnExceptionTest {
 
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
         mock.expectedMessageCount(1);
 
-        try {
-            template.sendBody("direct:fail", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
-        }
+        template.sendBody("direct:fail", "Hello World");
 
         assertMockEndpointsSatisfied();
 
         int count = jdbc.queryForInt("select count(*) from books");
-        assertEquals("Number of books", 1, count);
+        // there should be 2 books as the first insert operation succeded
+        assertEquals("Number of books", 2, count);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
-                // use required as transaction policy
-                SpringTransactionPolicy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED");
-
-                // configure to use transaction error handler and pass on the required as it will fetch
-                // the transaction manager from it that it needs
-                errorHandler(transactionErrorHandler(required));
+                // START SNIPPET: e1
 
                 // on exception is also supported
-                onException(IllegalArgumentException.class).handled(false).to("mock:error");
+                // so if an IllegalArgumentException is thrown then we route it to the mock:error
+                // since we mark it as handled then the exchange will NOT rollback
+                onException(IllegalArgumentException.class).handled(true).to("mock:error");
 
                 from("direct:okay")
-                    .policy(required)
+                    // mark this route as transacted
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Elephant in Action")).beanRef("bookService");
 
                 from("direct:fail")
-                    .policy(required)
+                    // mark this route as transacted
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
+                // END SNIPPET: e1
             }
         };
     }
