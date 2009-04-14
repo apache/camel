@@ -70,7 +70,9 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
             client.configure(ftpConfig.getFtpClientConfig());
         }
 
-        LOG.trace("Connecting to " + config.remoteServerInformation());
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Connecting to " + config.remoteServerInformation());
+        }
         try {
             client.connect(host, port);
         } catch (IOException e) {
@@ -86,10 +88,12 @@ public class FtpOperations implements RemoteFileOperations<FTPFile> {
         try {
             boolean login;
             if (username != null) {
-                LOG.trace("Attempting to login user: " + username);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Attempting to login user: " + username + " using password: " + config.getPassword());
+                }
                 login = client.login(username, config.getPassword());
             } else {
-                LOG.trace("Attempting to login anonymousl");
+                LOG.trace("Attempting to login anonymous");
                 login = client.login("anonymous", null);
             }
             if (LOG.isTraceEnabled()) {
