@@ -109,7 +109,9 @@ public class FtpConsumer extends RemoteFileConsumer<RemoteFileExchange> {
                 }
                 // list the files in the fold and poll the first file
                 final FTPFile[] files = client.listFiles(fileName.substring(index + 1));
-                pollFile(files[0]);
+                if (files != null && files.length > 0) {
+                    pollFile(files[0]);
+                }
             }
 
             lastPollTime = System.currentTimeMillis();
