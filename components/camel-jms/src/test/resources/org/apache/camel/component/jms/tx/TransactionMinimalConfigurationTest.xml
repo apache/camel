@@ -22,21 +22,7 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <route>
-            <!-- 1: from the jms queue -->
-            <from uri="activemq:queue:okay"/>
-            <!-- 2: mark this route as transacted -->
-            <transacted/>
-            <!-- 3: call our business logic that is myProcessor -->
-            <process ref="myProcessor"/>
-            <!-- 4: if success then send it to the mock -->
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
-
-    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
-
+    <!-- START SNIPPET: e1 -->
     <!-- setup JMS connection factory -->
     <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false&amp;broker.useJmx=false"/>
@@ -52,6 +38,29 @@
         <property name="connectionFactory" ref="jmsConnectionFactory"/>
         <!-- define the jms consumer/producer as transacted -->
         <property name="transacted" value="true"/>
+        <!-- setup the transaction manager to use -->
+        <!-- if not provided then Camel will automatic use a JmsTransactionManager, however if you
+             for instance use a JTA transaction manager then you must configure it -->
+        <property name="transactionManager" ref="jmsTransactionManager"/>
     </bean>
+    <!-- END SNIPPET: e1 -->
+
+    <!-- START SNIPPET: e2 -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <!-- 1: from the jms queue -->
+            <from uri="activemq:queue:okay"/>
+            <!-- 2: mark this route as transacted -->
+            <transacted/>
+            <!-- 3: call our business logic that is myProcessor -->
+            <process ref="myProcessor"/>
+            <!-- 4: if success then send it to the mock -->
+            <to uri="mock:result"/>
+        </route>
+    </camelContext>
+
+    <bean id="myProcessor" class="org.apache.camel.component.jms.tx.JMSTransactionalClientTest$MyProcessor"/>
+    <!-- END SNIPPET: e2 -->
+
 
 </beans>
