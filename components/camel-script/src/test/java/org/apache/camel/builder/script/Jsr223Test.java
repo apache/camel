@@ -24,6 +24,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
+import org.apache.camel.ScriptTestHelper;
 
 /**
  * @version $Revision$
@@ -32,6 +33,10 @@ public class Jsr223Test extends TestCase {
     private String [] scriptNames = {"beanshell", "groovy", "js", "python", "ruby", "javascript"};
 
     public void testLanguageNames() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         // ruby scripting does not work on IBM's JDK
         // see http://jira.codehaus.org/browse/JRUBY-3073
         ArrayList<String> scriptNamesAsList = new ArrayList<String>(Arrays.asList(scriptNames));       

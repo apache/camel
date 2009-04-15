@@ -17,6 +17,7 @@
 package org.apache.camel.language.script;
 
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.ScriptTestHelper;
 
 /**
  * @version $Revision$
@@ -24,6 +25,10 @@ import org.apache.camel.LanguageTestSupport;
 public class JavaScriptLanguageTest extends LanguageTestSupport {
     
     public void testLanguageExpressions() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         assertExpression("exchange.getIn()", "Message: <hello id='m123'>world!</hello>");
         assertExpression("exchange.getIn().body", "<hello id='m123'>world!</hello>");
         assertExpression("request.headers.get('foo')", "abc");
