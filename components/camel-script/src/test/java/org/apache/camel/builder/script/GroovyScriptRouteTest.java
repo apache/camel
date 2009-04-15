@@ -17,6 +17,7 @@
 package org.apache.camel.builder.script;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -26,6 +27,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class GroovyScriptRouteTest extends ContextTestSupport {
 
     public void testGroovyScript() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         mock.expectedHeaderReceived("foo", "Hello World");

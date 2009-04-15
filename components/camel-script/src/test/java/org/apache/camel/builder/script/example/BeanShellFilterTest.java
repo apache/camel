@@ -17,6 +17,7 @@
 package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.NoRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.XPathFilterTest;
@@ -27,6 +28,24 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version $Revision$
  */
 public class BeanShellFilterTest extends XPathFilterTest {
+
+    @Override
+    public void testSendMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        super.testSendMatchingMessage();
+    }
+
+    @Override
+    public void testSendNotMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
+        super.testSendNotMatchingMessage();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

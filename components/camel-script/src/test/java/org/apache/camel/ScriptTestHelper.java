@@ -14,30 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.language.script;
-
-import org.apache.camel.LanguageTestSupport;
-import org.apache.camel.ScriptTestHelper;
+package org.apache.camel;
 
 /**
+ * Script test helper.
+ *
  * @version $Revision$
  */
-public class PythonLanguageTest extends LanguageTestSupport {
-    
-    public void testLanguageExpressions() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
+public final class ScriptTestHelper {
+
+    private ScriptTestHelper() {
+    }
+
+    public static boolean canRunTestOnThisPlatform() {
+        // we cannot run unit tests on Mac with JDK 1.5
+
+        String version = System.getProperty("java.version");
+        String[] numbers = version.split("\\.");
+        if (Integer.valueOf(numbers[0]) > 1 || Integer.valueOf(numbers[1]) > 5) {
+            // JDK 1.6 or newer (eg JDK 2.x)
+            return true;
         }
 
-        // the properties are stored in a set so ordering is not known
-        assertExpression("exchange.in.headers", "{foo=abc, bar=123}", "{bar=123, foo=abc}");
-        
-        assertExpression("exchange.in", "Message: <hello id='m123'>world!</hello>");
-        assertExpression("exchange.in.headers.get('foo')", "abc");
-        assertExpression("request.headers['foo']", "abc");
+        // for JDK 1.5 or lower we can run on any platform except Apple/MacOSx
+        String os = System.getProperty("os.name");
+        return !os.startsWith("Mac");
     }
 
-    protected String getLanguageName() {
-        return "jython";
-    }
 }

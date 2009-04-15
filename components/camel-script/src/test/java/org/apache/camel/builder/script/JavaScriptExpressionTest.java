@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -29,6 +30,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class JavaScriptExpressionTest extends ContextTestSupport {
     
     public void testSendMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         // TODO Currently, this test fails because the JavaScript expression in createRouteBuilder
         // below returns false
         // To fix that, we need to figure out how to get the expression to return the right value
@@ -46,6 +51,10 @@ public class JavaScriptExpressionTest extends ContextTestSupport {
     }
 
     public void testSendNonMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 

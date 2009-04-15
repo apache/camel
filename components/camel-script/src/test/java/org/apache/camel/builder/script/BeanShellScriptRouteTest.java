@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 
-import static org.apache.camel.builder.script.ScriptBuilder.script;;
-
+import static org.apache.camel.builder.script.ScriptBuilder.script;
 
 /**
  * Unit test for a BeanSheel script
@@ -31,6 +31,10 @@ import static org.apache.camel.builder.script.ScriptBuilder.script;;
 public class BeanShellScriptRouteTest extends ContextTestSupport {
 
     public void testSendMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:unmatched").expectedMessageCount(0);
 
@@ -42,6 +46,10 @@ public class BeanShellScriptRouteTest extends ContextTestSupport {
     }
 
     public void testSendNonMatchingMessage() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
