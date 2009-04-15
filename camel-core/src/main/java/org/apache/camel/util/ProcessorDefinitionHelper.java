@@ -20,9 +20,8 @@ import java.util.List;
 
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.WhenDefinition;
 import org.apache.camel.model.SendDefinition;
-import org.apache.camel.processor.DelegateProcessor;
+import org.apache.camel.model.WhenDefinition;
 
 /**
  * Helper class for ProcessorType and the other model classes.

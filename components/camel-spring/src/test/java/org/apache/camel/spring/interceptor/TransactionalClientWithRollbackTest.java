@@ -87,20 +87,17 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 // setup the transaction policy
-                SpringTransactionPolicy required = context.getRegistry()
-                        .lookup("PROPAGATION_REQUIRED", SpringTransactionPolicy.class);
+                SpringTransactionPolicy required = bean(SpringTransactionPolicy.class, "PROPAGATION_REQUIRED");
 
                 // use transaction error handler
                 errorHandler(transactionErrorHandler(required));
 
                 // must setup policy for each route
-                // TODO: CAMEL-1475 should fix this
                 from("direct:okay").policy(required)
                         .setBody(constant("Tiger in Action")).beanRef("bookService")
                         .setBody(constant("Elephant in Action")).beanRef("bookService");
 
                 // must setup policy for each route
-                // TODO: CAMEL-1475 should fix this
                 from("direct:fail").policy(required)
                         .setBody(constant("Tiger in Action")).beanRef("bookService")
                         // force a rollback

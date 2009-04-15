@@ -59,13 +59,17 @@ public class SpringTransactionPolicy implements TransactedPolicy {
         answer.setOutput(processor);
 
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
+
         if (builder instanceof ErrorHandlerBuilderRef) {
             // its a reference to a error handler so lookup the reference
             ErrorHandlerBuilderRef ref = (ErrorHandlerBuilderRef) builder;
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref.getRef());
+            // only lookup if there was explicit an error handler builder configured
+            if (ref.isErrorHandlerBuilderConfigued()) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Looking up ErrorHandlerBuilder with ref: " + ref.getRef());
+                }
+                builder = ref.lookupErrorHandlerBuilder(routeContext);
             }
-            builder = ref.lookupErrorHandlerBuilder(routeContext);
         }
 
         if (builder instanceof TransactionErrorHandlerBuilder) {
@@ -93,6 +97,9 @@ public class SpringTransactionPolicy implements TransactedPolicy {
             }
             answer.setExceptionPolicy(txBuilder.getExceptionPolicyStrategy());
             txBuilder.configure(answer);
+
+            // set the route to use our transacted error handler builder
+            routeContext.getRoute().setErrorHandlerBuilder(txBuilder);
         }
 
         return answer;

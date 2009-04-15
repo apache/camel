@@ -35,17 +35,17 @@ import org.apache.camel.spi.RouteContext;
 public class RouteService extends ServiceSupport {
 
     private final DefaultCamelContext camelContext;
-    private final RouteDefinition routeType;
+    private final RouteDefinition routeDefinition;
     private final List<RouteContext> routeContexts;
     private final Collection<Route> routes;
     private final String id;
 
-    public RouteService(DefaultCamelContext camelContext, RouteDefinition routeType, List<RouteContext> routeContexts, Collection<Route> routes) {
+    public RouteService(DefaultCamelContext camelContext, RouteDefinition routeDefinition, List<RouteContext> routeContexts, Collection<Route> routes) {
         this.camelContext = camelContext;
-        this.routeType = routeType;
+        this.routeDefinition = routeDefinition;
         this.routeContexts = routeContexts;
         this.routes = routes;
-        this.id = routeType.idOrCreate();
+        this.id = routeDefinition.idOrCreate();
     }
 
     public String getId() {
@@ -60,8 +60,8 @@ public class RouteService extends ServiceSupport {
         return routeContexts;
     }
 
-    public RouteDefinition getRouteType() {
-        return routeType;
+    public RouteDefinition getRouteDefinition() {
+        return routeDefinition;
     }
 
     public Collection<Route> getRoutes() {

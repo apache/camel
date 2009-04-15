@@ -54,7 +54,7 @@ public class JettyImageFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyImageService());
+                from("jetty:http://localhost:9080/myapp/myservice").process(new MyImageService());
             }
         };
     }

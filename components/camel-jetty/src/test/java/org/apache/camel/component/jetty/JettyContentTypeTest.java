@@ -67,7 +67,7 @@ public class JettyContentTypeTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:9080/myapp/myservice").streamCaching().process(new MyBookService());
+                from("jetty:http://localhost:9080/myapp/myservice").process(new MyBookService());
             }
         };
     }

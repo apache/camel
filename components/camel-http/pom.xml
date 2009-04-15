@@ -49,9 +49,10 @@
     </dependency>
 
     <dependency>
+	  <!-- TODO: update group and artifact id when upgrading to httpclient 4.0 -->
       <groupId>commons-httpclient</groupId>
       <artifactId>commons-httpclient</artifactId>
-      <version>3.1</version>
+      <version>${httpclient-version}</version>
       <optional>false</optional>
     </dependency>
 

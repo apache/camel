@@ -18,25 +18,16 @@
 package org.apache.camel.component.jetty;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import javax.xml.transform.dom.DOMSource;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.processor.interceptor.StreamCaching;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
-import org.apache.commons.httpclient.ChunkedInputStream;
-import org.apache.commons.httpclient.ChunkedOutputStream;
 
 public class HttpClientRouteTest extends ContextTestSupport {
 
@@ -67,13 +58,14 @@ public class HttpClientRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(noErrorHandler());
+
                 Processor clientProc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        InputStream is = (InputStream) exchange.getIn().getBody();                        
+                        assertIsInstanceOf(InputStream.class, exchange.getIn().getBody());
                     }
                 };
                 
-                from("direct:start").to("http://localhost:9080/hello").process(clientProc).intercept(new StreamCachingInterceptor()).convertBodyTo(String.class).to("mock:a");
+                from("direct:start").to("http://localhost:9080/hello").process(clientProc).convertBodyTo(String.class).to("mock:a");
                
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -82,8 +74,6 @@ public class HttpClientRouteTest extends ContextTestSupport {
                     }
                 };
                 from("jetty:http://localhost:9080/hello").process(proc);
-                
-                noStreamCaching();
             }
         };
     }    

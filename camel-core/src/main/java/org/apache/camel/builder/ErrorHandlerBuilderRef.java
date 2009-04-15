@@ -29,6 +29,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
+    public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private final String ref;
     private ErrorHandlerBuilder handler;
 
@@ -51,9 +52,47 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return handler.createErrorHandler(routeContext, processor);
     }
 
+    /**
+     * Returns whether a specific error handler builder has been configued or not.
+     * <p/>
+     * Can be used to test if none has been configued and then install a custom error handler builder
+     * replacing the default error handler (that would have been used as fallback).
+     * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
+     * in camel-spring.
+     */
+    public boolean isErrorHandlerBuilderConfigued() {
+        return !DEFAULT_ERROR_HANDLER_BUILDER.equals(getRef());
+    }
+
     public ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext) {
         if (handler == null) {
-            handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+            // if the ref is the default then the we do not have any explicit error handler configured
+            // if that is the case then use error handlers configured on the route, as for instance
+            // the transacted error handler could have been configured on the route so we should use that one
+            if (!isErrorHandlerBuilderConfigued()) {
+                // see if there has been configured a route builder on the route
+                handler = routeContext.getRoute().getErrorHandlerBuilder();
+                if (handler == null) {
+                    handler = routeContext.lookup(routeContext.getRoute().getErrorHandlerRef(), ErrorHandlerBuilder.class);
+                }
+                if (handler == null) {
+                    // fallback to the default error handler if none configured on the route
+                    handler = new DefaultErrorHandlerBuilder();
+                }
+                // check if its also a ref with no error handler configuration like me
+                if (handler instanceof ErrorHandlerBuilderRef) {
+                    ErrorHandlerBuilderRef other = (ErrorHandlerBuilderRef) handler;
+                    if (!other.isErrorHandlerBuilderConfigued()) {
+                        // the other has also no explict error handler configured then fallback to the default error handler
+                        // otherwise we could recursive loop forever (triggered by createErrorHandler method)
+                        handler = new DefaultErrorHandlerBuilder();
+                    }
+                }
+            } else {
+                // use specific configured error handler
+                handler = routeContext.lookup(ref, ErrorHandlerBuilder.class);
+            }
+
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
             List<OnExceptionDefinition> list = getErrorHandlers();
             for (OnExceptionDefinition exceptionType : list) {
@@ -67,4 +106,8 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return ref;
     }
 
+    @Override
+    public String toString() {
+        return "ErrorHandlerBuilderRef[" + ref + "]";
+    }
 }

@@ -2090,8 +2090,9 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         if (errorHandlerRef != null) {
             return new ErrorHandlerBuilderRef(errorHandlerRef);
         }
-        // return a new default one
-        return new DefaultErrorHandlerBuilder();
+
+        // return a reference to the default error handler
+        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
     protected void configureChild(ProcessorDefinition output) {

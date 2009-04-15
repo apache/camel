@@ -19,9 +19,7 @@ package org.apache.camel.spring.spi;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.processor.DelayPolicy;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.util.MessageHelper;
@@ -34,8 +32,6 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * The <a href="http://camel.apache.org/transactional-client.html">Transactional Client</a>
@@ -82,7 +78,7 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
 
                 // wrapper exception to throw if the exchange failed
                 // IMPORTANT: Must be a runtime exception to let Spring regard it as to do "rollback"
-                RuntimeCamelException rce;
+                TransactedRuntimeCamelException rce;
 
                 // find out if there is an actual transaction alive, and thus we are in transacted mode
                 boolean activeTx = TransactionSynchronizationManager.isActualTransactionActive();
@@ -115,12 +111,21 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
                 // an exception occured maybe an onException can handle it
                 if (exchange.getException() != null) {
                     // handle onException
-                    handleException(exchange);
+                    // but test beforehand if we have already handled it, if so we should not do it again
+                    boolean handled = false;
+                    if (exchange.getException() instanceof TransactedRuntimeCamelException) {
+                        TransactedRuntimeCamelException trce = exchange.getException(TransactedRuntimeCamelException.class);
+                        handled = trce.isHandled();
+                    }
+                    if (!handled) {
+                        // not handled before so handle it once
+                        handleException(exchange);
+                    }
                 }
 
                 // after handling and still an exception or marked as rollback only then rollback
                 if (exchange.getException() != null || exchange.isRollbackOnly()) {
-                    rce = wrapRuntimeCamelException(exchange.getException());
+                    rce = wrapTransactedRuntimeException(exchange.getException());
 
                     if (activeTx) {
                         status.setRollbackOnly();
@@ -140,6 +145,22 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
                 }
             }
         });
+    }
+
+    protected TransactedRuntimeCamelException wrapTransactedRuntimeException(Exception exception) {
+        if (exception instanceof TransactedRuntimeCamelException) {
+            return (TransactedRuntimeCamelException) exception;
+        } else {
+            TransactedRuntimeCamelException answer = new TransactedRuntimeCamelException(exception);
+            // Mark as handled so we dont want to handle the same exception twice or more in other
+            // wrapped transaction error handlers in this route.
+            // We need to mark this information in the exception as we need to propagage
+            // the exception back by rehtrowing it. We cannot mark it on the exchange as Camel
+            // uses copies of exchanges in its pipeline and the data isnt copied back in case
+            // when an exception occured
+            answer.setHandled(true);
+            return answer;
+        }
     }
 
     /**
