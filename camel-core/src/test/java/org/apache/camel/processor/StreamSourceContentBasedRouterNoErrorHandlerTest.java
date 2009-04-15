@@ -16,56 +16,20 @@
  */
 package org.apache.camel.processor;
 
-import java.io.StringReader;
-
-import javax.xml.transform.stream.StreamSource;
-
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.jaxp.StringSource;
 
 /**
  * Test for handling a StreamSource in a content-based router with XPath predicates
  *
  * @version $Revision$
  */
-public class StreamSourceContentBasedRouterTest extends ContextTestSupport {
-    protected MockEndpoint x;
-    protected MockEndpoint y;
-
-    public void testSendStreamSource() throws Exception {
-        x.expectedMessageCount(1);
-        y.expectedMessageCount(1);
-        
-        sendBody("direct:start", new StreamSource(new StringReader("<message>xx</message>")));
-        sendBody("direct:start", new StreamSource(new StringReader("<message>yy</message>")));
-        
-        assertMockEndpointsSatisfied();
-    }
-
-    public void testSendStringSource() throws Exception {
-        x.expectedMessageCount(1);
-        y.expectedMessageCount(1);
-     
-        sendBody("direct:start", new StringSource("<message>xx</message>"));
-        sendBody("direct:start", new StringSource("<message>yy</message>"));
-        
-        assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-
-        x = getMockEndpoint("mock:x");
-        y = getMockEndpoint("mock:y");
-    }
+public class StreamSourceContentBasedRouterNoErrorHandlerTest extends StreamSourceContentBasedRouterTest {
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // should work with default error handler as the stream cache
+                errorHandler(noErrorHandler());
+                // should work with no error handler as the stream cache
                 // should be enabled and make sure the predicates can be evaluated
                 // multiple times
 

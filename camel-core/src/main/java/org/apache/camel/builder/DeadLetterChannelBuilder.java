@@ -28,7 +28,6 @@ import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.spi.RouteContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -78,7 +77,6 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         DeadLetterChannel answer = new DeadLetterChannel(processor, getFailureProcessor(), deadLetterUri, onRedelivery, getRedeliveryPolicy(), getLogger(), getExceptionPolicyStrategy());
         // must enable stream cache as DeadLetterChannel can do redeliveries and
         // thus it needs to be able to read the stream again
-        StreamCaching.enable(routeContext);
         configure(answer);
         return answer;
     }

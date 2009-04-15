@@ -53,7 +53,7 @@ public class TwoTimerWithJMXIssue extends ContextTestSupport {
     }
 
     private class MyTracer implements InterceptStrategy {
-        public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target)
+        public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target)
             throws Exception {
             assertNotNull(target);
             counter++;

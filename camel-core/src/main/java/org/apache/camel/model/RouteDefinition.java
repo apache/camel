@@ -54,7 +54,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;
     private CamelContext camelContext;
-    private Boolean streamCaching;
 
     public RouteDefinition() {
     }
@@ -196,26 +195,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
         return this;
     }
 
-    /**
-     * Disable stream caching for this route
-     *
-     * @return the builder
-     */
-    public RouteDefinition noStreamCaching() {
-        StreamCachingInterceptor.noStreamCaching(interceptors);
-        return this;
-    }
-
-    /**
-     * Enable stream caching for this route
-     *
-     * @return the builder
-     */
-    public RouteDefinition streamCaching() {
-        addInterceptor(new StreamCachingInterceptor());
-        return this;
-    }
-
     // Properties
     // -----------------------------------------------------------------------
 
@@ -276,25 +255,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     public void setGroup(String group) {
         this.group = group;
     }
-
-    public Boolean getStreamCaching() {
-        return streamCaching;
-    }
-
-    /**
-     * Enable stream caching on this route
-     * @param streamCaching <code>true</code> for enabling stream caching
-     */
-    @XmlAttribute(required = false)
-    public void setStreamCaching(Boolean streamCaching) {
-        this.streamCaching = streamCaching;
-        if (streamCaching != null && streamCaching) {
-            streamCaching();
-        } else {
-            noStreamCaching();
-        }
-    }
-
 
     // Implementation methods
     // -------------------------------------------------------------------------

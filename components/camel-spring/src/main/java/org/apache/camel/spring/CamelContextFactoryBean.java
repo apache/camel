@@ -86,6 +86,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     @XmlAttribute(required = false)
     private Boolean trace;
     @XmlAttribute(required = false)
+    private Boolean streamCache = Boolean.TRUE;
+    @XmlAttribute(required = false)
     private Long delay;
     @XmlAttribute(required = false)
     private String errorHandlerRef;
@@ -470,6 +472,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.trace = trace;
     }
 
+    public Boolean getStreamCache() {
+        return streamCache;
+    }
+
+    public void setStreamCache(Boolean streamCache) {
+        this.streamCache = streamCache;
+    }
+
     public Long getDelay() {
         return delay;
     }
@@ -520,6 +530,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     protected SpringCamelContext createContext() {
         SpringCamelContext ctx = new SpringCamelContext(getApplicationContext());
         ctx.setName(getId());
+        if (streamCache != null) {
+            ctx.setStreamCaching(streamCache);
+        }
         if (trace != null) {
             ctx.setTrace(trace);
         }

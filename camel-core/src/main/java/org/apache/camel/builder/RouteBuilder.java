@@ -254,20 +254,6 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Completely disable stream caching for all routes being defined in the same RouteBuilder after this.
-     */
-    public void noStreamCaching() {
-        StreamCachingInterceptor.noStreamCaching(routeCollection.getInterceptors());
-    }
-
-    /**
-     * Enable stream caching for all routes being defined in the same RouteBuilder after this call.
-     */
-    public void streamCaching() {
-        routeCollection.intercept(new StreamCachingInterceptor());
-    }
-
-    /**
      * Factory method
      */
     protected CamelContext createContainer() {

@@ -31,7 +31,7 @@
     <bean id="interceptor1" class="org.apache.camel.builder.MyInterceptorProcessor"/>
     <bean id="interceptor2" class="org.apache.camel.builder.MyInterceptorProcessor"/>
 
-    <camelContext errorHandlerRef="errorHandler" id="camel" xmlns="http://camel.apache.org/schema/spring">
+    <camelContext errorHandlerRef="errorHandler" streamCache="false" id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="seda:a"/>
             <interceptor ref="interceptor1"/>

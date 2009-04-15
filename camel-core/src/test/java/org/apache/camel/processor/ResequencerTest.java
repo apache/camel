@@ -27,6 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * @version $Revision$
@@ -89,7 +90,8 @@ public class ResequencerTest extends ContextTestSupport {
 
         outputProcessor = interceptor.getProcessor();
 
-        assertIsInstanceOf(Resequencer.class, outputProcessor);
+        StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
+        assertIsInstanceOf(Resequencer.class, cache.getProcessor());
     }
 
 }

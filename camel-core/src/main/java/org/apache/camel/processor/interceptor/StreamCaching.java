@@ -16,53 +16,38 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import java.util.List;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.RouteContext;
 
 /**
  * {@link InterceptStrategy} implementation to configure stream caching on a RouteContext
  */
 public final class StreamCaching implements InterceptStrategy {
     
-    /*
-     * Hide constructor -- instances will be created through static enable() methods
-     */
-    private StreamCaching() {
-        super();
-    }
-
     @SuppressWarnings("unchecked")
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
         return new StreamCachingInterceptor(target);
     }
     
     /**
-     * Enable stream caching for a RouteContext
-     * 
-     * @param context the route context
+     * A helper method to return the StreamCacheInterceptor instance
+     * for a given {@link org.apache.camel.CamelContext} if one is enabled
+     *
+     * @param context the camel context the stream cache is connected to
+     * @return the stream cache or null if none can be found
      */
-    public static void enable(RouteContext context) {
-        for (InterceptStrategy strategy : context.getInterceptStrategies()) {
-            if (strategy instanceof StreamCaching) {
-                return;
+    public static StreamCachingInterceptor getStreamCache(CamelContext context) {
+        List<InterceptStrategy> list = context.getInterceptStrategies();
+        for (InterceptStrategy interceptStrategy : list) {
+            if (interceptStrategy instanceof StreamCachingInterceptor) {
+                return (StreamCachingInterceptor)interceptStrategy;
             }
         }
-        context.addInterceptStrategy(new StreamCaching());
+        return null;
     }
-    
-    /**
-     * Disable stream caching for a RouteContext
-     * 
-     * @param context the route context
-     */
-    public static void disable(RouteContext context) {
-        for (InterceptStrategy strategy : context.getInterceptStrategies()) {
-            if (strategy instanceof StreamCaching) {
-                context.getInterceptStrategies().remove(strategy);
-                return;
-            }
-        }        
-    }
+
 }

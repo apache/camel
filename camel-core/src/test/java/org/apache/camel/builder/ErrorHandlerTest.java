@@ -31,6 +31,7 @@ import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * @version $Revision$
@@ -98,22 +99,24 @@ public class ErrorHandlerTest extends TestSupport {
                                                                           processor);
                 Processor outputProcessor = loggingProcessor.getOutput();
                 if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
                 } else {
-                    InstrumentationProcessor interceptor =
-                        assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
+                    InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
                 }
             } else {
                 assertEquals("From endpoint", "seda:b", endpointUri);
                 DefaultErrorHandler defaultErrorHandler = assertIsInstanceOf(DefaultErrorHandler.class, processor);
                 Processor outputProcessor = defaultErrorHandler.getOutput();
                 if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, outputProcessor);
+                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
                 } else {
-                    InstrumentationProcessor interceptor =
-                        assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
+                    InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
+                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
+                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
                 }
             }
             log.debug("For " + endpointUri + " using: " + sendProcessor);
@@ -201,15 +204,17 @@ public class ErrorHandlerTest extends TestSupport {
             LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
 
             if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                processor = loggingProcessor.getOutput();
+                StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, loggingProcessor.getOutput());
+                processor = cache.getProcessor();
             } else {
-                InstrumentationProcessor interceptor =
-                    assertIsInstanceOf(InstrumentationProcessor.class, loggingProcessor.getOutput());
-                processor = interceptor.getProcessor();
+                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, loggingProcessor.getOutput());
+                StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
+                processor = cache.getProcessor();
             }
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, filterProcessor.getProcessor());
+            StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, filterProcessor.getProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
 
             log.debug("Found sendProcessor: " + sendProcessor);
         }

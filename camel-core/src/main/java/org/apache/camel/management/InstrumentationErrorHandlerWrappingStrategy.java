@@ -37,15 +37,15 @@ public class InstrumentationErrorHandlerWrappingStrategy implements ErrorHandler
         this.routeContext = routeContext;
     }
 
-    public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorType, Processor target) throws Exception {
+    public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorDefinition, Processor target) throws Exception {
         // dont double wrap error handlers
         if (target instanceof ErrorHandler) {
             return target;
         }
 
         // don't wrap our instrumentation interceptors
-        if (counterMap.containsKey(processorType)) {
-            return processorType.getErrorHandlerBuilder().createErrorHandler(routeContext, target);
+        if (counterMap.containsKey(processorDefinition)) {
+            return processorDefinition.getErrorHandlerBuilder().createErrorHandler(routeContext, target);
         }
 
         return target;

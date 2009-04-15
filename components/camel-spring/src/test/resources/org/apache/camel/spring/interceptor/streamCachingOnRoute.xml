@@ -22,13 +22,13 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd 
     ">
 
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <!--  START SNIPPET: streamCache -->
-    <route streamCaching="true">
-      <from uri="direct:a"/>
-      <to uri="mock:a"/>
-    </route>
+    <camelContext streamCache="true" xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:a"/>
+            <to uri="mock:a"/>
+        </route>
+    </camelContext>
     <!--  END SNIPPET: streamCache -->
-  </camelContext>  
 
 </beans>

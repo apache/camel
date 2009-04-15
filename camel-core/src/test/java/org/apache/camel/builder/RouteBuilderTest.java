@@ -19,12 +19,14 @@ package org.apache.camel.builder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -47,6 +49,23 @@ public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
     protected DelegateProcessor interceptor1;
     protected DelegateProcessor interceptor2;
+
+    protected CamelContext createCamelContext() {
+        // disable stream cache otherwisw to much hazzle in this unit test to filter the stream cache
+        // in all the assertion codes
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.setStreamCaching(Boolean.FALSE);
+        return ctx;
+    }
+
+    protected List<Route> getRouteList(RouteBuilder builder) throws Exception {
+        CamelContext context = createCamelContext();
+        context.addRoutes(builder);
+        context.start();
+        List<Route> answer = context.getRoutes();
+        context.stop();
+        return answer;
+    }
 
     protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1

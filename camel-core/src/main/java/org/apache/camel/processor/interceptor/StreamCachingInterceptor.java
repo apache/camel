@@ -16,15 +16,11 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import java.util.List;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
-import org.apache.camel.model.AbstractInterceptorDefinition;
-import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;
@@ -46,21 +42,6 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
     @Override
     public String toString() {
         return "StreamCachingInterceptor[" + processor + "]";
-    }
-
-    /**
-     * Remove the {@link StreamCachingInterceptor} type of interceptor from the given list of interceptors
-     *
-     * @param interceptors the list of interceptors
-     */
-    public static void noStreamCaching(List<AbstractInterceptorDefinition> interceptors) {
-        for (int i = 0; i < interceptors.size(); i++) {
-            AbstractInterceptorDefinition interceptor = interceptors.get(i);
-            if (interceptor instanceof InterceptorDefinition
-                && ((InterceptorDefinition)interceptor).getInterceptor() instanceof StreamCachingInterceptor) {
-                interceptors.remove(interceptor);
-            }
-        }
     }
 
     @Override

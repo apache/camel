@@ -19,13 +19,13 @@ package org.apache.camel.spi;
 import org.apache.camel.Processor;
 import org.apache.camel.model.ProcessorDefinition;
 
- /**
-  * The purpose of this interface is to allow an implementation to wrap
-  * processors in a route with interceptors.  For example, a possible
-  * usecase is to gather performance statistics at the processor's level.
-  *
-  * @version $Revision$
-  */
+/**
+ * The purpose of this interface is to allow an implementation to wrap
+ * processors in a route with interceptors.  For example, a possible
+ * usecase is to gather performance statistics at the processor's level.
+ *
+ * @version $Revision$
+ */
 public interface InterceptStrategy {
 
     /**
@@ -34,11 +34,10 @@ public interface InterceptStrategy {
      * to give the implementor an opportunity to wrap the target processor
      * in a route.
      *
-     * @param processorType the object that invokes this method
-     * @param target the processor to be wrapped
+     * @param processorDefinition the object that invokes this method
+     * @param target        the processor to be wrapped
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(ProcessorDefinition processorType,
-                                          Processor target) throws Exception;
+    Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception;
 }

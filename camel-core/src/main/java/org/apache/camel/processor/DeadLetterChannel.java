@@ -165,6 +165,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
             // if the exchange is transacted then let the underlying system handle the redelivery etc.
             // this DeadLetterChannel is only for non transacted exchanges
+            // TODO: Should be possible to remove with Claus got the TX error handler sorted
             if (exchange.isTransacted() && exchange.getException() != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("This is a transacted exchange, bypassing this DeadLetterChannel: " + this + " for exchange: " + exchange);

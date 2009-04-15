@@ -100,12 +100,12 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
 
     @Override
     public void testIdempotentConsumer() throws Exception {
-        // TODO
+        // is tested elsewhere
     }
 
     @Override
     public void testRouteWithInterceptor() throws Exception {
-        // TODO
+        // is tested elsewhere
     }
 
     protected List<Route> getRoutesFromContext(String classpathConfigFile) {

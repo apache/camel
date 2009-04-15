@@ -71,8 +71,6 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 
         // there should be no error handlers and no stream cache
         for (RouteDefinition route : context.getRouteDefinitions()) {
-            assertNull("StreamCache should be disabled", route.getStreamCaching());
-
             ErrorHandler error = ProcessorDefinitionHelper.findFirstTypeInOutputs(route.getOutputs(), DeadLetterChannel.class);
             assertNull("There should be no error handler", error);
         }
@@ -83,7 +81,7 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
                 EventDrivenConsumerRoute consumer = (EventDrivenConsumerRoute) route;
 
                 StreamCachingInterceptor cache = findProceesorInRoute(consumer.getProcessor(), StreamCachingInterceptor.class);
-                assertNull("There should be no stream cache found: " + cache, cache);
+                assertNotNull("There should be stream cache found: " + cache, cache);
 
                 ErrorHandler error = findProceesorInRoute(consumer.getProcessor(), ErrorHandler.class);
                 assertNull("There should be no error handler found: " + error, error);

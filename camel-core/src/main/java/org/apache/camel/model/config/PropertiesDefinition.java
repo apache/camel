@@ -35,7 +35,6 @@ public class PropertiesDefinition {
     private List<PropertyDefinition> properties;
     
     public PropertiesDefinition() {
-        
     }
     
     public void setProperties(List<PropertyDefinition> properties) {

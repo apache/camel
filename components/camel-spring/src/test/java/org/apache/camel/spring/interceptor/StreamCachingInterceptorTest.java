@@ -45,6 +45,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
         Exchange exchange = a.getExchanges().get(0);
         StreamCache streamCache = Assertions.assertInstanceOf(exchange.getIn().getBody(), StreamCache.class);
+        assertNotNull(streamCache);
     }
 
     protected CamelContext createCamelContext() throws Exception {

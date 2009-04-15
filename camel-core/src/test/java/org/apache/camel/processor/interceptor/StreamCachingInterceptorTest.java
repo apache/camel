@@ -117,25 +117,15 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
             public void configure() {
                 //Stream caching for a single route...
                 //START SNIPPET: route
-                from("direct:a").streamCaching().to("mock:a");
+                from("direct:a").to("mock:a");
                 //END SNIPPET: route
 
                 //... or for all the following routes in this builder
                 //START SNIPPET: routebuilder
-                streamCaching();
                 from("direct:b").to("mock:b");
                 //END SNIPPET: routebuilder
             }
         };
     }
 
-    public void testNoStreamCaching() throws Exception {
-        List<AbstractInterceptorDefinition> interceptors = new LinkedList<AbstractInterceptorDefinition>();
-        InterceptorDefinition streamCache = new InterceptorDefinition(new StreamCachingInterceptor());
-        interceptors.add(streamCache);
-        interceptors.add(new InterceptorDefinition(new DelegateProcessor()));
-        StreamCachingInterceptor.noStreamCaching(interceptors);
-        assertEquals(1, interceptors.size());
-        assertFalse(interceptors.contains(streamCache));
-    }
 }

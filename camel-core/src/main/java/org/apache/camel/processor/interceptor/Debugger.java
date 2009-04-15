@@ -115,13 +115,13 @@ public class Debugger implements InterceptStrategy {
     }
 
 
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorType, Processor target) throws Exception {
-        String id = processorType.idOrCreate();
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+        String id = processorDefinition.idOrCreate();
         if (logExchanges) {
-            TraceInterceptor traceInterceptor = new TraceInterceptor(processorType, target, tracer);
+            TraceInterceptor traceInterceptor = new TraceInterceptor(processorDefinition, target, tracer);
             target = traceInterceptor;
         }
-        DebugInterceptor interceptor = new DebugInterceptor(processorType, target, createExchangeList(), createExceptionsList());
+        DebugInterceptor interceptor = new DebugInterceptor(processorDefinition, target, createExchangeList(), createExceptionsList());
         interceptors.put(id, interceptor);
         if (LOG.isDebugEnabled()) {
             LOG.debug("Adding " + id + " interceptor: " + interceptor);

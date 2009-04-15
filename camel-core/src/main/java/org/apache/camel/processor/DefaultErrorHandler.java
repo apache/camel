@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -38,22 +39,20 @@ import org.apache.commons.logging.LogFactory;
 public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultErrorHandler.class);
-    private Processor output;
     private AsyncProcessor outputAsync;
 
     public DefaultErrorHandler(Processor output, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.output = output;
         this.outputAsync = AsyncProcessorTypeConverter.convert(output);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
     @Override
     public String toString() {
-        return "DefaultErrorHandler[" + output + "]";
+        return "DefaultErrorHandler[" + outputAsync + "]";
     }
 
     public void process(Exchange exchange) throws Exception {
-        output.process(exchange);
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -130,15 +129,15 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
      * Returns the output processor
      */
     public Processor getOutput() {
-        return output;
+        return outputAsync;
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(output);
+        ServiceHelper.startServices(outputAsync);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(output);
+        ServiceHelper.stopServices(outputAsync);
     }
 
 }

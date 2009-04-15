@@ -21,6 +21,8 @@ import java.util.List;
 import org.apache.camel.model.ChoiceDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.WhenDefinition;
+import org.apache.camel.model.SendDefinition;
+import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * Helper class for ProcessorType and the other model classes.
@@ -47,6 +49,16 @@ public final class ProcessorDefinitionHelper {
         for (ProcessorDefinition out : outputs) {
             if (type.isInstance(out)) {
                 return type.cast(out);
+            }
+
+            // send is much common
+            if (out instanceof SendDefinition) {
+                SendDefinition send = (SendDefinition) out;
+                List<ProcessorDefinition> children = send.getOutputs();
+                T child = findFirstTypeInOutputs(children, type);
+                if (child != null) {
+                    return child;
+                }
             }
 
             // special for choice

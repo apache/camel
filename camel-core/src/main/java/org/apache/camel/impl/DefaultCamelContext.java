@@ -49,6 +49,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
+import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
@@ -102,6 +103,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
+    private Boolean streamCache = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -703,6 +705,27 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     /**
      * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
+     * or it has not been specified then default to the <b>camel.streamCache</b> system property
+     */
+    public boolean getStreamCache() {
+        final Boolean value = getStreamCaching();
+        if (value != null) {
+            return value;
+        } else {
+            return SystemHelper.isSystemProperty("camel.streamCache");
+        }
+    }
+
+    public Boolean getStreamCaching() {
+        return streamCache;
+    }
+
+    public void setStreamCaching(Boolean trace) {
+        this.streamCache = trace;
+    }
+
+    /**
+     * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
      * or it has not been specified then default to the <b>camel.trace</b> system property
      */
     public boolean getTrace() {
@@ -783,6 +806,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
 
+        if (getStreamCache()) {
+            // only add a new stream cache if not already configured
+            if (StreamCaching.getStreamCache(this) == null) {
+                LOG.debug("StreamCaching is enabled");
+                addInterceptStrategy(new StreamCaching());
+            }
+        }
+
         if (getTrace()) {
             // only add a new tracer if not already configured
             if (Tracer.getTracer(this) == null) {
@@ -792,6 +823,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 if (formatter != null) {
                     tracer.setFormatter(formatter);
                 }
+                LOG.debug("Tracing is enabled");
                 addInterceptStrategy(tracer);
             }
         }
@@ -799,6 +831,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         if (getDelay() > 0) {
             // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
+                LOG.debug("Delayer is enabled");
                 addInterceptStrategy(new Delayer(getDelay()));
             }
         }
