@@ -53,10 +53,11 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     }
 
     /**
-     * Returns whether a specific error handler builder has been configued or not.
+     * Returns whether a specific error handler builder has been configured or not.
      * <p/>
-     * Can be used to test if none has been configued and then install a custom error handler builder
-     * replacing the default error handler (that would have been used as fallback).
+     * Can be used to test if none has been configured and then install a custom error handler builder
+     * replacing the default error handler (that would have been used as fallback otherwise).
+     * <br/>
      * This is for instance used by the transacted policy to setup a TransactedErrorHandlerBuilder
      * in camel-spring.
      */

@@ -49,13 +49,12 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
                     destinations[i] = "seda:file" + i;
 
                     from("seda:file" + i)
-                            .setHeader(Exchange.FILE_NAME,
-                                    constant("file" + i + ".txt"))
-                            .to("file://" + path + "/?append=false&noop=true", "mock:result");
+                        .setHeader(Exchange.FILE_NAME, constant("file" + i + ".txt"))
+                        .to("file://" + path + "/?append=false&noop=true", "mock:result");
                 }
 
                 from("seda:testFileCreatedAsDir")
-                        .to(destinations);
+                    .to(destinations);
             }
         };
     }
@@ -70,7 +69,7 @@ public class DirectoryCreateIssueTest extends ContextTestSupport {
             }
         });
         // wait a while for the file creation
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         assertMockEndpointsSatisfied();
 
         for (int i = 0; i < numFiles; i++) {

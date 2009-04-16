@@ -48,9 +48,9 @@ public class DataSetSedaTest extends ContextTestSupport {
             public void configure() throws Exception {
                 //TODO: remove this once the delegate processor supports async
                 errorHandler(noErrorHandler());
-                
-                from("dataset:foo").to("seda:queue:test?size=100");
-                from("seda:queue:test?size=100").to("dataset:foo");
+
+                from("dataset:foo").to("seda:queue:test?size=200");
+                from("seda:queue:test?size=200").to("dataset:foo");
             }
         };
     }

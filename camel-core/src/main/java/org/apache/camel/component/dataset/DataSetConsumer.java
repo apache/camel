@@ -62,10 +62,10 @@ public class DataSetConsumer extends DefaultConsumer {
 
                 try {
                     long delay = endpoint.getProduceDelay();
-                    if (delay >= 0 && delay < 3) {
-                        // if no delay set then we must sleep at lest for 3 millis to avoid concurrency
+                    if (delay >= 0 && delay < 4) {
+                        // if no delay set then we must sleep at lest for 4 millis to avoid concurrency
                         // issues with extremely high throughput
-                        delay = 3;
+                        delay = 4;
                     }
                     // to allow -1 to force none delay at all
                     if (delay > 0) {

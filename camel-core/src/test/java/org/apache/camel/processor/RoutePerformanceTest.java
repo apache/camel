@@ -24,20 +24,17 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dataset.SimpleDataSet;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * A route for simple performance testing that can be used when we suspect
  * something is wrong. Inspired by end user on forum doing this as proof of concept.
  */
 public class RoutePerformanceTest extends ContextTestSupport {
-    private static final Log LOG = LogFactory.getLog(RoutePerformanceTest.class);
 
     protected SimpleDataSet dataSet = new SimpleDataSet(1000);
 
     public void testPerformance() throws Exception {
-        long start = System.nanoTime();
+        long start = System.currentTimeMillis();
 
         MockEndpoint endpoint = getMockEndpoint("mock:results");
         endpoint.expectedMessageCount((int) dataSet.getSize());
@@ -45,10 +42,9 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        long delta = System.nanoTime() - start;
+        long delta = System.currentTimeMillis() - start;
 
-        LOG.info("Took: " + delta + " ns");
-        LOG.info("Took: " + delta / 1000000 + " millis");
+        System.out.println("RoutePerformanceTest: Took: " + delta + " ms");
     }
 
     @Override
