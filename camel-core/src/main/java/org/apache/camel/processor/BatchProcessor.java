@@ -121,7 +121,7 @@ public class BatchProcessor extends ServiceSupport implements Processor {
      * A strategy method to decide if the "in" batch is completed. That is, whether the resulting exchanges in
      * the in queue should be drained to the "out" collection.
      */
-    protected boolean isInBatchCompleted(int num) {
+    private boolean isInBatchCompleted(int num) {
         return num >= batchSize;
     }
 
@@ -129,7 +129,7 @@ public class BatchProcessor extends ServiceSupport implements Processor {
      * A strategy method to decide if the "out" batch is completed. That is, whether the resulting exchange in
      * the out collection should be sent.
      */
-    protected boolean isOutBatchCompleted() {
+    private boolean isOutBatchCompleted() {
         if (outBatchSize == 0) {
             // out batch is disabled, so go ahead and send.
             return true;
@@ -154,10 +154,6 @@ public class BatchProcessor extends ServiceSupport implements Processor {
         sender.cancel();
         ServiceHelper.stopServices(processor);
         collection.clear();
-    }
-
-    protected Collection<Exchange> getCollection() {
-        return collection;
     }
 
     /**
