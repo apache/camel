@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -54,6 +55,22 @@ public class StreamResequencerTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    public void testMultithreaded() throws Exception {
+        int numMessages = 500;
+        Thread t1 = new Sender(context.createProducerTemplate(), 0, numMessages, 2);
+        Thread t2 = new Sender(context.createProducerTemplate(), 1, numMessages + 1, 2);
+        Object[] bodies = new Object[numMessages];
+        for (int i = 0; i < numMessages; i++) {
+            bodies[i] = "msg" + i;
+        }
+        resultEndpoint.expectedBodiesReceived(bodies);
+        t1.start();
+        t2.start();
+        t1.join();
+        t2.join();
+        resultEndpoint.assertIsSatisfied();
+    }
+    
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -110,6 +127,35 @@ public class StreamResequencerTest extends ContextTestSupport {
         }
 
         assertIsInstanceOf(StreamResequencer.class, outputProcessor);
+    }
+    
+    private static class Sender extends Thread {
+        
+        ProducerTemplate template;
+
+        int start;
+        int end;
+        int increment;
+        
+        public Sender(ProducerTemplate template, int start, int end, int increment) {
+            this.template = template;
+            this.start = start;
+            this.end = end;
+            this.increment = increment;
+        }
+
+        @Override
+        public void run() {
+            for (int i = start; i < end; i += increment) {
+                try {
+                    Thread.sleep(2);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+                template.sendBodyAndHeader("direct:start", "msg" + i, "seqnum", Long.valueOf(i));
+            }
+        }
+        
     }
 }
 
