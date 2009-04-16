@@ -649,13 +649,14 @@ public class MockEndpoint extends DefaultEndpoint<Exchange> implements Browsable
             if (reporter != null) {
                 reporter.process(exchange);
             }
-
             performAssertions(exchange);
         } catch (Throwable e) {
             failures.add(e);
-        }
-        if (latch != null) {
-            latch.countDown();
+        } finally {
+            // make sure latch is counted down to avoid test hanging forever
+            if (latch != null) {
+                latch.countDown();
+            }
         }
     }
 
