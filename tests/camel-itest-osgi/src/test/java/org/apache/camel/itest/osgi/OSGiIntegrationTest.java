@@ -25,10 +25,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import static org.ops4j.pax.exam.CoreOptions.*;
+import static org.ops4j.pax.exam.CoreOptions.equinox;
+import static org.ops4j.pax.exam.CoreOptions.felix;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import org.ops4j.pax.exam.Inject;
 import org.ops4j.pax.exam.Option;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Bundle;
@@ -44,15 +49,15 @@ public class OSGiIntegrationTest {
 
   @Test
   public void listBundles() throws Exception {
-    System.out.println("************ Hello from OSGi ************");
+    LOG.info("************ Hello from OSGi ************");
 
     for (Bundle b : bundleContext.getBundles()) {
-      System.out.println("Bundle " + b.getBundleId() + " : " + b.getSymbolicName());
+      LOG.info("Bundle " + b.getBundleId() + " : " + b.getSymbolicName());
     }
 
     // TODO we should be using Camel OSGi really to deal with class loader issues
     CamelContext camelContext = new DefaultCamelContext();
-    
+
     camelContext.addRoutes(new RouteBuilder() {
       public void configure() throws Exception {
         from("seda:foo").to("seda:bar");
@@ -61,29 +66,32 @@ public class OSGiIntegrationTest {
 
     camelContext.start();
 
+    LOG.info("CamelContext started");
+
     Thread.sleep(2000);
+
+    LOG.info("CamelContext stopping");
+
     camelContext.stop();
 
+    LOG.info("CamelContext stopped");
   }
 
   @Configuration
   public static Option[] configure() {
     return options(
         // install log service using pax runners profile abstraction (there are more profiles, like DS)
-        //logProfile(),
-        
+        logProfile(),
+
         // this is how you set the default log level when using pax logging (logProfile)
-        //systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
+        systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
 
         // TODO why can't we find these from the maven pom.xml with transitive dependency?
-        mavenBundle().groupId("org.apache.camel").artifactId("camel-core").version(
-            "2.0-SNAPSHOT"),
+        mavenBundle().groupId("org.apache.camel").artifactId("camel-core").version("2.0-SNAPSHOT"),
         wrappedBundle(
-            mavenBundle().groupId("commons-logging").artifactId("commons-logging").version("1.1.1")
-        ),
+            mavenBundle().groupId("commons-logging").artifactId("commons-logging").version(
+                "1.1.1")),
 
-
-        felix(), equinox()
-    );
+        felix(), equinox());
   }
 }
