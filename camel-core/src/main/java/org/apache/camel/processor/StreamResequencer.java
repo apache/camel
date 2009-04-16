@@ -16,6 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
@@ -170,7 +175,8 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
 
     private class Delivery extends Thread {
 
-        private volatile boolean cancelRequested;
+        private Lock deliveryRequestLock = new ReentrantLock();
+        private Condition deliveryRequestCondition = deliveryRequestLock.newCondition();
         
         public Delivery() {
             super("Delivery Thread");
@@ -180,11 +186,14 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(DELIVERY_ATTEMPT_INTERVAL);
-                } catch (InterruptedException e) {
-                    if (cancelRequested) {
-                        return;
+                    deliveryRequestLock.lock();
+                    try {
+                        deliveryRequestCondition.await(DELIVERY_ATTEMPT_INTERVAL, TimeUnit.MILLISECONDS);
+                    } finally {
+                        deliveryRequestLock.unlock();
                     }
+                } catch (InterruptedException e) {
+                    break;
                 }
                 try {
                     engine.deliver();
@@ -195,12 +204,16 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         }
 
         public void cancel() {
-            cancelRequested = true;
             interrupt();
         }
         
         public void request() {
-            interrupt();
+            deliveryRequestLock.lock();
+            try {
+                deliveryRequestCondition.signal();
+            } finally {
+                deliveryRequestLock.unlock();
+            }
         }
         
     }
