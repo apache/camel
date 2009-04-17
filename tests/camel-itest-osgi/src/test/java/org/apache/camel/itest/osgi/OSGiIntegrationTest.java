@@ -32,7 +32,9 @@ import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 import org.ops4j.pax.exam.Inject;
+import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.options.MavenUrlProvisionOption;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
@@ -87,11 +89,21 @@ public class OSGiIntegrationTest {
         systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
 
         // TODO why can't we find these from the maven pom.xml with transitive dependency?
-        mavenBundle().groupId("org.apache.camel").artifactId("camel-core").version("2.0-SNAPSHOT"),
-        wrappedBundle(
-            mavenBundle().groupId("commons-logging").artifactId("commons-logging").version(
-                "1.1.1")),
+        mavenBundleAsInProject("org.apache.camel", "camel-core"),
+
+        wrappedBundle(mavenBundleAsInProject("commons-logging", "commons-logging")),
 
         felix(), equinox());
+  }
+
+  /**
+   * Adds a maven bundle for the given groupId and artifactId while deducing the version to use
+   * from the <code>target/classes/META-INF/maven/dependencies.properties</code> file that is
+   * generated via the
+   * <a href="http://wiki.ops4j.org/display/paxexam/Pax+Exam+-+Tutorial+1">depends-maven-plugin
+   * from ServiceMix</a>
+   */
+  public static MavenUrlProvisionOption mavenBundleAsInProject(String groupId, String artifactId) {
+    return mavenBundle().groupId(groupId).artifactId(artifactId).version(asInProject());
   }
 }
