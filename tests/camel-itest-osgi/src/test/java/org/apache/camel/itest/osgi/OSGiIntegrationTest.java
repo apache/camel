@@ -85,9 +85,8 @@ public class OSGiIntegrationTest {
                 // this is how you set the default log level when using pax logging (logProfile)
                 systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
 
-                // TODO why can't we find these from the maven pom.xml with transitive dependency?
+                // lets deploy the bundles we need
                 mavenBundleAsInProject("org.apache.camel", "camel-core"),
-
                 wrappedBundle(mavenBundleAsInProject("commons-logging", "commons-logging")),
 
                 felix(), equinox());
