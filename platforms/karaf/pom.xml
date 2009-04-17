@@ -41,6 +41,17 @@
     <modules>
       <module>features</module>
     </modules>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <snapshots>
+          <enabled>true</enabled>
+        </snapshots>
+        <id>apache.snapshots</id>
+        <name>Apache Snapshot Repository</name>
+        <url>http://repository.apache.org/snapshots</url>
+      </pluginRepository>
+    </pluginRepositories>
  
     <build>
       <pluginManagement> 
