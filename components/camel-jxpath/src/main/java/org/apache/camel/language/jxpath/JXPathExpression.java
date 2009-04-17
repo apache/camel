@@ -45,13 +45,12 @@ public class JXPathExpression extends ExpressionSupport {
         this.type = type;
     }
 
-
-    public Object evaluate(Exchange exchange) {
+    public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
             JXPathContext context = JXPathContext.newContext(exchange);
             Object result = getJXPathExpression().getValue(context, type);
             assertResultType(exchange, result);
-            return result;
+            return exchange.getContext().getTypeConverter().convertTo(tClass, result);
         } catch (JXPathException e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }

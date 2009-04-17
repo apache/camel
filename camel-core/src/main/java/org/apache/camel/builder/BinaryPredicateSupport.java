@@ -45,14 +45,14 @@ public abstract class BinaryPredicateSupport implements Predicate {
     }
 
     public boolean matches(Exchange exchange) {
-        Object leftValue = left.evaluate(exchange);
-        Object rightValue = right.evaluate(exchange);
+        Object leftValue = left.evaluate(exchange, Object.class);
+        Object rightValue = right.evaluate(exchange, Object.class);
         return matches(exchange, leftValue, rightValue);
     }
 
     public void assertMatches(String text, Exchange exchange) {
-        Object leftValue = left.evaluate(exchange);
-        Object rightValue = right.evaluate(exchange);
+        Object leftValue = left.evaluate(exchange, Object.class);
+        Object rightValue = right.evaluate(exchange, Object.class);
         if (!matches(exchange, leftValue, rightValue)) {
             throw new AssertionError(text + assertionFailureMessage(exchange, leftValue, rightValue));
         }

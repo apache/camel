@@ -22,7 +22,6 @@ import java.lang.reflect.Type;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.transaction.TransactionStatus;
@@ -79,7 +78,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
             if (i > 1) {
                 LOG.info("Retrying attempt: " + i);
                 try {
-                    Thread.sleep(retryCount);
+                    Thread.sleep(retrySleep);
                 } catch (InterruptedException e) {
                     LOG.debug("Caught: " + e, e);
                 }
@@ -132,10 +131,12 @@ public abstract class BamProcessorSupport<T> implements Processor {
     protected abstract Class<?> getKeyType();
 
     protected Object getCorrelationKey(Exchange exchange) throws NoCorrelationKeyException {
-        Object value = correlationKeyExpression.evaluate(exchange);
+        Object value;
         Class<?> keyType = getKeyType();
         if (keyType != null) {
-            value = ExchangeHelper.convertToType(exchange, keyType, value);
+            value = correlationKeyExpression.evaluate(exchange, keyType);
+        } else {
+            value = correlationKeyExpression.evaluate(exchange, Object.class);
         }
         if (value == null) {
             throw new NoCorrelationKeyException(this, exchange);

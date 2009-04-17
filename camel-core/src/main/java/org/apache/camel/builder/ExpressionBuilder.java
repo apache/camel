@@ -520,7 +520,7 @@ public final class ExpressionBuilder {
     public static Expression convertToExpression(final Expression expression, final Expression type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                return expression.evaluate(exchange, type.evaluate(exchange).getClass());
+                return expression.evaluate(exchange, type.evaluate(exchange, Object.class).getClass());
             }
 
             @Override
@@ -538,7 +538,7 @@ public final class ExpressionBuilder {
                                                 final String token) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 Scanner scanner = getScanner(exchange, value);
                 scanner.useDelimiter(token);
                 return scanner;
@@ -560,7 +560,7 @@ public final class ExpressionBuilder {
         final Pattern pattern = Pattern.compile(regexTokenizer);
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 Scanner scanner = getScanner(exchange, value);
                 scanner.useDelimiter(regexTokenizer);
                 return scanner;
@@ -757,7 +757,7 @@ public final class ExpressionBuilder {
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
                 Language language = exchange.getContext().resolveLanguage("simple");
-                return language.createExpression(expression).evaluate(exchange);
+                return language.createExpression(expression).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -774,7 +774,7 @@ public final class ExpressionBuilder {
                 // must call evalute to return the nested langauge evaluate when evaluating
                 // stacked expressions
                 Language language = exchange.getContext().resolveLanguage("bean");
-                return language.createExpression(expression).evaluate(exchange);
+                return language.createExpression(expression).evaluate(exchange, Object.class);
             }
 
             @Override

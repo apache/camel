@@ -43,6 +43,15 @@ public class MvelExpression extends ExpressionSupport {
         return new MvelExpression(new MvelLanguage(), expression, Object.class);
     }
 
+    public <T> T evaluate(Exchange exchange, Class<T> tClass) {
+        try {
+            Object value = org.mvel.MVEL.executeExpression(compiled, new RootObject(exchange));
+            return exchange.getContext().getTypeConverter().convertTo(tClass, value);
+        } catch (Exception e) {
+            throw new ExpressionEvaluationException(this, exchange, e);
+        }
+    }
+
     public Object evaluate(Exchange exchange) {
         try {
             return org.mvel.MVEL.executeExpression(compiled, new RootObject(exchange));

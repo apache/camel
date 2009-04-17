@@ -98,7 +98,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         }
 
         return new Expression() {
-            public Object evaluate(final Exchange exchange) {
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
                 Predicate predicate = null;
                 if (operator == EQ) {
                     predicate = PredicateBuilder.isEqualTo(left, rightConverted);
@@ -127,7 +127,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                     // okay the in operator is a bit more complex as we need to build a list of values
                     // from the right handside expression.
                     // each element on the right handside must be separated by comma (default for create iterator)
-                    Iterator it = ObjectHelper.createIterator(right.evaluate(exchange));
+                    Iterator it = ObjectHelper.createIterator(right.evaluate(exchange, Object.class));
                     List<Object> values = new ArrayList<Object>();
                     while (it.hasNext()) {
                         values.add(it.next());
@@ -143,12 +143,9 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 if (predicate == null) {
                     throw new IllegalArgumentException("Unsupported operator: " + operator + " for expression: " + expression);
                 }
-                return predicate.matches(exchange);
-            }
 
-            public <T> T evaluate(Exchange exchange, Class<T> type) {
-                Object result = evaluate(exchange);
-                return exchange.getContext().getTypeConverter().convertTo(type, result);
+                boolean matches = predicate.matches(exchange);
+                return exchange.getContext().getTypeConverter().convertTo(type, matches);
             }
 
             @Override

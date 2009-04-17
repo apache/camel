@@ -49,7 +49,7 @@ public class CamelConverter {
     public Processor toProcessor(final Expression expresion) {
         return new Processor() {
             public void process(Exchange exchange) throws Exception {
-                Object answer = expresion.evaluate(exchange);
+                Object answer = expresion.evaluate(exchange, Object.class);
                 Message out = exchange.getOut();
                 out.copyFrom(exchange.getIn());
                 out.setBody(answer);

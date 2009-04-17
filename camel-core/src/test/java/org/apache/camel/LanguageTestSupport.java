@@ -83,7 +83,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         if (expectedValue != null) {
             value = expression.evaluate(exchange, expectedValue.getClass());
         } else {
-            value = expression.evaluate(exchange);
+            value = expression.evaluate(exchange, Object.class);
         }
 
         log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);

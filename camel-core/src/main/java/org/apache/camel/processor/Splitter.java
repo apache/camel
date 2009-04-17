@@ -50,7 +50,7 @@ public class Splitter extends MulticastProcessor implements Processor {
     }
 
     public Splitter(Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
-            boolean parallelProcessing, Executor executor, boolean streaming) {
+                    boolean parallelProcessing, Executor executor, boolean streaming) {
         super(Collections.singleton(destination), aggregationStrategy, parallelProcessing, executor, streaming);
 
         this.expression = expression;
@@ -65,7 +65,7 @@ public class Splitter extends MulticastProcessor implements Processor {
 
     @Override
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
-        Object value = expression.evaluate(exchange);
+        Object value = expression.evaluate(exchange, Object.class);
 
         if (isStreaming()) {
             return createProcessorExchangePairsIterable(exchange, value);

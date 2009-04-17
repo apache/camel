@@ -47,7 +47,7 @@ public final class PredicateBuilder {
     public static Predicate toPredicate(final Expression expression) {
         return new Predicate() {
             public boolean matches(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 return ObjectHelper.evaluateValuePredicate(value);
             }
 
@@ -239,7 +239,7 @@ public final class PredicateBuilder {
 
         return new Predicate() {
             public boolean matches(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 return type.isInstance(value);
             }
 
@@ -276,9 +276,9 @@ public final class PredicateBuilder {
 
         return new Predicate() {
             public boolean matches(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                String value = expression.evaluate(exchange, String.class);
                 if (value != null) {
-                    Matcher matcher = pattern.matcher(value.toString());
+                    Matcher matcher = pattern.matcher(value);
                     return matcher.matches();
                 }
                 return false;

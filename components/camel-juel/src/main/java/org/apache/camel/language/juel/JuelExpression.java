@@ -32,8 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.ExpressionSupport;
 
-
-
 /**
  * The <a href="http://camel.apache.org/el.html">EL Language from JSP and JSF</a>
  * using the <a href="http://camel.apache.org/juel.html">JUEL library</a>
@@ -55,12 +53,13 @@ public class JuelExpression extends ExpressionSupport {
         return new JuelExpression(expression, Object.class);
     }
 
-    public Object evaluate(Exchange exchange) {
+    public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         // TODO we could use caching here but then we'd have possible concurrency issues
         // so lets assume that the provider caches
         ELContext context = populateContext(createContext(), exchange);
         ValueExpression valueExpression = getExpressionFactory().createValueExpression(context, expression, type);
-        return valueExpression.getValue(context);
+        Object value = valueExpression.getValue(context);
+        return exchange.getContext().getTypeConverter().convertTo(tClass, value);
     }
 
     public ExpressionFactory getExpressionFactory() {

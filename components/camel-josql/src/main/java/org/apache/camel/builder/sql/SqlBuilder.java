@@ -48,12 +48,8 @@ public class SqlBuilder implements Expression, Predicate {
         this.query = query;
     }
 
-    public Object evaluate(Exchange exchange) {
-        return evaluateQuery(exchange);
-    }
-
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Object result = evaluate(exchange);
+        Object result = evaluateQuery(exchange);
         return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
 

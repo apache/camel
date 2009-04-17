@@ -225,7 +225,7 @@ public final class FileExpressionBuilder {
                 }
                 // must call evaluate to return the nested language evaluate when evaluating
                 // stacked expressions
-                return ExpressionBuilder.dateExpression(command, pattern).evaluate(exchange);
+                return ExpressionBuilder.dateExpression(command, pattern).evaluate(exchange, Object.class);
             }
 
             @Override
@@ -242,11 +242,11 @@ public final class FileExpressionBuilder {
                 // stacked expressions
                 try {
                     Language simple = exchange.getContext().resolveLanguage("simple");
-                    return simple.createExpression(expression).evaluate(exchange);
+                    return simple.createExpression(expression).evaluate(exchange, Object.class);
                 } catch (ExpressionIllegalSyntaxException e) {
                     // fallback to constant so end users can enter a fixed filename
                     Language constant = exchange.getContext().resolveLanguage("constant");
-                    return constant.createExpression(expression).evaluate(exchange);
+                    return constant.createExpression(expression).evaluate(exchange, Object.class);
                 }
             }
 

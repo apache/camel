@@ -98,7 +98,7 @@ public class ExpressionBuilderTest extends TestSupport {
         Expression expression = camelContextPropertyExpression("CamelTestKey");
         assertExpression(expression, exchange, "CamelTestValue");        
         expression = camelContextPropertiesExpression();
-        Map<String, String> properties = (Map<String, String>)expression.evaluate(exchange);
+        Map<String, String> properties = (Map<String, String>)expression.evaluate(exchange, Object.class);
         assertEquals("Get a wrong properties size", properties.size(), 1);
     }
 

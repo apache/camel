@@ -161,7 +161,7 @@ public class WireTapProcessor extends SendProcessor {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         } else {
-            Object body = newExchangeExpression.evaluate(answer);
+            Object body = newExchangeExpression.evaluate(answer, Object.class);
             if (body != null) {
                 answer.getIn().setBody(body);
             }

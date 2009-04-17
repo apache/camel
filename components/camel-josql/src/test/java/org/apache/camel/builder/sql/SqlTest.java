@@ -38,8 +38,7 @@ public class SqlTest extends TestSupport {
 
     public void testExpression() throws Exception {
         Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where city = 'London'");
-        Object value = expression.evaluate(exchange);
-        assertIsInstanceOf(List.class, value);
+        List value = expression.evaluate(exchange, List.class);
 
         List list = (List)value;
         assertEquals("List size", 2, list.size());
@@ -51,8 +50,7 @@ public class SqlTest extends TestSupport {
 
     public void testExpressionWithHeaderVariable() throws Exception {
         Expression expression = sql("SELECT * FROM org.apache.camel.builder.sql.Person where name = :fooHeader");
-        Object value = expression.evaluate(exchange);
-        assertIsInstanceOf(List.class, value);
+        List value = expression.evaluate(exchange, List.class);
 
         List<Person> list = (List<Person>)value;
         assertEquals("List size", 1, list.size());

@@ -60,7 +60,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
     }
 
     protected synchronized Processor chooseProcessor(List<Processor> processors, Exchange exchange) {
-        Object value = correlationExpression.evaluate(exchange);
+        Object value = correlationExpression.evaluate(exchange, Object.class);
         Object key = getStickyKey(value);
 
         Processor processor;

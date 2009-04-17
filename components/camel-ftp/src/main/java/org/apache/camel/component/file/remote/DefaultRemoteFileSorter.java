@@ -124,8 +124,8 @@ public final class DefaultRemoteFileSorter {
         return new Comparator<RemoteFileExchange>() {
             public int compare(RemoteFileExchange o1, RemoteFileExchange o2) {
                 final Expression exp = FileLanguage.file(expression);
-                Object result1 = exp.evaluate(o1);
-                Object result2 = exp.evaluate(o2);
+                Object result1 = exp.evaluate(o1, Object.class);
+                Object result2 = exp.evaluate(o2, Object.class);
                 int answer = ObjectHelper.compare(result1, result2, ignoreCase);
                 // if equal then sub sort by nested comparator
                 if (answer == 0 && nested != null) {

@@ -48,11 +48,12 @@ public class GroovyExpression extends ExpressionSupport {
         return "groovy: " + text;
     }
 
-    public Object evaluate(Exchange exchange) {
+    public <T> T evaluate(Exchange exchange, Class<T> type) {
         Script script = ExchangeHelper.newInstance(exchange, scriptType);
         // lets configure the script
         configure(exchange, script);
-        return script.run();
+        Object value = script.run();
+        return exchange.getContext().getTypeConverter().convertTo(type, value);
     }
 
     private void configure(Exchange exchange, Script script) {

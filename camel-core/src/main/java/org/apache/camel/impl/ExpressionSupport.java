@@ -29,13 +29,12 @@ import org.apache.camel.util.ObjectHelper;
 public abstract class ExpressionSupport implements Expression, Predicate {
 
     public boolean matches(Exchange exchange) {
-        Object value = evaluate(exchange);
+        Object value = evaluate(exchange, Object.class);
         return ObjectHelper.evaluateValuePredicate(value);
     }
 
-    public <T> T evaluate(Exchange exchange, Class<T> type) {
-        Object result = evaluate(exchange);
-        return exchange.getContext().getTypeConverter().convertTo(type, result);
+    public Object evaluate(Exchange exchange) {
+        return evaluate(exchange, Object.class);
     }
 
     public void assertMatches(String text, Exchange exchange) {

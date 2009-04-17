@@ -527,14 +527,14 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             Exchange e2 = list.get(i);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: " + expression.evaluate(e1) + " for expression: " + expression + ". Exchanges: " + e1 + " and "
+                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: " + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and "
                      + e2);
             } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1) + " and message " + i + " has value: " + expression.evaluate(e2) + " for expression: "
+                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1, Object.class) + " and message " + i + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
                          + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
@@ -546,7 +546,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
         List<Exchange> list = getReceivedExchanges();
         for (int i = 0; i < list.size(); i++) {
             Exchange e2 = list.get(i);
-            Object key = expression.evaluate(e2);
+            Object key = expression.evaluate(e2, Object.class);
             Exchange e1 = map.get(key);
             if (e1 != null) {
                 fail("Duplicate message found on message " + i + " has value: " + key + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);

@@ -36,7 +36,7 @@ public class TransformProcessor extends DelegateProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Object newBody = expression.evaluate(exchange);
+        Object newBody = expression.evaluate(exchange, Object.class);
         exchange.getOut().setBody(newBody);
 
         // propagate headers and attachments

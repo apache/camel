@@ -63,6 +63,6 @@ object Languages {
 
   def evaluate(expression: String)(exchange: Exchange)(lang: String) : Any = { 
     val language = exchange.getContext().resolveLanguage(lang)
-    language.createExpression(expression).evaluate(exchange)
+    language.createExpression(expression).evaluate(exchange, classOf[Object])
   }
 }

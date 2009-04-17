@@ -108,12 +108,7 @@ public class ExpressionDefinition implements Expression, Predicate {
     }
 
     public Object evaluate(Exchange exchange) {
-        if (expressionValue == null) {
-            RouteContext routeContext = new DefaultRouteContext(exchange.getContext());
-            expressionValue = createExpression(routeContext);
-        }
-        ObjectHelper.notNull(expressionValue, "expressionValue");
-        return expressionValue.evaluate(exchange);
+        return evaluate(exchange, Object.class);
     }
 
     public <T> T evaluate(Exchange exchange, Class<T> type) {

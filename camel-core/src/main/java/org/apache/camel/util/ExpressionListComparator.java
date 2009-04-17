@@ -38,8 +38,8 @@ public class ExpressionListComparator implements Comparator<Exchange> {
 
     public int compare(Exchange e1, Exchange e2) {
         for (Expression expression : expressions) {
-            Object o1 = expression.evaluate(e1);
-            Object o2 = expression.evaluate(e2);
+            Object o1 = expression.evaluate(e1, Object.class);
+            Object o2 = expression.evaluate(e2, Object.class);
             int answer = ObjectHelper.compare(o1, o2);
             if (answer != 0) {
                 return answer;

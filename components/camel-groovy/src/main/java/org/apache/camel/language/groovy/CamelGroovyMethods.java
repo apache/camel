@@ -45,8 +45,9 @@ public final class CamelGroovyMethods {
                 return filter.toString();
             }
 
-            public Object evaluate(Exchange exchange) {
-                return filter.call(exchange);
+            public <T> T evaluate(Exchange exchange, Class<T> type) {
+                Object result = filter.call(exchange);
+                return exchange.getContext().getTypeConverter().convertTo(type, result);
             }
 
             @Override

@@ -24,18 +24,9 @@ package org.apache.camel;
  * or <a href="http://camel.apache.org/sql.html">SQL</a> as well
  * as any arbitrary Java expression.
  *
- *
  * @version $Revision$
  */
 public interface Expression {
-
-    /**
-     * Returns the value of the expression on the given exchange
-     *
-     * @param exchange the message exchange on which to evaluate the expression
-     * @return the value of the expression
-     */
-    Object evaluate(Exchange exchange);
 
     /**
      * Returns the value of the expression on the given exchange

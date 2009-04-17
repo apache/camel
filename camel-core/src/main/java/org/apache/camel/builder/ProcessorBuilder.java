@@ -39,7 +39,7 @@ public final class ProcessorBuilder {
     public static Processor setBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object newBody = expression.evaluate(exchange);
+                Object newBody = expression.evaluate(exchange, Object.class);
                 exchange.getIn().setBody(newBody);
             }
 
@@ -56,7 +56,7 @@ public final class ProcessorBuilder {
     public static Processor setOutBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object newBody = expression.evaluate(exchange);
+                Object newBody = expression.evaluate(exchange, Object.class);
                 exchange.getOut().setBody(newBody);
             }
 
@@ -73,7 +73,7 @@ public final class ProcessorBuilder {
     public static Processor setFaultBody(final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object newBody = expression.evaluate(exchange);
+                Object newBody = expression.evaluate(exchange, Object.class);
                 exchange.getFault().setBody(newBody);
             }
 
@@ -90,7 +90,7 @@ public final class ProcessorBuilder {
     public static Processor setHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 exchange.getIn().setHeader(name, value);
             }
 
@@ -107,7 +107,7 @@ public final class ProcessorBuilder {
     public static Processor setOutHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 exchange.getOut().setHeader(name, value);
             }
 
@@ -124,7 +124,7 @@ public final class ProcessorBuilder {
     public static Processor setFaultHeader(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 exchange.getFault().setHeader(name, value);
             }
 
@@ -141,7 +141,7 @@ public final class ProcessorBuilder {
     public static Processor setProperty(final String name, final Expression expression) {
         return new Processor() {
             public void process(Exchange exchange) {
-                Object value = expression.evaluate(exchange);
+                Object value = expression.evaluate(exchange, Object.class);
                 exchange.setProperty(name, value);
             }
 

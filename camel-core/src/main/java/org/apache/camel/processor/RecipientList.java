@@ -58,7 +58,7 @@ public class RecipientList extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Object receipientList = expression.evaluate(exchange);
+        Object receipientList = expression.evaluate(exchange, Object.class);
         sendToRecipientList(exchange, receipientList);
     }
 

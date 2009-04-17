@@ -43,7 +43,7 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) {
-        final Object values = expression.evaluate(exchange);
+        final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
             template.execute(new JpaCallback() {
                 public Object doInJpa(EntityManager entityManager) throws PersistenceException {

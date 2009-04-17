@@ -204,7 +204,7 @@ public abstract class TestSupport extends TestCase {
      * Asserts that the given expression when evaluated returns the given answer
      */
     protected Object assertExpression(Expression expression, Exchange exchange, Object expected) {
-        Object value = expression.evaluate(exchange);
+        Object value = expression.evaluate(exchange, Object.class);
 
         // lets try convert to the type of the expected
         if (expected != null) {

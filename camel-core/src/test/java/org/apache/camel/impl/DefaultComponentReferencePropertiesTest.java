@@ -134,7 +134,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
-        assertEquals("Hello World", endpoint.expression.evaluate(exchange));
+        assertEquals("Hello World", endpoint.expression.evaluate(exchange, String.class));
     }
 
     public void testCallSingleExpressionSetter() throws Exception {
@@ -149,7 +149,7 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
 
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody("Hello World");
-        assertEquals("Hello World", endpoint.special.evaluate(exchange));
+        assertEquals("Hello World", endpoint.special.evaluate(exchange, String.class));
     }
 
     public void testTypoInParameter() throws Exception {

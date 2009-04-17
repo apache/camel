@@ -44,7 +44,7 @@ public class BeanTest extends LanguageTestSupport {
         Expression exp = BeanLanguage.bean(MyUser.class, null);
         Exchange exchange = createExchangeWithBody("Claus");
 
-        Object result = exp.evaluate(exchange);
+        Object result = exp.evaluate(exchange, Object.class);
         assertEquals("Hello Claus", result);
     }
 
@@ -52,7 +52,7 @@ public class BeanTest extends LanguageTestSupport {
         Expression exp = BeanLanguage.bean(MyUser.class, "hello");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        Object result = exp.evaluate(exchange);
+        Object result = exp.evaluate(exchange, Object.class);
         assertEquals("Hello Claus", result);
     }
 
@@ -61,7 +61,7 @@ public class BeanTest extends LanguageTestSupport {
         Expression exp = BeanLanguage.bean(user, "hello");
         Exchange exchange = createExchangeWithBody("Claus");
 
-        Object result = exp.evaluate(exchange);
+        Object result = exp.evaluate(exchange, Object.class);
         assertEquals("Hello Claus", result);
     }
 

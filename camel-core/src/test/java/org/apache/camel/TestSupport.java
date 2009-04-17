@@ -207,7 +207,7 @@ public abstract class TestSupport extends TestCase {
         if (expected != null) {
             value = expression.evaluate(exchange, expected.getClass());
         } else {
-            value = expression.evaluate(exchange);
+            value = expression.evaluate(exchange, Object.class);
         }
 
         log.debug("Evaluated expression: " + expression + " on exchange: " + exchange + " result: " + value);

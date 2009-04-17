@@ -50,12 +50,13 @@ public class OgnlExpression extends ExpressionSupport {
         return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
     }
 
-    public Object evaluate(Exchange exchange) {
+    public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         // TODO we could use caching here but then we'd have possible
         // concurrency issues so lets assume that the provider caches
         OgnlContext oglContext = new OgnlContext();
         try {
-            return Ognl.getValue(expression, oglContext, new RootObject(exchange));
+            Object value = Ognl.getValue(expression, oglContext, new RootObject(exchange));
+            return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (OgnlException e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
