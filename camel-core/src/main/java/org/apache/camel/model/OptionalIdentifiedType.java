@@ -44,6 +44,8 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
     private String id;
+    @XmlTransient
+    private boolean customId;
     @XmlElement(required = false)
     private DescriptionDefinition description;
 
@@ -60,6 +62,7 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
      */
     public void setId(String value) {
         this.id = value;
+        customId = true;
     }
 
     public DescriptionDefinition getDescription() {
@@ -111,13 +114,32 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
     }
 
     /**
+     * Sets the id of this node
+     *
+     * @param id  the id
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public T id(String id) {
+        setId(id);
+        return (T) this;
+    }
+
+    /**
      * Gets the node id, creating one if not already set.
      */
     public String idOrCreate() {
         if (id == null) {
-            setId(createId());
+            id = createId();
         }
         return getId();
+    }
+
+    /**
+     * Returns whether a custom id has been assigned
+     */
+    public boolean hasCustomIdAssigned() {
+        return customId;
     }
 
     // Implementation methods
