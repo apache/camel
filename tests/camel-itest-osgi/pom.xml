@@ -28,6 +28,8 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>camel-itest-osgi</artifactId>
+  <name>Camel :: OSGi Integration Tests</name>
+  <description>Performs OSGi compliance integration tests</description>
 
   <properties>
     <!--<pax-exam-version>0.4.1-SNAPSHOT</pax-exam-version>-->
