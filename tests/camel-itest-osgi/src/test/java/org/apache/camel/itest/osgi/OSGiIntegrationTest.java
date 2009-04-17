@@ -94,11 +94,7 @@ public class OSGiIntegrationTest {
     }
 
     /**
-     * Adds a maven bundle for the given groupId and artifactId while deducing the version to use
-     * from the <code>target/classes/META-INF/maven/dependencies.properties</code> file that is
-     * generated via the
-     * <a href="http://wiki.ops4j.org/display/paxexam/Pax+Exam+-+Tutorial+1">depends-maven-plugin
-     * from ServiceMix</a>
+     * TODO we can remove this method when 0.4.1 of Pax Exam comes out!
      */
     public static MavenUrlProvisionOption mavenBundleAsInProject(String groupId, String artifactId) {
         return mavenBundle().groupId(groupId).artifactId(artifactId).version(asInProject());
