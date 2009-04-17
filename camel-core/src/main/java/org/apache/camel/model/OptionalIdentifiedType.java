@@ -143,7 +143,6 @@ public abstract class OptionalIdentifiedType<T extends OptionalIdentifiedType> {
      *
      * @param id the id
      * @return the builder
-     * @deprecated will be removed in Camel 2.0
      */
     public T id(String id) {
         setId(id);
