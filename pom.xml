@@ -43,6 +43,7 @@
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.2.0</activemq-version>
     <apacheds-version>1.5.4</apacheds-version>
+    <axiom-version>1.2.8</axiom-version>
     <cxf-version>2.2</cxf-version>
     <felix-version>1.4.1</felix-version>
     <felix-osgi-version>1.2.0</felix-osgi-version>
@@ -75,8 +76,8 @@
     <guiceyfruit-version>2.0-beta-4</guiceyfruit-version>
     <junit-version>3.8.2</junit-version>
     <saxon-version>9.1.0.1</saxon-version>
-    <scala-version>2.7.2-rc1</scala-version>
-    <scala-plugin-version>2.7.1</scala-plugin-version>
+    <scala-version>2.7.3</scala-version>
+    <scala-plugin-version>2.9.1</scala-plugin-version>
     <testng-version>5.8</testng-version>
     <xbean-spring-version>3.4</xbean-spring-version>
 
@@ -172,6 +173,7 @@
     <module>camel-core</module>
     <module>components</module>
     <module>examples</module>
+    <module>platforms</module>
     <module>tooling</module>
     <module>tests</module>
     <module>apache-camel</module>
@@ -673,7 +675,7 @@
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jpa_3.0_spec</artifactId>
-        <version>1.0</version>
+        <version>1.1.1</version>
       </dependency>
 
       <!-- Optional Spring Support -->
@@ -944,6 +946,12 @@
         <version>1.2</version>
       </dependency>
 
+      <!-- optional Axiom -->
+      <dependency>
+        <groupId>org.apache.ws.commons.axiom</groupId>
+        <artifactId>axiom-impl</artifactId>
+        <version>1.2.8</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
