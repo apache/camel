@@ -211,9 +211,8 @@ public class BatchProcessor extends ServiceSupport implements Processor {
             // The goal of the following algorithm in terms of synchronisation
             // is to provide fine grained locking i.e. retaining the lock only
             // when required. Special consideration is given to releasing the
-            // lock when calling an overloaded method such as isInBatchComplete,
-            // isOutBatchComplete and around sendExchanges. The latter is
-            // especially important as the process of sending out the exchanges
+            // lock when calling an overloaded method i.e. sendExchanges. 
+            // Unlocking is important as the process of sending out the exchanges
             // would otherwise block new exchanges from being queued.
 
             queueLock.lock();
@@ -232,13 +231,8 @@ public class BatchProcessor extends ServiceSupport implements Processor {
                                 drainQueueTo(collection, batchSize);
                             }
                             
-                            queueLock.unlock();
-                            try {
-                                if (!isOutBatchCompleted()) {
-                                    continue;
-                                }
-                            } finally {
-                                queueLock.lock();
+                            if (!isOutBatchCompleted()) {
+                                continue;
                             }
                         }
 
