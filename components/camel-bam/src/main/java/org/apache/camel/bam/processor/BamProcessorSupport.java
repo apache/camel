@@ -79,7 +79,7 @@ public abstract class BamProcessorSupport<T> implements Processor {
             if (i > 1) {
                 LOG.info("Retrying attempt: " + i);
                 try {
-                    Thread.sleep(retryCount);
+                    Thread.sleep(retrySleep);
                 } catch (InterruptedException e) {
                     LOG.debug("Caught: " + e, e);
                 }
