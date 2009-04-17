@@ -53,7 +53,7 @@ abstract class SAbstractDefinition extends DSL {
     new SProcessorDefinition(target.asInstanceOf[RawProcessorDefinition])
   }
   
-  def attempt : STryDefinition = new STryDefinition(target.tryBlock)
+  def attempt : STryDefinition = new STryDefinition(target.doTry)
   
   def split(expression: Exchange => Any) = 
     new SSplitDefinition(target.split(expression))

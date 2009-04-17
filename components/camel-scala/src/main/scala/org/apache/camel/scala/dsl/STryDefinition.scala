@@ -29,12 +29,12 @@ class STryDefinition(val target: TryDefinition)(implicit val builder: RouteBuild
   override def apply(block: => Unit) : STryDefinition = super.apply(block).asInstanceOf[STryDefinition]
   
   def handle[Target](exception: Class[Target]) = {
-    target.handle(exception)
+    target.doCatch(exception)
     this
   }
   
   def ensure = {
-    target.finallyBlock
+    target.doFinally
     this
   }
  
