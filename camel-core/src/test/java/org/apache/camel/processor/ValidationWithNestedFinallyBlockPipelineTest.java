@@ -30,17 +30,17 @@ public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .tryBlock()
+                    .doTry()
                         .to("direct:embedded")
-                    .handle(ValidationException.class)
+                    .doCatch(ValidationException.class)
                         .to("mock:invalid");
 
                 from("direct:embedded")
                     .errorHandler(noErrorHandler())
-                    .tryBlock()
+                    .doTry()
                         .process(validator)
                         .to("mock:valid")
-                    .finallyBlock()
+                    .doFinally()
                         .setHeader("valid", constant(false))
                     .end();
             }

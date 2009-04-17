@@ -30,14 +30,14 @@ public class ValidationWithMultipleHandlesTest extends ValidationTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .tryBlock()
+                    .doTry()
                         .process(validator)
-                    .handle(ValidationException.class)
+                    .doCatch(ValidationException.class)
                         .setHeader("xxx", constant("yyy"))
                     .end()
-                    .tryBlock()
+                    .doTry()
                         .process(validator).to("mock:valid")
-                    .handle(ValidationException.class)
+                    .doCatch(ValidationException.class)
                         .pipeline("direct:a", "mock:invalid");
             }
         };

@@ -26,24 +26,27 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class ValidatorRouteTest extends SpringTestSupport {
     protected MockEndpoint validEndpoint;
+    protected MockEndpoint finallyEndpoint;
     protected MockEndpoint invalidEndpoint;
 
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
+        finallyEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start",
                 "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
     public void testInvalidMessage() throws Exception {
         invalidEndpoint.expectedMessageCount(1);
+        finallyEndpoint.expectedMessageCount(1);
 
         template.sendBody("direct:start",
                 "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
 
-        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint);
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
     @Override
@@ -52,10 +55,10 @@ public class ValidatorRouteTest extends SpringTestSupport {
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         invalidEndpoint = resolveMandatoryEndpoint("mock:invalid", MockEndpoint.class);
+        finallyEndpoint = resolveMandatoryEndpoint("mock:finally", MockEndpoint.class);
     }
 
     protected int getExpectedRouteCount() {
-        // TODO why zero?
         return 0;
     }
 

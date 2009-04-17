@@ -34,7 +34,7 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "try")
+@XmlRootElement(name = "doTry")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TryDefinition extends OutputDefinition<TryDefinition> {
     @XmlTransient
@@ -48,12 +48,12 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
 
     @Override
     public String toString() {
-        return "Try[" + getOutputs() + "]";
+        return "DoTry[" + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "try";
+        return "doTry";
     }
 
     @Override
@@ -82,7 +82,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @param exceptionType  the exception
      * @return the try builder
      */
-    public TryDefinition handle(Class<?> exceptionType) {
+    public TryDefinition doCatch(Class<?> exceptionType) {
         popBlock();
         CatchDefinition answer = new CatchDefinition(exceptionType);
         addOutput(answer);
@@ -95,7 +95,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      *
      * @return  the try builder
      */
-    public TryDefinition finallyBlock() {
+    public TryDefinition doFinally() {
         popBlock();
         FinallyDefinition answer = new FinallyDefinition();
         addOutput(answer);

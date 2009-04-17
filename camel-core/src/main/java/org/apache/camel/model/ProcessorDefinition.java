@@ -692,7 +692,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @return the builder for a tryBlock expression
      */
-    public TryDefinition tryBlock() {
+    public TryDefinition doTry() {
         TryDefinition answer = new TryDefinition();
         addOutput(answer);
         return answer;

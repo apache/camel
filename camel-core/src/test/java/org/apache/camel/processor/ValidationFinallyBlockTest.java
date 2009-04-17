@@ -66,11 +66,11 @@ public class ValidationFinallyBlockTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                TryDefinition tryType = from("direct:start").tryBlock().
+                TryDefinition tryType = from("direct:start").doTry().
                         process(validator).
                         to("mock:valid");
-                tryType.handle(ValidationException.class).to("mock:invalid");
-                tryType.finallyBlock().to("mock:all");
+                tryType.doCatch(ValidationException.class).to("mock:invalid");
+                tryType.doFinally().to("mock:all");
             }
         };
     }

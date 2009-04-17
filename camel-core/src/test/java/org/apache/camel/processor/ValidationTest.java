@@ -90,10 +90,10 @@ public class ValidationTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").
-                        tryBlock().
+                        doTry().
                         process(validator).
                         to("mock:valid").
-                        handle(ValidationException.class).to("mock:invalid");
+                        doCatch(ValidationException.class).to("mock:invalid");
             }
         };
     }

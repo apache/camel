@@ -28,25 +28,20 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "finally")
+@XmlRootElement(name = "doFinally")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class FinallyDefinition extends OutputDefinition<ProcessorDefinition> implements Block {
 
     @Override
     public String toString() {
-        return "Finally[" + getOutputs() + "]";
+        return "DoFinally[" + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "finally";
+        return "doFinally";
     }
      
-    @Override
-    public String getLabel() {
-        return "";
-    }
-
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         return routeContext.createProcessor(this);

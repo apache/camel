@@ -74,10 +74,10 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
                 // use little delay to run unit test fast
                 errorHandler(deadLetterChannel().delay(25));
 
-                TryDefinition tryType = from("direct:start").tryBlock().
+                TryDefinition tryType = from("direct:start").doTry().
                         process(validator).
                         to("mock:valid");
-                tryType.finallyBlock().to("mock:all");
+                tryType.doFinally().to("mock:all");
             }
         };
     }

@@ -238,8 +238,8 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").delay(0));
                 
-                from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).process(orderProcessor3); // continuation of the handle clause
+                from("direct:a").doTry().process(validator).process(toProcessor)
+                    .doCatch(ValidationException.class).process(orderProcessor).process(orderProcessor3); // continuation of the handle clause
             }
         };
     }
@@ -273,8 +273,8 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").delay(0));
 
-                from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
+                from("direct:a").doTry().process(validator).process(toProcessor)
+                    .doCatch(ValidationException.class).process(orderProcessor).end().process(orderProcessor3);
             }
         };
     }
@@ -309,8 +309,8 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(1));
 
-                from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).finallyBlock()
+                from("direct:a").doTry().process(validator).process(toProcessor)
+                    .doCatch(ValidationException.class).process(orderProcessor).doFinally()
                     .process(orderProcessor2).process(orderProcessor3); // continuation of the finallyBlock clause
             }
         };
@@ -354,8 +354,8 @@ public class BuilderWithScopesTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel().maximumRedeliveries(1).delay(0));
                 
-                from("direct:a").tryBlock().process(validator).process(toProcessor)
-                    .handle(ValidationException.class).process(orderProcessor).finallyBlock()
+                from("direct:a").doTry().process(validator).process(toProcessor)
+                    .doCatch(ValidationException.class).process(orderProcessor).doFinally()
                     .process(orderProcessor2).end().process(orderProcessor3);
             }
         };

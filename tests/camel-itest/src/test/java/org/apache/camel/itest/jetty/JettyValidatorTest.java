@@ -45,11 +45,11 @@ public class JettyValidatorTest extends ContextTestSupport {
                 from("jetty:http://localhost:8192/test")
                     .setBody(body(String.class))
                     .to("log:in")
-                    .tryBlock()
+                    .doTry()
                         .to("validator:OptimizationRequest.xsd")
                         .setBody(constant("<ok/>"))
-                    .handle(ValidationException.class)
-                    .setBody(constant("<error/>"))
+                    .doCatch(ValidationException.class)
+                        .setBody(constant("<error/>"))
                     .end()
                     .to("log:out");
             }

@@ -30,12 +30,12 @@ public class ValidationWithFinallyBlockPipelineTest extends ValidationTest {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .tryBlock()
+                    .doTry()
                         .process(validator)
                         .setHeader("valid", constant(true))
-                    .handle(ValidationException.class)
+                    .doCatch(ValidationException.class)
                         .setHeader("valid", constant(false))
-                    .finallyBlock()
+                    .doFinally()
                         .setBody(body())
                         .choice()
                         .when(header("valid").isEqualTo(true))

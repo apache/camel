@@ -29,23 +29,29 @@ public class TryProcessorHandleTest extends ContextTestSupport {
 
     private boolean handled;
 
-    public void test() throws Exception {
+    public void testTryCatchFinally() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
+
         sendBody("direct:start", "<test>Hello World!</test>");
         assertTrue("Should have been handled", handled);
-        mock.expectedMessageCount(0);
-        mock.assertIsSatisfied();
+
+        assertMockEndpointsSatisfied();
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .tryBlock()
+                    .doTry()
                         .process(new ProcessorFail())
                         .to("mock:result")
-                    .handle(Exception.class)
+                    .doCatch(Exception.class)
                       .process(new ProcessorHandle())
+                    .doFinally()
+                        .to("mock:finally")
                     .end();
             }
         };

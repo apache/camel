@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "catch")
+@XmlRootElement(name = "doCatch")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
@@ -60,12 +60,12 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     @Override
     public String toString() {
-        return "Catch[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
+        return "DoCatch[ " + getExceptionClasses() + " -> " + getOutputs() + "]";
     }
 
     @Override
     public String getShortName() {
-        return "catch";
+        return "doCatch";
     }
 
     @Override

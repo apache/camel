@@ -22,21 +22,23 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <try>
-        <to uri="validator:org/apache/camel/component/validator/schema.xsd"/>
-        <to uri="mock:valid"/>
-
-        <catch>
-          <exception>org.apache.camel.ValidationException</exception>
-          <to uri="mock:invalid"/>
-        </catch>
-      </try>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <doTry>
+                <to uri="validator:org/apache/camel/component/validator/schema.xsd"/>
+                <to uri="mock:valid"/>
+                <doCatch>
+                    <exception>org.apache.camel.ValidationException</exception>
+                    <to uri="mock:invalid"/>
+                </doCatch>
+                <doFinally>
+                    <to uri="mock:finally"/>
+                </doFinally>
+            </doTry>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 
 </beans>
