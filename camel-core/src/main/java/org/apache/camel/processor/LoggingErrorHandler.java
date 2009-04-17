@@ -48,6 +48,10 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
         return "LoggingErrorHandler[" + output + "]";
     }
 
+    public boolean supportTransacted() {
+        return false;
+    }
+
     public void process(Exchange exchange) throws Exception {
         Throwable error = null;
         try {
@@ -129,13 +133,12 @@ public class LoggingErrorHandler extends ErrorHandlerSupport {
             }
             break;
         default:
-            log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e),
-                      e);
+            log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange, e), e);
         }
     }
 
     protected Object logMessage(Exchange exchange, Throwable e) {
-        return e + " while processing exchange: " + exchange;
+        return e.getMessage() + " while processing exchange: " + exchange;
     }
 
     protected void doStart() throws Exception {

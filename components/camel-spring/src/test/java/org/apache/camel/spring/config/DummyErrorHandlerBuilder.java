@@ -42,8 +42,8 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
         this.beanName = beanName;
     }
 
-    public ErrorHandlerBuilder copy() {
-        return new DummyErrorHandlerBuilder(beanName);
+    public boolean supportTransacted() {
+        return false;
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
@@ -55,4 +55,5 @@ public class DummyErrorHandlerBuilder extends ErrorHandlerBuilderSupport impleme
             }
         };
     }
+
 }

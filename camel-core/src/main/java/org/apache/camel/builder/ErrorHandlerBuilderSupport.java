@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 
@@ -39,9 +40,13 @@ public abstract class ErrorHandlerBuilderSupport implements ErrorHandlerBuilder 
         }
     }
 
-    public void configure(ErrorHandlerSupport handler) {
-        for (OnExceptionDefinition exception : exceptions) {
-            handler.addExceptionPolicy(exception);
+    public void configure(ErrorHandler handler) {
+        if (handler instanceof ErrorHandlerSupport) {
+            ErrorHandlerSupport handlerSupport = (ErrorHandlerSupport) handler;
+
+            for (OnExceptionDefinition exception : exceptions) {
+                handlerSupport.addExceptionPolicy(exception);
+            }
         }
     }
 

@@ -18,7 +18,6 @@ package org.apache.camel.spring.spi;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilderSupport;
-import org.apache.camel.processor.DelayPolicy;
 import org.apache.camel.processor.ErrorHandlerSupport;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -44,6 +43,10 @@ public class TransactionErrorHandlerBuilder extends ErrorHandlerBuilderSupport i
 
     public TransactionTemplate getTransactionTemplate() {
         return transactionTemplate;
+    }
+
+    public boolean supportTransacted() {
+        return true;
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {

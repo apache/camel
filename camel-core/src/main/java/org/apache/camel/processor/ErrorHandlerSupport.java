@@ -27,6 +27,8 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.DefaultExceptionPolicyStrategy;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyKey;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * Support class for {@link ErrorHandler} implementations.
@@ -34,6 +36,9 @@ import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
  * @version $Revision$
  */
 public abstract class ErrorHandlerSupport extends ServiceSupport implements ErrorHandler {
+
+    protected final transient Log log = LogFactory.getLog(getClass());
+
     private final Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies = new LinkedHashMap<ExceptionPolicyKey, OnExceptionDefinition>();
     private ExceptionPolicyStrategy exceptionPolicy = createDefaultExceptionPolicyStrategy();
 
@@ -93,5 +98,10 @@ public abstract class ErrorHandlerSupport extends ServiceSupport implements Erro
     public static ExceptionPolicyStrategy createDefaultExceptionPolicyStrategy() {
         return new DefaultExceptionPolicyStrategy();
     }
+
+    /**
+     * Whether this error handler supports transacted exchanges or not.
+     */
+    public abstract boolean supportTransacted();
 
 }

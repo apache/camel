@@ -27,6 +27,10 @@ import org.apache.camel.spi.RouteContext;
  */
 public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
 
+    public boolean supportTransacted() {
+        return false;
+    }
+
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         DefaultErrorHandler answer = new DefaultErrorHandler(processor, getExceptionPolicyStrategy());
         configure(answer);

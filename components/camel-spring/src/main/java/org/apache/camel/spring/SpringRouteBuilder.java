@@ -44,12 +44,12 @@ public abstract class SpringRouteBuilder extends RouteBuilder implements Applica
      * returns it, or throws an exception if the bean is not present or is not
      * of the given type
      *
-     * @param type the type of the bean
      * @param beanName the name of the bean in the application context
+     * @param type the type of the bean
      * @return the bean
      */
     @SuppressWarnings("unchecked")
-    public <T> T bean(Class<T> type, String beanName) {
+    public <T> T bean(String beanName, Class<T> type) {
         ApplicationContext context = getApplicationContext();
         return (T)context.getBean(beanName, type);
     }

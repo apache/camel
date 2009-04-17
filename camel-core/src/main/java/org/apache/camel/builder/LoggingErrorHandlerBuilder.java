@@ -45,6 +45,10 @@ public class LoggingErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         this.level = level;
     }
 
+    public boolean supportTransacted() {
+        return false;
+    }
+
     public Processor createErrorHandler(final RouteContext routeContext, final Processor processor) {
         LoggingErrorHandler handler = new LoggingErrorHandler(processor, log, level);
         configure(handler);

@@ -32,6 +32,7 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
     public static final String DEFAULT_ERROR_HANDLER_BUILDER = "CamelDefaultErrorHandlerBuilder";
     private final String ref;
     private ErrorHandlerBuilder handler;
+    private boolean supportTransacted;
 
     public ErrorHandlerBuilderRef(String ref) {
         this.ref = ref;
@@ -65,6 +66,10 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
         return !DEFAULT_ERROR_HANDLER_BUILDER.equals(getRef());
     }
 
+    public boolean supportTransacted() {
+        return supportTransacted;
+    }
+
     public ErrorHandlerBuilder lookupErrorHandlerBuilder(RouteContext routeContext) {
         if (handler == null) {
             // if the ref is the default then the we do not have any explicit error handler configured
@@ -95,6 +100,10 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
             }
 
             ObjectHelper.notNull(handler, "error handler '" + ref + "'");
+
+            // configure if the handler support transacted
+            supportTransacted = handler.supportTransacted();
+
             List<OnExceptionDefinition> list = getErrorHandlers();
             for (OnExceptionDefinition exceptionType : list) {
                 handler.addErrorHandlers(exceptionType);

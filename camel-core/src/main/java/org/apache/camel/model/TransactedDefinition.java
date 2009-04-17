@@ -148,15 +148,16 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
 
     @SuppressWarnings("unchecked")
     protected static Policy doResolvePolicy(RouteContext routeContext, String ref, Class<? extends Policy> type) {
-        Policy answer = null;
-
-        // try ref first
+        // explicit ref given so lookup by it
         if (ObjectHelper.isNotEmpty(ref)) {
-            answer = routeContext.lookup(ref, Policy.class);
+            return routeContext.lookup(ref, Policy.class);
         }
 
+        // no explicit reference given from user so we can use some convention over configuration here
+
         // try to lookup by scoped type
-        if (answer == null && type != null) {
+        Policy answer = null;
+        if (type != null) {
             // try find by type, note that this method is not supported by all registry
             Map types = routeContext.lookupByType(type);
             if (types.size() == 1) {
@@ -169,12 +170,12 @@ public class TransactedDefinition extends OutputDefinition<ProcessorDefinition> 
         }
 
         // for transacted routing try the default REQUIRED name
-        if (answer == null && type == TransactedPolicy.class) {
+        if (type == TransactedPolicy.class) {
             // still not found try with the default name PROPAGATION_REQUIRED
             answer = routeContext.lookup(PROPAGATION_REQUIRED, TransactedPolicy.class);
         }
 
-        // no policy then try lookup the platform transaction manager and use it as policy
+        // still no policy found then try lookup the platform transaction manager and use it as policy
         if (answer == null && type == TransactedPolicy.class) {
             Class tmClazz = routeContext.getCamelContext().getClassResolver().resolveClass("org.springframework.transaction.PlatformTransactionManager");
             if (tmClazz != null) {

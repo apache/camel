@@ -56,6 +56,10 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
         setExceptionPolicy(exceptionPolicy);
     }
 
+    public boolean supportTransacted() {
+        return true;
+    }
+
     @Override
     public String toString() {
         if (output == null) {
@@ -151,15 +155,13 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
         if (exception instanceof TransactedRuntimeCamelException) {
             return (TransactedRuntimeCamelException) exception;
         } else {
-            TransactedRuntimeCamelException answer = new TransactedRuntimeCamelException(exception);
             // Mark as handled so we dont want to handle the same exception twice or more in other
             // wrapped transaction error handlers in this route.
             // We need to mark this information in the exception as we need to propagage
             // the exception back by rehtrowing it. We cannot mark it on the exchange as Camel
             // uses copies of exchanges in its pipeline and the data isnt copied back in case
             // when an exception occured
-            answer.setHandled(true);
-            return answer;
+            return new TransactedRuntimeCamelException(exception, true);
         }
     }
 
@@ -180,11 +182,11 @@ public class TransactionErrorHandler extends ErrorHandlerSupport {
             Predicate handledPredicate = exceptionPolicy.getHandledPolicy();
 
             Processor processor = exceptionPolicy.getErrorHandler();
+            prepareExchangeBeforeOnException(exchange);
             if (processor != null) {
-                prepareExchangeBeforeOnException(exchange);
                 deliverToFaultProcessor(exchange, processor);
-                prepareExchangeAfterOnException(exchange, handledPredicate);
             }
+            prepareExchangeAfterOnException(exchange, handledPredicate);
         }
     }
 

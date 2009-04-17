@@ -33,4 +33,8 @@ public class NoErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) {
         return processor;
     }
+
+    public boolean supportTransacted() {
+        return false;
+    }
 }

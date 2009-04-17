@@ -40,7 +40,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
-    private Logger logger = DeadLetterChannel.createDefaultLogger();
+    private Logger logger = new Logger(LogFactory.getLog(DeadLetterChannel.class), LoggingLevel.ERROR);
     private ExceptionPolicyStrategy exceptionPolicyStrategy = ErrorHandlerSupport.createDefaultExceptionPolicyStrategy();
     private RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
     private Processor onRedelivery;
@@ -79,6 +79,10 @@ public class DeadLetterChannelBuilder extends ErrorHandlerBuilderSupport {
         // thus it needs to be able to read the stream again
         configure(answer);
         return answer;
+    }
+
+    public boolean supportTransacted() {
+        return false;
     }
 
     // Builder methods

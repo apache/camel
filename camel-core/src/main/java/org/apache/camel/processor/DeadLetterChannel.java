@@ -34,8 +34,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Implements a <a
@@ -46,7 +44,6 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
-    private static final transient Log LOG = LogFactory.getLog(DeadLetterChannel.class);
 
     // we can use a single shared static timer for async redeliveries
     private static final Timer REDELIVER_TIMER = new Timer("Camel DeadLetterChannel Redeliver Timer", true);
@@ -128,13 +125,13 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
-    public static Logger createDefaultLogger() {
-        return new Logger(LOG, LoggingLevel.ERROR);
-    }
-
     @Override
     public String toString() {
         return "DeadLetterChannel[" + output + ", " + (deadLetterUri != null ? deadLetterUri : deadLetter) + "]";
+    }
+
+    public boolean supportTransacted() {
+        return false;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -142,19 +139,19 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
-        return process(exchange, callback, new RedeliveryData());
+        return processErrorHandler(exchange, callback, new RedeliveryData());
     }
 
     /**
-     * Processes the exchange using decorated with this dead letter channel.
+     * Processes the exchange decorated with this dead letter channel.
      */
-    protected boolean process(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
+    protected boolean processErrorHandler(final Exchange exchange, final AsyncCallback callback, final RedeliveryData data) {
 
         while (true) {
             // we can't keep retrying if the route is being shutdown.
             if (!isRunAllowed()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Rejected execution as we are not started for exchange: " + exchange);
+                if (log.isDebugEnabled()) {
+                    log.debug("Rejected execution as we are not started for exchange: " + exchange);
                 }
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
@@ -163,12 +160,11 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 return data.sync;
             }
 
-            // if the exchange is transacted then let the underlying system handle the redelivery etc.
-            // this DeadLetterChannel is only for non transacted exchanges
-            // TODO: Should be possible to remove with Claus got the TX error handler sorted
-            if (exchange.isTransacted() && exchange.getException() != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("This is a transacted exchange, bypassing this DeadLetterChannel: " + this + " for exchange: " + exchange);
+            // do not handle transacted exchanges that failed as this error handler does not support it
+            if (exchange.isTransacted() && !supportTransacted() && exchange.getException() != null) {
+                if (log.isDebugEnabled()) {
+                    log.debug("This error handler does not support transacted exchanges."
+                        + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
                 }
                 return data.sync;
             }
@@ -192,7 +188,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
                 try {
                     data.redeliveryDelay = data.currentRedeliveryPolicy.sleep(data.redeliveryDelay, data.redeliveryCounter);
                 } catch (InterruptedException e) {
-                    LOG.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
+                    log.debug("Sleep interrupted, are we stopping? " + (isStopping() || isStopped()));
                     // continue from top
                     continue;
                 }
@@ -243,15 +239,15 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             return;
         }
 
-        // if the exchange is transacted then let the underlying system handle the redelivery etc.
-        // this DeadLetterChannel is only for non transacted exchanges
-        if (exchange.isTransacted() && exchange.getException() != null) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This is a transacted exchange, bypassing this DeadLetterChannel: " + this + " for exchange: " + exchange);
+        // do not handle transacted exchanges that failed as this error handler does not support it
+        if (exchange.isTransacted() && !supportTransacted() && exchange.getException() != null) {
+            if (log.isDebugEnabled()) {
+                log.debug("This error handler does not support transacted exchanges."
+                    + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
             }
             return;
         }
-        
+
         // did previous processing caused an exception?
         if (exchange.getException() != null) {
             handleException(exchange, data);
@@ -312,7 +308,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
     }
 
     /**
-     * Sets the logger strategy; which {@link Log} to use and which
+     * Sets the logger strategy; which {@link com.sun.tools.javac.util.Log} to use and which
      * {@link LoggingLevel} to use
      */
     public void setLogger(Logger logger) {
@@ -377,14 +373,14 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
             return;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("RedeliveryProcessor " + data.onRedeliveryProcessor + " is processing Exchange: " + exchange + " before its redelivered");
+        if (log.isTraceEnabled()) {
+            log.trace("RedeliveryProcessor " + data.onRedeliveryProcessor + " is processing Exchange: " + exchange + " before its redelivered");
         }
 
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.onRedeliveryProcessor);
         afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
-                LOG.trace("Redelivery processor done");
+                log.trace("Redelivery processor done");
                 // do NOT call done on callback as this is the redelivery processor that
                 // is done. we should not mark the entire exchange as done.
             }
@@ -405,7 +401,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(data.failureProcessor);
         boolean sync = afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
-                LOG.trace("Fault processor done");
+                log.trace("Fault processor done");
                 prepareExchangeForFailure(exchange, data.handledPredicate);
                 callback.done(data.sync);
             }
@@ -420,14 +416,14 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProce
 
     private void prepareExchangeForFailure(Exchange exchange, Predicate handledPredicate) {
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is handled so its marked as not failed: " + exchange);
             }
             exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.TRUE);
         }

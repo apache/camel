@@ -16,39 +16,41 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 
 /**
- * Same route but not transacted
+ * Easier transaction configuration as we do not have to setup a transaction error handler
  */
-public class TransactionalClientDataSourceNotTransactedTest extends TransactionalClientDataSourceTest {
-
-    public void testTransactionRollback() throws Exception {
-        try {
-            template.sendBody("direct:fail", "Hello World");
-        } catch (RuntimeCamelException e) {
-            // expeced as we fail
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
-        }
-
-        int count = jdbc.queryForInt("select count(*) from books");
-        // should get 2 books as the first operation will succeed and we are not transacted
-        assertEquals("Number of books", 2, count);
-    }
+public class TransactionalClientDataSourceTransactedWithChoiceTest extends TransactionalClientDataSourceTest {
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
                 from("direct:okay")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .transacted()
+                    .choice()
+                        .when(body().contains("Hello")).to("log:hello")
+                    .otherwise()
+                        .to("log:other")
+                    .end()
+                    .to("direct:tiger")
                     .setBody(constant("Elephant in Action")).beanRef("bookService");
 
-                from("direct:fail")
-                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                from("direct:tiger")
+                    .transacted()
+                    .setBody(constant("Tiger in Action")).beanRef("bookService");
+
+                from("direct:donkey")
+                    // notice this one is not marked as transacted but since the exchange is transacted
+                    // the default error handler will not handle it and thus not interfeer
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
+
+                // marks this route as transacted that will use the single policy defined in the registry
+                from("direct:fail")
+                    .transacted()
+                    .setBody(constant("Tiger in Action")).beanRef("bookService")
+                    .to("direct:donkey");
             }
         };
     }

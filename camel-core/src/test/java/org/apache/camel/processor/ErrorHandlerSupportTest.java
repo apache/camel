@@ -87,6 +87,10 @@ public class ErrorHandlerSupportTest extends TestCase {
         protected void doStop() throws Exception {
         }
 
+        public boolean supportTransacted() {
+            return false;
+        }
+
         public void process(Exchange exchange) throws Exception {
         }
     }

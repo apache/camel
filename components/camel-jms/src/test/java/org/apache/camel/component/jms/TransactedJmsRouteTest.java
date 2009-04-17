@@ -62,9 +62,9 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         return new SpringRouteBuilder() {
             public void configure() {
 
-                SpringTransactionPolicy requried = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRED"));
-                SpringTransactionPolicy notsupported = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_NOT_SUPPORTED"));
-                SpringTransactionPolicy requirenew = new SpringTransactionPolicy(bean(TransactionTemplate.class, "PROPAGATION_REQUIRES_NEW"));
+                SpringTransactionPolicy requried = new SpringTransactionPolicy(bean("PROPAGATION_REQUIRED", TransactionTemplate.class));
+                SpringTransactionPolicy notsupported = new SpringTransactionPolicy(bean("PROPAGATION_NOT_SUPPORTED", TransactionTemplate.class));
+                SpringTransactionPolicy requirenew = new SpringTransactionPolicy(bean("PROPAGATION_REQUIRES_NEW", TransactionTemplate.class));
 
                 Policy rollback = new Policy() {
                     public Processor wrap(RouteContext routeContext, Processor processor) {
@@ -214,8 +214,6 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
 
     /**
      * This test seems to be fail every other run.
-     *
-     * @throws Exception
      */
     public void disabledtestSenarioF() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
@@ -250,7 +248,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(assertTimeoutSeconds, TimeUnit.SECONDS, mockEndpointA, mockEndpointB);
     }
 
-    public void xxxtestSenarioC() throws Exception {
+    public void disabledtestSenarioC() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(0);
         // Should only get 1 message the incoming transaction does not rollback.
@@ -266,7 +264,7 @@ public class TransactedJmsRouteTest extends ContextTestSupport {
         assertIsSatisfied(mockEndpointA, mockEndpointB);
     }
 
-    public void xxxtestSenarioD() throws Exception {
+    public void disabledtestSenarioD() throws Exception {
         String expected = getName() + ": " + System.currentTimeMillis();
         mockEndpointA.expectedMessageCount(1);
         sendBody("activemq:queue:d", expected);

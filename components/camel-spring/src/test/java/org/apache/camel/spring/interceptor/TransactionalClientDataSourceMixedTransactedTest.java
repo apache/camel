@@ -23,7 +23,7 @@ import org.apache.camel.spring.SpringRouteBuilder;
 /**
  * Same route but not transacted
  */
-public class TransactionalClientDataSourceNotTransactedTest extends TransactionalClientDataSourceTest {
+public class TransactionalClientDataSourceMixedTransactedTest extends TransactionalClientDataSourceTest {
 
     public void testTransactionRollback() throws Exception {
         try {
@@ -42,11 +42,18 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {
+                // ignore failure if its something with Donkey
+                onException(IllegalArgumentException.class).onWhen(exceptionMessage().contains("Donkey")).handled(true);
+
                 from("direct:okay")
+                    // mark this route as transacted
+                    .transacted()
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
-                    .setBody(constant("Elephant in Action")).beanRef("bookService");
+                    .setBody(constant("Elephant in Action")).beanRef("bookService")
+                    .setBody(constant("Donkey in Action")).beanRef("bookService");
 
                 from("direct:fail")
+                    // and this route is not transacted
                     .setBody(constant("Tiger in Action")).beanRef("bookService")
                     .setBody(constant("Donkey in Action")).beanRef("bookService");
             }

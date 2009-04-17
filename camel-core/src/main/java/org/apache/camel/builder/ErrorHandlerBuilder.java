@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -71,4 +72,16 @@ public interface ErrorHandlerBuilder {
      * @param exceptionPolicyStrategy  the exception policy strategy
      */
     void setExceptionPolicyStrategy(ExceptionPolicyStrategy exceptionPolicyStrategy);
+
+    /**
+     * Whether this error handler supports transacted exchanges.
+     */
+    boolean supportTransacted();
+
+    /**
+     * Configures the other error handler based on this error handler.
+     *
+     * @param handler the other error handler
+     */
+    void configure(ErrorHandler handler);
 }

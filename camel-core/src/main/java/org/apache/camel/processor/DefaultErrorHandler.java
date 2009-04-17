@@ -28,8 +28,6 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * Default error handler
@@ -37,18 +35,20 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
-
-    private static final transient Log LOG = LogFactory.getLog(DefaultErrorHandler.class);
-    private AsyncProcessor outputAsync;
+    private AsyncProcessor output;
 
     public DefaultErrorHandler(Processor output, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.outputAsync = AsyncProcessorTypeConverter.convert(output);
+        this.output = AsyncProcessorTypeConverter.convert(output);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
     @Override
     public String toString() {
-        return "DefaultErrorHandler[" + outputAsync + "]";
+        return "DefaultErrorHandler[" + output + "]";
+    }
+
+    public boolean supportTransacted() {
+        return false;
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -56,12 +56,22 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
     }
 
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return outputAsync.process(exchange, new AsyncCallback() {
+        return output.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
-                if (exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
-                    handleException(exchange);
+
+                // do not handle transacted exchanges as this error handler does not support it
+                boolean handle = true;
+                if (exchange.isTransacted() && !supportTransacted()) {
+                    handle = false;
+                    if (log.isDebugEnabled()) {
+                        log.debug("This error handler does not support transacted exchanges."
+                            + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
+                    }
                 }
 
+                if (handle && exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
+                    handleException(exchange);
+                }
                 callback.done(sync);
             }
         });
@@ -79,11 +89,11 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
             Predicate handledPredicate = exceptionPolicy.getHandledPolicy();
 
             Processor processor = exceptionPolicy.getErrorHandler();
+            prepareExchangeBeforeOnException(exchange);
             if (processor != null) {
-                prepareExchangeBeforeOnException(exchange);
                 deliverToFaultProcessor(exchange, processor);
-                prepareExchangeAfterOnException(exchange, handledPredicate);
             }
+            prepareExchangeAfterOnException(exchange, handledPredicate);
         }
     }
 
@@ -102,24 +112,22 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
 
     private boolean deliverToFaultProcessor(final Exchange exchange, final Processor failureProcessor) {
         AsyncProcessor afp = AsyncProcessorTypeConverter.convert(failureProcessor);
-        boolean sync = afp.process(exchange, new AsyncCallback() {
+        return afp.process(exchange, new AsyncCallback() {
             public void done(boolean sync) {
             }
         });
-
-        return sync;
     }
 
     private void prepareExchangeAfterOnException(Exchange exchange, Predicate handledPredicate) {
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is not handled so its marked as failed: " + exchange);
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("This exchange is handled so its marked as not failed: " + exchange);
+            if (log.isDebugEnabled()) {
+                log.debug("This exchange is handled so its marked as not failed: " + exchange);
             }
             exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.TRUE);
         }
@@ -129,15 +137,15 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
      * Returns the output processor
      */
     public Processor getOutput() {
-        return outputAsync;
+        return output;
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(outputAsync);
+        ServiceHelper.startServices(output);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(outputAsync);
+        ServiceHelper.stopServices(output);
     }
 
 }
