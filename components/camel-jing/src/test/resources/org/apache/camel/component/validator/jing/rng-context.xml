@@ -22,19 +22,22 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route>
-      <from uri="direct:start"/>
-      <doTry>
-        <to uri="rng:org/apache/camel/component/validator/jing/schema.rng"/>
-        <to uri="mock:valid"/>
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <route>
+            <from uri="direct:start"/>
+            <doTry>
+                <to uri="rng:org/apache/camel/component/validator/jing/schema.rng"/>
+                <to uri="mock:valid"/>
 
-        <doCatch>
-          <exception>org.apache.camel.ValidationException</exception>
-          <to uri="mock:invalid"/>
-        </doCatch>
-      </doTry>
-    </route>
-  </camelContext>
+                <doCatch>
+                    <exception>org.apache.camel.ValidationException</exception>
+                    <to uri="mock:invalid"/>
+                </doCatch>
+                <doFinally>
+                    <to uri="mock:finally"/>
+                </doFinally>
+            </doTry>
+        </route>
+    </camelContext>
 
 </beans>
