@@ -62,7 +62,7 @@ public class IrcConfiguration implements Cloneable {
 
     public IrcConfiguration copy() {
         try {
-            return (IrcConfiguration)clone();
+            return (IrcConfiguration) clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -73,11 +73,24 @@ public class IrcConfiguration implements Cloneable {
     }
 
     public void configure(URI uri) {
+        // fix provided URI and handle that we can use # to indicate the IRC room
+
+        String fixedUri = uri.toString();
+        if (!fixedUri.startsWith("irc://")) {
+            fixedUri = fixedUri.replace("irc:", "irc://");
+            uri = uri.resolve(fixedUri);
+        }
+
         setNickname(uri.getUserInfo());
         setUsername(uri.getUserInfo());
         setRealname(uri.getUserInfo());
         setHostname(uri.getHost());
-        setTarget(uri.getPath().substring(1));
+
+        if (uri.getFragment() == null || uri.getFragment().length() == 0) {
+            throw new RuntimeCamelException("The IRC channel name is required but not configured");
+        }
+
+        setTarget("#" + uri.getFragment());
     }
 
     public String getHostname() {

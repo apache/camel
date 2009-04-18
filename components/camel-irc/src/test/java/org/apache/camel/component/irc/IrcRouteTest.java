@@ -48,7 +48,7 @@ public class IrcRouteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("irc://camel-con@irc.codehaus.org:6667/%23camel-test").
+                from("irc://camel-con@irc.codehaus.org:6667/#camel-test").
                         choice().
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("PRIVMSG")).to("mock:result").
                         when(header(IrcConstants.IRC_MESSAGE_TYPE).isEqualTo("JOIN")).to("seda:consumerJoined");
@@ -70,7 +70,7 @@ public class IrcRouteTest extends ContextTestSupport {
             sentMessages = true;
 
             // now the consumer has joined, lets send some messages
-            String sendUri = "irc://camel-prd@irc.codehaus.org:6667/%23camel-test";
+            String sendUri = "irc://camel-prd@irc.codehaus.org:6667/#camel-test";
 
             template.sendBody(sendUri, body1);
             template.sendBody(sendUri, body2);
