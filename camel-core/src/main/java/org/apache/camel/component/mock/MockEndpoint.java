@@ -40,6 +40,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.BrowsableEndpoint;
@@ -382,6 +383,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
 
     /**
      * Adds an expectation that the given body values are received by this
+     * endpoint
+     */
+    public ExpressionClause expectedBodyReceived() {
+        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+
+        expectedMessageCount(1);
+
+        expects(new Runnable() {
+            public void run() {
+                Exchange exchange = getReceivedExchanges().get(0);
+                assertTrue("No exchange received for counter: " + 0, exchange != null);
+
+                Object actualBody = exchange.getIn().getBody();
+                Object expectedBody = clause.evaluate(exchange, Object.class);
+
+                assertEquals("Body of message: " + 0, expectedBody, actualBody);
+            }
+        });
+
+        return clause;
+    }
+
+    /**
+     * Adds an expectation that the given body values are received by this
      * endpoint in any order
      */
     public void expectedBodiesReceivedInAnyOrder(final List bodies) {
@@ -474,6 +499,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     }
 
     /**
+     * Adds an expectation that messages received should have ascending values
+     * of the given expression such as a user generated counter value
+     */
+    public ExpressionClause expectsAscending() {
+        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+        expects(new Runnable() {
+            public void run() {
+                assertMessagesAscending(clause.getExpressionValue());
+            }
+        });
+        return clause;
+    }
+
+    /**
      * Adds an expectation that messages received should have descending values
      * of the given expression such as a user generated counter value
      */
@@ -483,6 +522,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 assertMessagesDescending(expression);
             }
         });
+    }
+
+    /**
+     * Adds an expectation that messages received should have descending values
+     * of the given expression such as a user generated counter value
+     */
+    public ExpressionClause expectsDescending() {
+        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+        expects(new Runnable() {
+            public void run() {
+                assertMessagesDescending(clause.getExpressionValue());
+            }
+        });
+        return clause;
     }
 
     /**
@@ -501,6 +554,20 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
                 assertNoDuplicates(expression);
             }
         });
+    }
+
+    /**
+     * Adds an expectation that no duplicate messages should be received using
+     * the expression to determine the message ID
+     */
+    public ExpressionClause expectsNoDuplicates() {
+        final ExpressionClause clause = new ExpressionClause<MockEndpoint>(this);
+        expects(new Runnable() {
+            public void run() {
+                assertNoDuplicates(clause.getExpressionValue());
+            }
+        });
+        return clause;
     }
 
     /**
@@ -527,15 +594,16 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
             Exchange e2 = list.get(i);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: " + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and "
-                     + e2);
+                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: "
+                    + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
             } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1, Object.class) + " and message " + i + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
-                         + expression + ". Exchanges: " + e1 + " and " + e2);
+                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1, Object.class)
+                        + " and message " + i + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
+                        + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
         }

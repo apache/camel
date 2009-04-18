@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
  * @version $Revision$
@@ -175,6 +176,84 @@ public class MockEndpointTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
+    public void testAscending() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsAscending().body();
+        mock.expectsAscending().header("counter");
+        sendMessages(1, 2, 3, 4, 5);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testAscendingFaied() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsAscending().body();
+        mock.expectsAscending().header("counter");
+        sendMessages(1, 2, 5, 3, 4);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testDescending() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsDescending().body();
+        mock.expectsDescending().header("counter");
+        sendMessages(5, 4, 3, 2, 1);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testDescendingFaied() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsDescending().body();
+        mock.expectsDescending().header("counter");
+        sendMessages(5, 4, 2, 3, 1);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testNoDuplicates() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsNoDuplicates().body();
+        mock.expectsNoDuplicates().header("counter");
+        sendMessages(1, 2, 3, 4, 5);
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNoDuplicatesFaied() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectsNoDuplicates().body();
+        mock.expectsNoDuplicates().header("counter");
+        sendMessages(1, 2, 5, 2, 4);
+
+        mock.assertIsNotSatisfied();
+    }
+
+    public void testBody() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().constant("<message>1</message>");
+        sendMessages(1);
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testBodyTransformed() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().method("foo", "greet");
+        template.sendBody("direct:b", "Hello");
+
+        mock.assertIsSatisfied();
+    }
+
+    public void testBodyFailed() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodyReceived().constant("<message>2</message>");
+        sendMessages(1);
+
+        mock.assertIsNotSatisfied();
+    }
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:a", createTestMessage(counter), "counter", counter);
@@ -197,12 +276,27 @@ public class MockEndpointTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:a", "body", name, value);
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("foo", new MyHelloBean());
+        return jndi;
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").to("mock:result");
+
+                from("direct:b").transform(body().append(" World")).to("mock:result");
             }
         };
     }
 
+    public static final class MyHelloBean {
+
+        public String greet() {
+            return "Hello World";
+        }
+    }
 }
