@@ -68,7 +68,12 @@ module Camel
     def evaluate(exchange)
       @block.call(exchange)
     end
-    
+
+    # TODO type parameter should be supported in block call
+    def evaluate(exchange, type)
+      @block.call(exchange)
+    end
+
     def assertionFailureMessage(text)
       text
     end

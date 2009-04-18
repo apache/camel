@@ -26,15 +26,15 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:start"/>
-      <try>
+      <doTry>
         <to uri="rnc:org/apache/camel/component/validator/jing/schema.rnc"/>
         <to uri="mock:valid"/>
 
-        <catch>
+        <doCatch>
           <exception>org.apache.camel.ValidationException</exception>
           <to uri="mock:invalid"/>
-        </catch>
-      </try>
+        </doCatch>
+      </doTry>
     </route>
   </camelContext>
   <!-- END SNIPPET: example -->

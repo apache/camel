@@ -35,7 +35,7 @@ public class XQueryTest extends TestCase {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext());
         exchange.getIn().setBody("<products><product type='food'><pizza/></product><product type='beer'><stella/></product></products>");
 
-        Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange);
+        Object result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, Object.class);
 
         assertTrue("Should be a document but was: " + className(result), result instanceof Document);
 

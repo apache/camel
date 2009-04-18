@@ -97,23 +97,8 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
 
     @SuppressWarnings("unchecked")
     public <T> T evaluate(Exchange exchange, Class<T> type) {
-        ObjectHelper.notNull(type, "type");
-        try {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Evaluation: " + expression + " for exchange: " + exchange);
-            }
-            if (type.equals(String.class)) {
-                return (T) evaluateAsString(exchange);
-            } else if (type.isAssignableFrom(Collection.class)) {
-                return (T) evaluateAsList(exchange);
-            } else if (type.isAssignableFrom(Node.class)) {
-                return (T) evaluateAsDOM(exchange);
-            } else {
-                throw new IllegalArgumentException("Type: " + type.getCanonicalName() + " not supported");
-            }
-        } catch (Exception e) {
-            throw new RuntimeExpressionException(e);
-        }
+        Object result = evaluate(exchange);
+        return exchange.getContext().getTypeConverter().convertTo(type, result);
     }
 
     public Object evaluate(Exchange exchange) {
