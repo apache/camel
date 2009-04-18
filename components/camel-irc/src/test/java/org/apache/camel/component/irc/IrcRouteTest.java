@@ -27,7 +27,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version $Revision$
  */
-public class IrcRouteIntegration extends ContextTestSupport {
+public class IrcRouteTest extends ContextTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "Message One";
     protected String body2 = "Message Two";
@@ -49,7 +49,7 @@ public class IrcRouteIntegration extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("irc://camel-con@irc.codehaus.org:6667/%23camel-test").
+                from("irc://camel-con@irc.codehaus.org:6667/#camel-test").
                         choice().
                         when(header("irc.messageType").isEqualTo("PRIVMSG")).to("mock:result").
                         when(header("irc.messageType").isEqualTo("JOIN")).to("seda:consumerJoined");
@@ -74,7 +74,7 @@ public class IrcRouteIntegration extends ContextTestSupport {
             sentMessages = true;
 
             // now the consumer has joined, lets send some messages
-            String sendUri = "irc://camel-prd@irc.codehaus.org:6667/%23camel-test";
+            String sendUri = "irc://camel-prd@irc.codehaus.org:6667/#camel-test";
 
             template.sendBody(sendUri, body1);
             template.sendBody(sendUri, body2);
