@@ -151,16 +151,16 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
      * <li>Otherwise the when predicate is matches against the current exchange
      * </ul>
      *
-     * @param type     the exception type
+     * @param definition     the exception definition
      * @param exchange the current {@link Exchange}
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
      */
-    protected boolean matchesWhen(OnExceptionDefinition type, Exchange exchange) {
-        if (type.getOnWhen() == null || type.getOnWhen().getExpression() == null) {
+    protected boolean matchesWhen(OnExceptionDefinition definition, Exchange exchange) {
+        if (definition.getOnWhen() == null || definition.getOnWhen().getExpression() == null) {
             // if no predicate then it's always a match
             return true;
         }
-        return type.getOnWhen().getExpression().matches(exchange);
+        return definition.getOnWhen().getExpression().matches(exchange);
     }
 
     /**

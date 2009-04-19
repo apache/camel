@@ -17,6 +17,8 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -24,10 +26,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.ProcessorDefinitionHelper;
 
 /**
  * Represents an XML &lt;try/&gt; element
@@ -64,12 +69,14 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         if (finallyClause != null) {
             finallyProcessor = finallyClause.createProcessor(routeContext);
         }
+
         List<CatchProcessor> catchProcessors = new ArrayList<CatchProcessor>();
         if (catchClauses != null) {
             for (CatchDefinition catchClause : catchClauses) {
                 catchProcessors.add(catchClause.createProcessor(routeContext));
             }
         }
+
         return new TryProcessor(tryProcessor, catchProcessors, finallyProcessor);
     }
 
@@ -77,17 +84,60 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
     // -------------------------------------------------------------------------
 
     /**
-     * Handles the given exception
+     * Handles the given exception(s)
      *
-     * @param exceptionType  the exception
+     * @param exceptionType  the exception(s)
      * @return the try builder
      */
-    public TryDefinition doCatch(Class<?> exceptionType) {
+    public TryDefinition doCatch(Class... exceptionType) {
         popBlock();
-        CatchDefinition answer = new CatchDefinition(exceptionType);
+        List<Class> list = Arrays.asList(exceptionType);
+        CatchDefinition answer = new CatchDefinition(list);
         addOutput(answer);
         pushBlock(answer);
         return this;
+    }
+
+    /**
+     * Sets an additional predicate that should be true before the onCatch is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @param predicate  predicate that determines true or false
+     * @return the builder
+     */
+    public TryDefinition onWhen(Predicate predicate) {
+        // set the onWhen predicate on all the catch definitions
+        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        while (it.hasNext()) {
+            CatchDefinition doCatch = it.next();
+            doCatch.setOnWhen(new WhenDefinition(predicate));
+        }
+        return this;
+    }
+
+    /**
+     * Creates an expression to configure an additional predicate that should be true before the
+     * onCatch is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @return the expression clause to configure
+     */
+    public ExpressionClause<TryDefinition> onWhen() {
+        WhenDefinition answer = new WhenDefinition();
+        // set the onWhen definition on all the catch definitions
+        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        while (it.hasNext()) {
+            CatchDefinition doCatch = it.next();
+            doCatch.setOnWhen(answer);
+        }
+        // return a expression clause as builder to set the predicate on the onWhen definition
+        ExpressionClause<TryDefinition> clause = new ExpressionClause<TryDefinition>(this);
+        answer.setExpression(clause);
+        return clause;
     }
 
     /**
@@ -170,4 +220,5 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
             }
         }
     }
+
 }

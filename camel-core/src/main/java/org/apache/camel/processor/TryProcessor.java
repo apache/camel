@@ -69,9 +69,6 @@ public class TryProcessor extends ServiceSupport implements Processor {
         // handle any exception occured during the try processor
         try {
             if (e != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Caught exception while processing exchange.", e);
-                }
                 handleException(exchange, e);
             }
         } finally {
@@ -91,7 +88,11 @@ public class TryProcessor extends ServiceSupport implements Processor {
 
     protected void handleException(Exchange exchange, Throwable e) throws Exception {
         for (CatchProcessor catchClause : catchClauses) {
-            if (catchClause.catches(e)) {
+            if (catchClause.catches(exchange, e)) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("This TryProcessor handles the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
+                }
+
                 // lets attach the exception to the exchange
                 Exchange localExchange = exchange.copy();
                 
@@ -105,6 +106,9 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 ExchangeHelper.copyResults(exchange, localExchange);
                 return;
             }
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("This TryProcessor does not handle the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
         }
     }
 

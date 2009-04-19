@@ -16,9 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Iterator;
 import java.util.List;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which catches exceptions.
@@ -27,10 +31,12 @@ import org.apache.camel.Processor;
  */
 public class CatchProcessor extends DelegateProcessor {
     private final List<Class> exceptions;
+    private final Predicate onWhen;
 
-    public CatchProcessor(List<Class> exceptions, Processor processor) {
+    public CatchProcessor(List<Class> exceptions, Processor processor, Predicate onWhen) {
         super(processor);
         this.exceptions = exceptions;
+        this.onWhen = onWhen;
     }
 
     @Override
@@ -38,16 +44,45 @@ public class CatchProcessor extends DelegateProcessor {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
     }
 
-    public boolean catches(Throwable e) {
-        for (Class type : exceptions) {
-            if (type.isInstance(e)) {
-                return true;
+    public boolean catches(Exchange exchange, Throwable exception) {
+        // use the exception iterator to walk the caused by hierachy
+        Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
+        while (it.hasNext()) {
+            Throwable e = it.next();
+            // see if we catch this type
+            for (Class type : exceptions) {
+                if (type.isInstance(e) && matchesWhen(exchange)) {
+                    return true;
+                }
             }
         }
+
+        // not found
         return false;
     }
 
     public List<Class> getExceptions() {
         return exceptions;
     }
+
+    /**
+     * Strategy method for matching the exception type with the current exchange.
+     * <p/>
+     * This default implementation will match as:
+     * <ul>
+     * <li>Always true if no when predicate on the exception type
+     * <li>Otherwise the when predicate is matches against the current exchange
+     * </ul>
+     *
+     * @param exchange the current {@link org.apache.camel.Exchange}
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise.
+     */
+    protected boolean matchesWhen(Exchange exchange) {
+        if (onWhen == null) {
+            // if no predicate then it's always a match
+            return true;
+        }
+        return onWhen.matches(exchange);
+    }
+
 }

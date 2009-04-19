@@ -16,27 +16,44 @@
  */
 package org.apache.camel.processor;
 
+import java.io.IOException;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test for try .. handle routing (CAMEL-564).
+ * Unit test for try .. handle with multiple exceptions.
  */
-public class TryProcessorHandleTest extends ContextTestSupport {
+public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
 
-    private boolean handled;
-
-    public void testTryCatchFinally() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
+    public void testIOException() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:catch").expectedMessageCount(1);
         getMockEndpoint("mock:finally").expectedMessageCount(1);
 
-        sendBody("direct:start", "<test>Hello World!</test>");
-        assertTrue("Should have been handled", handled);
+        sendBody("direct:start", "Damn IO");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testIllegalStateException() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:catch").expectedMessageCount(1);
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
+
+        sendBody("direct:start", "Damn State");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testOk() throws Exception {
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+        getMockEndpoint("mock:catch").expectedMessageCount(0);
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
+
+        sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,8 +65,8 @@ public class TryProcessorHandleTest extends ContextTestSupport {
                     .doTry()
                         .process(new ProcessorFail())
                         .to("mock:result")
-                    .doCatch(Exception.class)
-                        .process(new ProcessorHandle())
+                    .doCatch(IOException.class, IllegalStateException.class)
+                        .to("mock:catch")
                     .doFinally()
                         .to("mock:finally")
                     .end();
@@ -59,20 +76,12 @@ public class TryProcessorHandleTest extends ContextTestSupport {
 
     private class ProcessorFail implements Processor {
         public void process(Exchange exchange) throws Exception {
-            throw new IllegalStateException("Force to fail");
-        }
-    }
-
-    private class ProcessorHandle implements Processor {
-        public void process(Exchange exchange) throws Exception {
-            handled = true;
-
-            assertEquals("Should not be marked as failed", false, exchange.isFailed());
-
-            Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
-            assertNotNull("There should be an exception", e);
-            assertTrue(e instanceof IllegalStateException);
-            assertEquals("Force to fail", e.getMessage());
+            String body = exchange.getIn().getBody(String.class);
+            if ("Damn IO".equals(body)) {
+                throw new IOException("Damn IO");
+            } else if ("Damn State".equals(body)) {
+                throw new IllegalStateException("Damn State");
+            }
         }
     }
 

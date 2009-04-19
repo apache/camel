@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -41,6 +43,8 @@ import org.apache.camel.util.ObjectHelper;
 public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @XmlElement(name = "exception")
     private List<String> exceptions = new ArrayList<String>();
+    @XmlElement(name = "onWhen", required = false)
+    private WhenDefinition onWhen;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
@@ -76,7 +80,13 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        return new CatchProcessor(getExceptionClasses(), childProcessor);
+
+        Predicate when = null;
+        if (onWhen != null) {
+            when = onWhen.getExpression().createPredicate(routeContext);
+        }
+
+        return new CatchProcessor(getExceptionClasses(), childProcessor, when);
     }
 
     public List<ProcessorDefinition> getOutputs() {
@@ -112,6 +122,36 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
     
     /**
+     * Sets an additional predicate that should be true before the onCatch is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @param predicate  predicate that determines true or false
+     * @return the builder
+     */
+    public CatchDefinition onWhen(Predicate predicate) {
+        setOnWhen(new WhenDefinition(predicate));
+        return this;
+    }
+
+    /**
+     * Creates an expression to configure an additional predicate that should be true before the
+     * onCatch is triggered.
+     * <p/>
+     * To be used for fine grained controlling whether a thrown exception should be intercepted
+     * by this exception type or not.
+     *
+     * @return the expression clause to configure
+     */
+    public ExpressionClause<CatchDefinition> onWhen() {
+        onWhen = new WhenDefinition();
+        ExpressionClause<CatchDefinition> clause = new ExpressionClause<CatchDefinition>(this);
+        onWhen.setExpression(clause);
+        return clause;
+    }
+
+    /**
      * Sets the exception class that the CatchType want to catch
      *
      * @param exception  the exception of class
@@ -129,6 +169,14 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     public void setExceptions(List<String> exceptions) {
         this.exceptions = exceptions;
+    }
+
+    public WhenDefinition getOnWhen() {
+        return onWhen;
+    }
+
+    public void setOnWhen(WhenDefinition onWhen) {
+        this.onWhen = onWhen;
     }
 
     protected List<Class> createExceptionClasses() {

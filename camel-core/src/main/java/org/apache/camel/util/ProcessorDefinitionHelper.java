@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.model.ChoiceDefinition;
@@ -33,31 +35,50 @@ public final class ProcessorDefinitionHelper {
 
     /**
      * Looks for the given type in the list of outputs and recurring all the children as well.
+     *
+     * @param outputs  list of outputs, can be null or empty.
+     * @param type     the type to look for
+     * @return         the found definitions, or <tt>null</tt> if not found
+     */
+    public static <T> Iterator<T> filterTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
+        List<T> found = new ArrayList<T>();
+        doFindType(outputs, type, found);
+        return found.iterator();
+    }
+
+    /**
+     * Looks for the given type in the list of outputs and recurring all the children as well.
      * Will stop at first found and return it.
      *
      * @param outputs  list of outputs, can be null or empty.
      * @param type     the type to look for
      * @return         the first found type, or <tt>null</tt> if not found
      */
-    @SuppressWarnings("unchecked")
     public static <T> T findFirstTypeInOutputs(List<ProcessorDefinition> outputs, Class<T> type) {
-        if (outputs == null || outputs.isEmpty()) {
+        List<T> found = new ArrayList<T>();
+        doFindType(outputs, type, found);
+        if (found.isEmpty()) {
             return null;
+        }
+        return found.iterator().next();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static void doFindType(List<ProcessorDefinition> outputs, Class<?> type, List found) {
+        if (outputs == null || outputs.isEmpty()) {
+            return;
         }
 
         for (ProcessorDefinition out : outputs) {
             if (type.isInstance(out)) {
-                return type.cast(out);
+                found.add(out);
             }
 
             // send is much common
             if (out instanceof SendDefinition) {
                 SendDefinition send = (SendDefinition) out;
                 List<ProcessorDefinition> children = send.getOutputs();
-                T child = findFirstTypeInOutputs(children, type);
-                if (child != null) {
-                    return child;
-                }
+                doFindType(children, type, found);
             }
 
             // special for choice
@@ -65,31 +86,20 @@ public final class ProcessorDefinitionHelper {
                 ChoiceDefinition choice = (ChoiceDefinition) out;
                 for (WhenDefinition when : choice.getWhenClauses()) {
                     List<ProcessorDefinition> children = when.getOutputs();
-                    T child = findFirstTypeInOutputs(children, type);
-                    if (child != null) {
-                        return child;
-                    }
+                    doFindType(children, type, found);
                 }
 
                 // otherwise is optional
                 if (choice.getOtherwise() != null) {
                     List<ProcessorDefinition> children = choice.getOtherwise().getOutputs();
-                    T child = findFirstTypeInOutputs(children, type);
-                    if (child != null) {
-                        return child;
-                    }
+                    doFindType(children, type, found);
                 }
             }
 
             // try children as well
             List<ProcessorDefinition> children = out.getOutputs();
-            T child = findFirstTypeInOutputs(children, type);
-            if (child != null) {
-                return child;
-            }
+            doFindType(children, type, found);
         }
-
-        return null;
     }
 
 }
