@@ -62,9 +62,9 @@ public class JettyHandle404Test extends ContextTestSupport {
                 // use this sub route as indirection to handle the HttpOperationFailedException
                 // and set the data back as data on the exchange to not cause the exception to be thrown
                 from("direct:tohttp")
-                        .tryBlock()
+                        .doTry()
                             .to("http://localhost:8123/myserver?user=Camel")
-                        .handle(HttpOperationFailedException.class)
+                        .doCatch(HttpOperationFailedException.class)
                             .process(new Processor() {
                                 public void process(Exchange exchange) {
                                     // copy the caused exception values to the exchange as we want the response in the regular exchange
