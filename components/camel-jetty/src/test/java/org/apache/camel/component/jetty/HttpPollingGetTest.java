@@ -14,24 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.jetty;
 
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version $Revision$
  */
 public class HttpPollingGetTest extends ContextTestSupport {
+
     protected String expectedText = "<html";
 
-    public void testHttpGet() throws Exception {
+    public void testHttpPollingGet() throws Exception {
         MockEndpoint mockEndpoint = resolveMandatoryEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedMinimumMessageCount(1);
 
@@ -59,8 +61,15 @@ public class HttpPollingGetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("http://www.google.com").to("mock:results");
+                from("http://localhost:5431/myservice?delay=5000").to("mock:results");
+
+                from("jetty:http://localhost:5431/myservice").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("<html>Bye World</html>");
+                    }
+                });
             }
         };
     }
+
 }
