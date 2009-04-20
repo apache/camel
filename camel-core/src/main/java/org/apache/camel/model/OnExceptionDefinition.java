@@ -136,7 +136,18 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
     @Override
     public CatchProcessor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
-        return new CatchProcessor(getExceptionClasses(), childProcessor, null);
+
+        Predicate when = null;
+        if (onWhen != null) {
+            when = onWhen.getExpression().createPredicate(routeContext);
+        }
+
+        Predicate handle = null;
+        if (handled != null) {
+            handle = handled.createPredicate(routeContext);
+        }
+
+        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
     }
 
 

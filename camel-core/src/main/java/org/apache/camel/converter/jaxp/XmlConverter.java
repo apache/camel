@@ -613,8 +613,7 @@ public class XmlConverter {
     }
 
     public TransformerFactory createTransformerFactory() {
-        TransformerFactory answer = TransformerFactory.newInstance();
-        return answer;
+        return TransformerFactory.newInstance();
     }
 
 }

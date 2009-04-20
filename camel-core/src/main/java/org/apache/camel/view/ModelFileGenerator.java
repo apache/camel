@@ -94,7 +94,7 @@ public class ModelFileGenerator {
     private XmlConverter converter() {
         XmlConverter converter = new XmlConverter();
         TransformerFactory transformerFactory = converter.getTransformerFactory();
-        transformerFactory.setAttribute("indent-number", new Integer(2));
+        transformerFactory.setAttribute("indent-number", 2);
         return converter;
     }
 

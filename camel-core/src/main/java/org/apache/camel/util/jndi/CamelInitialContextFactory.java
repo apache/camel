@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util.jndi;
 
-
 import java.util.Hashtable;
 
 import javax.naming.Context;
@@ -41,9 +40,10 @@ public class CamelInitialContextFactory implements InitialContextFactory {
     public Context getInitialContext(Hashtable environment) throws NamingException {
         try {
             return new JndiContext(environment);
-        } catch (NamingException e) {
-            throw e;
         } catch (Exception e) {
+            if (e instanceof NamingException) {
+                throw (NamingException) e;
+            }
             NamingException exception = new NamingException(e.getMessage());
             exception.initCause(e);
             throw exception;

@@ -32,11 +32,13 @@ import org.apache.camel.util.ObjectHelper;
 public class CatchProcessor extends DelegateProcessor {
     private final List<Class> exceptions;
     private final Predicate onWhen;
+    private final Predicate handled;
 
-    public CatchProcessor(List<Class> exceptions, Processor processor, Predicate onWhen) {
+    public CatchProcessor(List<Class> exceptions, Processor processor, Predicate onWhen, Predicate handled) {
         super(processor);
         this.exceptions = exceptions;
         this.onWhen = onWhen;
+        this.handled = handled;
     }
 
     @Override
@@ -44,6 +46,13 @@ public class CatchProcessor extends DelegateProcessor {
         return "Catch[" + exceptions + " -> " + getProcessor() + "]";
     }
 
+    /**
+     * Whether this catch processor catch the given thrown exception
+     *
+     * @param exchange  the current exchange
+     * @param exception the thrown exception
+     * @return <tt>true</tt> if this processor catches it, <tt>false</tt> otherwise.
+     */
     public boolean catches(Exchange exchange, Throwable exception) {
         // use the exception iterator to walk the caused by hierachy
         Iterator<Throwable> it = ObjectHelper.createExceptionIterator(exception);
@@ -59,6 +68,22 @@ public class CatchProcessor extends DelegateProcessor {
 
         // not found
         return false;
+    }
+
+
+    /**
+     * Whether this catch processor handles the exception it have caught
+     *
+     * @param exchange  the current exchange
+     * @return <tt>true</tt> if this processor handles it, <tt>false</tt> otherwise.
+     */
+    public boolean handles(Exchange exchange) {
+        if (handled == null) {
+            // handle by default
+            return true;
+        }
+
+        return handled.matches(exchange);
     }
 
     public List<Class> getExceptions() {

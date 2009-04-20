@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for try .. handle routing (CAMEL-564).
  */
-public class TryProcessorHandleTest extends ContextTestSupport {
+public class TryProcessorTest extends ContextTestSupport {
 
     private boolean handled;
 

@@ -26,12 +26,15 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * Represents an XML &lt;catch/&gt; element
@@ -45,10 +48,14 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     private List<String> exceptions = new ArrayList<String>();
     @XmlElement(name = "onWhen", required = false)
     private WhenDefinition onWhen;
+    @XmlElement(name = "handled", required = false)
+    private ExpressionSubElementDefinition handled;
     @XmlElementRef
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     @XmlTransient
     private List<Class> exceptionClasses;
+    @XmlTransient
+    private Predicate handledPolicy;
 
     public CatchDefinition() {
     }
@@ -86,7 +93,12 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
             when = onWhen.getExpression().createPredicate(routeContext);
         }
 
-        return new CatchProcessor(getExceptionClasses(), childProcessor, when);
+        Predicate handle = handledPolicy;
+        if (handled != null) {
+            handle = handled.createPredicate(routeContext);
+        }
+
+        return new CatchProcessor(getExceptionClasses(), childProcessor, when, handle);
     }
 
     public List<ProcessorDefinition> getOutputs() {
@@ -152,6 +164,39 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
     }
 
     /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  handled or not
+     * @return the builder
+     */
+    public CatchDefinition handled(boolean handled) {
+        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
+        return handled(expression);
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  predicate that determines true or false
+     * @return the builder
+     */
+    public CatchDefinition handled(Predicate handled) {
+        setHandledPolicy(handled);
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  expression that determines true or false
+     * @return the builder
+     */
+    public CatchDefinition handled(Expression handled) {
+        setHandledPolicy(toPredicate(handled));
+        return this;
+    }
+
+    /**
      * Sets the exception class that the CatchType want to catch
      *
      * @param exception  the exception of class
@@ -177,6 +222,14 @@ public class CatchDefinition extends ProcessorDefinition<CatchDefinition> {
 
     public void setOnWhen(WhenDefinition onWhen) {
         this.onWhen = onWhen;
+    }
+
+    public Predicate getHandledPolicy() {
+        return handledPolicy;
+    }
+
+    public void setHandledPolicy(Predicate handledPolicy) {
+        this.handledPolicy = handledPolicy;
     }
 
     protected List<Class> createExceptionClasses() {

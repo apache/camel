@@ -89,8 +89,8 @@ public class TryProcessor extends ServiceSupport implements Processor {
     protected void handleException(Exchange exchange, Throwable e) throws Exception {
         for (CatchProcessor catchClause : catchClauses) {
             if (catchClause.catches(exchange, e)) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("This TryProcessor handles the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("This TryProcessor catches the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
                 }
 
                 // lets attach the exception to the exchange
@@ -102,13 +102,31 @@ public class TryProcessor extends ServiceSupport implements Processor {
 
                 // do not catch any exception here, let it propagate up
                 catchClause.process(localExchange);
-                localExchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
+
+                boolean handled = catchClause.handles(exchange);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("The exception is handled: " + handled + " for the exception: " + e.getClass().getName()
+                        + " caused by: " + e.getMessage());
+                }
+
+                if (handled) {
+                    localExchange.removeProperty(Exchange.EXCEPTION_CAUGHT);
+                } else {
+                    // put exception back as it was not handled
+                    if (localExchange.getException() == null) {
+                        localExchange.setException(localExchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
+                    }
+                }
+
+                // copy result back to the original exchange
                 ExchangeHelper.copyResults(exchange, localExchange);
                 return;
             }
         }
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("This TryProcessor does not handle the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("This TryProcessor does not catch the exception: " + e.getClass().getName() + " caused by: " + e.getMessage());
         }
     }
 

@@ -31,15 +31,14 @@ import org.apache.camel.builder.ExpressionBuilder;
  * @version $Revision$
  */
 public class DefaultParameterMappingStrategy implements ParameterMappingStrategy {
-    private Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
+    private final Map<Class, Expression> parameterTypeToExpressionMap = new ConcurrentHashMap<Class, Expression>();
 
     public DefaultParameterMappingStrategy() {
         loadDefaultRegistry();
     }
 
     public Expression getDefaultParameterTypeExpression(Class parameterType) {
-        Expression expression = parameterTypeToExpressionMap.get(parameterType);
-        return expression;
+        return parameterTypeToExpressionMap.get(parameterType);
     }
 
     /**

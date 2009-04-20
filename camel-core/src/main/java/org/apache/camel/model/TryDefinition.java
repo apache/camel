@@ -26,13 +26,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.processor.CatchProcessor;
 import org.apache.camel.processor.TryProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ProcessorDefinitionHelper;
+import static org.apache.camel.builder.PredicateBuilder.toPredicate;
 
 /**
  * Represents an XML &lt;try/&gt; element
@@ -108,6 +111,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @return the builder
      */
     public TryDefinition onWhen(Predicate predicate) {
+        // we must use a delegate so we can use the fluent builder based on TryDefinition
+        // to configure all with try .. catch .. finally
         // set the onWhen predicate on all the catch definitions
         Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
         while (it.hasNext()) {
@@ -127,6 +132,8 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
      * @return the expression clause to configure
      */
     public ExpressionClause<TryDefinition> onWhen() {
+        // we must use a delegate so we can use the fluent builder based on TryDefinition
+        // to configure all with try .. catch .. finally
         WhenDefinition answer = new WhenDefinition();
         // set the onWhen definition on all the catch definitions
         Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
@@ -138,6 +145,45 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         ExpressionClause<TryDefinition> clause = new ExpressionClause<TryDefinition>(this);
         answer.setExpression(clause);
         return clause;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  handled or not
+     * @return the builder
+     */
+    public TryDefinition handled(boolean handled) {
+        Expression expression = ExpressionBuilder.constantExpression(Boolean.toString(handled));
+        return handled(expression);
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  predicate that determines true or false
+     * @return the builder
+     */
+    public TryDefinition handled(Predicate handled) {
+        // we must use a delegate so we can use the fluent builder based on TryDefinition
+        // to configure all with try .. catch .. finally
+        // set the handled on all the catch definitions
+        Iterator<CatchDefinition> it = ProcessorDefinitionHelper.filterTypeInOutputs(getOutputs(), CatchDefinition.class);
+        while (it.hasNext()) {
+            CatchDefinition doCatch = it.next();
+            doCatch.setHandledPolicy(handled);
+        }
+        return this;
+    }
+
+    /**
+     * Sets whether the exchange should be marked as handled or not.
+     *
+     * @param handled  expression that determines true or false
+     * @return the builder
+     */
+    public TryDefinition handled(Expression handled) {
+        return handled(toPredicate(handled));
     }
 
     /**

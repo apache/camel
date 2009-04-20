@@ -54,8 +54,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
     private static final transient Log LOG = LogFactory.getLog(DefaultExceptionPolicyStrategy.class);
 
-    public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices, Exchange exchange,
-                                            Throwable exception) {
+    public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
+                                                    Exchange exchange, Throwable exception) {
 
         // recursive up the tree using the iterator
         Iterator<Throwable> it = createExceptionIterator(exception);
@@ -71,8 +71,8 @@ public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
     }
 
 
-    private OnExceptionDefinition findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices, Exchange exchange,
-                                               Throwable exception) {
+    private OnExceptionDefinition findMatchedExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicices,
+                                                             Exchange exchange, Throwable exception) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Finding best suited exception policy for thrown exception " + exception.getClass().getName());
         }
