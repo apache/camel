@@ -61,6 +61,7 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
+                // START SNIPPET: e1
                 from("direct:start")
                     .doTry()
                         .process(new ProcessorFail())
@@ -70,6 +71,7 @@ public class TryProcessorMultipleExceptionTest extends ContextTestSupport {
                     .doFinally()
                         .to("mock:finally")
                     .end();
+                // END SNIPPET: e1
             }
         };
     }
