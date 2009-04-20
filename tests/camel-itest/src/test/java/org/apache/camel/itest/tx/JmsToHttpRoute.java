@@ -35,14 +35,13 @@ import org.apache.camel.spring.spi.SpringTransactionPolicy;
  * @version $Revision$
  */
 public class JmsToHttpRoute extends SpringRouteBuilder {
-
+    protected static int counter;    
+    
     @Resource(name = "PROPAGATION_REQUIRED")
     protected SpringTransactionPolicy required;
 
     @EndpointInject(name = "data")
-    protected Endpoint data;
-
-    protected static int counter;
+    protected Endpoint data;    
 
     protected String nok = "<?xml version=\"1.0\"?><reply><status>nok</status></reply>";
     protected String ok  = "<?xml version=\"1.0\"?><reply><status>ok</status></reply>";

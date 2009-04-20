@@ -17,8 +17,8 @@
 package org.apache.camel.itest.tx;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.Predicate;
+import org.apache.camel.Processor;
 import org.apache.camel.component.http.HttpConstants;
 import org.apache.camel.component.http.HttpOperationFailedException;
 

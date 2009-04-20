@@ -70,7 +70,7 @@ public class JmsToHttpTXWithOnExceptionTest extends AbstractJUnit38SpringContext
         // will send and wait for a response
         try {
             template.requestBodyAndHeader(data,
-            "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
+                "<?xml version=\"1.0\"?><request><status id=\"123\"/></request>", "user", "guest");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue("Should timeout", e.getCause() instanceof ExchangeTimedOutException);
