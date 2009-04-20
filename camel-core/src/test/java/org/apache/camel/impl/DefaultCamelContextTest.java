@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import junit.framework.TestCase;
 import org.apache.camel.Component;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanComponent;
 
 /**
@@ -38,5 +39,27 @@ public class DefaultCamelContextTest extends TestCase {
         Component component = ctx.getComponent("bean");
         assertNull(component);
     }
+    
+    public void testRestartCamelContext() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:endpointA").to("mock:endpointB");                
+            }            
+        });
+        ctx.start();
+        assertEquals("Should have one RouteService", ctx.getRoutes().size(), 1);
+        String routeString = ctx.getRoutes().toString();
+        ctx.stop();
+        assertEquals("Should have one RouteService", ctx.getRoutes().size(), 1);        
+        ctx.start();
+        assertEquals("Should have one RouteService", ctx.getRoutes().size(), 1);
+        assertEquals("The RouteString should be same", routeString, ctx.getRoutes().toString());
+        ctx.stop();
+        assertEquals("Should have one RouteService", ctx.getRoutes().size(), 1);       
+                
+    }
+
 
 }

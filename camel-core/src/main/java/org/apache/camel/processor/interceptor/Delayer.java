@@ -45,13 +45,13 @@ public class Delayer implements InterceptStrategy {
      * @param context the camel context the delayer is connected to
      * @return the delayer or null if none can be found
      */
-    public static DelayInterceptor getDelayer(CamelContext context) {
+    public static Delayer getDelayer(CamelContext context) {
         if (context instanceof DefaultCamelContext) {
             DefaultCamelContext defaultCamelContext = (DefaultCamelContext) context;
             List<InterceptStrategy> list = defaultCamelContext.getInterceptStrategies();
             for (InterceptStrategy interceptStrategy : list) {
-                if (interceptStrategy instanceof DelayInterceptor) {
-                    return (DelayInterceptor)interceptStrategy;
+                if (interceptStrategy instanceof Delayer) {
+                    return (Delayer)interceptStrategy;
                 }
             }
         }

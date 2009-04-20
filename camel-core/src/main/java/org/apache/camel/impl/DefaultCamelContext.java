@@ -76,7 +76,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
-
+    private boolean routeDefinitionInitiated;
     private String name;
     private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -390,9 +390,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             this.routes = new ArrayList<Route>();
         }
 
-        if (routes != null) {
+        if (routes != null) {            
             this.routes.addAll(routes);
-
             lifecycleStrategy.onRoutesAdd(routes);
             if (shouldStartRoutes()) {
                 startRoutes(routes);
@@ -660,7 +659,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 startServices(component);
             }
         }
-        startRouteDefinitions(routeDefinitions);
+        // To avoid initiating the routeDefinitions after stopping the camel context
+        if (!routeDefinitionInitiated) {            
+            startRouteDefinitions(routeDefinitions);
+            routeDefinitionInitiated = true;
+        } 
     }
 
     protected void startRouteDefinitions(Collection<RouteType> list) throws Exception {
@@ -679,7 +682,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             for (Component component : components.values()) {
                 stopServices(component);
             }
-        }
+        }        
+        servicesToClose.clear();
     }
 
     protected void startRoutes(Collection<Route> routeList) throws Exception {
