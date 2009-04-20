@@ -33,7 +33,7 @@ public class MvelExpression extends ExpressionSupport {
         this.expressionString = expressionString;
         this.type = type;
         try {
-            this.compiled = org.mvel.MVEL.compileExpression(expressionString);
+            this.compiled = org.mvel2.MVEL.compileExpression(expressionString);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expressionString, e);
         }
@@ -45,7 +45,7 @@ public class MvelExpression extends ExpressionSupport {
 
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
-            Object value = org.mvel.MVEL.executeExpression(compiled, new RootObject(exchange));
+            Object value = org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
             return exchange.getContext().getTypeConverter().convertTo(tClass, value);
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
@@ -54,7 +54,7 @@ public class MvelExpression extends ExpressionSupport {
 
     public Object evaluate(Exchange exchange) {
         try {
-            return org.mvel.MVEL.executeExpression(compiled, new RootObject(exchange));
+            return org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
         } catch (Exception e) {
             throw new ExpressionEvaluationException(this, exchange, e);
         }
