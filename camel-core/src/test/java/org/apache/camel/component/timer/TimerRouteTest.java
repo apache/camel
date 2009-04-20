@@ -17,11 +17,11 @@
 package org.apache.camel.component.timer;
 
 import java.util.concurrent.atomic.AtomicInteger;
-
 import javax.naming.Context;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.jndi.JndiContext;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,17 +34,19 @@ public class TimerRouteTest extends ContextTestSupport {
     private MyBean bean = new MyBean();
 
     public void testTimerInvokesBeanMethod() throws Exception {
-        // now lets wait for the timer to fire a few times.
-        Thread.sleep(1000 * 2);
-        assertTrue("", bean.counter.get() >= 2);
-    }
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(2);
 
+        assertMockEndpointsSatisfied();
+
+        assertTrue("Should have fired 2 or more times was: " + bean.counter.get(), bean.counter.get() >= 2);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean");
+                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
             }
         };
     }
