@@ -52,6 +52,21 @@
         <url>http://repository.apache.org/snapshots</url>
       </pluginRepository>
     </pluginRepositories>
+
+    <repositories>
+      <!-- OPS4J repo -->
+      <repository>
+        <id>ops4j</id>
+        <name>OPS4j Repository</name>
+        <url>http://repository.ops4j.org/maven2</url>
+        <releases>
+          <enabled>true</enabled>
+        </releases>
+        <snapshots>
+          <enabled>false</enabled>
+        </snapshots>
+      </repository>
+    </repositories>
  
     <build>
       <pluginManagement> 
