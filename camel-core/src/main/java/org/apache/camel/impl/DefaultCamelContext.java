@@ -84,7 +84,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static final transient Log LOG = LogFactory.getLog(DefaultCamelContext.class);
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
-
+    private boolean routeDefinitionInitiated;
     private String name;  
     private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private final Map<String, Component> components = new HashMap<String, Component>();
@@ -808,7 +808,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
         if (getStreamCache()) {
             // only add a new stream cache if not already configured
-            if (StreamCaching.getStreamCache(this) == null) {
+            if (StreamCaching.getStreamCaching(this) == null) {
                 LOG.debug("StreamCaching is enabled");
                 addInterceptStrategy(new StreamCaching());
             }
@@ -855,7 +855,11 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 startServices(component);
             }
         }
-        startRouteDefinitions(routeDefinitions);
+         // To avoid initiating the routeDefinitions after stopping the camel context
+        if (!routeDefinitionInitiated) {            
+            startRouteDefinitions(routeDefinitions);
+            routeDefinitionInitiated = true;
+        }        
     }
 
     protected void startRouteDefinitions(Collection<RouteDefinition> list) throws Exception {
@@ -887,7 +891,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 stopServices(component);
             }
         }
-        routeServices.clear();
+        
         servicesToClose.clear();
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }

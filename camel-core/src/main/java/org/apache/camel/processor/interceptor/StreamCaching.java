@@ -34,17 +34,17 @@ public final class StreamCaching implements InterceptStrategy {
     }
     
     /**
-     * A helper method to return the StreamCacheInterceptor instance
+     * A helper method to return the StreamCaching instance
      * for a given {@link org.apache.camel.CamelContext} if one is enabled
      *
      * @param context the camel context the stream cache is connected to
      * @return the stream cache or null if none can be found
      */
-    public static StreamCachingInterceptor getStreamCache(CamelContext context) {
+    public static StreamCaching getStreamCaching(CamelContext context) {
         List<InterceptStrategy> list = context.getInterceptStrategies();
         for (InterceptStrategy interceptStrategy : list) {
-            if (interceptStrategy instanceof StreamCachingInterceptor) {
-                return (StreamCachingInterceptor)interceptStrategy;
+            if (interceptStrategy instanceof StreamCaching) {
+                return (StreamCaching)interceptStrategy;
             }
         }
         return null;
