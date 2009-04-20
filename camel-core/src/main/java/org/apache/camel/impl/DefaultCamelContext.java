@@ -85,7 +85,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private static final String NAME_PREFIX = "camel-";
     private static int nameSuffix;
 
-    private String name;
+    private String name;  
     private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
@@ -881,13 +881,14 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected synchronized void doStop() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is stopping");
         stopServices(routeServices.values());
-
         stopServices(servicesToClose);
         if (components != null) {
             for (Component component : components.values()) {
                 stopServices(component);
             }
         }
+        routeServices.clear();
+        servicesToClose.clear();
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") stopped");
     }
 
@@ -1071,6 +1072,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                 }
             }
         }
+    }
+    
+    protected Map<String, RouteService> getRouteServices() {
+        return routeServices;
     }
 
 }

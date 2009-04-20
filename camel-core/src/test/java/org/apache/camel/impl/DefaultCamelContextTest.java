@@ -23,6 +23,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -79,6 +80,24 @@ public class DefaultCamelContextTest extends TestCase {
         } catch (NoSuchEndpointException e) {
             // expected
         }
+    }
+    
+    public void testRestartCamelContext() throws Exception {
+        DefaultCamelContext ctx = new DefaultCamelContext();
+        ctx.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:endpointA").to("mock:endpointB");                
+            }            
+        });
+        ctx.start();
+        assertEquals("Should have one RouteService", ctx.getRouteServices().size(), 1);
+        ctx.stop();
+        assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 0);
+        ctx.start();
+        assertEquals("Should have one RouteService", ctx.getRouteServices().size(), 1);
+        ctx.stop();
+        assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 0);
     }
 
 }
