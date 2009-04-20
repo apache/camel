@@ -14,14 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http;
+package org.apache.camel.component.jetty;
 
 import java.io.InputStream;
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -93,12 +95,19 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion").thread(5).to("http://www.google.com/search")
+                from("seda:withConversion").thread(5).to("http://localhost:5430/search")
                     .convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion").thread(5).to("http://www.google.com/search")
+                from("seda:withoutConversion").thread(5).to("http://localhost:5430/search")
                     .to("mock:results");
+
+                from("jetty:http://localhost:5430/search").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setBody("<html>Bye World</html>");
+                    }
+                });
             }
         };
     }
+
 }
