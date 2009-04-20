@@ -30,7 +30,7 @@ public class TimerRouteWithTracerTest extends TimerRouteTest {
         return new RouteBuilder() {
             public void configure() {
                 getContext().addInterceptStrategy(new Tracer());
-                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean");
+                from("timer://foo?fixedRate=true&delay=0&period=500").to("bean:myBean", "mock:result");
             }
         };
     }
