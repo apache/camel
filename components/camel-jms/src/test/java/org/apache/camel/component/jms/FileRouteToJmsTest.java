@@ -59,7 +59,8 @@ public class FileRouteToJmsTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/routefromfile").to("activemq:queue:hello");
+                // a little delay to avoid unit test on windows failing in TC
+                from("file://target/routefromfile?consumer.initialDelay=3000&consumer.delay=5000").to("activemq:queue:hello");
 
                 from("activemq:queue:hello").to("mock:result");
             }
