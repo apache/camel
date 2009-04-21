@@ -16,32 +16,56 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executors;
+
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Processor;
 import org.apache.camel.Exchange;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to verify that using DLC with redelivery and delays that we are not blocking
- * the caller thread, for instance if we have delays in miniutes.
+ * Unit test to verify that using DLC with redelivery and delays with blocking threads.
+ * As threads comes cheap these days in the modern JVM its no biggie. And for transactions
+ * you should use the same thread anyway.
  *
  * @version $Revision$
  */
-public class DeadLetterChannelRedeliverWithDelayNotBlockingTest extends ContextTestSupport {
+public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 
     private static int counter;
 
     public void testRedeliverWithDelay() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // TODO: when we get the internal API reworked we should be able to receive in this order
-        // mock.expectedBodiesReceived("Message 2", "Message 1");
 
-        mock.expectedBodiesReceived("Message 1", "Message 2");
+        // we expect message 2 to arrive before 1 as message 1 is in trouble
+        // and must be redelivered 2 times before succeed
+        mock.expectedBodiesReceived("Message 2", "Message 1");
         mock.expectedHeaderReceived("foo", "bar");
+        // the first is not redelivered
+        mock.message(0).header(Exchange.REDELIVERED).isNull();
+        // but the 2nd is
+        mock.message(1).header(Exchange.REDELIVERED).isEqualTo(true);
 
-        template.sendBody("seda:start", "Message 1");
-        template.sendBody("seda:start", "Message 2");
+        // use executors to simulate two different clients sending
+        // a request to Camel
+        Callable task1 = Executors.callable(new Runnable() {
+            public void run() {
+                template.sendBody("direct:start", "Message 1");
+            }
+        });
+
+        Callable task2 = Executors.callable(new Runnable() {
+            public void run() {
+                template.sendBody("direct:start", "Message 2");
+            }
+        });
+
+        Executors.newCachedThreadPool().submit(task1);
+        // give task 1 a head start, even though it comes last
+        Thread.sleep(100);
+        Executors.newCachedThreadPool().submit(task2);
 
         assertMockEndpointsSatisfied();
     }
@@ -53,7 +77,7 @@ public class DeadLetterChannelRedeliverWithDelayNotBlockingTest extends ContextT
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").delay(1000).maximumRedeliveries(3).logStackTrace(false));
 
-                from("seda:start")
+                from("direct:start")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 String body = exchange.getIn().getBody(String.class);
