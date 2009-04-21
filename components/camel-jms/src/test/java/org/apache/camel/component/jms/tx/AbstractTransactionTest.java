@@ -87,9 +87,6 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
         return assertIsInstanceOf(ConditionalExceptionProcessor.class, processor);
     }
 
-    /**
-     * Find the first instance of a Processor of a given class.
-     */
     protected Processor findProcessorByClass(Processor processor, Class findClass) {
         while (true) {
             processor = unwrapDeadLetter(processor);
@@ -114,15 +111,16 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
     }
 
     private Processor unwrapDeadLetter(Processor processor) {
-        if (processor instanceof DeadLetterChannel) {
-            processor = ((DeadLetterChannel)processor).getOutput();
+        while (true) {
+            if (processor instanceof DeadLetterChannel) {
+                processor = ((DeadLetterChannel)processor).getOutput();
+            } else if (processor instanceof DefaultErrorHandler) {
+                processor = ((DefaultErrorHandler)processor).getOutput();
+            } else if (processor instanceof TransactionErrorHandler) {
+                processor = ((TransactionErrorHandler)processor).getOutput();
+            } else {
+                return processor;
+            }
         }
-        if (processor instanceof DefaultErrorHandler) {
-            processor = ((DefaultErrorHandler)processor).getOutput();
-        }
-        if (processor instanceof TransactionErrorHandler) {
-            processor = ((TransactionErrorHandler)processor).getOutput();
-        }
-        return processor;
     }
 }

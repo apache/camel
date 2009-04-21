@@ -33,6 +33,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.ServiceSupport;
+import org.apache.camel.impl.DefaultErrorHandlerWrappingStrategy;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -51,6 +52,9 @@ import org.apache.commons.logging.LogFactory;
  */
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
+
+    // TODO: This code needs an overhaul. It should *really* not change the route model,
+    // only register mbeans with the performance counters
 
     private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private InstrumentationAgent agent;
@@ -205,7 +209,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // Create a map (ProcessorType -> PerformanceCounter)
         // to be passed to InstrumentationInterceptStrategy.
-        Map<ProcessorDefinition, PerformanceCounter> counterMap =
+        Map<ProcessorDefinition, PerformanceCounter> registeredCounters =
             new HashMap<ProcessorDefinition, PerformanceCounter>();
 
         // Each processor in a route will have its own performance counter
@@ -226,7 +230,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 agent.register(pc, name);
 
                 // add to map now that it has been registered
-                counterMap.put(processor, pc);
+                registeredCounters.put(processor, pc);
             } catch (MalformedObjectNameException e) {
                 LOG.warn("Could not create MBean name: " + name, e);
             } catch (JMException e) {
@@ -234,14 +238,16 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
         }
 
-        // TODO: align this code with InstrumentationLifecycleStrategy
-        routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(counterMap));
-        routeContext.setErrorHandlerWrappingStrategy(new InstrumentationErrorHandlerWrappingStrategy(routeContext, counterMap));
+        // TODO: align this code with DefaultLifecycleStrategy
+        routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters));
+        routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(routeContext));
 
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the
         // ManagedRoute MBeans.
 
+        // TODO: Rework the code below it changes the model and it affects the gap with and without JMX!
+        // we have enough pain with JAXB vs Java DSL already so we should not also have gaps with JMX!
         RouteDefinition routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             if (routeType.getInputs().size() > 1) {

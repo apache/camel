@@ -34,15 +34,20 @@ import org.apache.camel.spi.InterceptStrategy;
  */
 public class InstrumentationInterceptStrategy implements InterceptStrategy {
 
-    private final Map<ProcessorDefinition, PerformanceCounter> counterMap;
+    private Map<ProcessorDefinition, PerformanceCounter> registeredCounters;
 
-    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> counterMap) {
-        this.counterMap = counterMap;
+    public InstrumentationInterceptStrategy(Map<ProcessorDefinition, PerformanceCounter> registeredCounters) {
+        this.registeredCounters = registeredCounters;
     }
 
     public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
-        PerformanceCounter counter = counterMap.get(processorDefinition);
+        // dont double wrap it
+        if (target instanceof InstrumentationProcessor) {
+            return target;
+        }
 
+        // only wrap a performance counter if we have it registered in JMX by the jmx agent
+        PerformanceCounter counter = registeredCounters.get(processorDefinition);
         if (counter != null) {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);

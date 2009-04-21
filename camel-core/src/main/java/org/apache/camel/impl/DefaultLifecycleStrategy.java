@@ -16,16 +16,12 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 
@@ -51,28 +47,9 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        RouteDefinition routeType = routeContext.getRoute();
-
-        if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
-            // configure the outputs
-            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>(routeType.getOutputs());
-
-            // clearing the outputs
-            routeType.clearOutput();
-
-            // a list of processors in the route
-            List<ProcessorDefinition> counterList = new ArrayList<ProcessorDefinition>();
-
-            // add the output configure the outputs with the routeType
-            for (ProcessorDefinition processorType : outputs) {
-                routeType.addOutput(processorType);
-                counterList.add(processorType);
-            }
-
-            // set the error handler strategy containing the list of outputs added
-            // TODO: align this code with InstrumentationLifecycleStrategy
-            routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(routeContext, counterList));
-        }
+        // set the error handler strategy containing the list of outputs added
+        // TODO: align this code with InstrumentationLifecycleStrategy
+        routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(routeContext));
     }
 
 }

@@ -43,7 +43,7 @@ public class DelayerInterceptorTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertTrue("Should be slower to run: " + delta, delta > 4000);
+        assertTrue("Should be slower to run: " + delta, delta > 2000);
         assertTrue("Should not take that long to run: " + delta, delta < 7000);
     }
 

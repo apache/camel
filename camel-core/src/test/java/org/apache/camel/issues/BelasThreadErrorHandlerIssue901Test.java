@@ -40,10 +40,9 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
     private int redelivery = 1;
 
     public void testThreadErrorHandlerLogging() throws Exception {
-        MockEndpoint handled = getMockEndpoint("mock:handled");
-        // in case of an exception we should receive the original input,
-        // so this is message 1
-        handled.expectedBodiesReceived(msg1);
+        MockEndpoint handled = getMockEndpoint("mock:dead");
+        // we should get the message intentded for the processor that failed
+        handled.expectedBodiesReceived(msg3);
 
         try {
             template.sendBody("direct:errorTest", msg1);
@@ -54,15 +53,15 @@ public class BelasThreadErrorHandlerIssue901Test extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals(1 + redelivery, callCounter1);
-        assertEquals(1 + redelivery, callCounter2);
+        assertEquals(1, callCounter1);
+        assertEquals(1, callCounter2);
         assertEquals(1 + redelivery, callCounter3);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:handled").maximumRedeliveries(redelivery));
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(redelivery));
 
                 from("direct:errorTest")
                     .thread(5)

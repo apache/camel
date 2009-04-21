@@ -36,12 +36,12 @@ public class JmsDiscoveryTest extends ContextTestSupport {
 
     public void testDiscovery() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(3);
+        mock.expectedMinimumMessageCount(3);
 
         assertMockEndpointsSatisfied();
 
         Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        assertEquals("Size of map: " + map, 3, map.size());
+        assertTrue("There should be 3 or more, was: " + map.size(), map.size() >= 3);
     }
 
     protected CamelContext createCamelContext() throws Exception {

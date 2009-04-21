@@ -315,17 +315,8 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
-
-            DelegateProcessor p1 = assertIsInstanceOf(DelegateProcessor.class, processor);
-            processor = p1.getProcessor();
-
-            DelegateProcessor p2 = assertIsInstanceOf(DelegateProcessor.class, processor);
-
-            assertSendTo(p2.getProcessor(), "seda:d");
+            assertIsInstanceOf(SendProcessor.class, processor);
+            assertSendTo(processor, "seda:d");
         }
     }
 

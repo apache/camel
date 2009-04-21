@@ -24,6 +24,8 @@ import org.apache.camel.Message;
 import org.apache.camel.util.AsyncProcessorHelper;
 
 public class HandleFaultProcessor extends DelegateProcessor implements AsyncProcessor {
+
+    // TODO: Should be an interceptor to be applied like the stream cache
     
     @Override
     public String toString() {
@@ -52,6 +54,7 @@ public class HandleFaultProcessor extends DelegateProcessor implements AsyncProc
                         final Object faultBody = faultMessage.getBody();
                         if (faultBody != null) {
                             faultMessage.setBody(null); // Reset it since we are handling it.
+                            // TODO: remove fault message entirely
                             if (faultBody instanceof Exception) {
                                 exchange.setException((Exception)faultBody);
                             } else {

@@ -16,9 +16,8 @@
  */
 package org.apache.camel.impl;
 
-import java.util.List;
-
 import org.apache.camel.Processor;
+import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
@@ -32,11 +31,9 @@ import org.apache.camel.spi.RouteContext;
 public class DefaultErrorHandlerWrappingStrategy implements ErrorHandlerWrappingStrategy {
 
     private final RouteContext routeContext;
-    private final List<ProcessorDefinition> counterList;
 
-    public DefaultErrorHandlerWrappingStrategy(RouteContext routeContext, List<ProcessorDefinition> counterList) {
+    public DefaultErrorHandlerWrappingStrategy(RouteContext routeContext) {
         this.routeContext = routeContext;
-        this.counterList = counterList;
     }
 
     public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorDefinition, Processor target) throws Exception {
@@ -45,12 +42,12 @@ public class DefaultErrorHandlerWrappingStrategy implements ErrorHandlerWrapping
             return target;
         }
 
-        // don't wrap our instrumentation interceptors
-        if (counterList.contains(processorDefinition)) {
-            return processorDefinition.getErrorHandlerBuilder().createErrorHandler(routeContext, target);
+        // dont wrap interceptor definitions otherwise we end up wrapping too much
+        if (processorDefinition instanceof InterceptorDefinition) {
+            return target;
         }
 
-        return target;
+        return processorDefinition.getErrorHandlerBuilder().createErrorHandler(routeContext, target);
     }
 
 }

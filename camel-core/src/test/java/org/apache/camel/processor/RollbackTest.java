@@ -42,7 +42,7 @@ public class RollbackTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:dead");
         mock.expectedMessageCount(1);
 
-        getMockEndpoint("mock:rollback").expectedMessageCount(2);
+        getMockEndpoint("mock:rollback").expectedMessageCount(1);
 
         try {
             template.requestBody("direct:start", "bad");
@@ -58,7 +58,7 @@ public class RollbackTest extends ContextTestSupport {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
 
         MockEndpoint mock = getMockEndpoint("mock:rollback");
-        mock.expectedMessageCount(2);
+        mock.expectedMessageCount(1);
 
         Exchange out = template.request("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {

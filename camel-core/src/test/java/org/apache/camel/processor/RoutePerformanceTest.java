@@ -31,7 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class RoutePerformanceTest extends ContextTestSupport {
 
-    protected SimpleDataSet dataSet = new SimpleDataSet(1000);
+    private int size = 10000;
+    protected SimpleDataSet dataSet = new SimpleDataSet(size);
 
     public void testPerformance() throws Exception {
         long start = System.currentTimeMillis();
@@ -44,7 +45,7 @@ public class RoutePerformanceTest extends ContextTestSupport {
 
         long delta = System.currentTimeMillis() - start;
 
-        System.out.println("RoutePerformanceTest: Took: " + delta + " ms");
+        System.out.println("RoutePerformanceTest: Sent: " + size + " Took: " + delta + " ms");
     }
 
     @Override

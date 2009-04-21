@@ -40,6 +40,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.builder.DataFormatClause;
 import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -2035,6 +2036,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
         ObjectHelper.notNull(target, "target", this);
+
+        if (target instanceof InstrumentationProcessor) {
+            // do not double wrap instrumentation
+            return target;
+        }
 
         List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
         CamelContext camelContext = routeContext.getCamelContext();

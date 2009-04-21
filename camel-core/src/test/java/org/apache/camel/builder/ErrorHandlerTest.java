@@ -183,7 +183,7 @@ public class ErrorHandlerTest extends TestSupport {
         }
     }
 
-    public void testDisablingInheritenceOfErrorHandlers() throws Exception {
+    public void testLoggingErrorHandler() throws Exception {
 
         // START SNIPPET: e5
         RouteBuilder builder = new RouteBuilder() {
@@ -213,7 +213,8 @@ public class ErrorHandlerTest extends TestSupport {
             }
 
             FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, filterProcessor.getProcessor());
+            LoggingErrorHandler logging = assertIsInstanceOf(LoggingErrorHandler.class, filterProcessor.getProcessor());
+            StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, logging.getOutput());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
 
             log.debug("Found sendProcessor: " + sendProcessor);
