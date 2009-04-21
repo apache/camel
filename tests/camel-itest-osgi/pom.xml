@@ -55,37 +55,47 @@
     </repository>
   </repositories>
 
+  <pluginRepositories>
+    <pluginRepository>
+      <id>ops4j.releases</id>
+      <url>http://repository.ops4j.org/maven2</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </pluginRepository>
+  </pluginRepositories>
+
   <dependencies>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam</artifactId>
       <version>${pax-exam-version}</version>
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit</artifactId>
       <version>${pax-exam-version}</version>
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-default</artifactId>
       <version>${pax-exam-version}</version>
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit-extender-impl</artifactId>
       <version>${pax-exam-version}</version>
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
       <version>4.0.1</version>
-      <!--<scope>test</scope>-->
+      <scope>test</scope>
     </dependency>
 
 
@@ -128,5 +138,38 @@
       </plugin>
     </plugins>
   </build>
+
+  <profiles>
+    <profile>
+      <id>ci-build-profile</id>
+      <activation>
+        <property>
+          <name>maven.repo.local</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <!-- use Pax Exam Maven plugin to get around PAXEXAM-62/64 -->
+          <plugin>
+            <groupId>org.ops4j.pax.exam</groupId>
+            <artifactId>maven-paxexam-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>generate-paxexam-config</id>
+                <goals>
+                  <goal>generate-paxexam-config</goal>
+                </goals>
+              </execution>
+            </executions>
+            <configuration>
+              <settings>
+                <localRepository>${maven.repo.local}</localRepository>
+              </settings>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 
 </project>
