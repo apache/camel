@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.model.FromDefinition;
-import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.model.MulticastDefinition;
 import org.apache.camel.model.PipelineDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -95,7 +94,7 @@ public class RouteDotGenerator extends GraphGeneratorSupport {
 
     @SuppressWarnings("unchecked")
     protected NodeData printNode(PrintWriter writer, NodeData fromData, ProcessorDefinition node) {
-        if (node instanceof MulticastDefinition || node instanceof InterceptorDefinition) {
+        if (node instanceof MulticastDefinition) {
             // no need for a multicast or interceptor node
             List<ProcessorDefinition> outputs = node.getOutputs();
             boolean isPipeline = isPipeline(node);

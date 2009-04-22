@@ -36,6 +36,7 @@ import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.MulticastProcessor;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.processor.Splitter;
@@ -296,7 +297,7 @@ public class RouteBuilderTest extends TestSupport {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                from("seda:a").intercept(interceptor1).intercept(interceptor2).to("seda:d");
+                from("seda:a").process(interceptor1).process(interceptor2).to("seda:d");
             }
         };
         // END SNIPPET: e7
@@ -315,6 +316,12 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             Processor processor = getProcessorWithoutErrorHandler(route);
 
+            Pipeline line = assertIsInstanceOf(Pipeline.class, processor);
+            assertEquals(3, line.getProcessors().size());
+            // last should be our seda
+            List<Processor> processors = new ArrayList<Processor>(line.getProcessors());
+            processor = unwrapErrorHandler(processors.get(2));
+            processor = unwrapDelegateProcessor(processor);
             assertIsInstanceOf(SendProcessor.class, processor);
             assertSendTo(processor, "seda:d");
         }
@@ -339,9 +346,6 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-
-            log.debug("processor: " + processor);
         }
     }
 

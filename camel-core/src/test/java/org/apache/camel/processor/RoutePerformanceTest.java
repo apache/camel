@@ -32,7 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class RoutePerformanceTest extends ContextTestSupport {
 
     private int size = 10000;
-    protected SimpleDataSet dataSet = new SimpleDataSet(size);
+    private SimpleDataSet dataSet = new SimpleDataSet(size);
 
     public void testPerformance() throws Exception {
         long start = System.currentTimeMillis();

@@ -40,18 +40,16 @@ import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.builder.DataFormatClause;
-import org.apache.camel.builder.DefaultErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
+import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -79,7 +77,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     private NodeFactory nodeFactory;
     private LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition parent;
-    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     private String errorHandlerRef;
 
     // else to use an optional attribute in JAXB2
@@ -1050,6 +1047,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param fault   the fault
      * @return the builder
+     * @deprecated should be renamed to throw Exception
      */
     @SuppressWarnings("unchecked")
     public Type throwFault(Throwable fault) {
@@ -1064,6 +1062,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      *
      * @param message  the fault message
      * @return the builder
+     * @deprecated should be renamed to throw Exception
      */
     public Type throwFault(String message) {
         return throwFault(new CamelException(message));
@@ -1153,80 +1152,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
      *
-     * @param ref  a reference in the registry to lookup the interceptor that must be of type {@link DelegateProcessor}
-     * @return the builder
-     */
-    @SuppressWarnings("unchecked")
-    public Type interceptor(String ref) {
-        InterceptorDefinition interceptor = new InterceptorDefinition(ref);
-        intercept(interceptor);
-        return (Type) this;
-    }
-
-    /**
-     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
-     *
-     * @param refs  a list of reference in the registry to lookup the interceptor that must
-     *              be of type {@link DelegateProcessor}
-     * @return the builder
-     */
-    @SuppressWarnings("unchecked")
-    public Type interceptors(String... refs) {
-        for (String ref : refs) {
-            interceptor(ref);
-        }
-        return (Type) this;
-    }
-
-    /**
-     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
-     *
-     * @param interceptor  the interceptor
-     * @return the builder
-     */
-    @SuppressWarnings("unchecked")
-    public Type intercept(DelegateProcessor interceptor) {
-        intercept(new InterceptorDefinition(interceptor));
-        return (Type) this;
-    }
-
-    /**
-     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
-     *
      * @return the intercept builder to configure
      */
     public InterceptDefinition intercept() {
         InterceptDefinition answer = new InterceptDefinition();
         addOutput(answer);
         return answer;
-    }
-
-    /**
-     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
-     *
-     * @param  interceptor  the interceptor
-     */
-    public void intercept(AbstractInterceptorDefinition interceptor) {
-        addOutput(interceptor);
-        pushBlock(interceptor);
-    }
-
-    /**
-     * Adds an interceptor around the whole of this nodes processing
-     *
-     * @param interceptor  the interceptor
-     */
-    public void addInterceptor(AbstractInterceptorDefinition interceptor) {
-        interceptors.add(interceptor);
-    }
-
-    /**
-     * Adds an interceptor around the whole of this nodes processing
-     *
-     * @param interceptor  the interceptor
-     */
-    public void addInterceptor(DelegateProcessor interceptor) {
-        addInterceptor(new InterceptorDefinition(interceptor));
     }
 
     /**
@@ -1405,17 +1336,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         answer.setRef(ref);
         addOutput(answer);
         return answer;
-    }
-
-    /**
-     * Forces handling of faults as exceptions
-     *
-     * @return the current builder with the fault handler configured
-     */
-    @SuppressWarnings("unchecked")
-    public Type handleFault() {
-        intercept(new HandleFaultDefinition());
-        return (Type) this;
     }
 
     /**
@@ -2053,29 +1973,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             }
         }
 
-        List<AbstractInterceptorDefinition> list = routeContext.getRoute().getInterceptors();
-        if (interceptors != null) {
-            list.addAll(interceptors);
-        }
-        // lets reverse the list so we apply the inner interceptors first
-        Collections.reverse(list);
-        Set<Processor> interceptors = new HashSet<Processor>();
-        interceptors.add(target);
-        for (AbstractInterceptorDefinition interceptorType : list) {
-            DelegateProcessor interceptor = interceptorType.createInterceptor(routeContext);
-            if (!interceptors.contains(interceptor)) {
-                interceptors.add(interceptor);
-                if (interceptor.getProcessor() != null) {
-                    LOG.warn("Interceptor " + interceptor + " currently wraps target "
-                            + interceptor.getProcessor()
-                            + " is attempting to change target " + target
-                            + " new wrapping has been denied.");
-                } else {
-                    interceptor.setProcessor(target);
-                    target = interceptor;
-                }
-            }
-        }
         return target;
     }
 

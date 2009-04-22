@@ -24,8 +24,8 @@
 
     <!-- START SNIPPET: e1 -->
     <!-- setup our error handler as the deal letter channel -->
-    <bean id="errorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="mock:error"/>
+    <bean id="deadLetter" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:dead"/>
     </bean>
 
     <!-- the default error handler used in the 2nd route -->
@@ -37,7 +37,7 @@
     <!-- this is the camel context where we define the routes -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-        <route errorHandlerRef="errorHandler">
+        <route errorHandlerRef="deadLetter">
             <from uri="direct:start"/>
             <onException>
                 <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>

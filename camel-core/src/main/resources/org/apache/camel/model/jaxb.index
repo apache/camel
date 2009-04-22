@@ -14,7 +14,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-AbstractInterceptorDefinition
 AggregateDefinition
 BeanDefinition
 CatchDefinition
@@ -27,11 +26,9 @@ ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
-HandleFaultDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
-InterceptorDefinition
 InterceptDefinition
 LoadBalanceDefinition
 LoopDefinition

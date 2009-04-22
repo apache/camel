@@ -26,14 +26,16 @@
     <!-- this is our POJO bean with our business logic defined as a plain spring bean -->
     <bean id="orderService" class="org.apache.camel.spring.processor.onexception.OrderService"/>
 
-    <!-- this is the camel context where we define the routes -->
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <bean id="defaultError" class="org.apache.camel.builder.DefaultErrorHandlerBuilder">
+    </bean>
 
+    <!-- this is the camel context where we define the routes -->
+    <camelContext trace="true" xmlns="http://camel.apache.org/schema/spring">
+        <!-- TODO: bug with no error handler ref = eg default it does not work -->
         <route>
             <from uri="direct:start"/>
             <onException>
                 <exception>org.apache.camel.spring.processor.onexception.OrderFailedException</exception>
-                <redeliveryPolicy maximumRedeliveries="1"/>
                 <handled>
                     <constant>true</constant>
                 </handled>

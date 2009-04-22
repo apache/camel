@@ -32,6 +32,7 @@ import org.apache.camel.spi.RouteContext;
 
 /**
  * Represents an XML &lt;throwFault/&gt; element
+ * @deprecated should be renamed to throwException and not be FAULT based
  */
 @XmlRootElement(name = "throwFault")
 @XmlAccessorType(XmlAccessType.FIELD)

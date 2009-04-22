@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.CamelExchangeException;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -33,7 +36,11 @@ public class FileDeleteRouteExceptionTest extends FileDeleteRouteTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(uri).to("mock:result").throwFault("Exception while processing file...").to("mock:skip");
+                from(uri).to("mock:result").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new CamelExchangeException("Cannot process it", exchange);
+                    }
+                }).to("mock:skip");
             }
         };
     }

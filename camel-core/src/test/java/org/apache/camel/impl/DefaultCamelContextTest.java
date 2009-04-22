@@ -97,7 +97,7 @@ public class DefaultCamelContextTest extends TestCase {
         assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 1);
         ctx.start();
         assertEquals("Should have one RouteService", ctx.getRouteServices().size(), 1);
-        System.out.println("The routes is " + ctx.getRoutes());
+        //System.out.println("The routes is " + ctx.getRoutes());
         assertEquals("The Routes should be same", routesString, ctx.getRoutes().toString());
         ctx.stop();
         assertEquals("The RouteService should be removed ", ctx.getRouteServices().size(), 1);        

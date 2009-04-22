@@ -18,6 +18,7 @@ package org.apache.camel.component.file;
 
 import java.io.File;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
@@ -39,7 +40,7 @@ public class FileDeleteRouteTest extends FileRouteTest {
         MockEndpoint result = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         result.expectedBodiesReceived(expectedBody);
 
-        template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
+        template.sendBodyAndHeader(uri, expectedBody, Exchange.FILE_NAME, "deletetest.txt");
         result.assertIsSatisfied();
 
         Thread.sleep(500);

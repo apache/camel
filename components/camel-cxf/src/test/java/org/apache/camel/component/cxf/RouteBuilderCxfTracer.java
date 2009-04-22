@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.non_wrapper.types.GetPerson;
 import org.apache.camel.non_wrapper.types.GetPersonResponse;
-import org.apache.camel.processor.DelegateProcessor;
 import org.apache.cxf.message.MessageContentsList;
 
 
@@ -33,7 +32,7 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
             + "&serviceName={http://camel.apache.org/non-wrapper}PersonService"
             + "&portName={http://camel.apache.org/non-wrapper}soap"
             + "&dataFormat=POJO")
-            .intercept(new MyDelegate()).to("direct:something");
+            .process(new BeforeProcessor()).to("direct:something").process(new AfterProcessor());
 
         from("direct:something")
             .process(new DoSomethingProcessor())
@@ -52,19 +51,20 @@ public class RouteBuilderCxfTracer extends RouteBuilder {
         }
     }
      
-    private class MyDelegate extends DelegateProcessor {
-        @Override
-        protected void processNext(Exchange e) throws Exception {
-            MessageContentsList mclIn = (MessageContentsList) e.getIn().getBody();
+    private class BeforeProcessor implements Processor {
+        public void process(Exchange e) throws Exception {
+            MessageContentsList mclIn = e.getIn().getBody(MessageContentsList.class);
             e.getIn().setBody(((GetPerson) mclIn.get(0)).getPersonId(), String.class);
-            
-            super.processNext(e);           
-            
+        }
+    }
+
+    private class AfterProcessor implements Processor {
+        public void process(Exchange e) throws Exception {
             GetPersonResponse gpr = new GetPersonResponse();
             gpr.setName("Bill");
             gpr.setPersonId(e.getOut().getBody(String.class));
             gpr.setSsn("Test");
-            
+
             MessageContentsList mclOut = new MessageContentsList();
             mclOut.set(0, gpr);
             e.getOut().setBody(mclOut, MessageContentsList.class);

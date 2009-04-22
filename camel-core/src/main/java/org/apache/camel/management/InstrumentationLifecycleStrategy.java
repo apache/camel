@@ -17,10 +17,8 @@
 package org.apache.camel.management;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javax.management.JMException;
 import javax.management.MalformedObjectNameException;
@@ -32,9 +30,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.impl.DefaultErrorHandlerWrappingStrategy;
-import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
@@ -52,9 +49,6 @@ import org.apache.commons.logging.LogFactory;
  */
 public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
-
-    // TODO: This code needs an overhaul. It should *really* not change the route model,
-    // only register mbeans with the performance counters
 
     private static final String MANAGED_RESOURCE_CLASSNAME = "org.springframework.jmx.export.annotation.ManagedResource";
     private InstrumentationAgent agent;
@@ -85,6 +79,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onContextStart(CamelContext context) {
+        // register camel context
         if (context instanceof DefaultCamelContext) {
             try {
                 initialized = true;
@@ -115,23 +110,26 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             return;
         }
 
+        // see if the spring-jmx is on the classpath
         Class annotationClass = resolveManagedAnnotation(endpoint);
         if (annotationClass == null) {
+            // no its not so register the endpoint as a new managed endpoint
             registerEndpointAsManagedEndpoint(endpoint);
             return;
         }
 
+        // see if the endpoint have been annotation with a spring JMX annotation
         Object annotation = endpoint.getClass().getAnnotation(annotationClass);
         if (annotation == null) {
+            // no its not so register the endpoint as a new managed endpoint
             registerEndpointAsManagedEndpoint(endpoint);
-            return;
+        } else {
+            // there is already a spring JMX annotation so attempt to register it
+            attemptToRegisterManagedResource(endpoint, annotation);
         }
-
-        attemptToRegisterManagedResource(endpoint, annotation);
     }
 
     private Class resolveManagedAnnotation(Endpoint endpoint) {
-
         CamelContext context = endpoint.getCamelContext();
 
         ClassResolver resolver = context.getClassResolver();
@@ -168,6 +166,10 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             return;
         }
 
+        // TODO: Disabled for now until we find a better strategy for registering routes in the JMX
+        // without altering the route model. The route model should be much the same as without JMX to avoid
+        // a gap that causes pain to get working with and without JMX enabled. We have seen to many issues with this already.
+/*
         for (Route route : routes) {
             try {
                 ManagedRoute mr = new ManagedRoute(route);
@@ -183,6 +185,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
                 LOG.warn("Could not register Route MBean", e);
             }
         }
+*/
     }
 
     public void onServiceAdd(CamelContext context, Service service) {
@@ -190,6 +193,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         if (!initialized) {
             return;
         }
+
+        // register consumer
         if (service instanceof ServiceSupport && service instanceof Consumer) {
             // TODO: add support for non-consumer services?
             try {
@@ -218,7 +223,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // to InstrumentationProcessor and wrap the appropriate processor
         // by InstrumentationInterceptStrategy.
         RouteDefinition route = routeContext.getRoute();
-        
+
+        // register all processors
         for (ProcessorDefinition processor : route.getOutputs()) {
             ObjectName name = null;
             try {
@@ -246,9 +252,11 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // set up the interceptorMap for onRoutesAdd() method to register the
         // ManagedRoute MBeans.
 
-        // TODO: Rework the code below it changes the model and it affects the gap with and without JMX!
-        // we have enough pain with JAXB vs Java DSL already so we should not also have gaps with JMX!
-        RouteDefinition routeType = routeContext.getRoute();
+        // TODO: Disabled for now until we find a better strategy for registering routes in the JMX
+        // without altering the route model. The route model should be much the same as without JMX to avoid
+        // a gap that causes pain to get working with and without JMX enabled. We have seen to many issues with this already.
+
+/*        RouteDefinition routeType = routeContext.getRoute();
         if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
             if (routeType.getInputs().size() > 1) {
                 LOG.warn("Addding InstrumentationProcessor to first input only.");
@@ -284,8 +292,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
 
             interceptorMap.put(endpoint, processor);
-        }
-
+        }*/
     }
 
     public CamelNamingStrategy getNamingStrategy() {

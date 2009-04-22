@@ -29,7 +29,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
-import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * Represents a collection of routes
@@ -41,8 +40,6 @@ import org.apache.camel.processor.DelegateProcessor;
 public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> implements RouteContainer {
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-    @XmlTransient
-    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     @XmlTransient
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlTransient
@@ -70,14 +67,6 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
-    }
-
-    public List<AbstractInterceptorDefinition> getInterceptors() {
-        return interceptors;
-    }
-
-    public void setInterceptors(List<AbstractInterceptorDefinition> interceptors) {
-        this.interceptors = interceptors;
     }
 
     public List<InterceptDefinition> getIntercepts() {
@@ -182,10 +171,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     public RouteDefinition route(RouteDefinition route) {
         // lets configure the route
         route.setCamelContext(getCamelContext());
-        List<AbstractInterceptorDefinition> list = getInterceptors();
-        for (AbstractInterceptorDefinition interceptorType : list) {
-            route.addInterceptor(interceptorType);
-        }
+
         List<InterceptDefinition> intercepts = getIntercepts();
         for (InterceptDefinition intercept : intercepts) {
             // need to create a proxy for this one and use the
@@ -194,20 +180,10 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             route.addOutput(proxy);
             route.pushBlock(proxy.getProceed());
         }
+
         route.getOutputs().addAll(getExceptions());
         getRoutes().add(route);
         return route;
-    }
-
-    /**
-     * Adds an interceptor
-     *
-     * @param interceptor  the interceptor
-     * @return the builder
-     */
-    public RoutesDefinition intercept(DelegateProcessor interceptor) {
-        getInterceptors().add(new InterceptorDefinition(interceptor));
-        return this;
     }
 
     /**

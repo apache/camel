@@ -17,6 +17,7 @@
 package org.apache.camel.spring;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -48,6 +49,7 @@ import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
 import org.apache.camel.processor.interceptor.Delayer;
+import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.ClassResolver;
@@ -89,6 +91,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private Boolean streamCache = Boolean.TRUE;
     @XmlAttribute(required = false)
     private Long delay;
+    @XmlAttribute(required = false)
+    private Boolean handleFault;
     @XmlAttribute(required = false)
     private String errorHandlerRef;
     @XmlAttribute(required = false)
@@ -190,6 +194,11 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             getContext().addInterceptStrategy(tracer);
         }
 
+        HandleFault handleFault = getBeanForType(HandleFault.class);
+        if (handleFault != null) {
+            getContext().addInterceptStrategy(handleFault);
+        }
+
         Delayer delayer = getBeanForType(Delayer.class);
         if (delayer != null) {
             getContext().addInterceptStrategy(delayer);
@@ -218,11 +227,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // do special preparation for some concepts such as interceptors and policies
+        // this is needed as JAXB does not build excaclty the same model definition as Spring DSL would do
+        // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
-            if (onExceptions != null) {
-                route.getOutputs().addAll(onExceptions);
-            }
-
+            initOnExceptions(route);
             initInterceptors(route);
             initPolicies(route);
         }
@@ -242,6 +250,36 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         findRouteBuilders();
         installRoutes();
+    }
+
+    private void initOnExceptions(RouteDefinition route) {
+        List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+        List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
+
+        // add global on exceptions if any
+        if (onExceptions != null && !onExceptions.isEmpty()) {
+            // on exceptions must be added at top, so the route flow is correct as
+            // on exceptions should be the first outputs
+            route.getOutputs().addAll(0, onExceptions);
+        }
+
+        for (ProcessorDefinition output : route.getOutputs()) {
+            // split into on exception and regular outputs
+            if (output instanceof OnExceptionDefinition) {
+                exceptionHandlers.add(output);
+            } else {
+                outputs.add(output);
+            }
+        }
+
+        // clearing the outputs
+        route.clearOutput();
+
+        // add exception handlers as top children
+        route.getOutputs().addAll(exceptionHandlers);
+
+        // and the remaining outputs
+        route.getOutputs().addAll(outputs);
     }
 
     private void initInterceptors(RouteDefinition route) {
@@ -488,6 +526,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.delay = delay;
     }
 
+    public Boolean getHandleFault() {
+        return handleFault;
+    }
+
+    public void setHandleFault(Boolean handleFault) {
+        this.handleFault = handleFault;
+    }
+
     public CamelJMXAgentDefinition getCamelJMXAgent() {
         return camelJMXAgent;
     }
@@ -538,6 +584,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
         if (delay != null) {
             ctx.setDelay(delay);
+        }
+        if (handleFault != null) {
+            ctx.setHandleFault(handleFault);
         }
         if (errorHandlerRef != null) {
             ErrorHandlerBuilder errorHandlerBuilder = (ErrorHandlerBuilder) getApplicationContext().getBean(errorHandlerRef, ErrorHandlerBuilder.class);

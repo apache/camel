@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.interceptor.HandleFault;
 
 public class FaultRetryRouteTest extends ContextTestSupport {
     protected MockEndpoint a;
@@ -63,6 +64,8 @@ public class FaultRetryRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
+                getContext().addInterceptStrategy(new HandleFault());
+
                 errorHandler(
                     deadLetterChannel("mock:error")
                         .maximumRedeliveries(4)
@@ -70,7 +73,6 @@ public class FaultRetryRouteTest extends ContextTestSupport {
 
                 from("direct:start")
                     .to("mock:a")
-                    .handleFault()
                     .process(successOnRetryProcessor)
                     .to("mock:b");
             }

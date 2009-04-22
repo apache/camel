@@ -289,6 +289,10 @@ public class DefaultExchange implements Exchange {
         configureMessage(fault);
     }
 
+    public void removeFault() {
+        this.fault = null;
+    }
+
     public String getExchangeId() {
         if (exchangeId == null) {
             exchangeId = createExchangeId();

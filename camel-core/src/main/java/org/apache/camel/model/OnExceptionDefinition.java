@@ -119,7 +119,8 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         return parentPolicy;
     }
 
-    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+    public void
+    addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         setHandledFromExpressionType(routeContext);
         setRetryUntilFromExpressionType(routeContext);
         // lets attach a processor to an error handler

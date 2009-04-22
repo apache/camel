@@ -19,8 +19,6 @@ package org.apache.camel.processor.interceptor;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.LinkedList;
-import java.util.List;
 import javax.xml.transform.Source;
 import javax.xml.transform.stream.StreamSource;
 
@@ -32,9 +30,6 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxp.BytesSource;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.model.AbstractInterceptorDefinition;
-import org.apache.camel.model.InterceptorDefinition;
-import org.apache.camel.processor.DelegateProcessor;
 
 public class StreamCachingInterceptorTest extends ContextTestSupport {
 

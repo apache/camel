@@ -92,6 +92,9 @@ public class ErrorHandlerBuilderRef extends ErrorHandlerBuilderSupport {
                         // the other has also no explict error handler configured then fallback to the default error handler
                         // otherwise we could recursive loop forever (triggered by createErrorHandler method)
                         handler = new DefaultErrorHandlerBuilder();
+                        // inherit the error handlers from the other as they are to be shared
+                        // this is needed by camel-spring when using non error handler configured
+                        handler.setErrorHandlers(other.getErrorHandlers());
                     }
                 }
             } else {

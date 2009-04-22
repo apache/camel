@@ -168,14 +168,6 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("#", node.getUriDelimiter());
     }
 
-    //TODO get the test fixed
-    public void xtestParseRouteWithInterceptorXml() throws Exception {
-        RouteDefinition route = assertOneRoute("routeWithInterceptor.xml");
-        assertFrom(route, "seda:a");
-        assertChildTo("to", route, "seda:d");
-        assertInterceptorRefs(route, "interceptor1", "interceptor2");
-    }
-
     @SuppressWarnings("unchecked")
     public void testParseRouteWithChoiceXml() throws Exception {
         RouteDefinition route = assertOneRoute("routeWithChoice.xml");
@@ -301,21 +293,4 @@ public class XmlParseTest extends XmlTestSupport {
         assertEquals("Expression", languageExpression, expression.getExpression());
     }
 
-    protected void assertInterceptorRefs(ProcessorDefinition route, String... names) {
-        RouteDefinition rt = (RouteDefinition)route;
-        assertNotNull(rt);
-
-        // Rely on the fact that reference ids are unique
-        List<AbstractInterceptorDefinition> interceptors = rt.getInterceptors();
-        assertEquals("Interceptor count does not match", names.length, interceptors.size());
-
-        Set<String> refs = new HashSet<String>();
-        for (AbstractInterceptorDefinition it : interceptors) {
-            InterceptorDefinition ir = assertIsInstanceOf(InterceptorDefinition.class, it);
-            refs.add(ir.getRef());
-        }
-        for (String name : names) {
-            assertTrue("Interceptor \"" + name + "\" not found", refs.contains(name));
-        }
-    }
 }

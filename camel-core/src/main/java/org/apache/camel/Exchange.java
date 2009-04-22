@@ -189,6 +189,11 @@ public interface Exchange {
     Message getFault(boolean lazyCreate);
 
     /**
+     * Removes the fault message.
+     */
+    void removeFault();
+
+    /**
      * Returns the exception associated with this exchange
      *
      * @return the exception (or null if no faults)

@@ -170,8 +170,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
                                 processStrategyCommit(processStrategy, exchange, file);
                                 committed = true;
                             } else {
-                                // there was an exception but it was not handled by the DeadLetterChannel
-                                handleException(exchange.getException());
+                                if (exchange.getException() != null) {
+                                    // if the failure was an exception then handle it
+                                    handleException(exchange.getException());
+                                } 
                             }
                         } finally {
                             if (!committed) {

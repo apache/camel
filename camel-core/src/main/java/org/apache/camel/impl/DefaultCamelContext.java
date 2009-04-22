@@ -49,6 +49,7 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.processor.interceptor.Delayer;
+import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.StreamCaching;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -104,6 +105,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private Boolean trace;
     private Boolean streamCache = Boolean.TRUE;
+    private Boolean handleFault = Boolean.FALSE;
     private Long delay;
     private ErrorHandlerBuilder errorHandlerBuilder;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
@@ -707,7 +709,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
      * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
      * or it has not been specified then default to the <b>camel.streamCache</b> system property
      */
-    public boolean getStreamCache() {
+    public boolean isStreamCacheEnabled() {
         final Boolean value = getStreamCaching();
         if (value != null) {
             return value;
@@ -725,11 +727,30 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Returns true if tracing has been enabled or disabled via the {@link #setTrace(Boolean)} method
-     * or it has not been specified then default to the <b>camel.trace</b> system property
+     * Returns true if handle fault has been enabled
      */
-    public boolean getTrace() {
-        final Boolean value = getTracing();
+    public boolean isHandleFaultEnabled() {
+        final Boolean value = getHandleFault();
+        if (value != null) {
+            return value;
+        } else {
+            return SystemHelper.isSystemProperty("camel.handleFault");
+        }
+    }
+
+    public Boolean getHandleFault() {
+        return handleFault;
+    }
+
+    public void setHandleFault(Boolean handleFault) {
+        this.handleFault = handleFault;
+    }
+
+    /**
+     * Returns true if tracing has been enabled
+     */
+    public boolean isTraceEnabled() {
+        final Boolean value = getTrace();
         if (value != null) {
             return value;
         } else {
@@ -737,7 +758,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public Boolean getTracing() {
+    public Boolean getTrace() {
         return trace;
     }
 
@@ -746,11 +767,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     }
 
     /**
-     * Returns the delay in millis if delaying has been enabled or disabled via the {@link #setDelay(Long)} method
-     * or it has not been specified then default to the <b>camel.delay</b> system property
+     * Returns the delay in millis if delaying has been enabled. Returns 0 if not enabled.
      */
-    public long getDelay() {
-        final Long value = getDelaying();
+    public long isDelayEnabled() {
+        final Long value = getDelay();
         if (value != null) {
             return value;
         } else {
@@ -759,7 +779,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         }
     }
 
-    public Long getDelaying() {
+    public Long getDelay() {
         return delay;
     }
 
@@ -806,7 +826,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     protected void doStart() throws Exception {
         LOG.info("Apache Camel " + getVersion() + " (CamelContext:" + getName() + ") is starting");
 
-        if (getStreamCache()) {
+        if (isStreamCacheEnabled()) {
             // only add a new stream cache if not already configured
             if (StreamCaching.getStreamCaching(this) == null) {
                 LOG.debug("StreamCaching is enabled");
@@ -814,7 +834,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        if (getTrace()) {
+        if (isTraceEnabled()) {
             // only add a new tracer if not already configured
             if (Tracer.getTracer(this) == null) {
                 Tracer tracer = new Tracer();
@@ -828,11 +848,20 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             }
         }
 
-        if (getDelay() > 0) {
+        long delayInMillis = isDelayEnabled();
+        if (delayInMillis > 0) {
             // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
-                LOG.debug("Delayer is enabled");
-                addInterceptStrategy(new Delayer(getDelay()));
+                LOG.debug("Delayer is enabled with: " + delayInMillis + " ms.");
+                addInterceptStrategy(new Delayer(delayInMillis));
+            }
+        }
+
+        if (isHandleFaultEnabled()) {
+            // only add a new handle fault if not already configured
+            if (HandleFault.getHandleFault(this) == null) {
+                LOG.debug("HandleFault is enabled");
+                addInterceptStrategy(new HandleFault());
             }
         }
 

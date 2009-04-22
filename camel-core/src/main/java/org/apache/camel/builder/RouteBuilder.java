@@ -32,7 +32,6 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
@@ -137,17 +136,6 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      */
     public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
         setErrorHandlerBuilder(errorHandlerBuilder);
-        return this;
-    }
-
-    /**
-     * Adds the given interceptor to this route
-     *
-     * @param interceptor  the interceptor
-     * @return the builder
-     */
-    public RouteBuilder intercept(DelegateProcessor interceptor) {
-        routeCollection.intercept(interceptor);
         return this;
     }
 

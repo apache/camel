@@ -17,7 +17,6 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Processor;
-import org.apache.camel.model.InterceptorDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
@@ -39,11 +38,6 @@ public class DefaultErrorHandlerWrappingStrategy implements ErrorHandlerWrapping
     public Processor wrapProcessorInErrorHandler(ProcessorDefinition processorDefinition, Processor target) throws Exception {
         // dont double wrap error handlers
         if (target instanceof ErrorHandler) {
-            return target;
-        }
-
-        // dont wrap interceptor definitions otherwise we end up wrapping too much
-        if (processorDefinition instanceof InterceptorDefinition) {
             return target;
         }
 

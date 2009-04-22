@@ -49,7 +49,6 @@ import org.apache.camel.util.CamelContextHelper;
 @XmlType(propOrder = {"inputs", "outputs" })
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> implements CamelContextAware {
-    private List<AbstractInterceptorDefinition> interceptors = new ArrayList<AbstractInterceptorDefinition>();
     private List<FromDefinition> inputs = new ArrayList<FromDefinition>();
     private List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
     private String group;
@@ -198,15 +197,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     // Properties
     // -----------------------------------------------------------------------
 
-    public List<AbstractInterceptorDefinition> getInterceptors() {
-        return interceptors;
-    }
-
-    @XmlTransient
-    public void setInterceptors(List<AbstractInterceptorDefinition> interceptors) {
-        this.interceptors = interceptors;
-    }
-
     public List<FromDefinition> getInputs() {
         return inputs;
     }
@@ -277,16 +267,6 @@ public class RouteDefinition extends ProcessorDefinition<ProcessorDefinition> im
     @Override
     protected void configureChild(ProcessorDefinition output) {
         super.configureChild(output);
-
-        List<AbstractInterceptorDefinition> interceptors = getInterceptors();
-        for (AbstractInterceptorDefinition interceptor : interceptors) {
-            output.addInterceptor(interceptor);
-        }
-    }
-
-    @Override
-    public void addInterceptor(AbstractInterceptorDefinition interceptor) {
-        getInterceptors().add(interceptor);
     }
 
 }
