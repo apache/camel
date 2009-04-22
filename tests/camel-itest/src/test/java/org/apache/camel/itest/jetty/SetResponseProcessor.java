@@ -26,9 +26,9 @@ public class SetResponseProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
 
         // Convert the input stream into a string
-        String result = exchange.getIn().getBody(String.class);
-
-        exchange.getOut().setBody("<message>out</message>");
+        String request = exchange.getIn().getBody(String.class);
+        
+        exchange.getOut().setBody("<response>" + request + "</response>");
 
     }
 
