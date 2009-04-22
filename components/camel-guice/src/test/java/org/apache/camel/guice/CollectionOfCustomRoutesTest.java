@@ -16,18 +16,20 @@
  */
 package org.apache.camel.guice;
 
+import java.util.Collection;
+import java.util.List;
+
+import junit.framework.TestCase;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.internal.Lists;
 import com.google.inject.name.Named;
-import junit.framework.TestCase;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
-
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Create a collection of routes via a provider method
@@ -50,7 +52,7 @@ public class CollectionOfCustomRoutesTest extends TestCase {
     }
 
 
-    public void DONTtestGuice() throws Exception {
+    public void xtestGuice() throws Exception {
         Injector injector = Guice.createInjector(new MyModule());
 
         CamelContext camelContext = injector.getInstance(CamelContext.class);

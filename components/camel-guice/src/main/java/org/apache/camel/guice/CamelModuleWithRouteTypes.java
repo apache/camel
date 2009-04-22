@@ -16,14 +16,14 @@
  */
 package org.apache.camel.guice;
 
-import java.util.Set;
 import java.util.HashSet;
+import java.util.Set;
 
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 import com.google.inject.internal.Sets;
+
 import org.apache.camel.Routes;
-import org.apache.camel.Route;
 
 
 /**

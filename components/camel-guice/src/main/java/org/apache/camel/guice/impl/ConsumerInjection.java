@@ -16,20 +16,21 @@
  */
 package org.apache.camel.guice.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+
 import com.google.inject.Inject;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.impl.CamelPostProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.guiceyfruit.support.MethodHandler;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * @version $Revision$
  */
-public class ConsumerInjection<I> extends CamelPostProcessorHelper implements MethodHandler<I,Consume> {
+public class ConsumerInjection<I> extends CamelPostProcessorHelper implements MethodHandler<I, Consume> {
     public void afterInjection(I injectee, Consume consume, Method method) throws InvocationTargetException, IllegalAccessException {
         consumerInjection(method, injectee);
     }

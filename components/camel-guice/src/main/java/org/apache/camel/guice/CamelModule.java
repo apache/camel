@@ -16,12 +16,11 @@
  */
 package org.apache.camel.guice;
 
-import com.google.inject.matcher.Matchers;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
-import org.apache.camel.Routes;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
+import org.apache.camel.Routes;
 import org.apache.camel.guice.impl.ConsumerInjection;
 import org.apache.camel.guice.impl.EndpointInjector;
 import org.apache.camel.guice.impl.ProduceInjector;

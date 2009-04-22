@@ -16,8 +16,17 @@
  */
 package org.apache.camel.guice;
 
+import java.util.List;
+import java.util.Set;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+
 import com.google.inject.Binding;
 import com.google.inject.Inject;
+
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.RuntimeCamelException;
@@ -34,13 +43,6 @@ import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.Registry;
 import org.guiceyfruit.Injectors;
-
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import java.util.List;
-import java.util.Set;
 
 /**
  * The default CamelContext implementation for working with Guice.

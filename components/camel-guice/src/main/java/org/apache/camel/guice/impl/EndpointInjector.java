@@ -17,10 +17,12 @@
 
 package org.apache.camel.guice.impl;
 
-import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -32,36 +34,35 @@ import org.guiceyfruit.support.AnnotationMemberProvider;
  *
  * @version $Revision$
  */
-public class EndpointInjector extends CamelPostProcessorHelper
-    implements AnnotationMemberProvider<EndpointInject> {
+public class EndpointInjector extends CamelPostProcessorHelper implements
+    AnnotationMemberProvider<EndpointInject> {
 
-  @Inject
-  public EndpointInjector(CamelContext camelContext) {
-    super(camelContext);
-  }
+    @Inject
+    public EndpointInjector(CamelContext camelContext) {
+        super(camelContext);
+    }
 
-  public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Field field) {
-    Class<?> type = field.getType();
-    String injectionPointName = field.getName();
-    String uri = inject.uri();
-    String endpointRef = inject.name();
-    return getInjectionValue(type, uri, endpointRef, injectionPointName);
-  }
+    public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Field field) {
+        Class<?> type = field.getType();
+        String injectionPointName = field.getName();
+        String uri = inject.uri();
+        String endpointRef = inject.name();
+        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+    }
 
-  public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Method method,
-      Class<?> aClass, int index) {
+    public Object provide(EndpointInject inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
+                          int index) {
 
-    Class<?>[] parameterTypes = method.getParameterTypes();
-    Class<?> type = parameterTypes[index];
-    String injectionPointName = ObjectHelper.getPropertyName(method);
-    String endpointRef = inject.name();
-    String uri = inject.uri();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Class<?> type = parameterTypes[index];
+        String injectionPointName = ObjectHelper.getPropertyName(method);
+        String endpointRef = inject.name();
+        String uri = inject.uri();
 
-    return getInjectionValue(type, uri, endpointRef, injectionPointName);
-  }
+        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+    }
 
-  public boolean isNullParameterAllowed(EndpointInject endpointInject, Method method,
-      Class<?> aClass, int i) {
-    return false;
-  }
+    public boolean isNullParameterAllowed(EndpointInject endpointInject, Method method, Class<?> aClass, int i) {
+        return false;
+    }
 }

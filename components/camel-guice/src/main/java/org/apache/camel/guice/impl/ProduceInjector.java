@@ -17,10 +17,12 @@
 
 package org.apache.camel.guice.impl;
 
-import com.google.inject.Inject;
-import com.google.inject.TypeLiteral;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import com.google.inject.Inject;
+import com.google.inject.TypeLiteral;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Produce;
 import org.apache.camel.impl.CamelPostProcessorHelper;
@@ -32,35 +34,34 @@ import org.guiceyfruit.support.AnnotationMemberProvider;
  *
  * @version $Revision$
  */
-public class ProduceInjector extends CamelPostProcessorHelper
-    implements AnnotationMemberProvider<Produce> {
+public class ProduceInjector extends CamelPostProcessorHelper implements AnnotationMemberProvider<Produce> {
 
-  @Inject
-  public ProduceInjector(CamelContext camelContext) {
-    super(camelContext);
-  }
+    @Inject
+    public ProduceInjector(CamelContext camelContext) {
+        super(camelContext);
+    }
 
-  public boolean isNullParameterAllowed(Produce produce, Method method, Class<?> aClass, int i) {
-    return false;
-  }
+    public boolean isNullParameterAllowed(Produce produce, Method method, Class<?> aClass, int i) {
+        return false;
+    }
 
-  public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Field field) {
-    Class<?> type = field.getType();
-    String injectionPointName = field.getName();
-    String endpointRef = inject.ref();
-    String uri = inject.uri();
+    public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Field field) {
+        Class<?> type = field.getType();
+        String injectionPointName = field.getName();
+        String endpointRef = inject.ref();
+        String uri = inject.uri();
 
-    return getInjectionValue(type, uri, endpointRef, injectionPointName);
-  }
+        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+    }
 
-  public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
-      int index) {
+    public Object provide(Produce inject, TypeLiteral<?> typeLiteral, Method method, Class<?> aClass,
+                          int index) {
 
-    Class<?>[] parameterTypes = method.getParameterTypes();
-    Class<?> type = parameterTypes[index];
-    String injectionPointName = ObjectHelper.getPropertyName(method);
-    String endpointRef = inject.ref();
-    String uri = inject.uri();
-    return getInjectionValue(type, uri, endpointRef, injectionPointName);
-  }
+        Class<?>[] parameterTypes = method.getParameterTypes();
+        Class<?> type = parameterTypes[index];
+        String injectionPointName = ObjectHelper.getPropertyName(method);
+        String endpointRef = inject.ref();
+        String uri = inject.uri();
+        return getInjectionValue(type, uri, endpointRef, injectionPointName);
+    }
 }
