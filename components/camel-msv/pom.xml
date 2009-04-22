@@ -100,7 +100,7 @@
     <repository>
       <id>maven-java.net</id>
       <name>Maven java.net Repository</name>
-      <url>http://repo1.maven.org/maven-java.net</url>
+      <url>http://download.java.net/maven/1</url>
       <layout>legacy</layout>
     </repository>
     <!-- for maven jaxb plugin -->
