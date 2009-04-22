@@ -29,48 +29,38 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit38.AbstractJUnit38SpringContextTests;
 
 @ContextConfiguration
-public class JettyJmsTest extends AbstractJUnit38SpringContextTests {
-
+public class JettyFileMulticastTest extends AbstractJUnit38SpringContextTests {
+    
     @Autowired
     protected CamelContext camelContext;
 
     @EndpointInject(uri = "mock:resultEndpoint")
     protected MockEndpoint resultEndpoint;
-
-    public void testMocksAreValidWithTracerEnabled() throws Exception {
-        assertNotNull(camelContext);
-        Tracer tracer = Tracer.getTracer(camelContext);
-        assertNotNull(tracer);
-        assertTrue("The tracer should be enabled", tracer.isEnabled());
-        validMockes();
-    }
-
-    public void testMocksAreValidWithTracerDisabled() throws Exception {
-        assertNotNull(camelContext);
-        Tracer tracer = Tracer.getTracer(camelContext);
-        assertNotNull(tracer);
-        tracer.setEnabled(false);
-        validMockes();
-    }
-
-    private void validMockes() throws Exception {
+   
+    @EndpointInject(uri = "mock:fileEndpoint")
+    protected MockEndpoint fileEndpoint;
+    
+    public void testMulticastEndpoint() throws Exception {
         assertNotNull(resultEndpoint);
-        resultEndpoint.reset();        
-
+        assertNotNull(fileEndpoint);
+        
+        resultEndpoint.reset();
+        fileEndpoint.reset();
+        
         ProducerTemplate template = camelContext.createProducerTemplate();
-        template.sendBodyAndHeader("jetty:http://localhost:9000/test", "Hello form Willem", "Operation", "greetMe");
+        template.sendBodyAndHeader("direct:start", "Hello form Willem", "Operation", "greetMe");
 
         // Sleep a while and wait for the message whole processing
-        Thread.sleep(4000);
+        Thread.sleep(2000);
 
         MockEndpoint.assertIsSatisfied(camelContext);
-        List<Exchange> list = resultEndpoint.getReceivedExchanges();
-        assertEquals("Should get one message", list.size(), 1);
-
-        for (Exchange exchange : list) {
-            Object result = exchange.getIn().getBody();
-            assertEquals("Should get the request", "Hello form Willem", result);
-            assertEquals("Should get the header", "greetMe", exchange.getIn().getHeader("Operation"));
-        }
+        List<Exchange> resultExchanges = resultEndpoint.getReceivedExchanges();
+        assertEquals("Should get one message for mock endpoint", resultExchanges.size(), 1);
+        
+        String result = resultExchanges.get(0).getIn().getBody(String.class);
+        assertEquals("Should get the request", "<response>Hello form Willem</response>", result);
+        assertEquals("Should get the header", "greetMe", resultExchanges.get(0).getIn().getHeader("Operation"));        
+        
     }
+
 }

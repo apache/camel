@@ -40,7 +40,7 @@ public class JettyJmsTwowayTest extends AbstractJUnit38SpringContextTests {
             }
 
         });
-        assertEquals("get result ", "<message>out</message>", exchange.getOut().getBody(String.class));
+        assertEquals("get result ", "<response><hello>Willem</hello></response>", exchange.getOut().getBody(String.class));
         Thread.sleep(2000);
 
     }
