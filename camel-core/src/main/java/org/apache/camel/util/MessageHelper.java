@@ -23,7 +23,7 @@ import org.apache.camel.converter.stream.StreamCache;
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
  *
- * @version $Revision: 740251 $
+ * @version $Revision$
  */
 public final class MessageHelper {
 
