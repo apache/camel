@@ -1184,6 +1184,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return loop;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public Type throwFault(Throwable fault) {
         ThrowFaultType answer = new ThrowFaultType();
         answer.setFault(fault);
@@ -1191,12 +1194,17 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return (Type) this;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public Type throwFault(String message) {
         return throwFault(new CamelException(message));
     }
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @deprecated will be removed in Camel 2.0
      */
     public Type interceptor(String ref) {
         InterceptorRef interceptor = new InterceptorRef(ref);
@@ -1206,6 +1214,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @deprecated will be removed in Camel 2.0
      */
     public Type intercept(DelegateProcessor interceptor) {
         intercept(new InterceptorRef(interceptor));
@@ -1224,6 +1234,8 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
 
     /**
      * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
+     *
+     * @deprecated will be removed in Camel 2.0
      */
     public void intercept(InterceptorType interceptor) {
         addOutput(interceptor);
@@ -1234,6 +1246,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds an interceptor around the whole of this nodes processing
      *
      * @param interceptor
+     * @deprecated will be removed in Camel 2.0
      */
     public void addInterceptor(InterceptorType interceptor) {
         interceptors.add(interceptor);
@@ -1243,6 +1256,7 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
      * Adds an interceptor around the whole of this nodes processing
      *
      * @param interceptor
+     * @deprecated will be removed in Camel 2.0
      */
     public void addInterceptor(DelegateProcessor interceptor) {
         addInterceptor(new InterceptorRef(interceptor));
@@ -1331,6 +1345,9 @@ public abstract class ProcessorType<Type extends ProcessorType> extends Optional
         return answer.when(predicate);
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.0
+     */
     public Type interceptors(String... refs) {
         for (String ref : refs) {
             interceptor(ref);

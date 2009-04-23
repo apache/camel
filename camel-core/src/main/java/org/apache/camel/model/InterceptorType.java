@@ -25,6 +25,7 @@ import org.apache.camel.spi.RouteContext;
  * Base class for interceptor types.
  * 
  * @version $Revision$
+ * @deprecated will be removed in Camel 2.0
  */
 @XmlType(name = "interceptorType")
 public abstract class InterceptorType extends OutputType implements Block {
