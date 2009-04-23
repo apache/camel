@@ -28,7 +28,7 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * This test stops a route, mutates it then restarts it
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class StartAndStopRoutesTest extends ContextTestSupport {
     protected SedaEndpoint endpointA;

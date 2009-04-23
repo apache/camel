@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version $Revision: 736555 $
+ * @version $Revision$
  */
 public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSupport {
 

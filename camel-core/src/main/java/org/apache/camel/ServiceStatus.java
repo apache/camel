@@ -19,7 +19,7 @@ package org.apache.camel;
 /**
  * Reresents the status of a {@link Service} instance
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public enum ServiceStatus {
     Created, Starting, Started, Stopping, Stopped;

@@ -21,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import org.apache.camel.Exchange;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class SedaProducer extends CollectionProducer {
     private SedaEndpoint endpoint;

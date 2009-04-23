@@ -30,7 +30,7 @@ import org.apache.camel.spi.RouteContext;
  * Represents the runtime objects for a given {@link RouteDefinition} so that it can be stopped independently
  * of other routes
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RouteService extends ServiceSupport {
 
