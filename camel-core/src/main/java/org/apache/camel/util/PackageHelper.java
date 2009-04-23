@@ -44,23 +44,25 @@ public final class PackageHelper {
     public static boolean isValidVersion(String packageName, double minimumVersion) {
         try {
             Package spring = Package.getPackage(packageName);
-            String value = spring.getImplementationVersion();
-            if (value != null) {
-                // lets remove any extra dots in the string...
-                int idx = value.indexOf('.');
-                if (idx >= 0) {
-                    StringBuffer buffer = new StringBuffer(value.substring(0, ++idx));
-                    int i = idx;
-                    for (int size = value.length(); i < size; i++) {
-                        char ch = value.charAt(i);
-                        if (Character.isDigit(ch)) {
-                            buffer.append(ch);
+            if (spring != null) {
+                String value = spring.getImplementationVersion();
+                if (value != null) {
+                    // lets remove any extra dots in the string...
+                    int idx = value.indexOf('.');
+                    if (idx >= 0) {
+                        StringBuffer buffer = new StringBuffer(value.substring(0, ++idx));
+                        int i = idx;
+                        for (int size = value.length(); i < size; i++) {
+                            char ch = value.charAt(i);
+                            if (Character.isDigit(ch)) {
+                                buffer.append(ch);
+                            }
                         }
+                        value = buffer.toString();
                     }
-                    value = buffer.toString();
+                    double number = Double.parseDouble(value);
+                    return number >= minimumVersion;
                 }
-                double number = Double.parseDouble(value);
-                return number >= minimumVersion;
             }
         } catch (Exception e) {
             LOG.debug("Failed to find out " + packageName + " version: " + e, e);
