@@ -99,7 +99,7 @@ public class DefaultChannel extends DelegateProcessor implements AsyncProcessor,
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.startServices(output, errorHandler);
+        ServiceHelper.stopServices(output, errorHandler);
         super.doStop();
     }
 

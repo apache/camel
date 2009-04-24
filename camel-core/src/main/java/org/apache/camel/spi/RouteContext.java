@@ -155,20 +155,6 @@ public interface RouteContext {
     void addInterceptStrategy(InterceptStrategy interceptStrategy);
 
     /**
-     * This method retrieves the ErrorHandlerWrappingStrategy.
-     *
-     * @return the strategy
-     */
-    ErrorHandlerWrappingStrategy getErrorHandlerWrappingStrategy();
-    
-    /**
-     * This method sets the ErrorHandlerWrappingStrategy.
-     *
-     * @param strategy the strategy
-     */
-    void setErrorHandlerWrappingStrategy(ErrorHandlerWrappingStrategy strategy);
-
-    /**
      * If this flag is true, {@link ProcessorDefinition#addRoutes(RouteContext, java.util.Collection)}
      * will not add processor to addEventDrivenProcessor to the RouteContext and it
      * will prevent from adding an EventDrivenRoute.

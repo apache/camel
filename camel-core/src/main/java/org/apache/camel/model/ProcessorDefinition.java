@@ -52,12 +52,10 @@ import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import static org.apache.camel.builder.Builder.body;
@@ -89,6 +87,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return createOutputsProcessor(routeContext, outputs);
     }
 
+    @SuppressWarnings("unchecked")
+    public void addOutput(ProcessorDefinition processorType) {
+        processorType.setParent(this);
+        configureChild(processorType);
+        if (blocks.isEmpty()) {
+            getOutputs().add(processorType);
+        } else {
+            Block block = blocks.getLast();
+            block.addOutput(processorType);
+        }
+    }
+
+    public void clearOutput() {
+        getOutputs().clear();
+        blocks.clear();
+    }
+
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Processor processor = makeProcessor(routeContext);
         if (!routeContext.isRouteAdded()) {
@@ -107,7 +122,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return wrapChannel(routeContext, processor);
     }
 
-    private Processor wrapChannel(RouteContext routeContext, Processor processor) throws Exception {
+    protected Processor wrapChannel(RouteContext routeContext, Processor processor) throws Exception {
         // put a channel inbetween this and each output to control the route flow logic
         Channel channel = createChannel(routeContext);
         channel.setNextProcessor(processor);
@@ -120,14 +135,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         channel.initChannel(this, routeContext);
 
         // set the error handler, must be done after init as we can set the error handler as first in the chain
-        // skip error handlers in on exception and try .. catch .. finally routes
-        if (this instanceof OnExceptionDefinition) {
-            // also use error handler for on exception
-            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, channel.getOutput());
-            channel.setErrorHandler(errorHandler);
-            return channel;
-        } else if (this instanceof TryDefinition || this instanceof CatchDefinition || this instanceof FinallyDefinition) {
-            // TODO: special error handler, where we have a local error handler with onlly the catch definitions
+        if (this instanceof TryDefinition || this instanceof CatchDefinition || this instanceof FinallyDefinition) {
+            // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             return channel;
         } else {
             // regular definition so add the error handler
@@ -178,9 +187,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return processor;
     }
 
-    public void clearOutput() {
-        getOutputs().clear();
-        blocks.clear();
+    /**
+     * Creates the processor and wraps it in any necessary interceptors and error handlers
+     */
+    protected Processor makeProcessor(RouteContext routeContext) throws Exception {
+        Processor processor = createProcessor(routeContext);
+        return wrapProcessor(routeContext, processor);
+    }
+
+    protected ErrorHandlerBuilder createErrorHandlerBuilder() {
+        if (errorHandlerRef != null) {
+            return new ErrorHandlerBuilderRef(errorHandlerRef);
+        }
+
+        // return a reference to the default error handler
+        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
+    }
+
+    protected void configureChild(ProcessorDefinition output) {
+        output.setNodeFactory(getNodeFactory());
+        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
     }
 
     // Fluent API
@@ -2008,55 +2034,5 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return "";
     }
 
-    // Implementation methods
-    // -------------------------------------------------------------------------
-
-    /**
-     * Creates the processor and wraps it in any necessary interceptors and
-     * error handlers
-     */
-    protected Processor makeProcessor(RouteContext routeContext) throws Exception {
-        Processor processor = createProcessor(routeContext);
-        return wrapProcessor(routeContext, processor);
-    }
-
-    /**
-     * A strategy method to allow newly created processors to be wrapped in an
-     * error handler.
-     */
-    protected Processor wrapInErrorHandler(RouteContext routeContext, Processor target) throws Exception {
-        ObjectHelper.notNull(target, "target", this);
-        ErrorHandlerWrappingStrategy strategy = routeContext.getErrorHandlerWrappingStrategy();
-        if (strategy != null) {
-            return strategy.wrapProcessorInErrorHandler(this, target);
-        }
-        return getErrorHandlerBuilder().createErrorHandler(routeContext, target);
-    }
-
-    protected ErrorHandlerBuilder createErrorHandlerBuilder() {
-        if (errorHandlerRef != null) {
-            return new ErrorHandlerBuilderRef(errorHandlerRef);
-        }
-
-        // return a reference to the default error handler
-        return new ErrorHandlerBuilderRef(ErrorHandlerBuilderRef.DEFAULT_ERROR_HANDLER_BUILDER);
-    }
-
-    protected void configureChild(ProcessorDefinition output) {
-        output.setNodeFactory(getNodeFactory());
-        output.setErrorHandlerBuilder(getErrorHandlerBuilder());
-    }
-
-    @SuppressWarnings("unchecked")
-    public void addOutput(ProcessorDefinition processorType) {
-        processorType.setParent(this);
-        configureChild(processorType);
-        if (blocks.isEmpty()) {
-            getOutputs().add(processorType);
-        } else {
-            Block block = blocks.getLast();
-            block.addOutput(processorType);
-        }
-    }
 
 }

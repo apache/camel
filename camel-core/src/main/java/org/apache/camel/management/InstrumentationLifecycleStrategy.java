@@ -30,7 +30,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultErrorHandlerWrappingStrategy;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -244,9 +243,8 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
         }
 
-        // TODO: align this code with DefaultLifecycleStrategy
+        // add intercept strategy that executes the JMX instrumentation for performance metrics
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters));
-        routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(routeContext));
 
         // Add an InstrumentationProcessor at the beginning of each route and
         // set up the interceptorMap for onRoutesAdd() method to register the

@@ -47,9 +47,7 @@ public class DefaultLifecycleStrategy implements LifecycleStrategy {
     }
 
     public void onRouteContextCreate(RouteContext routeContext) {
-        // set the error handler strategy containing the list of outputs added
-        // TODO: align this code with InstrumentationLifecycleStrategy
-        routeContext.setErrorHandlerWrappingStrategy(new DefaultErrorHandlerWrappingStrategy(routeContext));
+        // do nothing
     }
 
 }
