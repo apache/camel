@@ -38,13 +38,11 @@ public class CollectionProducer extends DefaultProducer implements AsyncProcesso
     }
 
     public void process(Exchange exchange) throws Exception {
-        // use new copy to not share the same unit of work
-        queue.add(exchange.newCopy());
+        queue.add(exchange.copy());
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        // use new copy to not share the same unit of work
-        queue.add(exchange.newCopy());
+        queue.add(exchange.copy());
         callback.done(true);
         return true;
     }

@@ -25,7 +25,8 @@ import org.apache.camel.processor.interceptor.Tracer;
 import org.apache.camel.spi.Synchronization;
 
 /**
- * Unit test to verify unit of work with seda.
+ * Unit test to verify unit of work with seda. That the UnitOfWork is able to route using seda
+ * but keeping the same UoW.
  *
  * @version $Revision$
  */
@@ -42,8 +43,8 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("onCompleteB", sync);
-        assertEquals("onCompleteB", lastOne);
+        assertEquals("onCompleteA", sync);
+        assertEquals("processor", lastOne);
     }
 
     @Override
@@ -65,7 +66,6 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
                                 assertEquals("onCompleteA", sync);
                             }
                         })
-                        .process(new MyUOWProcessor("B"))
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 lastOne = "processor";
