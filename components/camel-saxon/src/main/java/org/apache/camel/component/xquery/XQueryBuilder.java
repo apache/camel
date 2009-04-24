@@ -422,12 +422,14 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         throws Exception {
         addParameters(dynamicQueryContext, exchange.getProperties());
         addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
+        dynamicQueryContext.setParameter("in.body", exchange.getIn().getBody());
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter("exchange", exchange);
         Message out = exchange.getOut(false);
         if (out != null && exchange.getPattern().isOutCapable()) {
-            dynamicQueryContext.setParameter("out", out);
+            dynamicQueryContext.setParameter("out.body", out.getBody());
+            addParameters(dynamicQueryContext, exchange.getOut().getHeaders(), "out.headers.");
         }
     }
     

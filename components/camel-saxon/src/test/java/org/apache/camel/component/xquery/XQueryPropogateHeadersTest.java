@@ -28,7 +28,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
     public void testPropogateHeadersTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("<transformed subject=\"Hey\"><mail><subject>Hey</subject>"
+        mock.expectedBodiesReceived("<transformed sender=\"bar\" subject=\"Hey\"><mail><subject>Hey</subject>"
             + "<body>Hello world!</body></mail></transformed>");
         mock.expectedHeaderReceived("foo", "bar");
 
@@ -66,7 +66,7 @@ public class XQueryPropogateHeadersTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:one")
-                    .to("xquery:org/apache/camel/component/xquery/transform.xquery")
+                    .to("xquery:org/apache/camel/component/xquery/transform_with_headers.xquery")
                     .to("mock:result");
 
                 from("direct:two")
