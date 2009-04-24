@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,8 +29,6 @@ import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.InstrumentationProcessor;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
@@ -88,15 +87,11 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
 
-            SendProcessor sendProcessor;
-            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
-            } else {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                sendProcessor = assertIsInstanceOf(SendProcessor.class, interceptor.getProcessor());
-            }
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -123,16 +118,12 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
 
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
 
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-                    unwrapErrorHandler(filterProcessor.getProcessor()));
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(filterProcessor).getNextProcessor());
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }
@@ -160,24 +151,21 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
 
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
 
-            ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, processor);
+            ChoiceProcessor choiceProcessor = assertIsInstanceOf(ChoiceProcessor.class, channel.getNextProcessor());
             List<FilterProcessor> filters = choiceProcessor.getFilters();
             assertEquals("Should be two when clauses", 2, filters.size());
 
             FilterProcessor filter1 = filters.get(0);
-            assertSendTo(filter1.getProcessor(), "seda:b");
+            assertSendTo(unwrapChannel(filter1.getProcessor()).getNextProcessor(), "seda:b");
 
             FilterProcessor filter2 = filters.get(1);
-            assertSendTo(filter2.getProcessor(), "seda:c");
+            assertSendTo(unwrapChannel(filter2.getProcessor()).getNextProcessor(), "seda:c");
 
-            assertSendTo(choiceProcessor.getOtherwise(), "seda:d");
+            assertSendTo(unwrapChannel(choiceProcessor.getOtherwise()).getNextProcessor(), "seda:d");
         }
     }
 
@@ -207,13 +195,10 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
 
-            assertEquals("Should be called with my processor", myProcessor, processor);
+            assertEquals("Should be called with my processor", myProcessor, channel.getNextProcessor());
         }
     }
 
@@ -239,14 +224,12 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            assertEquals("Should be called with my processor", myProcessor,
-                         unwrapErrorHandler(filterProcessor.getProcessor()));
+
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
+            assertEquals("Should be called with my processor", myProcessor, unwrapChannel(filterProcessor.getProcessor()).getNextProcessor());
         }
     }
 
@@ -272,17 +255,16 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            // take off the InstrumentationProcessor
-            processor = unwrapDelegateProcessor(processor);
-            // take off the StreamCacheInterceptor
-            processor = unwrapDelegateProcessor(processor);
-            MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, processor);
+
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            MulticastProcessor multicastProcessor = assertIsInstanceOf(MulticastProcessor.class, channel.getNextProcessor());
             List<Processor> endpoints = new ArrayList<Processor>(multicastProcessor.getProcessors());
             assertEquals("Should have 2 endpoints", 2, endpoints.size());
 
-            assertSendToProcessor(endpoints.get(0), "seda:tap");
-            assertSendToProcessor(endpoints.get(1), "seda:b");
+            assertSendToProcessor(unwrapChannel(endpoints.get(0)).getNextProcessor(), "seda:tap");
+            assertSendToProcessor(unwrapChannel(endpoints.get(1)).getNextProcessor(), "seda:b");
         }
     }
 
@@ -314,16 +296,16 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
 
-            Pipeline line = assertIsInstanceOf(Pipeline.class, processor);
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+
+            Pipeline line = assertIsInstanceOf(Pipeline.class, unwrap(consumer.getProcessor()));
             assertEquals(3, line.getProcessors().size());
             // last should be our seda
+
             List<Processor> processors = new ArrayList<Processor>(line.getProcessors());
-            processor = unwrapErrorHandler(processors.get(2));
-            processor = unwrapDelegateProcessor(processor);
-            assertIsInstanceOf(SendProcessor.class, processor);
-            assertSendTo(processor, "seda:d");
+            Processor sendTo = assertIsInstanceOf(SendProcessor.class, unwrapChannel(processors.get(2)).getNextProcessor());
+            assertSendTo(sendTo, "seda:d");
         }
     }
 
@@ -385,12 +367,11 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
-            RecipientList p1 = assertIsInstanceOf(RecipientList.class, processor);
+
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            assertIsInstanceOf(RecipientList.class, channel.getNextProcessor());
         }
     }
 
@@ -417,12 +398,10 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
-            Splitter p1 = assertIsInstanceOf(Splitter.class, processor);
+
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+            assertIsInstanceOf(Splitter.class, channel.getNextProcessor());
         }
     }
 
@@ -450,18 +429,15 @@ public class RouteBuilderTest extends TestSupport {
         for (Route route : routes) {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
-            Processor processor = getProcessorWithoutErrorHandler(route);
-            if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, processor);
-                processor = interceptor.getProcessor();
-            }
 
-            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, processor);
+            EventDrivenConsumerRoute consumer = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+            Channel channel = unwrapChannel(consumer.getProcessor());
+
+            IdempotentConsumer idempotentConsumer = assertIsInstanceOf(IdempotentConsumer.class, channel.getNextProcessor());
             assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class,
-                                                             unwrapErrorHandler(idempotentConsumer.getNextProcessor()));
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getNextProcessor()).getNextProcessor());
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }

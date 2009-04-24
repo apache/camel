@@ -18,20 +18,17 @@ package org.apache.camel.builder;
 
 import java.util.List;
 
+import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.InstrumentationProcessor;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.processor.DeadLetterChannel;
-import org.apache.camel.processor.DefaultErrorHandler;
 import org.apache.camel.processor.FilterProcessor;
 import org.apache.camel.processor.LoggingErrorHandler;
 import org.apache.camel.processor.RedeliveryPolicy;
 import org.apache.camel.processor.SendProcessor;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 
 /**
  * @version $Revision$
@@ -58,12 +55,12 @@ public class ErrorHandlerTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
-            processor = unwrap(processor);
-            LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
-            processor = unwrap(loggingProcessor.getOutput());
+            Channel channel = unwrapChannel(consumerRoute.getProcessor());
+
+            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+
+            Processor processor = unwrap(channel.getNextProcessor());
             SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
-            log.debug("Found sendProcessor: " + sendProcessor);
         }
     }
 
@@ -87,40 +84,6 @@ public class ErrorHandlerTest extends TestSupport {
 
         List<Route> list = getRouteList(builder);
         assertEquals("Number routes created" + list, 2, list.size());
-        for (Route route : list) {
-            Endpoint key = route.getEndpoint();
-            String endpointUri = key.getEndpointUri();
-            EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = unwrap(consumerRoute.getProcessor());
-
-            SendProcessor sendProcessor = null;
-            if (endpointUri.equals("seda:a")) {
-                LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class,
-                                                                          processor);
-                Processor outputProcessor = loggingProcessor.getOutput();
-                if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
-                } else {
-                    InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
-                }
-            } else {
-                assertEquals("From endpoint", "seda:b", endpointUri);
-                DefaultErrorHandler defaultErrorHandler = assertIsInstanceOf(DefaultErrorHandler.class, processor);
-                Processor outputProcessor = defaultErrorHandler.getOutput();
-                if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
-                } else {
-                    InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-                    StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
-                    sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
-                }
-            }
-            log.debug("For " + endpointUri + " using: " + sendProcessor);
-        }
     }
 
     public void testConfigureDeadLetterChannel() throws Exception {
@@ -145,7 +108,7 @@ public class ErrorHandlerTest extends TestSupport {
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = unwrap(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(DeadLetterChannel.class, processor);
+            assertIsInstanceOf(SendProcessor.class, processor);
         }
     }
 
@@ -172,10 +135,9 @@ public class ErrorHandlerTest extends TestSupport {
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
-            processor = unwrap(processor);
+            Channel channel = unwrapChannel(processor);
 
-            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
-
+            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals("getMaximumRedeliveries()", 2, redeliveryPolicy.getMaximumRedeliveries());
@@ -199,25 +161,10 @@ public class ErrorHandlerTest extends TestSupport {
             Endpoint key = route.getEndpoint();
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = unwrap(consumerRoute.getProcessor());
+            Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
-
-            if (Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-                StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, loggingProcessor.getOutput());
-                processor = cache.getProcessor();
-            } else {
-                InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, loggingProcessor.getOutput());
-                StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, interceptor.getProcessor());
-                processor = cache.getProcessor();
-            }
-
-            FilterProcessor filterProcessor = assertIsInstanceOf(FilterProcessor.class, processor);
-            LoggingErrorHandler logging = assertIsInstanceOf(LoggingErrorHandler.class, filterProcessor.getProcessor());
-            StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, logging.getOutput());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, cache.getProcessor());
-
-            log.debug("Found sendProcessor: " + sendProcessor);
+            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            assertIsInstanceOf(FilterProcessor.class, channel.getNextProcessor());
         }
     }
 

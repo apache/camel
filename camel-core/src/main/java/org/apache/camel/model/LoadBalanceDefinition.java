@@ -120,7 +120,7 @@ public class LoadBalanceDefinition extends ProcessorDefinition<LoadBalanceDefini
         LoadBalancer loadBalancer = LoadBalancerDefinition.getLoadBalancer(routeContext, loadBalancerType, ref);
         for (ProcessorDefinition processorType : getOutputs()) {            
             Processor processor = processorType.createProcessor(routeContext);
-            processor = processorType.wrapProcessorInInterceptors(routeContext, processor);
+            processor = wrapProcessor(routeContext, processor);
             loadBalancer.addProcessor(processor);
         }
 

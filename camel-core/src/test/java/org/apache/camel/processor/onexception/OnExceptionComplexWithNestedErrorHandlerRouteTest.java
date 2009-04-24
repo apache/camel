@@ -46,7 +46,8 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
             @Override
             public void configure() throws Exception {
                 // global error handler
-                errorHandler(deadLetterChannel("mock:error"));
+                // as its based on a unit test we do not have any delays between and do not log the stack trace
+                errorHandler(deadLetterChannel("mock:error").delay(0).logStackTrace(false));
 
                 // shared for both routes
                 onException(MyTechnicalException.class).handled(true).maximumRedeliveries(2).to("mock:tech.error");

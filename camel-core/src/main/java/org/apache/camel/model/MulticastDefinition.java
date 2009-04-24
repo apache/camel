@@ -150,10 +150,4 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         this.executor = executor;        
     }
     
-    @Override
-    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {        
-        //CAMEL-1193 now we need to wrap the multicast processor with the interceptors
-        //Current we wrap the StreamCachingInterceptor by default
-        return super.wrapProcessorInInterceptors(routeContext, new StreamCachingInterceptor(target));        
-    }
 }

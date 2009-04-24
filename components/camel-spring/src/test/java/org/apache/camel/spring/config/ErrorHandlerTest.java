@@ -19,8 +19,7 @@ package org.apache.camel.spring.config;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+import org.apache.camel.Channel;
 import org.apache.camel.Route;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
@@ -30,6 +29,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ErrorHandlerTest extends SpringTestSupport {
+
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/errorHandler.xml");
     }
@@ -39,13 +39,10 @@ public class ErrorHandlerTest extends SpringTestSupport {
         List<Route> list = context.getRoutes();
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
-
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = consumerRoute.getProcessor();
-            processor = unwrap(processor);
+            Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
-
+            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 
             assertEquals("getMaximumRedeliveries()", 1, redeliveryPolicy.getMaximumRedeliveries());

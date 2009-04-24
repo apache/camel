@@ -24,6 +24,7 @@ import org.apache.camel.model.ProcessorDefinition;
  * provide custom logic to wrap a processor with error handler
  *
  * @version $Revision$
+ * @deprecated is replaced by {@link org.apache.camel.Channel}
  */
 public interface ErrorHandlerWrappingStrategy {
 
@@ -37,6 +38,7 @@ public interface ErrorHandlerWrappingStrategy {
      * @param target the processor to be wrapped
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
+     * @deprecated is replaced by {@link org.apache.camel.Channel}
      */
     Processor wrapProcessorInErrorHandler(ProcessorDefinition processorType, Processor target) throws Exception;
 

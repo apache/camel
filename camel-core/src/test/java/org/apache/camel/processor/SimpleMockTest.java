@@ -16,32 +16,31 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.ValidationException;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * The handle catch clause has a pipeline processing the exception.
- *
- * @author <a href="mailto:nsandhu">nsandhu</a>
- *
+ * @version $Revision$
  */
-public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest {
-    protected RouteBuilder createRouteBuilder() {
+public class SimpleMockTest extends ContextTestSupport {
+
+    public void testSimple() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
-                errorHandler(deadLetterChannel("mock:error").delay(0).maximumRedeliveries(3));
-
-                onException(ValidationException.class).to("mock:outer");
-
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                        .process(validator);
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("log:foo").to("mock:result");
             }
         };
     }
-
 }

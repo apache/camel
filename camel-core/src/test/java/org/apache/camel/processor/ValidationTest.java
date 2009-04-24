@@ -89,11 +89,11 @@ public class ValidationTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").
-                        doTry().
-                        process(validator).
-                        to("mock:valid").
-                        doCatch(ValidationException.class).to("mock:invalid");
+                from("direct:start")
+                    .doTry()
+                        .process(validator).to("mock:valid")
+                    .doCatch(ValidationException.class)
+                        .to("mock:invalid");
             }
         };
     }

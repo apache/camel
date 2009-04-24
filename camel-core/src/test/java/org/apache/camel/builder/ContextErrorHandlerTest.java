@@ -18,13 +18,11 @@ package org.apache.camel.builder;
 
 import java.util.List;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.TestSupport;
-import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.LoggingErrorHandler;
@@ -77,10 +75,10 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
-            processor = unwrap(processor);
-            LoggingErrorHandler loggingProcessor = assertIsInstanceOf(LoggingErrorHandler.class, processor);
-            processor = unwrap(loggingProcessor.getOutput());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, processor);
+
+            Channel channel = unwrapChannel(processor);
+            assertIsInstanceOf(LoggingErrorHandler.class, channel.getErrorHandler());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
             log.debug("Found sendProcessor: " + sendProcessor);
         }
     }
@@ -100,9 +98,9 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
             Processor processor = consumerRoute.getProcessor();
-            processor = unwrap(processor);
 
-            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, processor);
+            Channel channel = unwrapChannel(processor);
+            DeadLetterChannel deadLetterChannel = assertIsInstanceOf(DeadLetterChannel.class, channel.getErrorHandler());
 
             RedeliveryPolicy redeliveryPolicy = deadLetterChannel.getRedeliveryPolicy();
 

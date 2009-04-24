@@ -45,6 +45,8 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class DeadLetterChannel extends ErrorHandlerSupport implements AsyncProcessor {
 
+    // TODO: The code in this class will be much easier when the AsyncProcessor is removed
+
     // we can use a single shared static timer for async redeliveries
     private static final Timer REDELIVER_TIMER = new Timer("Camel DeadLetterChannel Redeliver Timer", true);
     private final Processor deadLetter;

@@ -18,6 +18,7 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
+import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -27,15 +28,13 @@ import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.InstrumentationProcessor;
-import org.apache.camel.management.JmxSystemPropertyKeys;
 
 public class StreamResequencerTest extends ContextTestSupport {
 
     protected MockEndpoint resultEndpoint;
 
     protected void sendBodyAndHeader(String endpointUri, final Object body,
-                                   final String headerName, final Object headerValue) {
+                                     final String headerName, final Object headerValue) {
         template.send(endpointUri, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
@@ -108,25 +107,12 @@ public class StreamResequencerTest extends ContextTestSupport {
         assertEquals("Number of routes created: " + list, 1, list.size());
 
         Route route = list.get(0);
-        EventDrivenConsumerRoute consumerRoute =
-            assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
-        Processor processor = unwrap(consumerRoute.getProcessor());
+        Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-        DefaultErrorHandler deadLetterChannel = assertIsInstanceOf(DefaultErrorHandler.class, processor);
-        Processor outputProcessor = deadLetterChannel.getOutput();
-        if (!Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED)) {
-            InstrumentationProcessor interceptor =
-                assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-            outputProcessor = interceptor.getProcessor();
-        }
-
-        // we are not interested in any other delegate processors in the route (e.g. stream caching)
-        while (outputProcessor instanceof DelegateProcessor) {
-            outputProcessor = ((DelegateProcessor) outputProcessor).getProcessor();
-        }
-
-        assertIsInstanceOf(StreamResequencer.class, outputProcessor);
+        assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
+        assertIsInstanceOf(StreamResequencer.class, channel.getNextProcessor());
     }
     
     private static class Sender extends Thread {

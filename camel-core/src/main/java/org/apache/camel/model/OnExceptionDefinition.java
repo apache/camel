@@ -119,19 +119,18 @@ public class OnExceptionDefinition extends ProcessorDefinition<ProcessorDefiniti
         return parentPolicy;
     }
 
-    public void
-    addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
+    public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         setHandledFromExpressionType(routeContext);
         setRetryUntilFromExpressionType(routeContext);
-        // lets attach a processor to an error handler
+        // lookup onRedelivery if ref is provided
+        if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
+            setOnRedelivery(routeContext.lookup(onRedeliveryRef, Processor.class));
+        }
+
+        // lets attach this on exception to the route error handler
         errorHandler = routeContext.createProcessor(this);
         ErrorHandlerBuilder builder = routeContext.getRoute().getErrorHandlerBuilder();
         builder.addErrorHandlers(this);
-
-        // lookup onRedelivery if ref is provided
-        if (ObjectHelper.isNotEmpty(onRedeliveryRef)) {
-            onRedelivery = routeContext.lookup(onRedeliveryRef, Processor.class);
-        }
     }
 
     @Override

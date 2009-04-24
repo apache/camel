@@ -18,16 +18,15 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
+import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
+import org.apache.camel.processor.interceptor.StreamCaching;
 
 /**
  * @version $Revision$
@@ -66,12 +65,7 @@ public class ResequencerTest extends ContextTestSupport {
 
     public void testBatchResequencerTypeWithJmx() throws Exception {
         System.setProperty(JmxSystemPropertyKeys.DISABLED, "true");
-
-        List<Route> list = getRouteList(createRouteBuilder());
-        assertEquals("Number of routes created: " + list, 1, list.size());
-
-        Route route = list.get(0);
-        assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
+        testBatchResequencerTypeWithoutJmx();
     }
 
     public void testBatchResequencerTypeWithoutJmx() throws Exception {
@@ -81,17 +75,11 @@ public class ResequencerTest extends ContextTestSupport {
         Route route = list.get(0);
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
-        Processor processor = unwrap(consumerRoute.getProcessor());
+        Channel channel = unwrapChannel(consumerRoute.getProcessor());
+        assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
+        assertTrue("Should have stream caching", channel.hasInterceptorStrategy(StreamCaching.class));
 
-        DefaultErrorHandler defaultErrorHandler = assertIsInstanceOf(DefaultErrorHandler.class, processor);
-
-        Processor outputProcessor = defaultErrorHandler.getOutput();
-        InstrumentationProcessor interceptor = assertIsInstanceOf(InstrumentationProcessor.class, outputProcessor);
-
-        outputProcessor = interceptor.getProcessor();
-
-        StreamCachingInterceptor cache = assertIsInstanceOf(StreamCachingInterceptor.class, outputProcessor);
-        assertIsInstanceOf(Resequencer.class, cache.getProcessor());
+        assertIsInstanceOf(Resequencer.class, channel.getNextProcessor());
     }
 
 }

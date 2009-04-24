@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.model.TryDefinition;
 
 /**
  * No catch blocks but handle all should work
@@ -31,16 +30,13 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     protected Processor validator = new MyValidator();
     protected MockEndpoint validEndpoint;
     protected MockEndpoint allEndpoint;
+    protected MockEndpoint deadEndpoint;
 
     public void testValidMessage() throws Exception {
         validEndpoint.expectedMessageCount(1);
         allEndpoint.expectedMessageCount(1);
 
-        try {
-            template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
-        } catch (Exception e) {
-            // expected
-        }
+        template.sendBodyAndHeader("direct:start", "<valid/>", "foo", "bar");
 
         assertMockEndpointsSatisfied();
     }
@@ -48,8 +44,11 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
     public void testInvalidMessage() throws Exception {
         validEndpoint.expectedMessageCount(0);
         
-        // allEndpoint receives 1 + 5 messages, ordinary (1 attempt) and redelivery (5 attempts) is involved
-        allEndpoint.expectedMessageCount(1 + 5);
+        // allEndpoint should only receive 1 when the message is being moved to the dead letter queue
+        allEndpoint.expectedMessageCount(1);
+
+        // regular error handler is disbled for try .. catch .. finally
+        deadEndpoint.expectedMessageCount(0);
 
         try {
             template.sendBodyAndHeader("direct:start", "<invalid/>", "foo", "notMatchedHeaderValue");
@@ -66,18 +65,21 @@ public class ValidationFinallyBlockNoCatchTest extends ContextTestSupport {
 
         validEndpoint = resolveMandatoryEndpoint("mock:valid", MockEndpoint.class);
         allEndpoint = resolveMandatoryEndpoint("mock:all", MockEndpoint.class);
+        deadEndpoint = resolveMandatoryEndpoint("mock:dead", MockEndpoint.class);
     }
 
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // use little delay to run unit test fast
-                errorHandler(deadLetterChannel().delay(25));
+                // use dead letter channel that supports redeliveries
+                errorHandler(deadLetterChannel("mock:dead").delay(0).maximumRedeliveries(3).logStackTrace(false));
 
-                TryDefinition tryType = from("direct:start").doTry().
-                        process(validator).
-                        to("mock:valid");
-                tryType.doFinally().to("mock:all");
+                from("direct:start")
+                    .doTry()
+                        .process(validator)
+                        .to("mock:valid")
+                    .doFinally()
+                        .to("mock:all");
             }
         };
     }

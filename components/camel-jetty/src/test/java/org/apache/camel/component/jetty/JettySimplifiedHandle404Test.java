@@ -54,7 +54,7 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
                 // HttpOperationFailedException in case of failures.
                 // This allows us to handle all responses in the aggregation strategy where we can check the HTTP response code
                 // and decide what to do. As this is based on an unit test we assert the code is 404
-                from("direct:start").enrich("http://localhost:8123/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
+                from("direct:start").enrich("http://localhost:8222/myserver?throwExceptionOnFailure=false&user=Camel", new AggregationStrategy() {
                     public Exchange aggregate(Exchange original, Exchange resource) {
                         // get the response code
                         Integer code = resource.getOut().getHeader(HttpConstants.HTTP_RESPONSE_CODE, Integer.class);
@@ -64,7 +64,7 @@ public class JettySimplifiedHandle404Test extends ContextTestSupport {
                 }).to("mock:result");
 
                 // this is our jetty server where we simulate the 404
-                from("jetty://http://localhost:8123/myserver")
+                from("jetty://http://localhost:8222/myserver")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Page not found");

@@ -26,6 +26,7 @@ import org.apache.camel.spi.RouteContext;
  * The default error handler wrapping strategy used when JMX is disabled.
  *
  * @version $Revision$
+ * @deprecated is replaced by {@link org.apache.camel.Channel}
  */
 public class DefaultErrorHandlerWrappingStrategy implements ErrorHandlerWrappingStrategy {
 

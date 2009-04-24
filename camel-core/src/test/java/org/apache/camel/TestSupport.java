@@ -362,6 +362,27 @@ public abstract class TestSupport extends TestCase {
     }
 
     /**
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
+     * this call will drill through them and return the Channel.
+     * <p/>
+     * Returns null if no channel is found.
+     */
+    protected Channel unwrapChannel(Processor processor) {
+        while (true) {
+            if (processor instanceof Channel) {
+                return (Channel) processor;
+            }
+            if (processor instanceof DelegateAsyncProcessor) {
+                processor = ((DelegateAsyncProcessor)processor).getProcessor();
+            } else if (processor instanceof DelegateProcessor) {
+                processor = ((DelegateProcessor)processor).getProcessor();
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
      * Recursively delete a directory, useful to zapping test data
      *
      * @param file the directory to be deleted

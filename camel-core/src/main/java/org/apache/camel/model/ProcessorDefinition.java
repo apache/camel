@@ -21,10 +21,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -32,8 +30,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
@@ -45,18 +43,17 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.ExpressionClause;
 import org.apache.camel.builder.ProcessorBuilder;
-import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.processor.DefaultChannel;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.ErrorHandlerWrappingStrategy;
 import org.apache.camel.spi.IdempotentRepository;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -100,12 +97,90 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Wraps the child processor in whatever necessary interceptors and error
-     * handlers
+     * Wraps the child processor in whatever necessary interceptors and error handlers
      */
     public Processor wrapProcessor(RouteContext routeContext, Processor processor) throws Exception {
-        processor = wrapProcessorInInterceptors(routeContext, processor);
-        return wrapInErrorHandler(routeContext, processor);
+        // dont double wrap
+        if (processor instanceof Channel) {
+            return processor;
+        }
+        return wrapChannel(routeContext, processor);
+    }
+
+    private Processor wrapChannel(RouteContext routeContext, Processor processor) throws Exception {
+        // put a channel inbetween this and each output to control the route flow logic
+        Channel channel = createChannel(routeContext);
+        channel.setNextProcessor(processor);
+
+        // add interceptor strategies to the channel
+        channel.addInterceptStrategies(routeContext.getCamelContext().getInterceptStrategies());
+        channel.addInterceptStrategies(routeContext.getInterceptStrategies());
+
+        // init the channel
+        channel.initChannel(this, routeContext);
+
+        // set the error handler, must be done after init as we can set the error handler as first in the chain
+        // skip error handlers in on exception and try .. catch .. finally routes
+        if (this instanceof OnExceptionDefinition) {
+            // also use error handler for on exception
+            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, channel.getOutput());
+            channel.setErrorHandler(errorHandler);
+            return channel;
+        } else if (this instanceof TryDefinition || this instanceof CatchDefinition || this instanceof FinallyDefinition) {
+            // TODO: special error handler, where we have a local error handler with onlly the catch definitions
+            return channel;
+        } else {
+            // regular definition so add the error handler
+            Processor errorHandler = getErrorHandlerBuilder().createErrorHandler(routeContext, channel.getOutput());
+            channel.setErrorHandler(errorHandler);
+            return channel;
+        }
+    }
+
+    /**
+     * Creates a new instance of some kind of composite processor which defaults
+     * to using a {@link Pipeline} but derived classes could change the behaviour
+     */
+    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
+        return new Pipeline(list);
+    }
+
+    /**
+     * Creates a new instance of the {@link Channel}.
+     */
+    protected Channel createChannel(RouteContext routeContext) {
+        return new DefaultChannel();
+    }
+
+    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs) throws Exception {
+        List<Processor> list = new ArrayList<Processor>();
+        for (ProcessorDefinition output : outputs) {
+            Processor processor = output.createProcessor(routeContext);
+            // if the ProceedType/StopType create processor is null we keep on going
+            if ((output instanceof ProceedDefinition || output instanceof StopDefinition || output instanceof Channel) && processor == null) {
+                continue;
+            }
+
+            Processor channel = wrapChannel(routeContext, processor);
+            list.add(channel);
+        }
+
+        // if more than one output wrap than in a composite processor else just keep it as is
+        Processor processor = null;
+        if (!list.isEmpty()) {
+            if (list.size() == 1) {
+                processor = list.get(0);
+            } else {
+                processor = createCompositeProcessor(routeContext, list);
+            }
+        }
+
+        return processor;
+    }
+
+    public void clearOutput() {
+        getOutputs().clear();
+        blocks.clear();
     }
 
     // Fluent API
@@ -1946,37 +2021,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * A strategy method which allows derived classes to wrap the child
-     * processor in some kind of interceptor
-     *
-     * @param routeContext the route context
-     * @param target       the processor which can be wrapped
-     * @return the original processor or a new wrapped interceptor
-     * @throws Exception can be thrown in case of error
-     */
-    protected Processor wrapProcessorInInterceptors(RouteContext routeContext, Processor target) throws Exception {
-        ObjectHelper.notNull(target, "target", this);
-
-        if (target instanceof InstrumentationProcessor) {
-            // do not double wrap instrumentation
-            return target;
-        }
-
-        List<InterceptStrategy> strategies = new ArrayList<InterceptStrategy>();
-        CamelContext camelContext = routeContext.getCamelContext();
-        strategies.addAll(camelContext.getInterceptStrategies());
-        strategies.addAll(routeContext.getInterceptStrategies());
-        // TODO: Order the strategies, eg using Comparable so we can have Tracer near the real processor
-        for (InterceptStrategy strategy : strategies) {
-            if (strategy != null) {
-                target = strategy.wrapProcessorInInterceptors(this, target);
-            }
-        }
-
-        return target;
-    }
-
-    /**
      * A strategy method to allow newly created processors to be wrapped in an
      * error handler.
      */
@@ -2015,46 +2059,4 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         }
     }
 
-    /**
-     * Creates a new instance of some kind of composite processor which defaults
-     * to using a {@link Pipeline} but derived classes could change the
-     * behaviour
-     */
-    protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
-        return new Pipeline(list);
-    }
-
-    protected Processor createOutputsProcessor(RouteContext routeContext, Collection<ProcessorDefinition> outputs)
-        throws Exception {
-        List<Processor> list = new ArrayList<Processor>();
-        for (ProcessorDefinition output : outputs) {
-            Processor processor = output.createProcessor(routeContext);
-            // if the ProceedType/StopType create processor is null we keep on going
-            if ((output instanceof ProceedDefinition || output instanceof StopDefinition) && processor == null) {
-                continue;
-            }
-            processor = output.wrapProcessorInInterceptors(routeContext, processor);
-
-            ProcessorDefinition currentProcessor = this;
-            if (!(currentProcessor instanceof OnExceptionDefinition || currentProcessor instanceof TryDefinition)) {
-                processor = output.wrapInErrorHandler(routeContext, processor);
-            }
-
-            list.add(processor);
-        }
-        Processor processor = null;
-        if (!list.isEmpty()) {
-            if (list.size() == 1) {
-                processor = list.get(0);
-            } else {
-                processor = createCompositeProcessor(routeContext, list);
-            }
-        }
-        return processor;
-    }
-
-    public void clearOutput() {
-        getOutputs().clear();
-        blocks.clear();
-    }
 }

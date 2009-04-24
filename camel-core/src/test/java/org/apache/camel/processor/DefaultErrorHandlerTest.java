@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -41,8 +42,9 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
 
         // there should be a default error handler in front of each processor in this pipeline
         for (Processor child : pipeline.getProcessors()) {
-            DefaultErrorHandler errorHandler = assertIsInstanceOf(DefaultErrorHandler.class, child);
-            assertNotNull(errorHandler);
+            Channel channel = assertIsInstanceOf(Channel.class, child);
+            assertNotNull("There should be an error handler", channel.getErrorHandler());
+            assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         }
     }
 

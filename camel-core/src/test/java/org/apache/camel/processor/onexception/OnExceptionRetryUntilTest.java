@@ -44,11 +44,14 @@ public class OnExceptionRetryUntilTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
+                // as its based on a unit test we do not have any delays between and do not log the stack trace
+                errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(1).delay(0).logStackTrace(false));
 
                 // START SNIPPET: e1
                 // we want to use a predicate for retries so we can determine in our bean
-                // when retry should stop
+                // when retry should stop, notice it will overrule the global error handler
+                // where we defined at most 1 redelivery attempt. Here we will continue until
+                // the predicate false
                 onException(MyFunctionalException.class)
                         .retryUntil(bean("myRetryHandler"))
                         .handled(true)
