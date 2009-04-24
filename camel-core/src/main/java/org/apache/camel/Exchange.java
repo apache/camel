@@ -50,6 +50,8 @@ public interface Exchange {
     String FILE_NAME = "CamelFileName";
     String FILE_NAME_ONLY = "CamelFileNameOnly";
     String FILE_NAME_PRODUCED = "CamelFileNameProduced";
+    String FILE_PATH = "CamelFilePath";
+    String FILE_PARENT = "CamelFileParent";
 
     String LOOP_INDEX = "CamelLoopIndex";
     String LOOP_SIZE = "CamelLoopSize";

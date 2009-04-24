@@ -70,15 +70,15 @@ public class GenericFileExchange<T> extends DefaultExchange implements PollingCo
             getIn().setHeader("CamelFileAbsolutePath", file.getAbsoluteFilePath());
 
             if (file.isAbsolute()) {
-                getIn().setHeader("CamelFilePath", file.getAbsoluteFilePath());
+                getIn().setHeader(Exchange.FILE_PATH, file.getAbsoluteFilePath());
             } else {
                 // we must normalize path according to protocol if we build our own paths
                 String path = file.normalizePathToProtocol(file.getEndpointPath() + File.separator + file.getRelativeFilePath());
-                getIn().setHeader("CamelFilePath", path);
+                getIn().setHeader(Exchange.FILE_PATH, path);
             }
 
             getIn().setHeader("CamelFileRelativePath", file.getRelativeFilePath());
-            getIn().setHeader("CamelFileParent", file.getParent());
+            getIn().setHeader(Exchange.FILE_PARENT, file.getParent());
 
             if (file.getFileLength() > 0) {
                 getIn().setHeader("CamelFileLength", file.getFileLength());
