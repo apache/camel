@@ -105,6 +105,11 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
      */
     private boolean useIterator = true;
 
+    /**
+     * Whether allow empty resultset to be routed to the next hop
+     */
+    private boolean routeEmptyResultSet = false;
+
     public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
     }
@@ -130,7 +135,9 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
                 }
             }
         } else {
-            process(data);
+            if (!data.isEmpty() || routeEmptyResultSet) {
+                process(data);
+            }
         }
     }
 
@@ -180,7 +187,6 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
         this.onConsume = onConsume;
     }
 
-
     /**
      * Indicates how resultset should be delivered to the route
      */
@@ -195,5 +201,20 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
      */
     public void setUseIterator(boolean useIterator) {
         this.useIterator = useIterator;
+    }
+
+    /**
+     * Indicates whether empty resultset should be allowed to be sent to the next hop or not
+     */
+    public boolean isRouteEmptyResultSet() {
+        return routeEmptyResultSet;
+    }
+
+    /**
+     * Sets whether empty resultset should be allowed to be sent to the next hop.
+     * defaults to false. So the empty resultset will be filtered out.
+     */
+    public void setRouteEmptyResultSet(boolean routeEmptyResultSet) {
+        this.routeEmptyResultSet = routeEmptyResultSet;
     }
 }
