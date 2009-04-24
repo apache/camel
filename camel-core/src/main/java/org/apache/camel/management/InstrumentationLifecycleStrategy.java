@@ -27,6 +27,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -35,6 +36,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -53,11 +55,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
     private InstrumentationAgent agent;
     private CamelNamingStrategy namingStrategy;
     private boolean initialized;
-
-    // A map (Endpoint -> InstrumentationProcessor) to facilitate
-    // adding per-route interceptor and registering ManagedRoute MBean
-    private final Map<Endpoint, InstrumentationProcessor> interceptorMap =
-        new HashMap<Endpoint, InstrumentationProcessor>();
+    private final Map<Endpoint, InstrumentationProcessor> registeredRoutes = new HashMap<Endpoint, InstrumentationProcessor>();
 
     public InstrumentationLifecycleStrategy() {
         this(new DefaultInstrumentationAgent());
@@ -165,26 +163,22 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             return;
         }
 
-        // TODO: Disabled for now until we find a better strategy for registering routes in the JMX
-        // without altering the route model. The route model should be much the same as without JMX to avoid
-        // a gap that causes pain to get working with and without JMX enabled. We have seen to many issues with this already.
-/*
         for (Route route : routes) {
             try {
                 ManagedRoute mr = new ManagedRoute(route);
                 // retrieve the per-route intercept for this route
-                InstrumentationProcessor interceptor = interceptorMap.get(route.getEndpoint());
-                if (interceptor == null) {
-                    LOG.warn("Instrumentation processor not found for route endpoint: " + route.getEndpoint());
+                InstrumentationProcessor processor = registeredRoutes.get(route.getEndpoint());
+                if (processor == null) {
+                    LOG.warn("Route has not been instrumented for endpoint: " + route.getEndpoint());
                 } else {
-                    interceptor.setCounter(mr);
+                    // let the instrumentation use our route counter
+                    processor.setCounter(mr);
                 }
                 agent.register(mr, getNamingStrategy().getObjectName(mr));
             } catch (JMException e) {
                 LOG.warn("Could not register Route MBean", e);
             }
         }
-*/
     }
 
     public void onServiceAdd(CamelContext context, Service service) {
@@ -223,6 +217,11 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         // by InstrumentationInterceptStrategy.
         RouteDefinition route = routeContext.getRoute();
 
+        // TODO: This only registers counters for the first outputs in the route
+        // all the chidren of the outputs is not registered
+        // we should leverge the Channel for this to ensure we register all processors
+        // in the entire route graph
+
         // register all processors
         for (ProcessorDefinition processor : route.getOutputs()) {
             ObjectName name = null;
@@ -244,53 +243,33 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
 
         // add intercept strategy that executes the JMX instrumentation for performance metrics
+        // TODO: We could do as below with an inlined implementation instead of a separate class
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters));
 
-        // Add an InstrumentationProcessor at the beginning of each route and
-        // set up the interceptorMap for onRoutesAdd() method to register the
-        // ManagedRoute MBeans.
+        // instrument the route endpoint
+        final Endpoint endpoint = routeContext.getEndpoint();
 
-        // TODO: Disabled for now until we find a better strategy for registering routes in the JMX
-        // without altering the route model. The route model should be much the same as without JMX to avoid
-        // a gap that causes pain to get working with and without JMX enabled. We have seen to many issues with this already.
+        // only needed to register on the first output as all rotues will pass through this one
+        ProcessorDefinition out = routeContext.getRoute().getOutputs().get(0);
 
-/*        RouteDefinition routeType = routeContext.getRoute();
-        if (routeType.getInputs() != null && !routeType.getInputs().isEmpty()) {
-            if (routeType.getInputs().size() > 1) {
-                LOG.warn("Addding InstrumentationProcessor to first input only.");
-            }
-
-            Endpoint endpoint  = routeType.getInputs().get(0).getEndpoint();
-
-            List<ProcessorDefinition> exceptionHandlers = new ArrayList<ProcessorDefinition>();
-            List<ProcessorDefinition> outputs = new ArrayList<ProcessorDefinition>();
-
-            // separate out the exception handers in the outputs
-            for (ProcessorDefinition output : routeType.getOutputs()) {
-                if (output instanceof OnExceptionDefinition) {
-                    exceptionHandlers.add(output);
-                } else {
-                    outputs.add(output);
+        // add an intercept strategy that counts when the route sends to any of its outputs
+        out.addInterceptStrategy(new InterceptStrategy() {
+            public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+                if (registeredRoutes.containsKey(endpoint)) {
+                    // do not double wrap
+                    return target;
                 }
+                InstrumentationProcessor wrapper = new InstrumentationProcessor(null);
+                wrapper.setType(processorDefinition.getShortName());
+                wrapper.setProcessor(target);
+
+                // register our wrapper
+                registeredRoutes.put(endpoint, wrapper);
+
+                return wrapper;
             }
+        });
 
-            // clearing the outputs
-            routeType.clearOutput();
-
-            // add exception handlers as top children
-            routeType.getOutputs().addAll(exceptionHandlers);
-
-            // add an interceptor to instrument the route
-            InstrumentationProcessor processor = new InstrumentationProcessor();
-            routeType.intercept(processor);
-
-            // add the output
-            for (ProcessorDefinition processorType : outputs) {
-                routeType.addOutput(processorType);
-            }
-
-            interceptorMap.put(endpoint, processor);
-        }*/
     }
 
     public CamelNamingStrategy getNamingStrategy() {

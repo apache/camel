@@ -34,6 +34,7 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
     private PerformanceCounter counter;
+    private String type;
 
     public InstrumentationProcessor(PerformanceCounter counter) {
         this.counter = counter;
@@ -44,7 +45,7 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     
     @Override
     public String toString() {
-        return "Instrumentation[" + processor + "]";
+        return "Instrumention" + (type != null ? ":" + type : "") + "[" + processor + "]";
     }
 
     public void setCounter(PerformanceCounter counter) {
@@ -102,4 +103,11 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
         }
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 }

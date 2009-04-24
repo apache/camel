@@ -51,6 +51,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         if (counter != null) {
             InstrumentationProcessor wrapper = new InstrumentationProcessor(counter);
             wrapper.setProcessor(target);
+            wrapper.setType(processorDefinition.getShortName());
             // remove to not double wrap it
             registeredCounters.remove(processorDefinition);
             return wrapper;

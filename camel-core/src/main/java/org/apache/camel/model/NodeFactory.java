@@ -23,6 +23,7 @@ package org.apache.camel.model;
  * @version $Revision$
  */
 public class NodeFactory {
+
     public FilterDefinition createFilter() {
         return new FilterDefinition();
     }

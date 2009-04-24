@@ -42,7 +42,6 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
         super.tearDown();
     }
 
-
     @Override
     public void testMBeansRegistered() throws Exception {
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null
@@ -52,22 +51,17 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
-        Set s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=endpoints,*"), null);
+        Set s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 0 endpoints: " + s, 0, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=contexts,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=contexts,*"), null);
         assertEquals("Could not find 0 context: " + s, 0, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=processors,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=processors,*"), null);
         assertEquals("Could not find 0 processor: " + s, 0, s.size());
 
-        s = mbsc.queryNames(
-                new ObjectName(domainName + ":type=routes,*"), null);
+        s = mbsc.queryNames(new ObjectName(domainName + ":type=routes,*"), null);
         assertEquals("Could not find 0 route: " + s, 0, s.size());
-
     }
 
     @Override

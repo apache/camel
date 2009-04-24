@@ -53,6 +53,7 @@ import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TransactedPolicy;
@@ -70,9 +71,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     private static final transient Log LOG = LogFactory.getLog(ProcessorDefinition.class);
     private ErrorHandlerBuilder errorHandlerBuilder;
     private NodeFactory nodeFactory;
-    private LinkedList<Block> blocks = new LinkedList<Block>();
+    private final LinkedList<Block> blocks = new LinkedList<Block>();
     private ProcessorDefinition parent;
     private String errorHandlerRef;
+    private final List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // else to use an optional attribute in JAXB2
     public abstract List<ProcessorDefinition> getOutputs();
@@ -130,6 +132,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         // add interceptor strategies to the channel
         channel.addInterceptStrategies(routeContext.getCamelContext().getInterceptStrategies());
         channel.addInterceptStrategies(routeContext.getInterceptStrategies());
+        channel.addInterceptStrategies(this.getInterceptStrategies());
 
         // init the channel
         channel.initChannel(this, routeContext);
@@ -2025,6 +2028,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
     public void setNodeFactory(NodeFactory nodeFactory) {
         this.nodeFactory = nodeFactory;
+    }
+
+    @XmlTransient
+    public List<InterceptStrategy> getInterceptStrategies() {
+        return interceptStrategies;
+    }
+
+    public void addInterceptStrategy(InterceptStrategy strategy) {
+        this.interceptStrategies.add(strategy);
     }
 
     /**

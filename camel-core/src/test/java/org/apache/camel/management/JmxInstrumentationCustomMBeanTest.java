@@ -68,8 +68,7 @@ public class JmxInstrumentationCustomMBeanTest extends JmxInstrumentationUsingDe
 
         resultEndpoint.assertIsSatisfied();
 
-        // TODO: Routes are temporary disabled until the code in InstrumentationLifecycleStrategy is fixed
-        // verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
+        verifyCounter(mbsc, new ObjectName(domainName + ":type=routes,*"));
         verifyCounter(mbsc, new ObjectName(domainName + ":type=processors,*"));
     }
 
