@@ -40,6 +40,7 @@ import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
@@ -93,7 +94,11 @@ public class OSGiIntegrationTest {
             systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
     
             // lets deploy the bundles we need
-            mavenBundleAsInProject("org.apache.camel", "camel-core"),
+            //mavenBundleAsInProject("org.apache.camel", "camel-core"),
+            
+            scanFeatures( "file:src/test/resources/features-2.0-SNAPSHOT-features.xml",
+                          "camel-core"),
+               
             
             knopflerfish(), felix(), equinox());
 

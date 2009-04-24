@@ -34,10 +34,10 @@ public final class HandleFault implements InterceptStrategy {
     }
 
     /**
-     * A helper method to return the StreamCaching instance
+     * A helper method to return the HandleFault instance
      * for a given {@link org.apache.camel.CamelContext} if one is enabled
      *
-     * @param context the camel context the stream cache is connected to
+     * @param context the camel context the handlefault intercept strategy is connected to
      * @return the stream cache or null if none can be found
      */
     public static HandleFault getHandleFault(CamelContext context) {
