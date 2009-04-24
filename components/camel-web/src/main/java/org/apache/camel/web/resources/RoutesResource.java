@@ -33,7 +33,7 @@ import org.apache.camel.view.RouteDotGenerator;
  * The active routes in Camel which are used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RoutesResource extends CamelChildResourceSupport {
 

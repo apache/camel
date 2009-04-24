@@ -50,7 +50,7 @@ import org.apache.commons.logging.LogFactory;
  * A single Camel Route which is used to implement one or more
  * <a href="http://camel.apache.org/enterprise-integration-patterns.html">Enterprise Integration Paterns</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class RouteResource extends CamelChildResourceSupport {
     private static final transient Log LOG = LogFactory.getLog(RouteResource.class);

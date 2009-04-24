@@ -23,7 +23,7 @@ import org.apache.camel.web.model.EndpointLink;
 import org.apache.camel.web.model.Endpoints;
 
 /**
- * @version $Revision: 735413 $
+ * @version $Revision$
  */
 public class EndpointsTest extends TestSupport {
 

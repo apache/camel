@@ -27,7 +27,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConvertersResource extends CamelChildResourceSupport {
     private static final transient Log LOG = LogFactory.getLog(ConvertersResource.class);

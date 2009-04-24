@@ -30,7 +30,7 @@ import org.apache.camel.spi.UnitOfWork;
 /**
  * A Camel <a href="http://camel.apache.org/exchange.html">message exchange</a>
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class ExchangeResource {

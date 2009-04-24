@@ -39,7 +39,7 @@ import org.apache.camel.web.model.Endpoints;
 /**
  * The active endpoints in Camel
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class EndpointsResource extends CamelChildResourceSupport {
     private String error = "";

@@ -29,7 +29,7 @@ import org.apache.commons.logging.LogFactory;
  * Represents the list of the currently active <a href="http://camel.apache.org/component.html">components</a>
  * in the current camel context
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ComponentsResource extends CamelChildResourceSupport {
     private static final transient Log LOG = LogFactory.getLog(ComponentsResource.class);

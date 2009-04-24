@@ -23,7 +23,7 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 
 /**
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 public class ConvertersFromResource extends CamelChildResourceSupport {
     private Class type;

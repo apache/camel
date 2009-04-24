@@ -27,7 +27,7 @@ import org.apache.commons.logging.LogFactory;
 /**
  * A useful base class for any sub resource of the root {@link org.apache.camel.web.resources.CamelContextResource}
  *
- * @version $Revision: 1.1 $
+ * @version $Revision$
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {
