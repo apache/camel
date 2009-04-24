@@ -40,6 +40,11 @@ public class ValidatorComponent extends ResourceBasedComponent {
             log.debug(this + " using schema resource: " + resource);
         }
         configureValidator(validator, uri, remaining, parameters);
+
+        // force loading of schema at create time otherwise concurrent processing could
+        // cause thread safe issues for the javax.xml.validation.SchemaFactory
+        validator.loadSchema();
+
         return new ProcessorEndpoint(uri, this, validator);
     }
 

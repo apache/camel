@@ -69,6 +69,11 @@ public class ValidatingProcessor implements Processor {
         handler.handleErrors(exchange, schema, result);
     }
 
+    public void loadSchema() throws Exception {
+        // force loading of schema
+        schema = createSchema();
+    }
+
     // Properties
     // -----------------------------------------------------------------------
 
