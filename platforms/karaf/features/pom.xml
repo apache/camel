@@ -45,23 +45,27 @@
       <commons-httpclient-bundle-version>3.1_1</commons-httpclient-bundle-version>
       <commons-io-bundle-version>1.3.2_1</commons-io-bundle-version>
       <flatpack-bundle-version>3.1.1_1</flatpack-bundle-version>
+      <freemarker-bundle-version>2.3.15_1-SNAPSHOT</freemarker-bundle-version>
       <geronimo-el-version>1.0.1</geronimo-el-version>
       <geronimo-jsp-version>1.0.1</geronimo-jsp-version>
       <hamcrest-bundle-version>1.2-dev1_1</hamcrest-bundle-version>
       <ibatis-bundle-version>2.3.4.726_1</ibatis-bundle-version>
       <jexcelapi-bundle-version>2.4.2_1</jexcelapi-bundle-version>
+      <hapi-bundle-version>0.5.1_1-SNAPSHOT</hapi-bundle-version>
       <httpcore-bundle-version>4.0-alpha6_1</httpcore-bundle-version>
       <irclib-bundle-version>1.10_1</irclib-bundle-version>
       <isorelax-bundle-version>20050913_1</isorelax-bundle-version>
       <jcr-bundle-version>1.0_1</jcr-bundle-version>
       <jdom-bundle-version>1.1_1</jdom-bundle-version>
       <jettison-bundle-version>1.0.1_1</jettison-bundle-version>
+      <jetty-cometd-bundle-version>6.1.11_1-SNAPSHOT</jetty-cometd-bundle-version>
       <jing-bundle-version>20030619_1</jing-bundle-version>
       <jodatime-bundle-version>1.5.2_1</jodatime-bundle-version>
       <josql-bundle-version>1.5_1</josql-bundle-version>
       <jsch-bundle-version>0.1.31_1</jsch-bundle-version>
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
+      <mvel-bundle-version>2.0.8_1-SNAPSHOT</mvel-bundle-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
       <oscache-bundle-version>2.4_1</oscache-bundle-version>
       <quartz-bundle-version>1.6.1_1</quartz-bundle-version>
@@ -70,7 +74,10 @@
       <servicemix-specs-version>1.3.0</servicemix-specs-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
+      <tagsoup-bundle-version>1.2_1-SNAPSHOT</tagsoup-bundle-version>
       <velocity-bundle-version>1.5_1</velocity-bundle-version>
+      <xalan-bundle-version>2.7.1_1-SNAPSHOT</xalan-bundle-version>
+      <xerces-bundle-version>2.9.1_1-SNAPSHOT</xerces-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
       <xmlsec-bundle-version>1.3.0_1</xmlsec-bundle-version>
       <xmlresolver-bundle-version>1.2_1</xmlresolver-bundle-version>
@@ -239,6 +246,14 @@
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
+       <artifactId>camel-bindy</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-cometd</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
        <artifactId>camel-csv</artifactId>
        <version>${pom.version}</version>
      </dependency>
@@ -249,7 +264,17 @@
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
+       <artifactId>camel-freemarker</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
        <artifactId>camel-ftp</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-guice</artifactId>
        <version>${pom.version}</version>
      </dependency>
      <dependency>
@@ -260,6 +285,11 @@
      <dependency>
        <groupId>org.apache.camel</groupId>
        <artifactId>camel-hamcrest</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-hl7</artifactId>
        <version>${pom.version}</version>
      </dependency>
      <dependency>
@@ -327,10 +357,9 @@
        <artifactId>camel-jpa</artifactId>
        <version>${pom.version}</version>
      </dependency>
-     <!-- Moved quartz before mail to have commons-collections auto-discovered, cfr. SMX4KNL-260 -->
      <dependency>
        <groupId>org.apache.camel</groupId>
-       <artifactId>camel-quartz</artifactId>
+       <artifactId>camel-ldap</artifactId>
        <version>${pom.version}</version>
      </dependency>
      <dependency>
@@ -345,13 +374,31 @@
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
+       <artifactId>camel-mvel</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
        <artifactId>camel-ognl</artifactId>
        <version>${pom.version}</version>
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
+       <artifactId>camel-quartz</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-restlet</artifactId>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
        <artifactId>camel-rmi</artifactId>
        <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-rss</artifactId>
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
@@ -375,6 +422,11 @@
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
+       <artifactId>camel-spring-javaconfig</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
        <artifactId>camel-sql</artifactId>
        <version>${pom.version}</version>
      </dependency>
@@ -388,6 +440,11 @@
        <artifactId>camel-stringtemplate</artifactId>
        <version>${pom.version}</version>
      </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-tagsoup</artifactId>
+       <version>${pom.version}</version>
+     </dependency>
      <!-- skipping camel-swing/camel-uface -->
      <dependency>
        <groupId>org.apache.camel</groupId>
@@ -398,6 +455,10 @@
        <groupId>org.apache.camel</groupId>
        <artifactId>camel-xmlbeans</artifactId>
        <version>${pom.version}</version>
+     </dependency>
+     <dependency>
+       <groupId>org.apache.camel</groupId>
+       <artifactId>camel-xmlsecurity</artifactId>
      </dependency>
      <dependency>
        <groupId>org.apache.camel</groupId>
