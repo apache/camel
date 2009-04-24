@@ -26,7 +26,7 @@ import org.apache.camel.guice.CamelModuleWithMatchingRoutes;
 import org.guiceyfruit.testing.junit3.GuiceyTestCase;
 
 /**
- * @version $Revision: 697494 $
+ * @version $Revision$
  */
 // START SNIPPET: example
 public class FilterTest extends GuiceyTestCase {

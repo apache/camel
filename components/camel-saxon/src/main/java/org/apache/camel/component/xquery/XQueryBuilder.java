@@ -421,7 +421,7 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
     protected void configureQuery(DynamicQueryContext dynamicQueryContext, Exchange exchange)
         throws Exception {
         addParameters(dynamicQueryContext, exchange.getProperties());
-        addParameters(dynamicQueryContext, exchange.getIn().getHeaders());
+        addParameters(dynamicQueryContext, exchange.getIn().getHeaders(), "in.headers.");
         addParameters(dynamicQueryContext, getParameters());
 
         dynamicQueryContext.setParameter("exchange", exchange);
@@ -430,11 +430,15 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
             dynamicQueryContext.setParameter("out", out);
         }
     }
-
+    
     protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map) {
+        addParameters(dynamicQueryContext, map, "");        
+    }
+
+    protected void addParameters(DynamicQueryContext dynamicQueryContext, Map<String, Object> map, String parameterPrefix) {
         Set<Map.Entry<String, Object>> propertyEntries = map.entrySet();
         for (Map.Entry<String, Object> entry : propertyEntries) {
-            dynamicQueryContext.setParameter(entry.getKey(), entry.getValue());
+            dynamicQueryContext.setParameter(parameterPrefix + entry.getKey(), entry.getValue());
         }
     }
 
