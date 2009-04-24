@@ -47,6 +47,9 @@ public final class JmxSystemPropertyKeys {
     // use jvm platform mbean server flag
     public static final String USE_PLATFORM_MBS = "org.apache.camel.jmx.usePlatformMBeanServer";
 
+    // whether all processors or only processors with a custom id given should be registered
+    public static final String ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID = "org.apache.camel.jmx.onlyRegisterProcessorWithCustomId";
+
     private JmxSystemPropertyKeys() {
         // not instantiated
     }

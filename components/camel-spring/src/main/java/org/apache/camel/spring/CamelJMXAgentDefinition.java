@@ -33,12 +33,19 @@ import org.apache.camel.model.IdentifiedType;
 @XmlRootElement(name = "jmxAgent")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelJMXAgentDefinition extends IdentifiedType {
+
     /**
      * Disable JMI (default false)
      */
     @XmlAttribute(required = false)
     private Boolean disabled = Boolean.FALSE;
     
+    /**
+     * Only register processor if a custom id was defined for it.
+     */
+    @XmlAttribute(required = false)
+    private Boolean onlyRegisterProcessorWithCustomId = Boolean.FALSE;
+
     /**
      * RMI connector registry port (default 1099)
      */
@@ -135,6 +142,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     
     public void setUsePlatformMBeanServer(Boolean value) {
         usePlatformMBeanServer = value !=  null ? value : Boolean.FALSE;
+    }
+
+    public Boolean getOnlyRegisterProcessorWithCustomId() {
+        return onlyRegisterProcessorWithCustomId;
+    }
+
+    public void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId) {
+        this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
     public Boolean isDisabled() {

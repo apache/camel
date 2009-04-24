@@ -346,7 +346,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     private void initJMXAgent() throws Exception {
         if (camelJMXAgent != null && camelJMXAgent.isDisabled()) {
-            LOG.debug("JMXAgent disabled");
+            LOG.info("JMXAgent disabled");
             getContext().setLifecycleStrategy(new DefaultLifecycleStrategy());
         } else if (camelJMXAgent != null) {
             DefaultInstrumentationAgent agent = new DefaultInstrumentationAgent();
@@ -357,6 +357,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             agent.setRegistryPort(camelJMXAgent.getRegistryPort());
             agent.setServiceUrlPath(camelJMXAgent.getServiceUrlPath());
             agent.setUsePlatformMBeanServer(camelJMXAgent.isUsePlatformMBeanServer());
+            agent.setOnlyRegisterProcessorWithCustomId(camelJMXAgent.getOnlyRegisterProcessorWithCustomId());
 
             LOG.info("JMXAgent enabled: " + camelJMXAgent);
             getContext().setLifecycleStrategy(new InstrumentationLifecycleStrategy(agent));

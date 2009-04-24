@@ -224,6 +224,11 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // register all processors
         for (ProcessorDefinition processor : route.getOutputs()) {
+            // skip processors that should not be registered
+            if (!registerProcessor(processor)) {
+                continue;
+            }
+
             ObjectName name = null;
             try {
                 // get the mbean name
@@ -243,7 +248,6 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
         }
 
         // add intercept strategy that executes the JMX instrumentation for performance metrics
-        // TODO: We could do as below with an inlined implementation instead of a separate class
         routeContext.addInterceptStrategy(new InstrumentationInterceptStrategy(registeredCounters));
 
         // instrument the route endpoint
@@ -270,6 +274,22 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
             }
         });
 
+    }
+
+    /**
+     * Should the given processor be registered.
+     */
+    protected boolean registerProcessor(ProcessorDefinition processor) {
+        if (agent instanceof DefaultInstrumentationAgent) {
+            DefaultInstrumentationAgent dia = (DefaultInstrumentationAgent) agent;
+            if (dia.getOnlyRegisterProcessorWithCustomId() != null && dia.getOnlyRegisterProcessorWithCustomId()) {
+                // only register if the processor have an explicy id assigned
+                return processor.hasCustomIdAssigned();
+            }
+        }
+
+        // fallback to always register it
+        return true;
     }
 
     public CamelNamingStrategy getNamingStrategy() {

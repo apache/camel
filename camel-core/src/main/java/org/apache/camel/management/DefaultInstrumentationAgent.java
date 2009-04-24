@@ -73,6 +73,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
     private String serviceUrlPath;
     private Boolean usePlatformMBeanServer = true;
     private Boolean createConnector;
+    private Boolean onlyRegisterProcessorWithCustomId;
 
     protected void finalizeSettings() {
         if (registryPort == null) {
@@ -103,8 +104,11 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
             usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         }
-    }
 
+        if (onlyRegisterProcessorWithCustomId == null) {
+            onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
+        }
+    }
 
     public void setRegistryPort(Integer value) {
         registryPort = value;
@@ -160,6 +164,14 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
 
     public Boolean getUsePlatformMBeanServer() {
         return usePlatformMBeanServer;
+    }
+
+    public Boolean getOnlyRegisterProcessorWithCustomId() {
+        return onlyRegisterProcessorWithCustomId;
+    }
+
+    public void setOnlyRegisterProcessorWithCustomId(Boolean onlyRegisterProcessorWithCustomId) {
+        this.onlyRegisterProcessorWithCustomId = onlyRegisterProcessorWithCustomId;
     }
 
     public void setServer(MBeanServer value) {

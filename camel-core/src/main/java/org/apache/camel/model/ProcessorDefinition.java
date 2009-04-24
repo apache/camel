@@ -530,6 +530,24 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         return to(ExchangePattern.InOut, endpoints);
     }
 
+    /**
+     * Sets the id of this node
+     *
+     * @param id  the id
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type id(String id) {
+        if (getOutputs().isEmpty()) {
+            // set id on this
+            setId(id);
+        } else {
+            // set it on last output as this is what the user means to do
+            getOutputs().get(getOutputs().size() - 1).setId(id);
+        }
+
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/multicast.html">Multicast EIP:</a>
