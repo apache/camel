@@ -94,6 +94,18 @@
         <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
         <url>http://repository.springsource.com/maven/bundles/external</url>
       </repository>
+      <!-- Spring Java-Config JARs are here -->
+      <repository>
+        <id>com.springsource.repository.bundles.snapshot</id>
+        <name>SpringSource Enterprise Bundle Repository - SpringSource Snapshot Builds</name>
+        <url>http://repository.springsource.com/maven/bundles/snapshot</url>
+      </repository>
+      <repository>
+        <id>spring.maven.release</id>
+        <name>Spring Release Maven Repo</name>
+        <url>http://repository.springsource.com/maven/bundles/release</url>
+      </repository>
+
       <repository>
         <id>uface.m2</id>
         <url>http://uface.googlecode.com/svn/maven/</url>
