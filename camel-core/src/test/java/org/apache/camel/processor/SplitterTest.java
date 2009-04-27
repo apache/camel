@@ -105,9 +105,7 @@ public class SplitterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         List<Exchange> list = resultEndpoint.getReceivedExchanges();
-
         Set<Integer> numbersFound = new TreeSet<Integer>();
-
         final String[] names = {"James", "Guillaume", "Hiram", "Rob"};
 
         for (int i = 0; i < 4; i++) {
@@ -180,7 +178,6 @@ public class SplitterTest extends ContextTestSupport {
             //this header cannot be set when streaming is used
             assertNull(exchange.getIn().getHeader(Exchange.SPLIT_SIZE));
         }
-
     }
     
     public void testSplitterWithException() throws Exception {
@@ -209,14 +206,19 @@ public class SplitterTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 errorHandler(deadLetterChannel("mock:failed").maximumRedeliveries(0));
+
                 from("direct:seqential").split(body().tokenize(","), new UseLatestAggregationStrategy()).to("mock:result");
+
                 from("direct:parallel").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing(true).to("mock:result");
+
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
+
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
+
                 from("direct:exception")
                     .split(body().tokenize(","))
                     .aggregationStrategy(new MyAggregationStrategy())
-                    .parallelProcessing(true).streaming()
+                    .parallelProcessing(true)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             String string = exchange.getIn().getBody(String.class);
