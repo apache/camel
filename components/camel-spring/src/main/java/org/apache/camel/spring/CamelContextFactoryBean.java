@@ -45,6 +45,7 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.InterceptEndpointDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -120,6 +121,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlElement(name = "intercept", required = false)
     private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
+    @XmlElement(name = "interceptEndpoint", required = false)
+    private List<InterceptEndpointDefinition> interceptEndpoints = new ArrayList<InterceptEndpointDefinition>();
     @XmlElement(name = "route", required = false)
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();    
     @XmlTransient
@@ -313,6 +316,23 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
                 proceed.getOutputs().addAll(outputs);
             }
         }
+
+        for (InterceptEndpointDefinition intercept : interceptEndpoints) {
+            // special intercept for intercepting sending to an endpoint
+            // init interceptor by letting it proxy the real endpoint
+
+            // add the interceptor but we must do some pre configuration beforehand
+            intercept.afterPropertiesSet();
+
+            // replace proceed with the rest of the route
+            try {
+                intercept.proxyEndpoint(getContext());
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+            route.addOutput(intercept);
+        }
+
     }
 
     private void initPolicies(RouteDefinition route) {
@@ -432,6 +452,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setIntercepts(List<InterceptDefinition> intercepts) {
         this.intercepts = intercepts;
+    }
+
+    public List<InterceptEndpointDefinition> getInterceptEndpoints() {
+        return interceptEndpoints;
+    }
+
+    public void setInterceptEndpoints(List<InterceptEndpointDefinition> interceptEndpoints) {
+        this.interceptEndpoints = interceptEndpoints;
     }
 
     public RouteBuilder getRouteBuilder() {

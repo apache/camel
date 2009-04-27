@@ -40,11 +40,11 @@ import org.apache.camel.spi.RouteContext;
 public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
   
     @XmlTransient
-    private ProceedDefinition proceed = new ProceedDefinition();
+    protected ProceedDefinition proceed = new ProceedDefinition();
     @XmlTransient
-    private Boolean stopIntercept = Boolean.FALSE;
+    protected Boolean stopIntercept = Boolean.FALSE;
     @XmlTransient
-    private Boolean usePredicate = Boolean.FALSE;
+    protected Boolean usePredicate = Boolean.FALSE;
 
     @Override
     public String toString() {

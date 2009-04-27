@@ -31,11 +31,10 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.processor.DelegateProcessor;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
- * used to build {@link Route} instances in a {@link CamelContext} for smart routing.
+ * used to build {@link org.apache.camel.impl.DefaultRoute} instances in a {@link CamelContext} for smart routing.
  *
  * @version $Revision$
  */
@@ -74,6 +73,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public RouteDefinition from(String uri) {
+        routeCollection.setCamelContext(getContext());
         RouteDefinition answer = routeCollection.from(uri);
         configureRoute(answer);
         return answer;
@@ -87,6 +87,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public RouteDefinition fromF(String uri, Object... args) {
+        routeCollection.setCamelContext(getContext());
         RouteDefinition answer = routeCollection.from(String.format(uri, args));
         configureRoute(answer);
         return answer;
@@ -99,6 +100,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public RouteDefinition from(Endpoint endpoint) {
+        routeCollection.setCamelContext(getContext());
         RouteDefinition answer = routeCollection.from(endpoint);
         configureRoute(answer);
         return answer;
@@ -111,6 +113,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public RouteDefinition from(String... uris) {
+        routeCollection.setCamelContext(getContext());
         RouteDefinition answer = routeCollection.from(uris);
         configureRoute(answer);
         return answer;
@@ -123,6 +126,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public RouteDefinition from(Endpoint... endpoints) {
+        routeCollection.setCamelContext(getContext());
         RouteDefinition answer = routeCollection.from(endpoints);
         configureRoute(answer);
         return answer;
@@ -135,6 +139,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the current builder with the error handler configured
      */
     public RouteBuilder errorHandler(ErrorHandlerBuilder errorHandlerBuilder) {
+        routeCollection.setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
     }
@@ -145,6 +150,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public InterceptDefinition intercept() {
+        routeCollection.setCamelContext(getContext());
         return routeCollection.intercept();
     }
 
@@ -156,7 +162,20 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public ChoiceDefinition intercept(Predicate predicate) {
+        routeCollection.setCamelContext(getContext());
         return routeCollection.intercept(predicate);
+    }
+
+    /**
+     * Applies a route for an interceptor if an exchange is routed
+     * to the given endpoint
+     *
+     * @param uri  endpoint uri
+     * @return the builder
+     */
+    public InterceptDefinition interceptEndpoint(String uri) {
+        routeCollection.setCamelContext(getContext());
+        return routeCollection.interceptEndpoint(uri);
     }
 
     /**
@@ -167,6 +186,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @return the builder
      */
     public OnExceptionDefinition onException(Class exception) {
+        routeCollection.setCamelContext(getContext());
         return routeCollection.onException(exception);
     }
 

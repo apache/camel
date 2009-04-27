@@ -380,6 +380,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                     }
 
                     // If it's a singleton then auto register it.
+                    // TODO: Why not test for isSingleton?
                     if (answer != null) {
                         addService(answer);
 
@@ -402,6 +403,10 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
+
+        if (endpoint instanceof InterceptEndpoint) {
+            endpoint = ((InterceptEndpoint) endpoint).getDelegate();
+        }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);
         } else {

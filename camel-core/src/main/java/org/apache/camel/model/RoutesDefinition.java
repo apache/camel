@@ -174,11 +174,21 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
         List<InterceptDefinition> intercepts = getIntercepts();
         for (InterceptDefinition intercept : intercepts) {
-            // need to create a proxy for this one and use the
-            // proceed of the proxy which will be local to this route
-            InterceptDefinition proxy = intercept.createProxy();
-            route.addOutput(proxy);
-            route.pushBlock(proxy.getProceed());
+
+            if (intercept instanceof InterceptEndpointDefinition) {
+                // special intercept for intercepting sending to an endpoint
+                InterceptEndpointDefinition ied = (InterceptEndpointDefinition) intercept;
+                // init interceptor by letting it proxy the real endpoint
+                ied.proxyEndpoint(getCamelContext());
+                route.addOutput(ied);
+            } else {
+                // regular interceptor
+                // need to create a proxy for this one and use the
+                // proceed of the proxy which will be local to this route
+                InterceptDefinition proxy = intercept.createProxy();
+                route.addOutput(proxy);
+                route.pushBlock(proxy.getProceed());
+            }
         }
 
         route.getOutputs().addAll(getExceptions());
@@ -207,6 +217,19 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         InterceptDefinition answer = new InterceptDefinition();
         getIntercepts().add(answer);
         return answer.when(predicate);
+    }
+
+    /**
+     * Creates and adds an interceptor that is triggered when an exchange is
+     * routed to the given endpoint
+     *
+     * @param uri uri of the endpoint
+     * @return  the builder
+     */
+    public InterceptEndpointDefinition interceptEndpoint(final String uri) {
+        InterceptEndpointDefinition answer = new InterceptEndpointDefinition(uri);
+        getIntercepts().add(answer);
+        return answer;
     }
 
     /**

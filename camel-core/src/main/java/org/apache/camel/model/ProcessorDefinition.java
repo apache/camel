@@ -49,6 +49,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.processor.DefaultChannel;
 import org.apache.camel.processor.Pipeline;
+import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.aggregate.AggregationCollection;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.DataFormat;
@@ -109,7 +110,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Processor processor = makeProcessor(routeContext);
         if (!routeContext.isRouteAdded()) {
-            routeContext.addEventDrivenProcessor(processor);
+            boolean endpointInterceptor = false;
+
+            // are we routing to an endpoint interceptor, if so we should not add it as an event driven
+            // processor as we use the producer to trigger the interceptor
+            if (processor instanceof Channel) {
+                Channel channel = (Channel) processor;
+                Processor next = channel.getNextProcessor();
+                if (next instanceof InterceptEndpointProcessor) {
+                    endpointInterceptor = true;
+                }
+            }
+
+            // only add regular processors as event driven
+            if (endpointInterceptor) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Endpoint interceptor should not be added as an event driven consumer route: " + processor);
+                }
+            } else {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Adding event driven processor: " + processor);
+                }
+                routeContext.addEventDrivenProcessor(processor);
+            }
+
         }
     }
 

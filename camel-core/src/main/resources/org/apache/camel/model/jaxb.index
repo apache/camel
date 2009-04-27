@@ -30,6 +30,7 @@ IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
 InterceptDefinition
+InterceptEndpointDefinition
 LoadBalanceDefinition
 LoopDefinition
 MarshalDefinition
