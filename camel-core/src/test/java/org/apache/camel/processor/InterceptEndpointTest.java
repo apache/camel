@@ -66,7 +66,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
+                // START SNIPPET: e2
                 // we can also attach a predicate to the endpoint interceptor. So in this example the exchange is
                 // only intercepted if the body is Hello World
                 interceptEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
@@ -75,7 +75,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
                     .to("mock:bar")
                     .to("mock:foo")
                     .to("mock:result");
-                // END SNIPPET: e1
+                // END SNIPPET: e2
 
             }
         });
@@ -97,7 +97,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
+                // START SNIPPET: e3
                 // since we use the stop() at the end of the detour route we instruct Camel to skip
                 // sending the exchange to the original intended destination.
                 // That means that mock:foo will NOT receive the message, but the message
@@ -109,7 +109,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
                     .to("mock:bar")
                     .to("mock:foo")
                     .to("mock:result");
-                // END SNIPPET: e1
+                // END SNIPPET: e3
             }
         });
         context.start();
