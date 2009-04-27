@@ -22,15 +22,20 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-    <intercept>
-      <to uri="mock:middle1"/>
-    </intercept>
-    <route>
-      <from uri="direct:start"/>
-      <to uri="mock:end"/>
-    </route>
-  </camelContext>
-  <!-- END SNIPPET: example -->
+    <!-- START SNIPPET: example -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+        <!-- intercept incoming messages and route them to the mock:middle1 endpoint
+             before we proceed and continue routing from the point of interceptions, that
+             is mock:end will be the next target -->
+        <intercept>
+            <to uri="mock:middle1"/>
+        </intercept>
+
+        <!-- here we have a very simple route -->
+        <route>
+            <from uri="direct:start"/>
+            <to uri="mock:end"/>
+        </route>
+    </camelContext>
+    <!-- END SNIPPET: example -->
 </beans>

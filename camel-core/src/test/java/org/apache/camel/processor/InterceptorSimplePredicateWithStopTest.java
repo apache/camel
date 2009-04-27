@@ -17,8 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -52,10 +50,4 @@ public class InterceptorSimplePredicateWithStopTest extends ContextTestSupport {
         };
     }
 
-    private class MyTestServiceProcessor implements Processor {
-
-        public void process(Exchange exchange) throws Exception {
-            exchange.getIn().setBody("This is a test body");
-        }
-    }
 }
