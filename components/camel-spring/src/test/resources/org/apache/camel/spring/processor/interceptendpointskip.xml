@@ -30,13 +30,13 @@
              That means that mock:foo will NOT receive the message, but the message
              is skipped and continued in the original route, so mock:result will receive
              the message. -->
-        <interceptEndpoint uri="mock:foo">
+        <interceptSendToEndpoint uri="mock:foo">
             <transform>
                 <constant>Bye World</constant>
             </transform>
             <to uri="mock:detour"/>
             <stop/>
-        </interceptEndpoint>
+        </interceptSendToEndpoint>
 
         <route>
             <from uri="direct:third"/>

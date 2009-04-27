@@ -29,12 +29,12 @@
              this endpoint, its intercepted and routed with this detour route beforehand
              afterwards its send to the original intended destination. So this is kinda AOP before.
              That means mock:foo will receive the message (Bye World). -->
-        <interceptEndpoint uri="mock:foo">
+        <interceptSendToEndpoint uri="mock:foo">
             <to uri="mock:detour"/>
             <transform>
                 <constant>Bye World</constant>
             </transform>
-        </interceptEndpoint>
+        </interceptSendToEndpoint>
 
         <route>
             <from uri="direct:first"/>

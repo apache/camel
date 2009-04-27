@@ -40,7 +40,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
                 // this endpoint, its intercepted and routed with this detour route beforehand
                 // afterwards its send to the original intended destination. So this is kinda AOP before.
                 // That means mock:foo will receive the message (Bye World).
-                interceptEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:first")
                     .to("mock:bar")
@@ -69,7 +69,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
                 // START SNIPPET: e2
                 // we can also attach a predicate to the endpoint interceptor. So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:second")
                     .to("mock:bar")
@@ -103,7 +103,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
                 // That means that mock:foo will NOT receive the message, but the message
                 // is skipped and continued in the original route, so mock:result will receive
                 // the message.
-                interceptEndpoint("mock:foo").transform(constant("Bye World")).to("mock:detour").stop();
+                interceptSendToEndpoint("mock:foo").transform(constant("Bye World")).to("mock:detour").stop();
 
                 from("direct:third")
                     .to("mock:bar")
@@ -130,7 +130,7 @@ public class InterceptEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:start")
                     .to("mock:foo")

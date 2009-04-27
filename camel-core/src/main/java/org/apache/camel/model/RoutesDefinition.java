@@ -174,13 +174,12 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
         List<InterceptDefinition> intercepts = getIntercepts();
         for (InterceptDefinition intercept : intercepts) {
-
-            if (intercept instanceof InterceptEndpointDefinition) {
+            if (intercept instanceof InterceptSendToEndpointDefinition) {
                 // special intercept for intercepting sending to an endpoint
-                InterceptEndpointDefinition ied = (InterceptEndpointDefinition) intercept;
+                InterceptSendToEndpointDefinition sendTo = (InterceptSendToEndpointDefinition) intercept;
                 // init interceptor by letting it proxy the real endpoint
-                ied.proxyEndpoint(getCamelContext());
-                route.addOutput(ied);
+                sendTo.proxyEndpoint(getCamelContext());
+                route.addOutput(sendTo);
             } else {
                 // regular interceptor
                 // need to create a proxy for this one and use the
@@ -221,13 +220,13 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
     /**
      * Creates and adds an interceptor that is triggered when an exchange is
-     * routed to the given endpoint
+     * send to the given endpoint
      *
      * @param uri uri of the endpoint
      * @return  the builder
      */
-    public InterceptEndpointDefinition interceptEndpoint(final String uri) {
-        InterceptEndpointDefinition answer = new InterceptEndpointDefinition(uri);
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(final String uri) {
+        InterceptSendToEndpointDefinition answer = new InterceptSendToEndpointDefinition(uri);
         getIntercepts().add(answer);
         return answer;
     }

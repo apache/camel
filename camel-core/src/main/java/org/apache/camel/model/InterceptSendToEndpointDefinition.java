@@ -32,13 +32,13 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ProcessorDefinitionHelper;
 
 /**
- * Represents an XML &lt;interceptEndpoint/&gt; element
+ * Represents an XML &lt;interceptToEndpoint/&gt; element
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "interceptEndpoint")
+@XmlRootElement(name = "interceptToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptEndpointDefinition extends InterceptDefinition {
+public class InterceptSendToEndpointDefinition extends InterceptDefinition {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
     // TODO: Support wildcards for endpoints so you can match by scheme, eg jms:*
@@ -46,10 +46,10 @@ public class InterceptEndpointDefinition extends InterceptDefinition {
     @XmlAttribute(required = true)
     private String uri;
 
-    public InterceptEndpointDefinition() {
+    public InterceptSendToEndpointDefinition() {
     }
 
-    public InterceptEndpointDefinition(String uri) {
+    public InterceptSendToEndpointDefinition(String uri) {
         this.uri = uri;
     }
 

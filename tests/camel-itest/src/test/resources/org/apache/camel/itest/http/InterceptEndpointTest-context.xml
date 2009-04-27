@@ -26,13 +26,13 @@
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring" trace="true">
         <!-- intercept the request to google and return our own simulated response -->
-        <interceptEndpoint uri="http://www.google.com">
+        <interceptSendToEndpoint uri="http://www.google.com">
             <transform>
                 <constant>Simulated response from Google</constant>
             </transform>
             <!-- must use stop to skip the real request to http://www.google.com -->
             <stop/>
-        </interceptEndpoint>
+        </interceptSendToEndpoint>
 
         <route>
             <from uri="direct:start"/>

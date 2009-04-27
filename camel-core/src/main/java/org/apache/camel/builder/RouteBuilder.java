@@ -167,15 +167,14 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Applies a route for an interceptor if an exchange is routed
-     * to the given endpoint
+     * Applies a route for an interceptor if an exchange is send to the given endpoint
      *
      * @param uri  endpoint uri
      * @return the builder
      */
-    public InterceptDefinition interceptEndpoint(String uri) {
+    public InterceptDefinition interceptSendToEndpoint(String uri) {
         routeCollection.setCamelContext(getContext());
-        return routeCollection.interceptEndpoint(uri);
+        return routeCollection.interceptSendToEndpoint(uri);
     }
 
     /**

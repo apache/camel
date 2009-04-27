@@ -25,13 +25,13 @@
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <interceptEndpoint uri="mock:foo">
+        <interceptSendToEndpoint uri="mock:foo">
             <when><simple>${body} == 'Hello World'</simple></when>
             <to uri="mock:detour"/>
             <transform>
                 <constant>Bye World</constant>
             </transform>
-        </interceptEndpoint>
+        </interceptSendToEndpoint>
 
         <route>
             <from uri="direct:second"/>
