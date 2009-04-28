@@ -26,6 +26,7 @@ import javax.jms.Queue;
 import javax.jms.Topic;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -128,6 +129,24 @@ public class JmsMessage extends DefaultMessage {
         if (answer == null) {
             answer = super.getHeader(name);
         }
+        return answer;
+    }
+
+    @Override
+    public Object removeHeader(String name) {
+        Object answer = super.removeHeader(name);
+
+        if (jmsMessage != null && !name.startsWith("JMS")) {
+            try {
+                // also remove header from the JMS message
+                if (jmsMessage.propertyExists(name)) {
+                    answer = JmsMessageHelper.removeJmsProperty(jmsMessage, name);
+                }
+            } catch (JMSException e) {
+                throw new RuntimeCamelException(name, e);
+            }
+        }
+
         return answer;
     }
 
