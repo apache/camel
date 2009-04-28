@@ -207,9 +207,13 @@ public final class IOConverter {
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
         try {
-            int len = reader.read(buf);
-            if (len != -1) {
-                sb.append(buf, 0, len);
+            int len = 0;
+            // read until we reach then end which is the -1 marker
+            while (len != -1) {
+                len = reader.read(buf);
+                if (len != -1) {
+                    sb.append(buf, 0, len);
+                }
             }
         } finally {
             ObjectHelper.close(reader, "reader", LOG);
