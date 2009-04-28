@@ -30,7 +30,6 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.ops4j.pax.exam.options.MavenUrlProvisionOption;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -94,10 +93,10 @@ public class OSGiIntegrationTest {
             systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("DEBUG"),
     
             // lets deploy the bundles we need
-            //mavenBundleAsInProject("org.apache.camel", "camel-core"),
+            mavenBundle().groupId("org.apache.camel").artifactId("camel-core").versionAsInProject(),
             
-            scanFeatures( "file:src/test/resources/features-2.0-SNAPSHOT-features.xml",
-                          "camel-core"),
+            //scanFeatures("mvn:org.apache.camel.karaf/features/2.0-SNAPSHOT/xml/features",
+            //              "camel-core"),
                
             
             knopflerfish(), felix(), equinox());
@@ -109,11 +108,6 @@ public class OSGiIntegrationTest {
         
         return options;
     }
-    
-    /**
-     * TODO we can remove this method when 0.4.1 of Pax Exam comes out!
-     */
-    public static MavenUrlProvisionOption mavenBundleAsInProject(String groupId, String artifactId) {
-        return mavenBundle().groupId(groupId).artifactId(artifactId).version(asInProject());
-    }
+   
+   
 }
