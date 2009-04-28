@@ -14,12 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms.discovery;
+package org.apache.camel.component.jms;
 
 import java.util.HashMap;
 import java.util.Map;
 import javax.jms.ConnectionFactory;
-import javax.naming.Context;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
@@ -31,47 +30,42 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
 /**
  * @version $Revision$
  */
-public class JmsDiscoveryTest extends ContextTestSupport {
-    protected MyRegistry registry = new MyRegistry();
+public class JmsRemoveHeaderTest extends ContextTestSupport {
 
-    public void testDiscovery() throws Exception {
+    public void testRemoveHeader() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(3);
+        mock.expectedMessageCount(1);
+        // should not receive the foo header
+        mock.expectedHeaderReceived("foo", null);
+        // but only the bar header
+        mock.expectedHeaderReceived("bar", 123);
+
+        Map headers = new HashMap();
+        headers.put("foo", "cheese");
+        headers.put("bar", 123);
+
+        template.sendBodyAndHeaders("activemq:queue:foo", "Hello World", headers);
 
         assertMockEndpointsSatisfied();
-
-        Map<String, Map> map = new HashMap<String, Map>(registry.getServices());
-        assertTrue("There should be 3 or more, was: " + map.size(), map.size() >= 3);
     }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false&broker.useJmx=false");
+        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=false");
         camelContext.addComponent("activemq", jmsComponentClientAcknowledge(connectionFactory));
 
         return camelContext;
     }
 
     @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        context.bind("service1", new MyService("service1"));
-        context.bind("service2", new MyService("service2"));
-        context.bind("service3", new MyService("service3"));
-        context.bind("registry", registry);
-        return context;
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                // lets setup the heartbeats
-                from("bean:service1?method=status?initialDelay=100&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
-                from("bean:service2?method=status?initialDelay=125&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
-                from("bean:service3?method=status?initialDelay=150&exchangePattern=InOnly").to("activemq:topic:registry.heartbeats");
+                from("activemq:queue:foo").removeHeader("foo").to("activemq:queue:bar");
 
-                from("activemq:topic:registry.heartbeats?cacheLevelName=CACHE_CONSUMER").to("bean:registry?method=onEvent", "mock:result");
+                from("activemq:queue:bar").to("mock:result");
             }
         };
     }
