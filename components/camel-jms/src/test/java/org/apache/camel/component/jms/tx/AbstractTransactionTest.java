@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms.tx;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -91,7 +92,9 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
         while (true) {
             processor = unwrapDeadLetter(processor);
 
-            if (processor instanceof DelegateAsyncProcessor) {
+            if (processor instanceof Channel) {
+                processor = ((Channel)processor).getNextProcessor();
+            } else if (processor instanceof DelegateAsyncProcessor) {
                 processor = ((DelegateAsyncProcessor)processor).getProcessor();
             } else if (processor instanceof DelegateProcessor) {
                 // TransactionInterceptor is a DelegateProcessor
@@ -112,7 +115,9 @@ public abstract class AbstractTransactionTest extends ContextTestSupport {
 
     private Processor unwrapDeadLetter(Processor processor) {
         while (true) {
-            if (processor instanceof DeadLetterChannel) {
+            if (processor instanceof Channel) {
+                processor = ((Channel)processor).getNextProcessor();
+            } else if (processor instanceof DeadLetterChannel) {
                 processor = ((DeadLetterChannel)processor).getOutput();
             } else if (processor instanceof DefaultErrorHandler) {
                 processor = ((DefaultErrorHandler)processor).getOutput();
