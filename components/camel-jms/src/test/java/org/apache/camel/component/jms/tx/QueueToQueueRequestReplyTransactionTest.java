@@ -54,7 +54,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
                 from("activemq-1:queue:bar").process(new Processor() {
                     public void process(Exchange e) {
                         String request = e.getIn().getBody(String.class);
-                        Message out = e.getOut(true);
+                        Message out = e.getOut();
                         String selectorValue = e.getIn().getHeader("camelProvider", String.class);
                         if (selectorValue != null) {
                             out.setHeader("camelProvider", selectorValue);
@@ -104,7 +104,7 @@ public class QueueToQueueRequestReplyTransactionTest extends AbstractTransaction
                 from("activemq-1:queue:bar").process(new Processor() {
                     public void process(Exchange e) {
                         String request = e.getIn().getBody(String.class);
-                        Message out = e.getOut(true);
+                        Message out = e.getOut();
                         String selectorValue = e.getIn().getHeader("camelProvider", String.class);
                         out.setHeader("camelProvider", selectorValue);
                         out.setBody("Re: " + request);

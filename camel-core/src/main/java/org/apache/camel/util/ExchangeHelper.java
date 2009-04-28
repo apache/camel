@@ -178,14 +178,12 @@ public final class ExchangeHelper {
         
         if (result != source) {
             result.setException(source.getException());
-            Message fault = source.getFault(false);
-            if (fault != null) {
-                result.getFault(true).copyFrom(fault);
+            if (source.hasFault()) {
+                result.getFault().copyFrom(source.getFault());
             }
 
-            Message out = source.getOut(false);
-            if (out != null) {
-                result.getOut(true).copyFrom(out);
+            if (source.hasOut()) {
+                result.getOut().copyFrom(source.getOut());
             } else if (result.getPattern() == ExchangePattern.InOptionalOut) {
                 // special case where the result is InOptionalOut and with no OUT response
                 // so we should return null to indicate this fact
@@ -197,7 +195,7 @@ public final class ExchangeHelper {
                 // so lets assume the last IN is the OUT
                 if (result.getPattern().isOutCapable()) {
                     // only set OUT if its OUT capable
-                    result.getOut(true).copyFrom(source.getIn());
+                    result.getOut().copyFrom(source.getIn());
                 } else {
                     // if not replace IN instead to keep the MEP
                     result.getIn().copyFrom(source.getIn());
@@ -227,20 +225,17 @@ public final class ExchangeHelper {
         }
         
         // copy in message
-        Message m = source.getIn();
-        result.getIn().copyFrom(m);
+        result.getIn().copyFrom(source.getIn());
     
         // copy out message
-        m = source.getOut(false);
-        if (m != null) {
+        if (source.hasOut()) {
             // exchange pattern sensitive
-            getResultMessage(result).copyFrom(m);
+            getResultMessage(result).copyFrom(source.getOut());
         }
         
         // copy fault message
-        m = source.getFault(false);
-        if (m != null) {
-            result.getFault().copyFrom(m);
+        if (source.hasFault()) {
+            result.getFault().copyFrom(source.getFault());
         }
         
         // copy exception
@@ -325,7 +320,7 @@ public final class ExchangeHelper {
         map.put("headers", in.getHeaders());
         map.put("body", in.getBody());
         if (isOutCapable(exchange)) {
-            Message out = exchange.getOut(true);
+            Message out = exchange.getOut();
             map.put("out", out);
             map.put("response", out);
         }

@@ -76,7 +76,7 @@ public class BeanExpression implements Expression, Predicate {
                 newExchange.setPattern(ExchangePattern.InOut);
             }
             processor.process(newExchange);
-            return newExchange.getOut(true).getBody();
+            return newExchange.getOut().getBody();
         } catch (Exception e) {
             throw new RuntimeBeanExpressionException(exchange, beanName, method, e);
         }

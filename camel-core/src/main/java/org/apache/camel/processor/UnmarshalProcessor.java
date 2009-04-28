@@ -45,7 +45,7 @@ public class UnmarshalProcessor implements Processor {
         try {
             // lets setup the out message before we invoke the dataFormat
             // so that it can mutate it if necessary
-            Message out = exchange.getOut(true);
+            Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
 
             Object result = dataFormat.unmarshal(exchange, stream);

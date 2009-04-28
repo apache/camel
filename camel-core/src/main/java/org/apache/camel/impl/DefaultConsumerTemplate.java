@@ -152,8 +152,7 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
             }
 
             // okay no fault then return the response
-            boolean hasOut = result.getOut(false) != null;
-            if (hasOut) {
+            if (result.hasOut()) {
                 // use OUT as the response
                 answer = result.getOut().getBody();
             } else {
@@ -165,11 +164,13 @@ public class DefaultConsumerTemplate implements ConsumerTemplate {
     }
 
     protected boolean hasFaultMessage(Exchange result) {
-        Message faultMessage = result.getFault(false);
-        if (faultMessage != null) {
-            Object faultBody = faultMessage.getBody();
-            if (faultBody != null) {
-                return true;
+        if (result.hasFault()) {
+            Message faultMessage = result.getFault();
+            if (faultMessage != null) {
+                Object faultBody = faultMessage.getBody();
+                if (faultBody != null) {
+                    return true;
+                }
             }
         }
         return false;

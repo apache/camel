@@ -35,7 +35,7 @@ public class PipelineTest extends ContextTestSupport {
      */
     private final class InToOut implements Processor {
         public void process(Exchange exchange) throws Exception {            
-            exchange.getOut(true).copyFrom(exchange.getIn());
+            exchange.getOut().copyFrom(exchange.getIn());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
                 counter = 0;
@@ -49,7 +49,7 @@ public class PipelineTest extends ContextTestSupport {
      */
     private final class InToFault implements Processor {
         public void process(Exchange exchange) throws Exception {
-            exchange.getFault(true).setBody(exchange.getIn().getBody());
+            exchange.getFault().setBody(exchange.getIn().getBody());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
                 counter = 0;

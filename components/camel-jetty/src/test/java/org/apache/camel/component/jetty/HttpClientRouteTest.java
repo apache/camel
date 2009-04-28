@@ -70,7 +70,7 @@ public class HttpClientRouteTest extends ContextTestSupport {
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         ByteArrayInputStream bis = new ByteArrayInputStream("<b>Hello World</b>".getBytes());                        
-                        exchange.getOut(true).setBody(bis);
+                        exchange.getOut().setBody(bis);
                     }
                 };
                 from("jetty:http://localhost:9080/hello").process(proc);

@@ -55,9 +55,8 @@ public class DefaultHttpBinding implements HttpBinding {
 
     public void writeResponse(HttpExchange exchange, HttpServletResponse response) throws IOException {
         if (exchange.isFailed()) {
-            Message fault = exchange.getFault(false);
-            if (fault != null) {
-                doWriteFaultResponse(fault, response, exchange);
+            if (exchange.hasFault()) {
+                doWriteFaultResponse(exchange.getFault(), response, exchange);
             } else {
                 doWriteExceptionResponse(exchange.getException(), response);
             }

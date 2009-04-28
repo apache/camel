@@ -143,9 +143,8 @@ public class DebugInterceptor extends DelegateProcessor {
         answer.getIn().copyFrom(previousExchange.getIn());
 
         // only copy the out if its defined
-        Message previousOut = previousExchange.getOut(false);
-        if (previousOut != null) {
-            answer.getOut().copyFrom(previousOut);
+        if (previousExchange.hasOut()) {
+            answer.getOut().copyFrom(previousExchange.getOut());
         }
         return answer;
     }

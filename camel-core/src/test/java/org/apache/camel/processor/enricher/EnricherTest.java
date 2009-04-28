@@ -59,8 +59,8 @@ public class EnricherTest extends ContextTestSupport {
         });
         mock.assertIsSatisfied();
         assertEquals("test", exchange.getIn().getBody());
-        assertEquals("failed", exchange.getFault(false).getBody());
-        assertNull(exchange.getOut(false));
+        assertEquals("failed", exchange.getFault().getBody());
+        assertFalse(exchange.hasOut());
         assertNull(exchange.getException());
     }
 
@@ -74,8 +74,8 @@ public class EnricherTest extends ContextTestSupport {
         mock.assertIsSatisfied();
         assertEquals("test", exchange.getIn().getBody());
         assertEquals("failed", exchange.getException().getMessage());
-        assertNull(exchange.getFault(false));
-        assertNull(exchange.getOut(false));
+        assertFalse(exchange.hasFault());
+        assertFalse(exchange.hasOut());
     }
 
     // -------------------------------------------------------------
@@ -98,7 +98,7 @@ public class EnricherTest extends ContextTestSupport {
         assertEquals("test", exchange.getIn().getBody());
         assertEquals("bar", exchange.getOut().getHeader("foo"));
         assertEquals("test:blah", exchange.getOut().getBody());
-        assertNull(exchange.getFault(false));
+        assertFalse(exchange.hasFault());
         assertNull(exchange.getException());
     }
 
@@ -109,8 +109,8 @@ public class EnricherTest extends ContextTestSupport {
             }
         });
         assertEquals("test", exchange.getIn().getBody());
-        assertEquals("failed", exchange.getFault(false).getBody());
-        assertNull(exchange.getOut(false));
+        assertEquals("failed", exchange.getFault().getBody());
+        assertFalse(exchange.hasOut());
         assertNull(exchange.getException());
     }
 
@@ -122,8 +122,8 @@ public class EnricherTest extends ContextTestSupport {
         });
         assertEquals("test", exchange.getIn().getBody());
         assertEquals("failed", exchange.getException().getMessage());
-        assertNull(exchange.getFault(false));
-        assertNull(exchange.getOut(false));
+        assertFalse(exchange.hasFault());
+        assertFalse(exchange.hasOut());
     }
 
     protected RouteBuilder createRouteBuilder() {

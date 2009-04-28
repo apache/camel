@@ -67,7 +67,7 @@ public class StringTemplateEndpoint extends ResourceBasedEndpoint {
         template.write(new AutoIndentWriter(buffer));
 
         // now lets output the results to the exchange
-        Message out = exchange.getOut(true);
+        Message out = exchange.getOut();
         out.setBody(buffer.toString());
         out.setHeader(StringTemplateConstants.STRINGTEMPLATE_RESOURCE, getResource());
     }

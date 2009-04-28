@@ -46,7 +46,7 @@ public class MarshalProcessor implements Processor {
 
         // lets setup the out message before we invoke the dataFormat
         // so that it can mutate it if necessary
-        Message out = exchange.getOut(true);
+        Message out = exchange.getOut();
         out.copyFrom(in);
 
         dataFormat.marshal(exchange, body, buffer);

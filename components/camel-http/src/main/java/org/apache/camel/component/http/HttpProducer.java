@@ -94,7 +94,7 @@ public class HttpProducer extends DefaultProducer {
     }
 
     protected void populateResponse(Exchange exchange, HttpMethod method, Message in, HeaderFilterStrategy strategy, int responseCode) throws IOException {
-        Message answer = exchange.getOut(true);
+        Message answer = exchange.getOut();
 
         answer.setHeaders(in.getHeaders());
         answer.setHeader(HttpConstants.HTTP_RESPONSE_CODE, responseCode);
@@ -151,10 +151,9 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected static InputStream extractResponseBody(HttpMethod method, Exchange exchange) throws IOException {
-        CachedOutputStream cos = null;
         InputStream is = null;
         try {
-            cos = new CachedOutputStream(exchange.getContext().getProperties());
+            CachedOutputStream cos = new CachedOutputStream(exchange.getContext().getProperties());
             is = GZIPHelper.getInputStream(method);            
             // in case of no response stream
             if (is == null) {

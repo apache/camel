@@ -78,9 +78,8 @@ public class HandleFaultInterceptor extends DelegateProcessor implements AsyncPr
      */
     protected void handleFault(Exchange exchange) {
         // Take the fault message out before we keep on going
-        Message faultMessage = exchange.getFault(false);
-        if (faultMessage != null) {
-            final Object faultBody = faultMessage.getBody();
+        if (exchange.hasFault()) {
+            final Object faultBody = exchange.getFault().getBody();
             if (faultBody != null && exchange.getException() == null) {
                 // remove fault as we are converting it to an exception
                 exchange.removeFault();

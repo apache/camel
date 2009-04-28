@@ -104,13 +104,12 @@ public class RoutingSlip extends ServiceSupport implements Processor {
      * message.
      */
     private Message getResultMessage(Exchange exchange) {
-        Message message = exchange.getOut(false);
-        // if this endpoint had no out (like a mock endpoint)
-        // just take the in
-        if (message == null) {
-            message = exchange.getIn();
+        if (exchange.hasOut()) {
+            return exchange.getOut();
+        } else {
+            // if this endpoint had no out (like a mock endpoint) just take the in
+            return exchange.getIn();
         }
-        return message;
     }
 
     /**
@@ -131,9 +130,8 @@ public class RoutingSlip extends ServiceSupport implements Processor {
     private void copyOutToIn(Exchange result, Exchange source) {
         result.setException(source.getException());
 
-        Message fault = source.getFault(false);
-        if (fault != null) {
-            result.getFault(true).copyFrom(fault);
+        if (source.hasFault()) {
+            result.getFault().copyFrom(source.getFault());
         }
 
         result.setIn(getResultMessage(source));

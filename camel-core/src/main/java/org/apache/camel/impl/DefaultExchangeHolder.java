@@ -70,11 +70,11 @@ public class DefaultExchangeHolder implements Serializable {
 
         payload.inBody = checkSerializableObject("in body", exchange, exchange.getIn().getBody());
         payload.inHeaders.putAll(checkMapSerializableObjects("in headers", exchange, exchange.getIn().getHeaders()));
-        if (exchange.getOut(false) != null) {
+        if (exchange.hasOut()) {
             payload.outBody = checkSerializableObject("out body", exchange, exchange.getOut().getBody());
             payload.outHeaders.putAll(checkMapSerializableObjects("out headers", exchange, exchange.getOut().getHeaders()));
         }
-        if (exchange.getFault(false) != null) {
+        if (exchange.hasFault()) {
             payload.faultBody = checkSerializableObject("fault body", exchange, exchange.getFault().getBody());
             payload.faultHeaders.putAll(checkMapSerializableObjects("fault headers", exchange, exchange.getFault().getHeaders()));
         }

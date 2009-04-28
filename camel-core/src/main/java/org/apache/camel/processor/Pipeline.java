@@ -69,7 +69,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
                               + " exception: " + nextExchange.getException() + " fault: "
-                              + nextExchange.getFault(false)
+                              + (nextExchange.hasFault() ? nextExchange.getFault() : null)
                               + (exceptionHandled ? " handled by the error handler" : ""));
                 }
                 break;
@@ -131,7 +131,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
                                       + " exception: " + nextExchange.getException() + " fault: "
-                                      + nextExchange.getFault(false)
+                                      + (nextExchange.hasFault() ? nextExchange.getFault() : null)
                                       + (exceptionHandled ? " handled by the error handler" : ""));
                         }
                         break;
@@ -177,10 +177,9 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
         // now lets set the input of the next exchange to the output of the
         // previous message if it is not null
-        Message previousOut = previousExchange.getOut(false);
         Message in = answer.getIn();
-        if (previousOut != null) {
-            in.copyFrom(previousOut);
+        if (previousExchange.hasOut()) {
+            in.copyFrom(previousExchange.getOut());
         } else {
             in.copyFrom(previousExchange.getIn());
         }

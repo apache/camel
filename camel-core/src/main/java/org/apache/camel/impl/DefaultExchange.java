@@ -102,13 +102,11 @@ public class DefaultExchange implements Exchange {
 
         // this can cause strangeness if we copy, say, a FileMessage onto an FtpExchange with overloaded getExchange() methods etc.
         safeCopy(getIn(), exchange.getIn());
-        Message copyOut = exchange.getOut(false);
-        if (copyOut != null) {
-            safeCopy(getOut(true), copyOut);
+        if (exchange.hasOut()) {
+            safeCopy(getOut(), exchange.getOut());
         }
-        Message copyFault = exchange.getFault(false);
-        if (copyFault != null) {
-            safeCopy(getFault(true), copyFault);
+        if (exchange.hasFault()) {
+            safeCopy(getFault(), exchange.getFault());
         }
         setException(exchange.getException());
 
@@ -216,7 +214,15 @@ public class DefaultExchange implements Exchange {
     }
 
     public Message getOut() {
-        return getOut(true);
+        if (out == null) {
+            out = createOutMessage();
+            configureMessage(out);
+        }
+        return out;
+    }
+
+    public boolean hasOut() {
+        return out != null;
     }
 
     public Message getOut(boolean lazyCreate) {
@@ -273,7 +279,15 @@ public class DefaultExchange implements Exchange {
     }
 
     public Message getFault() {
-        return getFault(true);
+        if (fault == null) {
+            fault = createFaultMessage();
+            configureMessage(fault);
+        }
+        return fault;
+    }
+
+    public boolean hasFault() {
+        return fault != null;
     }
 
     public Message getFault(boolean lazyCreate) {
@@ -305,9 +319,8 @@ public class DefaultExchange implements Exchange {
     }
 
     public boolean isFailed() {
-        Message faultMessage = getFault(false);
-        if (faultMessage != null) {
-            Object faultBody = faultMessage.getBody();
+        if (hasFault()) {
+            Object faultBody = getFault().getBody();
             if (faultBody != null) {
                 return true;
             }

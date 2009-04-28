@@ -70,9 +70,9 @@ public class JettyHttpGetWithParamTest extends ContextTestSupport {
             Assert.assertEquals("uno", http.getRequest().getParameter("one"));
             Assert.assertEquals("dos", http.getRequest().getParameter("two"));
 
-            exchange.getOut(true).setBody("Bye World");
-            exchange.getOut(true).setHeader("one", "einz");
-            exchange.getOut(true).setHeader("two", "twei");
+            exchange.getOut().setBody("Bye World");
+            exchange.getOut().setHeader("one", "einz");
+            exchange.getOut().setHeader("two", "twei");
         }
     }
 

@@ -110,7 +110,7 @@ public class InterceptEndpoint implements Endpoint {
                 }
                 detour.process(exchange);
                 // copy OUT to IN
-                if (exchange.getOut(false) != null) {
+                if (exchange.hasOut()) {
                     // replace OUT with IN as detour changed something
                     exchange.setIn(exchange.getOut());
                     exchange.setOut(null);

@@ -536,7 +536,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         context.setAttribute("context", exchange.getContext(), scope);
         context.setAttribute("exchange", exchange, scope);
         context.setAttribute("request", exchange.getIn(), scope);
-        context.setAttribute("response", exchange.getOut(false), scope);
+        if (exchange.hasOut()) {
+            context.setAttribute("response", exchange.getOut(), scope);
+        }
     }
 
     protected InputStreamReader createScriptReader() throws IOException {

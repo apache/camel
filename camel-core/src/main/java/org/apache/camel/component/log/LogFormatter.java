@@ -72,9 +72,9 @@ public class LogFormatter implements ExchangeFormatter {
             sb.append(", Body:").append(getBodyAsString(in));
         }
 
-        Message out = exchange.getOut(false);
         if (showAll || showOut) {
-            if (out != null) {
+            if (exchange.hasOut()) {
+                Message out = exchange.getOut();
                 if (showAll || showHeaders) {
                     if (multiline) {
                         sb.append('\n');

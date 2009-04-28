@@ -63,6 +63,10 @@ public class ExchangeResource {
         return exchange.getFault();
     }
 
+    public boolean hasFault() {
+        return exchange.hasFault();
+    }
+
     public Endpoint getFromEndpoint() {
         return exchange.getFromEndpoint();
     }
@@ -72,7 +76,11 @@ public class ExchangeResource {
     }
 
     public Message getOut() {
-        return exchange.getOut(false);
+        return exchange.getOut();
+    }
+
+    public boolean hasOut() {
+        return exchange.hasOut();
     }
 
     public Map<String, Object> getProperties() {

@@ -60,7 +60,7 @@ public class JmsSimpleRequestCustomReplyToTest extends ContextTestSupport {
 
         result.assertIsSatisfied();
         assertNotNull(out);
-        assertNull(out.getOut(false));
+        assertFalse(out.hasOut());
 
         // get the reply from the special reply queue
         Endpoint end = context.getEndpoint(componentName + ":" + myReplyTo);

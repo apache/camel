@@ -262,7 +262,7 @@ public class JmsProducer extends DefaultProducer {
                     // correlation
                     if (correlationId != null) {
                         message.setJMSCorrelationID(correlationId);
-                        exchange.getOut(false).setHeader("JMSCorrelationID", correlationId);
+                        exchange.getOut().setHeader("JMSCorrelationID", correlationId);
                     }
                 } else {
                     // no response, so lets set a timed out exception
@@ -311,8 +311,8 @@ public class JmsProducer extends DefaultProducer {
         }
         try {
             JmsExchange jmsExchange = JmsExchange.class.cast(exchange);
-            JmsMessage out = jmsExchange.getOut(false);
-            if (out != null) {
+            if (jmsExchange.hasOut()) {
+                JmsMessage out = jmsExchange.getOut();
                 out.setMessageId(out.getJmsMessage().getJMSMessageID());
             }
         } catch (JMSException e) {

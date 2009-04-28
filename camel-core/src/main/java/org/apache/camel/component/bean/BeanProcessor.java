@@ -115,7 +115,7 @@ public class BeanProcessor extends ServiceSupport implements Processor {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Setting bean invocation result on the OUT message: " + value);
                     }
-                    exchange.getOut(true).setBody(value);
+                    exchange.getOut().setBody(value);
                     // propagate headers
                     exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
                 } else {

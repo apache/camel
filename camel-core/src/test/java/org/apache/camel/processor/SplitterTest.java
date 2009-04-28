@@ -84,7 +84,7 @@ public class SplitterTest extends ContextTestSupport {
             }
         });
 
-        assertNull(result.getOut(false));
+        assertFalse("Should not have out", result.hasOut());
     }
 
     public void testSendingAMessageUsingMulticastReceivesItsOwnExchangeParallel() throws Exception {

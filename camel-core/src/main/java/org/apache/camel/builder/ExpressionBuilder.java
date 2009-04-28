@@ -100,10 +100,11 @@ public final class ExpressionBuilder {
     public static Expression outHeaderExpression(final String headerName) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Message out = exchange.getOut(false);
-                if (out == null) {
+                if (!exchange.hasOut()) {
                     return null;
                 }
+
+                Message out = exchange.getOut();
                 Object header = out.getHeader(headerName);
                 if (header == null) {
                     // lets try the exchange header
@@ -380,11 +381,11 @@ public final class ExpressionBuilder {
     public static Expression outBodyExpression() {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Message out = exchange.getOut(false);
-                if (out == null) {
+                if (exchange.hasOut()) {
+                    return exchange.getOut().getBody();
+                } else {
                     return null;
                 }
-                return out.getBody();
             }
 
             @Override
@@ -401,11 +402,11 @@ public final class ExpressionBuilder {
     public static <T> Expression outBodyExpression(final Class<T> type) {
         return new ExpressionAdapter() {
             public Object evaluate(Exchange exchange) {
-                Message out = exchange.getOut(false);
-                if (out == null) {
+                if (exchange.hasOut()) {
+                    return exchange.getOut().getBody(type);
+                } else {
                     return null;
                 }
-                return out.getBody(type);
             }
 
             @Override

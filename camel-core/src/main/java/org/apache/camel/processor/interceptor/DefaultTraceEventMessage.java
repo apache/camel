@@ -56,9 +56,6 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
     public DefaultTraceEventMessage(final Date timestamp, final ProcessorDefinition toNode, final Exchange exchange) {
         Message in = exchange.getIn();
 
-        // false because we don't want to introduce side effects
-        Message out = exchange.getOut(false);
-
         // need to use defensive copies to avoid Exchange altering after the point of interception
         this.timestamp = timestamp;
         this.fromEndpointUri = exchange.getFromEndpoint() != null ? exchange.getFromEndpoint().getEndpointUri() : null;
@@ -71,7 +68,8 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         this.headers = in.getHeaders().isEmpty() ? null : in.getHeaders().toString();
         this.body = MessageHelper.extractBodyAsString(in);
         this.bodyType = MessageHelper.getBodyTypeName(in);
-        if (out != null) {
+        if (exchange.hasOut()) {
+            Message out = exchange.getOut();
             this.outHeaders = out.getHeaders().isEmpty() ? null : out.getHeaders().toString();
             this.outBody = MessageHelper.extractBodyAsString(out);
             this.outBodyType = MessageHelper.getBodyTypeName(out);

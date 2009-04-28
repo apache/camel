@@ -47,7 +47,7 @@ public class HttpsRouteSetupWithSystemPropsTest extends HttpsRouteTest {
 
                 Processor proc = new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut(true).setBody("<b>Hello World</b>");
+                        exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:https://localhost:9080/hello").process(proc);

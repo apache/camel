@@ -489,7 +489,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             // okay no fault then return the response according to the pattern
             // try to honor pattern if provided
             boolean notOut = pattern != null && !pattern.isOutCapable();
-            boolean hasOut = result.getOut(false) != null;
+            boolean hasOut = result.hasOut();
             if (hasOut && !notOut) {
                 // we have a response in out and the pattern is out capable
                 answer = result.getOut().getBody();
@@ -506,9 +506,8 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     }
 
     protected boolean hasFaultMessage(Exchange result) {
-        Message faultMessage = result.getFault(false);
-        if (faultMessage != null) {
-            Object faultBody = faultMessage.getBody();
+        if (result.hasFault()) {
+            Object faultBody = result.getFault().getBody();
             if (faultBody != null) {
                 return true;
             }

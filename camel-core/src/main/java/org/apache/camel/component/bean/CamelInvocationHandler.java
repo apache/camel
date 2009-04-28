@@ -59,7 +59,7 @@ public class CamelInvocationHandler implements InvocationHandler {
             throw new InvocationTargetException(fault);
         }
         if (pattern.isOutCapable()) {
-            return exchange.getOut(true).getBody();
+            return exchange.getOut().getBody();
         } else {
             return null;
         }

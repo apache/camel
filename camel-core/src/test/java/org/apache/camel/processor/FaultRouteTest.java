@@ -62,7 +62,7 @@ public class FaultRouteTest extends ContextTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        assertNull("Fault should be removed", response.getFault(false));
+        assertFalse("Fault should be removed", response.hasFault());
         assertNotNull("Should have exception", response.getException());
         assertEquals("fault", response.getException().getMessage());
     }

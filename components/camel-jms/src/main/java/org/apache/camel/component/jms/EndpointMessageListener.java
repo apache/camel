@@ -97,9 +97,9 @@ public class EndpointMessageListener implements MessageListener {
                     body = exchange.getFault();
                     sendReply = true;
                 }
-            } else if (exchange.getOut(false) != null) {
+            } else if (exchange.hasOut()) {
                 // process OK so get the reply
-                body = exchange.getOut(false);
+                body = exchange.getOut();
                 sendReply = true;
             }
 

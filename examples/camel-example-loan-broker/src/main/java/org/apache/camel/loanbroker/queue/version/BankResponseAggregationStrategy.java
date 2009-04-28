@@ -35,28 +35,28 @@ public class BankResponseAggregationStrategy implements AggregationStrategy {
     // Here we put the bank response together
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         LOG.debug("Get the exchange to aggregate, older: " + oldExchange + " newer:" + newExchange);
-        Message oldMessage = null;
-        Message newMessage = null;
+
+        Message oldMessage;
+        Message newMessage;
         if (aggregatingOutMessage) {
-            oldMessage = oldExchange.getOut(false);
-            newMessage = newExchange.getOut(false);
+            oldMessage = oldExchange.getOut();
+            newMessage = newExchange.getOut();
         } else {
             oldMessage = oldExchange.getIn();
             newMessage = newExchange.getIn();
         }
         Double oldRate = oldMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
         Double newRate = newMessage.getHeader(Constants.PROPERTY_RATE, Double.class);
-        Exchange result = null;
 
+        Exchange result;
         if (newRate >= oldRate) {
             result = oldExchange;
         } else {
             result = newExchange;
         }
+
         LOG.debug("Get the lower rate exchange " + result);
-
         return result;
-
     }
 
 }

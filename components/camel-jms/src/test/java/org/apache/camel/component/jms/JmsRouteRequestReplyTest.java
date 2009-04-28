@@ -38,6 +38,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentClientAckn
  * @version $Revision$
  */
 public class JmsRouteRequestReplyTest extends ContextTestSupport {
+
+    // TODO: Split into multiple files so it doesnt take 3 min to run
+
     protected static final String REPLY_TO_DESTINATION_SELECTOR_NAME = "camelProducer";
     protected static String componentName = "amq";
     protected static String componentName1 = "amq1";
@@ -76,7 +79,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             from(endpoingUriA).process(new Processor() {
                 public void process(Exchange e) {
                     String request = e.getIn().getBody(String.class);
-                    e.getOut(true).setBody(expectedReply + request.substring(request.indexOf('-')));
+                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
                 }
             });
         }
@@ -88,7 +91,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             from(endpointUriB).process(new Processor() {
                 public void process(Exchange e) {
                     String request = e.getIn().getBody(String.class);
-                    e.getOut(true).setBody(expectedReply + request.substring(request.indexOf('-')));
+                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
                 }
             });
         }
@@ -100,7 +103,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             from(endpointUriB).process(new Processor() {
                 public void process(Exchange e) {
                     Message in = e.getIn();
-                    Message out = e.getOut(true);
+                    Message out = e.getOut();
                     String selectorValue = in.getHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, String.class);
                     String request = in.getBody(String.class);
                     out.setHeader(REPLY_TO_DESTINATION_SELECTOR_NAME, selectorValue);
@@ -116,7 +119,7 @@ public class JmsRouteRequestReplyTest extends ContextTestSupport {
             from(endpointUriB1).process(new Processor() {
                 public void process(Exchange e) {
                     String request = e.getIn().getBody(String.class);
-                    e.getOut(true).setBody(expectedReply + request.substring(request.indexOf('-')));
+                    e.getOut().setBody(expectedReply + request.substring(request.indexOf('-')));
                 }
             });
         }

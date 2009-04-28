@@ -362,11 +362,8 @@ public class XPathBuilder implements Expression, Predicate, NamespaceAware {
         if (outBodyFunction == null) {
             outBodyFunction = new XPathFunction() {
                 public Object evaluate(List list) throws XPathFunctionException {
-                    if (exchange != null) {
-                        Message out = exchange.getOut(false);
-                        if (out != null) {
-                            return out.getBody();
-                        }
+                    if (exchange != null && exchange.hasOut()) {
+                        return exchange.getOut().getBody();
                     }
                     return null;
                 }

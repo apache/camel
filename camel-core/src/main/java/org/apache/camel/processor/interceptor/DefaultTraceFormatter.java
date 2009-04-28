@@ -46,7 +46,10 @@ public class DefaultTraceFormatter implements TraceFormatter {
 
     public Object format(final TraceInterceptor interceptor, final ProcessorDefinition node, final Exchange exchange) {
         Message in = exchange.getIn();
-        Message out = exchange.getOut(false);
+        Message out = null;
+        if (exchange.hasOut()) {
+            out = exchange.getOut();
+        }
 
         StringBuilder sb = new StringBuilder();
         sb.append(extractBreadCrumb(interceptor, node, exchange));
@@ -285,7 +288,7 @@ public class DefaultTraceFormatter implements TraceFormatter {
         // assemble result with and without the to/from
         if (showNode) {
             result = id.trim() + " >>> " + from + " --> " + to.trim();
-            if (interceptor.shouldTraceOutExchanges() && exchange.getOut(false) != null) {
+            if (interceptor.shouldTraceOutExchanges() && exchange.hasOut()) {
                 result += " (OUT) ";
             }
         } else {

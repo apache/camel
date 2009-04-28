@@ -50,11 +50,10 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
 
             // if the result of the polled exchange has output we should create a new exchange and
             // use the output as input to the next processor
-            Message out = exchange.getOut(false);
-            if (out != null) {
+            if (exchange.hasOut()) {
                 // lets create a new exchange
                 Exchange newExchange = getEndpoint().createExchange();
-                newExchange.getIn().copyFrom(out);
+                newExchange.getIn().copyFrom(exchange.getOut());
                 exchange = newExchange;
             }
             getProcessor().process(exchange);

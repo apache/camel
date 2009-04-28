@@ -60,7 +60,7 @@ public class JettyRouteTest extends ContextTestSupport {
             assertEquals("bookid=123", body);
 
             // send a html response
-            exchange.getOut(true).setBody("<html><body>Book 123 is Camel in Action</body></html>");
+            exchange.getOut().setBody("<html><body>Book 123 is Camel in Action</body></html>");
         }
     }
     // END SNIPPET: e2

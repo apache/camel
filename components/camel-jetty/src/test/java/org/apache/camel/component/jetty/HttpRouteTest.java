@@ -93,7 +93,7 @@ public class HttpRouteTest extends ContextTestSupport {
                         } catch (Exception e) {
                             exchange.getFault().setBody(e);
                         }
-                        exchange.getOut(true).setBody("<b>Hello World</b>");
+                        exchange.getOut().setBody("<b>Hello World</b>");
                     }
                 };
                 from("jetty:http://localhost:9080/hello?sessionSupport=true").process(proc);

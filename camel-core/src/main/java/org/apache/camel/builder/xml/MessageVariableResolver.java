@@ -88,8 +88,8 @@ public class MessageVariableResolver implements XPathVariableResolver {
                 answer = in.getBody();
             }
         } else if (uri.equals(OUT_NAMESPACE)) {
-            Message out = exchange.getOut(false);
-            if (out != null) {
+            if (exchange.hasOut()) {
+                Message out = exchange.getOut();
                 answer = out.getHeader(localPart);
                 if (answer == null && localPart.equals("body")) {
                     answer = out.getBody();

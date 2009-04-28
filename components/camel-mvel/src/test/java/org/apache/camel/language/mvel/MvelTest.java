@@ -30,13 +30,13 @@ public class MvelTest extends LanguageTestSupport {
     }
 
     public void testGetOutFalseKeepsNullOutMessage() throws Exception {
-        assertExpression("exchange.getOut(false)", null);
-        assertNull(exchange.getOut(false));
+        assertExpression("exchange.hasOut()", false);
+        assertFalse(exchange.hasOut());
     }
 
     public void testResponseCreatesOutMessage() throws Exception {
         assertExpression("response.body", null);
-        assertNotNull(exchange.getOut(false));
+        assertTrue(exchange.hasOut());
     }
 
     protected String getLanguageName() {
