@@ -205,25 +205,6 @@ public final class IOConverter {
         if (reader == null) {
             return null;
         }
-        try {
-            CollectionStringBuffer builder = new CollectionStringBuffer("\n");
-            while (true) {
-                String line = reader.readLine();
-                if (line == null) {
-                    return builder.toString();
-                }
-                builder.append(line);
-            }
-        } finally {
-            ObjectHelper.close(reader, "reader", LOG);
-        }
-    }
-
-    @Converter
-    public static byte[] toByteArray(BufferedReader reader) throws IOException {
-        if (reader == null) {
-            return null;
-        }
 
         StringBuilder sb = new StringBuilder(1024);
         char[] buf = new char[1024];
@@ -236,7 +217,13 @@ public final class IOConverter {
             ObjectHelper.close(reader, "reader", LOG);
         }
 
-        return sb.toString().getBytes();
+        return sb.toString();
+    }
+
+    @Converter
+    public static byte[] toByteArray(BufferedReader reader) throws IOException {
+        String s = toString(reader);
+        return s != null ? s.getBytes() : null;  
     }
 
     @Converter
