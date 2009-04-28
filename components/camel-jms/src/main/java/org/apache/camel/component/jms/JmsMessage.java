@@ -18,8 +18,6 @@ package org.apache.camel.component.jms;
 
 import java.io.File;
 import java.util.Map;
-import java.util.Enumeration;
-import java.util.LinkedHashMap;
 
 import javax.jms.Destination;
 import javax.jms.JMSException;
@@ -141,8 +139,8 @@ public class JmsMessage extends DefaultMessage {
         if (jmsMessage != null && !name.startsWith("JMS")) {
             try {
                 // also remove header from the JMS message
-                 if (jmsMessage.propertyExists(name)) {
-                     answer = JmsMessageHelper.removeJmsProperty(jmsMessage, name);
+                if (jmsMessage.propertyExists(name)) {
+                    answer = JmsMessageHelper.removeJmsProperty(jmsMessage, name);
                 }
             } catch (JMSException e) {
                 throw new RuntimeCamelException(name, e);
