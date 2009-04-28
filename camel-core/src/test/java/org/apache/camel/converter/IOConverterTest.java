@@ -36,7 +36,9 @@ public class IOConverterTest extends TestCase {
         byte[] data = IOConverter.toBytes(new FileInputStream(file));
         assertEquals("get the wrong byte size", file.length(), data.length);
         assertEquals('#', (char) data[0]);
-        assertEquals('!', (char) data[data.length - 1]);
+        assertEquals('!', (char) data[data.length - 2]);
+        // should end with a new line
+        assertEquals('\n', (char) data[data.length - 1]);
     }
 
     public void testCopy() throws Exception {
