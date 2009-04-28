@@ -437,7 +437,7 @@ public class RouteBuilderTest extends TestSupport {
             assertEquals("messageIdExpression", "header(myMessageId)", idempotentConsumer.getMessageIdExpression().toString());
 
             assertIsInstanceOf(MemoryIdempotentRepository.class, idempotentConsumer.getIdempotentRepository());
-            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getNextProcessor()).getNextProcessor());
+            SendProcessor sendProcessor = assertIsInstanceOf(SendProcessor.class, unwrapChannel(idempotentConsumer.getProcessor()).getNextProcessor());
             assertEquals("Endpoint URI", "seda:b", sendProcessor.getDestination().getEndpointUri());
         }
     }

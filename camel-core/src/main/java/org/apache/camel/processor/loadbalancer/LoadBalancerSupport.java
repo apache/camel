@@ -16,9 +16,11 @@
  */
 package org.apache.camel.processor.loadbalancer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
@@ -28,8 +30,9 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer {
-    private List<Processor> processors = new CopyOnWriteArrayList<Processor>();
+public abstract class LoadBalancerSupport extends ServiceSupport implements LoadBalancer, Navigate<Processor> {
+
+    private final List<Processor> processors = new CopyOnWriteArrayList<Processor>();
 
     public void addProcessor(Processor processor) {
         processors.add(processor);
@@ -42,7 +45,18 @@ public abstract class LoadBalancerSupport extends ServiceSupport implements Load
     public List<Processor> getProcessors() {
         return processors;
     }
-    
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        return new ArrayList<Processor>(processors);
+    }
+
+    public boolean hasNext() {
+        return processors.size() > 0;
+    }
+
     protected void doStart() throws Exception {
         ServiceHelper.startServices(processors);        
     }

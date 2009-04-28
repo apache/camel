@@ -16,21 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.List;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.EventDrivenConsumerRoute;
-import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ProcessorDefinitionHelper;
 
 /**
  * Unit test based on user forum problem - CAMEL-1463.
@@ -39,116 +29,13 @@ import org.apache.camel.util.ProcessorDefinitionHelper;
  */
 public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
 
-    private static boolean jmx = true;
-
-    @Override
-    protected void setUp() throws Exception {
-        // we must enable/disable JMX in this setUp
-        if (jmx) {
-            enableJMX();
-            jmx = false;
-        } else {
-            disableJMX();
-        }
-        super.setUp();
-    }
-
     public void testChoiceNoErrorHandler() throws Exception {
-        doTest();
-    }
-
-    public void testChoiceNoErrorHandlerJMXDisabled() throws Exception {
-        doTest();
-    }
-
-    private void doTest() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", "bar");
 
         assertMockEndpointsSatisfied();
-
-        // there should be no error handlers and no stream cache
-        for (RouteDefinition route : context.getRouteDefinitions()) {
-            ErrorHandler error = ProcessorDefinitionHelper.findFirstTypeInOutputs(route.getOutputs(), DeadLetterChannel.class);
-            assertNull("There should be no error handler", error);
-        }
-
-        // there should be no error handlers and no stream cache
-        for (Route route : context.getRoutes()) {
-            if (route instanceof EventDrivenConsumerRoute) {
-                EventDrivenConsumerRoute consumer = (EventDrivenConsumerRoute) route;
-
-                StreamCachingInterceptor cache = findProceesorInRoute(consumer.getProcessor(), StreamCachingInterceptor.class);
-                assertNotNull("There should be stream cache found: " + cache, cache);
-
-                ErrorHandler error = findProceesorInRoute(consumer.getProcessor(), ErrorHandler.class);
-                assertNull("There should be no error handler found: " + error, error);
-            }
-        }
-    }
-
-    private <T> T findProceesorInRoute(Processor route, Class<T> type) {
-        if (route == null) {
-            return null;
-        }
-        
-        if (type.isInstance(route)) {
-            return type.cast(route);
-        }
-
-        try {
-            Method m = route.getClass().getMethod("getProcessor");
-
-            Processor child = (Processor) ObjectHelper.invokeMethod(m, route);
-            // look its children
-            return findProceesorInRoute(child, type);
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-
-        try {
-            Method m = route.getClass().getMethod("getProcessors");
-
-            // look its children
-            Collection<Processor> children = (Collection<Processor>) ObjectHelper.invokeMethod(m, route);
-            for (Processor child : children) {
-                T out = findProceesorInRoute(child, type);
-                if (out != null) {
-                    return out;
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-
-        try {
-            Method m = route.getClass().getMethod("getFilters");
-
-            // look its children
-            List<FilterProcessor> children = (List<FilterProcessor>) ObjectHelper.invokeMethod(m, route);
-            for (Processor child : children) {
-                T out = findProceesorInRoute(child, type);
-                if (out != null) {
-                    return out;
-                }
-            }
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-
-        try {
-            Method m = route.getClass().getMethod("getOtherwise");
-
-            Processor child = (Processor) ObjectHelper.invokeMethod(m, route);
-            // look its children
-            return findProceesorInRoute(child, type);
-        } catch (NoSuchMethodException e) {
-            // ignore
-        }
-
-        return null;
     }
 
     @Override

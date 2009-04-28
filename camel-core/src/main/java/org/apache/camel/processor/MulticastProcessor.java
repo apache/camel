@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -38,7 +39,6 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.concurrent.AtomicExchange;
 import org.apache.camel.util.concurrent.CountingLatch;
-
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -48,7 +48,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @see Pipeline
  * @version $Revision$
  */
-public class MulticastProcessor extends ServiceSupport implements Processor {
+public class MulticastProcessor extends ServiceSupport implements Processor, Navigate {
+
     static class ProcessorExchangePair {
         private final Processor processor;
         private final Exchange exchange;
@@ -285,5 +286,16 @@ public class MulticastProcessor extends ServiceSupport implements Processor {
 
     public boolean isParallelProcessing() {
         return isParallelProcessing;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        return new ArrayList<Processor>(processors);
+    }
+
+    public boolean hasNext() {
+        return processors != null && !processors.isEmpty();
     }
 }

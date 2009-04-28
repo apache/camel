@@ -29,27 +29,29 @@ import org.apache.camel.spi.RouteContext;
  *
  * @version $Revision$
  */
-public interface Channel extends Processor {
+public interface Channel extends Processor, Navigate<Processor> {
 
-    // TODO: This interface method names are not 100% settled yet
-    // some methods should many be moved to DefaultChannel only as they are more used for testing purpose
-    // and we should add methods to traverse the channels
-    // and maybe a channel registry
+    List<Processor> next();
 
     /**
      * Sets the processor that the channel should route the {@link Exchange} to.
      *
-     * @param output  the next output
+     * @param next  the next processor
      */
-    void setNextProcessor(Processor output);
+    void setNextProcessor(Processor next);
 
     /**
-     * Sets the {@link org.apache.camel.processor.ErrorHandler} that the Channel uses.
-
+     * Sets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
+     *
      * @param errorHandler the error handler
      */
     void setErrorHandler(Processor errorHandler);
 
+    /**
+     * Gets the {@link org.apache.camel.processor.ErrorHandler} this Channel uses.
+     *
+     * @return the error handler, or <tt>null</tt> if no error handler is used.
+     */
     Processor getErrorHandler();
 
     /**
@@ -69,6 +71,13 @@ public interface Channel extends Processor {
     void addInterceptStrategies(List<InterceptStrategy> strategy);
 
     /**
+     * Gets the list of {@link org.apache.camel.spi.InterceptStrategy} registered to this Channel.
+     *
+     * @return list of strategies, returns an empty list if no strategies is registered.
+     */
+    List<InterceptStrategy> getInterceptStrategies();
+
+    /**
      * Initializes the channel.
      *
      * @param outputDefinition  the route defintion the {@link Channel} represents
@@ -80,17 +89,27 @@ public interface Channel extends Processor {
     /**
      * Gets the wrapped output that at runtime should be delegated to.
      *
-     * @return the output delegated to
+     * @return the output to route the {@link Exchange} to
      */
     Processor getOutput();
 
     /**
-     * Gets the original next {@link Processor} that is not wrapped.
+     * Sets the wrapped output that at runtime should be delegated to.
+     *
+     * @param output the output to route the {@link Exchange} to
+     */
+    void setOutput(Processor output);
+
+    /**
+     * Gets the next {@link Processor} to route to (not wrapped)
      *
      * @return  the next processor
      */
     Processor getNextProcessor();
 
-    boolean hasInterceptorStrategy(Class type);
+    /**
+     * Gets the defintion of the next processor
+     */
+    ProcessorDefinition getProcessorDefinition();
 
 }

@@ -16,83 +16,67 @@
  */
 package org.apache.camel;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * A <a href="http://camel.apache.org/routes.html">Route</a>
- * defines the processing used on an inbound message exchange
- * from a specific {@link Endpoint} within a {@link CamelContext}
- *
- * @version $Revision$
- */
-public class Route {
-    public static final String ID_PROPERTY = "id";
-    public static final String PARENT_PROPERTY = "parent";
-    public static final String GROUP_PROPERTY = "group";
+public interface Route {
 
-    private final Map<String, Object> properties = new HashMap<String, Object>(16);
-    private Endpoint endpoint;
-    private List<Service> services = new ArrayList<Service>();
+    String ID_PROPERTY = "id";
+    String PARENT_PROPERTY = "parent";
+    String GROUP_PROPERTY = "group";
 
-    public Route(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
+    /**
+     * Gets the inbound endpoint
+     */
+    Endpoint getEndpoint();
 
-    public Route(Endpoint endpoint, Service... services) {
-        this(endpoint);
-        for (Service service : services) {
-            addService(service);
-        }
-    }
+    /**
+     * Sets the inbound endpoint
+     *
+     * @param endpoint the endpoint
+     */
+    void setEndpoint(Endpoint endpoint);
 
-    @Override
-    public String toString() {
-        return "Route";
-    }
-
-    public Endpoint getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(Endpoint endpoint) {
-        this.endpoint = endpoint;
-    }
+    /**
+     * This property map is used to associate information about the route.
+     *
+     * @return properties
+     */
+    Map<String, Object> getProperties();
 
     /**
      * This property map is used to associate information about
-     * the route.
+     * the route. Gets all tbe services for this routes
+     *
+     * @return the services
+     * @throws Exception is thrown in case of error
      */
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public List<Service> getServicesForRoute() throws Exception {
-        List<Service> servicesForRoute = new ArrayList<Service>(getServices());
-        addServices(servicesForRoute);
-        return servicesForRoute;
-    }
+    List<Service> getServicesForRoute() throws Exception;
 
     /**
      * Returns the additional services required for this particular route
      */
-    public List<Service> getServices() {
-        return services;
-    }
-
-    public void setServices(List<Service> services) {
-        this.services = services;
-    }
-
-    public void addService(Service service) {
-        getServices().add(service);
-    }
+    List<Service> getServices();
 
     /**
-     * Strategy method to allow derived classes to lazily load services for the route
+     * Sets the sources for this route
+     *
+     * @param services the services
      */
-    protected void addServices(List<Service> services) throws Exception {
-    }
+    void setServices(List<Service> services);
+
+    /**
+     * Adds a service to this route
+     *
+     * @param service the service
+     */
+    void addService(Service service);
+
+    /**
+     * Returns a navigator to navigate this route by navigating all the {@link Processor}s.
+     *
+     * @return a navigator for {@link Processor}.
+     */
+    Navigate<Processor> navigate();
+
 }

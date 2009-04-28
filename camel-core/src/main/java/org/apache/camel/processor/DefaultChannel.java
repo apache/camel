@@ -24,6 +24,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -42,17 +43,28 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class DefaultChannel extends DelegateProcessor implements AsyncProcessor, Channel {
+public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Channel {
 
     private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
     private Processor errorHandler;
-    // target is the original output
+    // the next processor (non wrapped)
     private Processor nextProcessor;
-    // output is the real output used as its wrapped by error handler and interceptors
+    // the real output to invoke that has been wrapped
     private Processor output;
+    private ProcessorDefinition definition;
 
-    public void setNextProcessor(Processor output) {
-        this.nextProcessor = output;
+    public List<Processor> next() {
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(nextProcessor);
+        return answer;
+    }
+
+    public boolean hasNext() {
+        return nextProcessor != null;
+    }
+
+    public void setNextProcessor(Processor next) {
+        this.nextProcessor = next;
     }
 
     public Processor getOutput() {
@@ -60,6 +72,10 @@ public class DefaultChannel extends DelegateProcessor implements AsyncProcessor,
         // so it cointain the entire chain of processors, so we can safely use it directly as output
         // if no error handler provided we can use the output direcly
         return errorHandler != null ? errorHandler : output;
+    }
+
+    public void setOutput(Processor output) {
+        this.output = output;
     }
 
     public Processor getNextProcessor() {
@@ -91,19 +107,27 @@ public class DefaultChannel extends DelegateProcessor implements AsyncProcessor,
         interceptors.addAll(strategies);
     }
 
+    public List<InterceptStrategy> getInterceptStrategies() {
+        return interceptors;
+    }
+
+    public ProcessorDefinition getProcessorDefinition() {
+        return definition;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
         ServiceHelper.startServices(errorHandler, output);
     }
 
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopServices(output, errorHandler);
-        super.doStop();
     }
 
     public void initChannel(ProcessorDefinition outputDefinition, RouteContext routeContext) throws Exception {
+        this.definition = outputDefinition;
+
         // TODO: Support ordering of interceptors
 
         // wrap the output with the interceptors
@@ -114,10 +138,8 @@ public class DefaultChannel extends DelegateProcessor implements AsyncProcessor,
 
         // sets the delegate to our wrapped output
         output = target;
-        setProcessor(target);
     }
 
-    @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }

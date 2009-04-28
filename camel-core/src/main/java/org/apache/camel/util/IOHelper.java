@@ -38,34 +38,24 @@ public final class IOHelper {
     
     /**
      * Use this function instead of new String(byte[]) to avoid surprises from non-standard default encodings.
-     * @param bytes
-     * @return
      */
     public static String newStringFromBytes(byte[] bytes) {
         try {
             return new String(bytes, UTF8_CHARSET.name());
         } catch (UnsupportedEncodingException e) {
-            throw 
-                new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.");
-
+            throw new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.", e);
         }
     }
 
     /**
      * Use this function instead of new String(byte[], int, int) 
      * to avoid surprises from non-standard default encodings.
-     * @param bytes
-     * @param start
-     * @param length
-     * @return
      */
     public static String newStringFromBytes(byte[] bytes, int start, int length) {
         try {
             return new String(bytes, start, length, UTF8_CHARSET.name());
         } catch (UnsupportedEncodingException e) {
-            throw 
-                new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.");
-
+            throw new RuntimeException("Impossible failure: Charset.forName(\"utf-8\") returns invalid name.", e);
         }
     }
 

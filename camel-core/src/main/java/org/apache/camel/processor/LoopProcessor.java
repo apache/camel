@@ -19,7 +19,6 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,13 +43,8 @@ public class LoopProcessor extends DelegateProcessor {
         // Intermediate conversion to String is needed when direct conversion to Integer is not available
         // but evaluation result is a textual representation of a numeric value.
         String text = expression.evaluate(exchange, String.class);
-        Integer value = ExchangeHelper.convertToType(exchange, Integer.class, text);
-        if (value == null) {
-            // TODO: we should probably catch evaluate/convert exception an set is as fault (after fix for CAMEL-316)
-            throw new RuntimeCamelException("Expression \"" + expression + "\" is not convertable to an Integer.");
-        }
+        int count = ExchangeHelper.convertToMandatoryType(exchange, Integer.class, text);
 
-        int count = value;
         exchange.setProperty(Exchange.LOOP_SIZE, count);
         for (int i = 0; i < count; i++) {
             if (LOG.isDebugEnabled()) {

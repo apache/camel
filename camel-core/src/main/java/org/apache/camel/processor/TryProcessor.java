@@ -16,9 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
@@ -31,7 +33,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class TryProcessor extends ServiceSupport implements Processor {
+public class TryProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
     private static final transient Log LOG = LogFactory.getLog(TryProcessor.class);
 
     private final Processor tryProcessor;
@@ -83,7 +85,7 @@ public class TryProcessor extends ServiceSupport implements Processor {
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(tryProcessor, catchClauses, finallyProcessor);
+        ServiceHelper.stopServices(finallyProcessor, catchClauses, tryProcessor);
     }
 
     protected void handleException(Exchange exchange, Throwable e) throws Exception {
@@ -141,5 +143,26 @@ public class TryProcessor extends ServiceSupport implements Processor {
                 exchange.setException(lastException);
             }
         }
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>();
+        if (tryProcessor != null) {
+            answer.add(tryProcessor);
+        }
+        if (catchClauses != null) {
+            answer.addAll(catchClauses);
+        }
+        if (finallyProcessor != null) {
+            answer.add(finallyProcessor);
+        }
+        return answer;
+    }
+
+    public boolean hasNext() {
+        return tryProcessor != null;
     }
 }

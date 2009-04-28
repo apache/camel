@@ -16,7 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
@@ -27,7 +31,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class DelegateProcessor extends ServiceSupport implements Processor {
+public class DelegateProcessor extends ServiceSupport implements Processor, Navigate {
     protected Processor processor;
 
     public DelegateProcessor() {
@@ -77,4 +81,18 @@ public class DelegateProcessor extends ServiceSupport implements Processor {
     public void proceed(Exchange exchange) throws Exception {
         processNext(exchange);
     }
+
+    public boolean hasNext() {
+        return processor != null;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(processor);
+        return answer;
+    }
+
 }

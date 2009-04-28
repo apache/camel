@@ -14,35 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel;
 
-import org.apache.camel.builder.RouteBuilder;
+import java.util.List;
 
 /**
+ * Implementations support navigating a graph where you can traverse forward and each next
+ * returns a {@link List} of outputs of type <tt>T</tt> that can contain <tt>0..n</tt> nodes.
+ *
  * @version $Revision$
  */
-public class InterceptWithPredicateAndStopRouteTest extends InterceptRouteTestSupport {
+public interface Navigate<T> {
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                intercept(header("foo").isEqualTo("bar")).to("mock:b").stop();
+    /**
+     * Next group of outputs
+     *
+     * @return next group or <tt>null</tt> if no more outputs
+     */
+    List<T> next();
 
-                from("direct:start").to("mock:a");
-            }
-        };
-    }
+    /**
+     * Are there more outputs?
+     *
+     * @return <tt>true</tt> if more outputs
+     */
+    boolean hasNext();
 
-    @Override
-    protected void prepareMatchingTest() {
-        a.expectedMessageCount(0);
-        b.expectedMessageCount(1);
-    }
-
-    @Override
-    protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(0);
-    }
 }

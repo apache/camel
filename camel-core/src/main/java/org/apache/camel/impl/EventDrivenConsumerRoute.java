@@ -20,18 +20,18 @@ import java.util.List;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
-import org.apache.camel.Route;
 import org.apache.camel.Service;
 
 /**
- * A {@link Route} which starts with an
+ * A {@link DefaultRoute} which starts with an
  * <a href="http://camel.apache.org/event-driven-consumer.html">Event Driven Consumer</a>
  *
  * @version $Revision$
  */
-public class EventDrivenConsumerRoute extends Route {
-    private Processor processor;
+public class EventDrivenConsumerRoute extends DefaultRoute {
+    private final Processor processor;
 
     public EventDrivenConsumerRoute(Endpoint endpoint, Processor processor) {
         super(endpoint);
@@ -45,10 +45,6 @@ public class EventDrivenConsumerRoute extends Route {
 
     public Processor getProcessor() {
         return processor;
-    }
-
-    public void setProcessor(Processor processor) {
-        this.processor = processor;
     }
 
     /**
@@ -66,5 +62,13 @@ public class EventDrivenConsumerRoute extends Route {
         if (processor instanceof Service) {
             services.add((Service)processor);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public Navigate<Processor> navigate() {
+        if (processor instanceof Navigate) {
+            return (Navigate) processor;
+        }
+        return null;
     }
 }

@@ -132,24 +132,24 @@ public class DefaultRouteContext implements RouteContext {
 
     @SuppressWarnings("unchecked")
     public void commit() {
-        // now lets turn all of the event driven consumer processors into a
-        // single route
+        // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
             Processor processor = Pipeline.newInstance(eventDrivenProcessors);
 
             // lets create the async processor
             final AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
-            // and wrap it in a unit of work so the UoW is on the top, so the entire route
-            // will be in the same UoW
+
+            // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             Processor unitOfWorkProcessor = new UnitOfWorkProcessor(asyncProcessor);
 
-            // TODO: hz: move all this into the lifecycle strategy! (used by jmx naming strategy)
+            // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor);
             edcr.getProperties().put(Route.ID_PROPERTY, route.idOrCreate());
             edcr.getProperties().put(Route.PARENT_PROPERTY, Integer.toHexString(route.hashCode()));
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }
+
             routes.add(edcr);
         }
     }
@@ -198,4 +198,5 @@ public class DefaultRouteContext implements RouteContext {
             return null;
         }
     }
+
 }

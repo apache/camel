@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.ServiceHelper;
@@ -29,7 +32,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class CompositeProcessor extends ServiceSupport implements Processor {
+public class CompositeProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
     private final Collection<Processor> processors;
 
     public CompositeProcessor(Collection<Processor> processors) {
@@ -60,6 +63,17 @@ public class CompositeProcessor extends ServiceSupport implements Processor {
 
     public Collection<Processor> getProcessors() {
         return processors;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        return new ArrayList<Processor>(processors);
+    }
+
+    public boolean hasNext() {
+        return processors != null && !processors.isEmpty();
     }
 
     protected void doStart() throws Exception {

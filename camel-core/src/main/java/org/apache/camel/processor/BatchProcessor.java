@@ -16,9 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
@@ -26,6 +28,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.GroupedExchange;
 import org.apache.camel.impl.LoggingExceptionHandler;
@@ -39,7 +42,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class BatchProcessor extends ServiceSupport implements Processor {
+public class BatchProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
@@ -128,6 +131,19 @@ public class BatchProcessor extends ServiceSupport implements Processor {
 
     public Processor getProcessor() {
         return processor;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(processor);
+        return answer;
+    }
+
+    public boolean hasNext() {
+        return processor != null;
     }
 
     /**

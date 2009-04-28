@@ -37,4 +37,9 @@ public class UseLatestAggregationStrategy implements AggregationStrategy {
                 ? newExchange.getException()
                 : oldExchange.getException();
     }
+
+    @Override
+    public String toString() {
+        return "useLatestAggregationStrategy";
+    }
 }

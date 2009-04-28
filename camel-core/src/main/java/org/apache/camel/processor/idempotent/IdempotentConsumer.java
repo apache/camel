@@ -16,8 +16,12 @@
  */
 package org.apache.camel.processor.idempotent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.IdempotentRepository;
@@ -32,23 +36,23 @@ import org.apache.commons.logging.LogFactory;
  * 
  * @version $Revision$
  */
-public class IdempotentConsumer extends ServiceSupport implements Processor {
+public class IdempotentConsumer extends ServiceSupport implements Processor, Navigate<Processor> {
     private static final transient Log LOG = LogFactory.getLog(IdempotentConsumer.class);
     private final Expression messageIdExpression;
-    private final Processor nextProcessor;
+    private final Processor processor;
     private final IdempotentRepository idempotentRepository;
 
     public IdempotentConsumer(Expression messageIdExpression, IdempotentRepository idempotentRepository,
-                              Processor nextProcessor) {
+                              Processor processor) {
         this.messageIdExpression = messageIdExpression;
         this.idempotentRepository = idempotentRepository;
-        this.nextProcessor = nextProcessor;
+        this.processor = processor;
     }
 
     @Override
     public String toString() {
         return "IdempotentConsumer[expression=" + messageIdExpression + ", repository=" + idempotentRepository
-               + ", processor=" + nextProcessor + "]";
+               + ", processor=" + processor + "]";
     }
 
     @SuppressWarnings("unchecked")
@@ -62,7 +66,7 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
             onDuplicateMessage(exchange, messageId);
         } else {
             // process it first
-            nextProcessor.process(exchange);
+            processor.process(exchange);
 
             // then test wheter it was failed or not
             if (!exchange.isFailed()) {
@@ -71,6 +75,19 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
                 onFailedMessage(exchange, messageId);
             }
         }
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(processor);
+        return answer;
+    }
+
+    public boolean hasNext() {
+        return processor != null;
     }
 
     // Properties
@@ -83,19 +100,19 @@ public class IdempotentConsumer extends ServiceSupport implements Processor {
         return idempotentRepository;
     }
 
-    public Processor getNextProcessor() {
-        return nextProcessor;
+    public Processor getProcessor() {
+        return processor;
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
 
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(nextProcessor);
+        ServiceHelper.startServices(processor);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(nextProcessor);
+        ServiceHelper.stopServices(processor);
     }
 
     /**

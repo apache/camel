@@ -16,12 +16,15 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.impl.ServiceSupport;
@@ -55,7 +58,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor> {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     
@@ -161,6 +164,19 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
         }
         engine.insert(exchange);
         delivery.request();
+    }
+
+    public boolean hasNext() {
+        return processor != null;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(processor);
+        return answer;
     }
 
     private class Delivery extends Thread {

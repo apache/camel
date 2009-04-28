@@ -34,6 +34,11 @@ public class ConvertBodyProcessor implements Processor {
         this.type = type;
     }
 
+    @Override
+    public String toString() {
+        return "convertBodyTo[" + type.getCanonicalName() + "]";
+    }
+
     @SuppressWarnings("unchecked")
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();        
@@ -46,5 +51,9 @@ public class ConvertBodyProcessor implements Processor {
         } else {
             in.setBody(value);
         }
+    }
+
+    public Class getType() {
+        return type;
     }
 }

@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.List;
 
-import org.apache.camel.Channel;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
@@ -75,7 +74,8 @@ public class ResequencerTest extends ContextTestSupport {
         Route route = list.get(0);
         EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
 
-        Channel channel = unwrapChannel(consumerRoute.getProcessor());
+        DefaultChannel channel = assertIsInstanceOf(DefaultChannel.class, unwrapChannel(consumerRoute.getProcessor()));
+
         assertIsInstanceOf(DefaultErrorHandler.class, channel.getErrorHandler());
         assertTrue("Should have stream caching", channel.hasInterceptorStrategy(StreamCaching.class));
 

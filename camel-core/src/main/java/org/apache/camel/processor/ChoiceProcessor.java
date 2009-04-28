@@ -16,9 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
@@ -31,7 +33,7 @@ import org.apache.camel.util.ServiceHelper;
  * 
  * @version $Revision$
  */
-public class ChoiceProcessor extends ServiceSupport implements Processor {
+public class ChoiceProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
 
@@ -86,13 +88,29 @@ public class ChoiceProcessor extends ServiceSupport implements Processor {
         return otherwise;
     }
 
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>();
+        if (filters != null) {
+            answer.addAll(filters);
+        }
+        if (otherwise != null) {
+            answer.add(otherwise);
+        }
+        return answer;
+    }
+
+    public boolean hasNext() {
+        return otherwise != null || (filters != null && !filters.isEmpty());
+    }
+
     protected void doStart() throws Exception {
-        ServiceHelper.startServices(filters);
-        ServiceHelper.startServices(otherwise);
+        ServiceHelper.startServices(filters, otherwise);
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopServices(otherwise);
-        ServiceHelper.stopServices(filters);
+        ServiceHelper.stopServices(otherwise, filters);
     }
 }

@@ -16,9 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -27,7 +32,7 @@ import org.apache.camel.util.ServiceHelper;
  * A Delegate pattern which delegates processing to a nested AsyncProcessor which can
  * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
  */
-public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProcessor {
+public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProcessor, Navigate {
     protected AsyncProcessor processor;
 
     public DelegateAsyncProcessor() {
@@ -63,6 +68,19 @@ public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProce
 
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean hasNext() {
+        return processor != null;
+    }
+
+    public List<Processor> next() {
+        if (!hasNext()) {
+            return null;
+        }
+        List<Processor> answer = new ArrayList<Processor>(1);
+        answer.add(processor);
+        return answer;
     }
 
 }

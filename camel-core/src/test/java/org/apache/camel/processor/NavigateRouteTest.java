@@ -17,34 +17,57 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
+import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
+ * Unit test for navigating a route (runtime processors, not the model).
+ *
  * @version $Revision$
  */
-public class ChannelTest extends ContextTestSupport {
+public class NavigateRouteTest extends ContextTestSupport {
 
-    private static int counter;
+    private static int count;
 
-    @Override
-    protected void setUp() throws Exception {
-        disableJMX();
-        super.setUp();
-    }
-
-    public void testChannel() throws Exception {
-        counter = 0;
-
+    public void testNavigateRoute() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");
-        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
+
+        Navigate<Processor> nav = context.getRoutes().get(0).navigate();
+        navigateRoute(nav);
+
+        assertEquals("There should be 7 processors to navigate", 7, count);
+    }
+
+    private void navigateRoute(Navigate<Processor> nav) {
+        if (!nav.hasNext()) {
+            return;
+        }
+
+        for (Processor child : nav.next()) {
+            count++;
+
+            if (child instanceof SendProcessor) {
+                SendProcessor send = (SendProcessor) child;
+                assertEquals("mock:result", send.getDestination().getEndpointUri());
+            }
+
+            if (child instanceof ConvertBodyProcessor) {
+                ConvertBodyProcessor convert = (ConvertBodyProcessor) child;
+                assertEquals(String.class, convert.getType());
+            }
+
+            // navigate children
+            if (child instanceof Navigate) {
+                navigateRoute((Navigate) child);
+            } 
+        }
     }
 
     @Override
@@ -52,17 +75,12 @@ public class ChannelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
-
                 from("direct:start")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            if (counter++ < 1) {
-                                throw new IllegalArgumentException("Damn");
-                            }
-                        }
-                    }).delay(10).to("mock:result");
+                    .convertBodyTo(String.class)
+                    .split(body().tokenize(" "))
+                    .to("mock:result");
             }
         };
     }
+
 }

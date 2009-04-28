@@ -106,9 +106,9 @@ public class ErrorHandlerTest extends TestSupport {
             assertEquals("From endpoint", "seda:a", key.getEndpointUri());
 
             EventDrivenConsumerRoute consumerRoute = assertIsInstanceOf(EventDrivenConsumerRoute.class, route);
-            Processor processor = unwrap(consumerRoute.getProcessor());
+            Channel channel = unwrapChannel(consumerRoute.getProcessor());
 
-            assertIsInstanceOf(SendProcessor.class, processor);
+            assertIsInstanceOf(SendProcessor.class, channel.getNextProcessor());
         }
     }
 
