@@ -37,6 +37,7 @@
       <abdera-bundle-version>0.4.0-incubating_1</abdera-bundle-version>
       <ant-bundle-version>1.7.0_1</ant-bundle-version>
       <antlr-bundle-version>3.0.1_1</antlr-bundle-version>
+      <aopalliance-bundle-version>1.0_1</aopalliance-bundle-version>
       <asm-bundle-version>2.2.3_1</asm-bundle-version>
       <dom4j-bundle-version>1.6_1</dom4j-bundle-version>
       <commons-beanutils-bundle-version>1.7.0_1</commons-beanutils-bundle-version>

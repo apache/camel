@@ -9,6 +9,11 @@
   </feature>
   <feature name='camel-spring' version='${pom.version}'>
     <bundle>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aopalliance/${aopalliance-bundle-version}</bundle>
+    <bundle>mvn:org.springframework/spring-aop/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-beans/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-core/${spring-version}</bundle>
+    <bundle>mvn:org.springframework/spring-context/${spring-version}</bundle>
     <bundle>mvn:org.springframework/spring-tx/${spring-version}</bundle>
     <feature version='${pom.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-spring/${pom.version}</bundle>
