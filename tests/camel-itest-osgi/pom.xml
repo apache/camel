@@ -97,8 +97,13 @@
       <version>4.0.1</version>
       <scope>test</scope>
     </dependency>
-
-
+    <dependency>
+      <groupId>org.apache.camel.karaf</groupId>
+      <artifactId>features</artifactId>
+      <version>${version}</version>
+      <type>pom</type>
+      <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-osgi</artifactId>
