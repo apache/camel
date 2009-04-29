@@ -49,7 +49,7 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina:tcp://localhost:8888?sync=true&codec=#hl7codec")
+                from("mina:tcp://0.0.0.0:8888?sync=true&codec=#hl7codec")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Message input = exchange.getIn().getBody(Message.class);
@@ -77,7 +77,7 @@ public class HL7MLLPCodecTest extends ContextTestSupport {
         in.append("\n");
         in.append(line2);
 
-        String out = (String)template.requestBody("mina:tcp://localhost:8888?sync=true&codec=#hl7codec", in.toString());
+        String out = (String)template.requestBody("mina:tcp://0.0.0.0:8888?sync=true&codec=#hl7codec", in.toString());
         // END SNIPPET: e2
 
         String[] lines = out.split("\r");

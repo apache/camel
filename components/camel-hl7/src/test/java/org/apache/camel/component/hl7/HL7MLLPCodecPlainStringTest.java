@@ -46,7 +46,7 @@ public class HL7MLLPCodecPlainStringTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         // send plain hello world as String
-        Object out = template.requestBody("mina:tcp://localhost:8888?sync=true&codec=#hl7codec", "Hello World");
+        Object out = template.requestBody("mina:tcp://0.0.0.0:8888?sync=true&codec=#hl7codec", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -59,7 +59,7 @@ public class HL7MLLPCodecPlainStringTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina:tcp://localhost:8888?sync=true&codec=#hl7codec")
+                from("mina:tcp://0.0.0.0:8888?sync=true&codec=#hl7codec")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // use plain String as message format
