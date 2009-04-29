@@ -34,12 +34,15 @@ import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * @version $Revision$
  */
 public class JpaEndpoint extends ScheduledPollEndpoint {
     private EntityManagerFactory entityManagerFactory;
+    private PlatformTransactionManager transactionManager;
     private String persistenceUnit = "camel";
     private JpaTemplate template;
     private Expression producerExpression;
@@ -53,9 +56,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     public JpaEndpoint() {
     }
 
+    public JpaEndpoint(String endpointUri) {
+        super(endpointUri);
+    }
+
     public JpaEndpoint(String uri, JpaComponent component) {
         super(uri, component);
         entityManagerFactory = component.getEntityManagerFactory();
+        transactionManager = component.getTransactionManager();
     }
 
     public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory) {
@@ -63,8 +71,10 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.entityManagerFactory = entityManagerFactory;
     }
 
-    public JpaEndpoint(String endpointUri) {
+    public JpaEndpoint(String endpointUri, EntityManagerFactory entityManagerFactory, PlatformTransactionManager transactionManager) {
         super(endpointUri);
+        this.entityManagerFactory = entityManagerFactory;
+        this.transactionManager = transactionManager;
     }
 
     public Producer createProducer() throws Exception {
@@ -149,6 +159,17 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.entityManagerFactory = entityManagerFactory;
     }
 
+    public PlatformTransactionManager getTransactionManager() {
+        if (transactionManager == null) {
+            transactionManager = createTransactionManager();
+        }
+        return transactionManager;
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
+    }
+
     public Map getEntityManagerProperties() {
         if (entityManagerProperties == null) {
             entityManagerProperties = System.getProperties();
@@ -194,6 +215,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
     protected void validate() {
         ObjectHelper.notNull(getEntityManagerFactory(), "entityManagerFactory");
     }
@@ -206,13 +228,18 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return Persistence.createEntityManagerFactory(persistenceUnit, getEntityManagerProperties());
     }
 
+    protected PlatformTransactionManager createTransactionManager() {
+        JpaTransactionManager tm = new JpaTransactionManager(getEntityManagerFactory());
+        tm.afterPropertiesSet();
+        return tm;
+    }
+
     protected EntityManager createEntityManager() {
         return getEntityManagerFactory().createEntityManager();
     }
 
     protected TransactionStrategy createTransactionStrategy() {
-        EntityManagerFactory emf = getEntityManagerFactory();
-        return JpaTemplateTransactionStrategy.newInstance(emf, getTemplate());
+        return JpaTemplateTransactionStrategy.newInstance(getTransactionManager(), getTemplate());
     }
 
     protected Expression createProducerExpression() {

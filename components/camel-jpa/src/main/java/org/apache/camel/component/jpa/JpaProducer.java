@@ -50,7 +50,7 @@ public class JpaProducer extends DefaultProducer {
                     Iterator iter = ObjectHelper.createIterator(values);
                     while (iter.hasNext()) {
                         Object value = iter.next();
-                        entityManager.persist(value);
+                        entityManager.merge(value);
                     }
                     if (endpoint.isFlushOnSend()) {
                         entityManager.flush();

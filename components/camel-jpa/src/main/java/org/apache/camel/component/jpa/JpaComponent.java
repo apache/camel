@@ -19,10 +19,9 @@ package org.apache.camel.component.jpa;
 import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.springframework.transaction.PlatformTransactionManager;
 
 /**
  * A JPA Component
@@ -31,10 +30,7 @@ import org.apache.camel.impl.DefaultComponent;
  */
 public class JpaComponent extends DefaultComponent {
     private EntityManagerFactory entityManagerFactory;
-
-    public Component resolveComponent(CamelContext container, String uri) throws Exception {
-        return null;
-    }
+    private PlatformTransactionManager transactionManager;
 
     // Properties
     //-------------------------------------------------------------------------
@@ -44,6 +40,14 @@ public class JpaComponent extends DefaultComponent {
 
     public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
         this.entityManagerFactory = entityManagerFactory;
+    }
+
+    public PlatformTransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public void setTransactionManager(PlatformTransactionManager transactionManager) {
+        this.transactionManager = transactionManager;
     }
 
     // Implementation methods
