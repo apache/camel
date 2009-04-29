@@ -17,15 +17,13 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Iterator;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.impl.DefaultProducer;
-
+import org.apache.camel.util.ObjectHelper;
 import org.springframework.orm.jpa.JpaCallback;
 
 /**
@@ -48,10 +46,10 @@ public class JpaProducer extends DefaultProducer<Exchange> {
         if (values != null) {
             template.execute(new JpaCallback() {
                 public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                    Iterator iter = ObjectConverter.iterator(values);
+                    Iterator iter = ObjectHelper.createIterator(values);
                     while (iter.hasNext()) {
                         Object value = iter.next();
-                        entityManager.persist(value);
+                        entityManager.merge(value);
                     }
                     if (endpoint.isFlushOnSend()) {
                         entityManager.flush();

@@ -25,6 +25,7 @@ import org.apache.camel.impl.ServiceSupport;
 import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -51,10 +52,23 @@ public class JpaTemplateTransactionStrategy extends ServiceSupport implements Tr
         return newInstance(emf, template);
     }
 
+    /**
+     * Creates a new implementation from the given JPA factory and JPA template
+     */
     public static JpaTemplateTransactionStrategy newInstance(EntityManagerFactory emf, JpaTemplate template) {
         JpaTransactionManager transactionManager = new JpaTransactionManager(emf);
         transactionManager.afterPropertiesSet();
 
+        TransactionTemplate tranasctionTemplate = new TransactionTemplate(transactionManager);
+        tranasctionTemplate.afterPropertiesSet();
+
+        return new JpaTemplateTransactionStrategy(template, tranasctionTemplate);
+    }
+
+    /**
+     * Creates a new implementation from the given Transaction Manager and JPA template
+     */
+    public static JpaTemplateTransactionStrategy newInstance(PlatformTransactionManager transactionManager, JpaTemplate template) {
         TransactionTemplate tranasctionTemplate = new TransactionTemplate(transactionManager);
         tranasctionTemplate.afterPropertiesSet();
 
