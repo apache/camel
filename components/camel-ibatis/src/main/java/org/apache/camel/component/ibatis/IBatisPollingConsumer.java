@@ -108,7 +108,7 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
     /**
      * Whether allow empty resultset to be routed to the next hop
      */
-    private boolean routeEmptyResultSet = false;
+    private boolean routeEmptyResultSet;
 
     public IBatisPollingConsumer(IBatisEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);

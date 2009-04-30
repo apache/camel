@@ -18,7 +18,6 @@ package org.apache.camel.component.ibatis;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.List;
 import java.util.ArrayList;
 
 import org.apache.camel.ContextTestSupport;
