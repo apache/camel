@@ -17,35 +17,12 @@
 
 package org.apache.camel.itest.osgi;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Inject;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.OptionUtils;
-import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
-import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.MavenUtils.asInProject;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
-import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
 /**
  * @version $Revision$
  */
