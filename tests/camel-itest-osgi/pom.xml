@@ -34,8 +34,7 @@
   <description>Performs OSGi compliance integration tests</description>
 
   <properties>
-    <pax-exam-version>0.5.0-SNAPSHOT</pax-exam-version>
-    <!-- <pax-exam-version>0.4.0</pax-exam-version>-->
+    <pax-exam-version>0.5.0</pax-exam-version>    
   </properties>
 
   <repositories>
@@ -107,6 +106,12 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-osgi</artifactId>
+      <version>${version}</version>
+      <scope>test</scope>
+    </dependency>
+     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
       <version>${version}</version>
       <scope>test</scope>
     </dependency>

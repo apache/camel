@@ -17,23 +17,16 @@
 
 package org.apache.camel.itest.osgi;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Inject;
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.test.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.OptionUtils;
 import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.equinox;
 import static org.ops4j.pax.exam.CoreOptions.felix;
@@ -41,33 +34,41 @@ import static org.ops4j.pax.exam.CoreOptions.knopflerfish;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.mavenConfiguration;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.ops4j.pax.exam.MavenUtils.asInProject;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.logProfile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.profile;
 import static org.ops4j.pax.exam.container.def.PaxRunnerOptions.scanFeatures;
-/**
- * @version $Revision$
- */
-@RunWith(JUnit4TestRunner.class)
-public class OSGiIntegrationTest extends OSGiIntegrationTestSupport {
+
+public abstract class OSGiIntegrationSpringTestSupport extends OSGiIntegrationTestSupport {
     
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            public void configure() {
-                from("seda:foo").to("mock:bar");
-            }
-        };
+    protected OsgiBundleXmlApplicationContext applicationContext;
+
+    protected abstract OsgiBundleXmlApplicationContext createApplicationContext();
+
+    @Before
+    public void setUp() throws Exception {
+        applicationContext = createApplicationContext();
+        assertNotNull("Should have created a valid spring context", applicationContext);
+        super.setUp();        
     }
 
-    @Test
-    public void testSendMessage() throws Exception {
-        MockEndpoint mock =  getMandatoryEndpoint("mock:bar", MockEndpoint.class);
-        assertNotNull("The mock endpoint should not be null", mock);
-        
-        mock.expectedBodiesReceived("Hello World");
-        template.sendBody("seda:foo", "Hello World");
-        assertMockEndpointsSatisfied();        
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        if (applicationContext != null) {
+            applicationContext.destroy();
+        }
     }
-   
+    
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        applicationContext.setBundleContext(bundleContext);
+        applicationContext.refresh();
+        String[] names = applicationContext.getBeanNamesForType(SpringCamelContext.class);
+        if (names.length == 1) {
+            return (SpringCamelContext)applicationContext.getBean(names[0], SpringCamelContext.class);
+        } else {
+            throw new RuntimeCamelException("can't create a right camel context from the application context"); 
+        }
+    }
+
 }
