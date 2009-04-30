@@ -78,7 +78,7 @@
       <saxon-bundle-version>9.1.0.1_1</saxon-bundle-version>
       <servicemix-specs-version>1.3.0</servicemix-specs-version>
       <smack-bundle-version>3.0.4_1</smack-bundle-version>
-      <spring-javaconfig-version>1.0.0.BUILD-SNAPSHOT</spring-javaconfig-version>
+      <spring-javaconfig-version>1.0.0.M4</spring-javaconfig-version>
       <stringtemplate-bundle-version>3.2_1</stringtemplate-bundle-version>
       <velocity-bundle-version>1.5_1</velocity-bundle-version>
       <xmlbeans-bundle-version>2.4.0_2</xmlbeans-bundle-version>
