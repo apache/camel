@@ -86,7 +86,9 @@ public abstract class ContextTestSupport extends TestSupport {
     @Override
     protected void tearDown() throws Exception {
         log.debug("tearDown test: " + getName());
-        template.stop();
+        if (template != null) {
+            template.stop();
+        }
         stopCamelContext();
     }
 
@@ -94,7 +96,9 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.stop();
         } else {
-            context.stop();
+            if (context != null) {
+                context.stop();
+            }    
         }
     }
 
