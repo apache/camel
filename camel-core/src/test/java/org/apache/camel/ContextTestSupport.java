@@ -101,7 +101,9 @@ public abstract class ContextTestSupport extends TestSupport {
         if (camelContextService != null) {
             camelContextService.stop();
         } else {
-            context.stop();
+            if (context != null) {
+                context.stop();
+            }    
         }
     }
 
