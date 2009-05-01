@@ -202,7 +202,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 CamelContextFactoryBean factoryBean = (CamelContextFactoryBean)value;
                 builder.addPropertyValue("id", contextId);
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
-                builder.addPropertyValue("intercepts", factoryBean.getIntercepts());
+                builder.addPropertyValue("interceptFroms", factoryBean.getInterceptFroms());
                 builder.addPropertyValue("interceptSendToEndpoints", factoryBean.getInterceptSendToEndpoints());
                 builder.addPropertyValue("dataFormats", factoryBean.getDataFormats());
                 builder.addPropertyValue("onExceptions", factoryBean.getOnExceptions());

@@ -14,32 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+package org.apache.camel.spring.processor;
 
-/**
- * Test for an interceptor
- */
-class InterceptorTest extends ScalaTestSupport {
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.intercept.InterceptFromWhenTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-  def testSimple() = {
-    // TODO: Does not work after change to default error handler
-    // "mock:a" expect { _.count = 1}
-    // "mock:intercepted" expect { _.count = 1}
-    // test {
-    //    "seda:a" ! ("NightHawk", "SongBird")
-    // }
-  }
+public class SpringInterceptFromWhenTest extends InterceptFromWhenTest {
 
-  val builder = new RouteBuilder {
-     //START SNIPPET: simple
-     interceptFrom(_.in(classOf[String]) == "Nighthawk") {
-		to ("mock:intercepted")     	
-     } stop
-     
-     "seda:a" --> "mock:a"
-     //END SNIPPET: simple
-   }
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptFromWhenTest.xml");
+    }
 
 }

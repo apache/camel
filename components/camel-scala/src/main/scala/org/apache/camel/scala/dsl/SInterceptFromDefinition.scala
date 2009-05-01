@@ -15,31 +15,23 @@
  * limitations under the License.
  */
 package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+
+import org.apache.camel.model.InterceptFromDefinition
+import org.apache.camel.scala.dsl.builder.RouteBuilder
 
 /**
- * Test for an interceptor
+ * Scala enrichment for Camel's InterceptFromDefinition
  */
-class InterceptorTest extends ScalaTestSupport {
-
-  def testSimple() = {
-    // TODO: Does not work after change to default error handler
-    // "mock:a" expect { _.count = 1}
-    // "mock:intercepted" expect { _.count = 1}
-    // test {
-    //    "seda:a" ! ("NightHawk", "SongBird")
-    // }
+class SInterceptFromDefinition(val target: InterceptFromDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition with Wrapper[InterceptFromDefinition] {
+  
+  val unwrap = target
+  
+  override def apply(block: => Unit) : SInterceptFromDefinition = {
+    builder.build(this, block)
+    this
   }
-
-  val builder = new RouteBuilder {
-     //START SNIPPET: simple
-     interceptFrom(_.in(classOf[String]) == "Nighthawk") {
-		to ("mock:intercepted")     	
-     } stop
-     
-     "seda:a" --> "mock:a"
-     //END SNIPPET: simple
-   }
-
+  
+  def stop =  {
+    target.setStopIntercept(true)
+  }   
 }

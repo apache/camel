@@ -16,10 +16,7 @@
  */
 package org.apache.camel.model;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-
 import javax.xml.bind.JAXBException;
 
 import org.apache.camel.model.language.ExpressionDefinition;

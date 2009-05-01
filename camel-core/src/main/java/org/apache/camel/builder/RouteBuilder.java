@@ -27,7 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.model.ChoiceDefinition;
-import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -148,23 +148,24 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     /**
      * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
      * to continue processing the underlying route being intercepted.
+     *
      * @return the builder
      */
-    public InterceptDefinition intercept() {
+    public InterceptFromDefinition interceptFrom() {
         routeCollection.setCamelContext(getContext());
-        return routeCollection.intercept();
+        return routeCollection.interceptFrom();
     }
 
     /**
-     * Applies a route for an interceptor if the given predicate is true
-     * otherwise the interceptor route is not applied
+     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
+     * to continue processing the underlying route being intercepted.
      *
-     * @param predicate  the predicate
+     * @param uri  endpoint uri
      * @return the builder
      */
-    public ChoiceDefinition intercept(Predicate predicate) {
+    public InterceptFromDefinition interceptFrom(String uri) {
         routeCollection.setCamelContext(getContext());
-        return routeCollection.intercept(predicate);
+        return routeCollection.interceptFrom(uri);
     }
 
     /**

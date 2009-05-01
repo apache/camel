@@ -120,20 +120,6 @@ public interface RouteContext {
     void addEventDrivenProcessor(Processor processor);
 
     /**
-     * Intercepts with the given interceptor
-     *
-     * @param interceptor the interceptor
-     */
-    void intercept(Intercept interceptor);
-
-    /**
-     * Creates a proceed processor
-     *
-     * @return the created proceed processor
-     */
-    Processor createProceedProcessor();
-
-    /**
      * This method retrieves the InterceptStrategy instances this route context.
      *
      * @return the strategy

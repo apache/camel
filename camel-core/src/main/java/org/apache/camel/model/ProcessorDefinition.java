@@ -1296,17 +1296,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Intercepts outputs added to this node in the future (i.e. intercepts outputs added after this statement)
-     *
-     * @return the intercept builder to configure
-     */
-    public InterceptDefinition intercept() {
-        InterceptDefinition answer = new InterceptDefinition();
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
      * Pushes the given block on the stack as current block
      * @param block  the block
      */
@@ -1337,14 +1326,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         ProceedDefinition proceed = null;
         ProcessorDefinition currentProcessor = this;
 
-        if (currentProcessor instanceof InterceptDefinition) {
-            proceed = ((InterceptDefinition) currentProcessor).getProceed();
+        if (currentProcessor instanceof InterceptFromDefinition) {
+            proceed = ((InterceptFromDefinition) currentProcessor).getProceed();
             LOG.info("proceed() is the implied and hence not needed for an intercept()");
         }
         if (proceed == null) {
             for (ProcessorDefinition node = parent; node != null; node = node.getParent()) {
-                if (node instanceof InterceptDefinition) {
-                    InterceptDefinition intercept = (InterceptDefinition)node;
+                if (node instanceof InterceptFromDefinition) {
+                    InterceptFromDefinition intercept = (InterceptFromDefinition)node;
                     proceed = intercept.getProceed();
                     break;
                 }
@@ -1373,13 +1362,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     public Type stop() {
         ProcessorDefinition currentProcessor = this;
 
-        if (currentProcessor instanceof InterceptDefinition) {
-            ((InterceptDefinition) currentProcessor).stopIntercept();
+        if (currentProcessor instanceof InterceptFromDefinition) {
+            ((InterceptFromDefinition) currentProcessor).stopIntercept();
         } else {
             ProcessorDefinition node;
             for (node = parent; node != null; node = node.getParent()) {
-                if (node instanceof InterceptDefinition) {
-                    ((InterceptDefinition) node).stopIntercept();
+                if (node instanceof InterceptFromDefinition) {
+                    ((InterceptFromDefinition) node).stopIntercept();
                     break;
                 }
             }
@@ -1428,31 +1417,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     public OnExceptionDefinition onException(Class exceptionType) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * Apply an interceptor route if the predicate is true.
-     *
-     * @param predicate the predicate to test
-     * @return  the choice builder to configure
-     */
-    public ChoiceDefinition intercept(Predicate predicate) {
-        InterceptDefinition answer = new InterceptDefinition();
-        addOutput(answer);
-        return answer.when(predicate);
-    }
-
-    /**
-     * Creates a policy.
-     * <p/>
-     * Policy can be used for transactional policies.
-     *
-     * @return the policy builder to configure
-     */
-    public PolicyDefinition policies() {
-        PolicyDefinition answer = new PolicyDefinition();
         addOutput(answer);
         return answer;
     }

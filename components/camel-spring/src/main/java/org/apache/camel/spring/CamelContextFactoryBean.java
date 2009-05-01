@@ -35,7 +35,7 @@ import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
 import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.InterceptDefinition;
+import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PolicyDefinition;
@@ -120,8 +120,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
-    @XmlElement(name = "intercept", required = false)
-    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
+    @XmlElement(name = "interceptFrom", required = false)
+    private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlElement(name = "interceptSendToEndpoint", required = false)
     private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<InterceptSendToEndpointDefinition>();
     @XmlElement(name = "route", required = false)
@@ -287,7 +287,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initInterceptors(RouteDefinition route) {
-        for (InterceptDefinition intercept : intercepts) {
+        for (InterceptFromDefinition intercept : interceptFroms) {
             List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
             List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
             for (ProcessorDefinition output : route.getOutputs()) {
@@ -306,7 +306,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
             // add the interceptor but we must do some pre configuration beforehand
             intercept.afterPropertiesSet();
-            InterceptDefinition proxy = intercept.createProxy();
+            InterceptFromDefinition proxy = intercept.createProxy();
             route.addOutput(proxy);
             route.pushBlock(proxy.getProceed());
 
@@ -447,12 +447,12 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         this.routes = routes;
     }
 
-    public List<InterceptDefinition> getIntercepts() {
-        return intercepts;
+    public List<InterceptFromDefinition> getInterceptFroms() {
+        return interceptFroms;
     }
 
-    public void setIntercepts(List<InterceptDefinition> intercepts) {
-        this.intercepts = intercepts;
+    public void setInterceptFroms(List<InterceptFromDefinition> interceptFroms) {
+        this.interceptFroms = interceptFroms;
     }
 
     public List<InterceptSendToEndpointDefinition> getInterceptSendToEndpoints() {

@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Predicate;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 
 /**
@@ -41,7 +40,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
-    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
+    private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlTransient
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<InterceptSendToEndpointDefinition>();
     @XmlTransient
@@ -71,12 +70,12 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         this.routes = routes;
     }
 
-    public List<InterceptDefinition> getIntercepts() {
-        return intercepts;
+    public List<InterceptFromDefinition> getInterceptFroms() {
+        return interceptFroms;
     }
 
-    public void setIntercepts(List<InterceptDefinition> intercepts) {
-        this.intercepts = intercepts;
+    public void setInterceptFroms(List<InterceptFromDefinition> interceptFroms) {
+        this.interceptFroms = interceptFroms;
     }
 
     public List<InterceptSendToEndpointDefinition> getInterceptSendTos() {
@@ -182,19 +181,17 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         // lets configure the route
         route.setCamelContext(getCamelContext());
 
-        List<InterceptDefinition> intercepts = getIntercepts();
-        for (InterceptDefinition intercept : intercepts) {
+        List<InterceptFromDefinition> intercepts = getInterceptFroms();
+        for (InterceptFromDefinition intercept : intercepts) {
             // need to create a proxy for this one and use the
             // proceed of the proxy which will be local to this route
-            InterceptDefinition proxy = intercept.createProxy();
+            InterceptFromDefinition proxy = intercept.createProxy();
             route.addOutput(proxy);
             route.pushBlock(proxy.getProceed());
         }
 
         List<InterceptSendToEndpointDefinition> sendTos = getInterceptSendTos();
-        for (InterceptSendToEndpointDefinition intercept : sendTos) {
-            // special intercept for intercepting sending to an endpoint
-            InterceptSendToEndpointDefinition sendTo = (InterceptSendToEndpointDefinition) intercept;
+        for (InterceptSendToEndpointDefinition sendTo : sendTos) {
             // init interceptor by letting it proxy the real endpoint
             sendTo.proxyEndpoint(getCamelContext());
             route.addOutput(sendTo);
@@ -206,26 +203,28 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     }
 
     /**
-     * Creates and adds an interceptor
+     * Creates and adds an interceptor that is triggered when an exchange
+     * is received as input to any routes (eg from all the <tt>from</tt>)
      *
      * @return the interceptor builder to configure
      */
-    public InterceptDefinition intercept() {
-        InterceptDefinition answer = new InterceptDefinition();
-        getIntercepts().add(answer);
+    public InterceptFromDefinition interceptFrom() {
+        InterceptFromDefinition answer = new InterceptFromDefinition();
+        getInterceptFroms().add(answer);
         return answer;
     }
 
     /**
-     * Creates and adds an interceptor that is attached with a predicate
+     * Creates and adds an interceptor that is triggered when an exchange is received
+     * as input to the route defined with the given endpoint (eg from the <tt>from</tt>)
      *
-     * @param predicate  the predicate
-     * @return the builder
+     * @param uri uri of the endpoint
+     * @return the interceptor builder to configure
      */
-    public ChoiceDefinition intercept(Predicate predicate) {
-        InterceptDefinition answer = new InterceptDefinition();
-        getIntercepts().add(answer);
-        return answer.when(predicate);
+    public InterceptFromDefinition interceptFrom(final String uri) {
+        InterceptFromDefinition answer = new InterceptFromDefinition(uri);
+        getInterceptFroms().add(answer);
+        return answer;
     }
 
     /**

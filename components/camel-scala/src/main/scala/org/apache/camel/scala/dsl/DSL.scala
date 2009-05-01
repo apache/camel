@@ -32,7 +32,6 @@ trait DSL {
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly(): SProcessorDefinition
   def inOut(): SProcessorDefinition
-  def intercept(expression: Exchange => Boolean) : SInterceptDefinition
   def loadbalance : SLoadBalanceDefinition
   def loop(expression: Exchange => Any) : SLoopDefinition
   def marshal(format : DataFormatDefinition) : DSL

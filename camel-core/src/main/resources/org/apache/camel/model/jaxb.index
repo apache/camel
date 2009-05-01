@@ -29,7 +29,7 @@ FromDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition
-InterceptDefinition
+InterceptFromDefinition
 InterceptSendToEndpointDefinition
 LoadBalanceDefinition
 LoopDefinition

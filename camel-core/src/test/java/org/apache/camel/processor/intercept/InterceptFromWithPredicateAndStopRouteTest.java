@@ -14,32 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.scala.dsl;
- 
-import scala.dsl.builder.RouteBuilder
+package org.apache.camel.processor.intercept;
+
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Test for an interceptor
+ * @version $Revision$
  */
-class InterceptorTest extends ScalaTestSupport {
+public class InterceptFromWithPredicateAndStopRouteTest extends InterceptFromRouteTestSupport {
 
-  def testSimple() = {
-    // TODO: Does not work after change to default error handler
-    // "mock:a" expect { _.count = 1}
-    // "mock:intercepted" expect { _.count = 1}
-    // test {
-    //    "seda:a" ! ("NightHawk", "SongBird")
-    // }
-  }
+    @Override
+    protected RouteBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            public void configure() {
+                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b").stop();
 
-  val builder = new RouteBuilder {
-     //START SNIPPET: simple
-     interceptFrom(_.in(classOf[String]) == "Nighthawk") {
-		to ("mock:intercepted")     	
-     } stop
-     
-     "seda:a" --> "mock:a"
-     //END SNIPPET: simple
-   }
+                from("direct:start").to("mock:a");
+            }
+        };
+    }
 
+    @Override
+    protected void prepareMatchingTest() {
+        a.expectedMessageCount(0);
+        b.expectedMessageCount(1);
+    }
+
+    @Override
+    protected void prepareNonMatchingTest() {
+        a.expectedMessageCount(1);
+        b.expectedMessageCount(0);
+    }
 }

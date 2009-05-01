@@ -153,18 +153,6 @@ public class DefaultRouteContext implements RouteContext {
         eventDrivenProcessors.add(processor);
     }
 
-    public void intercept(Intercept interceptor) {
-        lastInterceptor = (Interceptor)interceptor;
-    }
-
-    public Processor createProceedProcessor() {
-        if (lastInterceptor == null) {
-            throw new IllegalArgumentException("Cannot proceed() from outside of an interceptor!");
-        } else {
-            return new ProceedProcessor(lastInterceptor);
-        }
-    }
-
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
