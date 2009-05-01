@@ -46,7 +46,7 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
     @XmlAttribute(required = true)
     private String uri;
     @XmlAttribute(required = false)
-    protected Boolean skipSendToOriginalEndpoint = Boolean.FALSE;
+    private Boolean skipSendToOriginalEndpoint = Boolean.FALSE;
 
     public InterceptSendToEndpointDefinition() {
     }
