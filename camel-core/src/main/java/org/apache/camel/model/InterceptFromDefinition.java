@@ -41,7 +41,6 @@ public class InterceptFromDefinition extends OutputDefinition<ProcessorDefinitio
     // TODO: we need a new interceptDefinition to uses the InterceptStrategy so its applied for each route step
     // and a more intelligent Channel so we can stop or proceed on-the-fly
 
-    // TODO: Filter by from endpoint uri
     // TODO: Support lookup endpoint by ref (requires a bit more work)
     // TODO: Support wildcards for endpoints so you can match by scheme, eg jms:*
 

@@ -45,6 +45,7 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -287,37 +288,56 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initInterceptors(RouteDefinition route) {
+        // configure intercept from
         for (InterceptFromDefinition intercept : interceptFroms) {
-            List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-            List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
-            for (ProcessorDefinition output : route.getOutputs()) {
-                if (output instanceof OnExceptionDefinition) {
-                    exceptionHandlers.add(output);
-                } else {
-                    outputs.add(output);
+
+            // should we only apply interceptor for a given endpoint uri
+            boolean match = true;
+            if (intercept.getUri() != null) {
+                match = false;
+                for (FromDefinition input : route.getInputs()) {
+                    if (input.getUri().equals(intercept.getUri())) {
+                        match = true;
+                        break;
+                    }
                 }
             }
 
-            // clearing the outputs
-            route.clearOutput();
+            if (match) {
 
-            // add exception handlers as top children
-            route.getOutputs().addAll(exceptionHandlers);
+                List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+                List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
 
-            // add the interceptor but we must do some pre configuration beforehand
-            intercept.afterPropertiesSet();
-            InterceptFromDefinition proxy = intercept.createProxy();
-            route.addOutput(proxy);
-            route.pushBlock(proxy.getProceed());
+                for (ProcessorDefinition output : route.getOutputs()) {
+                    if (output instanceof OnExceptionDefinition) {
+                        exceptionHandlers.add(output);
+                    } else {
+                        outputs.add(output);
+                    }
+                }
 
-            // if there is a proceed in the interceptor proxy then we should add
-            // the current outputs to out route so we will proceed and continue to route to them
-            ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
-            if (proceed != null) {
-                proceed.getOutputs().addAll(outputs);
+                // clearing the outputs
+                route.clearOutput();
+
+                // add exception handlers as top children
+                route.getOutputs().addAll(exceptionHandlers);
+
+                // add the interceptor but we must do some pre configuration beforehand
+                intercept.afterPropertiesSet();
+                InterceptFromDefinition proxy = intercept.createProxy();
+                route.addOutput(proxy);
+                route.pushBlock(proxy.getProceed());
+
+                // if there is a proceed in the interceptor proxy then we should add
+                // the current outputs to out route so we will proceed and continue to route to them
+                ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
+                if (proceed != null) {
+                    proceed.getOutputs().addAll(outputs);
+                }
             }
         }
 
+        // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpoints) {
             // special intercept for intercepting sending to an endpoint
             // init interceptor by letting it proxy the real endpoint

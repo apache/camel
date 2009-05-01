@@ -35,9 +35,9 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class InterceptEndpoint implements Endpoint {
+public class InterceptSendToEndpoint implements Endpoint {
 
-    private static final transient Log LOG = LogFactory.getLog(InterceptEndpoint.class);
+    private static final transient Log LOG = LogFactory.getLog(InterceptSendToEndpoint.class);
 
     private final Endpoint delegate;
     private Producer producer;
@@ -50,7 +50,7 @@ public class InterceptEndpoint implements Endpoint {
      * @param destination  the original endpoint
      * @param skip <tt>true</tt> to skip sending after the detour to the original endpoint
      */
-    public InterceptEndpoint(final Endpoint destination, boolean skip) {
+    public InterceptSendToEndpoint(final Endpoint destination, boolean skip) {
         this.delegate = destination;
         this.skip = skip;
     }

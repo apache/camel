@@ -401,8 +401,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     public <T extends Endpoint> T getEndpoint(String name, Class<T> endpointType) {
         Endpoint endpoint = getEndpoint(name);
 
-        if (endpoint instanceof InterceptEndpoint) {
-            endpoint = ((InterceptEndpoint) endpoint).getDelegate();
+        if (endpoint instanceof InterceptSendToEndpoint) {
+            endpoint = ((InterceptSendToEndpoint) endpoint).getDelegate();
         }
         if (endpointType.isInstance(endpoint)) {
             return endpointType.cast(endpoint);

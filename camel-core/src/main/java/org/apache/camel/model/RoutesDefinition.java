@@ -44,7 +44,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     @XmlTransient
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<InterceptSendToEndpointDefinition>();
     @XmlTransient
-    private List<OnExceptionDefinition> exceptions = new ArrayList<OnExceptionDefinition>();
+    private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
     @XmlTransient
     private CamelContext camelContext;
     @XmlTransient
@@ -86,12 +86,12 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         this.interceptSendTos = interceptSendTos;
     }
 
-    public List<OnExceptionDefinition> getExceptions() {
-        return exceptions;
+    public List<OnExceptionDefinition> getOnExceptions() {
+        return onExceptions;
     }
 
-    public void setExceptions(List<OnExceptionDefinition> exceptions) {
-        this.exceptions = exceptions;
+    public void setOnExceptions(List<OnExceptionDefinition> onExceptions) {
+        this.onExceptions = onExceptions;
     }
 
     public CamelContext getCamelContext() {
@@ -181,15 +181,31 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         // lets configure the route
         route.setCamelContext(getCamelContext());
 
-        List<InterceptFromDefinition> intercepts = getInterceptFroms();
-        for (InterceptFromDefinition intercept : intercepts) {
-            // need to create a proxy for this one and use the
-            // proceed of the proxy which will be local to this route
-            InterceptFromDefinition proxy = intercept.createProxy();
-            route.addOutput(proxy);
-            route.pushBlock(proxy.getProceed());
+        // configure intercept from
+        for (InterceptFromDefinition intercept : getInterceptFroms()) {
+
+            // should we only apply interceptor for a given endpoint uri
+            boolean match = true;
+            if (intercept.getUri() != null) {
+                match = false;
+                for (FromDefinition input : route.getInputs()) {
+                    if (input.getUri().equals(intercept.getUri())) {
+                        match = true;
+                        break;
+                    }
+                }
+            }
+
+            if (match) {
+                // need to create a proxy for this one and use the
+                // proceed of the proxy which will be local to this route
+                InterceptFromDefinition proxy = intercept.createProxy();
+                route.addOutput(proxy);
+                route.pushBlock(proxy.getProceed());
+            }
         }
 
+        // configure intercept send to endpoint
         List<InterceptSendToEndpointDefinition> sendTos = getInterceptSendTos();
         for (InterceptSendToEndpointDefinition sendTo : sendTos) {
             // init interceptor by letting it proxy the real endpoint
@@ -197,7 +213,9 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             route.addOutput(sendTo);
         }
 
-        route.getOutputs().addAll(getExceptions());
+        // add on exceptions
+        route.getOutputs().addAll(getOnExceptions());
+
         getRoutes().add(route);
         return route;
     }
@@ -248,7 +266,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
      */
     public OnExceptionDefinition onException(Class exception) {
         OnExceptionDefinition answer = new OnExceptionDefinition(exception);
-        getExceptions().add(answer);
+        getOnExceptions().add(answer);
         return answer;
     }
 
