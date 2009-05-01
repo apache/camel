@@ -82,10 +82,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             // using the features to install the camel components             
             scanFeatures(mavenBundle().groupId("org.apache.camel.karaf").
                          artifactId("features").versionAsInProject().type("xml/features"),                         
-                          "camel-core", "camel-osgi", "camel-spring"),
-                          
-            // Install the camel-test bundle,              
-            mavenBundle().groupId("org.apache.camel").artifactId("camel-test").versionAsInProject(),   
+                          "camel-core", "camel-osgi", "camel-spring", "camel-test"),
             
             knopflerfish(), felix(), equinox());
 
