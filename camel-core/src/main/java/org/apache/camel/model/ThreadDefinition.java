@@ -116,8 +116,7 @@ public class ThreadDefinition extends ProcessorDefinition<ProcessorDefinition> {
         thread.setTaskQueue(taskQueue);
         thread.setThreadGroup(threadGroup);
 
-        // TODO: see if we can avoid creating so many nested pipelines
-        ArrayList<Processor> pipe = new ArrayList<Processor>(2);
+        List<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);
         pipe.add(createOutputsProcessor(routeContext, outputs));
         return new Pipeline(pipe);

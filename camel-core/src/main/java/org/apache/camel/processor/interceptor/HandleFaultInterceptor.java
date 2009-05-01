@@ -16,16 +16,12 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.AsyncProcessorHelper;
 
-public class HandleFaultInterceptor extends DelegateProcessor implements AsyncProcessor {
+public class HandleFaultInterceptor extends DelegateProcessor {
 
     public HandleFaultInterceptor() {
         super();
@@ -43,23 +39,8 @@ public class HandleFaultInterceptor extends DelegateProcessor implements AsyncPr
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         if (processor == null) {
-            // no processor so nothing to process, so return
-            callback.done(true);
-            return true;
-        }
-
-        if (processor instanceof AsyncProcessor) {
-            return ((AsyncProcessor) processor).process(exchange, new AsyncCallback() {
-                public void done(boolean doneSynchronously) {
-                    handleFault(exchange);
-                    callback.done(doneSynchronously);
-                }
-            });
+            return;
         }
 
         try {
@@ -67,10 +48,8 @@ public class HandleFaultInterceptor extends DelegateProcessor implements AsyncPr
         } catch (Exception e) {
             exchange.setException(e);
         }
-        handleFault(exchange);
 
-        callback.done(true);
-        return true;
+        handleFault(exchange);
     }
 
     /**

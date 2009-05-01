@@ -31,6 +31,8 @@ import org.apache.camel.util.ServiceHelper;
 /**
  * A Delegate pattern which delegates processing to a nested AsyncProcessor which can
  * be useful for implementation inheritance when writing an {@link org.apache.camel.spi.Policy}
+ *
+ * @deprecated
  */
 public class DelegateAsyncProcessor extends ServiceSupport implements AsyncProcessor, Navigate {
     protected AsyncProcessor processor;

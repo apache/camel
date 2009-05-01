@@ -50,6 +50,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements Processor, Navigate {
 
+    // TODO: Cleanup this when AsyncProcessor/AsyncCallback is replaced with new async API
+
     static class ProcessorExchangePair {
         private final Processor processor;
         private final Exchange exchange;
@@ -163,7 +165,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                 exchanges.add(subExchange);
                 completedExchanges.increment(); 
                 ProcessCall call = new ProcessCall(subExchange, producer, new AsyncCallback() {
-                    public void done(boolean doneSynchronously) {
+                    public void done(boolean sync) {
                         if (streaming && aggregationStrategy != null) {
                             doAggregate(result, subExchange);
                         }

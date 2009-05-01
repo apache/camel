@@ -16,17 +16,14 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.Service;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -35,11 +32,10 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class SendProcessor extends ServiceSupport implements AsyncProcessor, Service {
+public class SendProcessor extends ServiceSupport implements Processor {
     protected static final transient Log LOG = LogFactory.getLog(SendProcessor.class);
     protected Endpoint destination;
     protected Producer producer;
-    protected AsyncProcessor processor;
     protected ExchangePattern pattern;
 
     public SendProcessor(Endpoint destination) {
@@ -70,40 +66,17 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
         }
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-            } else {
-                exchange.setException(new IllegalStateException("No producer, this processor has not been started!"));
-            }
-            callback.done(true);
-            return true;
-        } else {
-            exchange = configureExchange(exchange);
-            return processor.process(exchange, callback);
-        }
-    }
-
     public Endpoint getDestination() {
         return destination;
     }
 
     protected void doStart() throws Exception {
         this.producer = destination.createProducer();
-        this.producer.start();
-        this.processor = AsyncProcessorTypeConverter.convert(producer);
+        ServiceHelper.startService(this.producer);
     }
 
     protected void doStop() throws Exception {
-        if (producer != null) {
-            try {
-                producer.stop();
-            } finally {
-                producer = null;
-                processor = null;
-            }
-        }
+        ServiceHelper.stopService(this.producer);
     }
 
     protected Exchange configureExchange(Exchange exchange) {
@@ -111,10 +84,6 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Ser
             exchange.setPattern(pattern);
         }
         return exchange;
-    }
-
-    public Processor getProcessor() {
-        return processor;
     }
 
 }

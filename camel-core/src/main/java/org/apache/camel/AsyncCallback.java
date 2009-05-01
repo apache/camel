@@ -19,17 +19,24 @@ package org.apache.camel;
 
 /**
  * The callback interface for an {@link AsyncProcessor} so that it can
- * notify you when an {@link Exchange} has completed. 
+ * notify you when an {@link Exchange} has completed.
+ *
+ * @deprecated a new async API is planned for Camel 2.0
  */
 public interface AsyncCallback {
     
     /**
      * This method is invoked once the Exchange is completed.  If an error 
      * occurred while processing the exchange, the exception field of the 
-     * {@link Exchange} being processed will hold the error. 
+     * {@link Exchange} being processed will hold the error.
+     * <p/>
+     * This callback reports back twice:
+     * - first time when the caller thread is done, that is the synchronously done.
+     * - second time when the asynchronously thread is done and thus the {@link Exchange} is really complete. 
      *  
-     * @param doneSynchronously set to true if the processing of the exchange was completed synchronously thread.
+     * @param doneSynchronously set to <tt>true</tt> if the processing of the exchange was completed in the
+     * synchronously thread. Is set to <tt>false</tt> when the asynchronously thread is complete.
      */
-    void done(boolean doneSynchronously);    
+    void done(boolean doneSynchronously);
     
 }

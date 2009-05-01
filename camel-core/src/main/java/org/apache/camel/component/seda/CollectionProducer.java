@@ -42,7 +42,9 @@ public class CollectionProducer extends DefaultProducer implements AsyncProcesso
     }
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        queue.add(exchange.copy());
+        Exchange copy = exchange.copy();
+        copy.setProperty("CamelAsyncCallback", callback);
+        queue.add(copy);
         callback.done(true);
         return true;
     }

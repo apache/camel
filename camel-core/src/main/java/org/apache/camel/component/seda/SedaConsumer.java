@@ -67,12 +67,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
             if (exchange != null) {
                 if (isRunAllowed()) {
                     try {
-                        processor.process(exchange, new AsyncCallback() {
-                            public void done(boolean sync) {
-                            }
-                        });
+                        processor.process(exchange);
                     } catch (Exception e) {
                         LOG.error("Seda queue caught: " + e, e);
+                    }
+
+                    // TODO: It ought to be UnitOfWork that did the callback notification but we are planning
+                    // to replace it with a brand new Async API so we leave it as is
+                    AsyncCallback callback = exchange.getProperty("CamelAsyncCallback", AsyncCallback.class);
+                    if (callback != null) {
+                        // seda consumer is async so invoke the async done on the callback if its provided
+                        callback.done(false);
                     }
                 } else {
                     LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);

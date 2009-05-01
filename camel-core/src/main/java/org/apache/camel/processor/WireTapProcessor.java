@@ -21,7 +21,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -95,39 +94,6 @@ public class WireTapProcessor extends SendProcessor {
             });
         }
     }
-
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-            } else {
-                exchange.setException(new IllegalStateException("No producer, this processor has not been started!"));
-            }
-            callback.done(true);
-            return true;
-        } else {
-            exchange = configureExchange(exchange);
-
-            final Exchange wireTapExchange = configureExchange(exchange);
-
-            // use submit instead of execute to force it to use a new thread, execute might
-            // decide to use current thread, so we must submit a new task
-            // as we dont care for the response we dont hold the future object and wait for the result
-            getExecutorService().submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Processing wiretap: " + wireTapExchange);
-                    }
-                    return processor.process(wireTapExchange, callback);
-                }
-            });
-
-            // return true to indicate caller its okay, and he should not wait as this wiretap
-            // is a fire and forget
-            return true;
-        }
-    }
-
 
     @Override
     protected Exchange configureExchange(Exchange exchange) {

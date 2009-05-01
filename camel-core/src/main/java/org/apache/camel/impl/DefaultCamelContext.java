@@ -379,11 +379,8 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
                         answer = createEndpoint(uri);
                     }
 
-                    // If it's a singleton then auto register it.
-                    // TODO: Why not test for isSingleton?
                     if (answer != null) {
                         addService(answer);
-
                         endpoints.put(getEndpointKey(uri, answer), answer);
                         lifecycleStrategy.onEndpointAdd(answer);
                     }

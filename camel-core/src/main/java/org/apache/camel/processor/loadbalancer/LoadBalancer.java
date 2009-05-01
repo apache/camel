@@ -18,7 +18,6 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Processor;
 
 /**
@@ -26,7 +25,8 @@ import org.apache.camel.Processor;
  *
  * @version $Revision$
  */
-public interface LoadBalancer extends AsyncProcessor {
+public interface LoadBalancer extends Processor {
+
     /**
      * Adds a new processor to the load balancer
      *

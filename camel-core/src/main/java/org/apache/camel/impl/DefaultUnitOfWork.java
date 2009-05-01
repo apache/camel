@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
 import org.apache.camel.model.ProcessorDefinition;
@@ -38,7 +37,6 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
 
     private String id;
     private List<Synchronization> synchronizations;
-    private List<AsyncCallback> asyncCallbacks;
     private List<ProcessorDefinition> routeList;
 
     public DefaultUnitOfWork() {
@@ -52,9 +50,6 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
             synchronizations.clear();
-        }
-        if (asyncCallbacks != null) {
-            asyncCallbacks.clear();
         }
         if (routeList != null) {
             routeList.clear();
@@ -87,10 +82,6 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         }
     }
 
-    public boolean isSynchronous() {
-        return asyncCallbacks == null || asyncCallbacks.isEmpty();
-    }
-
     public String getId() {
         if (id == null) {
             id = DEFAULT_ID_GENERATOR.generateId();
@@ -116,27 +107,4 @@ public class DefaultUnitOfWork implements TraceableUnitOfWork, Service {
         return Collections.unmodifiableList(routeList);
     }
 
-    /**
-     * Register some asynchronous processing step
-     */
-    /*
-    public synchronized AsyncCallback addAsyncStep() {
-        AsyncCallback answer = new AsyncCallback() {
-            public void done(boolean doneSynchronously) {
-                latch.countDown();
-            }
-        };
-        if (latch == null) {
-            latch = new CountDownLatch(1);
-        }
-        else {
-            // TODO increment latch!
-        }
-        if (asyncCallbacks == null) {
-            asyncCallbacks = new ArrayList<AsyncCallback>();
-        }
-        asyncCallbacks.add(answer);
-        return answer;
-    }
-    */
 }

@@ -76,7 +76,7 @@ public class Camel715ThreadProcessorTest extends TestCase {
 
             for (int i = 0; i < ITERS; i++) {
                 template.send(e, new SendingProcessor(i), new AsyncCallback() {
-                    public void done(boolean arg0) {
+                    public void done(boolean sync) {
                         // Do nothing here
                     }
                 });

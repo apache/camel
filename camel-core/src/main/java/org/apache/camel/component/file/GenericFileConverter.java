@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.file;
 
-import java.io.FileNotFoundException;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.FallbackConverter;

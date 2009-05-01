@@ -16,11 +16,8 @@
  */
 package org.apache.camel.management;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -30,19 +27,19 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class InstrumentationProcessor extends DelegateProcessor implements AsyncProcessor {
+public class InstrumentationProcessor extends DelegateProcessor {
 
     private static final transient Log LOG = LogFactory.getLog(InstrumentationProcessor.class);
     private PerformanceCounter counter;
     private String type;
 
+    public InstrumentationProcessor() {
+    }
+
     public InstrumentationProcessor(PerformanceCounter counter) {
         this.counter = counter;
     }
 
-    public InstrumentationProcessor() {
-    }
-    
     @Override
     public String toString() {
         return "Instrumention" + (type != null ? ":" + type : "") + "[" + processor + "]";
@@ -53,42 +50,26 @@ public class InstrumentationProcessor extends DelegateProcessor implements Async
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
+        if (processor != null) {
 
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        if (processor == null) {
-            // no processor so nothing to process, so return
-            callback.done(true);
-            return true;
+            // TODO: why not use millis instead of nano?
+
+            long startTime = 0;
+            if (counter != null) {
+                startTime = System.nanoTime();
+            }
+
+            try {
+                processor.process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            if (counter != null) {
+                // convert nanoseconds to milliseconds
+                recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
+            }
         }
-
-        final long startTime = System.nanoTime();
-
-        if (processor instanceof AsyncProcessor) {
-            return ((AsyncProcessor)processor).process(exchange, new AsyncCallback() {
-                public void done(boolean doneSynchronously) {
-                    if (counter != null) {
-                        // convert nanoseconds to milliseconds
-                        recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
-                    }
-                    callback.done(doneSynchronously);
-                }
-            });
-        }
-
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-
-        if (counter != null) {
-            // convert nanoseconds to milliseconds
-            recordTime(exchange, (System.nanoTime() - startTime) / 1000000.0);
-        }
-        callback.done(true);
-        return true;
     }
 
     protected void recordTime(Exchange exchange, double duration) {

@@ -20,12 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,61 +128,67 @@ public abstract class GenericFileConsumer<T> extends ScheduledPollConsumer {
         try {
             final GenericFileProcessStrategy<T> processStrategy = endpoint.getGenericFileProcessStrategy();
 
-            if (processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile())) {
-
-                // must use file from exchange as it can be updated due the
-                // preMoveNamePrefix/preMoveNamePostfix options
-                final GenericFile<T> target = exchange.getGenericFile();
-                // must use full name when downloading so we have the correct path
-                final String name = target.getAbsoluteFilePath();
-
-                // retrieve the file using the stream
-                if (log.isTraceEnabled()) {
-                    log.trace("Retreiving file: " + name + " from: " + endpoint);
-                }
-
-                operations.retrieveFile(name, exchange);
-
-                if (log.isTraceEnabled()) {
-                    log.trace("Retrieved file: " + name + " from: " + endpoint);
-                }
-
-                if (log.isDebugEnabled()) {
-                    log.debug("About to process file: " + target + " using exchange: " + exchange);
-                }
-                // Use the async processor interface so that processing of
-                // the exchange can happen asynchronously
-                getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    public void done(boolean sync) {
-                        final GenericFile<T> file = exchange.getGenericFile();
-                        boolean failed = exchange.isFailed();
-
-                        if (log.isDebugEnabled()) {
-                            log.debug("Done processing file: " + file + " using exchange: " + exchange);
-                        }
-
-                        boolean committed = false;
-                        try {
-                            if (!failed) {
-                                // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
-                                processStrategyCommit(processStrategy, exchange, file);
-                                committed = true;
-                            } else {
-                                if (exchange.getException() != null) {
-                                    // if the failure was an exception then handle it
-                                    handleException(exchange.getException());
-                                } 
-                            }
-                        } finally {
-                            if (!committed) {
-                                processStrategyRollback(processStrategy, exchange, file);
-                            }
-                        }
-                    }
-                });
-            } else {
+            boolean begin = processStrategy.begin(operations, endpoint, exchange, exchange.getGenericFile());
+            if (!begin) {
                 log.warn(endpoint + " cannot process remote file: " + exchange.getGenericFile());
+                return;
             }
+
+            // must use file from exchange as it can be updated due the
+            // preMoveNamePrefix/preMoveNamePostfix options
+            final GenericFile<T> target = exchange.getGenericFile();
+            // must use full name when downloading so we have the correct path
+            final String name = target.getAbsoluteFilePath();
+
+            // retrieve the file using the stream
+            if (log.isTraceEnabled()) {
+                log.trace("Retreiving file: " + name + " from: " + endpoint);
+            }
+
+            operations.retrieveFile(name, exchange);
+
+            if (log.isTraceEnabled()) {
+                log.trace("Retrieved file: " + name + " from: " + endpoint);
+            }
+
+            if (log.isDebugEnabled()) {
+                log.debug("About to process file: " + target + " using exchange: " + exchange);
+            }
+            // Use the async processor interface so that processing of
+            // the exchange can happen asynchronously
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // after processing
+            final GenericFile<T> file = exchange.getGenericFile();
+            boolean failed = exchange.isFailed();
+
+            if (log.isDebugEnabled()) {
+                log.debug("Done processing file: " + file + " using exchange: " + exchange);
+            }
+
+            // commit or rollback
+            boolean committed = false;
+            try {
+                if (!failed) {
+                    // commit the file strategy if there was no failure or already handled by the DeadLetterChannel
+                    processStrategyCommit(processStrategy, exchange, file);
+                    committed = true;
+                } else {
+                    if (exchange.getException() != null) {
+                        // if the failure was an exception then handle it
+                        handleException(exchange.getException());
+                    }
+                }
+            } finally {
+                if (!committed) {
+                    processStrategyRollback(processStrategy, exchange, file);
+                }
+            }
+
         } catch (Exception e) {
             handleException(e);
         }

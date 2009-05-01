@@ -61,9 +61,7 @@ public class SedaAsyncProcessorTest extends ContextTestSupport {
                 // the first is when we have finished sending to the seda producer
                 if (sync) {
                     doneSync = true;
-                }
-                // and the async should occur when the mock endpoint is done
-                if (!sync) {
+                } else {
                     latchAsync.countDown();
                 }
             }
@@ -77,14 +75,14 @@ public class SedaAsyncProcessorTest extends ContextTestSupport {
         assertEquals("Send should occur before processor", "sendprocess", route);
         assertTrue("Sync done should have occured", doneSync);
 
-        // TODO: The AsyncProcessor does not work as expected
         // wait at most 2 seconds
         boolean zero = latchAsync.await(2, TimeUnit.SECONDS);
-        // assertTrue("Async done should have occured", zero);
+        assertTrue("Async done should have occured", zero);
 
         // how to get the response?
         String response = exchange.getOut().getBody(String.class);
-        // assertEquals("Bye World", response);
+        // TODO: we need a new API for getting the result
+        //assertEquals("Bye World", response);
     }
 
     @Override

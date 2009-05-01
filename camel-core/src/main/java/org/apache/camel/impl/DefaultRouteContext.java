@@ -21,14 +21,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Intercept;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -136,11 +134,8 @@ public class DefaultRouteContext implements RouteContext {
         if (!eventDrivenProcessors.isEmpty()) {
             Processor processor = Pipeline.newInstance(eventDrivenProcessors);
 
-            // lets create the async processor
-            final AsyncProcessor asyncProcessor = AsyncProcessorTypeConverter.convert(processor);
-
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
-            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(asyncProcessor);
+            Processor unitOfWorkProcessor = new UnitOfWorkProcessor(processor);
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(getEndpoint(), unitOfWorkProcessor);

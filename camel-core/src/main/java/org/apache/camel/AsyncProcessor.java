@@ -26,6 +26,7 @@ package org.apache.camel;
  * method.
  * 
  * @version $Revision$
+ * @deprecated a new async API is planned for Camel 2.0
  */
 public interface AsyncProcessor extends Processor {
 

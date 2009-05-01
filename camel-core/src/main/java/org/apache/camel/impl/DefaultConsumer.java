@@ -56,7 +56,8 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     /**
      * Provides an {@link AsyncProcessor} interface to the configured
      * processor on the consumer.  If the processor does not implement
-     * the interface, it will be adapted so that it does.  
+     * the interface, it will be adapted so that it does.
+     * @deprecated
      */
     public AsyncProcessor getAsyncProcessor() {
         if (asyncProcessor == null) {

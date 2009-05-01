@@ -87,7 +87,6 @@ public class ThreadTest extends ContextTestSupport {
 
         final Exchange exchanges[] = new Exchange[exchangeCount];
         for (int i = 0; i < exchangeCount; i++) {
-            final int index = i;
             // Send the exchange using the async completion interface.
             // This call returns before the exchange is completed.
             exchanges[i] = template.send("direct:a", new Processor() {
@@ -98,7 +97,6 @@ public class ThreadTest extends ContextTestSupport {
                 }
             }, new AsyncCallback() {
                 public void done(boolean doneSynchronously) {
-                    log.debug("Completed: " + index + ", exception: " + exchanges[index].getException());
                     completedExchanges.countDown();
                 }
             });
@@ -142,9 +140,11 @@ public class ThreadTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:a").thread(1).process(new Processor() {
+                from("direct:a").to("seda:async");
+
+                from("seda:async").thread(1).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        continueProcessing.await();
+                        continueProcessing.await(10, TimeUnit.SECONDS);
                     }
                 }).to("mock:result");
                 // END SNIPPET: example

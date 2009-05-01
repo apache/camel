@@ -18,7 +18,6 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
@@ -52,17 +51,4 @@ public class TopicLoadBalancer extends LoadBalancerSupport {
         return exchange.copy();
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        List<Processor> list = getProcessors();
-        for (Processor processor : list) {
-            Exchange copy = copyExchangeStrategy(processor, exchange);
-            try {
-                processor.process(copy);
-            } catch (Exception ex) {
-                // We don't handle the exception here
-            }
-        }
-        callback.done(false);
-        return false;
-    }
 }

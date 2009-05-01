@@ -19,8 +19,6 @@ package org.apache.camel.processor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,7 +26,6 @@ import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -43,7 +40,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Channel {
+public class DefaultChannel extends ServiceSupport implements Processor, Channel {
 
     private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
     private Processor errorHandler;
@@ -141,24 +138,10 @@ public class DefaultChannel extends ServiceSupport implements AsyncProcessor, Ch
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         Processor processor = getOutput();
-
-        if (processor instanceof AsyncProcessor) {
-            return ((AsyncProcessor) processor).process(exchange, callback);
-        } else if (processor != null) {
-            try {
-                processor.process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
+        if (processor != null) {
+            processor.process(exchange);
         }
-
-        callback.done(true);
-        return true;
     }
 
     @Override

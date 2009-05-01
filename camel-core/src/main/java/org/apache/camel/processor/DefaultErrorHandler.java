@@ -16,15 +16,11 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.processor.exceptionpolicy.ExceptionPolicyStrategy;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -34,11 +30,11 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version $Revision$
  */
-public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncProcessor {
-    private AsyncProcessor output;
+public class DefaultErrorHandler extends ErrorHandlerSupport implements Processor {
+    private Processor output;
 
     public DefaultErrorHandler(Processor output, ExceptionPolicyStrategy exceptionPolicyStrategy) {
-        this.output = AsyncProcessorTypeConverter.convert(output);
+        this.output = output;
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 
@@ -52,32 +48,28 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
+        try {
+            output.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
 
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        return output.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-
-                // do not handle transacted exchanges as this error handler does not support it
-                boolean handle = true;
-                if (exchange.isTransacted() && !supportTransacted()) {
-                    handle = false;
-                    if (log.isDebugEnabled()) {
-                        log.debug("This error handler does not support transacted exchanges."
-                            + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
-                    }
-                }
-
-                if (handle && exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
-                    handleException(exchange);
-                }
-                callback.done(sync);
+        // do not handle transacted exchanges as this error handler does not support it
+        boolean handle = true;
+        if (exchange.isTransacted() && !supportTransacted()) {
+            handle = false;
+            if (log.isDebugEnabled()) {
+                log.debug("This error handler does not support transacted exchanges."
+                    + " Bypassing this error handler: " + this + " for exchangeId: " + exchange.getExchangeId());
             }
-        });
+        }
+
+        if (handle && exchange.getException() != null && !ExchangeHelper.isFailureHandled(exchange)) {
+            handleException(exchange);
+        }
     }
 
-    private void handleException(Exchange exchange) {
+    private void handleException(Exchange exchange) throws Exception {
         Exception e = exchange.getException();
 
         // store the original caused exception in a property, so we can restore it later
@@ -110,12 +102,8 @@ public class DefaultErrorHandler extends ErrorHandlerSupport implements AsyncPro
         MessageHelper.resetStreamCache(exchange.getIn());
     }
 
-    private boolean deliverToFaultProcessor(final Exchange exchange, final Processor failureProcessor) {
-        AsyncProcessor afp = AsyncProcessorTypeConverter.convert(failureProcessor);
-        return afp.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-            }
-        });
+    private void deliverToFaultProcessor(final Exchange exchange, final Processor failureProcessor) throws Exception {
+        failureProcessor.process(exchange);
     }
 
     private void prepareExchangeAfterOnException(Exchange exchange, Predicate handledPredicate) {

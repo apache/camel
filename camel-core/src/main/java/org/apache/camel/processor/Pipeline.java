@@ -40,6 +40,8 @@ import org.apache.commons.logging.LogFactory;
 public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
 
+    // TODO: Cleanup this when AsyncProcessor/AsyncCallback is replaced with new async API
+
     public Pipeline(Collection<Processor> processors) {
         super(processors);
     }

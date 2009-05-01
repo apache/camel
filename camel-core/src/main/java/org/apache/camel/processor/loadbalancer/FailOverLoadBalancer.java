@@ -18,8 +18,6 @@ package org.apache.camel.processor.loadbalancer;
 
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
@@ -83,13 +81,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
     }
 
-    public boolean process(Exchange exchange, final AsyncCallback callback) {
-        return processExchange(0, exchange, callback);
-    }
-
-    public boolean processExchange(final int index, final Exchange exchange, final AsyncCallback callback) {
-        boolean sync;
-
+    protected void processExchange(final int index, final Exchange exchange) {
         List<Processor> list = getProcessors();
         if (list.isEmpty()) {
             throw new IllegalStateException("No processors available to process " + exchange);
@@ -99,33 +91,18 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
-        if (processor instanceof AsyncProcessor) {
-            AsyncProcessor asyncProcessor = (AsyncProcessor) processor;
-            sync = asyncProcessor.process(exchange, new AsyncCallback() {
-                public void done(boolean doSync) {
-                    // check the exchange and call the FailOverProcessor
-                    if (isCheckedException(exchange) && index < getProcessors().size() - 1) {
-                        exchange.setException(null);
-                        processExchange(index + 1, exchange, callback);
-                    } else {
-                        callback.done(doSync);
-                    }
-                }
-            });
-        } else {
-            try {
-                processor.process(exchange);
-            } catch (Exception ex) {
-                exchange.setException(ex);
-            }
-            if (isCheckedException(exchange) && index < getProcessors().size() - 1) {
-                exchange.setException(null);
-                processExchange(index + 1, exchange, callback);
-            }
-            sync = true;
-            callback.done(true);
+
+        try {
+            processor.process(exchange);
+        } catch (Exception ex) {
+            exchange.setException(ex);
         }
-        return sync;
+
+        if (isCheckedException(exchange) && index < getProcessors().size() - 1) {
+            exchange.setException(null);
+            processExchange(index + 1, exchange);
+        }
+
     }
 
 }

@@ -16,19 +16,16 @@
  */
 package org.apache.camel.processor.interceptor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.StreamCache;
 import org.apache.camel.processor.DelegateProcessor;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.MessageHelper;
 
 /**
  * {@link DelegateProcessor} that converts a message into a re-readable format
  */
-public class StreamCachingInterceptor extends DelegateProcessor implements AsyncProcessor {
+public class StreamCachingInterceptor extends DelegateProcessor {
 
     public StreamCachingInterceptor() {
         super();
@@ -46,31 +43,13 @@ public class StreamCachingInterceptor extends DelegateProcessor implements Async
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
         StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
         if (newBody != null) {
             exchange.getIn().setBody(newBody);
         }
         MessageHelper.resetStreamCache(exchange.getIn());
 
-        return proceed(exchange, callback);
+        getProcessor().process(exchange);
     }
 
-    public boolean proceed(Exchange exchange, AsyncCallback callback) {
-        if (getProcessor() instanceof AsyncProcessor) {
-            return ((AsyncProcessor) getProcessor()).process(exchange, callback);
-        } else {
-            try {
-                getProcessor().process(exchange);
-            } catch (Exception e) {
-                exchange.setException(e);
-            }
-            // false means processing of the exchange asynchronously,
-            callback.done(true);
-            return true;
-        }
-    }
 }
