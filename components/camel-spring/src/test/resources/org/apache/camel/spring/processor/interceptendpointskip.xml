@@ -25,17 +25,16 @@
     <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
 
-        <!-- since we use the stop() at the end of the detour route we instruct Camel to skip
-             sending the exchange to the original intended destination.
+        <!-- since we set the skipSendToOriginalEndpoint attribute to true we instruct
+             Camel to skip sending the exchange to the original intended destination.
              That means that mock:foo will NOT receive the message, but the message
              is skipped and continued in the original route, so mock:result will receive
              the message. -->
-        <interceptSendToEndpoint uri="mock:foo">
+        <interceptSendToEndpoint uri="mock:foo" skipSendToOriginalEndpoint="true">
             <transform>
                 <constant>Bye World</constant>
             </transform>
             <to uri="mock:detour"/>
-            <stop/>
         </interceptSendToEndpoint>
 
         <route>

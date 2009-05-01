@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ProcessorDefinitionHelper;
 
 /**
  * Represents an XML &lt;interceptToEndpoint/&gt; element
@@ -38,13 +38,15 @@ import org.apache.camel.util.ProcessorDefinitionHelper;
  */
 @XmlRootElement(name = "interceptToEndpoint")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class InterceptSendToEndpointDefinition extends InterceptDefinition {
+public class InterceptSendToEndpointDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
     // TODO: Support wildcards for endpoints so you can match by scheme, eg jms:*
 
     @XmlAttribute(required = true)
     private String uri;
+    @XmlAttribute(required = false)
+    protected Boolean skipSendToOriginalEndpoint = Boolean.FALSE;
 
     public InterceptSendToEndpointDefinition() {
     }
@@ -68,6 +70,9 @@ public class InterceptSendToEndpointDefinition extends InterceptDefinition {
         return "interceptEndpoint";
     }
 
+    public void skipSendToOriginalEndpoint() {
+        setSkipSendToOriginalEndpoint(Boolean.TRUE);
+    }
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -100,7 +105,7 @@ public class InterceptSendToEndpointDefinition extends InterceptDefinition {
         Endpoint endpoint = lookupEndpoint(context);
 
         // decorate endpoint with our proxy
-        boolean skip = stopIntercept != null ? stopIntercept : false;
+        boolean skip = skipSendToOriginalEndpoint != null ? skipSendToOriginalEndpoint : false;
         InterceptEndpoint proxy = new InterceptEndpoint(endpoint, skip);
         try {
             // add will replace the old one
@@ -111,6 +116,16 @@ public class InterceptSendToEndpointDefinition extends InterceptDefinition {
     }
 
     /**
+     * Applies this interceptor only if the given predicate is true
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
+    public ChoiceDefinition when(Predicate predicate) {
+        return choice().when(predicate);
+    }
+
+    /**
      * This method is <b>only</b> for handling some post configuration
      * that is needed from the Spring DSL side as JAXB does not invoke the fluent
      * builders, so we need to manually handle this afterwards, and since this is
@@ -118,27 +133,27 @@ public class InterceptSendToEndpointDefinition extends InterceptDefinition {
      * with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {
-        super.afterPropertiesSet();
         // okay the intercept endpoint works a bit differently than the regular interceptors
         // so we must fix the route definiton yet again
 
-        // we need to fix if the interceptor should only trigger based on a predicate
-        // as the regular interceptor will prepare the route "reverse" we gotta move
-        // from this output to the otherwise output
-        if (usePredicate != null && usePredicate) {
-            ChoiceDefinition choice = ProcessorDefinitionHelper.findFirstTypeInOutputs(outputs, ChoiceDefinition.class);
-            if (choice != null && outputs.size() > 1) {
-                // move this outputs to the otherwise, expect the first one
-                // as the first one is the interceptor itself
-                for (int i = 1; i < outputs.size(); i++) {
-                    ProcessorDefinition out = outputs.get(i);
-                    choice.getOtherwise().addOutput(out);
-                }
-                // remove the moved from the original output, by just keeping the first one
-                ProcessorDefinition keep = outputs.get(0);
-                clearOutput();
-                outputs.add(keep);
+        if (getOutputs().size() == 0) {
+            // no outputs
+            return;
+        }
+
+        ProcessorDefinition first = getOutputs().get(0);
+        if (first instanceof WhenDefinition) {
+            WhenDefinition when = (WhenDefinition) first;
+            // move this outputs to the when, expect the first one
+            // as the first one is the interceptor itself
+            for (int i = 1; i < outputs.size(); i++) {
+                ProcessorDefinition out = outputs.get(i);
+                when.addOutput(out);
             }
+            // remove the moved from the original output, by just keeping the first one
+            ProcessorDefinition keep = outputs.get(0);
+            clearOutput();
+            outputs.add(keep);
         }
     }
 
@@ -147,6 +162,11 @@ public class InterceptSendToEndpointDefinition extends InterceptDefinition {
         return context.getEndpoint(uri);
     }
 
+    public Boolean getSkipSendToOriginalEndpoint() {
+        return skipSendToOriginalEndpoint;
+    }
 
-
+    public void setSkipSendToOriginalEndpoint(Boolean skipSendToOriginalEndpoint) {
+        this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
+    }
 }

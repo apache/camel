@@ -31,6 +31,7 @@ import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.InterceptSendToEndpointDefinition;
 
 /**
  * A <a href="http://camel.apache.org/dsl.html">Java DSL</a> which is
@@ -172,7 +173,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
      * @param uri  endpoint uri
      * @return the builder
      */
-    public InterceptDefinition interceptSendToEndpoint(String uri) {
+    public InterceptSendToEndpointDefinition interceptSendToEndpoint(String uri) {
         routeCollection.setCamelContext(getContext());
         return routeCollection.interceptSendToEndpoint(uri);
     }

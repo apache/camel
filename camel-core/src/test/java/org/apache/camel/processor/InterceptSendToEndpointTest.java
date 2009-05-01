@@ -20,11 +20,11 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test for intercepting endpoint
+ * Unit test for intercepting sending to endpoint
  * 
  * @version $Revision$
  */
-public class InterceptEndpointTest extends ContextTestSupport {
+public class InterceptSendToEndpointTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -98,12 +98,12 @@ public class InterceptEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e3
-                // since we use the stop() at the end of the detour route we instruct Camel to skip
+                // since we use the skip() at the end of the detour route we instruct Camel to skip
                 // sending the exchange to the original intended destination.
                 // That means that mock:foo will NOT receive the message, but the message
                 // is skipped and continued in the original route, so mock:result will receive
                 // the message.
-                interceptSendToEndpoint("mock:foo").transform(constant("Bye World")).to("mock:detour").stop();
+                interceptSendToEndpoint("mock:foo").transform(constant("Bye World")).to("mock:detour").skip();
 
                 from("direct:third")
                     .to("mock:bar")

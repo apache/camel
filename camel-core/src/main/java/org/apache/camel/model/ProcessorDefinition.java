@@ -1392,6 +1392,34 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Skip sending the {@link org.apache.camel.Exchange} to the original intended endpoint
+     * when used with <tt>interceptSendToEndpoint</tt>.
+     *
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type skip() {
+        ProcessorDefinition currentProcessor = this;
+
+        if (currentProcessor instanceof InterceptSendToEndpointDefinition) {
+            ((InterceptSendToEndpointDefinition) currentProcessor).skipSendToOriginalEndpoint();
+        } else {
+            ProcessorDefinition node;
+            for (node = parent; node != null; node = node.getParent()) {
+                if (node instanceof InterceptSendToEndpointDefinition) {
+                    ((InterceptSendToEndpointDefinition) node).skipSendToOriginalEndpoint();
+                    break;
+                }
+            }
+            if (node == null) {
+                throw new IllegalArgumentException("Cannot use skip() without being within an interceptSendToEndpoint() block");
+            }
+        }
+
+        return (Type) this;
+    }
+
+    /**
      * <a href="http://camel.apache.org/exception-clause.html">Exception clause</a>
      * for cathing certain exceptions and handling them.
      *
