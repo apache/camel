@@ -14,51 +14,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.processor.intercept;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.spi.InterceptStrategy;
 
 /**
- * Trying to reproduce CAMEL-927.
+ * @version $Revision$
  */
-public class TwoTimerWithJMXIssue extends ContextTestSupport {
+public class InterceptSimpleRouteStopTest extends ContextTestSupport {
 
-    private static int counter;
+    public void testInterceptWithStop() throws Exception {
+        // TODO: stop is not yet supported
+        //getMockEndpoint("mock:foo").expectedMessageCount(0);
+        //getMockEndpoint("mock:bar").expectedMessageCount(0);
+        //getMockEndpoint("mock:result").expectedMessageCount(0);
 
-    @Override
-    protected void setUp() throws Exception {
-        enableJMX(); // the bug was in the JMX so it must be enabled
-        super.setUp();
-    }
+        //getMockEndpoint("mock:intercepted").expectedMessageCount(1);
 
-    public void testFromWithNoOutputs() throws Exception {
-        Thread.sleep(500);
+        //template.sendBody("direct:start", "Hello World");
 
-        assertTrue("Counter should be 2 or higher", counter >= 2);
+        //assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                context.addInterceptStrategy(new MyTracer());
+//                intercept().to("mock:intercepted").stop();
+                intercept().to("mock:intercepted");
 
-                from("timer://kickoff_1?period=250").from("timer://kickoff_2?period=250&delay=10");
+                from("direct:start")
+                    .to("mock:foo", "mock:bar", "mock:result");
             }
         };
     }
-
-    private class MyTracer implements InterceptStrategy {
-        public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget)
-            throws Exception {
-            assertNotNull(target);
-            counter++;
-            return target;
-        }
-    }
-
 }

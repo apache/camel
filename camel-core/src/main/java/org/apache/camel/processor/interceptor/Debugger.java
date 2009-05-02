@@ -115,7 +115,7 @@ public class Debugger implements InterceptStrategy {
     }
 
 
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
         String id = processorDefinition.idOrCreate();
         if (logExchanges) {
             TraceInterceptor traceInterceptor = new TraceInterceptor(processorDefinition, target, tracer);

@@ -109,6 +109,11 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
 
     public void addRoutes(RouteContext routeContext, Collection<Route> routes) throws Exception {
         Processor processor = makeProcessor(routeContext);
+        if (processor == null) {
+            // no processor to add
+            return;
+        }
+
         if (!routeContext.isRouteAdded()) {
             boolean endpointInterceptor = false;
 
@@ -219,6 +224,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     protected Processor makeProcessor(RouteContext routeContext) throws Exception {
         Processor processor = createProcessor(routeContext);
+        if (processor == null) {
+            // no processor to make
+            return null;
+        }
         return wrapProcessor(routeContext, processor);
     }
 
@@ -1342,7 +1351,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
             if (proceed == null) {
                 throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
             }
-
         }
 
         addOutput(proceed);

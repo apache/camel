@@ -22,11 +22,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Predicate;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.model.ChoiceDefinition;
+import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -143,6 +142,17 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
         routeCollection.setCamelContext(getContext());
         setErrorHandlerBuilder(errorHandlerBuilder);
         return this;
+    }
+
+    /**
+     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
+     * to continue processing the underlying route being intercepted.
+     *
+     * @return the builder
+     */
+    public InterceptDefinition intercept() {
+        routeCollection.setCamelContext(getContext());
+        return routeCollection.intercept();
     }
 
     /**

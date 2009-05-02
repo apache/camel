@@ -40,7 +40,7 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         this.registeredCounters = registeredCounters;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
         // dont double wrap it
         if (target instanceof InstrumentationProcessor) {
             return target;

@@ -36,8 +36,10 @@ public interface InterceptStrategy {
      *
      * @param processorDefinition the object that invokes this method
      * @param target        the processor to be wrapped
+     * @param nextTarget    the next processor to be routed to
      * @return processor wrapped with an interceptor or not wrapped
      * @throws Exception can be thrown
      */
-    Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception;
+    Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition,
+                                          Processor target, Processor nextTarget) throws Exception;
 }

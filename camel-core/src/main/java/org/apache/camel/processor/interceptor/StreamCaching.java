@@ -29,7 +29,7 @@ import org.apache.camel.spi.InterceptStrategy;
 public final class StreamCaching implements InterceptStrategy {
     
     @SuppressWarnings("unchecked")
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
         return new StreamCachingInterceptor(target);
     }
     

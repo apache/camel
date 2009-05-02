@@ -18,7 +18,6 @@ package org.apache.camel.spring;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,12 +28,15 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Routes;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
 import org.apache.camel.management.DefaultInstrumentationAgent;
 import org.apache.camel.management.InstrumentationLifecycleStrategy;
+import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -45,7 +47,6 @@ import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.TransactedDefinition;
-import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.processor.interceptor.Debugger;
@@ -58,6 +59,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.commons.logging.Log;
@@ -71,9 +73,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 
 /**
  * A Spring {@link FactoryBean} to create and initialize a
@@ -121,6 +121,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     private DataFormatsDefinition dataFormats;
     @XmlElement(name = "onException", required = false)
     private List<OnExceptionDefinition> onExceptions = new ArrayList<OnExceptionDefinition>();
+    @XmlElement(name = "intercept", required = false)
+    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
     @XmlElement(name = "interceptFrom", required = false)
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlElement(name = "interceptSendToEndpoint", required = false)
@@ -288,8 +290,17 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     private void initInterceptors(RouteDefinition route) {
+
+        // configure intercept
+        for (InterceptDefinition intercept : getIntercepts()) {
+            intercept.afterPropertiesSet();
+            // add as first output so intercept is handled before the acutal route and that gives
+            // us the needed head start to init and be able to intercept all the remaining processing steps
+            route.getOutputs().add(0, intercept);
+        }
+
         // configure intercept from
-        for (InterceptFromDefinition intercept : interceptFroms) {
+        for (InterceptFromDefinition intercept : getInterceptFroms()) {
 
             // should we only apply interceptor for a given endpoint uri
             boolean match = true;
@@ -304,6 +315,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
 
             if (match) {
+
+                // TODO: reduce the complex of this code when we overhaul the intercept from
 
                 List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
                 List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
@@ -338,7 +351,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         }
 
         // configure intercept send to endpoint
-        for (InterceptSendToEndpointDefinition intercept : interceptSendToEndpoints) {
+        for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
             // special intercept for intercepting sending to an endpoint
             // init interceptor by letting it proxy the real endpoint
 
@@ -465,6 +478,14 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
+    }
+
+    public List<InterceptDefinition> getIntercepts() {
+        return intercepts;
+    }
+
+    public void setIntercepts(List<InterceptDefinition> intercepts) {
+        this.intercepts = intercepts;
     }
 
     public List<InterceptFromDefinition> getInterceptFroms() {

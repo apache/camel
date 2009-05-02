@@ -54,7 +54,7 @@ public class Delayer implements InterceptStrategy {
         return null;
     }
 
-    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+    public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
         DelayInterceptor delayer = new DelayInterceptor(processorDefinition, target, this);
         return delayer;
     }

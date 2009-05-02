@@ -258,7 +258,7 @@ public class InstrumentationLifecycleStrategy implements LifecycleStrategy {
 
         // add an intercept strategy that counts when the route sends to any of its outputs
         out.addInterceptStrategy(new InterceptStrategy() {
-            public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target) throws Exception {
+            public Processor wrapProcessorInInterceptors(ProcessorDefinition processorDefinition, Processor target, Processor nextTarget) throws Exception {
                 if (registeredRoutes.containsKey(endpoint)) {
                     // do not double wrap
                     return target;

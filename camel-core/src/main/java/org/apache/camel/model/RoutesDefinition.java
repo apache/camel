@@ -40,6 +40,8 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
     @XmlElementRef
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
     @XmlTransient
+    private List<InterceptDefinition> intercepts = new ArrayList<InterceptDefinition>();
+    @XmlTransient
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlTransient
     private List<InterceptSendToEndpointDefinition> interceptSendTos = new ArrayList<InterceptSendToEndpointDefinition>();
@@ -84,6 +86,14 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
     public void setInterceptSendTos(List<InterceptSendToEndpointDefinition> interceptSendTos) {
         this.interceptSendTos = interceptSendTos;
+    }
+
+    public List<InterceptDefinition> getIntercepts() {
+        return intercepts;
+    }
+
+    public void setIntercepts(List<InterceptDefinition> intercepts) {
+        this.intercepts = intercepts;
     }
 
     public List<OnExceptionDefinition> getOnExceptions() {
@@ -181,6 +191,11 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         // lets configure the route
         route.setCamelContext(getCamelContext());
 
+        // configure intercepts
+        for (InterceptDefinition intercept : getIntercepts()) {
+            route.addOutput(intercept);
+        }
+
         // configure intercept from
         for (InterceptFromDefinition intercept : getInterceptFroms()) {
 
@@ -206,8 +221,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
         }
 
         // configure intercept send to endpoint
-        List<InterceptSendToEndpointDefinition> sendTos = getInterceptSendTos();
-        for (InterceptSendToEndpointDefinition sendTo : sendTos) {
+        for (InterceptSendToEndpointDefinition sendTo : getInterceptSendTos()) {
             // init interceptor by letting it proxy the real endpoint
             sendTo.proxyEndpoint(getCamelContext());
             route.addOutput(sendTo);
@@ -218,6 +232,18 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
         getRoutes().add(route);
         return route;
+    }
+
+    /**
+     * Creates and adds an interceptor that is triggered on every step in the route
+     * processing.
+     *
+     * @return the interceptor builder to configure
+     */
+    public InterceptDefinition intercept() {
+        InterceptDefinition answer = new InterceptDefinition();
+        getIntercepts().add(answer);
+        return answer;
     }
 
     /**
