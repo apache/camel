@@ -47,6 +47,7 @@ import org.apache.cxf.jaxws.handler.HandlerChainInvoker;
 import org.apache.cxf.message.Exchange;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 
@@ -89,7 +90,10 @@ public final class CxfBinding {
     public static Message createCxfMessage(HeaderFilterStrategy strategy, CxfExchange exchange) {
 
         Message answer = exchange.getInMessage();
-        CxfMessage in = exchange.getIn();
+        if (answer == null) {
+            answer = new MessageImpl();
+        }
+        org.apache.camel.Message in = exchange.getIn();
 
         // Check the body if the POJO parameter list first
         try {
@@ -142,10 +146,14 @@ public final class CxfBinding {
 
     public static void storeCxfResponse(HeaderFilterStrategy strategy, CxfExchange exchange,
             Message response) {
-        CxfMessage out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getOut();
         if (response != null) {
             CxfHeaderHelper.propagateCxfToCamel(strategy, response, out.getHeaders());
-            out.setMessage(response);
+            if (out instanceof CxfMessage) {
+                ((CxfMessage)out).setMessage(response);
+            } else {
+                out.setBody(response.get(List.class));
+            }
             DataFormat dataFormat = (DataFormat) exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY);
             if (dataFormat.equals(DataFormat.MESSAGE)) {
                 out.setBody(response.getContent(InputStream.class));
@@ -196,14 +204,14 @@ public final class CxfBinding {
     }
 
     public static void storeCxfResponse(CxfExchange exchange, Object response) {
-        CxfMessage out = exchange.getOut();
+        org.apache.camel.Message out = exchange.getOut();
         if (response != null) {
             out.setBody(response);
         }
     }
 
     public static void storeCxfFault(CxfExchange exchange, Message message) {
-        CxfMessage fault = exchange.getFault();
+        org.apache.camel.Message fault = exchange.getFault();
         if (fault != null) {
             fault.setBody(getBody(message));
         }
@@ -391,4 +399,5 @@ public final class CxfBinding {
         }
     }
 }
+
 

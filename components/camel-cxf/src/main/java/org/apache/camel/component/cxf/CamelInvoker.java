@@ -97,7 +97,7 @@ public class CamelInvoker implements Invoker, MessageInvoker {
         Message outMessage = null;
         if (result.isFailed()) {
             // The exception will be send back to the soap client
-            CxfMessage fault = result.getFault();
+            org.apache.camel.Message fault = result.getFault();
             outMessage = exchange.getInFaultMessage();
             if (outMessage == null) {
                 outMessage = endpoint.getBinding().createMessage();

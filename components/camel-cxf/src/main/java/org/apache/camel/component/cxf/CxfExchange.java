@@ -81,26 +81,6 @@ public class CxfExchange extends DefaultExchange {
     }
 
     @Override
-    public CxfMessage getIn() {
-        return (CxfMessage) super.getIn();
-    }
-
-    @Override
-    public CxfMessage getOut() {
-        return (CxfMessage) super.getOut();
-    }
-
-    @Override
-    public CxfMessage getOut(boolean lazyCreate) {
-        return (CxfMessage) super.getOut(lazyCreate);
-    }
-
-    @Override
-    public CxfMessage getFault() {
-        return (CxfMessage) super.getFault();
-    }
-
-    @Override
     protected org.apache.camel.Message createFaultMessage() {
         return new CxfMessage();
     }
@@ -124,11 +104,19 @@ public class CxfExchange extends DefaultExchange {
     }
 
     public Message getInMessage() {
-        return getIn().getMessage();
+        if (getIn() instanceof CxfMessage) {
+            return ((CxfMessage)getIn()).getMessage();
+        } else {
+            return null;
+        }
     }
 
     public Message getOutMessage() {
-        return getOut().getMessage();
+        if (getOut() instanceof CxfMessage) {
+            return ((CxfMessage)getOut()).getMessage();
+        } else {
+            return null;
+        }
     }
 
     public Message getOutFaultMessage() {
@@ -148,12 +136,12 @@ public class CxfExchange extends DefaultExchange {
     }
 
     @Override
-    protected CxfMessage createInMessage() {
+    protected org.apache.camel.Message createInMessage() {
         return new CxfMessage();
     }
 
     @Override
-    protected CxfMessage createOutMessage() {
+    protected org.apache.camel.Message createOutMessage() {
         return new CxfMessage();
     }
 }
