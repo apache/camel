@@ -50,4 +50,8 @@ public final class HandleFault implements InterceptStrategy {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "HandleFault";
+    }
 }

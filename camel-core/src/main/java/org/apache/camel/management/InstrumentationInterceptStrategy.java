@@ -60,4 +60,8 @@ public class InstrumentationInterceptStrategy implements InterceptStrategy {
         return target;
     }
 
+    @Override
+    public String toString() {
+        return "Instrument";
+    }
 }

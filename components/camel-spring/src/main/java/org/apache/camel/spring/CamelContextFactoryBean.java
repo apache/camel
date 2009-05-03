@@ -28,7 +28,6 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelException;
 import org.apache.camel.Routes;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultLifecycleStrategy;
@@ -59,7 +58,6 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.commons.logging.Log;

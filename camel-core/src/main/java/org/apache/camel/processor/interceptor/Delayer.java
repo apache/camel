@@ -74,4 +74,9 @@ public class Delayer implements InterceptStrategy {
     public void setDelay(long delay) {
         this.delay = delay;
     }
+
+    @Override
+    public String toString() {
+        return "Delayer[" + delay + "]";
+    }
 }

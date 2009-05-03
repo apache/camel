@@ -198,4 +198,9 @@ public class Tracer implements InterceptStrategy {
     public void setUseJpa(boolean useJpa) {
         this.useJpa = useJpa;
     }
+
+    @Override
+    public String toString() {
+        return "Tracer";
+    }
 }

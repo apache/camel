@@ -145,5 +145,8 @@ public class Debugger implements InterceptStrategy {
         return new ArrayList<ExceptionEvent>();
     }
 
-
+    @Override
+    public String toString() {
+        return "Debugger";
+    }
 }

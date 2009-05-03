@@ -16,14 +16,13 @@
  */
 package org.apache.camel.model;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Pipeline;
@@ -40,7 +39,6 @@ import org.apache.camel.spi.RouteContext;
 public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: support stop later (its a bit hard as it needs to break entire processing of route)
-    // TODO: add support for when predicate
 
     @XmlTransient
     protected Processor output;
@@ -81,12 +79,27 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
                     return output;
                 }
             }
+
+            @Override
+            public String toString() {
+                return "intercept[" + output + "]";
+            }
         });
 
         // remove me from the route so I am not invoked in a regular route path
         routeContext.getRoute().getOutputs().remove(this);
         // and return no processor to invoke next from me
         return null;
+    }
+
+    /**
+     * Applies this interceptor only if the given predicate is true
+     *
+     * @param predicate  the predicate
+     * @return the builder
+     */
+    public ChoiceDefinition when(Predicate predicate) {
+        return choice().when(predicate);
     }
 
     /**
@@ -97,7 +110,25 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
      * with or without proceed/stop set as well.
      */
     public void afterPropertiesSet() {
-        // TODO: is needed when we add support for when predicate
+        if (getOutputs().size() == 0) {
+            // no outputs
+            return;
+        }
+
+        ProcessorDefinition first = getOutputs().get(0);
+        if (first instanceof WhenDefinition) {
+            WhenDefinition when = (WhenDefinition) first;
+            // move this outputs to the when, expect the first one
+            // as the first one is the interceptor itself
+            for (int i = 1; i < outputs.size(); i++) {
+                ProcessorDefinition out = outputs.get(i);
+                when.addOutput(out);
+            }
+            // remove the moved from the original output, by just keeping the first one
+            ProcessorDefinition keep = outputs.get(0);
+            clearOutput();
+            outputs.add(keep);
+        }
     }
 
 

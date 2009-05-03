@@ -50,4 +50,8 @@ public final class StreamCaching implements InterceptStrategy {
         return null;
     }
 
+    @Override
+    public String toString() {
+        return "StreamCaching";
+    }
 }
