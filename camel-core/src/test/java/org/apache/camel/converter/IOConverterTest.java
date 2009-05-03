@@ -36,7 +36,12 @@ public class IOConverterTest extends TestCase {
         byte[] data = IOConverter.toBytes(new FileInputStream(file));
         assertEquals("get the wrong byte size", file.length(), data.length);
         assertEquals('#', (char) data[0]);
-        assertEquals('!', (char) data[data.length - 2]);
+        char testChar = (char) data[data.length - 2];
+        if (System.getProperty("os.name").startsWith("Windows")) {
+            // to skip the "0D" character
+            testChar = (char) data[data.length - 3];
+        }
+        assertEquals('!', testChar);
         // should end with a new line
         assertEquals('\n', (char) data[data.length - 1]);
     }
