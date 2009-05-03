@@ -165,9 +165,9 @@
             <artifactId>maven-paxexam-plugin</artifactId>
             <executions>
               <execution>
-                <id>generate-paxexam-config</id>
+                <id>generate-config</id>
                 <goals>
-                  <goal>generate-paxexam-config</goal>
+                  <goal>generate-config</goal>
                 </goals>
               </execution>
             </executions>
