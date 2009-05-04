@@ -34,14 +34,14 @@ import org.apache.commons.logging.LogFactory;
  */
 public class LdapProducer<E extends Exchange> extends DefaultProducer {
     private static final transient Log LOG = LogFactory.getLog(LdapProducer.class);
-    private DirContext ldapContext;
+    private String remaining;
     private SearchControls controls;
     private String searchBase;
-
+    
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope) throws Exception {
         super(endpoint);
 
-        ldapContext = (DirContext)getEndpoint().getCamelContext().getRegistry().lookup(remaining);
+        this.remaining = remaining;
         searchBase = base;
         controls = new SearchControls();
         controls.setSearchScope(scope);
@@ -49,20 +49,28 @@ public class LdapProducer<E extends Exchange> extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
-
-        // could throw NamingException
-        List<SearchResult> data = new ArrayList<SearchResult>();
-        NamingEnumeration<SearchResult> namingEnumeration =
-            ldapContext.search(searchBase, filter, getControls());
-
-        while (namingEnumeration.hasMore()) {
-            data.add(namingEnumeration.next());
+        
+        // Obtain our ldap context. We do this by looking up the context in our registry. 
+        // Note though that a new context is expected each time. Therefore if spring is
+        // being used then use prototype="scope". If you do not then you might experience
+        // concurrency issues as InitialContext is not required to support concurrency.
+        // On the other hand if you have a DirContext that is able to support concurrency
+        // then using the default singleton scope is entirely sufficient. Most DirContext
+        // classes will require prototype scope though.
+        DirContext ldapContext = (DirContext)getEndpoint().getCamelContext().getRegistry().lookup(remaining);
+        try {
+	        // could throw NamingException
+	        List<SearchResult> data = new ArrayList<SearchResult>();
+	        NamingEnumeration<SearchResult> namingEnumeration =
+	            ldapContext.search(searchBase, filter, getControls());
+	
+	        while (namingEnumeration.hasMore()) {
+	            data.add(namingEnumeration.next());
+	        }
+	        exchange.getOut().setBody(data);
+        } finally {
+            ldapContext.close();
         }
-        exchange.getOut().setBody(data);
-    }
-
-    public DirContext getDirContext() {
-        return ldapContext;
     }
 
     protected SearchControls getControls() {
