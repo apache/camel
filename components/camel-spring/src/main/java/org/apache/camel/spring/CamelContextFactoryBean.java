@@ -233,8 +233,8 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // this is needed as JAXB does not build excaclty the same model definition as Spring DSL would do
         // using route builders. So we have here a little custom code to fix the JAXB gaps
         for (RouteDefinition route : routes) {
-            initOnExceptions(route);
             initInterceptors(route);
+            initOnExceptions(route);
             initPolicies(route);
         }
 
@@ -320,19 +320,10 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
 
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
-            // special intercept for intercepting sending to an endpoint
-
-            // add the interceptor but we must do some pre configuration beforehand
             intercept.afterPropertiesSet();
-
-            // replace proceed with the rest of the route
-            try {
-                // init interceptor by letting it proxy the real endpoint
-                intercept.proxyEndpoint(getContext());
-            } catch (Exception e) {
-                throw ObjectHelper.wrapRuntimeCamelException(e);
-            }
-            route.addOutput(intercept);
+            // add as first output so intercept is handled before the acutal route and that gives
+            // us the needed head start to init and be able to intercept all the remaining processing steps
+            route.getOutputs().add(0, intercept);
         }
 
     }

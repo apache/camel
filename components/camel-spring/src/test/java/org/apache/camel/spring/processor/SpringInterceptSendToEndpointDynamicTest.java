@@ -23,20 +23,27 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 /**
  * @version $Revision$
  */
-public class SpringInterceptSendToEndpointWhenTest extends ContextTestSupport {
+public class SpringInterceptSendToEndpointDynamicTest extends ContextTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointWhen.xml");
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/interceptSendToEndpointDynamic.xml");
     }
 
-    public void testInterceptEndpointWhen() throws Exception {
-        getMockEndpoint("mock:bar").expectedBodiesReceived("Hello World", "Hi");
-        getMockEndpoint("mock:detour").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World", "Hi");
-        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World", "Hi");
+    public void testInterceptFile() throws Exception {
+        getMockEndpoint("mock:intercepted").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:first", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testNoInterceptFile() throws Exception {
+        getMockEndpoint("mock:intercepted").expectedMessageCount(0);
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:second", "Hello World");
-        template.sendBody("direct:second", "Hi");
 
         assertMockEndpointsSatisfied();
     }

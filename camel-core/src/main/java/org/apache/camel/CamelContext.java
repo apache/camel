@@ -35,6 +35,7 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.EndpointStrategy;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -180,6 +181,16 @@ public interface CamelContext extends Service {
      * @throws Exception if at least one endpoint could not be stopped
      */
     Collection<Endpoint> removeEndpoints(String uri) throws Exception;
+
+    /**
+     * Registers a {@link org.apache.camel.spi.EndpointStrategy callback} to allow you to do custom
+     * logic when an {@link Endpoint} is about to be registered to the {@link CamelContext} endpoint registry.
+     * <p/>
+     * When a callback is added it will be executed on the already registered endpoints allowing you to catch-up
+     *
+     * @param strategy  callback to be invoked
+     */
+    void addRegisterEndpointCallback(EndpointStrategy strategy);
 
     // Route Management Methods
     //-----------------------------------------------------------------------

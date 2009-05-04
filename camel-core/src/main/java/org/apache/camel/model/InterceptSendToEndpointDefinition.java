@@ -22,14 +22,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.processor.InterceptEndpointProcessor;
+import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.EndpointHelper;
 
 /**
  * Represents an XML &lt;interceptToEndpoint/&gt; element
@@ -41,7 +41,6 @@ import org.apache.camel.util.ObjectHelper;
 public class InterceptSendToEndpointDefinition extends OutputDefinition<ProcessorDefinition> {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
-    // TODO: Support wildcards for endpoints so you can match by scheme, eg jms:*
 
     @XmlAttribute(required = true)
     private String uri;
@@ -72,18 +71,27 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // we have to reuse the createProcessor method to build the detour route
-        // afterwards we remove this interceptor from the route so the route will
-        // not use regular intercptor. The interception by endpoint is triggered
-        // by the InterceptSendToEndpoint that handles the intercept routing logic
-        Endpoint endpoint = lookupEndpoint(routeContext.getCamelContext());
-
         // create the detour
-        Processor detour = routeContext.createProcessor(this);
+        final Processor detour = routeContext.createProcessor(this);
 
-        // set the detour on the endpoint proxy
-        InterceptSendToEndpoint proxy = routeContext.getCamelContext().getTypeConverter().mandatoryConvertTo(InterceptSendToEndpoint.class, endpoint);
-        proxy.setDetour(detour);
+        // register endpoint callback so we can proxy the endpoint
+        routeContext.getCamelContext().addRegisterEndpointCallback(new EndpointStrategy() {
+            public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
+                // only proxy if the uri is matched
+                boolean match = getUri() == null || EndpointHelper.matchEndpoint(uri, getUri()); 
+                if (match) {
+                    // decorate endpoint with our proxy
+                    boolean skip = skipSendToOriginalEndpoint != null ? skipSendToOriginalEndpoint : false;
+                    InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
+                    proxy.setDetour(detour);
+                    return proxy;
+                } else {
+                    // no proxy so return regular endpoint
+                    return endpoint;
+                }
+            }
+        });
+
 
         // remove the original intercepted route from the outputs as we do not intercept as the regular interceptor
         // instead we use the proxy endpoints producer do the triggering. That is we trigger when someone sends
@@ -93,25 +101,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
         outputs.remove(this);
 
         return new InterceptEndpointProcessor(uri, detour);
-    }
-
-    public void proxyEndpoint(CamelContext context) {
-        // TODO: Add dyanmic proxy support in that sence it should be some callback hooks in CamelContext to
-        // you can register to do custom endpoint lookup or add to registry
-
-        // proxy the endpoint by using the InterceptSendToEndpoint that will proxy
-        // the producer so it processes the detour first
-        Endpoint endpoint = lookupEndpoint(context);
-
-        // decorate endpoint with our proxy
-        boolean skip = skipSendToOriginalEndpoint != null ? skipSendToOriginalEndpoint : false;
-        InterceptSendToEndpoint proxy = new InterceptSendToEndpoint(endpoint, skip);
-        try {
-            // add will replace the old one
-            context.addEndpoint(proxy.getEndpointUri(), proxy);
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
     }
 
     /**
@@ -166,16 +155,19 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
         }
     }
 
-    private Endpoint lookupEndpoint(CamelContext context) {
-        ObjectHelper.notNull(uri, "uri", this);
-        return context.getEndpoint(uri);
-    }
-
     public Boolean getSkipSendToOriginalEndpoint() {
         return skipSendToOriginalEndpoint;
     }
 
     public void setSkipSendToOriginalEndpoint(Boolean skipSendToOriginalEndpoint) {
         this.skipSendToOriginalEndpoint = skipSendToOriginalEndpoint;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 }

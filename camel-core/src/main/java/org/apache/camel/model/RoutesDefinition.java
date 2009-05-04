@@ -193,7 +193,9 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
 
         // configure intercepts
         for (InterceptDefinition intercept : getIntercepts()) {
-            route.addOutput(intercept);
+            // add as first output so intercept is handled before the acutal route and that gives
+            // us the needed head start to init and be able to intercept all the remaining processing steps
+            route.getOutputs().add(0, intercept);
         }
 
         // configure intercept from
@@ -212,15 +214,17 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             }
 
             if (match) {
-                route.addOutput(intercept);
+                // add as first output so intercept is handled before the acutal route and that gives
+                // us the needed head start to init and be able to intercept all the remaining processing steps
+                route.getOutputs().add(0, intercept);
             }
         }
 
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition sendTo : getInterceptSendTos()) {
-            // init interceptor by letting it proxy the real endpoint
-            sendTo.proxyEndpoint(getCamelContext());
-            route.addOutput(sendTo);
+            // add as first output so intercept is handled before the acutal route and that gives
+            // us the needed head start to init and be able to intercept all the remaining processing steps
+            route.getOutputs().add(0, sendTo);
         }
 
         // add on exceptions

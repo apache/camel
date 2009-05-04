@@ -35,6 +35,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
 import org.apache.camel.Routes;
@@ -88,6 +89,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
     private boolean routeDefinitionInitiated;
     private String name;  
     private final Map<String, Endpoint> endpoints = new HashMap<String, Endpoint>();
+    private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private List<Route> routes;
     private final List<Service> servicesToClose = new ArrayList<Service>();
@@ -310,7 +312,7 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
         synchronized (endpoints) {
             startServices(endpoint);
             oldEndpoint = endpoints.remove(uri);
-            endpoints.put(getEndpointKey(uri, endpoint), endpoint);
+            addEndpointToRegistry(uri, endpoint);
             if (oldEndpoint != null) {
                 stopServices(oldEndpoint);
             }
@@ -381,8 +383,9 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
 
                     if (answer != null) {
                         addService(answer);
-                        endpoints.put(getEndpointKey(uri, answer), answer);
+                        Endpoint newAnswer = addEndpointToRegistry(uri, answer);
                         lifecycleStrategy.onEndpointAdd(answer);
+                        answer = newAnswer;
                     }
                 } catch (Exception e) {
                     throw new ResolveEndpointFailedException(uri, e);
@@ -410,6 +413,34 @@ public class DefaultCamelContext extends ServiceSupport implements CamelContext,
             throw new IllegalArgumentException("The endpoint is not of type: " + endpointType + " but is: "
                     + endpoint.getClass().getCanonicalName());
         }
+    }
+
+    public void addRegisterEndpointCallback(EndpointStrategy strategy) {
+        if (!endpointStrategies.contains(strategy)) {
+            // let it be invoked for already registered endpoints so it can catch-up.
+            endpointStrategies.add(strategy);
+            for (Endpoint endpoint : getEndpoints()) {
+                Endpoint newEndpoint = strategy.registerEndpoint(endpoint.getEndpointUri(), endpoint);
+                if (newEndpoint != endpoint) {
+                    endpoints.put(getEndpointKey(newEndpoint.getEndpointUri(), newEndpoint), newEndpoint);
+                }
+            }
+        }
+    }
+
+    /**
+     * Strategy to add the given endpoint to the internal endpoint registry
+     *
+     * @param uri  uri of endpoint
+     * @param endpoint the endpoint to add
+     * @return the added endpoint
+     */
+    protected Endpoint addEndpointToRegistry(String uri, Endpoint endpoint) {
+        for (EndpointStrategy strategy : endpointStrategies) {
+            endpoint = strategy.registerEndpoint(uri, endpoint);
+        }
+        endpoints.put(getEndpointKey(uri, endpoint), endpoint);
+        return endpoint;
     }
 
     // Route Management Methods

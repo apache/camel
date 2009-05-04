@@ -22,35 +22,27 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: example -->
+    <!-- START SNIPPET: e1 -->
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!-- intercept sending to any file component -->
+        <interceptSendToEndpoint uri="file:*" skipSendToOriginalEndpoint="true">
+            <!-- send it to the mock instead -->
+            <to uri="mock:intercepted"/>
+        </interceptSendToEndpoint>
+
         <route>
-            <from uri="direct:start"/>
-            <choice>
-                <when><simple>${in.body} contains 'Hello'</simple>
-                    <to uri="mock:hello"/>
-                </when>
-                <when><simple>${in.body} contains 'Bye'</simple>
-                    <to uri="mock:bye"/>
-                    <!-- here we stop continue routing so this was the last processing step -->
-                    <stop/>
-                </when>
-                <otherwise>
-                    <to uri="mock:other"/>
-                </otherwise>
-            </choice>
+            <from uri="direct:first"/>
+            <to uri="file://target/foo"/>
             <to uri="mock:result"/>
         </route>
-        
+
         <route>
-            <from uri="direct:foo"/>
+            <from uri="direct:second"/>
             <to uri="mock:foo"/>
-            <!-- you can also set the Exchange#ROUTE_STOP property on Exchange to true -->
-            <setProperty propertyName="CamelRouteStop">
-                <constant>true</constant>
-            </setProperty>
             <to uri="mock:result"/>
         </route>
     </camelContext>
-    <!-- END SNIPPET: example -->
+    <!-- END SNIPPET: e1 -->
+
 </beans>
