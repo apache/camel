@@ -65,9 +65,8 @@ public class InterceptFromDefinition extends InterceptDefinition {
     @Override
     @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // insert a set property defintion so we can set the intercepted endpoint
+        // insert a set header defintion so we can set the intercepted endpoint uri as a header
         // this allows us to use the same header for both the interceptFrom and interceptSendToEndpoint
-        // so end users is not confused if they should use another header for interceptFrom than interceptSendToEndpoint
         SetHeaderDefinition headerDefinition = new SetHeaderDefinition(Exchange.INTERCEPTED_ENDPOINT, new ExpressionAdapter() {
             public Object evaluate(Exchange exchange, Class type) {
                 return exchange.getFromEndpoint().getEndpointUri();
