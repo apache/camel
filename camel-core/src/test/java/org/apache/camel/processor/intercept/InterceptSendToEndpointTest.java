@@ -40,7 +40,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // this endpoint, its intercepted and routed with this detour route beforehand
                 // afterwards its send to the original intended destination. So this is kinda AOP before.
                 // That means mock:foo will receive the message (Bye World).
-                interceptSendToEndpoint("mock:foo").to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo")
+                    .to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:first")
                     .to("mock:bar")
@@ -69,7 +70,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
                 // START SNIPPET: e2
                 // we can also attach a predicate to the endpoint interceptor. So in this example the exchange is
                 // only intercepted if the body is Hello World
-                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World")).to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("mock:foo").when(body().isEqualTo("Hello World"))
+                    .to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:second")
                     .to("mock:bar")
@@ -98,12 +100,14 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e3
-                // since we use the skip() at the end of the detour route we instruct Camel to skip
-                // sending the exchange to the original intended destination.
+                // since we use the skipSendToOriginalEndpoint() we instruct Camel to skip
+                // sending the exchange to the original intended destination after the intercept
+                // route is complete.
                 // That means that mock:foo will NOT receive the message, but the message
                 // is skipped and continued in the original route, so mock:result will receive
                 // the message.
-                interceptSendToEndpoint("mock:foo").transform(constant("Bye World")).to("mock:detour").skip();
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint()
+                    .transform(constant("Bye World")).to("mock:detour");
 
                 from("direct:third")
                     .to("mock:bar")
@@ -130,7 +134,8 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start").to("mock:detour").transform(constant("Bye World"));
+                interceptSendToEndpoint("direct:start")
+                    .to("mock:detour").transform(constant("Bye World"));
 
                 from("direct:start")
                     .to("mock:foo")
@@ -142,6 +147,29 @@ public class InterceptSendToEndpointTest extends ContextTestSupport {
         getMockEndpoint("mock:detour").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testInterceptEndpointWithStop() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("direct:start")
+                    .to("mock:detour").stop();
+
+                from("direct:start")
+                    .to("mock:foo")
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:detour").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").expectedMessageCount(0);
+        getMockEndpoint("mock:result").expectedMessageCount(0);
 
         template.sendBody("direct:start", "Hello World");
 

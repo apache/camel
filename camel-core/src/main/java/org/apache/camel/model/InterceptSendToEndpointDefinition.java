@@ -70,10 +70,6 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
         return "interceptEndpoint";
     }
 
-    public void skipSendToOriginalEndpoint() {
-        setSkipSendToOriginalEndpoint(Boolean.TRUE);
-    }
-
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // we have to reuse the createProcessor method to build the detour route
@@ -123,6 +119,16 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
      */
     public ChoiceDefinition when(Predicate predicate) {
         return choice().when(predicate);
+    }
+
+    /**
+     * Skip sending the {@link org.apache.camel.Exchange} to the original intended endpoint
+     *
+     * @return the builder
+     */
+    public InterceptSendToEndpointDefinition skipSendToOriginalEndpoint() {
+        setSkipSendToOriginalEndpoint(Boolean.TRUE);
+        return this;
     }
 
     /**
