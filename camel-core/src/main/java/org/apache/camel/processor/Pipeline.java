@@ -25,9 +25,11 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -76,7 +78,9 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 }
                 break;
             }
-            if (!processors.hasNext()) {
+
+            // should we continue routing or not
+            if (!continueRouting(processors, nextExchange)) {
                 break;
             }
 
@@ -123,7 +127,8 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
 
                 // Continue processing the pipeline...
                 Exchange nextExchange = exchange;
-                while (processors.hasNext()) {
+
+                while (continueRouting(processors, nextExchange)) {
                     AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
 
                     boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
@@ -186,6 +191,23 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
             in.copyFrom(previousExchange.getIn());
         }
         return answer;
+    }
+
+    protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
+        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
+        if (stop != null) {
+            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
+            if (doStop) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exchange is marked to stop routing: " + exchange);
+                }
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return it.hasNext();
+        }
     }
 
     @Override

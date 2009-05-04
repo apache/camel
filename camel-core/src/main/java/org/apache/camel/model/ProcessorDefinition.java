@@ -197,8 +197,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
         List<Processor> list = new ArrayList<Processor>();
         for (ProcessorDefinition output : outputs) {
             Processor processor = output.createProcessor(routeContext);
-            // if the ProceedType/StopType create processor is null we keep on going
-            if ((output instanceof ProceedDefinition || output instanceof StopDefinition || output instanceof Channel) && processor == null) {
+            if (output instanceof Channel && processor == null) {
                 continue;
             }
 
@@ -1308,7 +1307,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Pushes the given block on the stack as current block
      * @param block  the block
      */
-    public void pushBlock(Block block) {
+    void pushBlock(Block block) {
         blocks.add(block);
     }
 
@@ -1316,75 +1315,19 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      * Pops the block off the stack as current block
      * @return the block
      */
-    public Block popBlock() {
+    Block popBlock() {
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
     /**
-     * Procceeds the given intercepted route.
-     * <p/>
-     * Proceed is used in conjunction with intercept where calling proceed will route the message through the
-     * original route path from the point of interception. This can be used to implement the
-     * <a href="http://www.enterpriseintegrationpatterns.com/Detour.html">detour</a> pattern.
+     * Stops continue routing the current {@link org.apache.camel.Exchange} and marks it as completed.
      *
      * @return the builder
-     * @see ProcessorDefinition#proceed()
-     */
-    @SuppressWarnings("unchecked")
-    public Type proceed() {
-        ProceedDefinition proceed = null;
-        ProcessorDefinition currentProcessor = this;
-
-        if (currentProcessor instanceof InterceptFromDefinition) {
-            proceed = ((InterceptFromDefinition) currentProcessor).getProceed();
-            LOG.info("proceed() is the implied and hence not needed for an intercept()");
-        }
-        if (proceed == null) {
-            for (ProcessorDefinition node = parent; node != null; node = node.getParent()) {
-                if (node instanceof InterceptFromDefinition) {
-                    InterceptFromDefinition intercept = (InterceptFromDefinition)node;
-                    proceed = intercept.getProceed();
-                    break;
-                }
-            }
-
-            if (proceed == null) {
-                throw new IllegalArgumentException("Cannot use proceed() without being within an intercept() block");
-            }
-        }
-
-        addOutput(proceed);
-        return (Type) this;
-    }
-
-    /**
-     * Stops the given intercepted route.
-     * <p/>
-     * As opposed to {@link #proceed()} calling stop will stop the message route and <b>not</b> continue
-     * from the interepted origin.
-     *
-     * @return the builder
-     * @see #proceed()
      */
     @SuppressWarnings("unchecked")
     public Type stop() {
-        ProcessorDefinition currentProcessor = this;
-
-        if (currentProcessor instanceof InterceptFromDefinition) {
-            ((InterceptFromDefinition) currentProcessor).stopIntercept();
-        } else {
-            ProcessorDefinition node;
-            for (node = parent; node != null; node = node.getParent()) {
-                if (node instanceof InterceptFromDefinition) {
-                    ((InterceptFromDefinition) node).stopIntercept();
-                    break;
-                }
-            }
-            if (node == null) {
-                throw new IllegalArgumentException("Cannot use stop() without being within an intercept() block");
-            }
-        }
-
+        StopDefinition stop = new StopDefinition();
+        addOutput(stop);
         return (Type) this;
     }
 
@@ -1396,6 +1339,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
      */
     @SuppressWarnings("unchecked")
     public Type skip() {
+        // TODO: move this to InterceptSendToEndpoint so its a special builder method on it only
         ProcessorDefinition currentProcessor = this;
 
         if (currentProcessor instanceof InterceptSendToEndpointDefinition) {

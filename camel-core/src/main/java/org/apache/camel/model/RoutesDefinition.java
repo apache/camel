@@ -212,11 +212,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             }
 
             if (match) {
-                // need to create a proxy for this one and use the
-                // proceed of the proxy which will be local to this route
-                InterceptFromDefinition proxy = intercept.createProxy();
-                route.addOutput(proxy);
-                route.pushBlock(proxy.getProceed());
+                route.addOutput(intercept);
             }
         }
 

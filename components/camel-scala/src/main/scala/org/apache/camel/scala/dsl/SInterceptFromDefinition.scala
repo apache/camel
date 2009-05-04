@@ -31,7 +31,4 @@ class SInterceptFromDefinition(val target: InterceptFromDefinition)(implicit val
     this
   }
   
-  def stop =  {
-    target.setStopIntercept(true)
-  }   
 }

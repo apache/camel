@@ -40,7 +40,6 @@ import org.apache.camel.model.InterceptFromDefinition;
 import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PolicyDefinition;
-import org.apache.camel.model.ProceedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
@@ -59,7 +58,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ProcessorDefinitionHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.DisposableBean;
@@ -166,7 +164,6 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
     }
 
     public void afterPropertiesSet() throws Exception {
-        // TODO there should be a neater way to do this!
         if (properties != null) {
             getContext().setProperties(properties.asMap());
         }
@@ -313,38 +310,9 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
 
             if (match) {
-
-                // TODO: reduce the complex of this code when we overhaul the intercept from
-
-                List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
-                List<ProcessorDefinition<?>> exceptionHandlers = new ArrayList<ProcessorDefinition<?>>();
-
-                for (ProcessorDefinition output : route.getOutputs()) {
-                    if (output instanceof OnExceptionDefinition) {
-                        exceptionHandlers.add(output);
-                    } else {
-                        outputs.add(output);
-                    }
-                }
-
-                // clearing the outputs
-                route.clearOutput();
-
-                // add exception handlers as top children
-                route.getOutputs().addAll(exceptionHandlers);
-
-                // add the interceptor but we must do some pre configuration beforehand
-                intercept.afterPropertiesSet();
-                InterceptFromDefinition proxy = intercept.createProxy();
-                route.addOutput(proxy);
-                route.pushBlock(proxy.getProceed());
-
-                // if there is a proceed in the interceptor proxy then we should add
-                // the current outputs to out route so we will proceed and continue to route to them
-                ProceedDefinition proceed = ProcessorDefinitionHelper.findFirstTypeInOutputs(proxy.getOutputs(), ProceedDefinition.class);
-                if (proceed != null) {
-                    proceed.getOutputs().addAll(outputs);
-                }
+                // add as first output so intercept is handled before the acutal route and that gives
+                // us the needed head start to init and be able to intercept all the remaining processing steps
+                route.getOutputs().add(0, intercept);
             }
         }
 

@@ -41,8 +41,8 @@ public class InterceptFromLogTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                interceptFrom().to("log:foo").to("mock:foo").proceed();
-                interceptFrom().to("log:bar").to("mock:bar"); // proceed is default
+                interceptFrom().to("log:foo").to("mock:foo");
+                interceptFrom().to("log:bar").to("mock:bar");
 
                 from("seda:foo").to("seda:bar");
                 from("seda:bar").to("mock:result");

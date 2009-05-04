@@ -131,5 +131,4 @@ public class InterceptDefinition extends OutputDefinition<ProcessorDefinition> {
         }
     }
 
-
 }

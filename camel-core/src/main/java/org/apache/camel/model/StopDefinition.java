@@ -16,11 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.Collections;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.Processor;
+import org.apache.camel.processor.StopProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -39,17 +42,23 @@ public class StopDefinition extends OutputDefinition<ProcessorDefinition> {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // stop does not have any processor
-        return null;
+        return new StopProcessor();
     }
 
     @Override
     public String getLabel() {
-        return getShortName();
+        return "stop";
     }
 
     @Override
     public String toString() {
-        return getShortName();
+        return "Stop";
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<ProcessorDefinition> getOutputs() {
+        return Collections.EMPTY_LIST;
+    }
+
 }

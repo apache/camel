@@ -41,7 +41,6 @@ OptionalIdentifiedType
 OtherwiseDefinition
 PipelineDefinition
 PolicyDefinition
-ProceedDefinition
 ProcessDefinition
 RecipientListDefinition
 RedeliveryPolicyDefinition

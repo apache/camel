@@ -56,6 +56,11 @@ public interface Exchange {
     String LOOP_INDEX = "CamelLoopIndex";
     String LOOP_SIZE = "CamelLoopSize";
 
+    String ROUTE_STOP = "CamelRouteStop";
+
+    /**
+     * @deprecated a new Async API is planned for Camel 2.0
+     */
     String PROCESSED_SYNC = "CamelProcessedSync";
 
     String REDELIVERED = "CamelRedelivered";

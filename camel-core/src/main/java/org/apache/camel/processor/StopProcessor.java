@@ -14,40 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.processor;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.spi.RouteContext;
 
 /**
- * Represents an XML &lt;proceed/&gt; element
+ * Stops continue processing the route and marks it as complete.
  *
  * @version $Revision$
  */
-@XmlRootElement(name = "proceed")
-@XmlAccessorType(XmlAccessType.FIELD)
-public class ProceedDefinition extends OutputDefinition<ProcessorDefinition> {
+public class StopProcessor implements Processor {
 
-    @Override
-    public String getShortName() {
-        return "proceed";
-    }
-
-    public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return createOutputsProcessor(routeContext);
-    }
-
-    @Override
-    public String getLabel() {
-        return getShortName();
+    public void process(Exchange exchange) throws Exception {
+        // mark the exchange to stop continue routing
+        exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
     }
 
     @Override
     public String toString() {
-        return "proceed[" + getOutputs() + "]";
+        return "StopProcessor";
     }
 }

@@ -22,11 +22,14 @@ import java.util.List;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * DefaultChannel is the default {@link Channel}.
@@ -41,6 +44,8 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public class DefaultChannel extends ServiceSupport implements Processor, Channel {
+
+    private static final transient Log LOG = LogFactory.getLog(DefaultChannel.class);
 
     private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
     private Processor errorHandler;
@@ -139,9 +144,26 @@ public class DefaultChannel extends ServiceSupport implements Processor, Channel
 
     public void process(Exchange exchange) throws Exception {
         Processor processor = getOutput();
-        if (processor != null) {
+        if (processor != null && continueProcessing(exchange)) {
             processor.process(exchange);
         }
+    }
+
+    /**
+     * Strategy to determine if we should continue processing the {@link Exchange}.
+     */
+    protected boolean continueProcessing(Exchange exchange) {
+        Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
+        if (stop != null) {
+            boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
+            if (doStop) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Exchange is marked to stop routing: " + exchange);
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

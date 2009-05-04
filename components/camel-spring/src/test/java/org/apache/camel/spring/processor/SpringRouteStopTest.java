@@ -14,34 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.intercept;
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version $Revision$
- */
-public class InterceptFromWithPredicateAndProceedRouteTest extends InterceptFromRouteTestSupport {
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                interceptFrom().when(header("foo").isEqualTo("bar")).to("mock:b");
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.RouteStopTest;
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-                from("direct:start").to("mock:a");
-            }
-        };
-    }
+public class SpringRouteStopTest extends RouteStopTest {
 
     @Override
-    protected void prepareMatchingTest() {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(1);
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
-    @Override
-    protected void prepareNonMatchingTest() {
-        a.expectedMessageCount(1);
-        b.expectedMessageCount(0);
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringRouteStopTest.xml");
     }
+
 }

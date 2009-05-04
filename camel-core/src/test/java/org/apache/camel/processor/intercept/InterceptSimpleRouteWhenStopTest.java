@@ -22,9 +22,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class InterceptSimpleRouteStopTest extends ContextTestSupport {
+public class InterceptSimpleRouteWhenStopTest extends ContextTestSupport {
 
-    public void testInterceptWithStop() throws Exception {
+    public void testInterceptStop() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:bar").expectedMessageCount(0);
         getMockEndpoint("mock:result").expectedMessageCount(0);
@@ -36,13 +36,25 @@ public class InterceptSimpleRouteStopTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testInterceptNoStop() throws Exception {
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        getMockEndpoint("mock:intercepted").expectedMessageCount(0);
+
+        template.sendBody("direct:start", "Hi");
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                intercept().to("mock:intercepted").stop();
+                intercept().when(body().contains("Hello")).to("mock:intercepted").stop();
 
                 from("direct:start")
                     .to("mock:foo", "mock:bar", "mock:result");
