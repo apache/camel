@@ -34,7 +34,6 @@ import org.apache.camel.spi.RouteContext;
 public class InterceptFromDefinition extends InterceptDefinition {
 
     // TODO: Support lookup endpoint by ref (requires a bit more work)
-    // TODO: Support wildcards for endpoints so you can match by scheme, eg jms:*
 
     @XmlAttribute(required = false)
     protected String uri;

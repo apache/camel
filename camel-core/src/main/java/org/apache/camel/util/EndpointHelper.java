@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.regex.PatternSyntaxException;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
@@ -29,6 +31,7 @@ import org.apache.commons.logging.LogFactory;
  * @version $Revision$
  */
 public final class EndpointHelper {
+
     private static final transient Log LOG = LogFactory.getLog(EndpointHelper.class);
 
     private EndpointHelper() {
@@ -70,4 +73,44 @@ public final class EndpointHelper {
     public static void pollEndpoint(Endpoint endpoint, Processor processor) throws Exception {
         pollEndpoint(endpoint, processor, 1000L);
     }
+
+    /**
+     * Matches the endpoint with the given pattern.
+     * <p/>
+     * The match rules are applied in this order:
+     * <ul>
+     *   <li>excact match, returns true</li>
+     *   <li>wildcard match (pattern ends with a * and the uri starts with the pattern), returns true</li>
+     *   <li>regular expression match, returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param uri  the endpoint uri
+     * @param pattern a pattern to match
+     * @return <tt>true</tt> if match, <tt>false</tt> otherwise.
+     */
+    public static boolean matchEndpoint(String uri, String pattern) {
+        if (uri.equals(pattern)) {
+            // excact match
+            return true;
+        }
+
+        // we have wildcard support in that hence you can match with: file* to match any file endpoints
+        if (pattern.endsWith("*") && uri.startsWith(pattern.substring(0, pattern.length() - 1))) {
+            return true;
+        }
+
+        // match by regular expression
+        try {
+            if (uri.matches(pattern)) {
+                return true;
+            }
+        } catch (PatternSyntaxException e) {
+            // ignore
+        }
+        
+        // no match
+        return false;
+    }
+
 }

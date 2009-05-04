@@ -57,6 +57,7 @@ import org.apache.camel.spi.FactoryFinderResolver;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -302,7 +303,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             if (intercept.getUri() != null) {
                 match = false;
                 for (FromDefinition input : route.getInputs()) {
-                    if (input.getUri().equals(intercept.getUri())) {
+                    if (EndpointHelper.matchEndpoint(input.getUri(), intercept.getUri())) {
                         match = true;
                         break;
                     }
@@ -310,6 +311,7 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
             }
 
             if (match) {
+                intercept.afterPropertiesSet();
                 // add as first output so intercept is handled before the acutal route and that gives
                 // us the needed head start to init and be able to intercept all the remaining processing steps
                 route.getOutputs().add(0, intercept);
@@ -319,13 +321,13 @@ public class CamelContextFactoryBean extends IdentifiedType implements RouteCont
         // configure intercept send to endpoint
         for (InterceptSendToEndpointDefinition intercept : getInterceptSendToEndpoints()) {
             // special intercept for intercepting sending to an endpoint
-            // init interceptor by letting it proxy the real endpoint
 
             // add the interceptor but we must do some pre configuration beforehand
             intercept.afterPropertiesSet();
 
             // replace proceed with the rest of the route
             try {
+                // init interceptor by letting it proxy the real endpoint
                 intercept.proxyEndpoint(getContext());
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);

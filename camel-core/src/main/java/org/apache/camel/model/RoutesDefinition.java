@@ -18,7 +18,6 @@ package org.apache.camel.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
@@ -28,6 +27,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.ErrorHandlerBuilder;
+import org.apache.camel.util.EndpointHelper;
 
 /**
  * Represents a collection of routes
@@ -204,7 +204,7 @@ public class RoutesDefinition extends OptionalIdentifiedType<RoutesDefinition> i
             if (intercept.getUri() != null) {
                 match = false;
                 for (FromDefinition input : route.getInputs()) {
-                    if (input.getUri().equals(intercept.getUri())) {
+                    if (EndpointHelper.matchEndpoint(input.getUri(), intercept.getUri())) {
                         match = true;
                         break;
                     }

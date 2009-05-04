@@ -96,6 +96,9 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Processo
     }
 
     public void proxyEndpoint(CamelContext context) {
+        // TODO: Add dyanmic proxy support in that sence it should be some callback hooks in CamelContext to
+        // you can register to do custom endpoint lookup or add to registry
+
         // proxy the endpoint by using the InterceptSendToEndpoint that will proxy
         // the producer so it processes the detour first
         Endpoint endpoint = lookupEndpoint(context);

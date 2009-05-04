@@ -145,8 +145,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
-     * to continue processing the underlying route being intercepted.
+     * Adds a route for an interceptor that intercepts every processing step.
      *
      * @return the builder
      */
@@ -156,8 +155,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
-     * to continue processing the underlying route being intercepted.
+     * Adds a route for an interceptor that intercepts incoming messages on any inputs in this route
      *
      * @return the builder
      */
@@ -167,8 +165,7 @@ public abstract class RouteBuilder extends BuilderSupport implements Routes {
     }
 
     /**
-     * Adds a route for an interceptor; use the {@link org.apache.camel.model.ProcessorDefinition#proceed()} method
-     * to continue processing the underlying route being intercepted.
+     * Adds a route for an interceptor that intercepts incoming messages on the given endpoint.
      *
      * @param uri  endpoint uri
      * @return the builder
