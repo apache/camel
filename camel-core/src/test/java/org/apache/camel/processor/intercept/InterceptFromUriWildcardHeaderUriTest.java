@@ -23,7 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * Testing http://camel.apache.org/dsl.html
  */
-public class InterceptFromUriWildcardTest extends ContextTestSupport {
+public class InterceptFromUriWildcardHeaderUriTest extends ContextTestSupport {
 
     public void testNoIntercept() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(0);
@@ -46,6 +46,7 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
 
     public void testInterceptBar() throws Exception {
         getMockEndpoint("mock:intercept").expectedMessageCount(1);
+        getMockEndpoint("mock:intercept").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "seda:bar");
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("seda:bar", "Hello World");
@@ -56,8 +57,6 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                // only trigger when incoming from any seda endpoint as we use the * wildcard
                 interceptFrom("seda*").to("mock:intercept");
 
                 from("direct:start").to("mock:result");
@@ -65,7 +64,6 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
                 from("seda:bar").to("mock:result");
 
                 from("seda:foo").to("mock:result");
-                // END SNIPPET: e1
             }
         };
     }

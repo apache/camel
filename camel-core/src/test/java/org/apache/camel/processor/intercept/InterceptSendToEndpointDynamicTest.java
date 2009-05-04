@@ -70,6 +70,29 @@ public class InterceptSendToEndpointDynamicTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSendToWildcardHeaderUri() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("file:*").skipSendToOriginalEndpoint()
+                    .to("mock:detour");
+
+                from("direct:first")
+                    .to("file://foo")
+                    .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:detour").expectedMessageCount(1);
+        getMockEndpoint("mock:detour").expectedHeaderReceived(Exchange.INTERCEPTED_ENDPOINT, "file://foo");
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:first", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testSendToRegex() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override

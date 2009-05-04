@@ -77,6 +77,8 @@ public interface Exchange {
     String TRANSACTED = "CamelTransacted";
     String ROLLBACK_ONLY = "CamelRollbackOnly";
 
+    String INTERCEPTED_ENDPOINT = "CamelInterceptedEndpoint";
+
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
      *

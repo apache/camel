@@ -21,7 +21,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.ExpressionAdapter;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -61,7 +63,22 @@ public class InterceptFromDefinition extends InterceptDefinition {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // insert a set property defintion so we can set the intercepted endpoint
+        // this allows us to use the same header for both the interceptFrom and interceptSendToEndpoint
+        // so end users is not confused if they should use another header for interceptFrom than interceptSendToEndpoint
+        SetHeaderDefinition headerDefinition = new SetHeaderDefinition(Exchange.INTERCEPTED_ENDPOINT, new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange, Class type) {
+                return exchange.getFromEndpoint().getEndpointUri();
+            }
+
+            public String toString() {
+                return "";
+            }
+        });
+        getOutputs().add(0, headerDefinition);
+
         return createOutputsProcessor(routeContext);
     }
 

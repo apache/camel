@@ -25,6 +25,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.ExchangeConverter;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.FactoryFinderResolver;
@@ -35,7 +36,6 @@ import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
-import org.apache.camel.spi.EndpointStrategy;
 
 /**
  * Interface used to represent the context used to configure routes and the

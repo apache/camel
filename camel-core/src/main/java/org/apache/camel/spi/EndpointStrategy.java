@@ -30,6 +30,10 @@ import org.apache.camel.Endpoint;
  */
 public interface EndpointStrategy {
 
+    // TODO: Add more strategy methods for other endpoint related methods, such as lookup, remove etc.
+    // and add a base class EndpointStrategySupport that has noop impl of all methods so you can extend it
+    // if you only want to do custom behavior in one of the methods
+
     /**
      * Register the endpoint.
      *
