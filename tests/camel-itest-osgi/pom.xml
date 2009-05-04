@@ -150,36 +150,26 @@
   </build>
 
   <profiles>
-    <profile>
-      <id>ci-build-profile</id>
-      <activation>
-        <property>
-          <name>maven.repo.local</name>
-        </property>
-      </activation>
-      <build>
-        <plugins>
-          <!-- use Pax Exam Maven plugin to get around PAXEXAM-62/64 -->
-          <plugin>
-            <groupId>org.ops4j.pax.exam</groupId>
-            <artifactId>maven-paxexam-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>generate-config</id>
-                <goals>
-                  <goal>generate-config</goal>
-                </goals>
-              </execution>
-            </executions>
-            <configuration>
-              <settings>
-                <localRepository>${maven.repo.local}</localRepository>
-              </settings>
-            </configuration>
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
-  </profiles>
+        <profile>
+            <id>ci-build-profile</id>
+            <activation>
+                <property>
+                   <name>maven.repo.local</name>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                           <!-- when the local repo location has been specified, we need to pass on this information to PAX mvn url -->
+                           <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+   </profiles>
 
 </project>
