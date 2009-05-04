@@ -1744,14 +1744,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
     
     /**
-     * Converts the IN message body to the specified class type
+     * Converts the IN message body to the specified type
      *
-     * @param typeString the type to convert to as a fully qualified classname
+     * @param type the type to convert to
+     * @param charset the charset to use by type converters (not all converters support specifc charset)
      * @return the builder
      */
     @SuppressWarnings("unchecked")
-    public Type convertBodyTo(String typeString) {
-        addOutput(new ConvertBodyDefinition(typeString));
+    public Type convertBodyTo(Class type, String charset) {
+        addOutput(new ConvertBodyDefinition(type, charset));
         return (Type) this;
     }
 

@@ -22,27 +22,42 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- START SNIPPET: example -->
-  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-	<route>
-		<from uri="direct:start" />
-		<convertBodyTo type="java.lang.Integer" />
-		<to uri="mock:result" />
-	</route>
-	<route errorHandlerRef="deadLetterErrorHandler">
-		<from uri="direct:invalid" />
-		<convertBodyTo type="java.util.Date" />
-		<to uri="mock:result" />
-	</route>
-  </camelContext>
-  
-  <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-  	<property name="deadLetterUri" value="mock:dead"/>
-  	<property name="redeliveryPolicy" ref="redeliveryPolicy"/>
-  </bean>
-  
-   <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">        
+    <!-- START SNIPPET: example -->
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <route>
+            <from uri="direct:start"/>
+            <convertBodyTo type="java.lang.Integer"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route errorHandlerRef="deadLetterErrorHandler">
+            <from uri="direct:invalid"/>
+            <convertBodyTo type="java.util.Date"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route>
+            <from uri="direct:charset"/>
+            <convertBodyTo type="java.lang.byte[]" charset="iso-8859-1"/>
+            <to uri="mock:result"/>
+        </route>
+
+        <route>
+            <from uri="direct:charset2"/>
+            <convertBodyTo type="java.lang.byte[]" charset="utf-16"/>
+            <to uri="mock:result"/>
+        </route>
+
+    </camelContext>
+
+    <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+        <property name="deadLetterUri" value="mock:dead"/>
+        <property name="redeliveryPolicy" ref="redeliveryPolicy"/>
+    </bean>
+
+    <bean id="redeliveryPolicy" class="org.apache.camel.processor.RedeliveryPolicy">
         <property name="maximumRedeliveries" value="0"/>
     </bean>
-  <!-- END SNIPPET: example -->
+    <!-- END SNIPPET: example -->
 </beans>

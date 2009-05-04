@@ -50,6 +50,29 @@ public class ConvertBodyTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testConvertCharset() throws Exception {
+        byte[] body = "Hello World".getBytes("iso-8859-1");
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(body);
+
+        template.sendBody("direct:charset", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testConvertCharsetFail() throws Exception {
+        byte[] body = "Hello World".getBytes("utf-8");
+
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.expectedBodiesReceived(body);
+
+        template.sendBody("direct:charset2", "Hello World");
+
+        // should NOT be okay as we expected utf-8 but got it in utf-16
+        result.assertIsNotSatisfied();
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -58,6 +81,10 @@ public class ConvertBodyTest extends ContextTestSupport {
                 from("direct:start").convertBodyTo(Integer.class).to("mock:result");
 
                 from("direct:invalid").convertBodyTo(Date.class).to("mock:result");
+
+                from("direct:charset").convertBodyTo(byte[].class, "iso-8859-1").to("mock:result");
+
+                from("direct:charset2").convertBodyTo(byte[].class, "utf-16").to("mock:result");
             }
         };
     }
