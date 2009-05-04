@@ -18,7 +18,6 @@ package org.apache.camel.component.ldap;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.naming.NamingEnumeration;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.SearchControls;
@@ -26,30 +25,27 @@ import javax.naming.directory.SearchResult;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 /**
  * @version $
  */
-public class LdapProducer<E extends Exchange> extends DefaultProducer {
-    private static final transient Log LOG = LogFactory.getLog(LdapProducer.class);
+public class LdapProducer extends DefaultProducer {
     private String remaining;
     private SearchControls controls;
     private String searchBase;
-    
+
     public LdapProducer(LdapEndpoint endpoint, String remaining, String base, int scope) throws Exception {
         super(endpoint);
 
         this.remaining = remaining;
-        searchBase = base;
-        controls = new SearchControls();
-        controls.setSearchScope(scope);
+        this.searchBase = base;
+        this.controls = new SearchControls();
+        this.controls.setSearchScope(scope);
     }
 
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
-        
+
         // Obtain our ldap context. We do this by looking up the context in our registry. 
         // Note though that a new context is expected each time. Therefore if spring is
         // being used then use prototype="scope". If you do not then you might experience
@@ -61,9 +57,8 @@ public class LdapProducer<E extends Exchange> extends DefaultProducer {
         try {
 	        // could throw NamingException
 	        List<SearchResult> data = new ArrayList<SearchResult>();
-	        NamingEnumeration<SearchResult> namingEnumeration =
-	            ldapContext.search(searchBase, filter, getControls());
-	
+	        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, filter, getControls());
+
 	        while (namingEnumeration.hasMore()) {
 	            data.add(namingEnumeration.next());
 	        }
