@@ -481,6 +481,11 @@ public final class ObjectHelper {
         // must clean the name so its pure java name, eg remoing \n or whatever people can do in the Spring XML
         name = normalizeClassName(name);
 
+        // special for byte[] as its common to use
+        if ("java.lang.byte[]".equals(name) || "byte[]".equals(name)) {
+            return byte[].class;
+        }
+
         // try context class loader first
         Class clazz = doLoadClass(name, Thread.currentThread().getContextClassLoader());
         if (clazz == null) {
@@ -858,7 +863,7 @@ public final class ObjectHelper {
     public static String normalizeClassName(String name) {
         StringBuffer sb = new StringBuffer(name.length());
         for (char ch : name.toCharArray()) {
-            if (ch == '.' || Character.isJavaIdentifierPart(ch)) {
+            if (ch == '.'  || ch == '[' || ch == ']' || Character.isJavaIdentifierPart(ch)) {
                 sb.append(ch);
             }
         }
