@@ -18,11 +18,8 @@ package org.apache.camel.component.cxf;
 
 import java.io.OutputStream;
 import java.lang.reflect.Proxy;
-
 import javax.xml.transform.Source;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -32,7 +29,6 @@ import org.apache.camel.component.cxf.util.CxfEndpointUtils;
 import org.apache.camel.component.cxf.util.Dummy;
 import org.apache.camel.component.cxf.util.NullConduit;
 import org.apache.camel.component.cxf.util.NullConduitSelector;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,20 +48,19 @@ import org.apache.cxf.message.Message;
  * The consumer will delegate to another endpoint for the transport layer
  * and will provide SOAP support on top of it.
  */
-public class CxfSoapProducer implements Producer, AsyncProcessor {
+public class CxfSoapProducer implements Producer {
 
     private static final Log LOG = LogFactory.getLog(CxfSoapProducer.class);
 
     private final CxfSoapEndpoint endpoint;
     private final Producer producer;
-    private final AsyncProcessor processor;
-    private ClientImpl client;
-
+    private final Processor processor;
+    private final ClientImpl client;
 
     public CxfSoapProducer(CxfSoapEndpoint endpoint) throws Exception {
         this.endpoint = endpoint;
         this.producer = endpoint.getInnerEndpoint().createProducer();
-        this.processor = new AsyncProcessorDecorator(producer,
+        this.processor = new CxfAroundProcessor(producer,
                 new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         processSoapProviderIn(exchange);
@@ -97,7 +92,6 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
         }
         cfb.setConduitSelector(new NullConduitSelector());
         client = (ClientImpl)((ClientProxy)Proxy.getInvocationHandler(cfb.create())).getClient();
-
     }
 
     public Endpoint getEndpoint() {
@@ -117,11 +111,7 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        return processor.process(exchange, callback);
+        processor.process(exchange);
     }
 
     public void start() throws Exception {
@@ -133,7 +123,9 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
     }
 
     protected void processSoapProviderOut(Exchange exchange) throws Exception {
-        LOG.info("processSoapProviderOut: " + exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("processSoapProviderOut: " + exchange);
+        }
 
         org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(
                 endpoint.getHeaderFilterStrategy(), exchange, true);
@@ -150,7 +142,9 @@ public class CxfSoapProducer implements Producer, AsyncProcessor {
     }
 
     protected void processSoapProviderIn(Exchange exchange) throws Exception {
-        LOG.info("processSoapProviderIn: " + exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("processSoapProviderIn: " + exchange);
+        }
         org.apache.cxf.endpoint.Endpoint cxfEndpoint = client.getEndpoint();
         org.apache.cxf.message.Exchange cxfExchange = new ExchangeImpl();
         cxfExchange.put(org.apache.cxf.endpoint.Endpoint.class, cxfEndpoint);

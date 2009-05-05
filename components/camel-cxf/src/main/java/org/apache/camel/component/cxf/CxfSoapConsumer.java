@@ -54,7 +54,7 @@ public class CxfSoapConsumer implements Consumer {
 
     public CxfSoapConsumer(CxfSoapEndpoint endpoint, Processor processor) throws Exception {
         this.endpoint = endpoint;
-        Processor soapProcessor = new AsyncProcessorDecorator(processor,
+        Processor soapProcessor = new CxfAroundProcessor(processor,
                 new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         processSoapConsumerIn(exchange);
@@ -90,12 +90,11 @@ public class CxfSoapConsumer implements Consumer {
         server.start();
         inMessageObserver = server.getDestination().getMessageObserver();
         consumer.start();
-
     }
 
     public void stop() throws Exception {
-        server.stop();
         consumer.stop();
+        server.stop();
     }
 
     protected Bus getBus() {
@@ -103,7 +102,9 @@ public class CxfSoapConsumer implements Consumer {
     }
 
     protected void processSoapConsumerIn(Exchange exchange) throws Exception {
-        LOG.info("processSoapConsumerIn: " + exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("processSoapConsumerIn: " + exchange);
+        }
         org.apache.cxf.message.Message inMessage = CxfSoapBinding.getCxfInMessage(
                 endpoint.getHeaderFilterStrategy(), exchange, false);
         org.apache.cxf.message.Exchange cxfExchange = inMessage.getExchange();
@@ -119,7 +120,9 @@ public class CxfSoapConsumer implements Consumer {
     }
 
     protected void processSoapConsumerOut(Exchange exchange) throws Exception {
-        LOG.info("processSoapConsumerOut: " + exchange);
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("processSoapConsumerOut: " + exchange);
+        }
 
         // TODO check if the message is one-way message
         // Get the method name from the soap endpoint
