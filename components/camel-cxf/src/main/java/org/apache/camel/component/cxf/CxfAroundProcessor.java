@@ -40,7 +40,11 @@ public class CxfAroundProcessor implements Processor {
 
     public void process(Exchange exchange) throws Exception {
         before.process(exchange);
-        processor.process(exchange);
+        try {
+            processor.process(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
         after.process(exchange);
     }
 
