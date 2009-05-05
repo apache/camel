@@ -18,7 +18,6 @@ package org.apache.camel.component.ibatis;
 
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
@@ -158,17 +157,15 @@ public class IBatisPollingConsumer extends ScheduledPollConsumer {
             LOG.debug("Processing exchange: " + exchange);
         }
 
-        getAsyncProcessor().process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-                try {
-                    if (onConsume != null) {
-                        endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
-                    }
-                } catch (Exception e) {
-                    handleException(e);
-                }
+        getProcessor().process(exchange);
+
+        try {
+            if (onConsume != null) {
+                endpoint.getProcessingStrategy().commit(endpoint, exchange, data, onConsume);
             }
-        });
+        } catch (Exception e) {
+            handleException(e);
+        }
     }
     
     /**
