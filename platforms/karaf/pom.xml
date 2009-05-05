@@ -34,7 +34,6 @@
     <name>Camel :: Platforms :: Apache Karaf</name>
 
     <properties>
-      <features-maven-plugin-version>1.2-SNAPSHOT</features-maven-plugin-version>
       <servicemix-kernel-version>1.1.0</servicemix-kernel-version>
     </properties>
 
@@ -81,15 +80,4 @@
       </repository>
     </repositories>
  
-    <build>
-      <pluginManagement> 
-        <plugins>
-          <plugin>
-            <groupId>org.apache.servicemix.tooling</groupId>
-            <artifactId>features-maven-plugin</artifactId>
-            <version>${features-maven-plugin-version}</version>
-          </plugin>
-        </plugins>
-      </pluginManagement>
-    </build>
 </project>
