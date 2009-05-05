@@ -139,6 +139,7 @@ public interface ProducerTemplate extends Service {
      * {@link Processor} to populate the exchange.
      * @param callback    the callback will be called when the exchange is completed.
      * @return the returned exchange
+     * @deprecated a new async API is planned for Camel 2.0
      */
     Exchange send(String endpointUri, Processor processor, AsyncCallback callback);
 
@@ -181,6 +182,7 @@ public interface ProducerTemplate extends Service {
      * {@link Processor} to populate the exchange.
      * @param callback  the callback will be called when the exchange is completed.
      * @return the returned exchange
+     * @deprecated a new async API is planned for Camel 2.0
      */
     Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback);
 

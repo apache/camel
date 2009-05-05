@@ -31,8 +31,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
-
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
+import org.apache.camel.util.ExchangeHelper;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
@@ -453,65 +452,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         endpointCache.clear();
     }
 
-    /**
-     * Extracts the body from the given result.
-     *
-     * @param result   the result
-     * @return  the result, can be <tt>null</tt>.
-     */
     protected Object extractResultBody(Exchange result) {
         return extractResultBody(result, null);
     }
 
-    /**
-     * Extracts the body from the given result.
-     * <p/>
-     * If the exchange pattern is provided it will try to honor it and retrive the body
-     * from either IN or OUT according to the pattern.
-     *
-     * @param result   the result
-     * @param pattern  exchange pattern if given, can be <tt>null</tt>
-     * @return  the result, can be <tt>null</tt>.
-     */
     protected Object extractResultBody(Exchange result, ExchangePattern pattern) {
-        Object answer = null;
-        if (result != null) {
-            // rethrow if there was an exception
-            if (result.getException() != null) {
-                throw wrapRuntimeCamelException(result.getException());
-            }
-
-            // result could have a fault message
-            if (hasFaultMessage(result)) {
-                return result.getFault().getBody();
-            }
-
-            // okay no fault then return the response according to the pattern
-            // try to honor pattern if provided
-            boolean notOut = pattern != null && !pattern.isOutCapable();
-            boolean hasOut = result.hasOut();
-            if (hasOut && !notOut) {
-                // we have a response in out and the pattern is out capable
-                answer = result.getOut().getBody();
-            } else if (!hasOut && result.getPattern() == ExchangePattern.InOptionalOut) {
-                // special case where the result is InOptionalOut and with no OUT response
-                // so we should return null to indicate this fact
-                answer = null;
-            } else {
-                // use IN as the response
-                answer = result.getIn().getBody();
-            }
-        }
-        return answer;
+        return ExchangeHelper.extractResultBody(result, pattern);
     }
 
-    protected boolean hasFaultMessage(Exchange result) {
-        if (result.hasFault()) {
-            Object faultBody = result.getFault().getBody();
-            if (faultBody != null) {
-                return true;
-            }
-        }
-        return false;
-    }
 }

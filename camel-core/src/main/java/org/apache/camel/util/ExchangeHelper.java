@@ -31,6 +31,7 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -394,5 +395,64 @@ public final class ExchangeHelper {
         // clear exception since its failure handled
         exchange.setException(null);
     }
+
+    /**
+     * Extracts the body from the given result.
+     * <p/>
+     * If the exchange pattern is provided it will try to honor it and retrive the body
+     * from either IN or OUT according to the pattern.
+     *
+     * @param exchange   the result
+     * @param pattern  exchange pattern if given, can be <tt>null</tt>
+     * @return  the result, can be <tt>null</tt>.
+     */
+    public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
+        Object answer = null;
+        if (exchange != null) {
+            // rethrow if there was an exception
+            if (exchange.getException() != null) {
+                throw wrapRuntimeCamelException(exchange.getException());
+            }
+
+            // result could have a fault message
+            if (hasFaultMessage(exchange)) {
+                return exchange.getFault().getBody();
+            }
+
+            // okay no fault then return the response according to the pattern
+            // try to honor pattern if provided
+            boolean notOut = pattern != null && !pattern.isOutCapable();
+            boolean hasOut = exchange.hasOut();
+            if (hasOut && !notOut) {
+                // we have a response in out and the pattern is out capable
+                answer = exchange.getOut().getBody();
+            } else if (!hasOut && exchange.getPattern() == ExchangePattern.InOptionalOut) {
+                // special case where the result is InOptionalOut and with no OUT response
+                // so we should return null to indicate this fact
+                answer = null;
+            } else {
+                // use IN as the response
+                answer = exchange.getIn().getBody();
+            }
+        }
+        return answer;
+    }
+
+    /**
+     * Tests whether the exchange has a fault message set and that its not null.
+     *
+     * @param exchange  the exchange
+     * @return <tt>true</tt> if fault message exists
+     */
+    public static boolean hasFaultMessage(Exchange exchange) {
+        if (exchange.hasFault()) {
+            Object faultBody = exchange.getFault().getBody();
+            if (faultBody != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
 }

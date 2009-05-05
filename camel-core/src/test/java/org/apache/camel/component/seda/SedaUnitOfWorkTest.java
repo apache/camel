@@ -60,7 +60,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
                 from("seda:foo")
                         // use a little delay to allow the first route to complete
-                        .delay(100)
+                        .delay(200)
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("onCompleteA", sync);
