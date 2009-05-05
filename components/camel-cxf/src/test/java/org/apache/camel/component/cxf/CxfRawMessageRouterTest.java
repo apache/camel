@@ -16,7 +16,10 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     private String routerEndpointURI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&dataFormat=MESSAGE";
@@ -24,8 +27,23 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI);
+                from(routerEndpointURI).to("log:org.apache.camel?level=DEBUG").to(serviceEndpointURI).to("mock:result");
             }
         };
+    }
+    
+    public void testTheContentType() throws Exception {
+        MockEndpoint result = getMockEndpoint("mock:result");
+        result.reset();
+        result.expectedMessageCount(1);
+        HelloService client = getCXFClient();
+        client.echo("hello world");
+        assertMockEndpointsSatisfied();
+        Map context = (Map)result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext");
+        Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");
+        assertEquals("Should get the content type", protocalHeaders.get("content-type").toString(), "[text/xml; charset=utf-8]");
+        assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);
+        // get the content type directly from the message header
+        assertEquals("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type"), "text/xml; charset=utf-8");        
     }
 }

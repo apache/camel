@@ -57,9 +57,8 @@ public class CxfSimpleRouterTest extends CxfRouterTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }
-
-
-    public void testInvokingServiceFromCXFClient() throws Exception {
+    
+    protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
         clientBean.setAddress(ROUTER_ADDRESS);
@@ -67,19 +66,19 @@ public class CxfSimpleRouterTest extends CxfRouterTestSupport {
         clientBean.setBus(bus);
 
         HelloService client = (HelloService) proxyFactory.create();
+        return client;
+    }
 
+
+    public void testInvokingServiceFromCXFClient() throws Exception {        
+        HelloService client = getCXFClient();
         String result = client.echo("hello world");
         assertEquals("we should get the right answer from router", result, "echo hello world");
 
     }
 
     public void testOnwayInvocation() throws Exception {
-        ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
-        ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
-        clientBean.setAddress(ROUTER_ADDRESS);
-        clientBean.setServiceClass(HelloService.class);
-        clientBean.setBus(bus);
-        HelloService client = (HelloService) proxyFactory.create();
+        HelloService client = getCXFClient();
         int count = client.getInvocationCount();
         client.ping();
         //oneway ping invoked, so invocationCount ++
