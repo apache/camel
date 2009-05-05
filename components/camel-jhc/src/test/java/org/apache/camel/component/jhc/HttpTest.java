@@ -55,11 +55,6 @@ public class HttpTest extends ContextTestSupport {
         Message in = exchange.getIn();
         assertNotNull("in", in);
 
-        Map<String, Object> headers = in.getHeaders();
-
-        log.debug("Headers: " + headers);
-        assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
-
         String body = in.getBody(String.class);
 
         log.debug("Body: " + body);

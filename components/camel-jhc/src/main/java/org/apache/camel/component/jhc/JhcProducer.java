@@ -20,19 +20,14 @@ import java.io.IOException;
 import java.io.InterruptedIOException;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.concurrent.ThreadFactory;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.Header;
@@ -63,7 +58,7 @@ import org.apache.http.protocol.RequestExpectContinue;
 import org.apache.http.protocol.RequestTargetHost;
 import org.apache.http.protocol.RequestUserAgent;
 
-public class JhcProducer extends DefaultProducer implements AsyncProcessor {
+public class JhcProducer extends DefaultProducer implements Processor {
 
     public static final String HTTP_RESPONSE_CODE = "http.responseCode";
     private static final transient Log LOG = LogFactory.getLog(JhcProducer.class);
@@ -127,17 +122,8 @@ public class JhcProducer extends DefaultProducer implements AsyncProcessor {
         if (LOG.isDebugEnabled()) {
             LOG.debug("process: " + exchange);
         }
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("processAsync: " + exchange);
-        }
         SocketAddress addr = new InetSocketAddress(getEndpoint().getHost(), getEndpoint().getPort());
-        exchange.setProperty(AsyncCallback.class.getName(), callback);
         ioReactor.connect(addr, null, exchange, new MySessionRequestCallback());
-        return false;
     }
 
     protected HttpRequest createRequest(Exchange exchange) {
@@ -257,8 +243,6 @@ public class JhcProducer extends DefaultProducer implements AsyncProcessor {
             }
             
             e.getOut().setHeader(HTTP_RESPONSE_CODE, httpResponse.getStatusLine().getStatusCode());
-            AsyncCallback callback = (AsyncCallback) e.removeProperty(AsyncCallback.class.getName());
-            callback.done(false);
         }
 
         public void finalizeContext(HttpContext httpContext) {

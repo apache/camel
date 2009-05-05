@@ -18,7 +18,6 @@ package org.apache.camel.component.jhc;
 
 import java.io.IOException;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -146,25 +145,27 @@ public class JhcConsumer extends DefaultConsumer {
             if (request instanceof HttpEntityEnclosingRequest) {
                 exchange.getIn().setBody(((HttpEntityEnclosingRequest)request).getEntity());
             }
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                public void done(boolean doneSynchronously) {
-                    LOG.debug("handleExchange");
-                    // create the default response to this request
-                    ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
 
-                    HttpResponse response = responseFactory.newHttpResponse(
-                        httpVersion, HttpStatus.SC_OK, context);
-                    response.setParams(params);
-                    HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
-                    response.setEntity(entity);
-                    response.setParams(getEndpoint().getParams());
-                    try {
-                        handler.sendResponse(response);
-                    } catch (Exception e) {
-                        LOG.info(e);
-                    }
-                }
-            });
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            LOG.debug("handleExchange");
+            // create the default response to this request
+            ProtocolVersion httpVersion = (HttpVersion)request.getRequestLine().getProtocolVersion();
+
+            HttpResponse response = responseFactory.newHttpResponse(httpVersion, HttpStatus.SC_OK, context);
+            response.setParams(params);
+            HttpEntity entity = exchange.getOut().getBody(HttpEntity.class);
+            response.setEntity(entity);
+            response.setParams(getEndpoint().getParams());
+            try {
+                handler.sendResponse(response);
+            } catch (Exception e) {
+                LOG.info(e);
+            }
         }
 
         public void handle(HttpRequest request, HttpResponse response, HttpContext context)
