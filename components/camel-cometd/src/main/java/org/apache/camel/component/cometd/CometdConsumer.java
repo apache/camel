@@ -35,7 +35,6 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
 
     private AbstractBayeux bayeux;
     private final CometdEndpoint endpoint;
-    @SuppressWarnings("unused")
     private ConsumerService service;
 
     public CometdConsumer(CometdEndpoint endpoint, Processor processor) {
@@ -52,8 +51,8 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
 
     @Override
     public void stop() throws Exception {
-        super.stop();
         endpoint.disconnect(this);
+        super.stop();
     }
 
     public void setBayeux(AbstractBayeux bayeux) {
@@ -69,8 +68,7 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         private final CometdEndpoint endpoint;
         private final CometdConsumer consumer;
 
-        public ConsumerService(String channel, Bayeux bayeux,
-                CometdConsumer consumer) {
+        public ConsumerService(String channel, Bayeux bayeux, CometdConsumer consumer) {
             super(bayeux, channel);
             this.consumer = consumer;
             this.endpoint = consumer.getEndpoint();
@@ -79,10 +77,13 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
 
         public void push(Client client, Object data) throws Exception {
             Message message = new DefaultMessage();
-            Exchange exchange = endpoint.createExchange();
             message.setBody(data);
+
+            Exchange exchange = endpoint.createExchange();
             exchange.setIn(message);
-            consumer.getAsyncProcessor().process(exchange);
+
+            consumer.getProcessor().process(exchange);
         }
     }
+
 }

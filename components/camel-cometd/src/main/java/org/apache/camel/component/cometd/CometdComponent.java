@@ -41,7 +41,7 @@ import org.mortbay.jetty.servlet.ServletHolder;
 public class CometdComponent extends DefaultComponent {
     private static final transient Log LOG = LogFactory.getLog(CometdComponent.class);
 
-    private HashMap<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
+    private final Map<String, ConnectorRef> connectors = new HashMap<String, ConnectorRef>();
 
     private Server server;
     private String sslKeyPassword;
@@ -77,8 +77,7 @@ public class CometdComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         setProperties(this, parameters);
-        CometdEndpoint endpoint = new CometdEndpoint(this, uri, remaining, parameters);
-        return endpoint;
+        return new CometdEndpoint(this, uri, remaining, parameters);
     }
 
     /**
@@ -242,4 +241,5 @@ public class CometdComponent extends DefaultComponent {
     protected void doStart() throws Exception {
         super.doStart();
     }
+
 }

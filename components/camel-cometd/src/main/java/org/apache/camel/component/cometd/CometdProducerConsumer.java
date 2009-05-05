@@ -25,7 +25,6 @@ public interface CometdProducerConsumer {
      */
     CometdEndpoint getEndpoint();
 
-
     /**
      * Sets the bayeux to use.
      */
