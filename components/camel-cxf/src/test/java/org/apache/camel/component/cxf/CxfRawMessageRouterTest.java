@@ -40,6 +40,8 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         client.echo("hello world");        
         Map context = (Map)result.assertExchangeReceived(0).getIn().getHeaders().get("ResponseContext"); 
         assertNotNull("Expect to get the protocal header ", context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS"));
+        Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");
+        assertEquals("Should get the content type", protocalHeaders.get("content-type").toString(), "[text/xml; charset=utf-8]");
         assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);
     }
 }
