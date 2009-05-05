@@ -16,17 +16,12 @@
  */
 package org.apache.camel.component.spring.integration;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,8 +40,9 @@ import org.springframework.integration.message.MessageHandler;
  * should be set for receiving the response message.
  * @version $Revision$
  */
-public class SpringIntegrationProducer extends DefaultProducer implements AsyncProcessor {
+public class SpringIntegrationProducer extends DefaultProducer implements Processor {
     private static final transient Log LOG = LogFactory.getLog(SpringIntegrationProducer.class);
+
     private SpringCamelContext context;
     private DirectChannel inputChannel;
     private MessageChannel outputChannel;
@@ -65,8 +61,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements AsyncP
                 outputChannelName = endpoint.getInputChannel();
             }
             if (ObjectHelper.isEmpty(outputChannelName)) {
-                throw new RuntimeCamelException("Can't find the right outputChannelName, "
-                                                + "please check the endpoint uri outputChannel part!");
+                throw new RuntimeCamelException("Cannot find outputChannelName, please check the endpoint uri outputChannel part!");
             } else {
                 outputChannel = channelResolver.resolveChannelName(outputChannelName);
             }
@@ -74,15 +69,14 @@ public class SpringIntegrationProducer extends DefaultProducer implements AsyncP
             if (endpoint.getMessageChannel() != null) {
                 outputChannel = endpoint.getMessageChannel();
             } else {
-                throw new RuntimeCamelException("Can't find the right message channel, please check your configuration.");
+                throw new RuntimeCamelException("Cannot find message channel, please check your configuration.");
             }
         }
         if (endpoint.isInOut()) {
             endpoint.setExchangePattern(ExchangePattern.InOut);
             // we need to setup right inputChannel for further processing
             if (ObjectHelper.isEmpty(endpoint.getInputChannel())) {
-                throw new RuntimeCamelException("Can't find the right inputChannel, "
-                                                + "please check the endpoint uri inputChannel part!");
+                throw new RuntimeCamelException("Cannot find inputChannel, please check the endpoint uri inputChannel part!");
             } else {
                 inputChannel = (DirectChannel)channelResolver.resolveChannelName(endpoint.getInputChannel());
             }
@@ -91,31 +85,18 @@ public class SpringIntegrationProducer extends DefaultProducer implements AsyncP
         }
     }
 
-    public void process(Exchange exchange) throws Exception {
-        
-        AsyncProcessorHelper.process(this, exchange);       
-        
-    }
-
-    public boolean process(final Exchange exchange, final AsyncCallback callback) {
-        Map<String, Object> headers = new HashMap<String, Object>();
+    public void process(final Exchange exchange) throws Exception {
         if (exchange.getPattern().isOutCapable()) {
-            headers.put(MessageHeaders.REPLY_CHANNEL , inputChannel);
-            inputChannel.subscribe(new MessageHandler() {                
+            exchange.getIn().getHeaders().put(MessageHeaders.REPLY_CHANNEL , inputChannel);
+            inputChannel.subscribe(new MessageHandler() {
                 public void handleMessage(Message<?> message) {                    
                     SpringIntegrationBinding.storeToCamelMessage(message, exchange.getOut());
-                    callback.done(true);
                 }
             });
         }
-        org.springframework.integration.core.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange, headers);
+        org.springframework.integration.core.Message siOutmessage = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
         
         outputChannel.send(siOutmessage);
-        if (!exchange.getPattern().isOutCapable()) {
-            callback.done(true);
-        }
-        
-        return true;
     }
 
 
