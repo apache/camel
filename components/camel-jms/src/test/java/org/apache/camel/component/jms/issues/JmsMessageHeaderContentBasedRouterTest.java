@@ -65,8 +65,8 @@ public class JmsMessageHeaderContentBasedRouterTest extends ContextTestSupport {
     }
 
     public static class MyPreProcessorBean {
-
-        public static void determineRouting(Exchange exchange) {
+        
+        public void determineRouting(Exchange exchange) {
             exchange.getIn().setHeader("route", "b");
         }
     }

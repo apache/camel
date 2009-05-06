@@ -32,25 +32,28 @@ import static org.apache.activemq.camel.component.ActiveMQComponent.activeMQComp
  */
 public class JmsHammerTest extends ContextTestSupport {
 
-    private static Log LOG = LogFactory.getLog(JmsHammerTest.class);
+    private static final Log LOG = LogFactory.getLog(JmsHammerTest.class);
 
-	private String message;
+    private String message;
     // TODO: AMQ reaches a limit when sending #169.
     // private int size = 200;
     private int size = 10;
 
     public void prepareMessage() throws Exception {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < 20000; i++) {
-			sb.append("hellothere");
-		}
-		message = sb.toString();
-	}
+        StringBuffer sb = new StringBuffer();
+        for (int i = 0; i < 20000; i++) {
+            sb.append("hellothere");
+        }
+        message = sb.toString();
+    }
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         // TODO: MR-170
-        ActiveMQComponent activemq = activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false&jms.redeliveryPolicy.maximumRedeliveries=0&jms.redeliveryPolicy.initialRedeliveryDelay=500&jms.useAsyncSend=false&jms.sendTimeout=10000&jms.maxReconnectAttempts=1&jms.timeout=3000");
+        ActiveMQComponent activemq = 
+            activeMQComponent("vm://localhost?broker.persistent=false&broker.useJmx=false&jms.redeliveryPolicy.maximumRedeliveries=0" 
+                              + "&jms.redeliveryPolicy.initialRedeliveryDelay=500&jms.useAsyncSend=false&jms.sendTimeout=10000"
+                              + "&jms.maxReconnectAttempts=1&jms.timeout=3000");
         camelContext.addComponent("activemq", activemq);
         return camelContext;
     }

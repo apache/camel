@@ -55,14 +55,15 @@ public class LdapProducer extends DefaultProducer {
         // classes will require prototype scope though.
         DirContext ldapContext = (DirContext)getEndpoint().getCamelContext().getRegistry().lookup(remaining);
         try {
-	        // could throw NamingException
-	        List<SearchResult> data = new ArrayList<SearchResult>();
-	        NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, filter, getControls());
+            // could throw NamingException
+            List<SearchResult> data = new ArrayList<SearchResult>();
+            NamingEnumeration<SearchResult> namingEnumeration = ldapContext.search(searchBase, filter,
+                                                                                   getControls());
 
-	        while (namingEnumeration.hasMore()) {
-	            data.add(namingEnumeration.next());
-	        }
-	        exchange.getOut().setBody(data);
+            while (namingEnumeration.hasMore()) {
+                data.add(namingEnumeration.next());
+            }
+            exchange.getOut().setBody(data);
         } finally {
             ldapContext.close();
         }
