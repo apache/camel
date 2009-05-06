@@ -19,8 +19,8 @@ package org.apache.camel.impl;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -30,6 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A default endpoint useful for implementation inheritance
@@ -37,10 +38,12 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
+    private static final int DEFAULT_THREADPOOL_SIZE = 5;
+
     private String endpointUri;
     private CamelContext camelContext;
     private Component component;
-    private ScheduledExecutorService executorService;
+    private ExecutorService executorService;
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
 
     protected DefaultEndpoint(String endpointUri, Component component) {
@@ -101,7 +104,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.camelContext = camelContext;
     }
 
-    public synchronized ScheduledExecutorService getExecutorService() {
+    public synchronized ExecutorService getExecutorService() {
         if (executorService == null) {
             Component c = getComponent();
             if (c instanceof DefaultComponent) {
@@ -180,8 +183,8 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.exchangePattern = exchangePattern;
     }
 
-    protected ScheduledThreadPoolExecutor createExecutorService() {
-        return new ScheduledThreadPoolExecutor(10);
+    protected ExecutorService createExecutorService() {
+        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpointUri(), true);
     }
 
     public void configureProperties(Map options) {

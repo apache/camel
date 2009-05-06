@@ -33,7 +33,6 @@ import org.apache.camel.processor.ChoiceProcessor;
 import org.apache.camel.processor.DeadLetterChannel;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.processor.FilterProcessor;
-import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.RecipientList;
@@ -483,15 +482,6 @@ public class RouteBuilderTest extends TestSupport {
         }
     }
 
-    protected Processor unwrapInterceptor(Processor processor) {
-        if (processor instanceof Interceptor) {
-            Interceptor interceptor = (Interceptor) processor;
-            return interceptor.getProcessor();
-        } else {
-            return processor;
-        }
-    }
-    
     protected Processor unwrapDelegateProcessor(Processor processor) {
         if (processor instanceof DelegateProcessor) {
             DelegateProcessor delegate = (DelegateProcessor) processor;

@@ -19,6 +19,7 @@ package org.apache.camel.util.concurrent;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ScheduledExecutorService;
 
 /**
  * Helper for {@link java.util.concurrent.ExecutorService} to construct executors using a thread factory that
@@ -44,7 +45,7 @@ public final class ExecutorServiceHelper {
         return ++threadCounter;
     }
 
-    public static ExecutorService newScheduledThreadPool(final int poolSize, final String name, final boolean daemon) {
+    public static ScheduledExecutorService newScheduledThreadPool(final int poolSize, final String name, final boolean daemon) {
         return Executors.newScheduledThreadPool(poolSize, new ThreadFactory() {
             public Thread newThread(Runnable r) {
                 Thread answer = new Thread(r, getThreadName(name));

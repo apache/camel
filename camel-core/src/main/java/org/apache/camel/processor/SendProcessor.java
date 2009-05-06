@@ -77,6 +77,7 @@ public class SendProcessor extends ServiceSupport implements Processor {
 
     protected void doStop() throws Exception {
         ServiceHelper.stopService(this.producer);
+        this.producer = null;
     }
 
     protected Exchange configureExchange(Exchange exchange) {

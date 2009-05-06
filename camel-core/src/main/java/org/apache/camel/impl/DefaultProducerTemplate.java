@@ -22,7 +22,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -38,6 +37,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
@@ -47,6 +47,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version $Revision$
  */
 public class DefaultProducerTemplate extends ServiceSupport implements ProducerTemplate {
+    private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private final CamelContext context;
     private final ProducerCache producerCache = new ProducerCache();
     // TODO: why do we have endpoint cache as camel context also have endpoint cache?
@@ -57,7 +58,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
-        this.executor = new ScheduledThreadPoolExecutor(5);
+        this.executor = ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, "ProducerTemplate", true);
     }
 
     public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {

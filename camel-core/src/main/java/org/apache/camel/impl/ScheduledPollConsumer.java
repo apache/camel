@@ -19,10 +19,12 @@ package org.apache.camel.impl;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,7 +47,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private boolean useFixedDelay;
 
     public ScheduledPollConsumer(DefaultEndpoint endpoint, Processor processor) {
-        this(endpoint, processor, endpoint.getExecutorService());
+        super(endpoint, processor);
+
+        ScheduledExecutorService scheduled;
+        ExecutorService service = endpoint.getExecutorService();
+        if (service instanceof ScheduledExecutorService) {
+            scheduled = (ScheduledExecutorService) service;
+        } else {
+            scheduled = ExecutorServiceHelper.newScheduledThreadPool(5, getEndpoint().getEndpointUri(), true);
+        }
+
+        this.executor = scheduled;
+        ObjectHelper.notNull(executor, "executor");
     }
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor, ScheduledExecutorService executor) {

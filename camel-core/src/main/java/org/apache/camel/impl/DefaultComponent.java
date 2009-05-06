@@ -20,8 +20,7 @@ import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -32,6 +31,7 @@ import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -46,7 +46,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
 
     private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private CamelContext camelContext;
-    private ScheduledExecutorService executorService;
+    private ExecutorService executorService;
 
     public DefaultComponent() {
     }
@@ -149,7 +149,7 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.camelContext = context;
     }
 
-    public ScheduledExecutorService getExecutorService() {
+    public ExecutorService getExecutorService() {
         if (executorService == null) {
             executorService = createExecutorService();
         }
@@ -163,16 +163,8 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
     /**
      * A factory method to create a default thread pool and executor
      */
-    protected ScheduledExecutorService createExecutorService() {
-        return new ScheduledThreadPoolExecutor(DEFAULT_THREADPOOL_SIZE, new ThreadFactory() {
-            int counter;
-
-            public synchronized Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable);
-                thread.setName("Thread: " + (++counter) + " " + DefaultComponent.this.toString());
-                return thread;
-            }
-        });
+    protected ExecutorService createExecutorService() {
+        return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, this.toString(), true);
     }
 
     protected void doStart() throws Exception {

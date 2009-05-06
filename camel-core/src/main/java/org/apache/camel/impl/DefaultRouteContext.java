@@ -23,7 +23,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Intercept;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -31,9 +30,7 @@ import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.dataformat.DataFormatDefinition;
-import org.apache.camel.processor.Interceptor;
 import org.apache.camel.processor.Pipeline;
-import org.apache.camel.processor.ProceedProcessor;
 import org.apache.camel.processor.UnitOfWorkProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -49,7 +46,6 @@ public class DefaultRouteContext implements RouteContext {
     private final Collection<Route> routes;
     private Endpoint endpoint;
     private final List<Processor> eventDrivenProcessors = new ArrayList<Processor>();
-    private Interceptor lastInterceptor;
     private CamelContext camelContext;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
     private boolean routeAdded;

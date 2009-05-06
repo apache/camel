@@ -103,7 +103,7 @@ public class BuilderWithScopesTest extends TestSupport {
         Producer producer = endpoint.createProducer();
         producer.process(exchange);
 
-        log.debug("Interceptor invocation order:" + order);
+        log.debug("Invocation order:" + order);
         assertEquals(expected, order);
     }
 

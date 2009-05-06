@@ -50,17 +50,6 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         return false;
     }
 
-    private void processExchange(Processor processor, Exchange exchange) {
-        if (processor == null) {
-            throw new IllegalStateException("No processors could be chosen to process " + exchange);
-        }
-        try {
-            processor.process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
-        }
-    }
-
     public void process(Exchange exchange) throws Exception {
         List<Processor> list = getProcessors();
         if (list.isEmpty()) {
@@ -81,28 +70,15 @@ public class FailOverLoadBalancer extends LoadBalancerSupport {
         }
     }
 
-    protected void processExchange(final int index, final Exchange exchange) {
-        List<Processor> list = getProcessors();
-        if (list.isEmpty()) {
-            throw new IllegalStateException("No processors available to process " + exchange);
-        }
-
-        Processor processor = list.get(index);
+    private void processExchange(Processor processor, Exchange exchange) {
         if (processor == null) {
             throw new IllegalStateException("No processors could be chosen to process " + exchange);
         }
-
         try {
             processor.process(exchange);
-        } catch (Exception ex) {
-            exchange.setException(ex);
+        } catch (Exception e) {
+            exchange.setException(e);
         }
-
-        if (isCheckedException(exchange) && index < getProcessors().size() - 1) {
-            exchange.setException(null);
-            processExchange(index + 1, exchange);
-        }
-
     }
 
 }

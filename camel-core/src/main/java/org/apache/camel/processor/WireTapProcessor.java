@@ -18,8 +18,6 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -28,6 +26,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
@@ -36,7 +35,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class WireTapProcessor extends SendProcessor {
 
-    private int defaultThreadPoolSize = 5;
     private ExecutorService executorService;
 
     // expression or processor used for populating a new exchange to send
@@ -144,15 +142,7 @@ public class WireTapProcessor extends SendProcessor {
     }
 
     private ExecutorService createExecutorService() {
-        return new ScheduledThreadPoolExecutor(defaultThreadPoolSize, new ThreadFactory() {
-            int counter;
-
-            public synchronized Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable);
-                thread.setName("Thread: " + (++counter) + " " + WireTapProcessor.this.toString());
-                return thread;
-            }
-        });
+        return ExecutorServiceHelper.newScheduledThreadPool(5, this.toString(), true);
     }
 
     public void setExecutorService(ExecutorService executorService) {

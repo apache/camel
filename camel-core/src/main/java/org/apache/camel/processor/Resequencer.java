@@ -34,6 +34,7 @@ import org.apache.camel.util.ExpressionListComparator;
  * @version $Revision$
  */
 public class Resequencer extends BatchProcessor {
+
     public Resequencer(Processor processor, Expression expression) {
         this(processor, createSet(expression));
     }
