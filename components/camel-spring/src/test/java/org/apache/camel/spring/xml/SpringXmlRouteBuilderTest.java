@@ -56,14 +56,6 @@ public class SpringXmlRouteBuilderTest extends RouteBuilderTest {
     }
 
     @Override
-    protected List<Route> buildRouteWithInterceptor() {
-        List<Route> answer = getRoutesFromContext("org/apache/camel/spring/xml/buildRouteWithInterceptor.xml");
-        interceptor1 = (DelegateProcessor) applicationContext.getBean("interceptor1");
-        interceptor2 = (DelegateProcessor) applicationContext.getBean("interceptor2");
-        return answer;
-    }
-
-    @Override
     protected List<Route> buildSimpleRouteWithHeaderPredicate() {
         return getRoutesFromContext("org/apache/camel/spring/xml/buildSimpleRouteWithHeaderPredicate.xml");
     }

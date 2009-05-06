@@ -17,7 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.processor.MulticastProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
-import org.apache.camel.processor.interceptor.StreamCachingInterceptor;
 import org.apache.camel.spi.RouteContext;
 
 /**
@@ -44,12 +43,15 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     private Boolean parallelProcessing;
     @XmlAttribute(required = false)
     private String strategyRef;
+    @XmlTransient
+    private ExecutorService executorService;
     @XmlAttribute(required = false)
-    private String threadPoolRef;    
+    private String executorServiceRef;
+    @XmlAttribute(required = false)
+    private Boolean streaming;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
-    @XmlTransient
-    private Executor executor;
+
 
     @Override
     public String toString() {
@@ -80,7 +82,7 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     }
     
     /**
-     * use a thread pool to do the multicasting work
+     * Uses the {@link java.util.concurrent.ExecutorService} to do the multicasting work
      *     
      * @return the builder
      */
@@ -90,39 +92,37 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
     }
     
     /**
-     * Set the multicasting action's thread model
-     *
-     * @param parallelProcessing <tt>true</tt> to use a thread pool, if <tt>false</tt> then work is done in the
-     * calling thread.
+     * Aggregates the responses as the are done (e.g. out of order sequence)
      *
      * @return the builder
      */
-    public MulticastDefinition parallelProcessing(boolean parallelProcessing) {
-        setParallelProcessing(parallelProcessing);
+    public MulticastDefinition streaming() {
+        setStreaming(true);
         return this;
     }
-    
+       
     /**
-     * Setting the executor for executing the multicasting action. 
+     * Setting the executor service for executing the multicasting action.
      *
      * @return the builder
      */
-    public MulticastDefinition executor(Executor executor) {
-        setExecutor(executor);
+    public MulticastDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
         return this;
     }    
         
     protected Processor createCompositeProcessor(RouteContext routeContext, List<Processor> list) {
-        if (aggregationStrategy == null && strategyRef != null) {
+        if (strategyRef != null) {
             aggregationStrategy = routeContext.lookup(strategyRef, AggregationStrategy.class);
         }
         if (aggregationStrategy == null) {
+            // default to use latest aggregation strategy
             aggregationStrategy = new UseLatestAggregationStrategy();
         }
-        if (threadPoolRef != null) {
-            executor = routeContext.lookup(threadPoolRef, Executor.class);
+        if (executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
-        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executor);
+        return new MulticastProcessor(list, aggregationStrategy, isParallelProcessing(), executorService, isStreaming());
     }
 
     public AggregationStrategy getAggregationStrategy() {
@@ -142,12 +142,20 @@ public class MulticastDefinition extends OutputDefinition<ProcessorDefinition> {
         this.parallelProcessing = parallelProcessing;        
     }
 
-    public Executor getExecutor() {
-        return executor;
+    public boolean isStreaming() {
+        return streaming != null ? streaming : false;
     }
 
-    public void setExecutor(Executor executor) {
-        this.executor = executor;        
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
     }
-    
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
 }

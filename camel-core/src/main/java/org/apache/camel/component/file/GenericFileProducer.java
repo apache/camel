@@ -46,8 +46,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected String getFileSeparator() {
         return File.separator;
     }
-    
-   
+
     protected String normalizePath(String name) {        
         return FileUtil.normalizePath(name);
     }

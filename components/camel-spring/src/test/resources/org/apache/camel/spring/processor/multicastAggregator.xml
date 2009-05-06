@@ -26,7 +26,7 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="direct:parallel"/>
-      <multicast strategyRef="bodyOutAggregatorStrategy" parallelProcessing="true" threadPoolRef="mySingleThreadExcutor">
+      <multicast strategyRef="bodyOutAggregatorStrategy" parallelProcessing="true" executorServiceRef="mySingleThreadExcutor">
          <to uri="direct:x"/>
          <to uri="direct:y"/>
          <to uri="direct:z"/>

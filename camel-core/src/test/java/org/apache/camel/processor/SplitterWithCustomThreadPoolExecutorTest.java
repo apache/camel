@@ -32,7 +32,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
     protected ThreadPoolExecutor customThreadPoolExecutor = new ThreadPoolExecutor(8, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue());
 
     public void testSplitterWithCustomThreadPoolExecutor() throws Exception {
-        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutor();
+        ThreadPoolExecutor threadPoolExecutor = (ThreadPoolExecutor) getSplitter().getExecutorService();
         // this should be sufficient as core pool size is the only thing I changed from the default
         assertTrue(threadPoolExecutor.getCorePoolSize() == customThreadPoolExecutor.getCorePoolSize());
         assertTrue(threadPoolExecutor.getMaximumPoolSize() == customThreadPoolExecutor.getMaximumPoolSize());
@@ -71,7 +71,7 @@ public class SplitterWithCustomThreadPoolExecutorTest extends ContextTestSupport
             public void configure() {
                 from("direct:parallel-custom-pool")
                     .split(body().tokenize(",")).parallelProcessing(true)
-                    .executor(customThreadPoolExecutor).to("mock:result");
+                    .executorService(customThreadPoolExecutor).to("mock:result");
             }
         };
     }

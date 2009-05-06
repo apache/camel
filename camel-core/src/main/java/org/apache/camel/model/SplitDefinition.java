@@ -16,11 +16,8 @@
  */
 package org.apache.camel.model;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -46,17 +43,17 @@ import org.apache.camel.spi.RouteContext;
 public class SplitDefinition extends ExpressionNode {
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
+    @XmlTransient
+    private ExecutorService executorService;
     @XmlAttribute(required = false)
     private Boolean parallelProcessing;
-    @XmlTransient
-    private Executor executor;
     @XmlAttribute(required = false)
     private String strategyRef;
     @XmlAttribute(required = false)
-    private String threadPoolExecutorRef;
+    private String executorServiceRef;
     @XmlAttribute(required = false)
     private Boolean streaming = false;
-    
+
     public SplitDefinition() {
     }
 
@@ -82,9 +79,9 @@ public class SplitDefinition extends ExpressionNode {
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         Processor childProcessor = routeContext.createProcessor(this);
         aggregationStrategy = createAggregationStrategy(routeContext);
-        executor = createThreadPoolExecutor(routeContext);
+        executorService = createExecutorService(routeContext);
         return new Splitter(getExpression().createExpression(routeContext), childProcessor, aggregationStrategy,
-                isParallelProcessing(), executor, streaming);
+                isParallelProcessing(), executorService, streaming);
     }
 
     
@@ -100,16 +97,15 @@ public class SplitDefinition extends ExpressionNode {
         return strategy;
     }        
     
-    private Executor createThreadPoolExecutor(RouteContext routeContext) {
-        Executor executor = getExecutor();
-        if (executor == null && threadPoolExecutorRef != null) {
-            executor = routeContext.lookup(threadPoolExecutorRef, ThreadPoolExecutor.class);
+    private ExecutorService createExecutorService(RouteContext routeContext) {
+        if (executorServiceRef != null) {
+            executorService = routeContext.lookup(executorServiceRef, ExecutorService.class);
         }
-        if (executor == null) {
+        if (executorService == null) {
             // fall back and use default
-            executor = new ThreadPoolExecutor(4, 16, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+            executorService = Executors.newScheduledThreadPool(5);
         }
-        return executor;
+        return executorService;
     }         
     
     // Fluent API
@@ -168,13 +164,13 @@ public class SplitDefinition extends ExpressionNode {
     }
     
     /**
-     * Setting the executor for executing the splitting action. 
+     * Setting the executor service for executing the splitting action.
      *
-     * @param executor the executor
+     * @param executorService the executor service
      * @return the builder
      */
-    public SplitDefinition executor(Executor executor) {
-        setExecutor(executor);
+    public SplitDefinition executorService(ExecutorService executorService) {
+        setExecutorService(executorService);
         return this;
     }
     
@@ -197,7 +193,7 @@ public class SplitDefinition extends ExpressionNode {
     /**
      * The splitter should use streaming -- exchanges are being sent as the data for them becomes available.
      * This improves throughput and memory usage, but it has a drawback: 
-     * - the sent exchanges will no longer contain the {@link Splitter#SPLIT_SIZE} header property 
+     * - the sent exchanges will no longer contain the {@link org.apache.camel.Exchange#SPLIT_SIZE} header property
      * 
      * @return whether or not streaming should be used
      */
@@ -207,13 +203,13 @@ public class SplitDefinition extends ExpressionNode {
 
     public void setStreaming(boolean streaming) {
         this.streaming = streaming;
-    }  
-    
-    public Executor getExecutor() {
-        return executor;
     }
 
-    public void setExecutor(Executor executor) {
-        this.executor = executor;
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 }

@@ -52,8 +52,6 @@ public class InstrumentationProcessor extends DelegateProcessor {
     public void process(Exchange exchange) throws Exception {
         if (processor != null) {
 
-            // TODO: why not use millis instead of nano?
-
             long startTime = 0;
             if (counter != null) {
                 startTime = System.nanoTime();

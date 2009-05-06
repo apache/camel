@@ -454,7 +454,9 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     protected void doStop() throws Exception {
         producerCache.stop();
         endpointCache.clear();
-        executor.shutdown();
+        if (executor != null) {
+            executor.shutdown();
+        }
     }
 
     protected Object extractResultBody(Exchange result) {

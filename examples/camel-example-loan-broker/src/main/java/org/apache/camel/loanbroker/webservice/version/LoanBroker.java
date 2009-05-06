@@ -96,7 +96,7 @@ public class LoanBroker extends RouteBuilder {
                 .multicast(new BankResponseAggregationStrategy())
                     // Camel will create a thread pool with the size of the send to endpoints
                     // for sending the message in parallel
-                    .parallelProcessing(true)
+                    .parallelProcessing()
                     .to(Constants.BANK1_URI, Constants.BANK2_URI, Constants.BANK3_URI);
 
     //END SNIPPET: dsl
