@@ -18,6 +18,8 @@ package org.apache.camel.component.cxf;
 
 import java.util.Map;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
@@ -43,5 +45,22 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");
         assertEquals("Should get the content type", protocalHeaders.get("content-type").toString(), "[text/xml; charset=utf-8]");
         assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);
+    }
+    
+    public void testTheContentTypeOnTheWire() throws Exception {
+        Exchange exchange = template.send(ROUTER_ADDRESS,  new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" 
+                                         + "<soap:Body><ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
+                                         + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">hello world</arg0>"
+                                         + "</ns1:echo></soap:Body></soap:Envelope>");
+            }
+
+        });        
+        assertNotNull("We should get the content type here", exchange.getOut().getHeader("content-type"));
+        assertEquals("Get wrong content type", "text/xml; charset=utf-8", exchange.getOut().getHeader("content-type"));
+        String response = exchange.getOut().getBody(String.class);        
+        assertNotNull("Response should not be null", response);
+        assertTrue("We should get right return result", response.indexOf("echo hello world") > 0);
     }
 }
