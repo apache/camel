@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
@@ -31,9 +32,19 @@ import org.apache.camel.util.ExchangeHelper;
 public class RemoteFileProducer<T> extends GenericFileProducer<T> {
 
     private boolean loggedIn;
-
+    
     protected RemoteFileProducer(RemoteFileEndpoint<T> endpoint, RemoteFileOperations<T> operations) {
         super(endpoint, operations);
+    }
+    
+    @Override
+    protected String getFileSeparator() {
+        return "/";
+    }
+    
+    @Override
+    protected String normalizePath(String name) {        
+        return name;
     }
 
     @SuppressWarnings("unchecked")

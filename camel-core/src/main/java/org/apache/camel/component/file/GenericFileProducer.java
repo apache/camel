@@ -36,11 +36,20 @@ public class GenericFileProducer<T> extends DefaultProducer {
     protected final transient Log log = LogFactory.getLog(getClass());
     protected final GenericFileEndpoint<T> endpoint;
     protected final GenericFileOperations<T> operations;
-
+    
     protected GenericFileProducer(GenericFileEndpoint<T> endpoint, GenericFileOperations<T> operations) {
         super(endpoint);
         this.endpoint = endpoint;
         this.operations = operations;
+    }
+    
+    protected String getFileSeparator() {
+        return File.separator;
+    }
+    
+   
+    protected String normalizePath(String name) {        
+        return FileUtil.normalizePath(name);
     }
 
     @SuppressWarnings("unchecked")
@@ -116,7 +125,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         try {
             // build directory if auto create is enabled
             if (endpoint.isAutoCreate()) {
-                int lastPathIndex = fileName.lastIndexOf(File.separator);
+                int lastPathIndex = fileName.lastIndexOf(getFileSeparator());
                 if (lastPathIndex != -1) {
                     String directory = fileName.substring(0, lastPathIndex);
                     // skip trailing /
@@ -173,7 +182,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // flattern name
         if (name != null && endpoint.isFlattern()) {
-            int pos = name.lastIndexOf(File.separator);
+            int pos = name.lastIndexOf(getFileSeparator());
             if (pos == -1) {
                 pos = name.lastIndexOf('/');
             }
@@ -188,7 +197,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
         // If the path isn't empty, we need to add a trailing / if it isn't already there
         String baseDir = "";
         if (endpointPath.length() > 0) {
-            baseDir = endpointPath + (endpointPath.endsWith(File.separator) ? "" : File.separator);
+            baseDir = endpointPath + (endpointPath.endsWith(getFileSeparator()) ? "" : getFileSeparator());
         }
         if (name != null) {
             answer = baseDir + name;
@@ -198,16 +207,16 @@ public class GenericFileProducer<T> extends DefaultProducer {
         }
 
         // must normalize path to cater for Windows and other OS
-        answer = FileUtil.normalizePath(answer);
+        answer = normalizePath(answer);
 
         return answer;
     }
 
     protected String createTempFileName(String fileName) {
         // must normalize path to cater for Windows and other OS
-        fileName = FileUtil.normalizePath(fileName);
+        fileName = normalizePath(fileName);
 
-        int path = fileName.lastIndexOf(File.separator);
+        int path = fileName.lastIndexOf(getFileSeparator());
         if (path == -1) {
             // no path
             return endpoint.getTempPrefix() + fileName;
