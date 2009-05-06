@@ -20,13 +20,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,10 +33,8 @@ import org.apache.commons.logging.LogFactory;
  *
  * @version $Revision$
  */
-public class Pipeline extends MulticastProcessor implements AsyncProcessor {
+public class Pipeline extends MulticastProcessor implements Processor {
     private static final transient Log LOG = LogFactory.getLog(Pipeline.class);
-
-    // TODO: Cleanup this when AsyncProcessor/AsyncCallback is replaced with new async API
 
     public Pipeline(Collection<Processor> processors) {
         super(processors);
@@ -56,18 +50,37 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
-    public boolean process(Exchange original, AsyncCallback callback) {
         Iterator<Processor> processors = getProcessors().iterator();
-        Exchange nextExchange = original;
+        Exchange nextExchange = exchange;
         boolean first = true;
-        while (true) {
+
+        while (continueRouting(processors, nextExchange)) {
+            if (first) {
+                first = false;
+            } else {
+                // prepare for next run
+                nextExchange = createNextExchange(nextExchange);
+            }
+
+            // get the next processor
+            Processor processor = processors.next();
+
+            // process the next exchange
+            try {
+                if (LOG.isTraceEnabled()) {
+                    // this does the actual processing so log at trace level
+                    LOG.trace("Processing exchangeId: " + nextExchange.getExchangeId() + " >>> " + nextExchange);
+                }
+                processor.process(nextExchange);
+            } catch (Exception e) {
+                nextExchange.setException(e);
+            }
+
+            // check for error if so we should break out
             boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
             if (nextExchange.isFailed() || exceptionHandled) {
                 // The Exchange.EXCEPTION_HANDLED property is only set if satisfactory handling was done
-                //  by the error handler.  It's still an exception, the exchange still failed.
+                // by the error handler. It's still an exception, the exchange still failed.
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
                               + " exception: " + nextExchange.getException() + " fault: "
@@ -76,85 +89,18 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
                 }
                 break;
             }
-
-            // should we continue routing or not
-            if (!continueRouting(processors, nextExchange)) {
-                break;
-            }
-
-            AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
-
-            if (first) {
-                first = false;
-            } else {
-                nextExchange = createNextExchange(processor, nextExchange);
-            }
-
-            boolean sync = process(original, nextExchange, callback, processors, processor);
-            // Continue processing the pipeline synchronously ...
-            if (!sync) {
-                // The pipeline will be completed async...
-                return false;
-            }
         }
 
-        // If we get here then the pipeline was processed entirely
-        // synchronously.
         if (LOG.isTraceEnabled()) {
             // logging nextExchange as it contains the exchange that might have altered the payload and since
             // we are logging the completion if will be confusing if we log the original instead
             // we could also consider logging the original and the nextExchange then we have *before* and *after* snapshots
-            LOG.trace("Processing compelete for exchangeId: " + original.getExchangeId() + " >>> " + nextExchange);
+            LOG.trace("Processing compelete for exchangeId: " + exchange.getExchangeId() + " >>> " + nextExchange);
         }
-        ExchangeHelper.copyResults(original, nextExchange);
-        callback.done(true);
-        return true;
+
+        // copy results back to the original exchange
+        ExchangeHelper.copyResults(exchange, nextExchange);
     }
-
-    private boolean process(final Exchange original, final Exchange exchange, final AsyncCallback callback, final Iterator<Processor> processors, AsyncProcessor processor) {
-        if (LOG.isTraceEnabled()) {
-            // this does the actual processing so log at trace level
-            LOG.trace("Processing exchangeId: " + exchange.getExchangeId() + " >>> " + exchange);
-        }
-        return processor.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-                // We only have to handle async completion of the pipeline..
-                if (sync) {
-                    return;
-                }
-
-                // Continue processing the pipeline...
-                Exchange nextExchange = exchange;
-
-                while (continueRouting(processors, nextExchange)) {
-                    AsyncProcessor processor = AsyncProcessorTypeConverter.convert(processors.next());
-
-                    boolean exceptionHandled = hasExceptionBeenHandled(nextExchange);
-                    if (nextExchange.isFailed() || exceptionHandled) {
-                        // The Exchange.EXCEPTION_HANDLED property is only set if satisfactory handling was done
-                        //  by the error handler.  It's still an exception, the exchange still failed.
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Message exchange has failed so breaking out of pipeline: " + nextExchange
-                                      + " exception: " + nextExchange.getException() + " fault: "
-                                      + (nextExchange.hasFault() ? nextExchange.getFault() : null)
-                                      + (exceptionHandled ? " handled by the error handler" : ""));
-                        }
-                        break;
-                    }
-
-                    nextExchange = createNextExchange(processor, nextExchange);
-                    sync = process(original, nextExchange, callback, processors, processor);
-                    if (!sync) {
-                        return;
-                    }
-                }
-
-                ExchangeHelper.copyResults(original, nextExchange);
-                callback.done(false);
-            }
-        });
-    }
-
 
     private static boolean hasExceptionBeenHandled(Exchange nextExchange) {
         return Boolean.TRUE.equals(nextExchange.getProperty(Exchange.EXCEPTION_HANDLED));
@@ -165,11 +111,10 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
      * <p/>
      * Remember to copy the original exchange id otherwise correlation of ids in the log is a problem
      *
-     * @param producer         the producer used to send to the endpoint
      * @param previousExchange the previous exchange
      * @return a new exchange
      */
-    protected Exchange createNextExchange(Processor producer, Exchange previousExchange) {
+    protected Exchange createNextExchange(Exchange previousExchange) {
         Exchange answer = previousExchange.newInstance();
         // we must use the same id as this is a snapshot strategy where Camel copies a snapshot
         // before processing the next step in the pipeline, so we have a snapshot of the exchange
@@ -212,4 +157,5 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor {
     public String toString() {
         return "Pipeline" + getProcessors();
     }
+
 }

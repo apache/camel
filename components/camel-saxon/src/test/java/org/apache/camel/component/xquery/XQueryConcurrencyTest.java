@@ -19,7 +19,6 @@ package org.apache.camel.component.xquery;
 import java.util.Random;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.DeadLetterChannelBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -28,6 +27,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  * Concurrency test of XQuery using transform.xquery DSL.
  */
 public class XQueryConcurrencyTest extends ContextTestSupport {
+
+    private String uri = "seda:in?concurrentConsumers=5";
 
     public void testConcurrency() throws Exception {
         int total = 1000;
@@ -51,7 +52,7 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody("seda:in", "<person><id>" + (start + i) + "</id><name>James</name></person>");
+                        template.sendBody(uri, "<person><id>" + (start + i) + "</id><name>James</name></person>");
                     }
                 }
             });
@@ -67,8 +68,7 @@ public class XQueryConcurrencyTest extends ContextTestSupport {
                 // no retry as we want every failure to submerge
                 errorHandler(noErrorHandler());
 
-                from("seda:in")
-                    .thread(5)
+                from(uri)
                     .transform().xquery("/person/id", String.class)
                     .to("mock:result");
             }

@@ -22,13 +22,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ServiceSupport;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -41,17 +38,17 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     private static final transient Log LOG = LogFactory.getLog(SedaConsumer.class);
 
     private SedaEndpoint endpoint;
-    private AsyncProcessor processor;
+    private Processor processor;
     private ExecutorService executor;
 
     public SedaConsumer(SedaEndpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
-        this.processor = AsyncProcessorTypeConverter.convert(processor);
+        this.processor = processor;
     }
 
     @Override
     public String toString() {
-        return "SedaConsumer: " + endpoint.getEndpointUri();
+        return "SedaConsumer[" + endpoint.getEndpointUri() + "]";
     }
 
     public void run() {
@@ -70,14 +67,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
                         processor.process(exchange);
                     } catch (Exception e) {
                         LOG.error("Seda queue caught: " + e, e);
-                    }
-
-                    // TODO: It ought to be UnitOfWork that did the callback notification but we are planning
-                    // to replace it with a brand new Async API so we leave it as is
-                    AsyncCallback callback = exchange.getProperty("CamelAsyncCallback", AsyncCallback.class);
-                    if (callback != null) {
-                        // seda consumer is async so invoke the async done on the callback if its provided
-                        callback.done(false);
                     }
                 } else {
                     LOG.warn("This consumer is stopped during polling an exchange, so putting it back on the seda queue: " + exchange);

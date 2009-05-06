@@ -157,9 +157,7 @@ public interface Exchange {
 
     /**
      * Returns the outbound message, lazily creating one if one has not already
-     * been associated with this exchange. If you want to inspect this property
-     * but not force lazy creation then invoke the {@link #getOut(boolean)}
-     * method passing in <tt>false</tt>
+     * been associated with this exchange.
      * <p/>
      * If you want to test whether an OUT message have been set or not, use the {@link #hasOut()} method.
      *

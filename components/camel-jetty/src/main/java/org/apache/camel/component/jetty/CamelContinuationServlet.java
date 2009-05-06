@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpExchange;
@@ -56,30 +55,30 @@ public class CamelContinuationServlet extends CamelServlet {
             if (continuation.isNew()) {
 
                 // Have the camel process the HTTP exchange.
-                final HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
-                boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
-                    public void done(boolean sync) {
-                        if (sync) {
-                            return;
-                        }
-                        continuation.setObject(exchange);
-                        continuation.resume();
-                    }
-                });
+                // final HttpExchange exchange = new HttpExchange(consumer.getEndpoint(), request, response);
+                // boolean sync = consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
+                //     public void done(boolean sync) {
+                //        if (sync) {
+                //            return;
+                //        }
+                //        continuation.setObject(exchange);
+                //        continuation.resume();
+                //    }
+                //});
 
-                if (!sync) {
+                //if (!sync) {
                     // Wait for the exchange to get processed.
                     // This might block until it completes or it might return via an exception and
                     // then this method is re-invoked once the the exchange has finished processing
-                    continuation.suspend(0);
-                }
+                //    continuation.suspend(0);
+                //}
 
                 // HC: The getBinding() is interesting because it illustrates the
                 // impedance miss-match between HTTP's stream oriented protocol, and
                 // Camels more message oriented protocol exchanges.
 
                 // now lets output to the response
-                consumer.getBinding().writeResponse(exchange, response);
+                //consumer.getBinding().writeResponse(exchange, response);
                 return;
             }
 

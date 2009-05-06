@@ -20,13 +20,10 @@ package org.apache.camel;
 
 /**
  * A more complex version of {@link Processor} which supports asynchronous
- * processing of the {@link Exchange}.  Any processor can be coerced to
- * have an {@link AsyncProcessor} interface by using the
- * {@link org.apache.camel.impl.converter.AsyncProcessorTypeConverter#convert AsyncProcessorTypeConverter.covert}
- * method.
+ * processing of the {@link Exchange}.
  * 
  * @version $Revision$
- * @deprecated a new async API is planned for Camel 2.0
+ * @deprecated a new async API is planned for Camel 2.0, will be removed in Camel 2.0 GA
  */
 public interface AsyncProcessor extends Processor {
 

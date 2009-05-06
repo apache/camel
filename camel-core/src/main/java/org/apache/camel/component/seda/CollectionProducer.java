@@ -18,10 +18,9 @@ package org.apache.camel.component.seda;
 
 import java.util.Collection;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
@@ -29,7 +28,7 @@ import org.apache.camel.impl.DefaultProducer;
  *
  * @version $Revision$
  */
-public class CollectionProducer extends DefaultProducer implements AsyncProcessor {
+public class CollectionProducer extends DefaultProducer implements Processor {
     private final Collection<Exchange> queue;
 
     public CollectionProducer(Endpoint endpoint, Collection<Exchange> queue) {
@@ -41,11 +40,4 @@ public class CollectionProducer extends DefaultProducer implements AsyncProcesso
         queue.add(exchange.copy());
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        Exchange copy = exchange.copy();
-        copy.setProperty("CamelAsyncCallback", callback);
-        queue.add(copy);
-        callback.done(true);
-        return true;
-    }
 }

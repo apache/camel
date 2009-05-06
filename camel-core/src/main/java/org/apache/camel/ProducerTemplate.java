@@ -17,6 +17,10 @@
 package org.apache.camel;
 
 import java.util.Map;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Template (named like Spring's TransactionTemplate & JmsTemplate
@@ -43,6 +47,9 @@ import java.util.Map;
  * @version $Revision$
  */
 public interface ProducerTemplate extends Service {
+
+    // Synchronous methods
+    // -----------------------------------------------------------------------
 
     /**
      * Sends the exchange to the default endpoint
@@ -132,18 +139,6 @@ public interface ProducerTemplate extends Service {
     Exchange send(String endpointUri, ExchangePattern pattern, Processor processor);
 
     /**
-     * Sends an exchange to an endpoint using a supplied processor
-     *
-     * @param endpointUri the endpoint URI to send the exchange to
-     * @param processor   the transformer used to populate the new exchange
-     * {@link Processor} to populate the exchange.
-     * @param callback    the callback will be called when the exchange is completed.
-     * @return the returned exchange
-     * @deprecated a new async API is planned for Camel 2.0
-     */
-    Exchange send(String endpointUri, Processor processor, AsyncCallback callback);
-
-    /**
      * Sends the exchange to the given endpoint
      *
      * @param endpoint the endpoint to send the exchange to
@@ -173,18 +168,6 @@ public interface ProducerTemplate extends Service {
      * @return the returned exchange
      */
     Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor);
-
-    /**
-     * Sends an exchange to an endpoint using a supplied processor
-     *
-     * @param endpoint  the endpoint to send the exchange to
-     * @param processor the transformer used to populate the new exchange
-     * {@link Processor} to populate the exchange.
-     * @param callback  the callback will be called when the exchange is completed.
-     * @return the returned exchange
-     * @deprecated a new async API is planned for Camel 2.0
-     */
-    Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback);
 
     /**
      * Send the body to an endpoint
@@ -407,6 +390,7 @@ public interface ProducerTemplate extends Service {
      * Uses an {@link ExchangePattern#InOut} message exchange pattern.
      *
      * @param body the payload to send
+     * @param type the expected response type
      * @return the result (see class javadoc)
      */
     <T> T requestBody(Object body, Class<T> type);
@@ -552,4 +536,137 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      */
     <T> T requestBodyAndHeaders(Endpoint endpoint, Object body, Map<String, Object> headers, Class<T> type);
+
+
+    // Asynchronous methods
+    // -----------------------------------------------------------------------
+
+    /**
+     * Sets the executor service to use for async messaging.
+     * <p/>
+     * If none provided Camel will default use a {@link java.util.concurrent.ScheduledExecutorService}
+     * with a pool of 5 threads.
+     *
+     * @param executorService  the executor service.
+     */
+    void setExecutorService(ExecutorService executorService);
+
+    /**
+     * Sends an asynchronous exchange to the given endpoint.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param exchange    the exchange to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Exchange> asyncSend(String endpointUri, Exchange exchange);
+
+    /**
+     * Sends an asynchronous exchange to the given endpoint.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param processor   the transformer used to populate the new exchange
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Exchange> asyncSend(String endpointUri, Processor processor);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOnly} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncSendBody(String endpointUri, Object body);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBody(String endpointUri, Object body);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @param headers     headers
+     * @return a handle to be used to get the response in the future
+     */
+    Future<Object> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBody(String endpointUri, Object body, Class<T> type);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @param header      the header name
+     * @param headerValue the header value
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBodyAndHeader(String endpointUri, Object body, String header, Object headerValue, Class<T> type);
+
+    /**
+     * Sends an asynchronous body to the given endpoint.
+     * Uses an {@link ExchangePattern#InOut} message exchange pattern.
+     *
+     * @param endpointUri the endpoint URI to send the exchange to
+     * @param body        the body to send
+     * @param headers     headers
+     * @param type        the expected response type
+     * @return a handle to be used to get the response in the future
+     */
+    <T> Future<T> asyncRequestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers, Class<T> type);
+
+    /**
+     * Gets the response body from the future handle, will wait until the response is ready.
+     *
+     * @param future      the handle to get the response
+     * @param type        the expected response type
+     * @return the result (see class javadoc)
+     */
+    <T> T asyncExtractBody(Future future, Class<T> type);
+
+    /**
+     * Gets the response body from the future handle, will wait at most the given time for the response to be ready.
+     *
+     * @param future      the handle to get the response
+     * @param timeout     the maximum time to wait
+     * @param unit        the time unit of the timeout argument
+     * @param type        the expected response type
+     * @return the result (see class javadoc)
+     * @throws java.util.concurrent.TimeoutException if the wait timed out
+     */
+    <T> T asyncExtractBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException;
+
 }

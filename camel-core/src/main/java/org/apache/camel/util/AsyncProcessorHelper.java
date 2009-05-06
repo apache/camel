@@ -16,11 +16,12 @@
  */
 package org.apache.camel.util;
 
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 
 /**
  * Helper methods for AsyncProcessor objects.
@@ -32,21 +33,21 @@ public final class AsyncProcessorHelper {
     }
 
     /**
-     * Calls the async version of the processor's process method and waits
-     * for it to complete before returning. This can be used by AsyncProcessor
-     * objects to implement their sync version of the process method.
+     * Processes the exchange async.
+     *
+     * @param executor  executor service
+     * @param processor the processor
+     * @param exchange  the exchange
+     * @return a future handle for the task being executed asynchronously
      */
-    public static void process(AsyncProcessor processor, Exchange exchange) throws Exception {
-        final CountDownLatch latch = new CountDownLatch(1);
-        boolean sync = processor.process(exchange, new AsyncCallback() {
-            public void done(boolean sync) {
-                if (!sync) {
-                    latch.countDown();
-                }
+    public static Future<Exchange> asyncProcess(final ExecutorService executor, final Processor processor, final Exchange exchange) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                processor.process(exchange);
+                return exchange;
             }
-        });
-        if (!sync) {
-            latch.await();
-        }
+        };
+
+        return executor.submit(task);
     }
 }

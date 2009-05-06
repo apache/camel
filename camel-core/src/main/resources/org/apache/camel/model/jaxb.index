@@ -60,7 +60,6 @@ SetPropertyDefinition
 SortDefinition
 SplitDefinition
 StopDefinition
-ThreadDefinition
 ThrottleDefinition
 ThrowFaultDefinition
 ToDefinition

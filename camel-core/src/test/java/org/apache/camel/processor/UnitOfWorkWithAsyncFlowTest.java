@@ -22,7 +22,7 @@ package org.apache.camel.processor;
 public class UnitOfWorkWithAsyncFlowTest extends UnitOfWorkTest {
     @Override
     protected void setUp() throws Exception {
-        uri = "direct:async";
+        uri = "seda:async";
         super.setUp();
     }
 }

@@ -42,8 +42,6 @@ public class ErrorOccuredInOnExceptionRoute extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // TODO: Should also work with DLC
-                // will be possible when we remove the AsyncProcessor so the processing logic
-                // is much easier to deal with
                 // errorHandler(deadLetterChannel("mock:dead").disableRedelivery());
 
                 onException(MyTechnicalException.class)

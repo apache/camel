@@ -688,34 +688,6 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
-     * Causes subsequent processors to be called asynchronously
-     *
-     * @param coreSize the number of threads that will be used to process
-     *                 messages in subsequent processors.
-     * @return a ThreadType builder that can be used to further configure the
-     *         the thread pool.
-     */
-    public ThreadDefinition thread(int coreSize) {
-        ThreadDefinition answer = new ThreadDefinition(coreSize);
-        addOutput(answer);
-        return answer;
-    }
-
-    /**
-     * Causes subsequent processors to be called asynchronously
-     *
-     * @param executor the executor that will be used to process
-     *                 messages in subsequent processors.
-     * @return a ThreadType builder that can be used to further configure the
-     *         the thread pool.
-     */
-    public ProcessorDefinition<Type> thread(Executor executor) {
-        ThreadDefinition answer = new ThreadDefinition(executor);
-        addOutput(answer);
-        return this;
-    }
-    
-    /**
      * <a href="http://camel.apache.org/idempotent-consumer.html">Idempotent consumer EIP:</a>
      * Creates an {@link org.apache.camel.processor.idempotent.IdempotentConsumer IdempotentConsumer}
      * to avoid duplicate messages

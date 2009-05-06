@@ -71,8 +71,9 @@ public class XQueryURLBasedConcurrencyTest extends ContextTestSupport {
                 // no retry as we want every failure to submerge
                 errorHandler(noErrorHandler());
 
-                from("direct:start")
-                    .thread(5)
+                from("direct:start").to("seda:foo?concurrentConsumers=5");
+
+                from("seda:foo?concurrentConsumers=5")
                     .to("xquery:org/apache/camel/component/xquery/transform.xquery")
                     .to("mock:result");
             }

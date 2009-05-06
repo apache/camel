@@ -30,6 +30,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
  */
 public class PipelineConcurrentTest extends ContextTestSupport {
 
+    private String uri = "seda:in?size=10000&concurrentConsumers=10";
+
     public void testConcurrentPipeline() throws Exception {
         int total = 10000;
         final int group = total / 20;
@@ -51,7 +53,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        template.sendBody("seda:in?size=10000", "" + (start + i));
+                        template.sendBody(uri, "" + (start + i));
                     }
                 }
             });
@@ -67,8 +69,7 @@ public class PipelineConcurrentTest extends ContextTestSupport {
                 // to force any exceptions coming forward immediately
                 errorHandler(noErrorHandler());
 
-                from("seda:in?size=10000")
-                    .thread(10)
+                from(uri)
                     .pipeline("direct:do", "mock:result");
 
                 from("direct:do")

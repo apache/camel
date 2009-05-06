@@ -26,7 +26,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
@@ -351,9 +350,7 @@ public abstract class TestSupport extends TestCase {
      */
     protected Processor unwrap(Processor processor) {
         while (true) {
-            if (processor instanceof DelegateAsyncProcessor) {
-                processor = ((DelegateAsyncProcessor)processor).getProcessor();
-            } else if (processor instanceof DelegateProcessor) {
+            if (processor instanceof DelegateProcessor) {
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else {
                 return processor;
@@ -371,9 +368,6 @@ public abstract class TestSupport extends TestCase {
         while (true) {
             if (processor instanceof Channel) {
                 return (Channel) processor;
-            }
-            if (processor instanceof DelegateAsyncProcessor) {
-                processor = ((DelegateAsyncProcessor)processor).getProcessor();
             } else if (processor instanceof DelegateProcessor) {
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else {

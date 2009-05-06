@@ -37,7 +37,7 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
         // so the stream has to be read to the end. When this happens
         // the associated connection is released automatically.
 
-        String endpointName = "seda:withConversion";
+        String endpointName = "seda:withConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);
     }
 
@@ -50,7 +50,7 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
         context.getComponent("http", HttpComponent.class).getHttpConnectionManager().getParams()
             .setDefaultMaxConnectionsPerHost(5);
 
-        String endpointName = "seda:withoutConversion";
+        String endpointName = "seda:withoutConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);
     }
 
@@ -63,7 +63,7 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
 
         for (int i = 0; i < 5; i++) {
             mockEndpoint.expectedMessageCount(1);
-            template.sendBody("seda:withoutConversion", null);
+            template.sendBody("seda:withoutConversion?concurrentConsumers=5", null);
             mockEndpoint.assertIsSatisfied();
             Object response = mockEndpoint.getReceivedExchanges().get(0).getIn().getBody();
             InputStream responseStream = assertIsInstanceOf(InputStream.class, response);
@@ -95,10 +95,10 @@ public class MultiThreadedHttpGetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion").thread(5).to("http://localhost:5430/search")
+                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:5430/search")
                     .convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion").thread(5).to("http://localhost:5430/search")
+                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:5430/search")
                     .to("mock:results");
 
                 from("jetty:http://localhost:5430/search").process(new Processor() {

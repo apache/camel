@@ -55,7 +55,7 @@ public class DataFormatDataSetTest extends ContextTestSupport {
                 DataFormat jaxb = new JaxbDataFormat("org.apache.camel.example");
 
                 // use 5 concurrent threads to do marshalling
-                from("dataset:beer").thread(5).marshal(jaxb).to("dataset:beer");
+                from("dataset:beer").marshal(jaxb).to("dataset:beer");
             }
         };
     }

@@ -21,6 +21,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
+import org.apache.camel.Channel;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -34,7 +35,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.PredicateAssertHelper;
@@ -328,12 +328,28 @@ public abstract class TestSupport extends TestCase {
      */
     protected Processor unwrap(Processor processor) {
         while (true) {
-            if (processor instanceof DelegateAsyncProcessor) {
-                processor = ((DelegateAsyncProcessor)processor).getProcessor();
-            } else if (processor instanceof DelegateProcessor) {
+            if (processor instanceof DelegateProcessor) {
                 processor = ((DelegateProcessor)processor).getProcessor();
             } else {
                 return processor;
+            }
+        }
+    }
+
+    /**
+     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
+     * this call will drill through them and return the Channel.
+     * <p/>
+     * Returns null if no channel is found.
+     */
+    protected Channel unwrapChannel(Processor processor) {
+        while (true) {
+            if (processor instanceof Channel) {
+                return (Channel) processor;
+            } else if (processor instanceof DelegateProcessor) {
+                processor = ((DelegateProcessor)processor).getProcessor();
+            } else {
+                return null;
             }
         }
     }

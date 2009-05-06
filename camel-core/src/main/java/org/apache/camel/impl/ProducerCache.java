@@ -19,20 +19,16 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
-
 
 /**
  * Cache containing created {@link Producer}.
@@ -91,26 +87,6 @@ public class ProducerCache extends ServiceSupport {
         }
     }
 
-    /**
-     * Sends an exchange to an endpoint using a supplied
-     * {@link Processor} to populate the exchange.  The callback
-     * will be called when the exchange is completed.
-     *
-     * @param endpoint the endpoint to send the exchange to
-     * @param processor the transformer used to populate the new exchange
-     */
-    public Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback) {
-        try {
-            Producer producer = getProducer(endpoint);
-            Exchange exchange = producer.createExchange();
-            boolean sync = sendExchange(endpoint, producer, processor, exchange, callback);
-            setProcessedSync(exchange, sync);
-            return exchange;
-        } catch (Exception e) {
-            throw wrapRuntimeCamelException(e);
-        }
-    }
-
     public static boolean isProcessedSync(Exchange exchange) {
         Boolean rc = exchange.getProperty(Exchange.PROCESSED_SYNC, Boolean.class);
         return rc == null ? false : rc;
@@ -150,17 +126,6 @@ public class ProducerCache extends ServiceSupport {
         }
         producer.process(exchange);
         return exchange;
-    }
-
-    protected boolean sendExchange(Endpoint endpoint, Producer producer, Processor processor, Exchange exchange, AsyncCallback callback) throws Exception {
-        // lets populate using the processor callback
-        processor.process(exchange);
-
-        // now lets dispatch
-        if (LOG.isDebugEnabled()) {
-            LOG.debug(">>>> " + endpoint + " " + exchange);
-        }
-        return AsyncProcessorTypeConverter.convert(producer).process(exchange, callback);
     }
 
     protected void doStop() throws Exception {

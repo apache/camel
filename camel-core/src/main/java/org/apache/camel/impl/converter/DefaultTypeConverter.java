@@ -68,7 +68,6 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         addFallbackTypeConverter(new EnumTypeConverter());
         addFallbackTypeConverter(new ArrayTypeConverter());
         addFallbackTypeConverter(new PropertyEditorTypeConverter());
-        addFallbackTypeConverter(new AsyncProcessorTypeConverter());
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {

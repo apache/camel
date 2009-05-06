@@ -44,7 +44,6 @@ trait DSL {
   def setbody(expression: Exchange => Any) : DSL
   def setheader(header: String, expression: Exchange => Any) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
-  def thread(number: Int) : SThreadDefinition
   def throttle(frequency: Frequency) : SThrottleDefinition
   def to(uris: String*) : DSL
   def unmarshal(format: DataFormatDefinition) : DSL

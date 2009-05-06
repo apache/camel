@@ -14,7 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.issues;
+package org.apache.camel.component.seda;
+
+import java.util.concurrent.Future;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -23,38 +25,52 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * Unit test to verify that error handling using thread() pool also works as expected.
+ * The new Async API version of doing async routing based on the old AsyncProcessor API
+ * In the old SedaAsyncProcessorTest a seda endpoint was needed to really turn it into async. This is not
+ * needed by the new API so we send it using direct instead.
+ *
+ * @version $Revision$
  */
-public class ThreadErrorHandlerTest extends ContextTestSupport {
+public class SedaAsyncProducerTest extends ContextTestSupport {
 
-    public void testThreadErrorHandler() throws Exception {
+    private String route = "";
+
+    public void testAsyncProducer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header("CamelRedelivered").isEqualTo(Boolean.TRUE);
-        mock.message(0).header("CamelRedeliveryCounter").isEqualTo(2);
 
-        try {
-            template.sendBody("direct:in", "Hello World");
-        } catch (Exception e) {
-            // expected
-        }
+        // using the new async API we can fire a real async message
+        Future<String> future = template.asyncRequestBody("direct:start", "Hello World", String.class);
+
+        // I should happen before mock
+        route = route + "send";
 
         assertMockEndpointsSatisfied();
+
+        assertEquals("Send should occur before processor", "sendprocess", route);
+
+        // and get the response with the future handle
+        String response = future.get();
+        assertEquals("Bye World", response);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:result").maximumRedeliveries(2));
-                
-                from("direct:in")
-                    .thread(2)
+                errorHandler(noErrorHandler());
+
+                from("direct:start").delay(100)
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            throw new Exception("Forced exception by unit test");
+                            route = route + "process";
+                            // set the response
+                            exchange.getOut().setBody("Bye World");
                         }
-                    });
+                    })
+                    .to("mock:result");
+
             }
         };
     }

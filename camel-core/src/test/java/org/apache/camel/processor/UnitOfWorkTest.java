@@ -94,7 +94,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:async").thread(1).to("direct:foo");
+                from("seda:async").to("direct:foo");
                 from("direct:foo").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         log.info("Received: " + exchange);

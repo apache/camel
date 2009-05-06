@@ -50,7 +50,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements Processor, Navigate {
 
-    // TODO: Cleanup this when AsyncProcessor/AsyncCallback is replaced with new async API
+    // TODO: Use JDK CompletionService to get rid of the AsyncProcessor/AsyncCallback
 
     static class ProcessorExchangePair {
         private final Processor processor;

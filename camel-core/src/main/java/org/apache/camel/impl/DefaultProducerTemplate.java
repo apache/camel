@@ -18,8 +18,14 @@ package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -30,8 +36,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A client helper object (named like Spring's TransactionTemplate & JmsTemplate
@@ -47,9 +53,16 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private final Map<String, Endpoint> endpointCache = new HashMap<String, Endpoint>();
     private boolean useEndpointCache = true;
     private Endpoint defaultEndpoint;
-    
+    private ExecutorService executor;
+
     public DefaultProducerTemplate(CamelContext context) {
         this.context = context;
+        this.executor = new ScheduledThreadPoolExecutor(5);
+    }
+
+    public DefaultProducerTemplate(CamelContext context, ExecutorService executor) {
+        this.context = context;
+        this.executor = executor;
     }
 
     public DefaultProducerTemplate(CamelContext context, Endpoint defaultEndpoint) {
@@ -60,7 +73,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public static DefaultProducerTemplate newInstance(CamelContext camelContext, String defaultEndpointUri) {
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(camelContext, defaultEndpointUri);
         return new DefaultProducerTemplate(camelContext, endpoint);
-    }   
+    }
 
     public Exchange send(String endpointUri, Exchange exchange) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
@@ -70,11 +83,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     public Exchange send(String endpointUri, Processor processor) {
         Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
         return send(endpoint, processor);
-    }
-
-    public Exchange send(String endpointUri, Processor processor, AsyncCallback callback) {
-        Endpoint endpoint = resolveMandatoryEndpoint(endpointUri);
-        return send(endpoint, processor, callback);
     }
 
     public Exchange send(String endpointUri, ExchangePattern pattern, Processor processor) {
@@ -89,10 +97,6 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     public Exchange send(Endpoint endpoint, Processor processor) {
         return producerCache.send(endpoint, processor);
-    }
-
-    public Exchange send(Endpoint endpoint, Processor processor, AsyncCallback callback) {
-        return producerCache.send(endpoint, processor, callback);
     }
 
     public Exchange send(Endpoint endpoint, ExchangePattern pattern, Processor processor) {
@@ -450,6 +454,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     protected void doStop() throws Exception {
         producerCache.stop();
         endpointCache.clear();
+        executor.shutdown();
     }
 
     protected Object extractResultBody(Exchange result) {
@@ -458,6 +463,138 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
 
     protected Object extractResultBody(Exchange result, ExchangePattern pattern) {
         return ExchangeHelper.extractResultBody(result, pattern);
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executor = executorService;
+    }
+
+    public Future<Exchange> asyncSend(final String uri, final Exchange exchange) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return send(uri, exchange);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Exchange> asyncSend(final String uri, final Processor processor) {
+        Callable<Exchange> task = new Callable<Exchange>() {
+            public Exchange call() throws Exception {
+                return send(uri, processor);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncSendBody(final String uri, final Object body) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                sendBody(uri, body);
+                // its InOnly, so no body to return
+                return null;
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncRequestBody(final String uri, final Object body) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBody(uri, body);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBody(final String uri, final Object body, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBody(uri, body, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBodyAndHeader(endpointUri, body, header, headerValue);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBodyAndHeader(final String endpointUri, final Object body, final String header, final Object headerValue, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBodyAndHeader(endpointUri, body, header, headerValue, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public Future<Object> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers) {
+        Callable<Object> task = new Callable<Object>() {
+            public Object call() throws Exception {
+                return requestBodyAndHeaders(endpointUri, body, headers);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+    public <T> Future<T> asyncRequestBodyAndHeaders(final String endpointUri, final Object body, final Map<String, Object> headers, final Class<T> type) {
+        Callable<T> task = new Callable<T>() {
+            public T call() throws Exception {
+                return requestBodyAndHeaders(endpointUri, body, headers, type);
+            }
+        };
+
+        return executor.submit(task);
+    }
+
+
+    public <T> T asyncExtractBody(Future future, Class<T> type) {
+        try {
+            return doExtractBody(future.get(), type);
+        } catch (InterruptedException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
+            // execution failed due to an exception so rethrow the cause
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        }
+    }
+
+    public <T> T asyncExtractBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+        try {
+            if (timeout > 0) {
+                return doExtractBody(future.get(timeout, unit), type);
+            } else {
+                return doExtractBody(future.get(), type);
+            }
+        } catch (InterruptedException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
+            // execution failed due to an exception so rethrow the cause
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        }
+    }
+
+    private <T> T doExtractBody(Object result, Class<T> type) {
+        if (result instanceof Exchange) {
+            Exchange exchange = (Exchange) result;
+            Object answer = ExchangeHelper.extractResultBody(exchange, exchange.getPattern());
+            return context.getTypeConverter().convertTo(type, answer);
+        }
+        return context.getTypeConverter().convertTo(type, result);
     }
 
 }

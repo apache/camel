@@ -27,6 +27,8 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  */
 public interface HeaderFilterStrategyAware {
 
+    // TODO move this to SPI package
+
     HeaderFilterStrategy getHeaderFilterStrategy();
     
     void setHeaderFilterStrategy(HeaderFilterStrategy strategy);

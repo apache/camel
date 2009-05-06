@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.AsyncProcessor;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -78,7 +76,7 @@ public class DeadLetterChannelTest extends ContextTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() {
-        final Processor processor = new AsyncProcessor() {
+        final Processor processor = new Processor() {
             public void process(Exchange exchange) {
                 Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
                 int attempt = (counter == null) ? 1 : counter + 1;
@@ -87,24 +85,6 @@ public class DeadLetterChannelTest extends ContextTestSupport {
                                                + " being less than: " + failUntilAttempt);
                 }
             }
-            // START SNIPPET: AsyncProcessor
-            public boolean process(Exchange exchange, AsyncCallback callback) {                
-                Integer counter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, Integer.class);
-                int attempt = (counter == null) ? 1 : counter + 1;
-                if (attempt > 1) {
-                    assertEquals("Now we should use TimerThread to call the process", Thread.currentThread().getName(),
-                            "Camel DeadLetterChannel Redeliver Timer");
-                }
-                
-                if (attempt < failUntilAttempt) {
-                    // we can't throw the exception here , or the callback will not be invoked.
-                    exchange.setException(new RuntimeException("Failed to process due to attempt: " + attempt
-                                               + " being less than: " + failUntilAttempt));
-                }
-                callback.done(false);
-                return false;
-            }
-            // END SNIPPET: AsyncProcessor
         };
 
         return new RouteBuilder() {
