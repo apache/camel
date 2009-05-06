@@ -87,15 +87,6 @@ public class ProducerCache extends ServiceSupport {
         }
     }
 
-    public static boolean isProcessedSync(Exchange exchange) {
-        Boolean rc = exchange.getProperty(Exchange.PROCESSED_SYNC, Boolean.class);
-        return rc == null ? false : rc;
-    }
-
-    public static void setProcessedSync(Exchange exchange, boolean sync) {
-        exchange.setProperty(Exchange.PROCESSED_SYNC, sync ? Boolean.TRUE : Boolean.FALSE);
-    }
-
     /**
      * Sends an exchange to an endpoint using a supplied
      * {@link Processor} to populate the exchange

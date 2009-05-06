@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.CamelException;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.util.ObjectHelper;
@@ -33,7 +32,6 @@ import org.apache.camel.util.ServiceHelper;
  * @version $Revision$
  */
 public abstract class ServiceSupport implements Service {
-    private static int threadCounter;
     private final AtomicBoolean started = new AtomicBoolean(false);
     private final AtomicBoolean starting = new AtomicBoolean(false);
     private final AtomicBoolean stopping = new AtomicBoolean(false);
@@ -156,17 +154,7 @@ public abstract class ServiceSupport implements Service {
 
     protected abstract void doStop() throws Exception;
 
-    /**
-     * Creates a new thread name with the given prefix
-     */
-    protected String getThreadName(String prefix) {
-        return prefix + " thread:" + nextThreadCounter();
-    }
-
-    protected static synchronized int nextThreadCounter() {
-        return ++threadCounter;
-    }
-
+    @SuppressWarnings("unchecked")
     protected void addChildService(Object childService) {
         synchronized (this) {
             if (childServices == null) {
@@ -177,7 +165,7 @@ public abstract class ServiceSupport implements Service {
     }
 
     protected boolean removeChildService(Object childService) {
-        return childServices != null ? childServices.remove(childService) : false;
+        return childServices != null && childServices.remove(childService);
     }
 
     /**

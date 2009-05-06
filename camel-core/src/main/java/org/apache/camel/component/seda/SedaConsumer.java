@@ -18,13 +18,12 @@ package org.apache.camel.component.seda;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -81,16 +80,9 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable {
     }
 
     protected void doStart() throws Exception {
-        int concurrentConsumers = endpoint.getConcurrentConsumers();
-        executor = Executors.newFixedThreadPool(concurrentConsumers, new ThreadFactory() {
-        
-            public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable, getThreadName(endpoint.getEndpointUri()));
-                thread.setDaemon(true);
-                return thread;
-            }
-        });
-        for (int i = 0; i < concurrentConsumers; i++) {
+        int poolSize = endpoint.getConcurrentConsumers();
+        executor = ExecutorServiceHelper.newFixedThreadPool(poolSize, endpoint.getEndpointUri(), true);
+        for (int i = 0; i < poolSize; i++) {
             executor.execute(this);
         }
         endpoint.onStarted(this);

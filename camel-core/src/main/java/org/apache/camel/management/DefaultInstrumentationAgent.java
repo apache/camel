@@ -43,6 +43,7 @@ import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.impl.ServiceSupport;
 import org.apache.camel.spi.InstrumentationAgent;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource;
@@ -384,13 +385,7 @@ public class DefaultInstrumentationAgent extends ServiceSupport implements Instr
 
         if (executorService == null) {
             // we only need a single for the JMX connector
-            executorService = Executors.newSingleThreadExecutor(new ThreadFactory() {
-                public Thread newThread(Runnable runnable) {
-                    Thread thread = new Thread(runnable, getThreadName("Camel JMXConnector: " + url));
-                    thread.setDaemon(true);
-                    return thread;
-                }
-            });
+            executorService = ExecutorServiceHelper.newSingleThreadExecutor("JMXConnector: " + url, true);
         }
 
         // execute the JMX connector

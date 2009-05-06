@@ -28,8 +28,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -37,6 +35,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -74,13 +73,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStream = resolveStreamFromUrl();
         }
 
-        executor = Executors.newSingleThreadExecutor(new ThreadFactory() {
-            public Thread newThread(Runnable runnable) {
-                Thread thread = new Thread(runnable, getThreadName(endpoint.getEndpointUri()));
-                thread.setDaemon(true);
-                return thread;
-            }
-        });
+        executor = ExecutorServiceHelper.newSingleThreadExecutor(endpoint.getEndpointUri(), true);
         executor.execute(this);
     }
 

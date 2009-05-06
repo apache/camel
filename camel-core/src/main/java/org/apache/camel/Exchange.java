@@ -58,14 +58,10 @@ public interface Exchange {
 
     String ROUTE_STOP = "CamelRouteStop";
 
-    /**
-     * @deprecated a new Async API is planned for Camel 2.0
-     */
-    String PROCESSED_SYNC = "CamelProcessedSync";
-
     String REDELIVERED = "CamelRedelivered";
     String REDELIVERY_COUNTER = "CamelRedeliveryCounter";
 
+    String MULTICAST_INDEX = "CamelMulticastIndex";
     String SPLIT_INDEX = "CamelSplitIndex";
     String SPLIT_SIZE = "CamelSplitSize";
 

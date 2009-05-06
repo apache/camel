@@ -53,8 +53,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     private static final transient Log LOG = LogFactory.getLog(MulticastProcessor.class);
 
-    // TODO: Add more logging
-    // TODO: Add option to stop if an exception was thrown during processing to break asap
+    // TODO: Add option to stop if an exception was thrown during processing to break asap (future task cancel)
 
     /**
      * Class that represent each step in the multicast route to do
@@ -117,9 +116,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         final Iterable<ProcessorExchangePair> pairs = createProcessorExchangePairs(exchange);
         
         if (isParallelProcessing() && isStreaming()) {
-            doProcessNewParallelStreaming(result, pairs);
+            doProcessParallelStreaming(result, pairs);
         } else if (isParallelProcessing()) {
-            doProcessNewParallel(result, pairs);
+            doProcessParallel(result, pairs);
         } else {
             doProcessSequntiel(result, pairs);
         }
@@ -129,7 +128,7 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void doProcessNewParallelStreaming(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException, ExecutionException {
+    protected void doProcessParallelStreaming(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException, ExecutionException {
         // execute tasks in parallel and aggregate in the order they are finished (out of order sequence)
 
         CompletionService<Exchange> completion = new ExecutorCompletionService<Exchange>(executorService);
@@ -147,6 +146,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                     } catch (Exception e) {
                         subExchange.setException(e);
                     }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Parallel streaming processing complete for exchange: " + subExchange);
+                    }
                     return subExchange;
                 }
             });
@@ -162,17 +164,13 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             }
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Done parallel streaming processing " + total + " exchanges");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Done parallel streaming processing " + total + " exchanges");
         }
     }
 
-    protected void doProcessNewParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException {
+    protected void doProcessParallel(final AtomicExchange result, Iterable<ProcessorExchangePair> pairs) throws InterruptedException {
         // execute tasks in parallel but aggregate in the same order as the tasks was submitted (in order sequence)
-
-        // TODO I wonder if there is a completion servce that can order the take in the same order as the tasks
-        // was submitted, if so we can do aggregate to catch-up while still processing for more performance
-        // this one completes all tasks before doing aggregation
 
         final List<Exchange> ordered = new ArrayList<Exchange>();
         final CountingLatch latch = new CountingLatch();
@@ -194,6 +192,9 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
                         producer.process(subExchange);
                     } catch (Exception e) {
                         subExchange.setException(e);
+                    }
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Parallel processing complete for exchange: " + subExchange);
                     }
                     // this task is done so decrement
                     latch.decrement();
@@ -238,8 +239,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
             total++;
         }
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Done sequientel processing " + total + " exchanges");
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Done sequientel processing " + total + " exchanges");
         }
     }
 
@@ -259,8 +260,8 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
         }
     }
 
-    protected void updateNewExchange(Exchange exchange, int i, Iterable<ProcessorExchangePair> allPairs) {
-        // No updates needed
+    protected void updateNewExchange(Exchange exchange, int index, Iterable<ProcessorExchangePair> allPairs) {
+        exchange.getIn().setHeader(Exchange.MULTICAST_INDEX, index);
     }
 
     protected Iterable<ProcessorExchangePair> createProcessorExchangePairs(Exchange exchange) {
@@ -312,6 +313,14 @@ public class MulticastProcessor extends ServiceSupport implements Processor, Nav
 
     public boolean isParallelProcessing() {
         return isParallelProcessing;
+    }
+
+    public ExecutorService getExecutorService() {
+        return executorService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
     public List<Processor> next() {
