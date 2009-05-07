@@ -27,16 +27,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.Service;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.log4j.Logger;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import quickfix.Application;
 import quickfix.ConfigError;
-import quickfix.FieldNotFound;
 import quickfix.FileStoreFactory;
-import quickfix.IncorrectDataFormat;
-import quickfix.IncorrectTagValue;
 import quickfix.LogFactory;
 import quickfix.Message;
 import quickfix.MessageStoreFactory;
@@ -44,7 +40,6 @@ import quickfix.ScreenLogFactory;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
-import quickfix.UnsupportedMessageType;
 
 /**
  * QuickfixEndpoint is the common class for quickfix endpoints
@@ -59,20 +54,6 @@ import quickfix.UnsupportedMessageType;
  * @see org.apache.camel.quickfix.QuickfixAcceptor
  */
 public abstract class QuickfixEndpoint extends DefaultEndpoint implements Service {
-
-    private static final Logger LOG = Logger.getLogger(QuickfixEndpoint.class);
-
-    {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                try {
-                    stop();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }));
-    }
 
     private boolean strict;
 
@@ -94,25 +75,12 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
         return true;
     }
 
-    public void onMessage(Message message) throws FieldNotFound, IncorrectDataFormat, IncorrectTagValue,
-        UnsupportedMessageType {
+    public void onMessage(Message message) {
         Exchange exchange = createExchange(message);
         try {
             processor.process(exchange);
-        } catch (FieldNotFound e) {
-            throw e;
-        } catch (IncorrectDataFormat e) {
-            throw e;
-        } catch (IncorrectTagValue e) {
-            throw e;
-        } catch (UnsupportedMessageType e) {
-            throw e;
-        } catch (RuntimeException e) {
-            LOG.error("Unexpected exception encountered in onMessage()", e);
-            throw e;
-        } catch (Throwable e) {
-            LOG.error("Unexpected exception encountered in onMessage()", e);
-            throw new RuntimeException("Unexpected exception encountered in onMessage()", e);
+        } catch (Exception e) {
+            exchange.setException(e);
         }
 
     }
@@ -152,7 +120,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
         return Session.lookupSession(sessionID);
     }
 
-    public void stop() throws Exception {
+    public void stop() throws Exception {        
         Session session = Session.lookupSession(sessionID);
         if (session != null) {
             session.disconnect();
@@ -201,7 +169,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
                 // then the screen logging factory will be used by default
                 logFactory = new ScreenLogFactory(settings);
             } else {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                                            "The strict option is switched on. "
                                                + "You should either inject the required logging factory via spring context, "
                                                + "or specify the logging factory parameters via endpoint URI");
@@ -216,7 +184,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
             if (!strict) {
                 messageStoreFactory = new FileStoreFactory(settings);
             } else {
-                throw new RuntimeException(
+                throw new IllegalArgumentException(
                                            "The strict option is switched on. "
                                                + "You should either inject the required logging factory via spring context, "
                                                + "or specify the logging factory parameters via endpoint URI");

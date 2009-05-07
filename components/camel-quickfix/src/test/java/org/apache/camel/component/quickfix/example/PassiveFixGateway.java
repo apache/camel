@@ -24,7 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  *         <p/>
  *         To use this example, start Banzai and Executor applications from
  *         Quickfix distribution. The PassiveFixGateway example is intended to
- *         receive the messages from Banzai, forward 'em to Executor, and
+ *         receive the messages from Banzai, forward them to Executor, and
  *         respond back to the Banzai with the execution report.
  */
 public class PassiveFixGateway extends SpringRouteBuilder {

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -36,12 +37,13 @@ import quickfix.SocketAcceptor;
  * @author Anton Arhipov
  */
 public class QuickfixAcceptor extends DefaultComponent {
-
+    private static final Log LOG = org.apache.commons.logging.LogFactory.getLog(QuickfixAcceptorEndpoint.class);
+    
     protected QuickfixEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new QuickfixAcceptorEndpoint(uri, getCamelContext(), remaining);
     }
 
-    class QuickfixAcceptorEndpoint extends QuickfixEndpoint {
+    class QuickfixAcceptorEndpoint extends QuickfixEndpoint {        
 
         private/* Threaded */SocketAcceptor acceptor;
 
@@ -51,7 +53,8 @@ public class QuickfixAcceptor extends DefaultComponent {
 
         protected void start(Application application, MessageStoreFactory storeFactory,
                              SessionSettings settings, LogFactory logFactory) throws ConfigError {
-
+                        // To avoid this exception in OSGi platform
+            // java.lang.NoClassDefFoundError: quickfix/fix41/MessageFactory
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -60,6 +63,9 @@ public class QuickfixAcceptor extends DefaultComponent {
                                               new DefaultMessageFactory());
 
                 acceptor.start();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Start the accetpor endpoint");
+                }
             } finally {
                 Thread.currentThread().setContextClassLoader(ccl);
             }
@@ -70,6 +76,9 @@ public class QuickfixAcceptor extends DefaultComponent {
             super.stop();
             if (acceptor != null) {
                 acceptor.stop();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stop the accetpor endpoint");
+                }
                 acceptor = null;
             }
         }

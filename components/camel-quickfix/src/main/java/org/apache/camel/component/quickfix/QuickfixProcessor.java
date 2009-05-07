@@ -18,6 +18,8 @@ package org.apache.camel.component.quickfix;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.log4j.Logger;
 
 /**
@@ -25,9 +27,9 @@ import org.apache.log4j.Logger;
  */
 public class QuickfixProcessor implements Processor {
 
-    private static final Logger LOG = Logger.getLogger(QuickfixProcessor.class);
+    private static final Log LOG = LogFactory.getLog(QuickfixProcessor.class);
 
-    // TODO:
+    // The default processor for the consumer
     public void process(Exchange exchange) throws Exception {
         LOG.debug("Processing exchange " + exchange);
     }

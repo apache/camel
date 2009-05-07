@@ -19,21 +19,32 @@ package org.apache.camel.component.quickfix.converter;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
+import org.apache.camel.component.quickfix.QuickfixApplication;
 import org.apache.camel.converter.IOConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import quickfix.InvalidMessage;
 import quickfix.Message;
-import quickfix.MessageCracker;
 
 /**
  * @author Anton Arhipov
  */
 @Converter
-public class Exchange2Message extends MessageCracker {
+public final class QuickFixConverter {
+        
     public static final int BUFFER_SIZE = 8192; 
+    private static final Log LOG = LogFactory.getLog(QuickFixConverter.class);
+    
+    private QuickFixConverter() {
+        // helper class
+    }
+    
     @Converter
-    public static Message convert(InputStream in) throws IOException, InvalidMessage {        
+    public static Message convert(InputStream in, Exchange exchange) throws IOException, InvalidMessage {        
         byte buffer[] = new byte[BUFFER_SIZE];
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         int count;
@@ -42,8 +53,19 @@ public class Exchange2Message extends MessageCracker {
             baos.write(buffer, 0, count);
             count = in.read(buffer);
         }
-
-        String str = baos.toString("ISO-8859-1");
+        String str = null;
+        String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+        if (charsetName != null) {
+            try {
+                str = baos.toString(charsetName);
+            } catch (UnsupportedEncodingException e) {
+                LOG.warn("Cannot convert the byte[] into String with the charset: " + charsetName, e);
+                str = baos.toString();
+            }
+        } else {
+            // using the default encoding 
+            str = baos.toString();
+        }
         in.close();
         return new Message(str);
     }

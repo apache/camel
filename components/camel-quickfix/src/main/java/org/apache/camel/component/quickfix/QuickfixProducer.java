@@ -22,7 +22,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import quickfix.Message;
 
 /**
@@ -34,7 +35,7 @@ import quickfix.Message;
  */
 public class QuickfixProducer extends DefaultProducer {
 
-    private static final Logger LOG = Logger.getLogger(QuickfixProducer.class);
+    private static final Log LOG = LogFactory.getLog(QuickfixProducer.class);
 
     private QuickfixEndpoint endpoint;
 

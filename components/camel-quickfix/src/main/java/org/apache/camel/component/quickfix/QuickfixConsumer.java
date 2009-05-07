@@ -19,7 +19,8 @@ package org.apache.camel.component.quickfix;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -28,7 +29,7 @@ import org.apache.log4j.Logger;
  * @author Anton Arhipov
  */
 public class QuickfixConsumer extends DefaultConsumer {
-    private static final Logger LOG = Logger.getLogger(QuickfixConsumer.class);
+    private static final Log LOG = LogFactory.getLog(QuickfixConsumer.class);
 
     public QuickfixConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);

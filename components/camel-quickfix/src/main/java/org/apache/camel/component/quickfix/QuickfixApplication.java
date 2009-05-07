@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.quickfix;
 
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import quickfix.Application;
 import quickfix.DoNotSend;
 import quickfix.FieldNotFound;
@@ -35,7 +37,7 @@ import quickfix.UnsupportedMessageType;
  */
 public class QuickfixApplication implements Application {
 
-    private static final Logger LOG = Logger.getLogger(QuickfixApplication.class);
+    private static final Log LOG = LogFactory.getLog(QuickfixApplication.class);
 
     private QuickfixEndpoint endpoint;
 

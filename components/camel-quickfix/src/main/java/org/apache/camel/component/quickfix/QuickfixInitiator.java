@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.commons.logging.Log;
 import quickfix.Application;
 import quickfix.ConfigError;
 import quickfix.DefaultMessageFactory;
@@ -36,6 +37,8 @@ import quickfix.SocketInitiator;
  * @author Anton Arhipov
  */
 public class QuickfixInitiator extends DefaultComponent {
+    private static final Log LOG = org.apache.commons.logging.LogFactory.getLog(QuickfixInitiatorEndpoint.class);
+    
     protected QuickfixEndpoint createEndpoint(String uri, String remaining, Map parameters) throws Exception {
         return new QuickfixInitiatorEndpoint(uri, getCamelContext(), remaining);
     }
@@ -51,6 +54,8 @@ public class QuickfixInitiator extends DefaultComponent {
         protected void start(Application application, MessageStoreFactory storeFactory,
                              SessionSettings settings, LogFactory logFactory) throws ConfigError {
 
+            // To avoid this exception in OSGi platform
+            // java.lang.NoClassDefFoundError: quickfix/fix41/MessageFactory
             ClassLoader ccl = Thread.currentThread().getContextClassLoader();
             try {
                 Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
@@ -59,6 +64,10 @@ public class QuickfixInitiator extends DefaultComponent {
                                                 new DefaultMessageFactory());
 
                 initiator.start();
+                
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Start the initiator endpoint");
+                }
             } finally {
                 Thread.currentThread().setContextClassLoader(ccl);
             }
@@ -68,6 +77,9 @@ public class QuickfixInitiator extends DefaultComponent {
             super.stop();
             if (initiator != null) {
                 initiator.stop();
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stop the accetpor endpoint");
+                }
                 initiator = null;
             }
         }
