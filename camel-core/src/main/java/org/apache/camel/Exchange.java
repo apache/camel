@@ -30,6 +30,9 @@ import org.apache.camel.spi.UnitOfWork;
  */
 public interface Exchange {
 
+    String ASYNC_WAIT = "CamelAsyncWait";
+    String ASYNC_WAIT_TIMEOUT = "CamelAsyncWaitTimeout";
+
     String BEAN_METHOD_NAME = "CamelBeanMethodName";
     String BEAN_HOLDER = "CamelBeanHolder";
     String BEAN_MULTI_PARAMETER_ARRAY = "CamelBeanMultiParameterArray";

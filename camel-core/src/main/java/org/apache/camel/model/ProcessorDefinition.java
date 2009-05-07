@@ -670,6 +670,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition> exte
     }
 
     /**
+     * Breaks the route into asynchronous. The caller thread will end and the OUT message will
+     * contain a {@link java.util.concurrent.Future} handle so you can get the real response
+     * later using this handle.
+     *
+     * @return the builder
+     */
+    public AsyncDefinition async() {
+        AsyncDefinition answer = new AsyncDefinition();
+        addOutput(answer);
+        return answer;
+    }
+
+    /**
+     * Breaks the route into asynchronous. The caller thread will end and the OUT message will
+     * contain a {@link java.util.concurrent.Future} handle so you can get the real response
+     * later using this handle.
+     *
+     * @param poolSize the core pool size
+     * @return the builder
+     */
+    public AsyncDefinition async(int poolSize) {
+        AsyncDefinition answer = async();
+        answer.setPoolSize(poolSize);
+        return answer;
+    }
+
+    /**
      * Ends the current block
      *
      * @return the builder

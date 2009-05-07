@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoTypeConversionAvailableException;
@@ -68,6 +69,7 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         addFallbackTypeConverter(new EnumTypeConverter());
         addFallbackTypeConverter(new ArrayTypeConverter());
         addFallbackTypeConverter(new PropertyEditorTypeConverter());
+        addFallbackTypeConverter(new FutureTypeConverter(this));
     }
 
     public List<TypeConverterLoader> getTypeConverterLoaders() {
@@ -82,6 +84,9 @@ public class DefaultTypeConverter implements TypeConverter, TypeConverterRegistr
         Object answer;
         try {
             answer = doConvertTo(type, exchange, value);
+        } catch (CamelExecutionException e) {
+            // rethrow exception exception as its not due to failed convertion
+            throw e;
         } catch (Exception e) {
             // we cannot convert so return null
             if (LOG.isDebugEnabled()) {

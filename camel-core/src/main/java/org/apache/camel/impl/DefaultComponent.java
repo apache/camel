@@ -19,8 +19,8 @@ package org.apache.camel.impl;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;

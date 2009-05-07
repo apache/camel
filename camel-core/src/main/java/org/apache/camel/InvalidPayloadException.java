@@ -29,13 +29,13 @@ public class InvalidPayloadException extends CamelExchangeException {
     }
 
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message) {
-        super("No body available of type: " + type.getName()
+        super("No body available of type: " + type.getCanonicalName()
               + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message, exchange);
         this.type = type;
     }
 
     public InvalidPayloadException(Exchange exchange, Class<?> type, Message message, Throwable cause) {
-        super("No body available of type: " + type.getName()
+        super("No body available of type: " + type.getCanonicalName()
               + NoSuchPropertyException.valueDescription(message.getBody()) + " on: " + message
               + ". Caused by: " + cause.getMessage(), exchange, cause);
         this.type = type;

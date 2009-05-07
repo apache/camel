@@ -16,10 +16,10 @@
  */
 package org.apache.camel.impl;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;

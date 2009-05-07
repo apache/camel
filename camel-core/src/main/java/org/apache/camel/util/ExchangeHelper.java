@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -31,7 +32,6 @@ import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.NoSuchPropertyException;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
-import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 
 /**
  * Some helper methods for working with {@link Exchange} objects
@@ -397,21 +397,22 @@ public final class ExchangeHelper {
     }
 
     /**
-     * Extracts the body from the given result.
+     * Extracts the body from the given exchange.
      * <p/>
      * If the exchange pattern is provided it will try to honor it and retrive the body
      * from either IN or OUT according to the pattern.
      *
-     * @param exchange   the result
-     * @param pattern  exchange pattern if given, can be <tt>null</tt>
-     * @return  the result, can be <tt>null</tt>.
+     * @param exchange   the exchange
+     * @param pattern    exchange pattern if given, can be <tt>null</tt>
+     * @return the result body, can be <tt>null</tt>.
+     * @throws CamelExecutionException if the processing of the exchange failed
      */
     public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
         Object answer = null;
         if (exchange != null) {
             // rethrow if there was an exception
             if (exchange.getException() != null) {
-                throw wrapRuntimeCamelException(exchange.getException());
+                throw new CamelExecutionException("Exception occured during execution ", exchange, exchange.getException());
             }
 
             // result could have a fault message

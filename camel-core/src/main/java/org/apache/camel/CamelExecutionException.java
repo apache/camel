@@ -17,26 +17,20 @@
 package org.apache.camel;
 
 /**
- * Exception used for forcing an Exchange to be rolled back.
+ * Exception occured during execution/processing of an {@link Exchange}.
+ * <p/>
+ * Is usually thrown to the caller when using the {@link org.apache.camel.ProducerTemplate}
+ * to send messages to Camel.
  *
  * @version $Revision$
  */
-public class RollbackExchangeException extends CamelExchangeException {
+public class CamelExecutionException extends RuntimeExchangeException {
 
-    public RollbackExchangeException(Exchange exchange) {
-        this("Intended rollback", exchange);
-    }
-
-    public RollbackExchangeException(Exchange exchange, Throwable cause) {
-        this("Intended rollback", exchange, cause);
-    }
-
-    public RollbackExchangeException(String message, Exchange exchange) {
+    public CamelExecutionException(String message, Exchange exchange) {
         super(message, exchange);
     }
 
-    public RollbackExchangeException(String message, Exchange exchange, Throwable cause) {
+    public CamelExecutionException(String message, Exchange exchange, Throwable cause) {
         super(message, exchange, cause);
     }
-
 }
