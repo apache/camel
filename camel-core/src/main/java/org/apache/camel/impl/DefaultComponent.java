@@ -149,21 +149,30 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         this.camelContext = context;
     }
 
-    public ExecutorService getExecutorService() {
+    public synchronized ExecutorService getExecutorService() {
         if (executorService == null) {
-            executorService = createExecutorService();
+            executorService = createScheduledExecutorService();
         }
         return executorService;
     }
 
-    public void setExecutorService(ScheduledExecutorService executorService) {
+    public synchronized void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
-    
+
+    public synchronized ScheduledExecutorService getScheduledExecutorService() {
+        ExecutorService executor = getExecutorService();
+        if (executor instanceof ScheduledExecutorService) {
+            return (ScheduledExecutorService) executor;
+        } else {
+            return createScheduledExecutorService();
+        }
+    }
+
     /**
      * A factory method to create a default thread pool and executor
      */
-    protected ExecutorService createExecutorService() {
+    protected ScheduledExecutorService createScheduledExecutorService() {
         return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, this.toString(), true);
     }
 

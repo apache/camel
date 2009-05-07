@@ -112,13 +112,22 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
                 executorService = dc.getExecutorService();
             }
             if (executorService == null) {
-                executorService = createExecutorService();
+                executorService = createScheduledExecutorService();
             }
         }
         return executorService;
     }
+    
+    public synchronized ScheduledExecutorService getScheduledExecutorService() {
+        ExecutorService executor = getExecutorService();
+        if (executor instanceof ScheduledExecutorService) {
+            return (ScheduledExecutorService) executor;
+        } else {
+            return createScheduledExecutorService();
+        }
+    }
 
-    public synchronized void setExecutorService(ScheduledExecutorService executorService) {
+    public synchronized void setExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
@@ -183,7 +192,7 @@ public abstract class DefaultEndpoint implements Endpoint, CamelContextAware {
         this.exchangePattern = exchangePattern;
     }
 
-    protected ExecutorService createExecutorService() {
+    protected ScheduledExecutorService createScheduledExecutorService() {
         return ExecutorServiceHelper.newScheduledThreadPool(DEFAULT_THREADPOOL_SIZE, getEndpointUri(), true);
     }
 
