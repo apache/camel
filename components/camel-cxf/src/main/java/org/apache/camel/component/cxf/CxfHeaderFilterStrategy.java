@@ -63,11 +63,10 @@ public class CxfHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
         getOutFilter().add(Message.PROTOCOL_HEADERS);
         getInFilter().add(Message.PROTOCOL_HEADERS);
         
-        // Since the DefaultCxfBinding deal with the content-type separately.
-        // We need to filter this header
+        // Since CXF can take the content-type from the protocol header
+        // we need to filter this header of this name.
         getOutFilter().add("content-type");
-        getInFilter().add("content-type");
-        
+                        
         // initialize message header filter map with default SOAP filter
         messageHeaderFiltersMap = new HashMap<String, MessageHeaderFilter>();
         addToMessageHeaderFilterMap(new SoapMessageHeaderFilter());

@@ -214,7 +214,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Map<String, Object> camelHeaders = camelExchange.getOut().getHeaders();
         extractInvocationContextFromCamel(camelExchange, camelHeaders, 
                 responseContext, Client.RESPONSE_CONTEXT);
-      
+        
         propagateHeadersFromCamelToCxf(camelExchange, camelHeaders, cxfExchange, 
                 responseContext);
         // create out message
@@ -228,7 +228,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate contexts
         if (dataFormat != DataFormat.POJO) {
             // copying response context to out message seems to cause problem in POJO mode
-            outMessage.putAll(responseContext);
+            outMessage.putAll(responseContext);            
         }
         outMessage.put(Client.RESPONSE_CONTEXT, responseContext);      
         
@@ -360,19 +360,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             }
         }
 
-        // propagate content type
-        String key = Message.CONTENT_TYPE;
-        Object value = cxfMessage.get(key);
-        if (value != null && !headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
-            camelHeaders.put(CamelTransportConstants.CONTENT_TYPE, value);
-            if (LOG.isTraceEnabled()) {
-                LOG.trace("Populate header from CXF header=" + key + " value=" + value);
-            }
-        }
         
         // propagate SOAP/protocol header list
-        key = Header.HEADER_LIST;
-        value = cxfMessage.get(key);
+        String key = Header.HEADER_LIST;
+        Object value = cxfMessage.get(key);
         if (value != null) {
             if (!headerFilterStrategy.applyFilterToExternalHeaders(key, value, exchange)) {
                 camelHeaders.put(key, value);
@@ -412,12 +403,6 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Propagate to CXF header: " + entry.getKey() + " value: " + entry.getValue());
-            }
-            
-            // put content type in exchange
-            if (CamelTransportConstants.CONTENT_TYPE.equals(entry.getKey())) {
-                cxfExchange.put(Message.CONTENT_TYPE, entry.getValue());
-                continue;
             }
             
             // put response code in request context so it will be copied to CXF message's property

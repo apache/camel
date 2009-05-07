@@ -46,7 +46,7 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
         Map protocalHeaders = (Map) context.get("org.apache.cxf.message.Message.PROTOCOL_HEADERS");
         assertEquals("Should get the content type", protocalHeaders.get("content-type").toString(), "[text/xml; charset=utf-8]");
         assertEquals("Should get the response code ", context.get("org.apache.cxf.message.Message.RESPONSE_CODE"), 200);        
-        assertEquals("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content.type"), "text/xml; charset=utf-8");        
+        assertEquals("Should get the content type", result.assertExchangeReceived(0).getIn().getHeaders().get("content-type"), "text/xml; charset=utf-8");        
     }
     
     public void testTheContentTypeOnTheWire() throws Exception {
@@ -60,9 +60,9 @@ public class CxfRawMessageRouterTest extends CxfSimpleRouterTest {
             }
 
         });
-        
-        assertNotNull("We should get the content type here", exchange.getOut().getHeader("Content-Type"));
+        assertNotNull("We should get the Content-Type here", exchange.getOut().getHeader("Content-Type"));
         assertEquals("Get wrong content type", "text/xml; charset=utf-8", exchange.getOut().getHeader("Content-Type"));
+        assertNull("We should not get the content-type here", exchange.getOut().getHeader("content-type"));        
         String response = exchange.getOut().getBody(String.class);        
         assertNotNull("Response should not be null", response);
         assertTrue("We should get right return result", response.indexOf("echo hello world") > 0);
