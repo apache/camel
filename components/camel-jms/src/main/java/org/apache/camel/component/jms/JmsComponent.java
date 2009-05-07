@@ -309,7 +309,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     public synchronized Requestor getRequestor() throws Exception {
         if (requestor == null) {
-            requestor = new Requestor(getConfiguration(), getExecutorService());
+            requestor = new Requestor(getConfiguration(), getScheduledExecutorService());
             requestor.start();
         }
         return requestor;

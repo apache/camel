@@ -100,11 +100,11 @@ public class JmsProducer extends DefaultProducer {
                 try {
                     JmsConfiguration c = endpoint.getConfiguration();
                     if (c.getReplyTo() != null) {
-                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getExecutorService());
+                        requestor = new PersistentReplyToRequestor(endpoint.getConfiguration(), endpoint.getScheduledExecutorService());
                         requestor.start();
                     } else {
                         if (affinity == RequestorAffinity.PER_PRODUCER) {
-                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getExecutorService());
+                            requestor = new Requestor(endpoint.getConfiguration(), endpoint.getScheduledExecutorService());
                             requestor.start();
                         } else if (affinity == RequestorAffinity.PER_ENDPOINT) {
                             requestor = endpoint.getRequestor();

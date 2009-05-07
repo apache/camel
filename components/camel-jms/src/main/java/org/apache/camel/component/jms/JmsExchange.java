@@ -73,6 +73,11 @@ public class JmsExchange extends DefaultExchange {
         return (JmsMessage) super.getFault();
     }
 
+    @Override
+    public JmsMessage getFault(boolean lazyCreate) {
+        return (JmsMessage) super.getFault(lazyCreate);
+    }
+
     public JmsBinding getBinding() {
         return binding;
     }
