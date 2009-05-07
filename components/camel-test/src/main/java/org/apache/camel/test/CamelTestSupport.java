@@ -151,10 +151,14 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     protected Context createJndiContext() throws Exception {
-        InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
-        assertNotNull("Cannot find jndi.properties on the classpath!", in);
         Properties properties = new Properties();
-        properties.load(in);
+
+        // jndi.properties is optional
+        InputStream in = getClass().getClassLoader().getResourceAsStream("jndi.properties");
+        if (in != null) {
+            log.debug("Using jndi.properties from classpath root");
+            properties.load(in);
+        }
         return new InitialContext(new Hashtable(properties));
     }
 
