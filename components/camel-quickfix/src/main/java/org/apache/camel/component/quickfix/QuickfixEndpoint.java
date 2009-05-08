@@ -165,7 +165,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
             if (!strict) {
                 // if the logFactory is still not set and we are fine to use
                 // non-strict logging,
-                // then the screen logging factory will be used by default
+                // then the SLF4JLogFactory logging factory will be used by default
                 logFactory = new SLF4JLogFactory(settings);
             } else {
                 throw new IllegalArgumentException(
