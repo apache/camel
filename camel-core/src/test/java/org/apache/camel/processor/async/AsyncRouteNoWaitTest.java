@@ -22,6 +22,7 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -130,7 +131,7 @@ public class AsyncRouteNoWaitTest extends ContextTestSupport {
                             // we do not want to wait for tasks to be complete so we instruct Camel
                             // to not wait, and therefore Camel returns the Future<Exchange> handle we
                             // can use to get the result when we want
-                        .async().waitForTaskToComplete(false)
+                        .async().waitForTaskToComplete(WaitForTaskToComplete.Newer)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")

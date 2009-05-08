@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.processor.AsyncProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
@@ -44,7 +45,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private Integer poolSize;
     @XmlAttribute(required = false)
-    private Boolean waitForTaskToComplete = Boolean.TRUE;
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.Always;
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
@@ -98,11 +99,11 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
      * <p/>
      * Is default <tt>true</tt>
      *
-     * @param complete whether to wait or not
+     * @param wait the wait option
      * @return the builder
      */
-    public AsyncDefinition waitForTaskToComplete(boolean complete) {
-        setWaitForTaskToComplete(complete);
+    public AsyncDefinition waitForTaskToComplete(WaitForTaskToComplete wait) {
+        setWaitForTaskToComplete(wait);
         return this;
     }
 
@@ -122,11 +123,11 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
         this.poolSize = poolSize;
     }
 
-    public Boolean getWaitForTaskToComplete() {
+    public WaitForTaskToComplete getWaitForTaskToComplete() {
         return waitForTaskToComplete;
     }
 
-    public void setWaitForTaskToComplete(Boolean waitForTaskToComplete) {
+    public void setWaitForTaskToComplete(WaitForTaskToComplete waitForTaskToComplete) {
         this.waitForTaskToComplete = waitForTaskToComplete;
     }
 }

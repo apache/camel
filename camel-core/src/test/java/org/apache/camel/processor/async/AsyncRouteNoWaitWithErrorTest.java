@@ -22,6 +22,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -103,7 +104,7 @@ public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
                             // now turn the route into async from this point forward
                             // the caller will have a Future<Exchange> returned as response in OUT
                             // to be used to grap the async response when he fell like it
-                        .async().waitForTaskToComplete(false)
+                        .async().waitForTaskToComplete(WaitForTaskToComplete.Newer)
                             // from this point forward this is the async route doing its work
                             // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")

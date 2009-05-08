@@ -22,6 +22,7 @@ import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.concurrent.ExecutorServiceHelper;
 
@@ -40,9 +41,9 @@ public class AsyncProcessor extends DelegateProcessor implements Processor {
 
     private static final int DEFAULT_THREADPOOL_SIZE = 5;
     private ExecutorService executorService;
-    private boolean waitTaskComplete;
+    private WaitForTaskToComplete waitTaskComplete;
 
-    public AsyncProcessor(Processor output, ExecutorService executorService, boolean waitTaskComplete) {
+    public AsyncProcessor(Processor output, ExecutorService executorService, WaitForTaskToComplete waitTaskComplete) {
         super(output);
         this.executorService = executorService;
         this.waitTaskComplete = waitTaskComplete;
@@ -71,12 +72,12 @@ public class AsyncProcessor extends DelegateProcessor implements Processor {
         Future<Exchange> future = getExecutorService().submit(task);
 
         // compute if we should wait for task to complete or not
-        boolean wait = waitTaskComplete;
+        WaitForTaskToComplete wait = waitTaskComplete;
         if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
-            wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, Boolean.class);
+            wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }
 
-        if (wait) {
+        if (wait != WaitForTaskToComplete.Newer) {
             // wait for task to complete
             Exchange response = future.get();
             ExchangeHelper.copyResults(exchange, response);

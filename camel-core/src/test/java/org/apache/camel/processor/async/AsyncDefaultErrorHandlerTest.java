@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -67,7 +68,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:in")
-                    .async(2).waitForTaskToComplete(false)
+                    .async(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {

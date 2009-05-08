@@ -30,7 +30,7 @@
                 <constant>Hello World</constant>
             </transform>
 
-            <async waitForTaskToComplete="false">
+            <async waitForTaskToComplete="Newer">
                 <to uri="mock:foo"/>
                 <delay>
                     <constant>100</constant>

@@ -20,6 +20,7 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -78,7 +79,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
 
                 from("direct:in")
-                    .async(2).waitForTaskToComplete(false)
+                    .async(2).waitForTaskToComplete(WaitForTaskToComplete.Newer)
                     .to("mock:foo")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
