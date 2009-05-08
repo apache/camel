@@ -77,8 +77,12 @@ public class AsyncProcessor extends DelegateProcessor implements Processor {
             wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, WaitForTaskToComplete.class);
         }
 
-        if (wait != WaitForTaskToComplete.Newer) {
+        if (wait == WaitForTaskToComplete.Always) {
             // wait for task to complete
+            Exchange response = future.get();
+            ExchangeHelper.copyResults(exchange, response);
+        } if (wait == WaitForTaskToComplete.IfReplyExpected && ExchangeHelper.isOutCapable(exchange)) {
+            // wait for task to complete as we expect a reply
             Exchange response = future.get();
             ExchangeHelper.copyResults(exchange, response);
         } else {
