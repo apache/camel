@@ -72,11 +72,13 @@ public final class QuickFixConverter {
 
     @Converter
     public static InputStream toInputStream(Message message) throws Exception {
+        System.out.println("Calling to inputStream");
         return IOConverter.toInputStream(toString(message).getBytes());
     }
 
     @Converter
     public static String toString(Message message) throws IOException {
+        System.out.println("Calling to string");
         return message.toString();
     }
 
