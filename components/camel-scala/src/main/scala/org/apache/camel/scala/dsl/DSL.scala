@@ -17,6 +17,7 @@
 package org.apache.camel.scala.dsl 
 
 import org.apache.camel.model.dataformat.DataFormatDefinition
+import org.apache.camel.processor.aggregate.AggregationStrategy
 
 /**
  * Defines the 'keywords' in our Scala DSL
@@ -29,6 +30,7 @@ trait DSL {
   def bean(bean: Any) : DSL
   def choice : SChoiceDefinition
   def delay(delay: Period) : SDelayDefinition
+  def enrich(uri:String, strategy: AggregationStrategy) : DSL
   def idempotentconsumer(expression: Exchange => Any): SIdempotentConsumerDefinition
   def inOnly(): SProcessorDefinition
   def inOut(): SProcessorDefinition

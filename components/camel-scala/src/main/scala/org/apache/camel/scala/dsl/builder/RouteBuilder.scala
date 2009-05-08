@@ -18,6 +18,7 @@ package org.apache.camel.scala.dsl.builder;
 
 import org.apache.camel.model.{ChoiceDefinition, ProcessorDefinition}
 import org.apache.camel.model.dataformat.DataFormatDefinition
+import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.Routes
 
 import collection.mutable.Stack
@@ -84,6 +85,7 @@ class RouteBuilder extends Preamble with DSL with Routes with Languages {
   def throttle(frequency: Frequency) = stack.top.throttle(frequency)
   def loadbalance = stack.top.loadbalance
   def delay(delay: Period) = stack.top.delay(delay)
+  def enrich(uri: String, strategy: AggregationStrategy) = stack.top.enrich(uri, strategy)
   def resequence(expression: Exchange => Any) = stack.top.resequence(expression)
   def rollback = stack.top.rollback
   def setbody(expression : Exchange => Any) = stack.top.setbody(expression)

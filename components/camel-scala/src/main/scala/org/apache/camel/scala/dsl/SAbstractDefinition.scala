@@ -18,10 +18,12 @@ package org.apache.camel.scala.dsl;
 
 import org.apache.camel.model.ProcessorDefinition
 import org.apache.camel.model.FilterDefinition
-import org.apache.camel.model.ChoiceDefinition
+import org.apache.camel.model.{ChoiceDefinition, EnrichDefinition}
 import org.apache.camel.model.IdempotentConsumerDefinition
 
 import org.apache.camel.model.dataformat.DataFormatDefinition
+
+import org.apache.camel.processor.aggregate.AggregationStrategy
 
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 
@@ -73,6 +75,11 @@ abstract class SAbstractDefinition extends DSL {
   }
   
   def choice = new SChoiceDefinition(target.choice)
+  
+  def enrich(uri: String, strategy: AggregationStrategy) = {
+    target.enrich(uri, strategy)
+    this
+  }
     
   def otherwise : SChoiceDefinition = 
     throw new Exception("otherwise is only supported in a choice block or after a when statement")
