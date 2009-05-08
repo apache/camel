@@ -26,20 +26,19 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpExchange;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
 import org.mortbay.jetty.security.SslSocketConnector;
 import org.mortbay.jetty.servlet.Context;
-import org.mortbay.jetty.servlet.HashSessionIdManager;
-import org.mortbay.jetty.servlet.HashSessionManager;
 import org.mortbay.jetty.servlet.ServletHolder;
 import org.mortbay.jetty.servlet.SessionHandler;
 
@@ -128,7 +127,7 @@ public class JettyHttpComponent extends HttpComponent {
                 }
                 getServer().addConnector(connector);
 
-                connectorRef = new ConnectorRef(connector, createServletForConnector(connector));
+                connectorRef = new ConnectorRef(connector, createServletForConnector(connector, endpoint.getHandlers()));
                 connector.start();
                 
                 connectors.put(connectorKey, connectorRef);
@@ -242,12 +241,20 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnector = connector;
     }
 
-    protected CamelServlet createServletForConnector(Connector connector) throws Exception {
+    protected CamelServlet createServletForConnector(Connector connector, String handlerNames) throws Exception {
         CamelServlet camelServlet = new CamelContinuationServlet();
         
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
+        if (handlerNames != null) {
+            String[] handlerNameArray = handlerNames.split(",");
+            for (String handlerName : handlerNameArray) {
+                Handler handler = getHandler(handlerName);
+                context.addHandler(handler);
+            }
+        }
+        
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
@@ -285,4 +292,15 @@ public class JettyHttpComponent extends HttpComponent {
         super.doStop();
     }
    
+    private Handler getHandler(String handlerName) {
+        Handler handler = null;
+        if (handlerName != null) {
+            handler = getCamelContext().getRegistry().lookup(handlerName, Handler.class);
+            ObjectHelper.notNull(handler, handlerName);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Using context handler: " + handlerName);
+            }
+        }
+        return handler;
+    }
 }

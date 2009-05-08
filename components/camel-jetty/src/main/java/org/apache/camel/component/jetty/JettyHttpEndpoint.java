@@ -37,7 +37,8 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpComponent component;
     private boolean sessionSupport;
-
+    private String handlerNames;
+    
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpClientParams clientParams,
                              HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(uri, component, httpURL, clientParams, httpConnectionManager, clientConfigurer);
@@ -70,6 +71,14 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public boolean isSessionSupport() {
         return sessionSupport;
+    }
+
+    public String getHandlers() {
+        return handlerNames;
+    }
+
+    public void setHandlers(String handlerNames) {
+        this.handlerNames = handlerNames;
     }
 
 }

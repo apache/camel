@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class JettyHttpEndpointDisconnectTest extends ContextTestSupport {
 
-    private String serverUri = "http://localhost:5432/myservice";
+    private String serverUri = "http://localhost:9080/myservice";
 
     public void testContextShutdownRemovesHttpConnector() throws Exception {
         context.stop();

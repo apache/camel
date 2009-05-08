@@ -25,7 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class JettySteveIssueTest extends ContextTestSupport {
 
-    private String serverUri = "http://localhost:5432/myservice";
+    private String serverUri = "http://localhost:9080/myservice";
 
     public void testSendX() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
