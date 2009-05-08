@@ -26,12 +26,7 @@ import org.apache.camel.language.simple.SimpleLanguage;
 public class SimpleTest extends LanguageTestSupport {
 
     public void testConstantExpression() throws Exception {
-        try {
-            assertExpression("Hello World", "Hello World");
-            fail("Should have thrown an Exception");
-        } catch (ExpressionIllegalSyntaxException e) {
-            // constants is not supported
-        }
+        assertExpression("Hello World", "Hello World");
     }
 
     public void testSimpleExpressions() throws Exception {
@@ -79,6 +74,22 @@ public class SimpleTest extends LanguageTestSupport {
         exchange.setException(new IllegalArgumentException("Just testing"));
         assertExpression("exception.message", "Just testing");
         assertExpression("Hello ${exception.message} World", "Hello Just testing World");
+    }
+
+    public void testIllegalSyntax() throws Exception {
+        try {
+            assertExpression("hey ${xxx} how are you?", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: xxx", e.getMessage());
+        }
+
+        try {
+            assertExpression("${xxx}", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: xxx", e.getMessage());
+        }
     }
 
     protected String getLanguageName() {

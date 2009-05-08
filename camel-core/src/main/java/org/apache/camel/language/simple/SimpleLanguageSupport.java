@@ -52,24 +52,24 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
         Matcher matcher = PATTERN.matcher(expression);
         if (matcher.matches()) {
             if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as operator expression: " + expression);
+                log.debug("Expression is evaluated as simple expression wiht operator: " + expression);
             }
             return createOperatorExpression(matcher, expression);
         } else if (expression.indexOf("${") >= 0) {
             if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as complex expression: " + expression);
+                log.debug("Expression is evaluated as simple (strict) expression: " + expression);
             }
             return createComplexConcatExpression(expression);
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Expression is evaluated as simple expression: " + expression);
+                log.debug("Expression is evaluated as simple (non strict) expression: " + expression);
             }
-            return createSimpleExpression(expression);
+            return createSimpleExpression(expression, false);
         }
     }
 
     private Expression createOperatorExpression(final Matcher matcher, final String expression) {
-        final Expression left = createSimpleExpression(matcher.group(1));
+        final Expression left = createSimpleExpression(matcher.group(1), true);
         final SimpleLangaugeOperator operator = asOperator(matcher.group(2));
 
         // the right hand side expression can either be a constant expression wiht ' '
@@ -91,7 +91,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
             }
             String simple = ObjectHelper.between(text, "${", "}");
 
-            right = simple != null ? createSimpleExpression(simple) : createConstantExpression(constant);
+            right = simple != null ? createSimpleExpression(simple, true) : createConstantExpression(constant);
             // to support numeric comparions using > and < operators we must convert the right hand side
             // to the same type as the left
             rightConverted = ExpressionBuilder.convertToExpression(right, left);
@@ -176,7 +176,7 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
                 }
                 String simpleText = expression.substring(pivot, endIdx);
 
-                Expression simpleExpression = createSimpleExpression(simpleText);
+                Expression simpleExpression = createSimpleExpression(simpleText, true);
                 results.add(simpleExpression);
                 pivot = endIdx + 1;
             }
@@ -196,9 +196,12 @@ public abstract class SimpleLanguageSupport implements Language, IsSingleton {
      * Creates the simple expression based on the extracted content from the ${ } place holders
      *
      * @param expression  the content between ${ and }
+     * @param strict whether it is strict mode or not, if strict it will throw a
+     * {@link org.apache.camel.ExpressionIllegalSyntaxException} if the expression was not known.
+     * Set to <tt>false</tt> to support constant expressions
      * @return the expression
      */
-    protected abstract Expression createSimpleExpression(String expression);
+    protected abstract Expression createSimpleExpression(String expression, boolean strict);
 
     protected String ifStartsWithReturnRemainder(String prefix, String text) {
         if (text.startsWith(prefix)) {

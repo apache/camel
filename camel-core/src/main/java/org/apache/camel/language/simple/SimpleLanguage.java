@@ -52,7 +52,7 @@ public class SimpleLanguage extends SimpleLanguageSupport {
         return language.createExpression(expression);
     }
 
-    protected Expression createSimpleExpression(String expression) {
+    protected Expression createSimpleExpression(String expression, boolean strict) {
         if (ObjectHelper.isEqualToAny(expression, "body", "in.body")) {
             return ExpressionBuilder.bodyExpression();
         } else if (ObjectHelper.equal(expression, "out.body")) {
@@ -117,7 +117,11 @@ public class SimpleLanguage extends SimpleLanguageSupport {
             return ExpressionBuilder.beanExpression(remainder);
         }
 
-        throw new ExpressionIllegalSyntaxException(expression);
+        if (strict) {
+            throw new ExpressionIllegalSyntaxException(expression);
+        } else {
+            return ExpressionBuilder.constantExpression(expression);
+        }
     }
 
     public boolean isSingleton() {

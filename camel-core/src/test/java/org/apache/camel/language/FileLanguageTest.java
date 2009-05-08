@@ -24,6 +24,7 @@ import java.util.GregorianCalendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
@@ -129,6 +130,34 @@ public class FileLanguageTest extends LanguageTestSupport {
         cal.set(2008, Calendar.AUGUST, 8);
         answer.getOut().setHeader("special", cal.getTime());
         return answer;
+    }
+
+    public void testIllegalSyntax() throws Exception {
+        try {
+            // it should be with colon
+            assertExpression("${file.name}", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: file.name", e.getMessage());
+        }
+
+        try {
+            assertExpression("hey ${xxx} how are you?", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: xxx", e.getMessage());
+        }
+
+        try {
+            assertExpression("${xxx}", "");
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertEquals("Illegal syntax: xxx", e.getMessage());
+        }
+    }
+
+    public void testConstantFilename() throws Exception {
+        assertExpression("hello.txt", "hello.txt");
     }
 
     public class MyFileNameGenerator {

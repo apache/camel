@@ -54,12 +54,14 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class FileLanguage extends SimpleLanguageSupport {
 
+    private static final SimpleLanguage SIMPLE = new SimpleLanguage();
+
     public static Expression file(String expression) {
         FileLanguage language = new FileLanguage();
         return language.createExpression(expression);
     }
 
-    protected Expression createSimpleExpression(String expression) {
+    protected Expression createSimpleExpression(String expression, boolean strict) {
 
         // file: prefix
         String remainder = ifStartsWithReturnRemainder("file:", expression);
@@ -102,7 +104,7 @@ public class FileLanguage extends SimpleLanguageSupport {
         }
 
         // fallback to simple language if not file specific
-        return FileExpressionBuilder.simpleExpression(expression);
+        return SIMPLE.createSimpleExpression(expression, strict);
     }
 
     public boolean isSingleton() {
