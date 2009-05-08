@@ -26,6 +26,7 @@ http\://activemq.apache.org/camel/schema/cxf/cxfEndpoint.xsd=schema/cxfEndpoint.
 http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.3.0.xsd=schema/cxfEndpoint.xsd
 http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.4.0.xsd=schema/cxfEndpoint.xsd
 http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.5.0.xsd=schema/cxfEndpoint.xsd
+http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-1.6.0.xsd=schema/cxfEndpoint.xsd
 http\://activemq.apache.org/camel/schema/cxfEndpoint/camel-cxf-${pom.version}.xsd=schema/cxfEndpoint.xsd
 
 # since we don't publish the camel schema in the cxf site, we will always use the schema file in the class path 
