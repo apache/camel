@@ -511,6 +511,9 @@ public final class ExchangeHelper {
     }
 
     private static <T> T doExtractBody(CamelContext context, Object result, Class<T> type) {
+        if (result == null) {
+            return null;
+        }
         if (type.isAssignableFrom(result.getClass())) {
             return type.cast(result);
         }
