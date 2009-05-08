@@ -36,7 +36,7 @@ import quickfix.FileStoreFactory;
 import quickfix.LogFactory;
 import quickfix.Message;
 import quickfix.MessageStoreFactory;
-import quickfix.ScreenLogFactory;
+import quickfix.SLF4JLogFactory;
 import quickfix.Session;
 import quickfix.SessionID;
 import quickfix.SessionSettings;
@@ -166,7 +166,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
                 // if the logFactory is still not set and we are fine to use
                 // non-strict logging,
                 // then the screen logging factory will be used by default
-                logFactory = new ScreenLogFactory(settings);
+                logFactory = new SLF4JLogFactory(settings);
             } else {
                 throw new IllegalArgumentException(
                                            "The strict option is switched on. "
