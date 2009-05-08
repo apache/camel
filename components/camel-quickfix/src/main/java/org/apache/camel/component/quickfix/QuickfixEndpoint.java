@@ -88,8 +88,7 @@ public abstract class QuickfixEndpoint extends DefaultEndpoint implements Servic
     public Exchange createExchange(Message message) {
         setExchangePattern(ExchangePattern.InOut);
         Exchange answer = createExchange();
-        answer.getIn().setBody(message);
-        answer.getOut().setBody(message);
+        answer.getIn().setBody(message);        
         return answer;
     }
 
