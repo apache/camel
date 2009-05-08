@@ -19,10 +19,10 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.component.cxf.CxfHeaderFilterStrategy;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;

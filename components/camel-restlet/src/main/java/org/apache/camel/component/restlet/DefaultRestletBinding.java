@@ -24,11 +24,11 @@ import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.HeaderFilterStrategyAware;
 import org.apache.camel.Message;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.converter.jaxp.StringSource;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.restlet.data.ChallengeResponse;

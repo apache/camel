@@ -14,9 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel;
-
-import org.apache.camel.spi.HeaderFilterStrategy;
+package org.apache.camel.spi;
 
 /**
  * An interface to represent an object which can make use of
@@ -27,9 +25,17 @@ import org.apache.camel.spi.HeaderFilterStrategy;
  */
 public interface HeaderFilterStrategyAware {
 
-    // TODO move this to SPI package
-
+    /**
+     * Gets the header filter strategy used
+     *
+     * @return the strategy
+     */
     HeaderFilterStrategy getHeaderFilterStrategy();
-    
+
+    /**
+     * Sets the header filter strategy to use
+     *
+     * @param strategy the strategy
+     */
     void setHeaderFilterStrategy(HeaderFilterStrategy strategy);
 }

@@ -30,9 +30,8 @@ import org.w3c.dom.Element;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.HeaderFilterStrategyAware;
-import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.binding.soap.SoapHeader;
