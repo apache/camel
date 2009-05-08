@@ -29,7 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
 
-    private String route = "";
+    private static String route = "";
 
     @Override
     protected void setUp() throws Exception {
@@ -98,26 +98,33 @@ public class AsyncRouteNoWaitWithErrorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // we start this route async
                 from("direct:start")
-                        // we play a bit with the message
+                            // we play a bit with the message
                         .transform(body().append(" World"))
-                                // now turn the route into async from this point forward
-                                // the caller will have a Future<Exchange> returned as response in OUT
-                                // to be used to grap the async response when he fell like it
+                            // now turn the route into async from this point forward
+                            // the caller will have a Future<Exchange> returned as response in OUT
+                            // to be used to grap the async response when he fell like it
                         .async().waitForTaskToComplete(false)
-                                // from this point forward this is the async route doing its work
-                                // so we do a bit of delay to simulate heavy work that takes time
+                            // from this point forward this is the async route doing its work
+                            // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
                         .delay(100)
-                                // and we also work with the message so we can prepare a response
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                route += "B";
-                                assertEquals("Hello World", exchange.getIn().getBody());
-                                throw new IllegalArgumentException("Damn forced by unit test");
-                            }
+                            // and we also work with the message so we can prepare a response
+                        .process(new MyProcessor())
                             // and we use mocks for unit testing
-                        }).to("mock:result");
+                        .to("mock:result");
             }
         };
+    }
+
+    public static class MyProcessor implements Processor {
+
+        public MyProcessor() {
+        }
+
+        public void process(Exchange exchange) throws Exception {
+            route += "B";
+            assertEquals("Hello World", exchange.getIn().getBody());
+            throw new IllegalArgumentException("Damn forced by unit test");
+        }
     }
 }

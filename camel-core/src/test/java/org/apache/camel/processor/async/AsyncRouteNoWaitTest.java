@@ -27,9 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version $Revision$
  */
-public class AsyncNoWaitRouteTest extends ContextTestSupport {
+public class AsyncRouteNoWaitTest extends ContextTestSupport {
 
-    private String route = "";
+    private static String route = "";
 
     @Override
     protected void setUp() throws Exception {
@@ -122,29 +122,36 @@ public class AsyncNoWaitRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // we start this route async
                 from("direct:start")
-                        // we play a bit with the message
+                            // we play a bit with the message
                         .transform(body().append(" World"))
-                                // now turn the route into async from this point forward
-                                // the caller will have a Future<Exchange> returned as response in OUT
-                                // to be used to grap the async response when he fell like it
-                                // we do not want to wait for tasks to be complete so we instruct Camel
-                                // to not wait, and therefore Camel returns the Future<Exchange> handle we
-                                // can use to get the result when we want
+                            // now turn the route into async from this point forward
+                            // the caller will have a Future<Exchange> returned as response in OUT
+                            // to be used to grap the async response when he fell like it
+                            // we do not want to wait for tasks to be complete so we instruct Camel
+                            // to not wait, and therefore Camel returns the Future<Exchange> handle we
+                            // can use to get the result when we want
                         .async().waitForTaskToComplete(false)
-                                // from this point forward this is the async route doing its work
-                                // so we do a bit of delay to simulate heavy work that takes time
+                            // from this point forward this is the async route doing its work
+                            // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
                         .delay(100)
-                                // and we also work with the message so we can prepare a response
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                route += "B";
-                                assertEquals("Hello World", exchange.getIn().getBody());
-                                exchange.getOut().setBody("Bye World");
-                            }
+                            // and we also work with the message so we can prepare a response
+                        .process(new MyProcessor())
                             // and we use mocks for unit testing
-                        }).to("mock:result");
+                        .to("mock:result");
             }
         };
+    }
+
+    public static class MyProcessor implements Processor {
+
+        public MyProcessor() {
+        }
+
+        public void process(Exchange exchange) throws Exception {
+            route += "B";
+            assertEquals("Hello World", exchange.getIn().getBody());
+            exchange.getOut().setBody("Bye World");
+        }
     }
 }

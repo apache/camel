@@ -24,6 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
+import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -74,7 +75,8 @@ public class TransactionalClientWithRollbackTest extends SpringTestSupport {
             template.sendBody("direct:fail", "Hello World");
             fail("Should have thrown a RollbackExchangeException");
         } catch (RuntimeCamelException e) {
-            assertTrue(e.getCause() instanceof RollbackExchangeException);
+            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            assertTrue(e.getCause().getCause() instanceof RollbackExchangeException);
         }
 
         int count = jdbc.queryForInt("select count(*) from books");

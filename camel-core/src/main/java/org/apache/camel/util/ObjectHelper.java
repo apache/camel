@@ -35,6 +35,8 @@ import java.util.Scanner;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -880,10 +882,26 @@ public final class ObjectHelper {
      */
     public static RuntimeCamelException wrapRuntimeCamelException(Throwable e) {
         if (e instanceof RuntimeCamelException) {
-            // don't double wrap if already a RuntimeCamelException
+            // don't double wrap
             return (RuntimeCamelException)e;
         } else {
             return new RuntimeCamelException(e);
+        }
+    }
+
+    /**
+     * Wraps the caused exception in a {@link CamelExecutionException} if its not
+     * already such an exception.
+     *
+     * @param e the caused exception
+     * @return the wrapper exception
+     */
+    public static CamelExecutionException wrapCamelExecutionException(Exchange exchange, Throwable e) {
+        if (e instanceof CamelExecutionException) {
+            // don't double wrap
+            return (CamelExecutionException)e;
+        } else {
+            return new CamelExecutionException("Exception occured during execution", exchange, e);
         }
     }
 

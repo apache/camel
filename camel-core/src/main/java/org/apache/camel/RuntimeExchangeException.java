@@ -43,7 +43,11 @@ public class RuntimeExchangeException extends RuntimeCamelException {
     }
 
     protected static String createMessage(String message, Exchange exchange) {
-        return message + " on the exchange: " + exchange;
+        if (exchange != null) {
+            return message + " on the exchange: " + exchange;
+        } else {
+            return message;
+        }
     }
 
 }

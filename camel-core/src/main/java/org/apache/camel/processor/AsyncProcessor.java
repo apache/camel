@@ -70,15 +70,16 @@ public class AsyncProcessor extends DelegateProcessor implements Processor {
         // sumbit the task
         Future<Exchange> future = getExecutorService().submit(task);
 
-        // TODO: Support exchange headers for wait and timeout values, see Exchange constants
+        // compute if we should wait for task to complete or not
+        boolean wait = waitTaskComplete;
+        if (exchange.getIn().getHeader(Exchange.ASYNC_WAIT) != null) {
+            wait = exchange.getIn().getHeader(Exchange.ASYNC_WAIT, Boolean.class);
+        }
 
-        if (waitTaskComplete) {
+        if (wait) {
             // wait for task to complete
             Exchange response = future.get();
-            // if we are out capable then set the response on the original exchange
-            if (ExchangeHelper.isOutCapable(exchange)) {
-                ExchangeHelper.copyResults(exchange, response);
-            }
+            ExchangeHelper.copyResults(exchange, response);
         } else {
             // no we do not expect a reply so lets continue, set a handle to the future task
             // in case end user need it later

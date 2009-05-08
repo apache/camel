@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spring.SpringTestSupport;
+import org.apache.camel.spring.spi.TransactedRuntimeCamelException;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -65,8 +66,9 @@ public class TransactionalClientDataSourceMinimalConfigurationTest extends Sprin
             template.sendBody("direct:fail", "Hello World");
         } catch (RuntimeCamelException e) {
             // expeced as we fail
-            assertTrue(e.getCause() instanceof IllegalArgumentException);
-            assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
+            assertIsInstanceOf(TransactedRuntimeCamelException.class, e.getCause());
+            assertTrue(e.getCause().getCause() instanceof IllegalArgumentException);
+            assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
 
         int count = jdbc.queryForInt("select count(*) from books");

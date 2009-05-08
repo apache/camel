@@ -19,7 +19,6 @@ package org.apache.camel.impl;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -564,40 +563,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
-
     public <T> T asyncExtractBody(Future future, Class<T> type) {
-        try {
-            return doExtractBody(future.get(), type);
-        } catch (InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        } catch (ExecutionException e) {
-            // execution failed due to an exception so rethrow the cause
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
-        }
+        return ExchangeHelper.asyncExtractBody(context, future, type);
     }
 
     public <T> T asyncExtractBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
-        try {
-            if (timeout > 0) {
-                return doExtractBody(future.get(timeout, unit), type);
-            } else {
-                return doExtractBody(future.get(), type);
-            }
-        } catch (InterruptedException e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        } catch (ExecutionException e) {
-            // execution failed due to an exception so rethrow the cause
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
-        }
-    }
-
-    private <T> T doExtractBody(Object result, Class<T> type) {
-        if (result instanceof Exchange) {
-            Exchange exchange = (Exchange) result;
-            Object answer = ExchangeHelper.extractResultBody(exchange, exchange.getPattern());
-            return context.getTypeConverter().convertTo(type, answer);
-        }
-        return context.getTypeConverter().convertTo(type, result);
+        return ExchangeHelper.asyncExtractBody(context, future, timeout, unit, type);
     }
 
 }

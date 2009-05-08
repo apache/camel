@@ -18,6 +18,10 @@ package org.apache.camel.util;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
@@ -410,9 +414,9 @@ public final class ExchangeHelper {
     public static Object extractResultBody(Exchange exchange, ExchangePattern pattern) {
         Object answer = null;
         if (exchange != null) {
-            // rethrow if there was an exception
+            // rethrow if there was an exception during execution
             if (exchange.getException() != null) {
-                throw new CamelExecutionException("Exception occured during execution ", exchange, exchange.getException());
+                throw ObjectHelper.wrapCamelExecutionException(exchange, exchange.getException());
             }
 
             // result could have a fault message
@@ -455,5 +459,67 @@ public final class ExchangeHelper {
         return false;
     }
 
+    /**
+     * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
+     * <p/>
+     * Will wait until the future task is complete.
+     *
+     * @param context the camel context
+     * @param future the future handle
+     * @param type the expected body response type
+     * @return the result body, can be <tt>null</tt>.
+     * @throws CamelExecutionException if the processing of the exchange failed
+     */
+    public static <T> T asyncExtractBody(CamelContext context, Future future, Class<T> type) {
+        try {
+            return doExtractBody(context, future.get(), type);
+        } catch (InterruptedException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
+            // execution failed due to an exception so rethrow the cause
+            throw ObjectHelper.wrapCamelExecutionException(null, e.getCause());
+        }
+    }
+
+    /**
+     * Extracts the body from the given future, that represents a handle to an asynchronous exchange.
+     * <p/>
+     * Will wait for the future task to complete, but waiting at most the timeout value.
+     *
+     * @param context the camel context
+     * @param future the future handle
+     * @param timeout timeout value
+     * @param unit    timeout unit
+     * @param type the expected body response type
+     * @return the result body, can be <tt>null</tt>.
+     * @throws CamelExecutionException if the processing of the exchange failed
+     * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
+     */
+    public static <T> T asyncExtractBody(CamelContext context, Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+        try {
+            if (timeout > 0) {
+                return doExtractBody(context, future.get(timeout, unit), type);
+            } else {
+                return doExtractBody(context, future.get(), type);
+            }
+        } catch (InterruptedException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        } catch (ExecutionException e) {
+            // execution failed due to an exception so rethrow the cause
+            throw ObjectHelper.wrapCamelExecutionException(null, e.getCause());
+        }
+    }
+
+    private static <T> T doExtractBody(CamelContext context, Object result, Class<T> type) {
+        if (type.isAssignableFrom(result.getClass())) {
+            return type.cast(result);
+        }
+        if (result instanceof Exchange) {
+            Exchange exchange = (Exchange) result;
+            Object answer = ExchangeHelper.extractResultBody(exchange, exchange.getPattern());
+            return context.getTypeConverter().convertTo(type, answer);
+        }
+        return context.getTypeConverter().convertTo(type, result);
+    }
 
 }

@@ -68,8 +68,11 @@ public final class FutureTypeConverter implements TypeConverter {
             try {
                 body = future.get();
             } catch (ExecutionException e) {
-                exchange.setException(e);
-                throw e;
+                if (e.getCause() instanceof Exception) {
+                    throw (Exception) e.getCause();
+                } else {
+                    throw e;
+                }
             }
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Got future response");
@@ -79,11 +82,9 @@ public final class FutureTypeConverter implements TypeConverter {
                 return null;
             }
 
-            Class from = body.getClass();
-
             // maybe from is already the type we want
-            if (from.isAssignableFrom(type)) {
-                return type.cast(from);
+            if (type.isAssignableFrom(body.getClass())) {
+                return type.cast(body);
             } else if (body instanceof Exchange) {
                 Exchange result = (Exchange) body;
                 body = ExchangeHelper.extractResultBody(result, result.getPattern());

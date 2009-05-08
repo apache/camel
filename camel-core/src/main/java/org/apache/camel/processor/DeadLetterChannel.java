@@ -47,6 +47,8 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     // or not. Also consider MEP as InOut does not work with async then as the original caller thread
     // is expecting a reply in the sync thread.
 
+    // TODO: DLQ should handle by default, so added option to set global predicate on DLC
+
     // we can use a single shared static timer for async redeliveries
     private final Processor deadLetter;
     private final String deadLetterUri;
@@ -64,7 +66,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
 
         // default behavior which can be overloaded on a per exception basis
         RedeliveryPolicy currentRedeliveryPolicy = redeliveryPolicy;
-        Processor failureProcessor = deadLetter;
+        Processor deadLetterQueue = deadLetter;
         Processor onRedeliveryProcessor = redeliveryProcessor;
     }
     
@@ -116,6 +118,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
                 }
                 if (exchange.getException() == null) {
                     exchange.setException(new RejectedExecutionException());
+                    return;
                 }
             }
 
@@ -136,8 +139,9 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
             // compute if we should redeliver or not
             boolean shouldRedeliver = shouldRedeliver(exchange, data);
             if (!shouldRedeliver) {
-                deliverToFaultProcessor(exchange, data);
-                // we should not try redeliver so we are finished
+                // no then move it to the dead letter queue
+                deliverToDeadLetterQueue(exchange, data);
+                // and we are finished since the exchanged was moved to the dead letter queue
                 return;
             }
 
@@ -249,7 +253,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
             // route specific failure handler?
             Processor processor = exceptionPolicy.getErrorHandler();
             if (processor != null) {
-                data.failureProcessor = processor;
+                data.deadLetterQueue = processor;
             }
             // route specific on redelivey?
             processor = exceptionPolicy.getOnRedelivery();
@@ -287,10 +291,10 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     }
 
     /**
-     * All redelivery attempts failed so move the exchange to the fault processor (eg the dead letter queue)
+     * All redelivery attempts failed so move the exchange to the dead letter queue
      */
-    private void deliverToFaultProcessor(final Exchange exchange, final RedeliveryData data) {
-        if (data.failureProcessor == null) {
+    private void deliverToDeadLetterQueue(final Exchange exchange, final RedeliveryData data) {
+        if (data.deadLetterQueue == null) {
             return;
         }
 
@@ -299,26 +303,30 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
         // must decrement the redelivery counter as we didn't process the redelivery but is
         // handling by the failure handler. So we must -1 to not let the counter be out-of-sync
         decrementRedeliveryCounter(exchange);
+        // reset cached streams so they can be read again
+        MessageHelper.resetStreamCache(exchange.getIn());
 
         try {
-            data.failureProcessor.process(exchange);
+            data.deadLetterQueue.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
         }
-        log.trace("Fault processor done");
-        prepareExchangeForFailure(exchange, data.handledPredicate);
+        log.trace("DedLetterQueue processor done");
+
+        prepareExchangeAfterMovedToDeadLetterQueue(exchange, data.handledPredicate);
 
         String msg = "Failed delivery for exchangeId: " + exchange.getExchangeId()
-                + ". Handled by the failure processor: " + data.failureProcessor;
+                + ". Moved to the dead letter queue: " + data.deadLetterQueue;
         logFailedDelivery(false, exchange, msg, data, null);
     }
 
-    private void prepareExchangeForFailure(Exchange exchange, Predicate handledPredicate) {
+    private void prepareExchangeAfterMovedToDeadLetterQueue(Exchange exchange, Predicate handledPredicate) {
         if (handledPredicate == null || !handledPredicate.matches(exchange)) {
             if (log.isDebugEnabled()) {
                 log.debug("This exchange is not handled so its marked as failed: " + exchange);
             }
             // exception not handled, put exception back in the exchange
+            exchange.setProperty(Exchange.EXCEPTION_HANDLED, Boolean.FALSE);
             exchange.setException(exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
         } else {
             if (log.isDebugEnabled()) {

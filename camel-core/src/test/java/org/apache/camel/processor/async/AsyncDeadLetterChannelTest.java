@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.async;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -27,24 +28,16 @@ import org.apache.camel.component.mock.MockEndpoint;
  *
  * @version $Revision$
  */
-public class AsyncErrorHandlerTest extends ContextTestSupport {
-
-    public void testAsyncErrorHandler() throws Exception {
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
-
-        MockEndpoint mock = getMockEndpoint("mock:dead");
-        mock.expectedMessageCount(1);
-        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
-        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
-
-        template.sendBody("direct:in", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }
+public class AsyncDeadLetterChannelTest extends ContextTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
+    public void testAsyncErrorHandlerWait() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
 
@@ -57,7 +50,55 @@ public class AsyncErrorHandlerTest extends ContextTestSupport {
                         }
                     });
             }
-        };
+        });
+        context.start();
+
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+
+        MockEndpoint mock = getMockEndpoint("mock:dead");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+
+        try {
+            template.sendBody("direct:in", "Hello World");
+            fail("Should have thrown a CamelExecutionException");
+        } catch (CamelExecutionException e) {
+            assertEquals("Forced exception by unit test", e.getCause().getMessage());
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testAsyncErrorHandlerNoWait() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).delay(0).logStackTrace(false));
+
+                from("direct:in")
+                    .async(2).waitForTaskToComplete(false)
+                    .to("mock:foo")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            throw new Exception("Forced exception by unit test");
+                        }
+                    });
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+
+        MockEndpoint mock = getMockEndpoint("mock:dead");
+        mock.expectedMessageCount(1);
+        mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
+        mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
+
+        template.sendBody("direct:in", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
 }

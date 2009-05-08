@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.async;
 
-import java.util.concurrent.Future;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -28,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class AsyncRouteTest extends ContextTestSupport {
 
-    private String route = "";
+    private static String route = "";
 
     @Override
     protected void setUp() throws Exception {
@@ -44,7 +42,7 @@ public class AsyncRouteTest extends ContextTestSupport {
         // it will wait for the async response so we get the full response
         Object out = template.requestBody("direct:start", "Hello");
 
-        // we should run before the async processor that sets B
+        // we should not run before the async processor that sets B
         route += "A";
 
         // as it turns into a async route later we get a Future as response
@@ -85,24 +83,31 @@ public class AsyncRouteTest extends ContextTestSupport {
                 from("direct:start")
                         // we play a bit with the message
                         .transform(body().append(" World"))
-                                // now turn the route into async from this point forward
-                                // the caller will have a Future<Exchange> returned as response in OUT
-                                // to be used to grap the async response when he fell like it
+                            // now turn the route into async from this point forward
+                            // the caller will have a Future<Exchange> returned as response in OUT
+                            // to be used to grap the async response when he fell like it
                         .async()
-                                // from this point forward this is the async route doing its work
-                                // so we do a bit of delay to simulate heavy work that takes time
+                            // from this point forward this is the async route doing its work
+                            // so we do a bit of delay to simulate heavy work that takes time
                         .to("mock:foo")
                         .delay(100)
-                                // and we also work with the message so we can prepare a response
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                route += "B";
-                                assertEquals("Hello World", exchange.getIn().getBody());
-                                exchange.getOut().setBody("Bye World");
-                            }
+                            // and we also work with the message so we can prepare a response
+                        .process(new MyProcessor())
                             // and we use mocks for unit testing
-                        }).to("mock:result");
+                        .to("mock:result");
             }
         };
+    }
+
+    public static class MyProcessor implements Processor {
+
+        public MyProcessor() {
+        }
+
+        public void process(Exchange exchange) throws Exception {
+            route += "B";
+            assertEquals("Hello World", exchange.getIn().getBody());
+            exchange.getOut().setBody("Bye World");
+        }
     }
 }
