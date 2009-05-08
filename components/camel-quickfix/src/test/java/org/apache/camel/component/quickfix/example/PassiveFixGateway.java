@@ -32,7 +32,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class PassiveFixGateway extends SpringRouteBuilder {
 
     public void configure() throws Exception {
-        from("quickfix-server:examples/server.cfg").convertBodyTo(InputStream.class).to("quickfix-client:examples/client.cfg");
+        from("quickfix-server:examples/server.cfg").to("quickfix-client:examples/client.cfg");
     }
 
     public static void main(String[] args) {
