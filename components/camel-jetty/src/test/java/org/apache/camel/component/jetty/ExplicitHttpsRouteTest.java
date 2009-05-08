@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.camel.Exchange;
@@ -28,12 +29,12 @@ public class ExplicitHttpsRouteTest extends HttpsRouteTest {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws URISyntaxException {
                 SslSocketConnector sslSocketConnector = new SslSocketConnector();
                 sslSocketConnector.setKeyPassword(pwd);
                 sslSocketConnector.setPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-                sslSocketConnector.setKeystore(keyStoreUrl.getPath());
+                sslSocketConnector.setKeystore(keyStoreUrl.toURI().getPath());
                 sslSocketConnector.setTruststoreType("JKS");
                 
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");

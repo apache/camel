@@ -30,7 +30,7 @@ import org.apache.camel.component.mock.MockEndpoint;
  */
 public class JettyHttpGetWithParamTest extends ContextTestSupport {
 
-    private String serverUri = "http://localhost:5432/myservice";
+    private String serverUri = "http://localhost:9080/myservice";
     private MyParamsProcessor processor = new MyParamsProcessor();
 
     public void testHttpGetWithParamsViaURI() throws Exception {

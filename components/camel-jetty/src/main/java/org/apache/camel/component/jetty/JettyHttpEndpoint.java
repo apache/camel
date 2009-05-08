@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -30,6 +31,7 @@ import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.component.http.HttpPollingConsumer;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
+import org.mortbay.jetty.Handler;
 
 /**
  * @version $Revision$
@@ -37,6 +39,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpComponent component;
     private boolean sessionSupport;
+    private List<Handler> handlers;
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL, HttpClientParams clientParams,
                              HttpConnectionManager httpConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
@@ -70,5 +73,13 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public boolean isSessionSupport() {
         return sessionSupport;
+    }
+
+    public List<Handler> getHandlers() {
+        return handlers;
+    }
+
+    public void setHandlers(List<Handler> handlers) {
+        this.handlers = handlers;
     }
 }

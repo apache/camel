@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class HttpsRouteTest extends ContextTestSupport {
         // ensure jsse clients can validate the self signed dummy localhost cert, 
         // use the server keystore as the trust store for these tests
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.getPath());
+        setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
     }
 
     @Override
@@ -134,13 +135,13 @@ public class HttpsRouteTest extends ContextTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws URISyntaxException {
                 
                 JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
                 URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
-                componentJetty.setKeystore(keyStoreUrl.getPath());
+                componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
                 
                 from("jetty:https://localhost:9080/test").to("mock:a");
 

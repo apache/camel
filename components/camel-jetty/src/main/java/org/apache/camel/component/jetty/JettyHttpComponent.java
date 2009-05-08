@@ -17,7 +17,9 @@
 package org.apache.camel.component.jetty;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
@@ -25,6 +27,7 @@ import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -32,6 +35,7 @@ import org.apache.commons.httpclient.params.HttpClientParams;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.mortbay.jetty.Connector;
+import org.mortbay.jetty.Handler;
 import org.mortbay.jetty.Server;
 import org.mortbay.jetty.handler.ContextHandlerCollection;
 import org.mortbay.jetty.nio.SelectChannelConnector;
@@ -84,8 +88,21 @@ public class JettyHttpComponent extends HttpComponent {
         uri = uri.startsWith("jetty:") ? remaining : uri;
 
         HttpClientParams params = new HttpClientParams();
-        IntrospectionSupport.setProperties(params, parameters, "httpClient.");   
+        IntrospectionSupport.setProperties(params, parameters, "httpClient.");
 
+        // handlers
+        List<Handler> handlerList = new ArrayList<Handler>();
+        String handlers = getAndRemoveParameter(parameters, "handlers", String.class);
+        if (handlers != null) {
+            // remove any leading # for reference lookup as we know its a reference lookup
+            handlers = handlers.replaceAll("#", "");
+            // lookup each individual handler and add it to the list
+            for (String key : handlers.split(",")) {
+                handlerList.add(CamelContextHelper.mandatoryLookup(getCamelContext(), key, Handler.class));
+            }
+        }
+
+        // configure regular parameters
         configureParameters(parameters);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
@@ -96,14 +113,15 @@ public class JettyHttpComponent extends HttpComponent {
         if (httpBinding != null) {
             result.setBinding(httpBinding);
         }
+        if (handlerList.size() > 0) {
+            result.setHandlers(handlerList);
+        }
         setProperties(result, parameters);
         return result;
     }
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
-     *
-     * @throws Exception
      */
     @Override
     public void connect(HttpConsumer consumer) throws Exception {
@@ -127,7 +145,7 @@ public class JettyHttpComponent extends HttpComponent {
                 }
                 getServer().addConnector(connector);
 
-                connectorRef = new ConnectorRef(connector, createServletForConnector(connector));
+                connectorRef = new ConnectorRef(connector, createServletForConnector(connector, endpoint.getHandlers()));
                 connector.start();
                 
                 connectors.put(connectorKey, connectorRef);
@@ -248,18 +266,23 @@ public class JettyHttpComponent extends HttpComponent {
         sslSocketConnector = connector;
     }
 
-    protected CamelServlet createServletForConnector(Connector connector) throws Exception {
+    protected CamelServlet createServletForConnector(Connector connector, List<Handler> handlers) throws Exception {
         CamelServlet camelServlet = new CamelServlet(isMatchOnUriPrefix());
 
         Context context = new Context(server, "/", Context.NO_SECURITY | Context.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
+
+        if (handlers != null) {
+            for (Handler handler : handlers) {
+                context.addHandler(handler);
+            }
+        }
 
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
         connector.start();
         context.start();
-        
 
         return camelServlet;
     }
