@@ -42,11 +42,11 @@ public final class CxfHeaderHelper {
     }
 
     /**
-     * Propagates Camel headers to CXF message.
+     * Progagates Camel headers to CXF message.
      *
      * @param strategy header filter strategy
      * @param headers Camel header
-     * @param message CXF message
+     * @param message CXF meassage
      * @param exchange provides context for filtering
      */
     public static void propagateCamelToCxf(HeaderFilterStrategy strategy,
@@ -64,7 +64,9 @@ public final class CxfHeaderHelper {
             if (strategy != null
                     && !strategy.applyFilterToCamelHeaders(entry.getKey(), entry.getValue(), exchange)) {
 
-                if (Client.REQUEST_CONTEXT.equals(entry.getKey())
+                if (CamelTransportConstants.CAMEL_CONTENT_TYPE.equals(entry.getKey())) {
+                    message.put(Message.CONTENT_TYPE, entry.getValue());
+                } else if (Client.REQUEST_CONTEXT.equals(entry.getKey())
                             || Client.RESPONSE_CONTEXT.equals(entry.getKey())
                             || Message.RESPONSE_CODE.equals(entry.getKey())) {
                     message.put(entry.getKey(), entry.getValue());
@@ -95,9 +97,16 @@ public final class CxfHeaderHelper {
             }
         }
 
-        // propagate request context
-        String key = Client.REQUEST_CONTEXT;
+        // propagate content type
+        String key = Message.CONTENT_TYPE;
         Object value = message.get(key);
+        if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
+            headers.put(CamelTransportConstants.CAMEL_CONTENT_TYPE, value);
+        }
+
+        // propagate request context
+        key = Client.REQUEST_CONTEXT;
+        value = message.get(key);
         if (value != null && !strategy.applyFilterToExternalHeaders(key, value, exchange)) {
             headers.put(key, value);
         }
