@@ -53,6 +53,8 @@ import java.util.Map;
  *  <b>Note:</b> that if ExchangeProperty instance get or set methods are used then type checks
  *  of property's value are performed and a runtime exception can be thrown if type
  *  safety is violated.
+ *
+ * @deprecated will be removed in Camel 2.0
  */
 public class ExchangeProperty<T> {
 
