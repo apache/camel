@@ -470,9 +470,9 @@ public final class ExchangeHelper {
      * @return the result body, can be <tt>null</tt>.
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    public static <T> T asyncExtractBody(CamelContext context, Future future, Class<T> type) {
+    public static <T> T extractFutureBody(CamelContext context, Future future, Class<T> type) {
         try {
-            return doExtractBody(context, future.get(), type);
+            return doExtractFutureBody(context, future.get(), type);
         } catch (InterruptedException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         } catch (ExecutionException e) {
@@ -495,12 +495,12 @@ public final class ExchangeHelper {
      * @throws CamelExecutionException if the processing of the exchange failed
      * @throws java.util.concurrent.TimeoutException is thrown if a timeout triggered
      */
-    public static <T> T asyncExtractBody(CamelContext context, Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+    public static <T> T extractFutureBody(CamelContext context, Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
         try {
             if (timeout > 0) {
-                return doExtractBody(context, future.get(timeout, unit), type);
+                return doExtractFutureBody(context, future.get(timeout, unit), type);
             } else {
-                return doExtractBody(context, future.get(), type);
+                return doExtractFutureBody(context, future.get(), type);
             }
         } catch (InterruptedException e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -510,7 +510,7 @@ public final class ExchangeHelper {
         }
     }
 
-    private static <T> T doExtractBody(CamelContext context, Object result, Class<T> type) {
+    private static <T> T doExtractFutureBody(CamelContext context, Object result, Class<T> type) {
         if (result == null) {
             return null;
         }

@@ -85,7 +85,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         // we can use extract body to convert to expect body type
-        String result = template.asyncExtractBody(future, String.class);
+        String result = template.extractFutureBody(future, String.class);
 
         long delta = System.currentTimeMillis() - start;
         assertTrue("Should take longer than: " + delta, delta > 250);
@@ -121,7 +121,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         // we can use extract body to convert to expect body type
-        String result = template.asyncExtractBody(future, String.class);
+        String result = template.extractFutureBody(future, String.class);
 
         assertMockEndpointsSatisfied();
 
@@ -169,7 +169,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         // we can use extract body to convert to expect body type
-        String result = template.asyncExtractBody(future, String.class);
+        String result = template.extractFutureBody(future, String.class);
 
         assertMockEndpointsSatisfied();
 
@@ -216,7 +216,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         try {
-            Exchange result = template.asyncExtractBody(future, Exchange.class);
+            Exchange result = template.extractFutureBody(future, Exchange.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertEquals("Damn forced by unit test", e.getCause().getMessage());
@@ -235,7 +235,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         assertEquals("HiHi", echo);
 
         try {
-            String result = template.asyncExtractBody(future, String.class);
+            String result = template.extractFutureBody(future, String.class);
             fail("Should have thrown exception");
         } catch (RuntimeCamelException e) {
             assertEquals("Damn forced by unit test", e.getCause().getMessage());
@@ -263,7 +263,7 @@ public class DefaultProducerTemplateAsyncTest extends ContextTestSupport {
         String echo = template.requestBody("direct:echo", "Hi", String.class);
         assertEquals("HiHi", echo);
 
-        String result = template.asyncExtractBody(future, String.class);
+        String result = template.extractFutureBody(future, String.class);
 
         assertMockEndpointsSatisfied();
 

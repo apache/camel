@@ -563,12 +563,12 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         return executor.submit(task);
     }
 
-    public <T> T asyncExtractBody(Future future, Class<T> type) {
-        return ExchangeHelper.asyncExtractBody(context, future, type);
+    public <T> T extractFutureBody(Future future, Class<T> type) {
+        return ExchangeHelper.extractFutureBody(context, future, type);
     }
 
-    public <T> T asyncExtractBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
-        return ExchangeHelper.asyncExtractBody(context, future, timeout, unit, type);
+    public <T> T extractFutureBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException {
+        return ExchangeHelper.extractFutureBody(context, future, timeout, unit, type);
     }
 
 }

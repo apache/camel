@@ -790,7 +790,7 @@ public interface ProducerTemplate extends Service {
      * @return the result (see class javadoc)
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T asyncExtractBody(Future future, Class<T> type);
+    <T> T extractFutureBody(Future future, Class<T> type);
 
     /**
      * Gets the response body from the future handle, will wait at most the given time for the response to be ready.
@@ -806,6 +806,6 @@ public interface ProducerTemplate extends Service {
      * @throws java.util.concurrent.TimeoutException if the wait timed out
      * @throws CamelExecutionException if the processing of the exchange failed
      */
-    <T> T asyncExtractBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException;
+    <T> T extractFutureBody(Future future, long timeout, TimeUnit unit, Class<T> type) throws TimeoutException;
 
 }

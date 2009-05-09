@@ -30,26 +30,27 @@ public class HttpAsyncTest extends ContextTestSupport {
     public void testAsyncAndSyncAtSameTimeWithHttp() throws Exception {
         // START SNIPPET: e2
         MockEndpoint mock = getMockEndpoint("mock:result");
-        // we expect the name job to be faster than the async job even though the async job
+        // We expect the name job to be faster than the async job even though the async job
         // was started first
         mock.expectedBodiesReceived("Claus", "Bye World");
 
-        // send a async request/reply message to the http endpoint
+        // Send a async request/reply message to the http endpoint
         Future future = template.asyncRequestBody("http://0.0.0.0:9080/myservice", "Hello World");
 
-        // we got the future so in the meantime we can do other stuff, as this is Camel
+        // We got the future so in the meantime we can do other stuff, as this is Camel
         // so lets invoke another request/reply route but this time is synchronous
         String name = template.requestBody("direct:name", "Give me a name", String.class);
         assertEquals("Claus", name);
 
-        // okay we got a name and we have done some other work at the same time
+        // Okay we got a name and we have done some other work at the same time
         // the async route is running, but now its about time to wait and get
         // get the response from the async task
 
-        // so we use the async extract body to return a string body response
-        // this allows us to do this in a single code line instead of using the
+        // We use the extract future body to get the response from the future
+        // (waiting if needed) and then return a string body response.
+        // This allows us to do this in a single code line instead of using the
         // JDK Future API to get hold of it, but you can also use that if you want
-        String response = template.asyncExtractBody(future, String.class);
+        String response = template.extractFutureBody(future, String.class);
         assertEquals("Bye World", response);
 
         assertMockEndpointsSatisfied();
@@ -62,13 +63,12 @@ public class HttpAsyncTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // the mocks are here for unit test
+                // The mocks are here for unit test
 
-                // some other service to return a name, this is invoked
-                // synhronously
+                // Some other service to return a name, this is invoked synhronously
                 from("direct:name").transform(constant("Claus")).to("mock:result");
 
-                // simulate a slow http service we want to invoke async
+                // Simulate a slow http service (delaying 1 sec) we want to invoke async
                 from("jetty:http://0.0.0.0:9080/myservice")
                     .delay(1000)
                     .transform(constant("Bye World"))
