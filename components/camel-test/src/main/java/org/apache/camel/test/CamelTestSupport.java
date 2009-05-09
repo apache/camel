@@ -42,6 +42,8 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.util.CamelContextHelper;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class which creates a {@link org.apache.camel.CamelContext} with some routes
@@ -49,7 +51,7 @@ import org.apache.camel.util.CamelContextHelper;
  *
  * @version $Revision$
  */
-public abstract class CamelTestSupport extends TestSupport {
+public abstract class CamelTestSupport extends TestSupport {    
     protected CamelContext context;
     protected ProducerTemplate template;
     private boolean useRouteBuilder = true;

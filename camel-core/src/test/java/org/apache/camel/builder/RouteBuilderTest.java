@@ -57,15 +57,6 @@ public class RouteBuilderTest extends TestSupport {
         return ctx;
     }
 
-    protected List<Route> getRouteList(RouteBuilder builder) throws Exception {
-        CamelContext context = createCamelContext();
-        context.addRoutes(builder);
-        context.start();
-        List<Route> answer = context.getRoutes();
-        context.stop();
-        return answer;
-    }
-
     protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1
         RouteBuilder builder = new RouteBuilder() {

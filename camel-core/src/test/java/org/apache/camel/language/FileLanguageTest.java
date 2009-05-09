@@ -23,8 +23,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.LanguageTestSupport;
 import org.apache.camel.component.file.FileConsumer;
 import org.apache.camel.component.file.FileEndpoint;
 import org.apache.camel.component.file.GenericFile;
