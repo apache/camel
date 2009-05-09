@@ -52,7 +52,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         // do nothing here
     }
 
-    protected List<Route> getRouteList(RouteBuilder builder) throws Exception {
+    protected List<Route> getRouteListWithCurrentContext(RouteBuilder builder) throws Exception {
         context.addRoutes(builder);
         context.start();
         List<Route> answer = context.getRoutes();
@@ -69,7 +69,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             }
         };
 
-        List<Route> list = getRouteList(builder);
+        List<Route> list = getRouteListWithCurrentContext(builder);
         assertEquals("Number routes created" + list, 1, list.size());
         for (Route route : list) {
             Endpoint key = route.getEndpoint();
@@ -94,7 +94,7 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
             }
         };
 
-        List<Route> list = getRouteList(builder);
+        List<Route> list = getRouteListWithCurrentContext(builder);
         assertEquals("Number routes created" + list, 2, list.size());
         for (Route route : list) {
 

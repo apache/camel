@@ -29,6 +29,8 @@ import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.jndi.JndiTest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * A useful base class which creates a {@link CamelContext} with some routes
@@ -37,6 +39,7 @@ import org.apache.camel.util.jndi.JndiTest;
  * @version $Revision$
  */
 public abstract class ContextTestSupport extends TestSupport {
+    
     protected CamelContext context;
     protected ProducerTemplate<Exchange> template;
     private boolean useRouteBuilder = true;

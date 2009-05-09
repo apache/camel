@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.TestSupport;
+import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.EventDrivenConsumerRoute;
 import org.apache.camel.management.InstrumentationProcessor;
 import org.apache.camel.management.JmxSystemPropertyKeys;
@@ -48,7 +49,7 @@ import static org.apache.camel.processor.idempotent.MemoryMessageIdRepository.me
 public class RouteBuilderTest extends TestSupport {
     protected Processor myProcessor = new MyProcessor();
     protected DelegateProcessor interceptor1;
-    protected DelegateProcessor interceptor2;
+    protected DelegateProcessor interceptor2;   
 
     protected List<Route> buildSimpleRoute() throws Exception {
         // START SNIPPET: e1
