@@ -43,7 +43,7 @@ public class DeadLetterChannel extends ErrorHandlerSupport implements Processor 
     // (eg the Timer task code). However we should consider using Channels that has internal
     // producer/consumer queues with "delayed" support so a redelivery is just to move an
     // exchange to this channel with the computed delay time
-    // we need to provide option so end users can deside if they would like to spawn an async thread
+    // we need to provide option so end users can decide if they would like to spawn an async thread
     // or not. Also consider MEP as InOut does not work with async then as the original caller thread
     // is expecting a reply in the sync thread.
 
