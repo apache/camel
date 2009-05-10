@@ -1,0 +1,131 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.itest.async;
+
+import javax.naming.Context;
+
+import org.apache.activemq.camel.component.ActiveMQComponent;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.StringDataFormat;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.jndi.JndiContext;
+
+/**
+ * @version $Revision$
+ */
+public class HttpAsyncDslTest extends ContextTestSupport {
+
+    private static String order = "";
+
+    public void testRequestOnly() throws Exception {
+        getMockEndpoint("mock:validate").expectedMessageCount(1);
+        // even though its request only the message is still continued being processed
+        getMockEndpoint("mock:order").expectedMessageCount(1);
+
+        template.sendBody("jms:queue:order", "Order: Camel in Action");
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("CAB", order);
+    }
+
+    public void testRequestReply() throws Exception {
+        getMockEndpoint("mock:validate").expectedMessageCount(1);
+        // even though its request only the message is still continued being processed
+        getMockEndpoint("mock:order").expectedMessageCount(1);
+
+        String response = template.requestBody("jms:queue:order", "Order: Camel in Action", String.class);
+        order += "C";
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("ABC", order);
+        assertEquals("Order OK", response);
+    }
+
+    @Override
+    protected void setUp() throws Exception {
+        order = "";
+        super.setUp();
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi =  super.createRegistry();
+        jndi.bind("validateOrder", new MyValidateOrderBean());
+        jndi.bind("handleOrder", new MyHandleOrderBean());
+        return jndi;
+    }
+
+    @Override
+    protected Context createJndiContext() throws Exception {
+        JndiContext answer = new JndiContext();
+
+        // add ActiveMQ with embedded broker
+        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        amq.setCamelContext(context);
+        answer.bind("jms", amq);
+        return answer;
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                // START SNIPPET: e1
+                // just a unit test but imaging using your own data format that does complex
+                // and CPU heavy processing for decrypting the message
+                DataFormat mySecureDataFormat = new StringDataFormat("iso-8859-1");
+
+                // list on the JMS queue for new orders
+                from("jms:queue:order")
+                    // do some sanity check validation
+                    .to("bean:validateOrder")
+                    .to("mock:validate")
+                    // turn the route async as some others do not expect a reply
+                    // and a few does then we can use the async DSL as a turning point
+                    // if the JMS ReplyTo was set then we expect a reply, otherwise not
+                    // use a pool of 20 threads for the point forward
+                    .async(20)
+                    // do some CPU heavy processing of the message (we simulate and delay just 100 ms)
+                    .unmarshal(mySecureDataFormat).delay(100).to("bean:handleOrder").to("mock:order");
+                // END SNIPPET: e1
+            }
+        };
+    }
+
+    public static class MyValidateOrderBean {
+
+        public void validateOrder(byte[] payload) {
+            order += "A";
+            // noop
+        }
+    }
+
+    public static class MyHandleOrderBean {
+
+        public String handleOrder(String message) {
+            order += "B";
+            return "Order OK";
+            // noop
+        }
+    }
+}

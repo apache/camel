@@ -54,7 +54,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
 
         try {
-            template.sendBody("direct:in", "Hello World");
+            template.requestBody("direct:in", "Hello World");
             fail("Should have thrown a CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertEquals("Forced exception by unit test", e.getCause().getMessage());
@@ -83,7 +83,7 @@ public class AsyncDefaultErrorHandlerTest extends ContextTestSupport {
 
         // as it turns into async and we do not wait for the task to complete
         // we will not get notified of the exception
-        template.sendBody("direct:in", "Hello World");
+        template.requestBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }

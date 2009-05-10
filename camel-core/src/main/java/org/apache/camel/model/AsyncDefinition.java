@@ -45,7 +45,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
     @XmlAttribute(required = false)
     private Integer poolSize;
     @XmlAttribute(required = false)
-    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.Always;
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {

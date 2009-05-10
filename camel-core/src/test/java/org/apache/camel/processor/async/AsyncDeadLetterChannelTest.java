@@ -62,7 +62,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
 
         try {
-            template.sendBody("direct:in", "Hello World");
+            template.requestBody("direct:in", "Hello World");
             fail("Should have thrown a CamelExecutionException");
         } catch (CamelExecutionException e) {
             assertEquals("Forced exception by unit test", e.getCause().getMessage());
@@ -97,7 +97,7 @@ public class AsyncDeadLetterChannelTest extends ContextTestSupport {
         mock.message(0).header(Exchange.REDELIVERED).isEqualTo(Boolean.TRUE);
         mock.message(0).header(Exchange.REDELIVERY_COUNTER).isEqualTo(2);
 
-        template.sendBody("direct:in", "Hello World");
+        template.requestBody("direct:in", "Hello World");
 
         assertMockEndpointsSatisfied();
     }

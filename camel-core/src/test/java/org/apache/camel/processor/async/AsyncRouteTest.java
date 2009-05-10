@@ -16,9 +16,12 @@
  */
 package org.apache.camel.processor.async;
 
+import java.util.concurrent.Future;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
@@ -34,7 +37,7 @@ public class AsyncRouteTest extends ContextTestSupport {
         route = "";
     }
 
-    public void testAsyncRoute() throws Exception {
+    public void testAsyncRequestReplyRoute() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -57,7 +60,7 @@ public class AsyncRouteTest extends ContextTestSupport {
         assertEquals("Bye World", response);
     }
 
-    public void testAsyncRouteWithTypeConverted() throws Exception {
+    public void testAsyncRequestReplyRouteWithTypeConverted() throws Exception {
         getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -72,6 +75,46 @@ public class AsyncRouteTest extends ContextTestSupport {
 
         assertEquals("Bye World", response);
         assertEquals("BA", route);
+    }
+
+    public void testAsyncRequestOnlyRoute() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        // send a request only to the direct start endpoint
+        // it will NOT wait for the async response so we get the full response
+        template.sendBody("direct:start", "Hello");
+
+        // we should run before the async processor that sets B
+        route += "A";
+
+        assertMockEndpointsSatisfied();
+        assertEquals("AB", route);
+    }
+
+    public void testAsyncRequestOnlyRouteWithExchange() throws Exception {
+        getMockEndpoint("mock:foo").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
+
+        // send a request only to the direct start endpoint
+        // it will NOT wait for the async response so we get the full response
+        Exchange out = template.send("direct:start", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.setPattern(ExchangePattern.InOnly);
+                exchange.getIn().setBody("Hello");
+            }
+        });
+
+        // we should run before the async processor that sets B
+        route += "A";
+
+        // as it turns into a async route later we get a Future as response
+        assertIsInstanceOf(Exchange.class, out);
+        Future future = out.getOut().getBody(Future.class);
+
+        assertMockEndpointsSatisfied();
+        assertTrue("Should be done", future.isDone());
+        assertEquals("AB", route);
     }
 
     @Override
