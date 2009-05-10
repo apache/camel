@@ -76,7 +76,7 @@
     <hibernate-version>3.2.6.ga</hibernate-version>
     <hibernate-entitymanager-version>3.2.1.ga</hibernate-entitymanager-version>
     <hsqldb-version>1.8.0.7</hsqldb-version>
-    <groovy-version>1.6.1</groovy-version>
+    <groovy-version>1.6.2</groovy-version>
     <guiceyfruit-version>2.0-beta-7</guiceyfruit-version>
     <junit-version>3.8.2</junit-version>
     <saxon-version>9.1.0.1</saxon-version>

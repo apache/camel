@@ -73,7 +73,7 @@
       <jsch-bundle-version>0.1.31_1</jsch-bundle-version>
       <juel-bundle-version>2.1.0_1</juel-bundle-version>
       <junit-bundle-version>4.4_1</junit-bundle-version>
-      <mvel-bundle-version>2.0.8_1</mvel-bundle-version>
+      <mvel-bundle-version>2.0.9_1</mvel-bundle-version>
       <neethi-version>2.0.4</neethi-version>
       <ognl-bundle-version>2.7.3_1</ognl-bundle-version>
       <oscache-bundle-version>2.4_1</oscache-bundle-version>
