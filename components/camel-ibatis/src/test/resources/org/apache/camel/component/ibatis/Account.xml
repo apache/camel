@@ -37,7 +37,7 @@
 
   <!-- Select with no parameters using the result map for Account class. -->
   <select id="selectAllAccounts" resultMap="AccountResult">
-    select * from ACCOUNT
+    select * from ACCOUNT order by ACC_ID
   </select>
 
   <!-- A simpler select example without the result map.  Note the
@@ -95,5 +95,9 @@
        update ACCOUNT set PROCESSED = true where ACC_ID = #id#
   </update>
   <!-- END SNIPPET: e2 -->
+
+  <select id="count" resultClass="int">
+       select count(*) from ACCOUNT
+  </select>
 
 </sqlMap>

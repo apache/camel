@@ -97,7 +97,7 @@ public class AsyncDefinition extends OutputDefinition<ProcessorDefinition> {
     /**
      * Setting to whether to wait for async tasks to be complete before continuing original route.
      * <p/>
-     * Is default <tt>true</tt>
+     * Is default <tt>IfReplyExpected</tt>
      *
      * @param wait the wait option
      * @return the builder

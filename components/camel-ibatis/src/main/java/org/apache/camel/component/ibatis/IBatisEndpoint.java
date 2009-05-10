@@ -35,6 +35,7 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
     private IBatisProcessingStrategy strategy;
     private boolean useTransactions;
     private String statement;
+    private StatementType statementType = StatementType.Default;
 
     public IBatisEndpoint() {
     }
@@ -115,4 +116,11 @@ public class IBatisEndpoint extends DefaultPollingEndpoint {
         this.useTransactions = useTransactions;
     }
 
+    public StatementType getStatementType() {
+        return statementType;
+    }
+
+    public void setStatementType(StatementType statementType) {
+        this.statementType = statementType;
+    }
 }
